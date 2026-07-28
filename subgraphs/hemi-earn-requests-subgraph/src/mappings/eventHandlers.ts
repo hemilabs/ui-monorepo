@@ -86,6 +86,36 @@ const upsertRequest = async function ({
   context.Request.set({ ...existing, ...patch(existing) })
 }
 
+// Record a global share->asset rate point for a processed request. The asset is
+// read off the Request (set by an earlier event); a missing asset or zero
+// denominator yields no point. `id` is per-log (append-only) so a re-processed
+// request adds a point rather than overwriting the earlier one.
+const recordRate = async function ({
+  context,
+  denominator,
+  id,
+  numerator,
+  requestId,
+  timestamp,
+}: {
+  context: EvmOnEventContext
+  denominator: bigint
+  id: string
+  numerator: bigint
+  requestId: bigint
+  timestamp: bigint
+}): Promise<void> {
+  const request = await context.Request.get(requestId.toString())
+  if (!request?.asset || denominator <= 0n) return
+  context.RateSnapshot.set({
+    asset: request.asset,
+    id,
+    rateDenominator: denominator,
+    rateNumerator: numerator,
+    timestamp,
+  })
+}
+
 // ---------------------------------------------------------------------------
 // Router (Hemi) — request creation and lifecycle.
 // ---------------------------------------------------------------------------
@@ -272,8 +302,8 @@ indexer.onEvent(
 // a value the Router side may have already set (ordering is not guaranteed).
 indexer.onEvent(
   { contract: 'Agent', event: 'DepositRequestProcessed' },
-  async ({ context, event }) =>
-    upsertRequest({
+  async function ({ context, event }) {
+    await upsertRequest({
       context,
       patch: existing => ({
         amountIn: existing.amountIn ?? event.params.assets, // deposit input
@@ -284,7 +314,16 @@ indexer.onEvent(
         stakedAmount: event.params.staked, // pegged staked into the vault
       }),
       requestId: event.params.requestId,
-    }),
+    })
+    await recordRate({
+      context,
+      denominator: event.params.shares,
+      id: `${event.transaction.hash}-${event.logIndex}`,
+      numerator: event.params.staked,
+      requestId: event.params.requestId,
+      timestamp: BigInt(event.block.timestamp),
+    })
+  },
 )
 
 indexer.onEvent(
@@ -305,8 +344,8 @@ indexer.onEvent(
 // Emitted by both the instant-redeem path and the cooldown claim path.
 indexer.onEvent(
   { contract: 'Agent', event: 'RedeemRequestProcessed' },
-  async ({ context, event }) =>
-    upsertRequest({
+  async function ({ context, event }) {
+    await upsertRequest({
       context,
       patch: existing => ({
         amountIn: existing.amountIn ?? event.params.shares, // redeem input
@@ -316,7 +355,16 @@ indexer.onEvent(
         processTxHash: event.transaction.hash,
       }),
       requestId: event.params.requestId,
-    }),
+    })
+    await recordRate({
+      context,
+      denominator: event.params.shares,
+      id: `${event.transaction.hash}-${event.logIndex}`,
+      numerator: event.params.unstaked,
+      requestId: event.params.requestId,
+      timestamp: BigInt(event.block.timestamp),
+    })
+  },
 )
 
 indexer.onEvent(

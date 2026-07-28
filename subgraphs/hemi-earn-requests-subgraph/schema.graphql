@@ -55,3 +55,15 @@ type ShareTransfer {
   to: String! @index
   value: BigInt!
 }
+
+# Share->asset rate points reconstructed as num/den from each processed
+# deposit/redeem, since the vault's convertToAssets lives on another chain.
+# rateNumerator is the pegged staked/unstaked amount (the cost-basis unit),
+# NOT the underlying asset's unit; `asset` is only the timeline grouping key.
+type RateSnapshot {
+  asset: String! @index
+  id: ID!
+  rateDenominator: BigInt!
+  rateNumerator: BigInt!
+  timestamp: BigInt!
+}

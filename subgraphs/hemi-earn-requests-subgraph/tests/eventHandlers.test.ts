@@ -171,6 +171,7 @@ describe('cross-chain partial view', () => {
               block: { number: ETH_START, timestamp: 1_700_000_050 },
               contract: 'Agent',
               event: 'DepositRequestProcessed',
+              logIndex: 0,
               params: {
                 assets: 1000n,
                 requestId: 20n,
@@ -466,6 +467,7 @@ describe('Agent receives', () => {
               block: { number: ETH_START, timestamp: 1_700_000_050 },
               contract: 'Agent',
               event: 'DepositRequestProcessed',
+              logIndex: 0,
               params: {
                 assets: 999n, // Agent echo differs from the Router value
                 requestId: 63n,
@@ -555,5 +557,106 @@ describe('ShareToken transfers', () => {
 
     const stored = await ti.ShareTransfer.getOrThrow('0xrouterleg-2')
     expect(stored.from).toBe(ROUTER.toLowerCase())
+  })
+})
+
+describe('rate snapshots', () => {
+  it('records a deposit rate point (staked/shares)', async () => {
+    await onChain(ETH, [
+      {
+        block: { number: ETH_START, timestamp: 1_700_000_100 },
+        contract: 'Agent',
+        event: 'DepositRequestReceived',
+        params: { asset: ASSET, assets: 1000n, requestId: 70n },
+        transaction: { from: SENDER, hash: '0xrecv' },
+      },
+      {
+        block: { number: ETH_START, timestamp: 1_700_000_200 },
+        contract: 'Agent',
+        event: 'DepositRequestProcessed',
+        logIndex: 3,
+        params: { assets: 1000n, requestId: 70n, shares: 12n, staked: 999n },
+        transaction: { from: SENDER, hash: '0xproc' },
+      },
+    ])
+
+    const rate = await ti.RateSnapshot.getOrThrow('0xproc-3')
+    expect(rate.asset).toBe(ASSET.toLowerCase())
+    expect(rate.rateNumerator).toBe(999n)
+    expect(rate.rateDenominator).toBe(12n)
+    expect(rate.timestamp).toBe(1_700_000_200n)
+  })
+
+  it('records a redeem rate point consuming unstaked', async () => {
+    await onChain(ETH, [
+      {
+        block: { number: ETH_START, timestamp: 1_700_000_100 },
+        contract: 'Agent',
+        event: 'RedeemRequestReceived',
+        params: { asset: ASSET, requestId: 71n, share: SHARE, shares: 500n },
+        transaction: { from: SENDER, hash: '0xrrecv' },
+      },
+      {
+        block: { number: ETH_START, timestamp: 1_700_000_200 },
+        contract: 'Agent',
+        event: 'RedeemRequestProcessed',
+        logIndex: 4,
+        params: { assets: 470n, requestId: 71n, shares: 500n, unstaked: 480n },
+        transaction: { from: SENDER, hash: '0xrproc' },
+      },
+    ])
+
+    const rate = await ti.RateSnapshot.getOrThrow('0xrproc-4')
+    expect(rate.asset).toBe(ASSET.toLowerCase())
+    expect(rate.rateNumerator).toBe(480n)
+    expect(rate.rateDenominator).toBe(500n)
+  })
+
+  it('records no rate point when the asset is unknown', async () => {
+    await onChain(ETH, [
+      {
+        block: { number: ETH_START, timestamp: 1_700_000_200 },
+        contract: 'Agent',
+        event: 'DepositRequestProcessed',
+        logIndex: 5,
+        params: { assets: 1000n, requestId: 72n, shares: 12n, staked: 999n },
+        transaction: { from: SENDER, hash: '0xnoasset' },
+      },
+    ])
+
+    expect(await ti.RateSnapshot.get('0xnoasset-5')).toBeUndefined()
+  })
+
+  it('appends a point per processing (a re-processed request keeps both)', async () => {
+    await onChain(ETH, [
+      {
+        block: { number: ETH_START, timestamp: 1_700_000_100 },
+        contract: 'Agent',
+        event: 'DepositRequestReceived',
+        params: { asset: ASSET, assets: 1000n, requestId: 73n },
+        transaction: { from: SENDER, hash: '0xrecv2' },
+      },
+      {
+        block: { number: ETH_START, timestamp: 1_700_000_200 },
+        contract: 'Agent',
+        event: 'DepositRequestProcessed',
+        logIndex: 1,
+        params: { assets: 1000n, requestId: 73n, shares: 10n, staked: 1000n },
+        transaction: { from: SENDER, hash: '0xp1' },
+      },
+      {
+        block: { number: ETH_START, timestamp: 1_700_000_300 },
+        contract: 'Agent',
+        event: 'DepositRequestProcessed',
+        logIndex: 1,
+        params: { assets: 1000n, requestId: 73n, shares: 10n, staked: 1010n },
+        transaction: { from: SENDER, hash: '0xp2' },
+      },
+    ])
+
+    const first = await ti.RateSnapshot.getOrThrow('0xp1-1')
+    const second = await ti.RateSnapshot.getOrThrow('0xp2-1')
+    expect(first.rateNumerator).toBe(1000n)
+    expect(second.rateNumerator).toBe(1010n)
   })
 })

@@ -172,7 +172,16 @@ $ curl http://localhost:3006/subgraphs/43111/earn-requests/0x0000000000000000000
 {"requests":[{"amountIn":"1000000000000000000","amountOut":"1000000000000000000","asset":"0x...","automatic":true,"claimableAt":"1759162804","claimTxHash":"0xabc...","failed":false,"failureReason":null,"kind":"DEPOSIT","receiver":"0x1234...","recoverTxHash":null,"requestedAt":"1759162804","requestId":"6","requestTxHash":"0xdef...","status":"FINALIZED"}]}
 ```
 
-Requires the following env vars to be set on the backend:
+##### `GET /subgraphs/:chain-id/earn-cost-basis/:address`
+
+Returns the per-share cost basis of the given address' Hemi Earn positions, keyed by the Hemi share OFT. Hemi mainnet only. Replays the holder's processed deposits/redeems and peer-to-peer share transfers: deposits add their pegged cost, redeems and transfers out reduce it proportionally, and transfers in are priced at fair market value (the share→asset rate closest to the transfer). Filtered by `receiver` (the holder), so the value reflects what the address currently holds. Values are decimal strings on the token's base-unit scale (may be fractional after proportional reductions).
+
+```console
+$ curl http://localhost:3006/subgraphs/43111/earn-cost-basis/0x0000000000000000000000000000000000000001
+{"costBasis":{"0x0000000000000000000000000000000000000002":"1010000000000000000"}}
+```
+
+Both Hemi Earn endpoints require the following env vars to be set on the backend:
 
 - `SUBGRAPH_HEMI_EARN_REQUESTS_API_URL` — the full GraphQL URL of the Envio `hemi-earn-requests` indexer.
 - `SUBGRAPH_HEMI_EARN_REQUESTS_API_KEY` — Bearer token for the Envio indexer (only sent when set; can be left empty against an unauthenticated local Envio).

@@ -149,7 +149,7 @@ const getShareTransfers = ({ account }: { account: string }) =>
 const getEarnAssets = async function () {
   const schema = {
     query: `query GetEarnAssets {
-      RateSnapshot(distinct_on: asset) { asset }
+      RateSnapshot(distinct_on: asset, order_by: { asset: asc }) { asset }
     }`,
   }
   const response =

@@ -329,9 +329,11 @@ export const getEarnCostBasis = async function ({
   const positions = replayCostBasis(timed.map(entry => entry.event))
 
   return Object.fromEntries(
-    [...positions].map(([share, { costBasis }]) => [
-      share,
-      formatUnits(costBasis, WAD_DECIMALS),
-    ]),
+    [...positions]
+      .filter(([, { shares }]) => shares > 0n)
+      .map(([share, { costBasis }]) => [
+        share,
+        formatUnits(costBasis, WAD_DECIMALS),
+      ]),
   )
 }

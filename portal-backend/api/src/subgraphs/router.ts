@@ -162,8 +162,8 @@ function parseQueryParams(
 const getStaked = (chainIdStr: string) =>
   getTotalStaked(Number(chainIdStr)).then(staked => ({ staked }))
 
-const getCostBasis = (_: string, address: string) =>
-  getEarnCostBasis({ address: address as Address }).then(costBasis => ({
+const getCostBasis = (_: string, address: Address) =>
+  getEarnCostBasis({ address }).then(costBasis => ({
     costBasis,
   }))
 

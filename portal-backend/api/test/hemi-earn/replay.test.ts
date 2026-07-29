@@ -1,56 +1,51 @@
-import { type Address } from 'viem'
 import { describe, expect, it } from 'vitest'
 
 import { replayCostBasis } from '../../src/hemi-earn/replay.ts'
 
 const WAD = 10n ** 18n
 
-// Two assets settle into share A, one into share B (a share accepts many assets).
 const SHARE_A = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 const SHARE_B = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
-const ASSET_A1 = '0x1111111111111111111111111111111111111111'
-const ASSET_A2 = '0x2222222222222222222222222222222222222222'
-const ASSET_B = '0x3333333333333333333333333333333333333333'
 
-const shareByAsset: Record<string, Address> = {
-  [ASSET_A1]: SHARE_A,
-  [ASSET_A2]: SHARE_A,
-  [ASSET_B]: SHARE_B,
-}
-
-const deposit = (asset: string, staked: string, shares: string) => ({
-  amountIn: null,
-  amountOut: shares,
-  asset,
+const deposit = (share: string, staked: string | null, shares: string) => ({
   kind: 'DEPOSIT' as const,
-  stakedAmount: staked,
+  share,
+  shares,
+  staked,
 })
 
-const redeem = (asset: string, shares: string) => ({
-  amountIn: shares,
-  amountOut: null,
-  asset,
+const redeem = (share: string, shares: string) => ({
   kind: 'REDEEM' as const,
-  stakedAmount: null,
+  share,
+  shares,
+})
+
+const transferIn = (
+  share: string,
+  value: string,
+  rate: { denominator: string; numerator: string } | null,
+) => ({ kind: 'TRANSFER_IN' as const, rate, share, value })
+
+const transferOut = (share: string, value: string) => ({
+  kind: 'TRANSFER_OUT' as const,
+  share,
+  value,
 })
 
 describe('replayCostBasis', function () {
   it('accrues a deposit as WAD-scaled cost basis + minted shares', function () {
-    const positions = replayCostBasis(
-      [deposit(ASSET_A1, '100', '50')],
-      shareByAsset,
-    )
+    const positions = replayCostBasis([deposit(SHARE_A, '100', '50')])
     expect(positions.get(SHARE_A)).toEqual({
       costBasis: 100n * WAD,
       shares: 50n,
     })
   })
 
-  it('sums deposits into the same share across different assets', function () {
-    const positions = replayCostBasis(
-      [deposit(ASSET_A1, '100', '50'), deposit(ASSET_A2, '40', '10')],
-      shareByAsset,
-    )
+  it('sums deposits into the same share', function () {
+    const positions = replayCostBasis([
+      deposit(SHARE_A, '100', '50'),
+      deposit(SHARE_A, '40', '10'),
+    ])
     expect(positions.get(SHARE_A)).toEqual({
       costBasis: 140n * WAD,
       shares: 60n,
@@ -58,11 +53,10 @@ describe('replayCostBasis', function () {
   })
 
   it('reduces cost basis proportionally on a partial redeem', function () {
-    // deposit 100 for 100 shares, then burn 40 shares → 60% of the basis remains.
-    const positions = replayCostBasis(
-      [deposit(ASSET_A1, '100', '100'), redeem(ASSET_A1, '40')],
-      shareByAsset,
-    )
+    const positions = replayCostBasis([
+      deposit(SHARE_A, '100', '100'),
+      redeem(SHARE_A, '40'),
+    ])
     expect(positions.get(SHARE_A)).toEqual({
       costBasis: 60n * WAD,
       shares: 60n,
@@ -70,22 +64,19 @@ describe('replayCostBasis', function () {
   })
 
   it('zeroes the position on a full (or over-) redeem', function () {
-    const positions = replayCostBasis(
-      [deposit(ASSET_A1, '100', '100'), redeem(ASSET_A1, '100')],
-      shareByAsset,
-    )
+    const positions = replayCostBasis([
+      deposit(SHARE_A, '100', '100'),
+      redeem(SHARE_A, '100'),
+    ])
     expect(positions.get(SHARE_A)).toEqual({ costBasis: 0n, shares: 0n })
   })
 
   it('keeps shares isolated — a redeem on one does not touch another', function () {
-    const positions = replayCostBasis(
-      [
-        deposit(ASSET_A1, '100', '100'),
-        deposit(ASSET_B, '200', '50'),
-        redeem(ASSET_A1, '50'),
-      ],
-      shareByAsset,
-    )
+    const positions = replayCostBasis([
+      deposit(SHARE_A, '100', '100'),
+      deposit(SHARE_B, '200', '50'),
+      redeem(SHARE_A, '50'),
+    ])
     expect(positions.get(SHARE_A)).toEqual({
       costBasis: 50n * WAD,
       shares: 50n,
@@ -96,54 +87,73 @@ describe('replayCostBasis', function () {
     })
   })
 
-  it('ignores rows whose asset has no share mapping', function () {
-    const positions = replayCostBasis(
-      [deposit('0x9999999999999999999999999999999999999999', '100', '50')],
-      shareByAsset,
-    )
-    expect(positions.size).toBe(0)
-  })
-
   it('tracks shares but no cost basis for a deposit missing its stakedAmount', function () {
-    const positions = replayCostBasis(
-      [
-        {
-          amountIn: null,
-          amountOut: '50',
-          asset: ASSET_A1,
-          kind: 'DEPOSIT' as const,
-          stakedAmount: null,
-        },
-      ],
-      shareByAsset,
-    )
-    // Shares counted (so later redeems divide by the true balance), but the
-    // unknown staked amount adds no cost basis — it reads as pure profit.
+    const positions = replayCostBasis([deposit(SHARE_A, null, '50')])
     expect(positions.get(SHARE_A)).toEqual({ costBasis: 0n, shares: 50n })
   })
 
-  it('reduces cost basis against the full balance when a deposit lacks stakedAmount', function () {
-    // Known deposit (100 basis / 100 shares) + unknown-basis deposit (50 shares),
-    // then burn 60 of the 150 total. The reduction must divide by 150, not 100 —
-    // otherwise the known cost basis is wiped out too fast.
-    const positions = replayCostBasis(
-      [
-        deposit(ASSET_A1, '100', '100'),
-        {
-          amountIn: null,
-          amountOut: '50',
-          asset: ASSET_A1,
-          kind: 'DEPOSIT' as const,
-          stakedAmount: null,
-        },
-        redeem(ASSET_A1, '60'),
-      ],
-      shareByAsset,
-    )
+  it('reduces against the full balance when a deposit lacks stakedAmount', function () {
+    const positions = replayCostBasis([
+      deposit(SHARE_A, '100', '100'),
+      deposit(SHARE_A, null, '50'),
+      redeem(SHARE_A, '60'),
+    ])
     // 100*WAD * (150 - 60) / 150 = 60*WAD
     expect(positions.get(SHARE_A)).toEqual({
       costBasis: 60n * WAD,
       shares: 90n,
+    })
+  })
+
+  it('prices a transfer-in at the nearest rate (FMV), not pure profit', function () {
+    // 10 shares received at rate 1.05 pegged/share → 10.5 pegged cost basis.
+    const positions = replayCostBasis([
+      transferIn(SHARE_A, '10', { denominator: '100', numerator: '105' }),
+    ])
+    expect(positions.get(SHARE_A)).toEqual({
+      costBasis: (10n * 105n * WAD) / 100n,
+      shares: 10n,
+    })
+  })
+
+  it('adds no cost basis for a transfer-in with no rate available', function () {
+    const positions = replayCostBasis([transferIn(SHARE_A, '10', null)])
+    expect(positions.get(SHARE_A)).toEqual({ costBasis: 0n, shares: 10n })
+  })
+
+  it('reduces cost basis proportionally on a transfer-out', function () {
+    const positions = replayCostBasis([
+      deposit(SHARE_A, '100', '100'),
+      transferOut(SHARE_A, '40'),
+    ])
+    expect(positions.get(SHARE_A)).toEqual({
+      costBasis: 60n * WAD,
+      shares: 60n,
+    })
+  })
+
+  it('replays deposits and transfers together in order', function () {
+    // deposit 100/100, transfer in 50 @ rate 1.0 (50 cost) → 150 basis / 150
+    // shares, then redeem 30 → 150*WAD * 120/150 = 120*WAD.
+    const positions = replayCostBasis([
+      deposit(SHARE_A, '100', '100'),
+      transferIn(SHARE_A, '50', { denominator: '1', numerator: '1' }),
+      redeem(SHARE_A, '30'),
+    ])
+    expect(positions.get(SHARE_A)).toEqual({
+      costBasis: 120n * WAD,
+      shares: 120n,
+    })
+  })
+
+  it('prices a transfer-only position (never deposited) at FMV', function () {
+    // 20 shares at rate 1.5 → 30 pegged, not zero (pure profit).
+    const positions = replayCostBasis([
+      transferIn(SHARE_A, '20', { denominator: '2', numerator: '3' }),
+    ])
+    expect(positions.get(SHARE_A)).toEqual({
+      costBasis: 30n * WAD,
+      shares: 20n,
     })
   })
 })

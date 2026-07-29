@@ -42,7 +42,7 @@ const resolveShareByAsset = function (asset: string) {
   const key = asset.toLowerCase()
   const cached = shareByAssetCache.get(key)
   if (cached) return cached
-  const share = getAssetData(getHemiEarnRpcClient(), {
+  const sharePromise = getAssetData(getHemiEarnRpcClient(), {
     asset: asset as Address,
   })
     .then(function (data) {
@@ -60,8 +60,8 @@ const resolveShareByAsset = function (asset: string) {
       shareByAssetCache.delete(key)
       throw error
     })
-  shareByAssetCache.set(key, share)
-  return share
+  shareByAssetCache.set(key, sharePromise)
+  return sharePromise
 }
 
 type RequestRow = {
@@ -300,10 +300,9 @@ export const getEarnCostBasis = async function ({
   const globalAssets = transferRows.length > 0 ? await getEarnAssets() : []
   const resolved = await Promise.all(
     [...new Set([...requestAssets, ...globalAssets])].map(asset =>
-      resolveShareByAsset(asset).then(
-        share => [asset, share] as const,
-        () => null,
-      ),
+      resolveShareByAsset(asset)
+        .then(share => [asset, share] as const)
+        .catch(() => null),
     ),
   )
   const shareByAsset: Record<string, Address> = Object.fromEntries(

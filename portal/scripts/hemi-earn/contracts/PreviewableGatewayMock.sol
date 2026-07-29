@@ -37,12 +37,12 @@ contract PreviewableGatewayMock {
     // calls `setTreasury` post-alias so the field gets populated.
     address private _treasury;
 
-    // slot 6+ — appended for the REMOTE_FAILED UI test (spec §
-    // ad_earnremotefailedui). Lets `redeem()` and `deposit()` revert with 3
-    // distinct revert-reason shapes so the portal's failureReason decoder
-    // can be exercised across its categories. `shouldFailRedeem` /
-    // `shouldFailDeposit` (slots 4/3) still work as legacy catch-alls —
-    // the mode enum, when non-NONE, takes precedence.
+    // slot 6+ — appended for the REMOTE_FAILED UI test. Lets `redeem()`
+    // and `deposit()` revert with 3 distinct revert-reason shapes so the
+    // portal's failureReason decoder can be exercised across its
+    // categories. `shouldFailRedeem` / `shouldFailDeposit` (slots 4/3)
+    // still work as legacy catch-alls — the mode enum, when non-NONE,
+    // takes precedence.
     //   NONE      → no injected failure (legacy boolean decides)
     //   SLIPPAGE  → `Error(string)` with a slippage keyword → 'slippage'
     //   FEE       → custom error `InsufficientFee(uint256,uint256)` → 'gas'

@@ -14,6 +14,7 @@ import {
   formatApyDisplay,
   getTerminalDeliveryTxHash,
   hasFailedSettlement,
+  hasInFlightEarnActions,
   hashesMatch,
   isAwaitingFinalize,
   isCooldownMature,
@@ -635,6 +636,62 @@ describe('utils', function () {
         ).toBe(true)
       },
     )
+  })
+
+  describe('hasInFlightEarnActions', function () {
+    const localOp = (initiateTxHash: string | undefined, settled: boolean) =>
+      ({ initiateTxHash, settled }) as unknown as LocalEarnOperation
+
+    it('is false when there are no local ops and no transactions', function () {
+      expect(
+        hasInFlightEarnActions({ localOperations: [], transactions: [] }),
+      ).toBe(false)
+    })
+
+    it('is true when a local op is initiated but not settled yet', function () {
+      expect(
+        hasInFlightEarnActions({
+          localOperations: [localOp(`0x${'9'.repeat(64)}`, false)],
+          transactions: [],
+        }),
+      ).toBe(true)
+    })
+
+    it('is false when the only local op is already settled', function () {
+      expect(
+        hasInFlightEarnActions({
+          localOperations: [localOp(`0x${'9'.repeat(64)}`, true)],
+          transactions: [],
+        }),
+      ).toBe(false)
+    })
+
+    it('is false when a local op has no initiate tx hash', function () {
+      expect(
+        hasInFlightEarnActions({
+          localOperations: [localOp(undefined, false)],
+          transactions: [],
+        }),
+      ).toBe(false)
+    })
+
+    it('is true when a subgraph transaction is still in flight', function () {
+      expect(
+        hasInFlightEarnActions({
+          localOperations: [],
+          transactions: [{ ...baseTx, status: 'PENDING' }],
+        }),
+      ).toBe(true)
+    })
+
+    it('is false when every transaction has reached a terminal status', function () {
+      expect(
+        hasInFlightEarnActions({
+          localOperations: [],
+          transactions: [{ ...baseTx, status: 'FINALIZED' }],
+        }),
+      ).toBe(false)
+    })
   })
 
   describe('isEarnRowTerminal', function () {

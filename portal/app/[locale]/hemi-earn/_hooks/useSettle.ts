@@ -10,7 +10,6 @@ import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { type Address } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { earnCostBasisKeyPrefix } from '../_fetchers/fetchEarnCostBasis'
 import { earnPositionsKeyPrefix } from '../_fetchers/fetchEarnPositions'
 import { earnTransactionsKeyPrefix } from '../_fetchers/fetchEarnTransactions'
 import { type EarnTransaction } from '../types'
@@ -109,8 +108,6 @@ export const useSettle = function ({
       queryClient.invalidateQueries({ queryKey: nativeTokenBalanceQueryKey })
       // resetQueries (not removeQueries) so the useEarnPositions observer refetches the staked-balance card.
       queryClient.resetQueries({ queryKey: earnPositionsKeyPrefix })
-      // Cost basis changed too (a deposit added it, a redeem reduced it) — refetch the earned card.
-      queryClient.invalidateQueries({ queryKey: earnCostBasisKeyPrefix })
     },
   })
 }

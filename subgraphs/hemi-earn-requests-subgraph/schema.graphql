@@ -44,3 +44,26 @@ type Request {
   stakedAmount: BigInt
   status: RequestStatus!
 }
+
+# Genuine wallet-to-wallet share transfers for FMV pricing: mints, burns, and the
+# Router's in-transit deposit/redeem legs are all excluded by the handler.
+type ShareTransfer {
+  from: String! @index
+  id: ID!
+  share: String!
+  timestamp: BigInt!
+  to: String! @index
+  value: BigInt!
+}
+
+# Share->asset rate points reconstructed as num/den from each processed
+# deposit/redeem, since the vault's convertToAssets lives on another chain.
+# rateNumerator is the pegged staked/unstaked amount (the cost-basis unit),
+# NOT the underlying asset's unit; `asset` is only the timeline grouping key.
+type RateSnapshot {
+  asset: String! @index
+  id: ID!
+  rateDenominator: BigInt!
+  rateNumerator: BigInt!
+  timestamp: BigInt!
+}

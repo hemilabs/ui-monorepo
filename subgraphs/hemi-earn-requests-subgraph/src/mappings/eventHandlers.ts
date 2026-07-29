@@ -11,6 +11,9 @@ import type { EvmOnEventContext, Request } from 'envio'
 
 const lc = (address: string): string => address.toLowerCase()
 
+const zeroAddress = '0x0000000000000000000000000000000000000000'
+const routerAddresses = new Set(indexer.chains[43111].Router.addresses.map(lc))
+
 // A fully-defaulted Request, so partial-view creation is identical from either
 // chain. Optional schema fields default to `undefined`; required fields get a
 // concrete default.
@@ -82,6 +85,36 @@ const upsertRequest = async function ({
   const id = requestId.toString()
   const existing = (await context.Request.get(id)) ?? baseRequest(id, requestId)
   context.Request.set({ ...existing, ...patch(existing) })
+}
+
+// Record a global share->asset rate point for a processed request. The asset is
+// read off the Request (set by an earlier event); a missing asset or zero
+// denominator yields no point. `id` is per-log (append-only) so a re-processed
+// request adds a point rather than overwriting the earlier one.
+const recordRate = async function ({
+  context,
+  denominator,
+  id,
+  numerator,
+  requestId,
+  timestamp,
+}: {
+  context: EvmOnEventContext
+  denominator: bigint
+  id: string
+  numerator: bigint
+  requestId: bigint
+  timestamp: bigint
+}): Promise<void> {
+  const request = await context.Request.get(requestId.toString())
+  if (!request?.asset || denominator <= 0n) return
+  context.RateSnapshot.set({
+    asset: request.asset,
+    id,
+    rateDenominator: denominator,
+    rateNumerator: numerator,
+    timestamp,
+  })
 }
 
 // ---------------------------------------------------------------------------
@@ -225,6 +258,30 @@ indexer.onEvent(
 )
 
 // ---------------------------------------------------------------------------
+// Share OFT (Hemi) — genuine peer-to-peer transfers for FMV cost basis.
+// ---------------------------------------------------------------------------
+
+indexer.onEvent(
+  { contract: 'ShareToken', event: 'Transfer' },
+  async function ({ context, event }) {
+    const from = lc(event.params.from)
+    const to = lc(event.params.to)
+    // Keep only genuine peer-to-peer transfers: skip mints/burns (0x0) and the
+    // Router's in-transit deposit/redeem legs.
+    if (from === zeroAddress || to === zeroAddress) return
+    if (routerAddresses.has(from) || routerAddresses.has(to)) return
+    context.ShareTransfer.set({
+      from,
+      id: `${event.transaction.hash}-${event.logIndex}`,
+      share: lc(event.srcAddress),
+      timestamp: BigInt(event.block.timestamp),
+      to,
+      value: event.params.value,
+    })
+  },
+)
+
+// ---------------------------------------------------------------------------
 // Agent (Ethereum) — request processing on the remote side.
 // ---------------------------------------------------------------------------
 
@@ -248,8 +305,8 @@ indexer.onEvent(
 // a value the Router side may have already set (ordering is not guaranteed).
 indexer.onEvent(
   { contract: 'Agent', event: 'DepositRequestProcessed' },
-  async ({ context, event }) =>
-    upsertRequest({
+  async function ({ context, event }) {
+    await upsertRequest({
       context,
       patch: existing => ({
         amountIn: existing.amountIn ?? event.params.assets, // deposit input
@@ -260,7 +317,16 @@ indexer.onEvent(
         stakedAmount: event.params.staked, // pegged staked into the vault
       }),
       requestId: event.params.requestId,
-    }),
+    })
+    await recordRate({
+      context,
+      denominator: event.params.shares,
+      id: `${event.transaction.hash}-${event.logIndex}`,
+      numerator: event.params.staked,
+      requestId: event.params.requestId,
+      timestamp: BigInt(event.block.timestamp),
+    })
+  },
 )
 
 indexer.onEvent(
@@ -281,8 +347,8 @@ indexer.onEvent(
 // Emitted by both the instant-redeem path and the cooldown claim path.
 indexer.onEvent(
   { contract: 'Agent', event: 'RedeemRequestProcessed' },
-  async ({ context, event }) =>
-    upsertRequest({
+  async function ({ context, event }) {
+    await upsertRequest({
       context,
       patch: existing => ({
         amountIn: existing.amountIn ?? event.params.shares, // redeem input
@@ -292,7 +358,16 @@ indexer.onEvent(
         processTxHash: event.transaction.hash,
       }),
       requestId: event.params.requestId,
-    }),
+    })
+    await recordRate({
+      context,
+      denominator: event.params.shares,
+      id: `${event.transaction.hash}-${event.logIndex}`,
+      numerator: event.params.unstaked,
+      requestId: event.params.requestId,
+      timestamp: BigInt(event.block.timestamp),
+    })
+  },
 )
 
 indexer.onEvent(

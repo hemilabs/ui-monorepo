@@ -18,6 +18,8 @@ const ASSET = mockAddresses[0]
 const RECEIVER = mockAddresses[1]
 const SENDER = mockAddresses[2]
 const SHARE = mockAddresses[3]
+const zeroAddress = '0x0000000000000000000000000000000000000000'
+const ROUTER = '0x8a23df259c6798f9eacc51ae816461218c3acddc'
 
 let ti: ReturnType<typeof createTestIndexer>
 beforeEach(() => {
@@ -169,6 +171,7 @@ describe('cross-chain partial view', () => {
               block: { number: ETH_START, timestamp: 1_700_000_050 },
               contract: 'Agent',
               event: 'DepositRequestProcessed',
+              logIndex: 0,
               params: {
                 assets: 1000n,
                 requestId: 20n,
@@ -464,6 +467,7 @@ describe('Agent receives', () => {
               block: { number: ETH_START, timestamp: 1_700_000_050 },
               contract: 'Agent',
               event: 'DepositRequestProcessed',
+              logIndex: 0,
               params: {
                 assets: 999n, // Agent echo differs from the Router value
                 requestId: 63n,
@@ -498,5 +502,164 @@ describe('Agent receives', () => {
     expect(req.amountIn).toBe(1000n) // Router value kept, not clobbered to 999n
     expect(req.amountOut).toBe(12n)
     expect(req.stakedAmount).toBe(999n) // pegged staked into the vault
+  })
+})
+
+describe('ShareToken transfers', () => {
+  const leg = (
+    hash: string,
+    logIndex: number,
+    from: `0x${string}`,
+    to: `0x${string}`,
+  ) => ({
+    block: { number: HEMI_START, timestamp: 1_700_000_000 },
+    contract: 'ShareToken' as const,
+    event: 'Transfer' as const,
+    logIndex,
+    params: { from, to, value: 1n },
+    srcAddress: SHARE,
+    transaction: { from: SENDER, hash },
+  })
+
+  it('stores a wallet-to-wallet transfer', async () => {
+    await onChain(HEMI, [
+      {
+        block: { number: HEMI_START, timestamp: 1_700_000_000 },
+        contract: 'ShareToken',
+        event: 'Transfer',
+        logIndex: 5,
+        params: { from: SENDER, to: RECEIVER, value: 1000n },
+        srcAddress: SHARE,
+        transaction: { from: SENDER, hash: '0xtransfer' },
+      },
+    ])
+
+    const transfer = await ti.ShareTransfer.getOrThrow('0xtransfer-5')
+    expect(transfer.from).toBe(SENDER.toLowerCase())
+    expect(transfer.to).toBe(RECEIVER.toLowerCase())
+    expect(transfer.value).toBe(1000n)
+    expect(transfer.share).toBe(SHARE.toLowerCase())
+    expect(transfer.timestamp).toBe(1_700_000_000n)
+  })
+
+  it('skips mints and burns', async () => {
+    await onChain(HEMI, [
+      leg('0xmint', 0, zeroAddress, RECEIVER),
+      leg('0xburn', 1, SENDER, zeroAddress),
+    ])
+
+    expect(await ti.ShareTransfer.get('0xmint-0')).toBeUndefined()
+    expect(await ti.ShareTransfer.get('0xburn-1')).toBeUndefined()
+  })
+
+  it('skips Router in-transit legs (both directions)', async () => {
+    await onChain(HEMI, [
+      leg('0xrouterin', 2, ROUTER, RECEIVER),
+      leg('0xrouterout', 3, SENDER, ROUTER),
+    ])
+
+    expect(await ti.ShareTransfer.get('0xrouterin-2')).toBeUndefined()
+    expect(await ti.ShareTransfer.get('0xrouterout-3')).toBeUndefined()
+  })
+})
+
+describe('rate snapshots', () => {
+  it('records a deposit rate point (staked/shares)', async () => {
+    await onChain(ETH, [
+      {
+        block: { number: ETH_START, timestamp: 1_700_000_100 },
+        contract: 'Agent',
+        event: 'DepositRequestReceived',
+        params: { asset: ASSET, assets: 1000n, requestId: 70n },
+        transaction: { from: SENDER, hash: '0xrecv' },
+      },
+      {
+        block: { number: ETH_START, timestamp: 1_700_000_200 },
+        contract: 'Agent',
+        event: 'DepositRequestProcessed',
+        logIndex: 3,
+        params: { assets: 1000n, requestId: 70n, shares: 12n, staked: 999n },
+        transaction: { from: SENDER, hash: '0xproc' },
+      },
+    ])
+
+    const rate = await ti.RateSnapshot.getOrThrow('0xproc-3')
+    expect(rate.asset).toBe(ASSET.toLowerCase())
+    expect(rate.rateNumerator).toBe(999n)
+    expect(rate.rateDenominator).toBe(12n)
+    expect(rate.timestamp).toBe(1_700_000_200n)
+  })
+
+  it('records a redeem rate point consuming unstaked', async () => {
+    await onChain(ETH, [
+      {
+        block: { number: ETH_START, timestamp: 1_700_000_100 },
+        contract: 'Agent',
+        event: 'RedeemRequestReceived',
+        params: { asset: ASSET, requestId: 71n, share: SHARE, shares: 500n },
+        transaction: { from: SENDER, hash: '0xrrecv' },
+      },
+      {
+        block: { number: ETH_START, timestamp: 1_700_000_200 },
+        contract: 'Agent',
+        event: 'RedeemRequestProcessed',
+        logIndex: 4,
+        params: { assets: 470n, requestId: 71n, shares: 500n, unstaked: 480n },
+        transaction: { from: SENDER, hash: '0xrproc' },
+      },
+    ])
+
+    const rate = await ti.RateSnapshot.getOrThrow('0xrproc-4')
+    expect(rate.asset).toBe(ASSET.toLowerCase())
+    expect(rate.rateNumerator).toBe(480n)
+    expect(rate.rateDenominator).toBe(500n)
+  })
+
+  it('records no rate point when the asset is unknown', async () => {
+    await onChain(ETH, [
+      {
+        block: { number: ETH_START, timestamp: 1_700_000_200 },
+        contract: 'Agent',
+        event: 'DepositRequestProcessed',
+        logIndex: 5,
+        params: { assets: 1000n, requestId: 72n, shares: 12n, staked: 999n },
+        transaction: { from: SENDER, hash: '0xnoasset' },
+      },
+    ])
+
+    expect(await ti.RateSnapshot.get('0xnoasset-5')).toBeUndefined()
+  })
+
+  it('appends a point per processing (a re-processed request keeps both)', async () => {
+    await onChain(ETH, [
+      {
+        block: { number: ETH_START, timestamp: 1_700_000_100 },
+        contract: 'Agent',
+        event: 'DepositRequestReceived',
+        params: { asset: ASSET, assets: 1000n, requestId: 73n },
+        transaction: { from: SENDER, hash: '0xrecv2' },
+      },
+      {
+        block: { number: ETH_START, timestamp: 1_700_000_200 },
+        contract: 'Agent',
+        event: 'DepositRequestProcessed',
+        logIndex: 1,
+        params: { assets: 1000n, requestId: 73n, shares: 10n, staked: 1000n },
+        transaction: { from: SENDER, hash: '0xp1' },
+      },
+      {
+        block: { number: ETH_START, timestamp: 1_700_000_300 },
+        contract: 'Agent',
+        event: 'DepositRequestProcessed',
+        logIndex: 1,
+        params: { assets: 1000n, requestId: 73n, shares: 10n, staked: 1010n },
+        transaction: { from: SENDER, hash: '0xp2' },
+      },
+    ])
+
+    const first = await ti.RateSnapshot.getOrThrow('0xp1-1')
+    const second = await ti.RateSnapshot.getOrThrow('0xp2-1')
+    expect(first.rateNumerator).toBe(1000n)
+    expect(second.rateNumerator).toBe(1010n)
   })
 })

@@ -6,15 +6,23 @@ A multichain [Envio HyperIndex](https://docs.envio.dev) indexer for the Hemi Ear
 
 A deposit/redeem is a request that spans two contracts on two chains:
 
-| Chain          | Contract | Role                                                           |
-| -------------- | -------- | -------------------------------------------------------------- |
-| Hemi (`43111`) | `Router` | Mints the `requestId`, emits `*Requested`, tracks lifecycle.   |
-| Ethereum (`1`) | `Agent`  | Stakes/unstakes remotely, emits `*Processed` with the amounts. |
+| Chain          | Contract     | Role                                                           |
+| -------------- | ------------ | -------------------------------------------------------------- |
+| Hemi (`43111`) | `Router`     | Mints the `requestId`, emits `*Requested`, tracks lifecycle.   |
+| Hemi (`43111`) | `ShareToken` | Share OFTs — `Transfer` events feed peer-to-peer FMV pricing.  |
+| Ethereum (`1`) | `Agent`      | Stakes/unstakes remotely, emits `*Processed` with the amounts. |
 
 Every event carries the same `requestId`. That `requestId` is the `Request` entity id, so each event upserts the **same** entity — it is created as a partial view by whichever chain is indexed first and progressively filled in by later events from either chain (see `src/mappings/eventHandlers.ts`). Cross-chain ordering uses Envio's default
 ordered multichain mode, and `status` is guarded so it never regresses.
 
 The resulting `Request` entity (see `schema.graphql`) holds who/what (`initiator`, `receiver`, `asset`, `kind`), the amounts (`amountIn`, `amountOut`, and the pegged `stakedAmount` used as the earned-value cost basis), the lifecycle `status`, and per-milestone timestamps/tx hashes.
+
+### Fair-market-value signals
+
+Two extra entities support future FMV cost-basis pricing of share tokens received outside a deposit (see `schema.graphql`):
+
+- **`ShareTransfer`** — genuine wallet-to-wallet share-OFT transfers on Hemi (mints, burns, and the Router's in-transit legs are excluded).
+- **`RateSnapshot`** — a share→asset rate timeline (`rateNumerator`/`rateDenominator`) reconstructed from each processed deposit/redeem, approximating the vault's `convertToAssets` at a past timestamp without a same-chain read.
 
 ### `initiator` caveat
 
@@ -27,6 +35,7 @@ contract / smart-account wallet it is that contract's address, not the logical u
 
 - **Ethereum (Agent)**
 - **Hemi (Router)**
+- **Hemi (ShareToken)** — share OFTs, source of `ShareTransfer`
 
 ## Prerequisites
 

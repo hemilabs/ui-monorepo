@@ -12,6 +12,7 @@ import type { EvmOnEventContext, Request } from 'envio'
 const lc = (address: string): string => address.toLowerCase()
 
 const zeroAddress = '0x0000000000000000000000000000000000000000'
+const routerAddresses = new Set(indexer.chains[43111].Router.addresses.map(lc))
 
 // A fully-defaulted Request, so partial-view creation is identical from either
 // chain. Optional schema fields default to `undefined`; required fields get a
@@ -265,8 +266,10 @@ indexer.onEvent(
   async function ({ context, event }) {
     const from = lc(event.params.from)
     const to = lc(event.params.to)
-    // Skip mints and burns. Router in-transit legs pass through and are deduped
+    // Keep only genuine peer-to-peer transfers: skip mints/burns (0x0) and the
+    // Router's in-transit deposit/redeem legs.
     if (from === zeroAddress || to === zeroAddress) return
+    if (routerAddresses.has(from) || routerAddresses.has(to)) return
     context.ShareTransfer.set({
       from,
       id: `${event.transaction.hash}-${event.logIndex}`,

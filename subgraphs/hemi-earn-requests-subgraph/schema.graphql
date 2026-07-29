@@ -45,8 +45,8 @@ type Request {
   status: RequestStatus!
 }
 
-# Share transfers minus mints and burns. Router in-transit legs are NOT excluded
-# here (the Router address isn't available to an Envio handler) — deduped later.
+# Genuine wallet-to-wallet share transfers for FMV pricing: mints, burns, and the
+# Router's in-transit deposit/redeem legs are all excluded by the handler.
 type ShareTransfer {
   from: String! @index
   id: ID!

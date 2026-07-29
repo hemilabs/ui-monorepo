@@ -552,11 +552,14 @@ describe('ShareToken transfers', () => {
     expect(await ti.ShareTransfer.get('0xburn-1')).toBeUndefined()
   })
 
-  it('keeps Router in-transit legs (deduped downstream)', async () => {
-    await onChain(HEMI, [leg('0xrouterleg', 2, ROUTER, RECEIVER)])
+  it('skips Router in-transit legs (both directions)', async () => {
+    await onChain(HEMI, [
+      leg('0xrouterin', 2, ROUTER, RECEIVER),
+      leg('0xrouterout', 3, SENDER, ROUTER),
+    ])
 
-    const stored = await ti.ShareTransfer.getOrThrow('0xrouterleg-2')
-    expect(stored.from).toBe(ROUTER.toLowerCase())
+    expect(await ti.ShareTransfer.get('0xrouterin-2')).toBeUndefined()
+    expect(await ti.ShareTransfer.get('0xrouterout-3')).toBeUndefined()
   })
 })
 

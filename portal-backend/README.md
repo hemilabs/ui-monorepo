@@ -78,6 +78,12 @@ $ curl http://localhost:3006/tvl
 {"tvl":808500187.3738999}
 ```
 
+##### Note
+
+This endpoint only reads Dune's latest cached result; it never triggers a new query run. The [`Refresh TVL`](../.github/workflows/refresh-tvl.yml) scheduled workflow keeps that cache fresh by executing the Dune query on a schedule, replacing the manual "Run" click on the [TVL query page](https://dune.com/queries/6346834/10099987). It needs the `TVL_DUNE_API_KEY` repository secret and the `TVL_DUNE_QUERY_ID` repository variable.
+
+On failure, a message will be posted to Slack using `SLACK_WEBHOOK_URL` and `SLACK_MENTION` as the deploy notifications do.
+
 #### `GET /ve-hemi-rewards/:chain-id`
 
 Returns the veHemi rewards per unit of veHemi weight (voting power) for the next year (60 epochs of 6 days).

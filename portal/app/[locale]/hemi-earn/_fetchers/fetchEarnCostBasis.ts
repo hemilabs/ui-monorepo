@@ -11,7 +11,7 @@ export const fetchEarnCostBasis = async function ({
   account,
 }: {
   account: Address
-}): Promise<Record<string, string>> {
+}) {
   const { costBasis } = (await fetchPlusPlus(getEarnCostBasisUrl(account), {
     method: 'GET',
   })) as { costBasis: Record<string, string> }

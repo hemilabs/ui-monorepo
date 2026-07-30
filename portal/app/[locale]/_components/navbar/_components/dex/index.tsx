@@ -29,6 +29,7 @@ import dodoIcon from './_images/dodo.png'
 import dzapIcon from './_images/dzap.png'
 import eisenIcon from './_images/eisen.png'
 import izumiIcon from './_images/izumi.png'
+import lunarFiIcon from './_images/lunarFi.svg'
 import okuIcon from './_images/oku.png'
 import oneDeltaIcon from './_images/oneDelta.png'
 import rubicIcon from './_images/rubic.png'
@@ -231,6 +232,12 @@ const DexImpl = function () {
                 href="https://www.atlasexchange.xyz/swap"
                 icon={<Image alt="Atlas" src={atlasIcon} />}
                 text="Atlas"
+              />
+              <ExternalLink
+                event="nav - lunarfi"
+                href="https://lunarfinance.io/"
+                icon={<Image alt="LunarFi" src={lunarFiIcon} />}
+                text="LunarFi"
               />
             </div>
           </div>,

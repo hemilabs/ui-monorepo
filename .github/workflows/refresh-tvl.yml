@@ -1,0 +1,32 @@
+# Triggers a Dune execution so the portal-backend /tvl endpoint reads fresh
+# data. The portal-backend only reads Dune's cached result, so this scheduled
+# run replaces the manual "Run" click on the Dune query.
+
+name: Refresh TVL
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # daily at 06:00 UTC
+  workflow_dispatch:
+
+permissions: {}
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  refresh-tvl:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl --fail-with-body --max-time 30 --silent --show-error \
+            -X POST "https://api.dune.com/api/v1/query/${{ vars.TVL_DUNE_QUERY_ID }}/execute" \
+            -H "X-Dune-API-Key: ${{ secrets.TVL_DUNE_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+      - if: failure()
+        run: |
+          curl --fail-with-body --max-time 30 --silent --show-error \
+            -X POST "${{ secrets.SLACK_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d '{"text": "${{ vars.SLACK_MENTION }} :boom: TVL refresh failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}'

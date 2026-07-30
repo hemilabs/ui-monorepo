@@ -168,6 +168,7 @@ const analyticsEvents = [
   'nav - izumi',
   'nav - dodo',
   'nav - atlas',
+  'nav - lunarfi',
   // custom Tokens for the tunnel
   'custom erc20 - cancel',
   'custom erc20 - open modal',

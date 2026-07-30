@@ -50,6 +50,11 @@ export type SubgraphRequest = EarnRequestCommonFields & {
   status: SubgraphRequestStatus
 }
 
+// Per-user cost basis keyed by the Hemi share OFT (lowercased). Value is a
+// decimal string on the base-unit scale — may be fractional, so not
+// `BigInt`-safe.
+export type EarnCostBasis = Record<Address, string>
+
 // One Hemi Earn cross-chain request, as returned by
 // `GET /subgraphs/:chainId/earn-requests/:address`. Shape mirrors the
 // portal's `EarnTransaction` type (minus the localStorage-only fields).

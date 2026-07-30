@@ -18,7 +18,7 @@ RUN pnpm install --frozen-lockfile --filter portal-backend...
 # Node can't type-strip .ts under node_modules, so compile the workspace packages
 # the api consumes to JS. Their package.json "compiled" export condition
 # points at this dist; the runtime activates it via NODE_OPTIONS below.
-RUN pnpm --filter ve-hemi-actions --filter ve-hemi-rewards run build
+RUN pnpm --filter ve-hemi-actions --filter ve-hemi-rewards --filter hemi-earn-actions run build
 # Self-contained app dir: prod deps + api files, workspace packages copied in.
 # --legacy: this workspace doesn't set inject-workspace-packages, which pnpm v10's
 # default deploy now requires.
@@ -42,9 +42,9 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 WORKDIR /app
 
 ENV NODE_ENV=production
-# Resolve the ve-hemi packages to their compiled JS. They ship raw .ts for local
-# dev and the portal bundler (the exports "default"); Node can't strip .ts under
-# node_modules, so here we opt into their "compiled" export condition.
+# Resolve the workspace action packages to their compiled JS. They ship raw .ts
+# for local dev and the portal bundler (the exports "default"); Node can't strip
+# .ts under node_modules, so here we opt into their "compiled" export condition.
 ENV NODE_OPTIONS=--conditions=compiled
 
 COPY --from=build --chown=node:node /app .

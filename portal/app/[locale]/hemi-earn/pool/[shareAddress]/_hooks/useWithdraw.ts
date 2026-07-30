@@ -10,6 +10,7 @@ import {
 import { requestRedeem } from 'hemi-earn-actions/actions'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useUmami } from 'hooks/useUmami'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { maxBigInt } from 'utils/bigint'
 import { unixNowTimestamp } from 'utils/time'
@@ -68,6 +69,7 @@ export const useWithdraw = function ({
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
   const [networkType] = useNetworkType()
+  const { track } = useUmami()
   const routerAddress = getHemiEarnRouterAddress()
   const { markSettledByInitiateTxHash, upsertLocalOperation } =
     useLocalEarnOperations()
@@ -169,6 +171,7 @@ export const useWithdraw = function ({
       })
 
       emitter.on('approve-transaction-reverted', function (receipt) {
+        track?.('hemi earn - withdraw failed')
         updateWithdrawOperation?.({
           status: WithdrawStatus.APPROVAL_TX_FAILED,
         })
@@ -190,6 +193,7 @@ export const useWithdraw = function ({
       })
 
       emitter.on('user-signed-withdraw', function (transactionHash) {
+        track?.('hemi earn - withdraw started')
         updateWithdrawOperation?.({
           amountIn: shares.toString(),
           status: WithdrawStatus.WITHDRAW_TX_PENDING,
@@ -220,6 +224,7 @@ export const useWithdraw = function ({
       emitter.on('withdraw-transaction-succeeded', function (receipt) {
         // TODO(phase-3): parse the `RedeemRequested` log to capture the
         // requestId so the UI can track cross-chain fulfillment.
+        track?.('hemi earn - withdraw success')
         updateWithdrawOperation?.({
           status: WithdrawStatus.WITHDRAW_TX_CONFIRMED,
         })
@@ -252,6 +257,7 @@ export const useWithdraw = function ({
       })
 
       emitter.on('withdraw-transaction-reverted', function (receipt) {
+        track?.('hemi earn - withdraw failed')
         updateWithdrawOperation?.({
           status: WithdrawStatus.WITHDRAW_TX_FAILED,
         })
@@ -265,24 +271,28 @@ export const useWithdraw = function ({
       })
 
       emitter.on('withdraw-failed-validation', function () {
+        track?.('hemi earn - withdraw failed')
         updateWithdrawOperation?.({
           status: WithdrawStatus.WITHDRAW_TX_FAILED,
         })
       })
 
       emitter.on('quote-failed', function () {
+        track?.('hemi earn - withdraw failed')
         updateWithdrawOperation?.({
           status: WithdrawStatus.WITHDRAW_TX_FAILED,
         })
       })
 
       emitter.on('withdraw-failed', function () {
+        track?.('hemi earn - withdraw failed')
         updateWithdrawOperation?.({
           status: WithdrawStatus.WITHDRAW_TX_FAILED,
         })
       })
 
       emitter.on('unexpected-error', function () {
+        track?.('hemi earn - withdraw failed')
         updateWithdrawOperation?.({
           status: WithdrawStatus.WITHDRAW_TX_FAILED,
         })

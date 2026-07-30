@@ -7,6 +7,7 @@ import { type CancelRedeemEvents } from 'hemi-earn-actions'
 import { cancelRedeem } from 'hemi-earn-actions/actions'
 import { hemi } from 'hemi-viem'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
+import { useUmami } from 'hooks/useUmami'
 import { useAccount } from 'wagmi'
 
 import { earnTransactionsKeyPrefix } from '../_fetchers/fetchEarnTransactions'
@@ -25,6 +26,7 @@ export const useCancelRedeem = function ({ on, transaction }: UseCancelRedeem) {
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
   const { setSettlement } = useLocalEarnOperations()
+  const { track } = useUmami()
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     hemi.id,
   )
@@ -47,13 +49,16 @@ export const useCancelRedeem = function ({ on, transaction }: UseCancelRedeem) {
       })
 
       // Flag failed on revert so the modal resets for a retry; left pending on success so the row reads as cancelling until terminal.
-      const fail = () =>
+      const fail = function () {
+        track?.('hemi earn - cancel redeem failed')
         setSettlement(transaction.requestTxHash, {
           failed: true,
           kind: 'CANCEL',
         })
+      }
 
       emitter.on('user-signed-tx', function (txHash) {
+        track?.('hemi earn - cancel redeem started')
         setSettlement(transaction.requestTxHash, {
           failed: false,
           kind: 'CANCEL',
@@ -61,6 +66,7 @@ export const useCancelRedeem = function ({ on, transaction }: UseCancelRedeem) {
         })
       })
       emitter.on('tx-transaction-succeeded', function (receipt) {
+        track?.('hemi earn - cancel redeem success')
         updateNativeBalanceAfterFees(receipt)
       })
       emitter.on('tx-transaction-reverted', function (receipt) {

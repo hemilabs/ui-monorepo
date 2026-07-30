@@ -49,12 +49,15 @@ export const useCancelRedeem = function ({ on, transaction }: UseCancelRedeem) {
       })
 
       // Flag failed on revert so the modal resets for a retry; left pending on success so the row reads as cancelling until terminal.
-      const fail = function () {
-        track?.('hemi earn - cancel redeem failed')
+      const markFailed = function () {
         setSettlement(transaction.requestTxHash, {
           failed: true,
           kind: 'CANCEL',
         })
+      }
+      const fail = function () {
+        track?.('hemi earn - cancel redeem failed')
+        markFailed()
       }
 
       emitter.on('user-signed-tx', function (txHash) {
@@ -75,7 +78,7 @@ export const useCancelRedeem = function ({ on, transaction }: UseCancelRedeem) {
       })
       emitter.on('tx-failed', fail)
       emitter.on('tx-failed-validation', fail)
-      emitter.on('user-signing-tx-error', fail)
+      emitter.on('user-signing-tx-error', markFailed)
       emitter.on('unexpected-error', fail)
 
       // Caller closes the modal on tx-transaction-succeeded — only when mined, so a revert keeps it open.

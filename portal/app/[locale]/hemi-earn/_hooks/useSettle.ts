@@ -88,9 +88,12 @@ export const useSettle = function ({
       })
 
       // Keyed by the request tx (requestTxHash = the local entry's initiateTxHash).
+      const markFailed = function () {
+        setSettlement(transaction.requestTxHash, { failed: true, kind })
+      }
       const fail = function () {
         track?.(analyticsEventsByKind[kind].failed)
-        setSettlement(transaction.requestTxHash, { failed: true, kind })
+        markFailed()
       }
 
       emitter.on('user-signed-tx', function (txHash) {
@@ -111,7 +114,7 @@ export const useSettle = function ({
       })
       emitter.on('tx-failed', fail)
       emitter.on('tx-failed-validation', fail)
-      emitter.on('user-signing-tx-error', fail)
+      emitter.on('user-signing-tx-error', markFailed)
       emitter.on('unexpected-error', fail)
 
       // Caller listens for user-signed-tx to redirect the drawer.

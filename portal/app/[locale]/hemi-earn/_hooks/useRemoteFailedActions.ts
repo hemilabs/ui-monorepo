@@ -134,9 +134,12 @@ const useRemoteFailedAction = function ({
         walletClient: l1WalletClient!,
       })
 
+      const markFailed = function () {
+        setSettlement(requestTxHash, { failed: true, kind })
+      }
       const fail = function () {
         track?.(analyticsEventsByKind[kind].failed)
-        setSettlement(requestTxHash, { failed: true, kind })
+        markFailed()
       }
 
       emitter.on('user-signed-tx', function (txHash) {
@@ -162,7 +165,7 @@ const useRemoteFailedAction = function ({
       })
       emitter.on('tx-failed', fail)
       emitter.on('tx-failed-validation', fail)
-      emitter.on('user-signing-tx-error', fail)
+      emitter.on('user-signing-tx-error', markFailed)
       emitter.on('unexpected-error', fail)
 
       on?.(emitter)

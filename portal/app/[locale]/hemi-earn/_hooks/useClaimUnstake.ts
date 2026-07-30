@@ -81,9 +81,12 @@ export const useClaimUnstake = function ({ on, transaction }: UseClaimUnstake) {
         walletClient: l1WalletClient!,
       })
 
+      const markFailed = function () {
+        setSettlement(requestTxHash, { failed: true, kind: 'UNSTAKE' })
+      }
       const fail = function () {
         track?.('hemi earn - claim from vault failed')
-        setSettlement(requestTxHash, { failed: true, kind: 'UNSTAKE' })
+        markFailed()
       }
 
       emitter.on('user-signed-tx', function (txHash) {
@@ -108,7 +111,7 @@ export const useClaimUnstake = function ({ on, transaction }: UseClaimUnstake) {
       })
       emitter.on('tx-failed', fail)
       emitter.on('tx-failed-validation', fail)
-      emitter.on('user-signing-tx-error', fail)
+      emitter.on('user-signing-tx-error', markFailed)
       emitter.on('unexpected-error', fail)
 
       on?.(emitter)

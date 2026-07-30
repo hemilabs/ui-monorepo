@@ -133,7 +133,7 @@ const DexImpl = function () {
   // Below `xl`, the navbar is rendered inside a Drawer portaled to body, so
   // portal the dropdown to body too — otherwise it lands in #app-layout-container
   // which sits behind the Drawer and the content stays hidden.
-  const isInlineNavbar = width != null && width >= screenBreakpoints.xl
+  const isInlineNavbar = width >= screenBreakpoints.xl
   const dropdownPortalContainer = isInlineNavbar
     ? getPortalContainer()
     : getDrawerPortalContainer()

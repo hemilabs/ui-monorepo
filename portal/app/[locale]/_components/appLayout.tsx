@@ -79,15 +79,14 @@ export const AppLayout = function ({ children }: Props) {
 
   useEffect(
     function closeNavbarWhenDesktopLayout() {
-      if (width != null && width >= screenBreakpoints.xl) {
+      if (width >= screenBreakpoints.xl) {
         closeNavbar()
       }
     },
     [closeNavbar, width],
   )
 
-  const showNavbarDrawer =
-    navbarDrawerMounted && (width == null || width < screenBreakpoints.xl)
+  const showNavbarDrawer = navbarDrawerMounted && width < screenBreakpoints.xl
 
   return (
     <>

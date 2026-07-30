@@ -37,13 +37,13 @@ contract PreviewableGatewayMock {
     // calls `setTreasury` post-alias so the field gets populated.
     address private _treasury;
 
-    // slot 6+ — appended for the REMOTE_FAILED redeem UI test (spec §
-    // ad_earnremotefailedui). Lets `redeem()` revert with 3 distinct
-    // revert-reason shapes so the portal's failureReason decoder can be
-    // exercised across its categories. `shouldFailRedeem` (slot 4) still
-    // works as the legacy catch-all — `redeemFailureMode != NONE` takes
-    // precedence over it.
-    //   NONE      → no injected failure (legacy `shouldFailRedeem` decides)
+    // slot 6+ — appended for the REMOTE_FAILED UI test. Lets `redeem()`
+    // and `deposit()` revert with 3 distinct revert-reason shapes so the
+    // portal's failureReason decoder can be exercised across its
+    // categories. `shouldFailRedeem` / `shouldFailDeposit` (slots 4/3)
+    // still work as legacy catch-alls — the mode enum, when non-NONE,
+    // takes precedence.
+    //   NONE      → no injected failure (legacy boolean decides)
     //   SLIPPAGE  → `Error(string)` with a slippage keyword → 'slippage'
     //   FEE       → custom error `InsufficientFee(uint256,uint256)` → 'gas'
     //   UNKNOWN   → `Error(string)` with no recognized keyword → 'unknown'
@@ -54,6 +54,13 @@ contract PreviewableGatewayMock {
         UNKNOWN
     }
     RedeemFailureMode public redeemFailureMode;
+    enum DepositFailureMode {
+        NONE,
+        SLIPPAGE,
+        FEE,
+        UNKNOWN
+    }
+    DepositFailureMode public depositFailureMode;
     error InsufficientFee(uint256 required, uint256 provided);
 
     constructor(address peggedToken_) {
@@ -74,6 +81,18 @@ contract PreviewableGatewayMock {
         uint256 /*minPeggedTokenOut_*/,
         address receiver_
     ) external returns (uint256) {
+        // Prioritize the multi-shape failure mode so the REMOTE_FAILED test
+        // can drive a specific decode category. Falls back to the legacy
+        // boolean when NONE.
+        if (depositFailureMode == DepositFailureMode.SLIPPAGE) {
+            revert("insufficient output amount");
+        }
+        if (depositFailureMode == DepositFailureMode.FEE) {
+            revert InsufficientFee(1e15, 5e14);
+        }
+        if (depositFailureMode == DepositFailureMode.UNKNOWN) {
+            revert("boom");
+        }
         if (shouldFailDeposit) revert("GatewayMock: deposit failed");
         IERC20(tokenIn_).safeTransferFrom(msg.sender, address(this), amountIn_);
         uint256 amountOut = (amountIn_ * depositRateBps) / 100_00;
@@ -151,5 +170,12 @@ contract PreviewableGatewayMock {
     ///         to disable (falls back to legacy `shouldFailRedeem`).
     function setRedeemFailureMode(uint8 mode) external {
         redeemFailureMode = RedeemFailureMode(mode);
+    }
+
+    /// @notice Set the deposit revert mode. Same decode categories as
+    ///         `setRedeemFailureMode`. Pass 0 to disable (falls back to
+    ///         legacy `shouldFailDeposit`).
+    function setDepositFailureMode(uint8 mode) external {
+        depositFailureMode = DepositFailureMode(mode);
     }
 }

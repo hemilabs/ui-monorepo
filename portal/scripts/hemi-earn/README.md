@@ -50,11 +50,12 @@ All sandbox actions are dispatched through a single pnpm script that forwards it
 pnpm --filter portal sandbox:hemi-earn -- <subcommand> [flags]
 ```
 
-| Subcommand | Purpose                                                                                                                  |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `setup`    | Start Anvil + deploy mocks + fund the test account.                                                                      |
-| `mining`   | Toggle Anvil's interval mining at runtime (see [Slow mining](#slow-mining)).                                             |
-| `relayer`  | Emulate the production keeper: claim mature cooldown redeems and bridge cancellation requests (see [Relayer](#relayer)). |
+| Subcommand     | Purpose                                                                                                                  |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `setup`        | Start Anvil + deploy mocks + fund the test account.                                                                      |
+| `mining`       | Toggle Anvil's interval mining at runtime (see [Slow mining](#slow-mining)).                                             |
+| `relayer`      | Emulate the production keeper: claim mature cooldown redeems and bridge cancellation requests (see [Relayer](#relayer)). |
+| `fail-gateway` | Toggle `PreviewableGatewayMock` into a failure mode (see [Failure simulation](#failure-simulation)).                     |
 
 Building blocks used by `setup` (`deployMocks.ts`, `fundAccount.ts`) are still invocable directly for advanced cases:
 
@@ -70,6 +71,7 @@ Flags are parsed by the handler of each subcommand.
 - `setup` — `--address` / `-a` (required), `--port` / `-p` (default `8545`), `--upstream-rpc` / `-u` (default `https://rpc.hemi.network/rpc`), `--fork-url` / `-f` (skips auto-start), `--deployer-pk` (default is Anvil's well-known account #0).
 - `mining` — `--seconds` / `-s` (default `6`, `0` returns to instant mining), `--fork-url` / `-f` (default `http://127.0.0.1:8545`).
 - `relayer` — `--router` / `-r` (required), `--agent` / `-a` (required) — both come from the address banner `setup` prints; `--fork-url` / `-f`, `--deployer-pk`, `--poll` (seconds between ticks, default `1`), `--from-block N` (first block to backfill from, default `0` — full history), `--disable-autoclaim` (observe events but skip the claim; simulates a downed keeper).
+- `fail-gateway` — either `--status` (read-only, prints the current state) or `--kind` / `-k` (`deposit` | `redeem`) + `--mode` / `-m` (`off` | `on` | `slippage` | `fee` | `unknown`). Optional: `--fork-url` / `-f`, `--deployer-pk`.
 
 ## Cooldown
 
@@ -114,6 +116,35 @@ pnpm --filter portal sandbox:hemi-earn -- relayer \
 pnpm --filter portal sandbox:hemi-earn -- relayer \
   --router 0x... --agent 0x... \
   --disable-autoclaim
+```
+
+## Failure simulation
+
+`PreviewableGatewayMock` (aliased at the Vetro gateway production address by `setup`) exposes revert-mode toggles that let a deposit or a redeem fail deterministically on the Agent side. Combined with the [`relayer`](#relayer) subcommand, this is what makes the REMOTE_FAILED UI (Retry / "Return share tokens" / cancel bridge CTAs) end-to-end testable locally without any external infra.
+
+Each mode maps to a distinct revert shape that the portal's `failureReason` decoder classifies into a category, which in turn decides which CTAs render:
+
+| `--mode`   | Revert shape                          | Portal category | CTAs shown                    |
+| ---------- | ------------------------------------- | --------------- | ----------------------------- |
+| `slippage` | `Error("insufficient output amount")` | `slippage`      | "Return share tokens" only    |
+| `fee`      | `InsufficientFee(1e15, 5e14)`         | `gas`           | Retry + "Return share tokens" |
+| `unknown`  | `Error("boom")`                       | `unknown`       | Retry + "Return share tokens" |
+| `on`       | legacy bool `revert("...failed")`     | `unknown`       | Retry + "Return share tokens" |
+| `off`      | clears both legacy bool and mode      | —               | request proceeds normally     |
+
+```bash
+# Read the current state without changing anything
+pnpm --filter portal sandbox:hemi-earn -- fail-gateway --status
+
+# Make the next redeem revert with a slippage-shaped error
+pnpm --filter portal sandbox:hemi-earn -- fail-gateway --kind redeem --mode slippage
+
+# Make the next deposit revert with an InsufficientFee custom error
+pnpm --filter portal sandbox:hemi-earn -- fail-gateway --kind deposit --mode fee
+
+# Reset both sides so operations succeed again
+pnpm --filter portal sandbox:hemi-earn -- fail-gateway --kind deposit --mode off
+pnpm --filter portal sandbox:hemi-earn -- fail-gateway --kind redeem --mode off
 ```
 
 ## Mock contracts

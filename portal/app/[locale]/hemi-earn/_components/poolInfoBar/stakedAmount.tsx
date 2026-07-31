@@ -34,7 +34,7 @@ export const StakedAmount = function ({ pool }: Props) {
   if (position) {
     return (
       <PoolInfoItem label={t('staked-balance')}>
-        <span className="body-text-medium text-neutral-950">
+        <span className="body-text-medium flex items-center text-neutral-950">
           $
           <RenderEarnFiatBalance
             balance={data?.peggedAmount}

@@ -233,6 +233,11 @@ function encodeRedeemForGasEstimate({
   })
 }
 
+const toCooldownSeconds = (claimableAt: EarnTransaction['claimableAt']) =>
+  claimableAt !== null && claimableAt !== undefined
+    ? BigInt(claimableAt)
+    : undefined
+
 export const ReviewWithdraw = function ({ onClose }: Props) {
   const { input, pool, selectedAsset, withdrawOperation } = usePoolForm()
   const t = useTranslations('hemi-earn.pool.drawer')
@@ -267,9 +272,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     stakingVault: pool.stakingVault,
   })
   const cooldownRemainingSec = useEarnCooldownRemaining(
-    subgraphRow?.claimableAt != null
-      ? BigInt(subgraphRow.claimableAt)
-      : undefined,
+    toCooldownSeconds(subgraphRow?.claimableAt),
   )
 
   const withdrawStatus =

@@ -126,7 +126,7 @@ const pickDisplay = (
   shareToken: EvmToken,
   assetToken: EvmToken | undefined,
 ) =>
-  tx.amountOut != null
+  tx.amountOut !== null
     ? { amount: tx.amountOut, token: assetToken }
     : { amount: tx.amountIn, token: shareToken }
 

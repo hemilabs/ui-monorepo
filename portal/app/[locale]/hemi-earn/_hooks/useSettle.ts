@@ -7,6 +7,7 @@ import { type ClaimDepositEvents } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
+import { useUmami } from 'hooks/useUmami'
 import { type Address } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -31,6 +32,19 @@ type UseSettle = {
   transaction: EarnTransaction
 }
 
+const analyticsEventsByKind = {
+  CLAIM: {
+    failed: 'hemi earn - claim failed',
+    started: 'hemi earn - claim started',
+    success: 'hemi earn - claim success',
+  },
+  RECOVER: {
+    failed: 'hemi earn - recover failed',
+    started: 'hemi earn - recover started',
+    success: 'hemi earn - recover success',
+  },
+} as const
+
 // Shared core for the single-tx claim/recover settlements. Marker on the local entry:
 // failed on revert (CTA becomes Retry), pending on success then dropped once terminal (no flicker during indexing lag).
 export const useSettle = function ({
@@ -45,6 +59,7 @@ export const useSettle = function ({
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
   const { setSettlement } = useLocalEarnOperations()
+  const { track } = useUmami()
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     hemi.id,
   )
@@ -73,10 +88,16 @@ export const useSettle = function ({
       })
 
       // Keyed by the request tx (requestTxHash = the local entry's initiateTxHash).
-      const fail = () =>
+      const markFailed = function () {
         setSettlement(transaction.requestTxHash, { failed: true, kind })
+      }
+      const fail = function () {
+        track?.(analyticsEventsByKind[kind].failed)
+        markFailed()
+      }
 
       emitter.on('user-signed-tx', function (txHash) {
+        track?.(analyticsEventsByKind[kind].started)
         setSettlement(transaction.requestTxHash, {
           failed: false,
           kind,
@@ -84,6 +105,7 @@ export const useSettle = function ({
         })
       })
       emitter.on('tx-transaction-succeeded', function (receipt) {
+        track?.(analyticsEventsByKind[kind].success)
         updateNativeBalanceAfterFees(receipt)
       })
       emitter.on('tx-transaction-reverted', function (receipt) {
@@ -92,7 +114,7 @@ export const useSettle = function ({
       })
       emitter.on('tx-failed', fail)
       emitter.on('tx-failed-validation', fail)
-      emitter.on('user-signing-tx-error', fail)
+      emitter.on('user-signing-tx-error', markFailed)
       emitter.on('unexpected-error', fail)
 
       // Caller listens for user-signed-tx to redirect the drawer.

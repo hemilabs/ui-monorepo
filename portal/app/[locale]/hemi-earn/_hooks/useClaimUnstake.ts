@@ -9,6 +9,7 @@ import {
   getUnstakeRequest,
   quoteRedeemFulfillment,
 } from 'hemi-earn-actions/actions'
+import { useUmami } from 'hooks/useUmami'
 import { mainnet } from 'networks/mainnet'
 import { maxBigInt } from 'utils/bigint'
 import { getEvmL1PublicClient } from 'utils/chainClients'
@@ -31,6 +32,7 @@ export const useClaimUnstake = function ({ on, transaction }: UseClaimUnstake) {
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
   const { setSettlement } = useLocalEarnOperations()
+  const { track } = useUmami()
   const { data: l1WalletClient } = useWalletClient({ chainId: mainnet.id })
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     mainnet.id,
@@ -79,13 +81,20 @@ export const useClaimUnstake = function ({ on, transaction }: UseClaimUnstake) {
         walletClient: l1WalletClient!,
       })
 
-      const fail = () =>
+      const markFailed = function () {
         setSettlement(requestTxHash, { failed: true, kind: 'UNSTAKE' })
+      }
+      const fail = function () {
+        track?.('hemi earn - claim from vault failed')
+        markFailed()
+      }
 
       emitter.on('user-signed-tx', function (txHash) {
+        track?.('hemi earn - claim from vault started')
         setSettlement(requestTxHash, { failed: false, kind: 'UNSTAKE', txHash })
       })
       emitter.on('tx-transaction-succeeded', function (receipt) {
+        track?.('hemi earn - claim from vault success')
         updateNativeBalanceAfterFees(receipt)
       })
       emitter.on('tx-transaction-reverted', async function (receipt) {
@@ -102,7 +111,7 @@ export const useClaimUnstake = function ({ on, transaction }: UseClaimUnstake) {
       })
       emitter.on('tx-failed', fail)
       emitter.on('tx-failed-validation', fail)
-      emitter.on('user-signing-tx-error', fail)
+      emitter.on('user-signing-tx-error', markFailed)
       emitter.on('unexpected-error', fail)
 
       on?.(emitter)

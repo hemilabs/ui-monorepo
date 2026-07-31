@@ -9,6 +9,7 @@ import {
 } from 'hemi-earn-actions'
 import { requestDeposit } from 'hemi-earn-actions/actions'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
+import { useUmami } from 'hooks/useUmami'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { maxBigInt } from 'utils/bigint'
 import { unixNowTimestamp } from 'utils/time'
@@ -57,6 +58,7 @@ export const useDeposit = function ({
   const config = useConfig()
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
+  const { track } = useUmami()
   const { markSettledByInitiateTxHash, upsertLocalOperation } =
     useLocalEarnOperations()
 
@@ -136,6 +138,7 @@ export const useDeposit = function ({
       })
 
       emitter.on('approve-transaction-reverted', function (receipt) {
+        track?.('hemi earn - deposit failed')
         updateDepositOperation?.({
           status: DepositStatus.APPROVAL_TX_FAILED,
         })
@@ -157,6 +160,7 @@ export const useDeposit = function ({
       })
 
       emitter.on('user-signed-deposit', function (transactionHash) {
+        track?.('hemi earn - deposit started')
         updateDepositOperation?.({
           amountIn: amount.toString(),
           status: DepositStatus.DEPOSIT_TX_PENDING,
@@ -178,6 +182,7 @@ export const useDeposit = function ({
       })
 
       emitter.on('deposit-transaction-succeeded', function (receipt) {
+        track?.('hemi earn - deposit success')
         updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_CONFIRMED,
         })
@@ -196,6 +201,7 @@ export const useDeposit = function ({
       })
 
       emitter.on('deposit-transaction-reverted', function (receipt) {
+        track?.('hemi earn - deposit failed')
         updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
         })
@@ -215,18 +221,21 @@ export const useDeposit = function ({
       })
 
       emitter.on('deposit-failed-validation', function () {
+        track?.('hemi earn - deposit failed')
         updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
         })
       })
 
       emitter.on('quote-failed', function () {
+        track?.('hemi earn - deposit failed')
         updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
         })
       })
 
       emitter.on('deposit-failed', function () {
+        track?.('hemi earn - deposit failed')
         updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
         })
@@ -237,6 +246,7 @@ export const useDeposit = function ({
       })
 
       emitter.on('unexpected-error', function () {
+        track?.('hemi earn - deposit failed')
         updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
         })

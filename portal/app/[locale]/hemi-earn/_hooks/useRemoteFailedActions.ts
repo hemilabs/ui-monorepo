@@ -16,6 +16,7 @@ import {
   quoteRedeemFulfillment,
   retryRequest,
 } from 'hemi-earn-actions/actions'
+import { useUmami } from 'hooks/useUmami'
 import { mainnet } from 'networks/mainnet'
 import { maxBigInt } from 'utils/bigint'
 import { getEvmL1PublicClient } from 'utils/chainClients'
@@ -42,6 +43,19 @@ type UseRemoteFailedAction = {
   transaction: EarnTransaction
 }
 
+const analyticsEventsByKind = {
+  CANCEL_REQUEST: {
+    failed: 'hemi earn - return shares failed',
+    started: 'hemi earn - return shares started',
+    success: 'hemi earn - return shares success',
+  },
+  RETRY: {
+    failed: 'hemi earn - retry failed',
+    started: 'hemi earn - retry started',
+    success: 'hemi earn - retry success',
+  },
+} as const
+
 const useRemoteFailedAction = function ({
   action,
   kind,
@@ -52,6 +66,7 @@ const useRemoteFailedAction = function ({
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
   const { setSettlement } = useLocalEarnOperations()
+  const { track } = useUmami()
   const { data: l1WalletClient } = useWalletClient({
     chainId: mainnet.id,
   })
@@ -119,12 +134,20 @@ const useRemoteFailedAction = function ({
         walletClient: l1WalletClient!,
       })
 
-      const fail = () => setSettlement(requestTxHash, { failed: true, kind })
+      const markFailed = function () {
+        setSettlement(requestTxHash, { failed: true, kind })
+      }
+      const fail = function () {
+        track?.(analyticsEventsByKind[kind].failed)
+        markFailed()
+      }
 
       emitter.on('user-signed-tx', function (txHash) {
+        track?.(analyticsEventsByKind[kind].started)
         setSettlement(requestTxHash, { failed: false, kind, txHash })
       })
       emitter.on('tx-transaction-succeeded', function (receipt) {
+        track?.(analyticsEventsByKind[kind].success)
         updateNativeBalanceAfterFees(receipt)
       })
       emitter.on('tx-transaction-reverted', async function (receipt) {
@@ -142,7 +165,7 @@ const useRemoteFailedAction = function ({
       })
       emitter.on('tx-failed', fail)
       emitter.on('tx-failed-validation', fail)
-      emitter.on('user-signing-tx-error', fail)
+      emitter.on('user-signing-tx-error', markFailed)
       emitter.on('unexpected-error', fail)
 
       on?.(emitter)

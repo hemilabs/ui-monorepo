@@ -3,12 +3,12 @@
 import { PageLayout } from 'components/pageLayout'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useRouter } from 'i18n/navigation'
-import { useLocale } from 'next-intl'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { queryStringObjectToString } from 'utils/url'
 import { type Address } from 'viem'
 
+import { EarnDisabledTestnet } from '../../../_components/earnDisabledTestnet'
 import { useEarnPools } from '../../../_hooks/useEarnPools'
 import { findPoolByShare } from '../../../_utils'
 import { PoolFormProvider } from '../_context/poolFormContext'
@@ -25,25 +25,12 @@ type Props = {
 
 export const PoolPageContent = function ({ shareAddress }: Props) {
   const router = useRouter()
-  const locale = useLocale()
   const [networkType] = useNetworkType()
   const { data: pools, isPending } = useEarnPools()
 
   const pool = pools
     ? findPoolByShare(pools, shareAddress as Address)
     : undefined
-
-  const networkTypeRef = useRef(networkType)
-  useEffect(
-    function redirectOnNetworkChange() {
-      if (networkTypeRef.current === networkType) return
-      networkTypeRef.current = networkType
-      // nuqs defers its URL flush ~50ms, so a router.push here would be overwritten. Pre-set
-      // location.pathname to /hemi-earn via pushState first; nuqs then applies ?networkType to the earn URL.
-      history.pushState(null, '', `/${locale}/hemi-earn`)
-    },
-    [locale, networkType],
-  )
 
   useEffect(
     function redirectIfNotFound() {
@@ -53,6 +40,14 @@ export const PoolPageContent = function ({ shareAddress }: Props) {
     },
     [isPending, networkType, pool, router],
   )
+
+  if (networkType === 'testnet') {
+    return (
+      <PageLayout variant="wide">
+        <EarnDisabledTestnet />
+      </PageLayout>
+    )
+  }
 
   if (isPending) {
     return (

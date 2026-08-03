@@ -7,10 +7,10 @@ import { usePathname } from 'i18n/navigation'
 import { useTranslations } from 'next-intl'
 import { MouseEvent } from 'react'
 
-export const SwitchToMainnet = function () {
+export const EarnDisabledTestnet = function () {
   const [, setNetworkType] = useNetworkType()
   const pathname = usePathname()
-  const t = useTranslations('hemi-earn.transactions')
+  const t = useTranslations('hemi-earn')
   const tCommon = useTranslations('common')
 
   const onClick = function (e: MouseEvent<HTMLAnchorElement>) {
@@ -19,11 +19,11 @@ export const SwitchToMainnet = function () {
   }
 
   return (
-    <div className="flex size-full flex-col items-center justify-center gap-y-1">
+    <div className="mt-8 flex flex-col items-center justify-center gap-y-1 rounded-xl bg-white py-48 shadow-md">
       <LiveIcon />
-      <h4>{tCommon('only-live-on-mainnet')}</h4>
+      <h2>{tCommon('only-live-on-mainnet')}</h2>
       <p className="mb-3 max-w-44 text-center font-medium text-neutral-500 sm:max-w-64 md:max-w-72 lg:max-w-72 xl:max-w-full">
-        {t('switch-to-view')}
+        {t('switch-to-start-earning')}
       </p>
       <ButtonLink
         href={{ pathname, query: { networkType: 'mainnet' } }}

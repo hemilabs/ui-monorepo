@@ -306,6 +306,7 @@
       "total-deposits": "Total deposits"
     },
     "subheading": "One click earn for your assets",
+    "switch-to-start-earning": "You can switch networks to start earning with Hemi.",
     "transactions": {
       "banner": {
         "cancelled": {
@@ -417,7 +418,6 @@
         "withdrawn": "Withdrawn"
       },
       "subtitle": "Track the status of your deposits and withdrawals.",
-      "switch-to-view": "Switch to Mainnet to view your earn transactions.",
       "title": "My earn transactions",
       "transaction-not-found": "Transaction not found",
       "transaction-not-found-subtitle": "We couldn't find this transaction. It may no longer be available.",

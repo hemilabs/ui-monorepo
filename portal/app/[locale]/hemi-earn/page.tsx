@@ -1,10 +1,12 @@
 'use client'
 
 import { PageLayout } from 'components/pageLayout'
+import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
 import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
+import { EarnDisabledTestnet } from './_components/earnDisabledTestnet'
 import { InfoCards } from './_components/infoCards'
 import { TopSection } from './_components/topSection'
 import { TransactionsSection } from './_components/transactionsSection'
@@ -36,14 +38,21 @@ const TokensGate = function ({ children }: { children: ReactNode }) {
 }
 
 export default function Page() {
+  const [networkType] = useNetworkType()
+  const isEnabled = networkType !== 'testnet'
+
   return (
     <PageLayout variant="wide">
       <TopSection />
-      <TokensGate>
-        <InfoCards />
-        <PoolsSection />
-        <TransactionsSection />
-      </TokensGate>
+      {isEnabled ? (
+        <TokensGate>
+          <InfoCards />
+          <PoolsSection />
+          <TransactionsSection />
+        </TokensGate>
+      ) : (
+        <EarnDisabledTestnet />
+      )}
     </PageLayout>
   )
 }

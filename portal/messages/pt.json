@@ -306,6 +306,7 @@
       "total-deposits": "Depósitos totais"
     },
     "subheading": "Ganhe rendimento com seus ativos em um clique",
+    "switch-to-start-earning": "Você pode mudar de rede para começar a ganhar com a Hemi.",
     "transactions": {
       "banner": {
         "cancelled": {
@@ -417,7 +418,6 @@
         "withdrawn": "Sacado"
       },
       "subtitle": "Acompanhe o status de seus depósitos e saques.",
-      "switch-to-view": "Mude para a Mainnet para ver suas transações de earn.",
       "title": "Minhas transações de earn",
       "transaction-not-found": "Transação não encontrada",
       "transaction-not-found-subtitle": "Não foi possível encontrar esta transação. Ela pode não estar mais disponível.",

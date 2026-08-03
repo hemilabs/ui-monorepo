@@ -2,6 +2,7 @@
 
 import { Card } from 'components/card'
 import { Table } from 'components/table'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
 import { useMemo, type ReactNode } from 'react'
 import { screenBreakpoints } from 'styles'
@@ -14,6 +15,7 @@ import { buildColumns } from './columns'
 import { CompactColumn } from './compactColumn'
 import { ConnectWallet } from './connectWallet'
 import { NoTransactions } from './noTransactions'
+import { SwitchToMainnet } from './switchToMainnet'
 import { TransactionDrawer } from './transactionDrawer'
 
 const Container = ({ children }: { children: ReactNode }) => (
@@ -24,6 +26,7 @@ const Container = ({ children }: { children: ReactNode }) => (
 
 export const TransactionsTable = function () {
   const t = useTranslations('hemi-earn.transactions')
+  const [networkType] = useNetworkType()
   const { status } = useAccount()
   const { data: transactions, isPending } = useEarnTransactions()
 
@@ -32,6 +35,13 @@ export const TransactionsTable = function () {
   const isEmpty = transactions.length === 0 && !isPending
 
   const content = (function () {
+    if (networkType === 'testnet') {
+      return (
+        <Container>
+          <SwitchToMainnet />
+        </Container>
+      )
+    }
     if (!walletIsConnected(status)) {
       return (
         <Container>

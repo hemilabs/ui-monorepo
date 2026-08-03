@@ -5,7 +5,7 @@ import Big from 'big.js'
 import { getTokenPrice } from 'utils/token'
 
 import { sharesToPeggedOptions } from '../_fetchers/fetchSharesToPegged'
-import { clampEarnedUsd, positionEarnedUsd } from '../_utils/earnedAmount'
+import { positionEarnedUsd } from '../_utils/earnedAmount'
 
 import { useEarnCostBasis } from './useEarnCostBasis'
 import { useEarnPositions } from './useEarnPositions'
@@ -55,7 +55,7 @@ export const useEarnedAmount = function () {
     )
   }, Big(0))
 
-  const totalUsd = clampEarnedUsd(total).toFixed(2)
+  const totalUsd = total.toFixed(2)
 
   const hasPositions = positions.length > 0
   const isPending =

@@ -1,10 +1,6 @@
-import Big from 'big.js'
 import { describe, expect, it } from 'vitest'
 
-import {
-  clampEarnedUsd,
-  positionEarnedUsd,
-} from '../../../../../app/[locale]/hemi-earn/_utils/earnedAmount'
+import { positionEarnedUsd } from '../../../../../app/[locale]/hemi-earn/_utils/earnedAmount'
 
 describe('positionEarnedUsd', function () {
   // 8-dec pegged token (BTC-like); base units: 1e8 == 1 token.
@@ -57,19 +53,5 @@ describe('positionEarnedUsd', function () {
       price: '1',
     })
     expect(result.toFixed(2)).toBe('0.50')
-  })
-})
-
-describe('clampEarnedUsd', function () {
-  it('floors a negative total at 0', function () {
-    expect(clampEarnedUsd(Big(-5)).toFixed(2)).toBe('0.00')
-  })
-
-  it('leaves a positive total unchanged', function () {
-    expect(clampEarnedUsd(Big('12.34')).toFixed(2)).toBe('12.34')
-  })
-
-  it('leaves zero unchanged', function () {
-    expect(clampEarnedUsd(Big(0)).toFixed(2)).toBe('0.00')
   })
 })

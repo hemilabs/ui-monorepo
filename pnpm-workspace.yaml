@@ -26,6 +26,7 @@ onlyBuiltDependencies:
   - 'unrs-resolver' # Rust resolver required by eslint-import-resolver-typescript during lint
 
 overrides:
+  brace-expansion@5: '5.0.8' # CVE-2026-13149 / CVE-2026-14257 DoS fixes
   postcss: '8.5.14' # Needed as Next pins 8.4.31 exactly
 
 patchedDependencies:

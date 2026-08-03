@@ -9,11 +9,13 @@ on:
       # a dynamic-matrix rework — tracked for a future PR/issue.
       - 'packages/ve-hemi-actions/**'
       - 'packages/ve-hemi-rewards/**'
+      - 'pnpm-lock.yaml'
       - 'portal-backend/**'
   push:
     paths:
       - 'packages/ve-hemi-actions/**'
       - 'packages/ve-hemi-rewards/**'
+      - 'pnpm-lock.yaml'
       - 'portal-backend/**'
 
 permissions:

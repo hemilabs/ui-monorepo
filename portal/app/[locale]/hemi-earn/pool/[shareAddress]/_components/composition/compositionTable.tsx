@@ -33,9 +33,9 @@ export const CompositionTable = function ({
 
   if (isPending) {
     return (
-      <div className="w-full overflow-hidden rounded-xl bg-neutral-100 text-sm font-medium">
-        <div className="h-10" />
-        <div className="rounded-xl bg-white shadow-md">
+      <div className="w-full text-sm font-medium">
+        <div className="h-10 rounded-t-lg bg-neutral-100 shadow-bs" />
+        <div className="overflow-hidden rounded-lg bg-white shadow-sm">
           {Array.from({ length: 4 }).map((_, i) => (
             <div
               className="flex items-center border-x border-b border-neutral-100 px-4 py-3"
@@ -55,10 +55,11 @@ export const CompositionTable = function ({
   }
 
   return (
-    <div className="w-full rounded-xl bg-neutral-100 text-sm font-medium">
+    <div className="w-full text-sm font-medium">
       <Table
         cellComponent={CompositionCell}
         columns={columns}
+        containerClassName="flex flex-col"
         data={data}
         mode="static"
         onRowHover={onHoveredIndexChange}

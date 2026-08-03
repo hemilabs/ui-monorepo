@@ -8,7 +8,7 @@ import {
   earnTransactionsKeyPrefix,
   fetchEarnTransactions,
 } from '../_fetchers/fetchEarnTransactions'
-import { isEarnRowInFlight } from '../_utils'
+import { hasInFlightEarnActions } from '../_utils'
 import { type EarnTransaction } from '../types'
 
 import { useLocalEarnOperations } from './useLocalEarnOperations'
@@ -21,17 +21,13 @@ export const useEarnTransactionsQuery = function () {
   const { address } = useAccount()
   const { localOperations } = useLocalEarnOperations()
 
-  const inFlightLocalsExist = localOperations.some(
-    op => op.initiateTxHash !== undefined && !op.settled,
-  )
-
   return useQuery({
     enabled: !!address && networkType === 'mainnet',
     queryFn: () => fetchEarnTransactions({ account: address! }),
     queryKey: [...earnTransactionsKeyPrefix, networkType, address],
     refetchInterval(query) {
-      const subgraphData = (query.state.data ?? []) as EarnTransaction[]
-      return inFlightLocalsExist || subgraphData.some(isEarnRowInFlight)
+      const transactions = (query.state.data ?? []) as EarnTransaction[]
+      return hasInFlightEarnActions({ localOperations, transactions })
         ? 10_000
         : false
     },

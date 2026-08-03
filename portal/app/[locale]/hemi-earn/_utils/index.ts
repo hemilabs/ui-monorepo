@@ -217,6 +217,18 @@ export const isEarnRowInFlight = (tx: EarnTransaction) =>
   !isEarnRowTerminal(tx) &&
   !(tx.status === 'FAILED' && isLocalEarnTransactionRow(tx))
 
+// Any earn action still settling — drives polling for the transactions list and
+// the earned card: local ops before they index, plus subgraph rows not yet terminal.
+export const hasInFlightEarnActions = ({
+  localOperations,
+  transactions,
+}: {
+  localOperations: LocalEarnOperation[]
+  transactions: EarnTransaction[]
+}) =>
+  localOperations.some(op => op.initiateTxHash !== undefined && !op.settled) ||
+  transactions.some(isEarnRowInFlight)
+
 export const isAwaitingFinalize = (tx: EarnTransaction) =>
   tx.kind === 'REDEEM' &&
   tx.status === 'PENDING' &&

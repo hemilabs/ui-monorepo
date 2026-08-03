@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { type ColumnDef } from '@tanstack/react-table'
 import { EmptyIcon } from 'app/[locale]/staking-dashboard/_icons/emptyIcon'
+import { MoreItemsIcon } from 'app/[locale]/staking-dashboard/_icons/moreItemsIcon'
 import { Badge } from 'components/badge'
 import { Button, ButtonIcon } from 'components/button'
 import { InformationBox } from 'components/informationBox'
@@ -51,15 +52,6 @@ const RewardStack = ({ count }: { count: number }) => (
   </div>
 )
 
-const MoreIcon = () => (
-  <svg aria-hidden="true" fill="none" height="16" width="16">
-    <path
-      d="M2 8a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm4.5 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm6-1.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"
-      fill="#737373"
-    />
-  </svg>
-)
-
 // Mirrors UnlockCta: while locked, a disabled Unlock button carries a badge with
 // the time remaining; once unlockable, the plain Unlock button is shown.
 const ActionCell = ({ timeRemaining }: { timeRemaining: string }) => (
@@ -76,14 +68,16 @@ const ActionCell = ({ timeRemaining }: { timeRemaining: string }) => (
     ) : (
       <Button size="xxSmall">Unlock</Button>
     )}
-    <ButtonIcon
-      aria-label="More actions"
-      size="xSmall"
-      type="button"
-      variant="tertiary"
-    >
-      <MoreIcon />
-    </ButtonIcon>
+    <div className="group/icon">
+      <ButtonIcon
+        aria-label="More actions"
+        size="xSmall"
+        type="button"
+        variant="tertiary"
+      >
+        <MoreItemsIcon className="[&>path]:transition-colors [&>path]:duration-200 group-hover/icon:[&>path]:fill-neutral-950" />
+      </ButtonIcon>
+    </div>
   </div>
 )
 

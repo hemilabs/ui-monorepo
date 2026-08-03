@@ -8,7 +8,6 @@ import Skeleton from 'react-loading-skeleton'
 import { queryStringObjectToString } from 'utils/url'
 import { type Address } from 'viem'
 
-import { EarnDisabledTestnet } from '../../../_components/earnDisabledTestnet'
 import { useEarnPools } from '../../../_hooks/useEarnPools'
 import { findPoolByShare } from '../../../_utils'
 import { PoolFormProvider } from '../_context/poolFormContext'
@@ -40,14 +39,6 @@ export const PoolPageContent = function ({ shareAddress }: Props) {
     },
     [isPending, networkType, pool, router],
   )
-
-  if (networkType === 'testnet') {
-    return (
-      <PageLayout variant="wide">
-        <EarnDisabledTestnet />
-      </PageLayout>
-    )
-  }
 
   if (isPending) {
     return (

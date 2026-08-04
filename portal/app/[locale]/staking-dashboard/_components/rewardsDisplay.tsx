@@ -1,6 +1,7 @@
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
 import { useTranslations } from 'next-intl'
+import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
 import { formatNumber } from 'utils/format'
 import { formatUnits } from 'viem'
@@ -38,7 +39,15 @@ function RewardAmount({
 
 export function RewardsDisplay({ tokenId }: Props) {
   const t = useTranslations('staking-dashboard.table')
-  const { tokens: rewardTokens } = useRewardTokens()
+  const { hasError, tokens: rewardTokens } = useRewardTokens()
+
+  if (hasError) {
+    return <span className="text-sm text-neutral-950">-</span>
+  }
+
+  if (rewardTokens.length === 0) {
+    return <Skeleton className="h-10 w-20" />
+  }
 
   return (
     <Tooltip

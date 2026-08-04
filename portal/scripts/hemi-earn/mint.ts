@@ -21,12 +21,28 @@ function printUsage() {
   console.error('  -t, --token TOKEN       ERC20-mock address (required)')
   console.error('      --to RECIPIENT      recipient address (required)')
   console.error(
-    '  -n, --amount AMOUNT     amount in 18-decimal units (default 10)',
+    '  -n, --amount AMOUNT     amount in `parseEther` units (default 10)',
   )
   console.error(
     '  [-f FORK_URL]           anvil RPC (default http://127.0.0.1:8545)',
   )
   console.error('  [--deployer-pk PK]      signer for the mint tx')
+}
+
+function parseAmount(raw: string | undefined) {
+  const amountLabel = raw ?? '10'
+  if (!/^\d+(\.\d+)?$/.test(amountLabel)) {
+    console.error('✗ --amount must be a positive decimal number')
+    printUsage()
+    process.exit(1)
+  }
+  const amount = parseEther(amountLabel)
+  if (amount === 0n) {
+    console.error('✗ --amount must be greater than 0')
+    printUsage()
+    process.exit(1)
+  }
+  return { amount, amountLabel }
 }
 
 function parseMintArgs(argv: string[]) {
@@ -65,8 +81,7 @@ function parseMintArgs(argv: string[]) {
   }
 
   return {
-    amount: parseEther(values.amount ?? '10'),
-    amountLabel: values.amount ?? '10',
+    ...parseAmount(values.amount),
     deployerPk,
     forkUrl: values['fork-url'] ?? DEFAULT_FORK_URL,
     to: to as Address,

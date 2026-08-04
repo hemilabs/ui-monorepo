@@ -70,7 +70,7 @@ node portal/scripts/hemi-earn/fundAccount.ts [flags]
 Flags are parsed by the handler of each subcommand.
 
 - `setup` — `--address` / `-a` (required), `--port` / `-p` (default `8545`), `--upstream-rpc` / `-u` (default `https://rpc.hemi.network/rpc`), `--fork-url` / `-f` (skips auto-start), `--deployer-pk` (default is Anvil's well-known account #0).
-- `mint` — `--token` / `-t` (required), `--to` (required), `--amount` / `-n` (default `10`, parsed as 18-dec units). Optional: `--fork-url` / `-f`, `--deployer-pk`.
+- `mint` — `--token` / `-t` (required), `--to` (required), `--amount` / `-n` (default `10`, parsed via `parseEther` — sandbox mocks are all 18-decimal by design, no `decimals()` lookup). Optional: `--fork-url` / `-f`, `--deployer-pk`.
 - `mining` — `--seconds` / `-s` (default `6`, `0` returns to instant mining), `--fork-url` / `-f` (default `http://127.0.0.1:8545`).
 - `relayer` — `--router` / `-r` (required), `--agent` / `-a` (required) — both come from the address banner `setup` prints; `--fork-url` / `-f`, `--deployer-pk`, `--poll` (seconds between ticks, default `1`), `--from-block N` (first block to backfill from, default `0` — full history), `--disable-autoclaim` (observe events but skip the claim; simulates a downed keeper).
 - `fail-gateway` — either `--status` (read-only, prints the current state) or `--kind` / `-k` (`deposit` | `redeem`) + `--mode` / `-m` (`off` | `on` | `slippage` | `fee` | `unknown`). Optional: `--fork-url` / `-f`, `--deployer-pk`.
@@ -89,7 +89,7 @@ Every sandbox token exposes the OpenZeppelin `mint(address,uint256)` shape, so a
 ```bash
 # Top up an EOA with 5 hemiBTC (copy the token address from the setup banner)
 pnpm --filter portal sandbox:hemi-earn -- mint \
-  --token 0x5FbDB2315678afecb367f032d93F642f64180aa3 \
+  --token 0xYourHemiBTC \
   --to    0xYourEOA \
   --amount 5
 

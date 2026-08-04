@@ -584,7 +584,7 @@
       "on": "Em {date}",
       "position-delegated-to-you": "Posição delegada para você",
       "rewards": "Recompensas",
-      "rewards-available": "{count} disponíveis",
+      "rewards-available": "{count, plural, one {# disponível} other {# disponíveis}}",
       "tx": "Tx",
       "unlock": "Desbloquear",
       "unlocked": "Desbloqueado",

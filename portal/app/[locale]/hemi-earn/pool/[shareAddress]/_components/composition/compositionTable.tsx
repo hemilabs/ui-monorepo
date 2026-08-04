@@ -34,8 +34,8 @@ export const CompositionTable = function ({
   if (isPending) {
     return (
       <div className="w-full text-sm font-medium">
-        <div className="h-10 rounded-t-lg bg-neutral-100 shadow-bs" />
-        <div className="overflow-hidden rounded-lg bg-white shadow-sm">
+        <div className="h-12 rounded-t-lg bg-neutral-100 pb-1.5 shadow-bs" />
+        <div className="-mt-1.5 mb-1 overflow-hidden rounded-lg bg-white shadow-sm">
           {Array.from({ length: 4 }).map((_, i) => (
             <div
               className="flex items-center border-x border-b border-neutral-100 px-4 py-3"

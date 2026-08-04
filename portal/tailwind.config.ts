@@ -40,8 +40,6 @@ const config: Config = {
           'linear-gradient(252deg, rgba(255, 255, 255, 0.20) -10.15%, rgba(255, 255, 255, 0.00) 103.3%), linear-gradient(0deg, #FF600A, #FF600A)',
         'connect-wallet-hovered':
           'linear-gradient(0deg, rgba(250, 250, 250, 0.70) 0%, rgba(250, 250, 250, 0.70) 100%)',
-        'linear-progress-bar':
-          'linear-gradient(270deg, rgba(229, 229, 229, 0.88) 0%, rgba(229, 229, 229, 0.00) 100%)',
         'recommended-claim':
           'linear-gradient(0deg, rgba(0, 156, 245, 0.03) 0%, rgba(0, 156, 245, 0.03) 100%), linear-gradient(0deg, rgba(250, 250, 250, 0.64) 0%, rgba(250, 250, 250, 0.64) 100%)',
       },

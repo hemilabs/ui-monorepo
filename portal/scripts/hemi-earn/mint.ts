@@ -20,7 +20,9 @@ function printUsage() {
   )
   console.error('  -t, --token TOKEN       ERC20-mock address (required)')
   console.error('      --to RECIPIENT      recipient address (required)')
-  console.error('  -n, --amount AMOUNT     amount in ether units (default 10)')
+  console.error(
+    '  -n, --amount AMOUNT     amount in 18-decimal units (default 10)',
+  )
   console.error(
     '  [-f FORK_URL]           anvil RPC (default http://127.0.0.1:8545)',
   )

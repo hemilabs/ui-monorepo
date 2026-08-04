@@ -10,8 +10,17 @@
       "vulnerability": {
         "name": "CVE-2026-48779"
       }
+    },
+    {
+      "justification": "vulnerable_code_not_in_execute_path",
+      "products": [{ "@id": "pkg:npm/brace-expansion@5.0.8" }],
+      "status": "not_affected",
+      "timestamp": "2026-08-04T00:00:00.000Z",
+      "vulnerability": {
+        "name": "CVE-2026-69152"
+      }
     }
   ],
-  "timestamp": "2026-07-02T00:00:00.000Z",
+  "timestamp": "2026-08-04T00:00:00.000Z",
   "version": 1
 }

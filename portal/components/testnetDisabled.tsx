@@ -10,7 +10,7 @@ import { MouseEvent } from 'react'
 const variants = {
   card: 'mt-8 rounded-xl bg-white py-48 shadow-md',
   overlay: 'absolute inset-0',
-}
+} as const
 
 type Props = {
   subtitle: string

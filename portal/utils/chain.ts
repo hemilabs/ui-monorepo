@@ -21,7 +21,10 @@ export const isL2NetworkId = (chainId: number) =>
 
 export const isL2Network = (chain: Chain) => isL2NetworkId(chain.id)
 
-export const getTunnelContracts = (l2Chain: Chain, l1ChainId: Chain['id']) => ({
+const getHemiForL1 = (l1ChainId: Chain['id']) =>
+  findChainById(l1ChainId)?.testnet ? hemiTestnet : hemiMainnet
+
+const getTunnelContracts = (l2Chain: Chain, l1ChainId: Chain['id']) => ({
   AddressManager: (process.env.NEXT_PUBLIC_ADDRESS_MANAGER ??
     // @ts-expect-error hemi has these contracts defined
     l2Chain.contracts.addressManager[l1ChainId].address) as Address,
@@ -45,3 +48,9 @@ export const getTunnelContracts = (l2Chain: Chain, l1ChainId: Chain['id']) => ({
     l2Chain.contracts.portal[l1ChainId].address) as Address,
   StateCommitmentChain: zeroAddress,
 })
+
+export const getL1StandardBridgeAddress = (l1ChainId: Chain['id']) =>
+  getTunnelContracts(getHemiForL1(l1ChainId), l1ChainId).L1StandardBridge
+
+export const getL2BridgeAddress = (l1ChainId: Chain['id']) =>
+  getTunnelContracts(getHemiForL1(l1ChainId), l1ChainId).L2Bridge

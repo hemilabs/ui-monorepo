@@ -1,5 +1,7 @@
-import 'styles/globals.css'
+// Turbopack requires skeleton.css be loaded before globals.css
+// otherwise it overrides a bunch of styles which breaks skeletons
 import 'react-loading-skeleton/dist/skeleton.css'
+import 'styles/globals.css'
 
 import { ConnectWalletDrawerProvider } from 'context/connectWalletDrawerContext'
 import { TunnelHistoryProvider } from 'context/tunnelHistoryContext'

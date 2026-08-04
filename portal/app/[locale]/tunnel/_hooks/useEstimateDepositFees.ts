@@ -1,7 +1,7 @@
 import { encodeDepositErc20, encodeDepositEth } from 'hemi-tunnel-actions'
 import { useEstimateFees } from 'hooks/useEstimateFees'
-import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { EvmToken } from 'types/token'
+import { getL1StandardBridgeAddress } from 'utils/chain'
 import { isNativeToken } from 'utils/nativeToken'
 import { useEstimateGas } from 'wagmi'
 
@@ -17,7 +17,7 @@ export const useEstimateDepositFees = function ({
   toToken: EvmToken
 }) {
   const isNative = isNativeToken(fromToken)
-  const l1StandardBridge = useL1StandardBridgeAddress(fromToken.chainId)
+  const l1StandardBridge = getL1StandardBridgeAddress(fromToken.chainId)
   const { data: gasUnits, isError } = useEstimateGas({
     data: isNative
       ? encodeDepositEth()

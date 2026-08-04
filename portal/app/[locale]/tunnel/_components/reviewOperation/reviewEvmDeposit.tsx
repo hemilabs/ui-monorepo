@@ -12,7 +12,6 @@ import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { Spinner } from 'components/spinner'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
-import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
 import { EvmToken } from 'types/token'
@@ -22,6 +21,7 @@ import {
   type EvmDepositStatusType,
   ExpectedWaitTimeMinutesGetFundsHemi,
 } from 'types/tunnel'
+import { getL1StandardBridgeAddress } from 'utils/chain'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 
@@ -53,7 +53,7 @@ const ReviewContent = function ({
   const fromChain = useChain(deposit.l1ChainId)!
   const toChain = useChain(deposit.l2ChainId)!
 
-  const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
+  const l1StandardBridgeAddress = getL1StandardBridgeAddress(fromToken.chainId)
 
   const { fees: approvalTokenGasFees, isError: isApprovalTokenGasFeesError } =
     useEstimateApproveErc20Fees({

@@ -53,6 +53,7 @@ pnpm --filter portal sandbox:hemi-earn -- <subcommand> [flags]
 | Subcommand     | Purpose                                                                                                                  |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | `setup`        | Start Anvil + deploy mocks + fund the test account.                                                                      |
+| `mint`         | Mint from any ERC20-mock — top up an EOA or inject yield into the vault (see [Minting](#minting)).                       |
 | `mining`       | Toggle Anvil's interval mining at runtime (see [Slow mining](#slow-mining)).                                             |
 | `relayer`      | Emulate the production keeper: claim mature cooldown redeems and bridge cancellation requests (see [Relayer](#relayer)). |
 | `fail-gateway` | Toggle `PreviewableGatewayMock` into a failure mode (see [Failure simulation](#failure-simulation)).                     |
@@ -69,6 +70,7 @@ node portal/scripts/hemi-earn/fundAccount.ts [flags]
 Flags are parsed by the handler of each subcommand.
 
 - `setup` — `--address` / `-a` (required), `--port` / `-p` (default `8545`), `--upstream-rpc` / `-u` (default `https://rpc.hemi.network/rpc`), `--fork-url` / `-f` (skips auto-start), `--deployer-pk` (default is Anvil's well-known account #0).
+- `mint` — `--token` / `-t` (required), `--to` (required), `--amount` / `-n` (default `10`, parsed via `parseEther` — sandbox mocks are all 18-decimal by design, no `decimals()` lookup). Optional: `--fork-url` / `-f`, `--deployer-pk`.
 - `mining` — `--seconds` / `-s` (default `6`, `0` returns to instant mining), `--fork-url` / `-f` (default `http://127.0.0.1:8545`).
 - `relayer` — `--router` / `-r` (required), `--agent` / `-a` (required) — both come from the address banner `setup` prints; `--fork-url` / `-f`, `--deployer-pk`, `--poll` (seconds between ticks, default `1`), `--from-block N` (first block to backfill from, default `0` — full history), `--disable-autoclaim` (observe events but skip the claim; simulates a downed keeper).
 - `fail-gateway` — either `--status` (read-only, prints the current state) or `--kind` / `-k` (`deposit` | `redeem`) + `--mode` / `-m` (`off` | `on` | `slippage` | `fee` | `unknown`). Optional: `--fork-url` / `-f`, `--deployer-pk`.
@@ -76,6 +78,27 @@ Flags are parsed by the handler of each subcommand.
 ## Cooldown
 
 The setup script enables cooldown on the staking vault with a 1-day duration, exercising the 2-step withdraw flow (request + claim after cooldown) by default. The claim step is dispatched by the production keeper; locally, run the [`relayer`](#relayer) subcommand alongside the portal to reproduce that behavior.
+
+## Minting
+
+Every sandbox token exposes the OpenZeppelin `mint(address,uint256)` shape, so a single subcommand covers both common flows:
+
+- **Top up an EOA** — mint deposit assets to a wallet you're testing with. `setup` already funds the test account with 10 of each on init; use this to bump balances mid-session or fund a second wallet.
+- **Inject yield** — mint the pegged token directly into the staking vault. That inflates `totalAssets()` without issuing new shares, so `convertToAssets(userShares)` grows proportionally and the portal's "Total earned" card starts showing profit.
+
+```bash
+# Top up an EOA with 5 hemiBTC (copy the token address from the setup banner)
+pnpm --filter portal sandbox:hemi-earn -- mint \
+  --token 0xYourHemiBTC \
+  --to    0xYourEOA \
+  --amount 5
+
+# Inject 1 vetBTC of yield into the staking vault (Vetro-aliased addresses)
+pnpm --filter portal sandbox:hemi-earn -- mint \
+  --token 0xf196C68233464A16CFDa319a47c21f4cECa62001 \
+  --to    0x0cB9D84d4bcEc8d3D5B2d99a6F07f4605325987e \
+  --amount 1
+```
 
 ## Slow mining
 

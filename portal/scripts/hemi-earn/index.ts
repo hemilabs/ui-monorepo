@@ -1,5 +1,6 @@
 import { scriptArgs } from './cli.ts'
 import { runFailGateway } from './failGateway.ts'
+import { runMint } from './mint.ts'
 import { runRelayer } from './relayer.ts'
 import { runSetIntervalMining } from './setIntervalMining.ts'
 import { runSetup } from './setup.ts'
@@ -7,6 +8,7 @@ import { runSetup } from './setup.ts'
 const HANDLERS = {
   'fail-gateway': runFailGateway,
   'mining': runSetIntervalMining,
+  'mint': runMint,
   'relayer': runRelayer,
   'setup': runSetup,
 } as const

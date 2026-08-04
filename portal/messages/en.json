@@ -639,7 +639,7 @@
     "form": {
       "balance": "Balance",
       "bitcoin-receiving-address": "Receiving Bitcoin address",
-      "bitcoin-receiving-address-description": "Deposited {symbol} is sent to the address associated with your connected Ethereum wallet.",
+      "bitcoin-receiving-address-description": "Withdrawn {symbol} is sent to the address associated with your connected Bitcoin wallet.",
       "from-network": "From Network",
       "hemi-receiving-address": "Receiving Hemi address",
       "hemi-receiving-address-description": "Deposited {symbol} is sent to the address associated with your connected EVM wallet.",

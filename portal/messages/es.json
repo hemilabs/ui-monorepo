@@ -639,7 +639,7 @@
     "form": {
       "balance": "Balance",
       "bitcoin-receiving-address": "Dirección de recepción en Bitcoin",
-      "bitcoin-receiving-address-description": "El {symbol} depositado se envía a la dirección asociada con su billetera Ethereum conectada.",
+      "bitcoin-receiving-address-description": "El {symbol} retirado se envía a la dirección asociada con su billetera Bitcoin conectada.",
       "from-network": "Desde la Red",
       "hemi-receiving-address": "Dirección de recepción en Hemi",
       "hemi-receiving-address-description": "El {symbol} depositado se envía a la dirección asociada con su billetera EVM conectada.",

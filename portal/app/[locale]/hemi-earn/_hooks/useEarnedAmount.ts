@@ -5,11 +5,14 @@ import Big from 'big.js'
 import { getTokenPrice } from 'utils/token'
 
 import { sharesToPeggedOptions } from '../_fetchers/fetchSharesToPegged'
+import { inTransitOnlyPositions } from '../_utils'
 import { positionEarnedUsd } from '../_utils/earnedAmount'
 
 import { useEarnCostBasis } from './useEarnCostBasis'
+import { useEarnPools } from './useEarnPools'
 import { useEarnPositions } from './useEarnPositions'
 import { useEarnTokenPrices } from './useEarnTokenPrices'
+import { useInTransitShares } from './useInTransitShares'
 
 // Total earned = Σ (convertToAssets(shares) − cost basis) per position, priced.
 // Cost basis (Vetro-parity, unrealized) comes from the earn-cost-basis endpoint;
@@ -30,17 +33,27 @@ export const useEarnedAmount = function () {
     isError: isCostBasisError,
     isLoading: isCostBasisLoading,
   } = useEarnCostBasis()
+  const { data: inTransitByShare, isPending: isInTransitPending } =
+    useInTransitShares()
+  const { data: pools = [] } = useEarnPools()
+
+  const rows = [
+    ...positions,
+    ...inTransitOnlyPositions(inTransitByShare, positions, pools),
+  ]
 
   const peggedAmountQueries = useQueries({
-    queries: positions.map(position =>
+    queries: rows.map(position =>
       sharesToPeggedOptions({
         shareAddress: position.shareAddress,
-        shares: position.yourDeposit,
+        shares:
+          position.yourDeposit +
+          (inTransitByShare[position.shareAddress.toLowerCase()] ?? BigInt(0)),
       }),
     ),
   })
 
-  const total = positions.reduce(function (acc, position, index) {
+  const total = rows.reduce(function (acc, position, index) {
     const currentPegged = peggedAmountQueries[index]?.data?.peggedAmount
 
     if (costBasis === undefined || currentPegged === undefined) return acc
@@ -57,14 +70,15 @@ export const useEarnedAmount = function () {
 
   const totalUsd = total.toFixed(2)
 
-  const hasPositions = positions.length > 0
+  const hasRows = rows.length > 0
   const isPending =
     isPositionsPending ||
-    (hasPositions && (isPricesPending || isCostBasisLoading)) ||
+    isInTransitPending ||
+    (hasRows && (isPricesPending || isCostBasisLoading)) ||
     peggedAmountQueries.some(q => q.isPending && q.isFetching)
   const isError =
     isPositionsError ||
-    (hasPositions && (isPricesError || isCostBasisError)) ||
+    (hasRows && (isPricesError || isCostBasisError)) ||
     peggedAmountQueries.some(q => q.isError)
 
   return { data: { totalUsd }, isError, isPending }

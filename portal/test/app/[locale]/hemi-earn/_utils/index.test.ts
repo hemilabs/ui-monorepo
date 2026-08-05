@@ -16,6 +16,7 @@ import {
   hasFailedSettlement,
   hasInFlightEarnActions,
   hashesMatch,
+  inTransitOnlyPositions,
   isAwaitingFinalize,
   isCooldownMature,
   isDeliberateCancel,
@@ -36,10 +37,12 @@ import {
   resolveSettleStepStatus,
   resolveStepExplorerChainId,
   shouldShowRemoteFailedCtas,
+  sumInTransitSharesByShare,
   unstakeSettlement,
 } from '../../../../../app/[locale]/hemi-earn/_utils'
 import {
   type EarnPool,
+  type EarnPosition,
   type EarnSettlement,
   type EarnTransaction,
   type EarnTransactionStatusType,
@@ -691,6 +694,149 @@ describe('utils', function () {
           transactions: [{ ...baseTx, status: 'FINALIZED' }],
         }),
       ).toBe(false)
+    })
+  })
+
+  describe('sumInTransitSharesByShare', function () {
+    const redeemAsset = '0x00000000000000000000000000000000000000c1' as Address
+    const share = '0x00000000000000000000000000000000000000d2' as Address
+    const makePool = (shareAddress: Address, assets: Address[]) =>
+      ({
+        assets: assets.map(address => ({ address })),
+        shareAddress,
+      }) as unknown as EarnPool
+    const pools = [makePool(share, [redeemAsset])]
+    const redeem = (
+      overrides: Partial<EarnTransaction> = {},
+    ): EarnTransaction => ({
+      ...baseTx,
+      amountIn: '2000000000000000000',
+      amountOut: null,
+      asset: redeemAsset,
+      kind: 'REDEEM',
+      status: 'PENDING',
+      ...overrides,
+    })
+
+    it('sums the amountIn of an in-flight redeem under its share', function () {
+      expect(sumInTransitSharesByShare([redeem()], pools)).toEqual({
+        [share.toLowerCase()]: BigInt('2000000000000000000'),
+      })
+    })
+
+    it('counts a CANCELLED redeem (shares still out, pre-recover)', function () {
+      expect(
+        sumInTransitSharesByShare([redeem({ status: 'CANCELLED' })], pools),
+      ).toEqual({ [share.toLowerCase()]: BigInt('2000000000000000000') })
+    })
+
+    it('excludes terminal redeems (RECOVERED / FINALIZED)', function () {
+      expect(
+        sumInTransitSharesByShare(
+          [redeem({ status: 'RECOVERED' }), redeem({ status: 'FINALIZED' })],
+          pools,
+        ),
+      ).toEqual({})
+    })
+
+    it('excludes a FULFILLED redeem whose amountOut has landed', function () {
+      expect(
+        sumInTransitSharesByShare(
+          [redeem({ amountOut: '1900000', status: 'FULFILLED' })],
+          pools,
+        ),
+      ).toEqual({})
+    })
+
+    it('excludes a TX_PENDING redeem (request tx not mined, shares still held)', function () {
+      expect(
+        sumInTransitSharesByShare([redeem({ status: 'TX_PENDING' })], pools),
+      ).toEqual({})
+    })
+
+    it('excludes deposits', function () {
+      expect(
+        sumInTransitSharesByShare([redeem({ kind: 'DEPOSIT' })], pools),
+      ).toEqual({})
+    })
+
+    it('sums multiple in-flight redeems for the same share', function () {
+      expect(
+        sumInTransitSharesByShare(
+          [
+            redeem({ amountIn: '2000000000000000000' }),
+            redeem({ amountIn: '1500000000000000000', requestId: '1' }),
+          ],
+          pools,
+        ),
+      ).toEqual({ [share.toLowerCase()]: BigInt('3500000000000000000') })
+    })
+
+    it('ignores a redeem whose asset maps to no pool', function () {
+      expect(
+        sumInTransitSharesByShare(
+          [redeem({ asset: `0x${'e'.repeat(40)}` })],
+          pools,
+        ),
+      ).toEqual({})
+    })
+  })
+
+  describe('inTransitOnlyPositions', function () {
+    const shareA = '0x00000000000000000000000000000000000000e1' as Address
+    const shareB = '0x00000000000000000000000000000000000000e2' as Address
+    const peggedToken = { decimals: 18 } as unknown as EvmToken
+    const shareToken = { symbol: 'S' } as unknown as EvmToken
+    const makePool = (shareAddress: Address) =>
+      ({
+        assets: [],
+        peggedToken,
+        shareAddress,
+        shareToken,
+      }) as unknown as EarnPool
+    const pools = [makePool(shareA), makePool(shareB)]
+
+    it('synthesizes a zero-balance row for an in-transit share with no position', function () {
+      expect(
+        inTransitOnlyPositions(
+          { [shareA.toLowerCase()]: BigInt(5) },
+          [],
+          pools,
+        ),
+      ).toEqual([
+        {
+          peggedToken,
+          shareAddress: shareA,
+          shareToken,
+          yourDeposit: BigInt(0),
+        },
+      ])
+    })
+
+    it('skips a share already covered by a position', function () {
+      const position = {
+        peggedToken,
+        shareAddress: shareA,
+        shareToken,
+        yourDeposit: BigInt(100),
+      } as unknown as EarnPosition
+      expect(
+        inTransitOnlyPositions(
+          { [shareA.toLowerCase()]: BigInt(5) },
+          [position],
+          pools,
+        ),
+      ).toEqual([])
+    })
+
+    it('drops an in-transit share that maps to no pool', function () {
+      expect(
+        inTransitOnlyPositions(
+          { [`0x${'f'.repeat(40)}`]: BigInt(5) },
+          [],
+          pools,
+        ),
+      ).toEqual([])
     })
   })
 

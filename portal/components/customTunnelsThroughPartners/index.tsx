@@ -3,7 +3,7 @@ import { WarningBox } from 'components/warningBox'
 import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
 
-import { Meson } from './meson'
+import { Jumper } from './jumper'
 import { Orbiter } from './orbiter'
 import { Stargate } from './stargate'
 
@@ -41,7 +41,9 @@ export const CustomTunnelsThroughPartners = function ({
           {fromToken.extensions?.tunnelPartners?.includes('stargate') && (
             <Stargate fromToken={fromToken} toToken={toToken} />
           )}
-          {fromToken.extensions?.tunnelPartners?.includes('meson') && <Meson />}
+          {fromToken.extensions?.tunnelPartners?.includes('jumper') && (
+            <Jumper fromToken={fromToken} toToken={toToken} />
+          )}
         </div>
         <p className="mb-3 font-medium text-zinc-500">{t('description')}</p>
         <div>

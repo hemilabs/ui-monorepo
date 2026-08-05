@@ -9,10 +9,11 @@ import orbiterLogo from './partnerLogos/orbiter.svg'
 
 type Props = {
   fromToken: Token
+  label?: string
   toToken: Token
 }
 
-export const Orbiter = function ({ fromToken, toToken }: Props) {
+export const Orbiter = function ({ fromToken, label, toToken }: Props) {
   const t = useTranslations('tunnel-page.tunnel-partners')
 
   const fromChain = useChain(fromToken.chainId) as Chain
@@ -24,7 +25,7 @@ export const Orbiter = function ({ fromToken, toToken }: Props) {
     <PartnerLink
       icon={<PartnerImage alt="Orbiter logo" src={orbiterLogo} />}
       partner="orbiter"
-      text={t('tunnel-with-our-partner', { partner: 'Orbiter' })}
+      text={label ?? t('tunnel-with-our-partner', { partner: 'Orbiter' })}
       url={url}
     />
   )

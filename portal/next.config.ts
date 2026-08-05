@@ -7,11 +7,6 @@ import createNextIntlPlugin from 'next-intl/plugin'
 const withNextIntl = createNextIntlPlugin()
 
 const nextConfig: NextConfig = {
-  eslint: {
-    // The linter is already running in the pre-commit git hook and in the CI
-    // checks. So we don't need to run it again here.
-    ignoreDuringBuilds: true,
-  },
   // images are exported on demand, which is incompatible with static export
   images: {
     remotePatterns: [
@@ -34,21 +29,19 @@ const nextConfig: NextConfig = {
     've-hemi-actions',
     've-hemi-rewards',
   ],
-  webpack(config) {
-    config.resolve.fallback = { fs: false, net: false, tls: false }
-    config.externals.push('pino-pretty', 'lokijs', 'encoding')
-    return config
-  },
 }
 
 const sentryOptions: SentryBuildOptions = {
+  _experimental: {
+    turbopackReactComponentAnnotation: {
+      enabled: true,
+    },
+  },
+  applicationKey: process.env.NEXT_PUBLIC_SENTRY_FILTER_KEY_ID,
   authToken: process.env.SENTRY_AUTH_TOKEN,
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#widen-the-upload-scope
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
-  reactComponentAnnotation: {
-    enabled: true,
-  },
   release:
     process.env.SENTRY_ENVIRONMENT && process.env.NEXT_PUBLIC_SENTRY_RELEASE
       ? {
@@ -58,10 +51,6 @@ const sentryOptions: SentryBuildOptions = {
           name: process.env.NEXT_PUBLIC_SENTRY_RELEASE,
         }
       : undefined,
-  // eslint-disable-next-line camelcase
-  unstable_sentryWebpackPluginOptions: {
-    applicationKey: process.env.NEXT_PUBLIC_SENTRY_FILTER_KEY_ID,
-  },
   widenClientFileUpload: true,
 }
 

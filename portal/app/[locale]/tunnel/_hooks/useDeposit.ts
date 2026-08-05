@@ -10,7 +10,6 @@ import {
   depositEth,
 } from 'hemi-tunnel-actions'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
-import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
 import { useContext } from 'react'
@@ -22,7 +21,7 @@ import {
   MessageDirection,
 } from 'types/tunnel'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
-import { findChainById } from 'utils/chain'
+import { findChainById, getL1StandardBridgeAddress } from 'utils/chain'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { isNativeAddress } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
@@ -58,7 +57,7 @@ export const useDeposit = function ({
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
     fromToken.chainId,
   )
-  const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
+  const l1StandardBridgeAddress = getL1StandardBridgeAddress(fromToken.chainId)
   const queryClient = useQueryClient()
   const erc20BalanceQueryKey = getTokenBalanceQueryKey({
     account: address,

@@ -1,8 +1,8 @@
 import { encodeInitiateWithdraw } from 'hemi-tunnel-actions'
 import { useEstimateFees } from 'hooks/useEstimateFees'
-import { useL2BridgeAddress } from 'hooks/useL2BridgeAddress'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList/nativeTokens'
 import { EvmToken } from 'types/token'
+import { getL2BridgeAddress } from 'utils/chain'
 import { isNativeAddress } from 'utils/nativeToken'
 import { Address, Chain } from 'viem'
 import { useEstimateGas } from 'wagmi'
@@ -18,7 +18,7 @@ export const useEstimateWithdrawFees = function ({
   fromToken: EvmToken
   l1ChainId: Chain['id']
 }) {
-  const l2BridgeAddress = useL2BridgeAddress(l1ChainId)
+  const l2BridgeAddress = getL2BridgeAddress(l1ChainId)
   const isNative = isNativeAddress(fromToken.address)
   const { data: gasUnits, isError } = useEstimateGas({
     data: encodeInitiateWithdraw({

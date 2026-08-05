@@ -7,12 +7,12 @@ import { FeesContainer } from 'components/feesContainer'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
-import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { getL1StandardBridgeAddress } from 'utils/chain'
 import { getTotal } from 'utils/getTotal'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits, tunnelsThroughPartners } from 'utils/token'
@@ -77,7 +77,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
     isSuccess: nativeTokenBalanceLoaded,
   } = useNativeBalance(fromToken.chainId)
 
-  const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
+  const l1StandardBridgeAddress = getL1StandardBridgeAddress(fromToken.chainId)
 
   const { isAllowanceError, isAllowanceLoading, needsApproval } =
     useNeedsApproval({

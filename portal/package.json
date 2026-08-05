@@ -2,10 +2,10 @@
   "name": "portal",
   "version": "1.0.0",
   "scripts": {
-    "build": "next build",
+    "build": "next build --turbopack",
     "postbuild": "pnpm run generate:htaccess",
     "deploy": "pnpm run build",
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "dev:wifi": "WIFI=true LOCAL_IP=$(ipconfig getifaddr en0) PORT=3000 pnpm run dev",
     "generate:htaccess": "node ./scripts/generateServerConfig.js",
     "sandbox:hemi-earn": "node scripts/hemi-earn/index.ts",
@@ -22,7 +22,7 @@
     "@hemilabs/token-list": "3.3.0",
     "@hemilabs/wallet-watch-asset": "1.0.2",
     "@rainbow-me/rainbowkit": "2.2.8",
-    "@sentry/nextjs": "9.9.0",
+    "@sentry/nextjs": "10.68.0",
     "@tanstack/react-query": "5.100.9",
     "@tanstack/react-table": "8.21.3",
     "@tanstack/react-virtual": "3.13.24",
@@ -46,7 +46,7 @@
     "hemi-viem": "2.8.0",
     "hemi-viem-stake-actions": "workspace:*",
     "lodash": "4.18.1",
-    "next": "15.5.3",
+    "next": "16.2.12",
     "next-intl": "4.11.0",
     "nuqs": "2.8.9",
     "p-all": "5.0.0",
@@ -55,10 +55,10 @@
     "promise-mem": "1.0.4",
     "qrcode.react": "4.2.0",
     "rc-tooltip": "6.4.0",
-    "react": "19.1.1",
+    "react": "19.2.8",
     "react-confetti-explosion": "3.0.3",
     "react-device-detect": "2.2.3",
-    "react-dom": "19.1.1",
+    "react-dom": "19.2.8",
     "react-loading-skeleton": "3.5.0",
     "smart-round": "3.0.0",
     "umami-analytics-next": "1.0.1",
@@ -83,8 +83,8 @@
     "@types/node": "24.10.2",
     "@types/qrcode-terminal": "0.12.2",
     "@types/rc-tooltip": "3.7.14",
-    "@types/react": "19.1.13",
-    "@types/react-dom": "19.1.9",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
     "autoprefixer": "10.4.16",
     "postcss": "8.5.14",
     "postcss-import": "16.1.0",
@@ -98,6 +98,6 @@
     "vitest": "4.1.6"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=20.9.0"
   }
 }

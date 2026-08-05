@@ -9,6 +9,7 @@ import { type Address, type Chain, type Hash, isAddressEqual } from 'viem'
 
 import {
   type EarnPool,
+  type EarnPosition,
   type EarnSettlement,
   type EarnTransaction,
   type LocalEarnOperation,
@@ -237,6 +238,27 @@ export const sumInTransitSharesByShare = (
     acc[key] = (acc[key] ?? BigInt(0)) + BigInt(tx.amountIn)
     return acc
   }, {})
+
+// Shares with in-transit balance but no live position: a 100% withdraw zeroes balanceOf,
+// so the share drops out of positions. Synthesize a zero-balance row so the earned card
+// still reconciles it against the cost basis instead of silently reading $0.
+export const inTransitOnlyPositions = function (
+  inTransitByShare: Record<string, bigint>,
+  positions: EarnPosition[],
+  pools: EarnPool[],
+) {
+  const held = new Set(positions.map(p => p.shareAddress.toLowerCase()))
+  return Object.keys(inTransitByShare)
+    .filter(share => !held.has(share))
+    .map(share => findPoolByShare(pools, share as Address))
+    .filter((pool): pool is EarnPool => pool !== undefined)
+    .map(pool => ({
+      peggedToken: pool.peggedToken,
+      shareAddress: pool.shareAddress,
+      shareToken: pool.shareToken,
+      yourDeposit: BigInt(0),
+    }))
+}
 
 // Any earn action still settling — drives polling for the transactions list and
 // the earned card: local ops before they index, plus subgraph rows not yet terminal.

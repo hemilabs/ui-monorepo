@@ -16,6 +16,7 @@ import {
   hasFailedSettlement,
   hasInFlightEarnActions,
   hashesMatch,
+  inTransitOnlyPositions,
   isAwaitingFinalize,
   isCooldownMature,
   isDeliberateCancel,
@@ -41,6 +42,7 @@ import {
 } from '../../../../../app/[locale]/hemi-earn/_utils'
 import {
   type EarnPool,
+  type EarnPosition,
   type EarnSettlement,
   type EarnTransaction,
   type EarnTransactionStatusType,
@@ -777,6 +779,64 @@ describe('utils', function () {
           pools,
         ),
       ).toEqual({})
+    })
+  })
+
+  describe('inTransitOnlyPositions', function () {
+    const shareA = '0x00000000000000000000000000000000000000e1' as Address
+    const shareB = '0x00000000000000000000000000000000000000e2' as Address
+    const peggedToken = { decimals: 18 } as unknown as EvmToken
+    const shareToken = { symbol: 'S' } as unknown as EvmToken
+    const makePool = (shareAddress: Address) =>
+      ({
+        assets: [],
+        peggedToken,
+        shareAddress,
+        shareToken,
+      }) as unknown as EarnPool
+    const pools = [makePool(shareA), makePool(shareB)]
+
+    it('synthesizes a zero-balance row for an in-transit share with no position', function () {
+      expect(
+        inTransitOnlyPositions(
+          { [shareA.toLowerCase()]: BigInt(5) },
+          [],
+          pools,
+        ),
+      ).toEqual([
+        {
+          peggedToken,
+          shareAddress: shareA,
+          shareToken,
+          yourDeposit: BigInt(0),
+        },
+      ])
+    })
+
+    it('skips a share already covered by a position', function () {
+      const position = {
+        peggedToken,
+        shareAddress: shareA,
+        shareToken,
+        yourDeposit: BigInt(100),
+      } as unknown as EarnPosition
+      expect(
+        inTransitOnlyPositions(
+          { [shareA.toLowerCase()]: BigInt(5) },
+          [position],
+          pools,
+        ),
+      ).toEqual([])
+    })
+
+    it('drops an in-transit share that maps to no pool', function () {
+      expect(
+        inTransitOnlyPositions(
+          { [`0x${'f'.repeat(40)}`]: BigInt(5) },
+          [],
+          pools,
+        ),
+      ).toEqual([])
     })
   })
 

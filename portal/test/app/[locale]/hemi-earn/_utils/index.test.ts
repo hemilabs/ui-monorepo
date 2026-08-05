@@ -775,6 +775,15 @@ describe('utils', function () {
         ),
       ).toEqual({ rawAmount: '7777', token: assetToken })
     })
+
+    it('returns an undefined token for an in-flight REDEEM while the share token is still loading', function () {
+      expect(
+        pickEarnRowAmount(
+          { ...baseTx, amountIn: '5000', amountOut: null, kind: 'REDEEM' },
+          { assetToken },
+        ),
+      ).toEqual({ rawAmount: '5000', token: undefined })
+    })
   })
 
   describe('hashesMatch', function () {

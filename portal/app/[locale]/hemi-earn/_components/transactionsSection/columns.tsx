@@ -25,7 +25,7 @@ function AmountCell({ transaction }: { transaction: EarnTransaction }) {
     address: transaction.asset,
     chainId: hemi.id,
   })
-  const { data: pools = [] } = useEarnPools()
+  const { data: pools = [], isPending: isPoolsPending } = useEarnPools()
   const pool =
     transaction.kind === 'REDEEM'
       ? findPoolByAsset(pools, transaction.asset)
@@ -37,7 +37,7 @@ function AmountCell({ transaction }: { transaction: EarnTransaction }) {
   })
 
   if (!token) {
-    if (isLoading) return <Skeleton className="w-16" />
+    if (isLoading || isPoolsPending) return <Skeleton className="w-16" />
     return <span className="text-neutral-950">{rawAmount}</span>
   }
   return (

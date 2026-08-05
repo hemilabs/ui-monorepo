@@ -1,10 +1,11 @@
 'use client'
 
 import { PageLayout } from 'components/pageLayout'
+import { TestnetDisabled } from 'components/testnetDisabled'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useTranslations } from 'next-intl'
 import { ReactNode, Suspense } from 'react'
 
-import { ClaimRewardsDisabledTestnet } from './_components/claimRewardsDisabledTestnet'
 import { GenesisDropTabs } from './_components/genesisDropTabs'
 import { isClaimRewardsEnabledOnTestnet } from './_utils'
 
@@ -14,9 +15,15 @@ type Props = {
 
 const Page = function ({ children }: Props) {
   const [networkType] = useNetworkType()
+  const t = useTranslations('genesis-drop')
 
   if (!isClaimRewardsEnabledOnTestnet(networkType)) {
-    return <ClaimRewardsDisabledTestnet />
+    return (
+      <TestnetDisabled
+        subtitle={t('switch-to-start-claiming')}
+        variant="overlay"
+      />
+    )
   }
 
   return children

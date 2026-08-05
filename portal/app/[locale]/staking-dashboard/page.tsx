@@ -2,6 +2,7 @@
 
 import { PageLayout } from 'components/pageLayout'
 import { PageTitle } from 'components/pageTitle'
+import { TestnetDisabled } from 'components/testnetDisabled'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
@@ -13,7 +14,6 @@ import {
   StakeTableFilter,
   type StakeTableFilterOptions,
 } from './_components/stakeTable/stakeTableFilter'
-import { StakingDashboardDisabledTestnet } from './_components/stakingDashboardDisabledTestnet'
 import { VotingPowerSummary } from './_components/votingPowerSummary'
 import { StakingDashboardProvider } from './_context/stakingDashboardContext'
 import { useStakingPositions } from './_hooks/useStakingPositions'
@@ -64,7 +64,11 @@ function Page() {
     <PageLayout variant="superWide">
       <div className="flex flex-col">
         <PageTitle title={t('heading', { symbol })} />
-        {isEnabled ? <StakingContent /> : <StakingDashboardDisabledTestnet />}
+        {isEnabled ? (
+          <StakingContent />
+        ) : (
+          <TestnetDisabled subtitle={t('switch-to-start-staking')} />
+        )}
       </div>
     </PageLayout>
   )

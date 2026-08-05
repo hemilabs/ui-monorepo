@@ -1,6 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
+import { secondsToDaysAndHours } from 'utils/time'
 import { useAccount } from 'wagmi'
 
 import { useCooldownDuration } from '../../_hooks/useCooldownDuration'
@@ -14,28 +15,21 @@ import { StatusBadge } from './statusBadge'
 
 const SECONDS_PER_DAY = 86_400
 const SECONDS_PER_HOUR = 3_600
-const SECONDS_PER_MINUTE = 60
 
 function formatCooldownText(
   seconds: number,
   t: ReturnType<typeof useTranslations<'hemi-earn.transactions'>>,
 ) {
   if (seconds >= SECONDS_PER_DAY) {
-    return t('status.cooldown-ready-in-days', {
-      value: Math.floor(seconds / SECONDS_PER_DAY),
-    })
+    const { days, hours } = secondsToDaysAndHours(seconds)
+    return t('status.cooldown-ready-in-days-hours', { days, hours })
   }
   if (seconds >= SECONDS_PER_HOUR) {
     return t('status.cooldown-ready-in-hours', {
       value: Math.floor(seconds / SECONDS_PER_HOUR),
     })
   }
-  if (seconds >= SECONDS_PER_MINUTE) {
-    return t('status.cooldown-ready-in-minutes', {
-      value: Math.floor(seconds / SECONDS_PER_MINUTE),
-    })
-  }
-  return t('status.cooldown-ready-soon')
+  return t('status.cooldown-ready-in-under-hour')
 }
 
 const isCooldownPhase = (status: EarnTransaction['status']) =>

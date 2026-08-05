@@ -28,4 +28,5 @@ type BtcWithdrawal @entity(immutable: true) {
   to: String # btc address, optional
   transactionHash: Bytes!
   uuid: BigInt!
+  vault: Bytes!
 }

@@ -10,6 +10,7 @@ import { positionEarnedUsd } from '../_utils/earnedAmount'
 import { useEarnCostBasis } from './useEarnCostBasis'
 import { useEarnPositions } from './useEarnPositions'
 import { useEarnTokenPrices } from './useEarnTokenPrices'
+import { useInTransitShares } from './useInTransitShares'
 
 // Total earned = Σ (convertToAssets(shares) − cost basis) per position, priced.
 // Cost basis (Vetro-parity, unrealized) comes from the earn-cost-basis endpoint;
@@ -30,12 +31,16 @@ export const useEarnedAmount = function () {
     isError: isCostBasisError,
     isLoading: isCostBasisLoading,
   } = useEarnCostBasis()
+  const { data: inTransitByShare, isPending: isInTransitPending } =
+    useInTransitShares()
 
   const peggedAmountQueries = useQueries({
     queries: positions.map(position =>
       sharesToPeggedOptions({
         shareAddress: position.shareAddress,
-        shares: position.yourDeposit,
+        shares:
+          position.yourDeposit +
+          (inTransitByShare[position.shareAddress.toLowerCase()] ?? BigInt(0)),
       }),
     ),
   })
@@ -60,7 +65,8 @@ export const useEarnedAmount = function () {
   const hasPositions = positions.length > 0
   const isPending =
     isPositionsPending ||
-    (hasPositions && (isPricesPending || isCostBasisLoading)) ||
+    (hasPositions &&
+      (isPricesPending || isCostBasisLoading || isInTransitPending)) ||
     peggedAmountQueries.some(q => q.isPending && q.isFetching)
   const isError =
     isPositionsError ||

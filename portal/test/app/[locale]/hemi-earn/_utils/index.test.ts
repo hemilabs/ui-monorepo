@@ -36,6 +36,7 @@ import {
   resolveSettleStepStatus,
   resolveStepExplorerChainId,
   shouldShowRemoteFailedCtas,
+  sumInTransitSharesByShare,
   unstakeSettlement,
 } from '../../../../../app/[locale]/hemi-earn/_utils'
 import {
@@ -691,6 +692,91 @@ describe('utils', function () {
           transactions: [{ ...baseTx, status: 'FINALIZED' }],
         }),
       ).toBe(false)
+    })
+  })
+
+  describe('sumInTransitSharesByShare', function () {
+    const redeemAsset = '0x00000000000000000000000000000000000000c1' as Address
+    const share = '0x00000000000000000000000000000000000000d2' as Address
+    const makePool = (shareAddress: Address, assets: Address[]) =>
+      ({
+        assets: assets.map(address => ({ address })),
+        shareAddress,
+      }) as unknown as EarnPool
+    const pools = [makePool(share, [redeemAsset])]
+    const redeem = (
+      overrides: Partial<EarnTransaction> = {},
+    ): EarnTransaction => ({
+      ...baseTx,
+      amountIn: '2000000000000000000',
+      amountOut: null,
+      asset: redeemAsset,
+      kind: 'REDEEM',
+      status: 'PENDING',
+      ...overrides,
+    })
+
+    it('sums the amountIn of an in-flight redeem under its share', function () {
+      expect(sumInTransitSharesByShare([redeem()], pools)).toEqual({
+        [share.toLowerCase()]: BigInt('2000000000000000000'),
+      })
+    })
+
+    it('counts a CANCELLED redeem (shares still out, pre-recover)', function () {
+      expect(
+        sumInTransitSharesByShare([redeem({ status: 'CANCELLED' })], pools),
+      ).toEqual({ [share.toLowerCase()]: BigInt('2000000000000000000') })
+    })
+
+    it('excludes terminal redeems (RECOVERED / FINALIZED)', function () {
+      expect(
+        sumInTransitSharesByShare(
+          [redeem({ status: 'RECOVERED' }), redeem({ status: 'FINALIZED' })],
+          pools,
+        ),
+      ).toEqual({})
+    })
+
+    it('excludes a FULFILLED redeem whose amountOut has landed', function () {
+      expect(
+        sumInTransitSharesByShare(
+          [redeem({ amountOut: '1900000', status: 'FULFILLED' })],
+          pools,
+        ),
+      ).toEqual({})
+    })
+
+    it('excludes a TX_PENDING redeem (request tx not mined, shares still held)', function () {
+      expect(
+        sumInTransitSharesByShare([redeem({ status: 'TX_PENDING' })], pools),
+      ).toEqual({})
+    })
+
+    it('excludes deposits', function () {
+      expect(
+        sumInTransitSharesByShare([redeem({ kind: 'DEPOSIT' })], pools),
+      ).toEqual({})
+    })
+
+    it('sums multiple in-flight redeems for the same share', function () {
+      expect(
+        sumInTransitSharesByShare(
+          [
+            redeem({ amountIn: '2000000000000000000' }),
+            redeem({ amountIn: '1500000000000000000', requestId: '1' }),
+          ],
+          pools,
+        ),
+      ).toEqual({ [share.toLowerCase()]: BigInt('3500000000000000000') })
+    })
+
+    it('ignores a redeem whose asset maps to no pool', function () {
+      expect(
+        sumInTransitSharesByShare(
+          [redeem({ asset: `0x${'e'.repeat(40)}` })],
+          pools,
+        ),
+      ).toEqual({})
     })
   })
 

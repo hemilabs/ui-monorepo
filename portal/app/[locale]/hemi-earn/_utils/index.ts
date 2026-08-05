@@ -217,6 +217,27 @@ export const isEarnRowInFlight = (tx: EarnTransaction) =>
   !isEarnRowTerminal(tx) &&
   !(tx.status === 'FAILED' && isLocalEarnTransactionRow(tx))
 
+// Shares an in-flight redeem locked in the Router: gone from the wallet, but the cost
+// basis hasn't disposed them yet, so the earned card adds them back to stay consistent.
+export const sumInTransitSharesByShare = (
+  transactions: EarnTransaction[],
+  pools: EarnPool[],
+) =>
+  transactions.reduce<Record<string, bigint>>(function (acc, tx) {
+    if (
+      tx.kind !== 'REDEEM' ||
+      tx.status === 'TX_PENDING' ||
+      tx.amountOut !== null ||
+      !isEarnRowInFlight(tx)
+    )
+      return acc
+    const shareAddress = findPoolByAsset(pools, tx.asset)?.shareAddress
+    if (!shareAddress) return acc
+    const key = shareAddress.toLowerCase()
+    acc[key] = (acc[key] ?? BigInt(0)) + BigInt(tx.amountIn)
+    return acc
+  }, {})
+
 // Any earn action still settling — drives polling for the transactions list and
 // the earned card: local ops before they index, plus subgraph rows not yet terminal.
 export const hasInFlightEarnActions = ({

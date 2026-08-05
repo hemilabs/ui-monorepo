@@ -4,7 +4,7 @@ import {
 } from 'components/reviewOperation/progressStatus'
 import { type useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
-import { secondsToDays, secondsToHours, secondsToWholeDays } from 'utils/time'
+import { secondsToDaysAndHours, secondsToWholeDays } from 'utils/time'
 
 export type CooldownPostAction = {
   description: ReactNode
@@ -80,10 +80,8 @@ export function deriveCooldownPostAction({
     }
   }
 
-  const remainingDays = Math.floor(secondsToDays(cooldownRemainingSec))
-  const remainingHours = Math.floor(
-    secondsToHours(cooldownRemainingSec - remainingDays * 86400),
-  )
+  const { days: remainingDays, hours: remainingHours } =
+    secondsToDaysAndHours(cooldownRemainingSec)
   return {
     description: t('wait-cooldown-countdown', {
       days: remainingDays,

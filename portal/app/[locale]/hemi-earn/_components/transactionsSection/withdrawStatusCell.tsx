@@ -1,7 +1,11 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { secondsToDaysAndHours } from 'utils/time'
+import {
+  secondsPerDay,
+  secondsPerHour,
+  secondsToDaysAndHours,
+} from 'utils/time'
 import { useAccount } from 'wagmi'
 
 import { useCooldownDuration } from '../../_hooks/useCooldownDuration'
@@ -13,20 +17,17 @@ import { type EarnPool, type EarnTransaction } from '../../types'
 
 import { StatusBadge } from './statusBadge'
 
-const SECONDS_PER_DAY = 86_400
-const SECONDS_PER_HOUR = 3_600
-
 function formatCooldownText(
   seconds: number,
   t: ReturnType<typeof useTranslations<'hemi-earn.transactions'>>,
 ) {
-  if (seconds >= SECONDS_PER_DAY) {
+  if (seconds >= secondsPerDay) {
     const { days, hours } = secondsToDaysAndHours(seconds)
     return t('status.cooldown-ready-in-days-hours', { days, hours })
   }
-  if (seconds >= SECONDS_PER_HOUR) {
+  if (seconds >= secondsPerHour) {
     return t('status.cooldown-ready-in-hours', {
-      value: Math.floor(seconds / SECONDS_PER_HOUR),
+      value: Math.floor(seconds / secondsPerHour),
     })
   }
   return t('status.cooldown-ready-in-under-hour')

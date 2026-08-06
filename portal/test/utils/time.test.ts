@@ -21,6 +21,13 @@ describe('utils/time', function () {
       })
     })
 
+    it('should floor extra minutes and seconds instead of rounding up', function () {
+      expect(secondsToDaysAndHours(6 * 86400 + 23 * 3600 + 3599)).toEqual({
+        days: 6,
+        hours: 23,
+      })
+    })
+
     it('should return zero hours on an exact day boundary', function () {
       expect(secondsToDaysAndHours(7 * 86400)).toEqual({ days: 7, hours: 0 })
     })

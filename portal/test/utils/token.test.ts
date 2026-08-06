@@ -120,7 +120,7 @@ describe('utils/token', function () {
     it('should return true if token tunnels through a partner', function () {
       const token = {
         ...baseToken,
-        extensions: { tunnel: true, tunnelPartners: ['meson' as const] },
+        extensions: { tunnel: true, tunnelPartners: ['stargate' as const] },
       }
       expect(tunnelsThroughPartners(token)).toBe(true)
     })

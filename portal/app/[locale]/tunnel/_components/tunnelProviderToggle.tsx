@@ -1,8 +1,6 @@
-import { Cobridge } from 'components/customTunnelsThroughPartners/cobridge'
-import { FireFly } from 'components/customTunnelsThroughPartners/firefly'
 import { Interport } from 'components/customTunnelsThroughPartners/interport'
-import { Memebridge } from 'components/customTunnelsThroughPartners/memebridge'
-import { Meson } from 'components/customTunnelsThroughPartners/meson'
+import { Jumper } from 'components/customTunnelsThroughPartners/jumper'
+import { Orbiter } from 'components/customTunnelsThroughPartners/orbiter'
 import { OwIto } from 'components/customTunnelsThroughPartners/owito'
 import { Relay } from 'components/customTunnelsThroughPartners/relay'
 import { Stargate } from 'components/customTunnelsThroughPartners/stargate'
@@ -36,13 +34,19 @@ function ThirdPartyOptions({ fromChainId, toChainId }: ThirdPartyOptionsProps) {
         label="Stargate"
         toToken={toNativeToken}
       />
+      <Jumper
+        fromToken={fromNativeToken}
+        label="Jumper"
+        toToken={toNativeToken}
+      />
       <Interport fromChainId={fromChainId} toChainId={toChainId} />
-      <Meson label="Meson" />
-      <Cobridge fromChainId={fromChainId} toChainId={toChainId} />
+      <Orbiter
+        fromToken={fromNativeToken}
+        label="Orbiter"
+        toToken={toNativeToken}
+      />
       <OwIto />
-      <Memebridge />
       <Relay />
-      <FireFly />
     </div>
   )
 }

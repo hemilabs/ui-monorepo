@@ -103,7 +103,7 @@ export const TokenInput = function <T extends Token>({
                 queryStatus="success"
                 token={fiatBalance.token}
               />
-            ) : !Number.isNaN(value) ? (
+            ) : !Number.isNaN(Number(value)) ? (
               <FiatBalanceComponent
                 balance={parseTokenUnits(value, token)}
                 queryStatus="success"

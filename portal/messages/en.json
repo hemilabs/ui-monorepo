@@ -394,6 +394,7 @@
         "action-needed": "Action needed",
         "bridging-back": "Bridging back to Hemi",
         "cancelling": "Cancelling withdrawal",
+        "cooldown-ready-in-days": "Cooldown · ready in {value}d",
         "cooldown-ready-in-days-hours": "Cooldown · ready in {days}d {hours}h",
         "cooldown-ready-in-hours": "Cooldown · ready in {value}h",
         "cooldown-ready-in-under-hour": "Cooldown · ready in < 1h",

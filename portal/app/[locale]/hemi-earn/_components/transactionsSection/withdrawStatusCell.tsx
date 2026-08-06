@@ -5,6 +5,7 @@ import {
   secondsPerDay,
   secondsPerHour,
   secondsToDaysAndHours,
+  secondsToWholeDays,
 } from 'utils/time'
 import { useAccount } from 'wagmi'
 
@@ -90,9 +91,17 @@ function deriveCooldownText({
     t,
   })
   if (postCooldown !== undefined) return postCooldown
-  const displaySec = hasClaimableAt ? (remainingSec ?? 0) : cooldownDurationSec
-  if (displaySec === undefined || displaySec <= 0) return undefined
-  return formatCooldownText(displaySec, t)
+  if (!hasClaimableAt) {
+    if (cooldownDurationSec === undefined || cooldownDurationSec <= 0) {
+      return undefined
+    }
+    return t('status.cooldown-ready-in-days', {
+      value: secondsToWholeDays(cooldownDurationSec),
+    })
+  }
+  const remaining = remainingSec ?? 0
+  if (remaining <= 0) return undefined
+  return formatCooldownText(remaining, t)
 }
 
 type Props = { transaction: EarnTransaction }

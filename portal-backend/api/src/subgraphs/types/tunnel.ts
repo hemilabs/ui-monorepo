@@ -1,6 +1,6 @@
 // Copied from https://github.com/hemilabs/ui-monorepo/blob/853f366d/webapp/types/tunnel.ts and modified to remove unused types
 
-import { type Chain, type Hash } from 'viem'
+import { type Address, type Chain, type Hash } from 'viem'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const MessageDirection = {
@@ -63,6 +63,7 @@ export type ToBtcWithdrawOperation = CommonOperation &
     challengeTxHash?: Hash
     uuid?: string // bigint can't be serialized into local storage
     netSatsAfterFee: string
+    vault: Address
   }
 
 export type BtcDepositOperation = {

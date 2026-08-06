@@ -182,7 +182,8 @@ export const getBtcWithdrawals = function ({
         timestamp,
         to,
         transactionHash,
-        uuid
+        uuid,
+        vault
       }
     }`,
     variables: { address, fromBlock, limit, orderBy, orderDirection, skip },
@@ -204,6 +205,7 @@ export const getBtcWithdrawals = function ({
         // @ts-expect-error OP-SDK does not properly type addresses as Address
         l2Token: toChecksum(d.l2Token),
         timestamp: Number(d.timestamp),
+        vault: toChecksum(d.vault),
       }))
     },
   ) satisfies Promise<ToBtcWithdrawOperation[]>

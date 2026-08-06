@@ -1,6 +1,12 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
+import {
+  secondsPerDay,
+  secondsPerHour,
+  secondsToDaysAndHours,
+  secondsToWholeDays,
+} from 'utils/time'
 import { useAccount } from 'wagmi'
 
 import { useCooldownDuration } from '../../_hooks/useCooldownDuration'
@@ -12,30 +18,20 @@ import { type EarnPool, type EarnTransaction } from '../../types'
 
 import { StatusBadge } from './statusBadge'
 
-const SECONDS_PER_DAY = 86_400
-const SECONDS_PER_HOUR = 3_600
-const SECONDS_PER_MINUTE = 60
-
 function formatCooldownText(
   seconds: number,
   t: ReturnType<typeof useTranslations<'hemi-earn.transactions'>>,
 ) {
-  if (seconds >= SECONDS_PER_DAY) {
-    return t('status.cooldown-ready-in-days', {
-      value: Math.floor(seconds / SECONDS_PER_DAY),
-    })
+  if (seconds >= secondsPerDay) {
+    const { days, hours } = secondsToDaysAndHours(seconds)
+    return t('status.cooldown-ready-in-days-hours', { days, hours })
   }
-  if (seconds >= SECONDS_PER_HOUR) {
+  if (seconds >= secondsPerHour) {
     return t('status.cooldown-ready-in-hours', {
-      value: Math.floor(seconds / SECONDS_PER_HOUR),
+      value: Math.floor(seconds / secondsPerHour),
     })
   }
-  if (seconds >= SECONDS_PER_MINUTE) {
-    return t('status.cooldown-ready-in-minutes', {
-      value: Math.floor(seconds / SECONDS_PER_MINUTE),
-    })
-  }
-  return t('status.cooldown-ready-soon')
+  return t('status.cooldown-ready-in-under-hour')
 }
 
 const isCooldownPhase = (status: EarnTransaction['status']) =>
@@ -95,9 +91,17 @@ function deriveCooldownText({
     t,
   })
   if (postCooldown !== undefined) return postCooldown
-  const displaySec = hasClaimableAt ? (remainingSec ?? 0) : cooldownDurationSec
-  if (displaySec === undefined || displaySec <= 0) return undefined
-  return formatCooldownText(displaySec, t)
+  if (!hasClaimableAt) {
+    if (cooldownDurationSec === undefined || cooldownDurationSec <= 0) {
+      return undefined
+    }
+    return t('status.cooldown-ready-in-days', {
+      value: secondsToWholeDays(cooldownDurationSec),
+    })
+  }
+  const remaining = remainingSec ?? 0
+  if (remaining <= 0) return undefined
+  return formatCooldownText(remaining, t)
 }
 
 type Props = { transaction: EarnTransaction }

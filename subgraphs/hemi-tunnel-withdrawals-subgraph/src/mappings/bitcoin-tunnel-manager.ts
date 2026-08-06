@@ -50,6 +50,7 @@ export function handleWithdrawalInitiated(
   entity.transactionHash = event.transaction.hash
 
   entity.uuid = event.params.uuid
+  entity.vault = event.params.vault
 
   // Decoding the input data is not that stable for The Graph. There are
   // several issues, and the tool they use (https://github.com/rust-ethereum/ethabi)

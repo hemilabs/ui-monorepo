@@ -69,6 +69,19 @@ export class BtcWithdrawal extends BaseWithdrawal {
     this.set('uuid', Value.fromBigInt(value))
   }
 
+  get vault(): Bytes {
+    const value = this.get('vault')
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error('Cannot return null for a required field.')
+    } else {
+      return value.toBytes()
+    }
+  }
+
+  set vault(value: Bytes) {
+    this.set('vault', Value.fromBytes(value))
+  }
+
   get l1ChainId(): string {
     const value = this.get('l1ChainId')
     if (!value || value.kind == ValueKind.NULL) {

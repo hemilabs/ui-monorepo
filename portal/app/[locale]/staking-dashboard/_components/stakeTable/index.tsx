@@ -1,14 +1,14 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { Card } from 'components/card'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { Table } from 'components/table'
 import { Header } from 'components/table/_components/header'
+import { TableCard } from 'components/table/tableCard'
 import { useHemi } from 'hooks/useHemi'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
-import { ReactNode, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type StakingPosition } from 'types/stakingDashboard'
 import { walletIsConnected } from 'utils/wallet'
@@ -22,7 +22,7 @@ import { ConnectWallet } from './connectWallet'
 import { LockupTime } from './lockupTime'
 import { NoPositionStaked } from './noPositionStaked'
 import { type StakeTableFilterOptions } from './stakeTableFilter'
-import { TimeRemaining } from './timeRemaining'
+import { UnlockCta } from './unlockCta'
 import { UnsupportedChain } from './unsupportedChain'
 import { VotingPower } from './votingPower'
 
@@ -80,38 +80,27 @@ const stakingColumns = ({
     meta: { width: 150 },
   },
   {
-    cell({ row }) {
-      const { tokenId } = row.original
-      return (
-        <div className="flex items-center justify-center gap-x-2">
-          <RewardsDisplay tokenId={tokenId} />
-        </div>
-      )
-    },
-    header: () => <Header text={t('table.claimable-rewards')} />,
+    cell: ({ row }) => <RewardsDisplay tokenId={row.original.tokenId} />,
+    header: () => <Header text={t('table.rewards')} />,
     id: 'rewards',
     meta: { width: 170 },
   },
   {
-    cell: ({ row }) => <TimeRemaining operation={row.original} />,
-    header: () => <Header text={t('table.time-remaining')} />,
-    id: 'time-remaining',
-    meta: { className: 'justify-end', width: 140 },
-  },
-  {
     cell: ({ row }) => (
-      <ActionCell openRowId={openRowId} row={row} setOpenRowId={setOpenRowId} />
+      <div className="flex w-full items-center justify-end gap-x-2">
+        <UnlockCta operation={row.original} />
+        <ActionCell
+          openRowId={openRowId}
+          row={row}
+          setOpenRowId={setOpenRowId}
+        />
+      </div>
     ),
+    header: () => <Header text={t('table.action')} />,
     id: 'action',
-    meta: { width: 60 },
+    meta: { className: 'justify-end', width: 210 },
   },
 ]
-
-const Container = ({ children }: { children: ReactNode }) => (
-  <div className="h-full rounded-xl bg-neutral-100 p-1 [&>div]:h-full">
-    <Card>{children}</Card>
-  </div>
-)
 
 type Props = {
   data: StakingPosition[] | undefined
@@ -141,51 +130,50 @@ export function StakeTable({ data, filter = 'active', loading }: Props) {
   const getContent = function () {
     if (!walletIsConnected(status)) {
       return (
-        <Container>
+        <TableCard>
           <ConnectWallet />
-        </Container>
+        </TableCard>
       )
     }
 
     if (status === 'connecting') {
       return (
-        <Container>
-          <Skeleton className="h-[calc(100%-3px)] w-full rounded-xl" />
-        </Container>
+        <TableCard>
+          <Skeleton className="h-[calc(100%-3px)] w-full rounded-lg" />
+        </TableCard>
       )
     }
 
     if (!connectedToHemi) {
       return (
-        <Container>
+        <TableCard>
           <UnsupportedChain />
-        </Container>
+        </TableCard>
       )
     }
 
     if (isEmpty) {
       return (
-        <Container>
+        <TableCard>
           <NoPositionStaked filter={filter} />
-        </Container>
+        </TableCard>
       )
     }
 
     return (
       <Table
         columns={cols}
+        containerClassName="flex h-full flex-col"
         data={data}
         loading={loading}
-        priorityColumnIdsOnSmall={['action', 'time-remaining']}
+        priorityColumnIdsOnSmall={['action']}
       />
     )
   }
 
   return (
-    <div className="w-full rounded-xl bg-neutral-100 text-sm font-medium">
-      <div className="h-[56dvh] overflow-hidden md:min-h-136">
-        {getContent()}
-      </div>
+    <div className="w-full text-sm font-medium">
+      <div className="h-[56dvh] md:min-h-136">{getContent()}</div>
     </div>
   )
 }

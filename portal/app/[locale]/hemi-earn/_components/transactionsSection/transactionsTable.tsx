@@ -1,9 +1,9 @@
 'use client'
 
-import { Card } from 'components/card'
 import { Table } from 'components/table'
+import { TableCard } from 'components/table/tableCard'
 import { useTranslations } from 'next-intl'
-import { useMemo, type ReactNode } from 'react'
+import { useMemo } from 'react'
 import { screenBreakpoints } from 'styles'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
@@ -15,12 +15,6 @@ import { CompactColumn } from './compactColumn'
 import { ConnectWallet } from './connectWallet'
 import { NoTransactions } from './noTransactions'
 import { TransactionDrawer } from './transactionDrawer'
-
-const Container = ({ children }: { children: ReactNode }) => (
-  <div className="h-90 rounded-xl bg-neutral-100 p-1 [&>div]:h-full">
-    <Card>{children}</Card>
-  </div>
-)
 
 export const TransactionsTable = function () {
   const t = useTranslations('hemi-earn.transactions')
@@ -34,22 +28,23 @@ export const TransactionsTable = function () {
   const content = (function () {
     if (!walletIsConnected(status)) {
       return (
-        <Container>
+        <TableCard>
           <ConnectWallet />
-        </Container>
+        </TableCard>
       )
     }
     if (isEmpty) {
       return (
-        <Container>
+        <TableCard>
           <NoTransactions />
-        </Container>
+        </TableCard>
       )
     }
     return (
       <Table
         cellComponent={CompactColumn}
         columns={columns}
+        containerClassName="flex h-full flex-col"
         data={transactions}
         loading={isPending}
         // Virtual mode: sticky header + body scroll so a long list doesn't grow the page.
@@ -70,8 +65,8 @@ export const TransactionsTable = function () {
   })()
 
   return (
-    <div className="w-full rounded-xl bg-neutral-100 text-sm font-medium">
-      <div className="h-90 overflow-hidden">{content}</div>
+    <div className="w-full text-sm font-medium">
+      <div className="h-90">{content}</div>
       <TransactionDrawer />
     </div>
   )

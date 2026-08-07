@@ -62,7 +62,7 @@ export const Amount = function ({ operation }: Props) {
           />
           <span className="text-sm">{token.symbol}</span>
         </div>
-        <span className="text-xs font-normal text-neutral-500">
+        <span className="body-text-caption text-neutral-500">
           <TxLink
             chainId={token.chainId}
             textColor="neutral-500"

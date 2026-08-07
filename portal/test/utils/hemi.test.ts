@@ -37,10 +37,6 @@ vi.mock('hemi-viem/actions', () => ({
   isBitcoinWithdrawalFulfilled: vi.fn(),
 }))
 
-vi.mock('utils/hemiClientExtraActions', () => ({
-  getVaultChildIndex: vi.fn().mockResolvedValue(1),
-}))
-
 vi.mocked(getBitcoinVaultStateAddress).mockResolvedValue(zeroAddress)
 vi.mocked(getVaultByIndex).mockResolvedValue(zeroAddress)
 
@@ -51,12 +47,15 @@ const hemiClient: PublicClient = {
 
 const deposit: Omit<BtcDepositOperation, 'status'> = {}
 
+const vault = '0x0000000000000000000000000000000000000456'
+
 const withdrawal: ToBtcWithdrawOperation = {
   l2ChainId: hemiSepolia.id,
   status: BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING,
   timestamp: Math.floor(new Date().getTime() / 1000) - 3600 * 24, // 1 day hour ago
   transactionHash: '0x0000000000000000000000000000000000000003',
   uuid: '1',
+  vault,
 }
 
 describe('utils/hemi', function () {
@@ -175,6 +174,11 @@ describe('utils/hemi', function () {
       })
 
       expect(status).toBe(BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED)
+
+      expect(vi.mocked(getBitcoinVaultStateAddress)).toHaveBeenCalledWith(
+        hemiClient,
+        { vaultAddress: vault },
+      )
       expect(vi.mocked(isBitcoinWithdrawalFulfilled)).toHaveBeenCalledOnce()
       expect(vi.mocked(isBitcoinWithdrawalFulfilled)).toHaveBeenLastCalledWith(
         hemiClient,
@@ -182,6 +186,21 @@ describe('utils/hemi', function () {
           uuid: BigInt(withdrawal.uuid),
           vaultStateAddress: zeroAddress,
         },
+      )
+    })
+
+    it('should throw if the withdrawal has no vault', async function () {
+      await expect(
+        getHemiStatusOfBtcWithdrawal({
+          hemiClient,
+          withdrawal: {
+            ...withdrawal,
+            status: BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED,
+            vault: undefined,
+          },
+        }),
+      ).rejects.toThrow(
+        `Missing vault for withdrawal ${withdrawal.transactionHash}`,
       )
     })
 

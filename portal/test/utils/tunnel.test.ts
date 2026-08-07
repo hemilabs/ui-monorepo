@@ -7,11 +7,12 @@ import {
 } from 'types/tunnel'
 import {
   getEvmWithdrawalStatus,
+  isBtcWithdrawalMissingInformation,
   isDeposit,
   isPendingOperation,
   isWithdrawalMissingInformation,
 } from 'utils/tunnel'
-import { zeroHash } from 'viem'
+import { zeroAddress, zeroHash } from 'viem'
 import { hemiSepolia } from 'viem/chains'
 import { getWithdrawalStatus } from 'viem/op-stack'
 import { describe, it, expect, vi } from 'vitest'
@@ -324,6 +325,73 @@ describe('utils/tunnel', function () {
     it('should return false if all required fields are present for status RELAYED', function () {
       const withdrawal = { ...baseWithdrawal, status: MessageStatus.RELAYED }
       expect(isWithdrawalMissingInformation(withdrawal)).toBe(false)
+    })
+  })
+
+  describe('isBtcWithdrawalMissingInformation', function () {
+    // @ts-expect-error baseWithdrawal is partial for test construction
+    const baseWithdrawal: ToBtcWithdrawOperation = {
+      status: BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED,
+      timestamp: 1234567890,
+      uuid: '1',
+      vault: zeroAddress,
+    }
+
+    it('should return false if the withdrawal is still pending', function () {
+      const withdrawal = {
+        ...baseWithdrawal,
+        status: BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING,
+        timestamp: undefined,
+        uuid: undefined,
+        vault: undefined,
+      }
+      expect(isBtcWithdrawalMissingInformation(withdrawal)).toBe(false)
+    })
+
+    it('should return true if uuid is missing', function () {
+      const { uuid, ...withdrawal } = baseWithdrawal
+      expect(isBtcWithdrawalMissingInformation(withdrawal)).toBe(true)
+    })
+
+    it('should return true if timestamp is missing', function () {
+      const { timestamp, ...withdrawal } = baseWithdrawal
+      expect(isBtcWithdrawalMissingInformation(withdrawal)).toBe(true)
+    })
+
+    it('should return true if vault is missing', function () {
+      const { vault, ...withdrawal } = baseWithdrawal
+      expect(isBtcWithdrawalMissingInformation(withdrawal)).toBe(true)
+    })
+
+    it('should return false if vault is missing but the withdrawal failed', function () {
+      const { vault, ...rest } = baseWithdrawal
+      const withdrawal = {
+        ...rest,
+        status: BtcWithdrawStatus.WITHDRAWAL_FAILED,
+      }
+      expect(isBtcWithdrawalMissingInformation(withdrawal)).toBe(false)
+    })
+
+    it('should return false if uuid is missing but the withdrawal failed', function () {
+      const { uuid, ...rest } = baseWithdrawal
+      const withdrawal = {
+        ...rest,
+        status: BtcWithdrawStatus.WITHDRAWAL_FAILED,
+      }
+      expect(isBtcWithdrawalMissingInformation(withdrawal)).toBe(false)
+    })
+
+    it('should return true if vault is missing and only the challenge failed', function () {
+      const { vault, ...rest } = baseWithdrawal
+      const withdrawal = {
+        ...rest,
+        status: BtcWithdrawStatus.CHALLENGE_FAILED,
+      }
+      expect(isBtcWithdrawalMissingInformation(withdrawal)).toBe(true)
+    })
+
+    it('should return false if all required fields are present', function () {
+      expect(isBtcWithdrawalMissingInformation(baseWithdrawal)).toBe(false)
     })
   })
 })

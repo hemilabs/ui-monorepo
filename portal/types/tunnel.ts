@@ -1,6 +1,6 @@
 import { BtcChain } from 'btc-wallet/chains'
 import { BtcTransaction } from 'btc-wallet/unisat'
-import { type Chain, type Hash } from 'viem'
+import { type Address, type Chain, type Hash } from 'viem'
 
 // Prefer ordering by value instead of keys
 // Based on https://sdk.optimism.io/classes/crosschainmessenger#getMessageStatus
@@ -204,6 +204,8 @@ export type ToBtcWithdrawOperation = CommonOperation &
     challengeTxHash?: Hash
     status: BtcWithdrawStatusType
     uuid?: string // bigint can't be serialized into local storage
+    // Withdrawals synced before the vault was indexed may not have it
+    vault?: Address
   }
 
 export type DepositTunnelOperation = BtcDepositOperation | EvmDepositOperation

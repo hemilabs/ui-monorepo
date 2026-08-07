@@ -17,12 +17,12 @@ import { isAddressEqual } from 'viem'
 
 import { useEarnPools } from '../../../_hooks/useEarnPools'
 import { useSettle } from '../../../_hooks/useSettle'
+import { findPoolByAsset } from '../../../_utils/pools'
+import { pickSettleBannerKey } from '../../../_utils/settleUi'
 import {
-  findPoolByAsset,
   needsManualClaim,
   needsRecover,
-  pickSettleBannerKey,
-} from '../../../_utils'
+} from '../../../_utils/transactionPredicates'
 import {
   type EarnAsset,
   type EarnPool,

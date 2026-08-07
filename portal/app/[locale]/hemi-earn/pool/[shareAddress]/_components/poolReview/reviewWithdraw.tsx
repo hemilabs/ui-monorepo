@@ -42,12 +42,18 @@ import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactions
 import { useIsCooldownEligible } from '../../../../_hooks/useIsCooldownEligible'
 import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperations'
 import { useRemoteFailedState } from '../../../../_hooks/useRemoteFailedState'
+import { hashesMatch } from '../../../../_utils/hashes'
 import {
   claimRecoverSettlement,
   enrichWithSettlement,
   findLocalSettlement,
+} from '../../../../_utils/settlement'
+import {
   getTerminalDeliveryTxHash,
-  hashesMatch,
+  remoteFailedStepStatus,
+  resolveSettleStepStatus,
+} from '../../../../_utils/settleUi'
+import {
   isAwaitingFinalize,
   isFinalizeInFlight,
   isRecoverPath,
@@ -56,9 +62,7 @@ import {
   isUserCancel,
   needsManualClaim,
   needsRecover,
-  remoteFailedStepStatus,
-  resolveSettleStepStatus,
-} from '../../../../_utils'
+} from '../../../../_utils/transactionPredicates'
 import { type EarnSettlement, type EarnTransaction } from '../../../../types'
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useEarnCooldownRemaining } from '../../_hooks/useEarnCooldownRemaining'

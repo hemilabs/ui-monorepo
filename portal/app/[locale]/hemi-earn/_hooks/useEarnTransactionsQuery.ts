@@ -8,7 +8,7 @@ import {
   earnTransactionsKeyPrefix,
   fetchEarnTransactions,
 } from '../_fetchers/fetchEarnTransactions'
-import { hasInFlightEarnActions } from '../_utils'
+import { hasInFlightEarnActions } from '../_utils/earnRows'
 import { type EarnTransaction } from '../types'
 
 import { useLocalEarnOperations } from './useLocalEarnOperations'

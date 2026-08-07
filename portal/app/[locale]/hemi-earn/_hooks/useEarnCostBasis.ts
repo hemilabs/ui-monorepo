@@ -8,7 +8,7 @@ import {
   earnCostBasisKeyPrefix,
   fetchEarnCostBasis,
 } from '../_fetchers/fetchEarnCostBasis'
-import { hasInFlightEarnActions } from '../_utils'
+import { hasInFlightEarnActions } from '../_utils/earnRows'
 
 import { useEarnTransactionsQuery } from './useEarnTransactionsQuery'
 import { useLocalEarnOperations } from './useLocalEarnOperations'

@@ -20,9 +20,13 @@ import { useAccount } from 'wagmi'
 import { useCooldownDuration } from '../../../_hooks/useCooldownDuration'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
+import { claimRecoverSettlement } from '../../../_utils/settlement'
 import {
-  claimRecoverSettlement,
   getTerminalDeliveryTxHash,
+  remoteFailedStepStatus,
+  resolveSettleStepStatus,
+} from '../../../_utils/settleUi'
+import {
   isEarnRowTerminal,
   isFinalizeInFlight,
   isLocalEarnTransactionRow,
@@ -32,9 +36,7 @@ import {
   isUserCancel,
   needsManualClaim,
   needsRecover,
-  remoteFailedStepStatus,
-  resolveSettleStepStatus,
-} from '../../../_utils'
+} from '../../../_utils/transactionPredicates'
 import { deriveCooldownPostAction } from '../../../pool/[shareAddress]/_components/poolReview/cooldownPostAction'
 import { useEarnCooldownRemaining } from '../../../pool/[shareAddress]/_hooks/useEarnCooldownRemaining'
 import {

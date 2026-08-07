@@ -3,8 +3,8 @@
 import { unixNowTimestamp } from 'utils/time'
 import { isAddressEqual, zeroAddress } from 'viem'
 
-import { shouldShowRemoteFailedCtas } from '../_utils'
 import { decodeFailureReason } from '../_utils/decodeFailureReason'
+import { shouldShowRemoteFailedCtas } from '../_utils/transactionPredicates'
 import { type EarnTransaction } from '../types'
 
 import { useFailedRequest } from './useFailedRequest'

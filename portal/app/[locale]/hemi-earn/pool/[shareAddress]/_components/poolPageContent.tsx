@@ -9,7 +9,7 @@ import { queryStringObjectToString } from 'utils/url'
 import { type Address } from 'viem'
 
 import { useEarnPools } from '../../../_hooks/useEarnPools'
-import { findPoolByShare } from '../../../_utils'
+import { findPoolByShare } from '../../../_utils/pools'
 import { PoolFormProvider } from '../_context/poolFormContext'
 
 import { Composition } from './composition'

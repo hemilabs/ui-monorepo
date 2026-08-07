@@ -1,6 +1,6 @@
 'use client'
 
-import { sumInTransitSharesByShare } from '../_utils'
+import { sumInTransitSharesByShare } from '../_utils/earnRows'
 
 import { useEarnPools } from './useEarnPools'
 import { useEarnTransactions } from './useEarnTransactions'

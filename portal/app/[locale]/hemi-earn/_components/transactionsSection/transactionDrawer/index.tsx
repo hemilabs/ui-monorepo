@@ -6,15 +6,15 @@ import { isAddressEqual, isHash } from 'viem'
 
 import { useEarnPools } from '../../../_hooks/useEarnPools'
 import { useEarnTransactions } from '../../../_hooks/useEarnTransactions'
+import { hashesMatch } from '../../../_utils/hashes'
+import { findPoolByAsset } from '../../../_utils/pools'
 import {
   canRetryRow,
-  findPoolByAsset,
-  hashesMatch,
   isAwaitingFinalize,
   isRemoteFailed,
   needsManualClaim,
   needsRecover,
-} from '../../../_utils'
+} from '../../../_utils/transactionPredicates'
 import {
   type EarnAsset,
   type EarnPool,

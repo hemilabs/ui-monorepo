@@ -5,15 +5,15 @@ import { Tooltip } from 'components/tooltip'
 import { useTranslations } from 'next-intl'
 import { type MouseEvent, useState } from 'react'
 
+import { claimRecoverSettlement } from '../../_utils/settlement'
 import {
-  claimRecoverSettlement,
   isAwaitingFinalize,
   isEarnRowInFlight,
   isFinalizeInFlight,
   isRemoteFailed,
   needsManualClaim,
   needsRecover,
-} from '../../_utils'
+} from '../../_utils/transactionPredicates'
 import { type EarnTransaction } from '../../types'
 import { LoaderIcon } from '../icons/loaderIcon'
 import { TrashIcon } from '../icons/trashIcon'

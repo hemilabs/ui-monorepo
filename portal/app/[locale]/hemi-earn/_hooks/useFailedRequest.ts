@@ -7,7 +7,7 @@ import { getEvmL1PublicClient } from 'utils/chainClients'
 import { type Address, isAddressEqual, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { isRemoteFailed } from '../_utils'
+import { isRemoteFailed } from '../_utils/transactionPredicates'
 import { type EarnTransaction } from '../types'
 
 import { agentAddressQueryOptions } from './useHemiEarnAgentAddress'

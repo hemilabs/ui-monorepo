@@ -7,7 +7,7 @@ import { useChain } from 'hooks/useChain'
 import { useLocale, useTranslations } from 'next-intl'
 import { formatCompactFiat, formatEvmAddress } from 'utils/format'
 
-import { formatApyDisplay } from '../../_utils'
+import { formatApyDisplay } from '../../_utils/formatApy'
 import { type EarnPool } from '../../types'
 import { RenderEarnFiatBalance } from '../earnFiatBalance'
 

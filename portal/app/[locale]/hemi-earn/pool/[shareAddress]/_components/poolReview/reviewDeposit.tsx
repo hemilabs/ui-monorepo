@@ -35,19 +35,23 @@ import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactions
 import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperations'
 import { useRemoteFailedState } from '../../../../_hooks/useRemoteFailedState'
 import { SparkleIcon } from '../../../../_icons/sparkleIcon'
+import { hashesMatch } from '../../../../_utils/hashes'
 import {
   enrichWithSettlement,
   findLocalSettlement,
+} from '../../../../_utils/settlement'
+import {
   getTerminalDeliveryTxHash,
-  hashesMatch,
+  remoteFailedStepStatus,
+  resolveStepExplorerChainId,
+} from '../../../../_utils/settleUi'
+import {
   isRecoverPath,
   isRemoteFailed,
   isRemoteFailedCancel,
   needsManualClaim,
   needsRecover,
-  remoteFailedStepStatus,
-  resolveStepExplorerChainId,
-} from '../../../../_utils'
+} from '../../../../_utils/transactionPredicates'
 import { type EarnTransaction } from '../../../../types'
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useDepositShares } from '../../_hooks/useDepositShares'

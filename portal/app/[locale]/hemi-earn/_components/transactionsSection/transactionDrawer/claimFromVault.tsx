@@ -7,11 +7,11 @@ import { useTranslations } from 'next-intl'
 import { type FormEvent, type ReactNode } from 'react'
 
 import { useClaimUnstake } from '../../../_hooks/useClaimUnstake'
+import { unstakeSettlement } from '../../../_utils/settlement'
 import {
   isCooldownMature,
   isFinalizeInFlight,
-  unstakeSettlement,
-} from '../../../_utils'
+} from '../../../_utils/transactionPredicates'
 import { useEarnCooldownRemaining } from '../../../pool/[shareAddress]/_hooks/useEarnCooldownRemaining'
 import { type EarnTransaction } from '../../../types'
 

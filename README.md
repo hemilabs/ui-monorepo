@@ -19,6 +19,10 @@ This monorepo uses pnpm workspaces, and contains the following projects:
 - **portal-backend**: Various APIs and cron jobs the Portal uses.
 - **subgraphs/\***: The different subgraphs needed for the portal, such as tunneling operations.
 
+## Domain
+
+[docs/DOMAIN.md](./docs/DOMAIN.md) covers the domain the repo works in: what Hemi is, how the tunnel works in each direction, and how the Portal rebuilds a user's operation history. Read it when working on tunneling, operation statuses or history syncing.
+
 ## Setup
 
 This repo pins its package manager via the `packageManager` field in `package.json`. Enable [Corepack](https://nodejs.org/api/corepack.html) once so the correct pnpm version is used automatically:

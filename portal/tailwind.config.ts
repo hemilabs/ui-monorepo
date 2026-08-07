@@ -272,6 +272,7 @@ const config: Config = {
         '85vh': '85vh',
       },
       minHeight: {
+        '31': '7.75rem',
         '136': '34rem',
       },
       opacity: {

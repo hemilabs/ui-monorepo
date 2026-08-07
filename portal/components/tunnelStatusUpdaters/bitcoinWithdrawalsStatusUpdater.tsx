@@ -9,7 +9,10 @@ import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { BtcWithdrawStatus, ToBtcWithdrawOperation } from 'types/tunnel'
-import { isPendingOperation } from 'utils/tunnel'
+import {
+  isBtcWithdrawalMissingInformation,
+  isPendingOperation,
+} from 'utils/tunnel'
 import { hasKeys } from 'utils/utilities'
 import { Hash } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
@@ -116,11 +119,6 @@ const getWorker = () =>
     new URL('../../workers/watchBitcoinWithdrawals.ts', import.meta.url),
   )
 
-// Unless the "initiateWithdraw" tx is not confirmed, the other 2 fields should be available
-const missingInformation = (withdrawal: ToBtcWithdrawOperation) =>
-  withdrawal.status !== BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING &&
-  (!withdrawal.timestamp || !withdrawal.uuid)
-
 export function BitcoinWithdrawalsStatusUpdater() {
   const withdrawals = useBtcWithdrawals()
   // Withdrawals  are checked against an hemi address
@@ -134,7 +132,8 @@ export function BitcoinWithdrawalsStatusUpdater() {
 
   const withdrawalsToWatch = withdrawals.filter(
     withdrawal =>
-      isPendingOperation(withdrawal) || missingInformation(withdrawal),
+      isPendingOperation(withdrawal) ||
+      isBtcWithdrawalMissingInformation(withdrawal),
   )
 
   return (

@@ -3,9 +3,13 @@ import { getPublicClient } from 'utils/chainClients'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
 import {
   getBitcoinWithdrawalUuid,
+  getBitcoinWithdrawalVault,
   getHemiStatusOfBtcWithdrawal,
 } from 'utils/hemi'
-import { isPendingOperation } from 'utils/tunnel'
+import {
+  isBtcWithdrawalMissingInformation,
+  isPendingOperation,
+} from 'utils/tunnel'
 
 const addMissingInfo = async function (withdrawal: ToBtcWithdrawOperation) {
   const updates: Partial<ToBtcWithdrawOperation> = {}
@@ -23,6 +27,12 @@ const addMissingInfo = async function (withdrawal: ToBtcWithdrawOperation) {
       updates.uuid = uuid.toString()
     }
   }
+  if (!withdrawal.vault) {
+    const vault = getBitcoinWithdrawalVault(receipt)
+    if (vault) {
+      updates.vault = vault
+    }
+  }
   if (!withdrawal.timestamp) {
     const block = await getEvmBlock(receipt.blockNumber, withdrawal.l2ChainId)
     updates.timestamp = Number(block.timestamp)
@@ -36,31 +46,45 @@ const addMissingInfo = async function (withdrawal: ToBtcWithdrawOperation) {
 export const watchBitcoinWithdrawal = async function (
   withdrawal: ToBtcWithdrawOperation,
 ) {
-  const updates: Partial<ToBtcWithdrawOperation> = {}
-
   const hemiClient = getPublicClient(withdrawal.l2ChainId)
 
-  // if the withdrawal is on a final state, it won't change, so there's no need to re-check it
-  const newStatus = isPendingOperation(withdrawal)
-    ? await getHemiStatusOfBtcWithdrawal({
-        hemiClient,
-        withdrawal,
-      })
-    : withdrawal.status
-
-  if (withdrawal.status !== newStatus) {
-    updates.status = newStatus
-  }
-
-  // check for values that may be missing
-  if (
-    newStatus !== BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING &&
-    (withdrawal.uuid === undefined || !withdrawal.timestamp)
-  ) {
-    Object.assign(updates, {
-      ...(await addMissingInfo(withdrawal)),
+  // a pending withdrawal resolves its status from the receipt of the initiating
+  // transaction, so it needs no vault - and the receipt may not even exist yet
+  if (withdrawal.status === BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING) {
+    const status = await getHemiStatusOfBtcWithdrawal({
+      hemiClient,
+      withdrawal,
     })
+
+    if (status === withdrawal.status) {
+      return {}
+    }
+    // it is no longer pending, so the receipt exists and the missing fields
+    // can be restored on this same run
+    const confirmed = { ...withdrawal, status }
+    return isBtcWithdrawalMissingInformation(confirmed)
+      ? { ...(await addMissingInfo(confirmed)), status }
+      : { status }
   }
 
-  return updates
+  // any other status is checked against the vault it was initiated with,
+  // so the vault must be restored first
+  const updates: Partial<ToBtcWithdrawOperation> =
+    isBtcWithdrawalMissingInformation(withdrawal)
+      ? await addMissingInfo(withdrawal)
+      : {}
+
+  const updatedWithdrawal = { ...withdrawal, ...updates }
+
+  // if the withdrawal is on a final state, it won't change, so there's no need to re-check it
+  if (!isPendingOperation(updatedWithdrawal)) {
+    return updates
+  }
+
+  const status = await getHemiStatusOfBtcWithdrawal({
+    hemiClient,
+    withdrawal: updatedWithdrawal,
+  })
+
+  return status === withdrawal.status ? updates : { ...updates, status }
 }

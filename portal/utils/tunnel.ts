@@ -162,3 +162,12 @@ export const isWithdrawalMissingInformation = (
   withdrawal.status === undefined ||
   isMissingProveTransaction(withdrawal) ||
   isMissingClaimTransaction(withdrawal)
+
+export const isBtcWithdrawalMissingInformation = (
+  withdrawal: ToBtcWithdrawOperation,
+) =>
+  withdrawal.status !== BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING &&
+  (!withdrawal.timestamp ||
+    // a reverted initiation emits no event to read the uuid and the vault from
+    (withdrawal.status !== BtcWithdrawStatus.WITHDRAWAL_FAILED &&
+      (withdrawal.uuid === undefined || !withdrawal.vault)))

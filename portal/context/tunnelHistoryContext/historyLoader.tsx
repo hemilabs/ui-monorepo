@@ -145,32 +145,30 @@ export const HistoryLoader = function ({
   const { remoteNetworks } = useNetworks()
   const [networkType] = useNetworkType()
 
-  // use this boolean to check if the past history was restored from local storage
-  const [loadedFromLocalStorage, setLoadedFromLocalStorage] = useState(false)
+  // the address whose history is loaded in the reducer - tracking it (instead of
+  // a boolean) lets the state reset and reload when the user switches accounts
+  const [loadedAddress, setLoadedAddress] = useState<Address | undefined>(
+    undefined,
+  )
 
   const supportedEvmChain = useConnectedToSupportedEvmChain()
 
   useEffect(
     function resetState() {
-      if (!supportedEvmChain || !loadedFromLocalStorage) {
-        setLoadedFromLocalStorage(false)
+      if (!supportedEvmChain || address !== loadedAddress) {
+        setLoadedAddress(undefined)
         dispatch({ type: 'reset' })
       }
     },
-    [
-      loadedFromLocalStorage,
-      dispatch,
-      setLoadedFromLocalStorage,
-      supportedEvmChain,
-    ],
+    [address, dispatch, loadedAddress, setLoadedAddress, supportedEvmChain],
   )
 
   useEffect(
     function restoreFromLocalStorage() {
-      if (!address || loadedFromLocalStorage || !supportedEvmChain) {
+      if (!address || loadedAddress || !supportedEvmChain) {
         return
       }
-      setLoadedFromLocalStorage(true)
+      setLoadedAddress(address)
       // Load all the deposits given the Hemi address
       const deposits = remoteNetworks
         .map(
@@ -204,9 +202,9 @@ export const HistoryLoader = function ({
       address,
       dispatch,
       l2ChainId,
-      loadedFromLocalStorage,
+      loadedAddress,
       remoteNetworks,
-      setLoadedFromLocalStorage,
+      setLoadedAddress,
       supportedEvmChain,
     ],
   )
@@ -216,7 +214,10 @@ export const HistoryLoader = function ({
       if (
         !address ||
         !supportedEvmChain ||
-        !loadedFromLocalStorage ||
+        // only save the history of the address it belongs to - on an account
+        // switch, this effect re-runs with the new address while the reducer
+        // still holds the previous account's history
+        address !== loadedAddress ||
         !['finished', 'syncing'].includes(history.status) ||
         // if we started resync, do not save!
         forceResync
@@ -230,7 +231,7 @@ export const HistoryLoader = function ({
       forceResync,
       history,
       l2ChainId,
-      loadedFromLocalStorage,
+      loadedAddress,
       remoteNetworks,
       supportedEvmChain,
     ],
@@ -246,6 +247,9 @@ export const HistoryLoader = function ({
       if (!forceResync) {
         return
       }
+      // cancel any pending debounced save - otherwise its trailing call can
+      // run after the clear below and repopulate storage with stale data
+      debouncedSaveToStorage.cancel()
       // clear local storage
       clearHistoryInLocalStorage({
         address: address!,
@@ -255,7 +259,7 @@ export const HistoryLoader = function ({
       // reset the history in memory
       dispatch({ type: 'reset' })
       // update flag so data is reloaded again
-      setLoadedFromLocalStorage(false)
+      setLoadedAddress(undefined)
       // mark resync as finished
       setForceResync(false)
     },
@@ -266,7 +270,7 @@ export const HistoryLoader = function ({
       l2ChainId,
       remoteNetworks,
       setForceResync,
-      setLoadedFromLocalStorage,
+      setLoadedAddress,
     ],
   )
 

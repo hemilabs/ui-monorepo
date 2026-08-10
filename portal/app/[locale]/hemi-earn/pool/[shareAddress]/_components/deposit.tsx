@@ -15,10 +15,12 @@ import { useAccount as useEvmAccount } from 'wagmi'
 
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
+import { getExtraApprovalAmount } from '../../../_utils/approval'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useDeposit } from '../_hooks/useDeposit'
 import { useDepositPreview } from '../_hooks/useDepositPreview'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
+import { useSlippageBps } from '../_hooks/useSlippageBps'
 import { type DepositOperationRunning } from '../_types/operations'
 import {
   computeIsLoading,
@@ -27,6 +29,7 @@ import {
   resolveValidationError,
 } from '../_utils/formState'
 
+import { AdvancedSettings } from './advancedSettings'
 import { AssetSelector } from './assetSelector'
 import { VaultFormLayout } from './form'
 import { OperationBelowForm } from './operationBelowForm'
@@ -48,6 +51,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     useState<DepositOperationRunning>('idle')
 
   const {
+    approveExtraAmount,
     input,
     pool,
     resetStateAfterOperation,
@@ -60,6 +64,8 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
 
   const amount = parseTokenUnits(input, selectedAsset.token)
   const routerAddress = getHemiEarnRouterAddress()
+  const slippageBps = useSlippageBps('deposit')
+  const extraApprovalAmount = getExtraApprovalAmount(amount, approveExtraAmount)
 
   const { data: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
     useTokenBalance(selectedAsset.token.chainId, selectedAsset.address)
@@ -102,8 +108,10 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   } = useDepositPreview({
     account: address,
     amount,
+    approvalAmount: extraApprovalAmount ?? amount,
     asset: selectedAsset.address,
     shareAddress: pool.shareAddress,
+    slippageBps,
     spender: routerAddress,
     token: selectedAsset.token,
     validInput,
@@ -112,6 +120,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   const { setDrawerQueryString } = useDrawerQueryString()
 
   const { isPending: isRunningOperation, mutate: deposit } = useDeposit({
+    approvalAmount: extraApprovalAmount,
     callbackFee: quote?.callbackFee ?? BigInt(0),
     input,
     on(emitter) {
@@ -200,6 +209,12 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
             disabled={isRunningOperation}
             errorKey={displayedErrorKey}
             fiatBalanceComponent={RenderEarnFiatBalance}
+            headerAction={
+              <AdvancedSettings
+                disabled={isRunningOperation}
+                operation="deposit"
+              />
+            }
             label={t('common.deposit')}
             maxBalanceButton={
               <SetMaxEvmBalance

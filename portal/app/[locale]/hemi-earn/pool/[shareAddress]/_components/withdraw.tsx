@@ -13,9 +13,11 @@ import { useAccount as useEvmAccount } from 'wagmi'
 
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
+import { getExtraApprovalAmount } from '../../../_utils/approval'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useAssetsToShares } from '../_hooks/useAssetsToShares'
 import { useMaxWithdrawableAsset } from '../_hooks/useMaxWithdrawableAsset'
+import { useSlippageBps } from '../_hooks/useSlippageBps'
 import { useUserShareValue } from '../_hooks/useUserShareValue'
 import { useWithdraw } from '../_hooks/useWithdraw'
 import { useWithdrawPreview } from '../_hooks/useWithdrawPreview'
@@ -36,6 +38,7 @@ import {
   splitWithdrawErrorKey,
 } from '../_utils/withdrawForm'
 
+import { AdvancedSettings } from './advancedSettings'
 import { AssetSelector } from './assetSelector'
 import { VaultFormLayout } from './form'
 import { OperationBelowForm } from './operationBelowForm'
@@ -55,6 +58,7 @@ export const Withdraw = function ({
     useState<WithdrawOperationRunning>('idle')
 
   const {
+    approveExtraAmount,
     input,
     pool,
     resetStateAfterOperation,
@@ -64,6 +68,8 @@ export const Withdraw = function ({
     updateWithdrawOperation,
     withdrawMode,
   } = usePoolForm()
+
+  const slippageBps = useSlippageBps('withdraw')
 
   const { address, status } = useEvmAccount()
 
@@ -132,6 +138,7 @@ export const Withdraw = function ({
   })
 
   const routerAddress = getHemiEarnRouterAddress()
+  const extraApprovalAmount = getExtraApprovalAmount(shares, approveExtraAmount)
 
   const {
     assetOut,
@@ -153,10 +160,12 @@ export const Withdraw = function ({
     totalFees,
   } = useWithdrawPreview({
     account: address,
+    approvalAmount: extraApprovalAmount ?? shares,
     asset: selectedAsset.address,
     shareAddress: pool.shareAddress,
     shares,
     shareToken: pool.shareToken,
+    slippageBps,
     spender: routerAddress,
     validInput,
   })
@@ -179,6 +188,7 @@ export const Withdraw = function ({
   const { callbackFee = BigInt(0), isInstant = false } = quote ?? {}
 
   const { isPending: isRunningOperation, mutate: withdrawFn } = useWithdraw({
+    approvalAmount: extraApprovalAmount,
     assetsOutMin,
     callbackFee,
     isInstant,
@@ -282,6 +292,12 @@ export const Withdraw = function ({
               token: pool.peggedToken,
             }}
             fiatBalanceComponent={RenderEarnFiatBalance}
+            headerAction={
+              <AdvancedSettings
+                disabled={isRunningOperation}
+                operation="withdraw"
+              />
+            }
             label={t('hemi-earn.pool.form.share-token-available-to-withdraw')}
             maxBalanceButton={
               <WithdrawMaxBalance

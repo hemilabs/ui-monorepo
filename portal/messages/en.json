@@ -294,6 +294,22 @@
         "pool-deposits": "Pool deposits",
         "title": "Historical metrics"
       },
+      "settings": {
+        "accept-risk": "I understand and accept the risk",
+        "advanced-settings": "Advanced settings",
+        "approve-extra-deposit": "Approve {multiplier}x deposit",
+        "approve-extra-withdrawal": "Approve {multiplier}x withdrawal",
+        "auto": "Auto",
+        "continue-anyway": "Continue anyway",
+        "high-slippage": "High slippage",
+        "high-slippage-value": "High slippage {value}%",
+        "max-slippage": "Max slippage",
+        "slippage-value": "Slippage {value}%",
+        "very-high-slippage": "Very high slippage",
+        "very-high-slippage-value": "Very high slippage {value}%",
+        "warning-description": "<highlight>Your slippage is set above {threshold}%.</highlight> This increases your exposure to price impact. You may receive significantly fewer tokens than quoted.",
+        "warning-title": "High slippage warning"
+      },
       "total-deposits": "Pool total deposits",
       "withdraw-successful": "Withdraw successful"
     },

@@ -4,15 +4,14 @@ import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { parseTokenUnits } from 'utils/token'
 
-import {
-  DEPOSIT_SLIPPAGE_BPS,
-  applySlippage,
-} from '../../../../_constants/slippage'
+import { applySlippage } from '../../../../_constants/slippage'
+import { getExtraApprovalAmount } from '../../../../_utils/approval'
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useDeposit } from '../../_hooks/useDeposit'
 import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useDrawerQueryString } from '../../_hooks/useDrawerQueryString'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
+import { useSlippageBps } from '../../_hooks/useSlippageBps'
 import { type DepositOperationRunning } from '../../_types/operations'
 
 export const RetryDeposit = function () {
@@ -20,6 +19,7 @@ export const RetryDeposit = function () {
     useState<DepositOperationRunning>('idle')
 
   const {
+    approveExtraAmount,
     depositOperation,
     input,
     pool,
@@ -31,6 +31,7 @@ export const RetryDeposit = function () {
 
   const t = useTranslations()
 
+  const slippageBps = useSlippageBps('deposit')
   const amount = parseTokenUnits(input, selectedAsset.token)
   const { data: quote } = useQuoteDeposit({
     amount,
@@ -44,11 +45,10 @@ export const RetryDeposit = function () {
     shareAddress: pool.shareAddress,
   })
 
-  const sharesOutMin = shares
-    ? applySlippage(shares, DEPOSIT_SLIPPAGE_BPS)
-    : BigInt(0)
+  const sharesOutMin = shares ? applySlippage(shares, slippageBps) : BigInt(0)
 
   const { mutate: runDeposit } = useDeposit({
+    approvalAmount: getExtraApprovalAmount(amount, approveExtraAmount),
     callbackFee: quote?.callbackFee ?? BigInt(0),
     input,
     on(emitter) {

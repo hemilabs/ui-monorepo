@@ -61,7 +61,7 @@ export const PoolPageContent = function ({ shareAddress }: Props) {
       <PoolFormProvider pool={pool}>
         <PoolNavigation pool={pool} />
         <div className="mt-6 flex flex-col gap-3 md:gap-5 lg:flex-row">
-          <div className="order-2 flex flex-col gap-4 md:gap-5 lg:order-1 lg:basis-2/3">
+          <div className="order-2 flex flex-col gap-4 md:gap-5 lg:order-1 lg:basis-3/5">
             <PoolInfoCards pool={pool} />
             <HistoricalMetrics
               peggedToken={pool.peggedToken}
@@ -73,7 +73,7 @@ export const PoolPageContent = function ({ shareAddress }: Props) {
               shareAddress={pool.shareAddress}
             />
           </div>
-          <div className="order-1 lg:sticky lg:top-4 lg:order-2 lg:basis-1/3 lg:self-start">
+          <div className="order-1 lg:sticky lg:top-4 lg:order-2 lg:basis-2/5 lg:self-start">
             <PoolForm />
           </div>
         </div>

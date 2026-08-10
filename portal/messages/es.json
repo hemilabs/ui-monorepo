@@ -294,6 +294,22 @@
         "pool-deposits": "Depósitos del fondo",
         "title": "Métricas históricas"
       },
+      "settings": {
+        "accept-risk": "Entiendo y acepto el riesgo",
+        "advanced-settings": "Configuración avanzada",
+        "approve-extra-deposit": "Aprobar {multiplier}x el depósito",
+        "approve-extra-withdrawal": "Aprobar {multiplier}x el retiro",
+        "auto": "Auto",
+        "continue-anyway": "Continuar de todos modos",
+        "high-slippage": "Slippage alto",
+        "high-slippage-value": "Slippage alto {value}%",
+        "max-slippage": "Slippage máximo",
+        "slippage-value": "Slippage {value}%",
+        "very-high-slippage": "Slippage muy alto",
+        "very-high-slippage-value": "Slippage muy alto {value}%",
+        "warning-description": "<highlight>Su slippage está configurado por encima del {threshold}%.</highlight> Esto aumenta su exposición al impacto de precio. Podría recibir muchos menos tokens de los cotizados.",
+        "warning-title": "Advertencia de slippage alto"
+      },
       "total-deposits": "Depósitos totales del fondo",
       "withdraw-successful": "Retiro exitoso"
     },

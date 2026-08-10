@@ -7,9 +7,10 @@ import { type FormEvent, useState } from 'react'
 import { formatUnits } from 'viem'
 
 import {
-  DEPOSIT_SLIPPAGE_BPS,
+  defaultDepositSlippage,
   applySlippage,
 } from '../../../_constants/slippage'
+import { percentToBps } from '../../../_utils/slippage'
 import { useDeposit } from '../../../pool/[shareAddress]/_hooks/useDeposit'
 import { useDepositShares } from '../../../pool/[shareAddress]/_hooks/useDepositShares'
 import { useQuoteDeposit } from '../../../pool/[shareAddress]/_hooks/useQuoteDeposit'
@@ -56,7 +57,7 @@ export const RetryFailedDeposit = function ({
   })
 
   const sharesOutMin = shares
-    ? applySlippage(shares, DEPOSIT_SLIPPAGE_BPS)
+    ? applySlippage(shares, percentToBps(defaultDepositSlippage))
     : BigInt(0)
 
   const { mutate: runDeposit } = useDeposit({

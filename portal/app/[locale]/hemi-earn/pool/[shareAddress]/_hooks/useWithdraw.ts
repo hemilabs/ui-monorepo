@@ -28,6 +28,8 @@ import { type WithdrawOperation, WithdrawStatus } from '../_types/operations'
 import { useDrawerQueryString } from './useDrawerQueryString'
 
 type UseWithdraw = {
+  // Allowance to request when approving; defaults to the redeemed shares.
+  approvalAmount?: bigint
   // Slippage min in asset units; enforced remotely and frozen across the ~7d cooldown.
   assetsOutMin: bigint
   callbackFee: bigint
@@ -50,6 +52,7 @@ type UseWithdraw = {
 }
 
 export const useWithdraw = function ({
+  approvalAmount,
   assetsOutMin,
   callbackFee,
   isInstant,
@@ -139,6 +142,7 @@ export const useWithdraw = function ({
 
       const { emitter, promise } = requestRedeem({
         account: address,
+        approvalAmount,
         asset: selectedAsset.address,
         assetsOutMin,
         callbackFee,

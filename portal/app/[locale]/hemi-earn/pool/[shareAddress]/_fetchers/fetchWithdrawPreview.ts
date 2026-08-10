@@ -1,11 +1,6 @@
 import { type QueryClient, queryOptions } from '@tanstack/react-query'
 import { type Address } from 'viem'
 
-import {
-  REDEEM_SLIPPAGE_BPS,
-  applySlippage,
-} from '../../../_constants/slippage'
-
 import { quoteRedeemOptions } from './fetchQuoteRedeem'
 import { sharesToAssetsOptions } from './fetchSharesToAssets'
 
@@ -34,7 +29,8 @@ const getWithdrawPreviewQueryKey = ({
   ] as const
 
 // Composes sharesToAssets + redeem quote into one subscription. Allowance stays in useNeedsApproval
-// so its error surfaces independently; assetsOutMin freshness is handled by fetchSharesToAssets' fetchQuery.
+// so its error surfaces independently; assetOut freshness is handled by fetchSharesToAssets' fetchQuery,
+// and assetsOutMin is derived in useWithdrawPreview so slippage doesn't invalidate on-chain reads.
 export const withdrawPreviewOptions = ({
   account,
   asset,
@@ -66,10 +62,6 @@ export const withdrawPreviewOptions = ({
       ])
       return {
         assetOut: sharesToAssets.assetOut,
-        assetsOutMin: applySlippage(
-          sharesToAssets.assetOut,
-          REDEEM_SLIPPAGE_BPS,
-        ),
         peggedAmount: sharesToAssets.peggedAmount,
         quote,
       }

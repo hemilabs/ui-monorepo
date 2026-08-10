@@ -38,6 +38,8 @@ type Props<T extends Token> = {
   // `RenderFiatBalance`; callers pricing against a different feed (e.g. Hemi
   // Earn's oracle-merged `RenderEarnFiatBalance`) pass their own.
   fiatBalanceComponent?: ComponentType<ComponentProps<typeof RenderFiatBalance>>
+  // Rendered at the right of the label row (e.g. the Hemi Earn settings gear).
+  headerAction?: ReactNode
   label: string
   maxBalanceButton?: ReactNode
   onChange: (value: string) => void
@@ -64,6 +66,7 @@ export const TokenInput = function <T extends Token>({
   errorKey,
   fiatBalance,
   fiatBalanceComponent,
+  headerAction,
   label,
   maxBalanceButton,
   onChange,
@@ -77,7 +80,10 @@ export const TokenInput = function <T extends Token>({
   const FiatBalanceComponent = fiatBalanceComponent ?? RenderFiatBalance
   return (
     <div className="flex min-h-31 flex-col justify-between rounded-lg border border-solid border-transparent bg-neutral-50 p-4 font-medium text-neutral-500 hover:shadow-bs">
-      <span className="block text-sm">{label}</span>
+      <div className="flex items-center justify-between gap-x-2">
+        <span className="block text-sm">{label}</span>
+        {headerAction}
+      </div>
       <div className="flex items-center justify-between gap-x-2 text-sm">
         <div className="min-w-0 flex-1">
           <input

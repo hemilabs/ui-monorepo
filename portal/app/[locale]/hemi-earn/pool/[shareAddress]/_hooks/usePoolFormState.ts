@@ -10,8 +10,11 @@ import {
 type WithdrawMode = 'shares' | 'tokens'
 
 type PoolFormState = {
+  approveExtraAmount: boolean
   depositOperation?: DepositOperation
   input: string
+  // undefined means "Auto" — the effective value is the active tab's default.
+  slippage?: number
   withdrawMode: WithdrawMode
   withdrawOperation?: WithdrawOperation
 }
@@ -20,18 +23,25 @@ type Action<T extends string> = {
   type: T
 }
 
+type ResetSettings = Action<'resetSettings'> & NoPayload
 type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
+type UpdateApproveExtraAmount = Action<'updateApproveExtraAmount'> &
+  Payload<boolean>
 type UpdateDepositOperation = Action<'updateDepositOperation'> &
   Payload<DepositOperation | undefined>
 type UpdateInput = Action<'updateInput'> &
   Payload<{ value: string; withdrawMode?: WithdrawMode }>
+type UpdateSlippage = Action<'updateSlippage'> & Payload<number | undefined>
 type UpdateWithdrawOperation = Action<'updateWithdrawOperation'> &
   Payload<WithdrawOperation | undefined>
 
 type Actions =
+  | ResetSettings
   | ResetStateAfterOperation
+  | UpdateApproveExtraAmount
   | UpdateDepositOperation
   | UpdateInput
+  | UpdateSlippage
   | UpdateWithdrawOperation
 
 type ActionHandlers = {
@@ -41,11 +51,24 @@ type ActionHandlers = {
   ) => PoolFormState
 }
 
+const settingsDefaults = {
+  approveExtraAmount: false,
+  slippage: undefined,
+}
+
 const actionHandlers: ActionHandlers = {
+  resetSettings: state => ({ ...state, ...settingsDefaults }),
+
   resetStateAfterOperation: state => ({
     ...state,
+    ...settingsDefaults,
     input: '0',
     withdrawMode: 'shares',
+  }),
+
+  updateApproveExtraAmount: (state, payload) => ({
+    ...state,
+    approveExtraAmount: payload,
   }),
 
   updateDepositOperation: (state, payload) => ({
@@ -63,6 +86,8 @@ const actionHandlers: ActionHandlers = {
     input: payload.value,
     withdrawMode: payload.withdrawMode ?? state.withdrawMode,
   }),
+
+  updateSlippage: (state, payload) => ({ ...state, slippage: payload }),
 
   updateWithdrawOperation: (state, payload) => ({
     ...state,
@@ -88,6 +113,7 @@ function reducer(state: PoolFormState, action: Actions) {
 
 export const usePoolFormState = function () {
   const [state, dispatch] = useReducer(reducer, {
+    ...settingsDefaults,
     input: '0',
     withdrawMode: 'shares',
   })
@@ -132,14 +158,25 @@ export const usePoolFormState = function () {
 
   return {
     ...state,
+    resetSettings: useCallback(() => dispatch({ type: 'resetSettings' }), []),
     resetStateAfterOperation: useCallback(
       () => dispatch({ type: 'resetStateAfterOperation' }),
+      [],
+    ),
+    updateApproveExtraAmount: useCallback(
+      (payload: boolean) =>
+        dispatch({ payload, type: 'updateApproveExtraAmount' }),
       [],
     ),
     updateAssetInput,
     updateDepositOperation,
     updateInput,
     updateSharesInput,
+    updateSlippage: useCallback(
+      (payload: number | undefined) =>
+        dispatch({ payload, type: 'updateSlippage' }),
+      [],
+    ),
     updateWithdrawOperation,
   }
 }

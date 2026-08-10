@@ -7,6 +7,7 @@ import { type EvmToken } from 'types/token'
 import { type Address } from 'viem'
 import { useEstimateGas } from 'wagmi'
 
+import { applySlippage } from '../../../_constants/slippage'
 import { depositPreviewOptions } from '../_fetchers/fetchDepositPreview'
 import { type QuoteDeposit } from '../_fetchers/fetchQuoteDeposit'
 import { computeCrossChainFees } from '../_utils/crossChainFees'
@@ -88,16 +89,20 @@ const computeIsFeesError = ({
 export const useDepositPreview = function ({
   account,
   amount,
+  approvalAmount,
   asset,
   shareAddress,
+  slippageBps,
   spender,
   token,
   validInput,
 }: {
   account: Address | undefined
   amount: bigint
+  approvalAmount: bigint
   asset: Address
   shareAddress: Address
+  slippageBps: bigint
   spender: Address
   token: EvmToken
   validInput: boolean
@@ -129,7 +134,8 @@ export const useDepositPreview = function ({
 
   const shares = composed?.shares
   const quote = composed?.quote
-  const sharesOutMin = composed?.sharesOutMin ?? BigInt(0)
+  const sharesOutMin =
+    shares === undefined ? BigInt(0) : applySlippage(shares, slippageBps)
   const layerZeroFee = quote?.nativeFee ?? BigInt(0)
   const { bridgingFee, ethereumFee } = computeCrossChainFees({
     layerZeroFee,
@@ -146,7 +152,7 @@ export const useDepositPreview = function ({
 
   const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
     useEstimateApproveErc20Fees({
-      amount,
+      amount: approvalAmount,
       enabled: needsApproval,
       spender,
       token,

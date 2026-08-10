@@ -27,14 +27,12 @@ import {
   SettleBanner,
   SettleCta,
 } from '../../../../_components/transactionsSection/transactionDrawer/settleShared'
-import {
-  DEPOSIT_SLIPPAGE_BPS,
-  applySlippage,
-} from '../../../../_constants/slippage'
+import { applySlippage } from '../../../../_constants/slippage'
 import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
 import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperations'
 import { useRemoteFailedState } from '../../../../_hooks/useRemoteFailedState'
 import { SparkleIcon } from '../../../../_icons/sparkleIcon'
+import { getApprovalAmount } from '../../../../_utils/approval'
 import { hashesMatch } from '../../../../_utils/hashes'
 import {
   enrichWithSettlement,
@@ -56,6 +54,7 @@ import { type EarnTransaction } from '../../../../types'
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
+import { useSlippageBps } from '../../_hooks/useSlippageBps'
 import { DepositStatus, type DepositStatusType } from '../../_types/operations'
 
 import { RetryDeposit } from './retryDeposit'
@@ -122,7 +121,9 @@ function getSharesStepMeta(
 }
 
 export const ReviewDeposit = function ({ onClose }: Props) {
-  const { depositOperation, input, pool, selectedAsset } = usePoolForm()
+  const { approveExtraAmount, depositOperation, input, pool, selectedAsset } =
+    usePoolForm()
+  const slippageBps = useSlippageBps('deposit')
   const { localOperations } = useLocalEarnOperations()
   const t = useTranslations('hemi-earn.pool.drawer')
   const chainId = selectedAsset.token.chainId
@@ -152,7 +153,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
 
   const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
     useEstimateApproveErc20Fees({
-      amount,
+      amount: getApprovalAmount(amount, approveExtraAmount),
       enabled: [
         DepositStatus.APPROVAL_TX_FAILED,
         DepositStatus.APPROVAL_TX_PENDING,
@@ -173,9 +174,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     shareAddress: pool.shareAddress,
   })
 
-  const sharesOutMin = shares
-    ? applySlippage(shares, DEPOSIT_SLIPPAGE_BPS)
-    : BigInt(0)
+  const sharesOutMin = shares ? applySlippage(shares, slippageBps) : BigInt(0)
 
   const { data: depositGasUnits, isError: isDepositGasUnitsError } =
     useEstimateGas({

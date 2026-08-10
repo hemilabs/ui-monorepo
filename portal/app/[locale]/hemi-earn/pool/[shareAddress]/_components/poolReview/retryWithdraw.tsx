@@ -4,13 +4,12 @@ import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { parseTokenUnits } from 'utils/token'
 
-import {
-  REDEEM_SLIPPAGE_BPS,
-  applySlippage,
-} from '../../../../_constants/slippage'
+import { applySlippage } from '../../../../_constants/slippage'
+import { getExtraApprovalAmount } from '../../../../_utils/approval'
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
 import { useSharesToAssets } from '../../_hooks/useSharesToAssets'
+import { useSlippageBps } from '../../_hooks/useSlippageBps'
 import { useWithdraw } from '../../_hooks/useWithdraw'
 import { type WithdrawOperationRunning } from '../../_types/operations'
 
@@ -19,6 +18,7 @@ export const RetryWithdraw = function () {
     useState<WithdrawOperationRunning>('idle')
 
   const {
+    approveExtraAmount,
     input,
     pool,
     resetStateAfterOperation,
@@ -28,6 +28,7 @@ export const RetryWithdraw = function () {
   } = usePoolForm()
 
   const t = useTranslations()
+  const slippageBps = useSlippageBps('withdraw')
   // Input is in share units — the Router burns shares directly; assetsOutMin comes from the asset preview below.
   const shares = parseTokenUnits(input, pool.shareToken)
 
@@ -43,9 +44,7 @@ export const RetryWithdraw = function () {
   })
 
   const assetsOutMin =
-    assetOut > BigInt(0)
-      ? applySlippage(assetOut, REDEEM_SLIPPAGE_BPS)
-      : BigInt(0)
+    assetOut > BigInt(0) ? applySlippage(assetOut, slippageBps) : BigInt(0)
 
   const { data: quote } = useQuoteRedeem({
     asset: selectedAsset.address,
@@ -54,6 +53,7 @@ export const RetryWithdraw = function () {
   })
 
   const { mutate: runWithdraw } = useWithdraw({
+    approvalAmount: getExtraApprovalAmount(shares, approveExtraAmount),
     assetsOutMin,
     callbackFee: quote?.callbackFee ?? BigInt(0),
     isInstant: quote?.isInstant ?? false,

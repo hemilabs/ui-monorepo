@@ -26,14 +26,16 @@ import {
 
 import { calculateDepositOutputIndex } from './bitcoin'
 import { createBtcApi, mapBitcoinNetwork } from './btcApi'
-import { getVaultChildIndex } from './hemiClientExtraActions'
+import {
+  getBitcoinDepositVaultIndex,
+  getBitcoinWithdrawalVaultIndex,
+} from './hemiClientExtraActions'
 import {
   getBitcoinCustodyAddress,
   getBitcoinKitAddress,
   getBitcoinVaultGracePeriod,
   getBitcoinVaultStateAddress,
   getVaultAddressByIndex,
-  getVaultIndexByBTCAddress,
 } from './hemiMemoized'
 
 // Max Sanchez note: looks like if we pass in all lower-case hex, Unisat publishes the bytes instead of the string.
@@ -42,11 +44,8 @@ import {
 export const hemiAddressToBitcoinOpReturn = (hemiAddress: Address) =>
   hemiAddress.toUpperCase().slice(2)
 
-export const getVaultAddressByDeposit = (
-  hemiClient: PublicClient,
-  deposit: BtcDepositOperation,
-) =>
-  getVaultIndexByBTCAddress(hemiClient, deposit).then(vaultIndex =>
+export const getDepositVaultAddress = (hemiClient: PublicClient) =>
+  getBitcoinDepositVaultIndex(hemiClient).then(vaultIndex =>
     getVaultAddressByIndex(hemiClient, vaultIndex),
   )
 
@@ -300,7 +299,7 @@ export const initiateBtcDeposit = function ({
   }
 
   return (
-    getVaultChildIndex(hemiClient)
+    getBitcoinDepositVaultIndex(hemiClient)
       // get vault address which will custody the btc
       .then(vaultIndex => getVaultAddressByIndex(hemiClient, vaultIndex))
       // get the bitcoin address which the vault uses
@@ -330,8 +329,8 @@ export const confirmBtcDeposit = ({
   hemiWalletClient: HemiWalletClient
 }) =>
   Promise.all([
-    getVaultIndexByBTCAddress(hemiClient, deposit),
-    getVaultAddressByDeposit(hemiClient, deposit).then(vaultAddress =>
+    getBitcoinDepositVaultIndex(hemiClient),
+    getDepositVaultAddress(hemiClient).then(vaultAddress =>
       getHemiStatusOfBtcDeposit({ deposit, hemiClient, vaultAddress }),
     ),
     createBtcApi(mapBitcoinNetwork(deposit.l1ChainId))
@@ -388,7 +387,7 @@ export const getBitcoinDepositFee = ({
   amount: bigint
   hemiClient: PublicClient
 }) =>
-  getVaultChildIndex(hemiClient)
+  getBitcoinDepositVaultIndex(hemiClient)
     .then(vaultIndex => getVaultAddressByIndex(hemiClient, vaultIndex))
     .then(vaultAddress => getBitcoinVaultStateAddress(hemiClient, vaultAddress))
     .then(vaultStateAddress =>
@@ -411,7 +410,7 @@ export const getBitcoinWithdrawalFee = ({
   amount: bigint
   hemiClient: PublicClient
 }) =>
-  getVaultChildIndex(hemiClient)
+  getBitcoinWithdrawalVaultIndex(hemiClient)
     .then(vaultIndex => getVaultAddressByIndex(hemiClient, vaultIndex))
     .then(vaultAddress => getBitcoinVaultStateAddress(hemiClient, vaultAddress))
     .then(vaultStateAddress =>

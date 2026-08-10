@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getMinimumDepositSats } from 'hemi-viem/actions'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useHemiClient } from 'hooks/useHemiClient'
-import { getVaultChildIndex } from 'utils/hemiClientExtraActions'
+import { getBitcoinDepositVaultIndex } from 'utils/hemiClientExtraActions'
 import { getVaultAddressByIndex } from 'utils/hemiMemoized'
 import { formatUnits } from 'viem'
 
@@ -12,7 +12,7 @@ export const useMinDepositSats = function () {
 
   const { data: minDepositSats, ...rest } = useQuery({
     queryFn: () =>
-      getVaultChildIndex(hemiClient)
+      getBitcoinDepositVaultIndex(hemiClient)
         .then(vaultIndex => getVaultAddressByIndex(hemiClient, vaultIndex))
         .then(vaultAddress =>
           getMinimumDepositSats(hemiClient, { vaultAddress }),

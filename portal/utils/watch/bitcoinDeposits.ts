@@ -3,7 +3,7 @@ import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { getBitcoinTimestamp } from 'utils/bitcoin'
 import { createBtcApi, mapBitcoinNetwork } from 'utils/btcApi'
 import { getPublicClient } from 'utils/chainClients'
-import { getHemiStatusOfBtcDeposit, getVaultAddressByDeposit } from 'utils/hemi'
+import { getDepositVaultAddress, getHemiStatusOfBtcDeposit } from 'utils/hemi'
 import { getBtcDepositInfo } from 'utils/subgraph'
 import { isPendingOperation } from 'utils/tunnel'
 import { hasKeys } from 'utils/utilities'
@@ -62,7 +62,7 @@ export const watchDepositOnHemi = async function (
   const hemiClient = getPublicClient(deposit.l2ChainId)
 
   const newStatus = isPendingOperation(deposit)
-    ? await getVaultAddressByDeposit(hemiClient, deposit).then(vaultAddress =>
+    ? await getDepositVaultAddress(hemiClient).then(vaultAddress =>
         getHemiStatusOfBtcDeposit({
           deposit,
           hemiClient,

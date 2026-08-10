@@ -4,32 +4,11 @@ import { getTreasury } from '@vetro-protocol/gateway/actions'
 import { getWhitelistedTokens } from '@vetro-protocol/treasury/actions'
 import { type AssetData, getAssetData } from 'hemi-earn-actions/actions'
 import { hemi } from 'hemi-viem'
-import { hemiMainnet } from 'networks/hemiMainnet'
 import { mainnet } from 'networks/mainnet'
 import { tokenList } from 'tokenList'
 import { toChecksumAddress } from 'utils/address'
-import {
-  type Address,
-  createPublicClient,
-  http,
-  isAddressEqual,
-  zeroAddress,
-} from 'viem'
-
-// Build-time `generateStaticParams` runs this on the server, so clients are
-// constructed straight from the chain configs with a bare `http()` transport
-// rather than via `getPublicClient`/`buildTransport`. Two reasons:
-//   1. those resolve the chain through `findChainById`, which reads the
-//      `'use client'` `networks` barrel — unavailable in a server (RSC) context;
-//   2. `buildTransport` pulls in `eth-rpc-cache`, whose ESM resolution breaks
-//      under vitest, so importing it here would take the fetcher's tests down.
-// `http()` honors each chain's configured RPC and the result is cached by
-// react-query (`staleTime: Infinity`), so the rpc-cache buys nothing here.
-const l1PublicClient = () =>
-  createPublicClient({ chain: mainnet, transport: http() })
-
-const hemiPublicClient = () =>
-  createPublicClient({ chain: hemiMainnet, transport: http() })
+import { getPublicClient } from 'utils/chainClients'
+import { type Address, type Chain, isAddressEqual, zeroAddress } from 'viem'
 
 // One Router-registered deposit asset, resolved on-chain rather than hardcoded.
 // Mirrors `Router.assetsData(asset)` (`AssetData`) plus the Hemi-side `asset`
@@ -58,8 +37,8 @@ export const uniqueShareConfigs = (configs: HemiEarnAssetConfig[]) => [
 // checksum them. Reads fail-fast (`Promise.all`): an unreadable gateway means
 // a broken registry, so surface it and fail the build rather than ship a
 // partial token set.
-const fetchWhitelistedL1Tokens = async function () {
-  const l1Client = l1PublicClient()
+const fetchWhitelistedL1Tokens = async function (chainId: Chain['id']) {
+  const l1Client = getPublicClient(chainId)
   const perGateway = await Promise.all(
     gateways.map(async function (gateway) {
       const treasury = await getTreasury(l1Client, { address: gateway.address })
@@ -73,19 +52,27 @@ const fetchWhitelistedL1Tokens = async function () {
 // `bridgeInfo` (standard bridge) or `oft.peers` (LayerZero OFT, e.g. hemiBTC)
 // mapping. Returns `undefined` when the token has no Hemi version (e.g. not
 // tunneled), so callers skip it.
-const findHemiToken = (l1Address: Address) =>
-  tokenList.tokens.find(function (token) {
-    if (token.chainId !== hemi.id) {
-      return false
-    }
-    const hemiTokenL1Address =
-      token.extensions?.bridgeInfo?.[mainnet.id]?.tokenAddress ??
-      token.extensions?.oft?.peers?.[mainnet.id]?.tokenAddress
-    return (
-      hemiTokenL1Address !== undefined &&
-      isAddressEqual(hemiTokenL1Address, l1Address)
-    )
-  })
+const findHemiToken =
+  ({
+    l1ChainId,
+    l2ChainId,
+  }: {
+    l1ChainId: Chain['id']
+    l2ChainId: Chain['id']
+  }) =>
+  (l1Address: Address) =>
+    tokenList.tokens.find(function (token) {
+      if (token.chainId !== l2ChainId) {
+        return false
+      }
+      const hemiTokenL1Address =
+        token.extensions?.bridgeInfo?.[l1ChainId]?.tokenAddress ??
+        token.extensions?.oft?.peers?.[l1ChainId]?.tokenAddress
+      return (
+        hemiTokenL1Address !== undefined &&
+        isAddressEqual(hemiTokenL1Address, l1Address)
+      )
+    })
 
 // Builds the Hemi Earn asset registry on-chain: each gateway's whitelisted
 // Ethereum tokens → their Hemi counterparts → `Router.assetsData`. Pure async
@@ -93,11 +80,11 @@ const findHemiToken = (l1Address: Address) =>
 export const fetchHemiEarnAssetConfigs = async function (): Promise<
   HemiEarnAssetConfig[]
 > {
-  const hemiClient = hemiPublicClient()
-  const l1Tokens = await fetchWhitelistedL1Tokens()
+  const hemiClient = getPublicClient(hemi.id)
+  const l1Tokens = await fetchWhitelistedL1Tokens(mainnet.id)
 
   const hemiAssets = l1Tokens
-    .map(findHemiToken)
+    .map(findHemiToken({ l1ChainId: mainnet.id, l2ChainId: hemi.id }))
     .filter(token => token !== undefined)
 
   const configs = await Promise.all(

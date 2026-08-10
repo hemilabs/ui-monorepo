@@ -1,5 +1,3 @@
-'use client'
-
 import { bitcoinTestnet, bitcoinMainnet } from 'btc-wallet/chains'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'

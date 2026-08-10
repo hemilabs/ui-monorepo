@@ -45,11 +45,10 @@ export const buildTransport = function (network: Chain) {
   const rpcUrls = network.rpcUrls.default.http
   if (rpcUrls.length > 1) {
     return fallback(
-      rpcUrls.map(rpcUrl => createHttpClient(rpcUrl, httpConfig), {
-        // rank every 30 seconds
-        rank: { interval: 30_000 },
+      rpcUrls.map(rpcUrl => createHttpClient(rpcUrl, httpConfig)),
+      {
         retryCount: 1,
-      }),
+      },
     )
   }
   return createHttpClient(rpcUrls[0], httpConfig)

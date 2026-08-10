@@ -7,6 +7,7 @@ import { allowance, approve, balanceOf } from 'viem-erc20/actions'
 import { getHemiEarnRouterAddress } from '../../constants.ts'
 import { routerAbi } from '../../routerAbi.ts'
 import type { RequestDepositEvents } from '../../types.ts'
+import { resolveApprovalAmount } from '../../utils.ts'
 import { quoteDeposit } from '../public/quoteDeposit.ts'
 
 const canRequestDeposit = async function ({
@@ -39,6 +40,7 @@ const canRequestDeposit = async function ({
 const runRequestDeposit = ({
   account,
   amount,
+  approvalAmount,
   asset,
   callbackFee,
   operator,
@@ -49,6 +51,9 @@ const runRequestDeposit = ({
 }: {
   account: Address
   amount: bigint
+  // Allowance to request when approving; defaults to amount. Larger values let the
+  // user pre-approve future deposits and skip the approval step next time.
+  approvalAmount?: bigint
   asset: Address
   callbackFee: bigint
   // Authorized to call Agent.cancel on the remote chain; reverts if 0x0.
@@ -109,7 +114,7 @@ const runRequestDeposit = ({
 
         const approvalHash = await approve(walletClient, {
           address: asset,
-          amount,
+          amount: resolveApprovalAmount({ approvalAmount, required: amount }),
           spender: routerAddress,
         }).catch(function (error) {
           emitter.emit('user-signing-approval-error', error)

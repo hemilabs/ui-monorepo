@@ -4,6 +4,7 @@ import { type ToBtcWithdrawOperation, BtcWithdrawStatus } from 'types/tunnel'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
 import {
   getBitcoinWithdrawalUuid,
+  getBitcoinWithdrawalVault,
   getHemiStatusOfBtcWithdrawal,
 } from 'utils/hemi'
 import { watchBitcoinWithdrawal } from 'utils/watch/bitcoinWithdrawals'
@@ -29,6 +30,8 @@ const block = {
 
 const uuid = BigInt(1)
 
+const vault = '0x0000000000000000000000000000000000000456'
+
 vi.mock('utils/chainClients', () => ({
   getPublicClient: vi.fn(),
 }))
@@ -40,6 +43,7 @@ vi.mock('utils/evmApi', () => ({
 
 vi.mock('utils/hemi', () => ({
   getBitcoinWithdrawalUuid: vi.fn(),
+  getBitcoinWithdrawalVault: vi.fn(),
   getHemiStatusOfBtcWithdrawal: vi.fn(),
 }))
 
@@ -61,6 +65,7 @@ describe('utils/watch/bitcoinWithdrawals', function () {
       )
       vi.mocked(getEvmTransactionReceipt).mockResolvedValue(withdrawalReceipt)
       vi.mocked(getBitcoinWithdrawalUuid).mockReturnValue(uuid)
+      vi.mocked(getBitcoinWithdrawalVault).mockReturnValue(vault)
       vi.mocked(getEvmBlock).mockResolvedValue(block)
 
       const updates = await watchBitcoinWithdrawal(withdrawal)
@@ -70,6 +75,7 @@ describe('utils/watch/bitcoinWithdrawals', function () {
         status: BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED,
         timestamp: Number(block.timestamp),
         uuid: uuid.toString(),
+        vault,
       })
 
       expect(getEvmTransactionReceipt).toHaveBeenCalledExactlyOnceWith(
@@ -94,6 +100,7 @@ describe('utils/watch/bitcoinWithdrawals', function () {
         status: BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED,
       })
       vi.mocked(getBitcoinWithdrawalUuid).mockReturnValue(uuid)
+      vi.mocked(getBitcoinWithdrawalVault).mockReturnValue(vault)
       vi.mocked(getEvmBlock).mockResolvedValue(block)
 
       const updates = await watchBitcoinWithdrawal({
@@ -105,6 +112,7 @@ describe('utils/watch/bitcoinWithdrawals', function () {
         blockNumber: Number(block.blockNumber),
         timestamp: Number(block.timestamp),
         uuid: uuid.toString(),
+        vault,
       })
 
       expect(getEvmTransactionReceipt).toHaveBeenCalledExactlyOnceWith(
@@ -137,12 +145,39 @@ describe('utils/watch/bitcoinWithdrawals', function () {
         status: BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED,
         timestamp: Number(block.timestamp),
         uuid: uuid.toString(),
+        vault,
       })
 
       expect(updates).toEqual({})
 
       expect(getBitcoinWithdrawalUuid).not.toHaveBeenCalled()
       expect(getEvmBlock).not.toHaveBeenCalled()
+    })
+
+    it('should restore the vault before checking the status', async function () {
+      vi.mocked(getHemiStatusOfBtcWithdrawal).mockResolvedValue(
+        BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED,
+      )
+      vi.mocked(getEvmTransactionReceipt).mockResolvedValue(withdrawalReceipt)
+      vi.mocked(getBitcoinWithdrawalVault).mockReturnValue(vault)
+
+      const confirmedWithdrawal = {
+        ...withdrawal,
+        blockNumber: Number(block.blockNumber),
+        status: BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED,
+        timestamp: Number(block.timestamp),
+        uuid: uuid.toString(),
+      }
+
+      const updates = await watchBitcoinWithdrawal(confirmedWithdrawal)
+
+      expect(updates).toEqual({ vault })
+
+      expect(getHemiStatusOfBtcWithdrawal).toHaveBeenCalledWith(
+        expect.objectContaining({
+          withdrawal: { ...confirmedWithdrawal, vault },
+        }),
+      )
     })
   })
 })

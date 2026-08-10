@@ -1,5 +1,5 @@
 import { WalletConnector } from 'btc-wallet/connectors/types'
-import { Account as BtcAccount, Satoshis } from 'btc-wallet/unisat'
+import { Satoshis } from 'btc-wallet/unisat'
 import {
   acknowledgedDeposits,
   calculateDepositFee,
@@ -112,20 +112,19 @@ export const getHemiStatusOfBtcDeposit = ({
 const getIsBitcoinWithdrawalChallenged = ({
   hemiClient,
   uuid,
-  vaultIndex,
+  vaultAddress,
 }: {
   hemiClient: PublicClient
-  vaultIndex: number
   uuid: bigint
+  vaultAddress: Address
 }) =>
-  getVaultAddressByIndex(hemiClient, vaultIndex)
-    .then(vaultAddress => getBitcoinVaultStateAddress(hemiClient, vaultAddress))
-    .then(vaultStateAddress =>
+  getBitcoinVaultStateAddress(hemiClient, vaultAddress).then(
+    vaultStateAddress =>
       isBitcoinWithdrawalChallenged(hemiClient, {
         uuid,
         vaultStateAddress,
       }),
-    )
+  )
 
 /**
  * Returns true if a fulfillment transaction exists on Bitcoin and it has been communicated
@@ -134,20 +133,19 @@ const getIsBitcoinWithdrawalChallenged = ({
 const getIsBitcoinWithdrawalFulfilled = ({
   hemiClient,
   uuid,
-  vaultIndex,
+  vaultAddress,
 }: {
   hemiClient: PublicClient
-  vaultIndex: number
   uuid: bigint
+  vaultAddress: Address
 }) =>
-  getVaultAddressByIndex(hemiClient, vaultIndex)
-    .then(vaultAddress => getBitcoinVaultStateAddress(hemiClient, vaultAddress))
-    .then(vaultStateAddress =>
+  getBitcoinVaultStateAddress(hemiClient, vaultAddress).then(
+    vaultStateAddress =>
       isBitcoinWithdrawalFulfilled(hemiClient, {
         uuid,
         vaultStateAddress,
       }),
-    )
+  )
 
 export const getBitcoinWithdrawalGracePeriod = ({
   hemiClient,
@@ -194,6 +192,16 @@ const getUuid = function (withdrawal: ToBtcWithdrawOperation): bigint {
   return BigInt(withdrawal.uuid)
 }
 
+const getVault = function (withdrawal: ToBtcWithdrawOperation): Address {
+  if (!withdrawal.vault) {
+    throw new Error(
+      `Missing vault for withdrawal ${withdrawal.transactionHash}`,
+    )
+  }
+
+  return withdrawal.vault
+}
+
 export const getHemiStatusOfBtcWithdrawal = async function ({
   hemiClient,
   withdrawal,
@@ -211,18 +219,18 @@ export const getHemiStatusOfBtcWithdrawal = async function ({
   // present, move it to WITHDRAWAL_SUCCEEDED but if not and the withdrawal is
   // more than ${grace period}, move it to CHALLENGE_READY.
   if (withdrawal.status === BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED) {
-    const vaultIndex = await getVaultChildIndex(hemiClient)
+    const vaultAddress = getVault(withdrawal)
 
     const [isFulfilled, isChallenged] = await Promise.all([
       getIsBitcoinWithdrawalFulfilled({
         hemiClient,
         uuid,
-        vaultIndex,
+        vaultAddress,
       }),
       getIsBitcoinWithdrawalChallenged({
         hemiClient,
         uuid,
-        vaultIndex,
+        vaultAddress,
       }),
     ])
     if (isFulfilled) {
@@ -232,10 +240,10 @@ export const getHemiStatusOfBtcWithdrawal = async function ({
       return BtcWithdrawStatus.WITHDRAWAL_CHALLENGED
     }
     if (withdrawal.timestamp) {
-      const gracePeriod = await getBitcoinWithdrawalGracePeriod({
+      const gracePeriod = await getBitcoinVaultGracePeriod(
         hemiClient,
-        vaultIndex,
-      })
+        vaultAddress,
+      )
       const age = Math.floor(new Date().getTime() / 1000) - withdrawal.timestamp
       if (age > gracePeriod) {
         return BtcWithdrawStatus.READY_TO_CHALLENGE
@@ -348,37 +356,21 @@ export const confirmBtcDeposit = ({
     })
   })
 
+// The logs must be decoded as viem does not seem to do so automatically.
+const getWithdrawalInitiatedEvent = (receipt: TransactionReceipt) =>
+  parseEventLogs({ abi: bitcoinTunnelManagerAbi, logs: receipt.logs }).find(
+    event => event.eventName === 'WithdrawalInitiated',
+  )
+
 // The withdrawal uuid is a 64-bit number needed to challenge the
 // operation if the operator does not process it timely, within 12 hours.
 // It is an argument of the WithdrawalInitiated event and can be easily
-// read from the receipt logs. The logs must be decoded as viem does not
-// seem to do so automatically.
+// read from the receipt logs.
 export const getBitcoinWithdrawalUuid = (receipt: TransactionReceipt) =>
-  parseEventLogs({ abi: bitcoinTunnelManagerAbi, logs: receipt.logs }).find(
-    event => event.eventName === 'WithdrawalInitiated',
-  )?.args.uuid satisfies bigint | undefined
+  getWithdrawalInitiatedEvent(receipt)?.args.uuid satisfies bigint | undefined
 
-export const initiateBtcWithdrawal = ({
-  amount,
-  btcAddress,
-  from,
-  hemiClient,
-  hemiWalletClient,
-}: {
-  amount: bigint
-  btcAddress: BtcAccount
-  from: Address
-  hemiClient: PublicClient
-  hemiWalletClient: HemiWalletClient
-}) =>
-  getVaultChildIndex(hemiClient).then(vaultIndex =>
-    hemiWalletClient!.initiateWithdrawal({
-      amount,
-      btcAddress,
-      from,
-      vaultIndex,
-    }),
-  )
+export const getBitcoinWithdrawalVault = (receipt: TransactionReceipt) =>
+  getWithdrawalInitiatedEvent(receipt)?.args.vault satisfies Address | undefined
 
 const calculateBtcDepositFee = (
   hemiClient: PublicClient,

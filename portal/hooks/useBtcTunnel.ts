@@ -18,9 +18,10 @@ import {
   getBitcoinDepositFee,
   getBitcoinWithdrawalFee,
   getBitcoinWithdrawalUuid,
+  getBitcoinWithdrawalVault,
   initiateBtcDeposit,
-  initiateBtcWithdrawal,
 } from 'utils/hemi'
+import { getVaultChildIndex } from 'utils/hemiClientExtraActions'
 import { getNativeToken } from 'utils/nativeToken'
 import { type Chain, zeroAddress, type Address } from 'viem'
 import {
@@ -320,13 +321,14 @@ export const useWithdrawBitcoin = function () {
     }) {
       await ensureConnectedTo(hemi.id)
 
+      const vaultIndex = await getVaultChildIndex(hemiClient)
+
       const [transactionHash, vaultFee] = await Promise.all([
-        initiateBtcWithdrawal({
+        hemiWalletClient!.initiateWithdrawal({
           amount,
           btcAddress: btcAddress!,
           from: hemiAddress!,
-          hemiClient,
-          hemiWalletClient,
+          vaultIndex,
         }),
         getBitcoinWithdrawalFee({
           amount,
@@ -417,6 +419,7 @@ export const useWithdrawBitcoin = function () {
         blockNumber: Number(withdrawBitcoinReceipt.blockNumber),
         status: BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED,
         uuid: uuid?.toString(),
+        vault: getBitcoinWithdrawalVault(withdrawBitcoinReceipt),
       })
 
       clearWithdrawBitcoinState()

@@ -4,6 +4,8 @@ This file is the single source of truth for the repo's coding conventions.
 
 Read the structure of the repo in the project [README](./README.md).
 
+Read [docs/DOMAIN.md](./docs/DOMAIN.md) before working on anything that touches the domain rather than plain plumbing: tunneling in either direction, tunnel operation statuses and their transitions, wait times, vaults, partner bridges, or how transaction history is synced. It explains what Hemi is and how the tunnel behaves, which is the background needed to tell a correct change from a plausible one.
+
 Consider these defaults whenever writing/updating code; make them take precedence by default, unless stated otherwise. Each section states the files it applies to: apply a section only when the file being added or changed matches its scope, and ignore that section entirely otherwise.
 
 ## General rules

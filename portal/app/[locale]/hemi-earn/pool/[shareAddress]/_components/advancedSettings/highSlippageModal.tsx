@@ -4,7 +4,7 @@ import { Button } from 'components/button'
 import { Checkbox } from 'components/checkbox'
 import { Modal } from 'components/modal'
 import { useTranslations } from 'next-intl'
-import { type ReactNode, useState } from 'react'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
 
 import {
   highSlippageThreshold,
@@ -15,15 +15,33 @@ import { getSlippageLevel } from '../../../../_utils/slippage'
 type Props = {
   onClose: VoidFunction
   onConfirm: VoidFunction
+  // Captured by the caller before the settings panel unmounted, so focus can go
+  // back to whatever held it rather than being dropped on the body.
+  returnFocusTo: HTMLElement | null
   slippage: number
 }
 
 export const HighSlippageModal = function ({
   onClose,
   onConfirm,
+  returnFocusTo,
   slippage,
 }: Props) {
   const [accepted, setAccepted] = useState(false)
+  const checkboxRef = useRef<HTMLInputElement>(null)
+
+  // The panel commits on blur, so this dialog can open while focus still sits on a
+  // form control behind it — where Enter would submit the very operation the dialog
+  // is asking about. Pull focus in, and hand it back once the dialog is gone.
+  useEffect(
+    function moveFocusIntoDialog() {
+      checkboxRef.current?.focus()
+      return function restoreFocus() {
+        returnFocusTo?.focus()
+      }
+    },
+    [returnFocusTo],
+  )
   const t = useTranslations('hemi-earn.pool.settings')
   const tCommon = useTranslations('common')
 
@@ -57,6 +75,7 @@ export const HighSlippageModal = function ({
             checked={accepted}
             id="accept-slippage-risk"
             onChange={setAccepted}
+            ref={checkboxRef}
           />
           <span className="text-sm font-medium text-neutral-950">
             {t('accept-risk')}

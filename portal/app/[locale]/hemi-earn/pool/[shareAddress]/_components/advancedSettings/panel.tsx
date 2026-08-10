@@ -53,6 +53,13 @@ export const SettingsPanel = function ({
 
   const isAuto = draft === ''
   const valueStyle = isAuto ? 'text-neutral-500' : levelStyles[level]
+  // Doubles as the toggle's accessible name, since the text sits outside it.
+  const approvalLabel = t(
+    operation === 'deposit'
+      ? 'approve-extra-deposit'
+      : 'approve-extra-withdrawal',
+    { multiplier },
+  )
 
   return (
     <div className="flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-y-1 rounded-lg bg-white p-1 shadow-xl">
@@ -106,20 +113,16 @@ export const SettingsPanel = function ({
           </span>
         </div>
       )}
-      <div className="flex items-center justify-between gap-x-2 rounded px-3 py-1 transition-colors hover:bg-neutral-50">
+      <div className="flex items-center justify-between gap-x-2 px-3 py-1">
         <span
           className={`text-sm font-medium text-neutral-900 ${
             disabled ? 'opacity-55' : ''
           }`}
         >
-          {t(
-            operation === 'deposit'
-              ? 'approve-extra-deposit'
-              : 'approve-extra-withdrawal',
-            { multiplier },
-          )}
+          {approvalLabel}
         </span>
         <Toggle
+          ariaLabel={approvalLabel}
           checked={approveExtraAmount}
           disabled={disabled}
           id="earn-extra-approval-toggle"

@@ -32,6 +32,15 @@ describe('clampSlippage', function () {
     expect(clampSlippage(150)).toBe(100)
     expect(clampSlippage(Number.POSITIVE_INFINITY)).toBe(100)
   })
+
+  // NaN survives Math.min/Math.max and would reach BigInt(), throwing mid-render.
+  it('falls back to the minimum for NaN', function () {
+    expect(clampSlippage(Number.NaN)).toBe(0.1)
+  })
+
+  it('clamps negative infinity to the minimum', function () {
+    expect(clampSlippage(Number.NEGATIVE_INFINITY)).toBe(0.1)
+  })
 })
 
 describe('percentToBps', function () {

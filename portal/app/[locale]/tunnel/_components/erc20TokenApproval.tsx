@@ -35,6 +35,7 @@ export const Erc20TokenApproval = function ({
         </Tooltip>
       </div>
       <Toggle
+        ariaLabel={t('erc20-extra-approval')}
         checked={checked}
         disabled={disabled}
         id="erc20-approval-toggle"

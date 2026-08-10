@@ -1,7 +1,12 @@
 'use client'
 
-import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
-import { type FocusEvent, useEffect, useState } from 'react'
+import {
+  type FocusEvent,
+  type KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 import { extraApprovalMultiplier } from '../../../../_utils/approval'
 import {
@@ -41,6 +46,7 @@ export const AdvancedSettings = function ({
   )
   // Holds a high value awaiting the risk confirmation; never Auto, which is always safe.
   const [pendingSlippage, setPendingSlippage] = useState<number>()
+  const focusOnDismiss = useRef<HTMLElement | null>(null)
 
   // An empty field reads as Auto, so the button stays lit and the committed
   // value matches what the panel shows.
@@ -48,6 +54,9 @@ export const AdvancedSettings = function ({
   const draftLevel = getSlippageLevel(draftSlippage ?? defaultSlippage)
 
   const closeAndCommit = function () {
+    // Captured before the panel unmounts, so the risk dialog can hand focus back to
+    // whatever held it — by the time the dialog mounts, the input is already gone.
+    focusOnDismiss.current = document.activeElement as HTMLElement | null
     setIsOpen(false)
     if (draftSlippage === slippage) {
       return
@@ -73,25 +82,20 @@ export const AdvancedSettings = function ({
     setDraft(next)
   }
 
-  const ref = useOnClickOutside<HTMLDivElement>(function () {
-    if (isOpen) {
-      closeAndCommit()
-    }
-  })
-
-  // Drop a pending edit once an operation starts: the form resets its settings on
-  // success, so committing a stale draft afterwards would resurrect a cleared value.
+  // The form resets its settings once an operation succeeds, so anything still
+  // pending here would write a cleared value back — drop both, not just the panel.
   useEffect(
-    function closeWhileOperating() {
+    function discardWhileOperating() {
       if (disabled) {
         setIsOpen(false)
+        setPendingSlippage(undefined)
       }
     },
     [disabled],
   )
 
-  // Only covers keyboard exits — pointer ones are useOnClickOutside's job. Requiring
-  // a relatedTarget is what keeps them apart: tabbing away always names the element
+  // Only covers keyboard exits — pointer ones land on the overlay. Requiring a
+  // relatedTarget is what keeps them apart: tabbing away always names the element
   // taking focus, while clicking a non-focusable spot *inside* the panel sends focus
   // to the body and reports none, which must not read as leaving.
   const handleBlur = function (event: FocusEvent<HTMLDivElement>) {
@@ -104,11 +108,19 @@ export const AdvancedSettings = function ({
     }
   }
 
+  // Escape discards rather than commits, which is the one way out the panel
+  // otherwise lacks — every other exit applies the draft.
+  const handleKeyDown = function (event: KeyboardEvent<HTMLDivElement>) {
+    if (isOpen && event.key === 'Escape') {
+      setIsOpen(false)
+    }
+  }
+
   return (
     <div
       className={`relative ${isOpen ? 'z-30' : ''}`}
       onBlur={handleBlur}
-      ref={ref}
+      onKeyDown={handleKeyDown}
     >
       {/* Swallows the dismissing click so it can't also activate what it landed
           on — the submit button sits right below and would sign in the same gesture. */}
@@ -151,6 +163,7 @@ export const AdvancedSettings = function ({
             updateSlippage(pendingSlippage)
             setPendingSlippage(undefined)
           }}
+          returnFocusTo={focusOnDismiss.current}
           slippage={pendingSlippage}
         />
       )}

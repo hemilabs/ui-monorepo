@@ -1,11 +1,20 @@
 type Props = {
+  // The visible setting label lives outside this component, so the input has no
+  // text of its own to be named by.
+  ariaLabel: string
   checked: boolean
   disabled?: boolean
   id: string
   onCheckedChange: (checked: boolean) => void
 }
 
-export const Toggle = ({ checked, disabled, id, onCheckedChange }: Props) => (
+export const Toggle = ({
+  ariaLabel,
+  checked,
+  disabled,
+  id,
+  onCheckedChange,
+}: Props) => (
   <div
     className={`h-5 w-9 shrink-0 rounded-full ${
       checked ? 'bg-orange-600' : 'bg-neutral-100'
@@ -17,6 +26,7 @@ export const Toggle = ({ checked, disabled, id, onCheckedChange }: Props) => (
       htmlFor={id}
     >
       <input
+        aria-label={ariaLabel}
         checked={checked}
         className={`mt-0.5 border-[0.6px] border-solid border-neutral-300/55 ${
           checked ? 'ml-auto mr-0.5' : 'ml-0.5 mr-auto'

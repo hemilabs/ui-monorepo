@@ -8,7 +8,9 @@ import {
 export type SlippageLevel = 'high' | 'normal' | 'veryHigh'
 
 export const clampSlippage = (percent: number) =>
-  Math.min(Math.max(percent, minSlippage), maxSlippage)
+  Number.isNaN(percent)
+    ? minSlippage
+    : Math.min(Math.max(percent, minSlippage), maxSlippage)
 
 export const percentToBps = (percent: number) =>
   BigInt(Math.round(percent * 100))

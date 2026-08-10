@@ -19,15 +19,17 @@ import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
 import { SparkleIcon } from '../../../_icons/sparkleIcon'
 import {
   getTerminalDeliveryTxHash,
+  remoteFailedStepStatus,
+  resolveStepExplorerChainId,
+} from '../../../_utils/settleUi'
+import {
   isLocalEarnTransactionRow,
   isRecoverPath,
   isRemoteFailed,
   isRemoteFailedCancel,
   needsManualClaim,
   needsRecover,
-  remoteFailedStepStatus,
-  resolveStepExplorerChainId,
-} from '../../../_utils'
+} from '../../../_utils/transactionPredicates'
 import {
   type EarnTransaction,
   type EarnTransactionStatusType,

@@ -6,7 +6,7 @@ import { formatFiatNumber } from 'utils/format'
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
 import { ArrowGrowingIcon } from '../../../_icons/arrowGrowingIcon'
 import { TotalDepositsIcon } from '../../../_icons/totalDepositsIcon'
-import { formatApyDisplay } from '../../../_utils'
+import { formatApyDisplay } from '../../../_utils/formatApy'
 import { type EarnPool } from '../../../types'
 
 import { PoolCard } from './poolCard'

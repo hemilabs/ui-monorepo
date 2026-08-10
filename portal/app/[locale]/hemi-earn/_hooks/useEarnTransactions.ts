@@ -3,7 +3,8 @@
 import { useMemo } from 'react'
 import { type Hash } from 'viem'
 
-import { hashesMatch, isEarnRowTerminal } from '../_utils'
+import { hashesMatch } from '../_utils/hashes'
+import { isEarnRowTerminal } from '../_utils/transactionPredicates'
 import {
   DepositStatus,
   WithdrawStatus,

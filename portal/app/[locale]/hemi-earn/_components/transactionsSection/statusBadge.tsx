@@ -5,6 +5,8 @@ import { WarningIcon } from 'components/icons/warningIcon'
 import { useTranslations } from 'next-intl'
 
 import { useRemoteFailedState } from '../../_hooks/useRemoteFailedState'
+import { decodeFailureReason } from '../../_utils/decodeFailureReason'
+import { remoteFailedSettlement } from '../../_utils/settlement'
 import {
   hasFailedSettlement,
   isDeliberateCancel,
@@ -12,9 +14,7 @@ import {
   isUserCancel,
   needsManualClaim,
   needsRecover,
-  remoteFailedSettlement,
-} from '../../_utils'
-import { decodeFailureReason } from '../../_utils/decodeFailureReason'
+} from '../../_utils/transactionPredicates'
 import { type EarnTransaction, type EarnTransactionKindType } from '../../types'
 import { InProgressIcon } from '../icons/inProgressIcon'
 

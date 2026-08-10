@@ -13,7 +13,7 @@ import {
   useRetryRequest,
 } from '../../../_hooks/useRemoteFailedActions'
 import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
-import { remoteFailedSettlement } from '../../../_utils'
+import { remoteFailedSettlement } from '../../../_utils/settlement'
 import { type EarnSettlement, type EarnTransaction } from '../../../types'
 
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'

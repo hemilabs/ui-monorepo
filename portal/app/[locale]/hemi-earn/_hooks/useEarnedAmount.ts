@@ -5,8 +5,8 @@ import Big from 'big.js'
 import { getTokenPrice } from 'utils/token'
 
 import { sharesToPeggedOptions } from '../_fetchers/fetchSharesToPegged'
-import { inTransitOnlyPositions } from '../_utils'
 import { positionEarnedUsd } from '../_utils/earnedAmount'
+import { inTransitOnlyPositions } from '../_utils/earnRows'
 
 import { useEarnCostBasis } from './useEarnCostBasis'
 import { useEarnPools } from './useEarnPools'

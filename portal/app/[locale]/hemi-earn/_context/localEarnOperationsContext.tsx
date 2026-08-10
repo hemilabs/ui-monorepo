@@ -11,7 +11,7 @@ import useLocalStorageState from 'use-local-storage-state'
 import { type Address, type Hash } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { hashesMatch } from '../_utils'
+import { hashesMatch } from '../_utils/hashes'
 import { type EarnSettlement, type LocalEarnOperation } from '../types'
 
 const STORAGE_KEY = 'hemi-earn:local-operations'

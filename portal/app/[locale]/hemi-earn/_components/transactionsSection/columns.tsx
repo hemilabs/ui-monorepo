@@ -13,7 +13,8 @@ import Skeleton from 'react-loading-skeleton'
 import { formatUnits } from 'viem'
 
 import { useEarnPools } from '../../_hooks/useEarnPools'
-import { findPoolByAsset, pickEarnRowAmount } from '../../_utils'
+import { pickEarnRowAmount } from '../../_utils/earnRows'
+import { findPoolByAsset } from '../../_utils/pools'
 import { type EarnTransaction } from '../../types'
 
 import { RowActions } from './rowActions'

@@ -33,15 +33,13 @@ import {
   SettleBanner,
   SettleCta,
 } from '../../../../_components/transactionsSection/transactionDrawer/settleShared'
-import {
-  REDEEM_SLIPPAGE_BPS,
-  applySlippage,
-} from '../../../../_constants/slippage'
+import { applySlippage } from '../../../../_constants/slippage'
 import { useCooldownDuration } from '../../../../_hooks/useCooldownDuration'
 import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
 import { useIsCooldownEligible } from '../../../../_hooks/useIsCooldownEligible'
 import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperations'
 import { useRemoteFailedState } from '../../../../_hooks/useRemoteFailedState'
+import { getApprovalAmount } from '../../../../_utils/approval'
 import { hashesMatch } from '../../../../_utils/hashes'
 import {
   claimRecoverSettlement,
@@ -68,6 +66,7 @@ import { usePoolForm } from '../../_context/poolFormContext'
 import { useEarnCooldownRemaining } from '../../_hooks/useEarnCooldownRemaining'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
 import { useSharesToAssets } from '../../_hooks/useSharesToAssets'
+import { useSlippageBps } from '../../_hooks/useSlippageBps'
 import {
   WithdrawStatus,
   type WithdrawStatusType,
@@ -243,7 +242,9 @@ const toCooldownSeconds = (claimableAt: EarnTransaction['claimableAt']) =>
     : undefined
 
 export const ReviewWithdraw = function ({ onClose }: Props) {
-  const { input, pool, selectedAsset, withdrawOperation } = usePoolForm()
+  const { approveExtraAmount, input, pool, selectedAsset, withdrawOperation } =
+    usePoolForm()
+  const slippageBps = useSlippageBps('withdraw')
   const t = useTranslations('hemi-earn.pool.drawer')
   const chainId = selectedAsset.token.chainId
   const chain = useChain(chainId)
@@ -293,9 +294,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   })
 
   const assetsOutMin =
-    assetOut > BigInt(0)
-      ? applySlippage(assetOut, REDEEM_SLIPPAGE_BPS)
-      : BigInt(0)
+    assetOut > BigInt(0) ? applySlippage(assetOut, slippageBps) : BigInt(0)
 
   const { needsApproval } = useNeedsApproval({
     address: pool.shareAddress,
@@ -306,7 +305,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
 
   const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
     useEstimateApproveErc20Fees({
-      amount: shares,
+      amount: getApprovalAmount(shares, approveExtraAmount),
       enabled: [
         WithdrawStatus.APPROVAL_TX_FAILED,
         WithdrawStatus.APPROVAL_TX_PENDING,

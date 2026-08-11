@@ -1,5 +1,7 @@
 import type { Hash } from 'viem'
 
+export type PoolOperation = 'deposit' | 'withdraw'
+
 // Prefer ordering these by value rather than by key
 /* eslint-disable sort-keys */
 export const DepositStatus = {

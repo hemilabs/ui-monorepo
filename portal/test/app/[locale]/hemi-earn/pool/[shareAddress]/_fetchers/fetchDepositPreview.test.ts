@@ -51,7 +51,7 @@ describe('depositPreviewOptions', function () {
     validInput: true,
   }
 
-  it('composes deposit-shares + quote in parallel and derives slippage', async function () {
+  it('composes deposit-shares + quote in parallel', async function () {
     const queryClient = createQueryClient(BigInt(800))
     const options = depositPreviewOptions({
       ...baseParams,
@@ -60,12 +60,9 @@ describe('depositPreviewOptions', function () {
     const result = (await options.queryFn!({} as never)) as {
       quote: { callbackFee: bigint; nativeFee: bigint; peggedAmount: bigint }
       shares: bigint
-      sharesOutMin: bigint
     }
 
     expect(result.shares).toBe(BigInt(800))
-    // applySlippage with DEPOSIT_SLIPPAGE_BPS=50 (0.5%): 800 * 0.995 = 796
-    expect(result.sharesOutMin).toBe(BigInt(796))
     expect(result.quote.nativeFee).toBe(BigInt(9))
     expect(queryClient.ensureQueryData).toHaveBeenCalledTimes(2)
   })

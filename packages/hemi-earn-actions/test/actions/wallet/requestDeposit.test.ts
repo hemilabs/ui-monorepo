@@ -212,9 +212,52 @@ describe('requestDeposit', function () {
     expect(onApproveSucceeded).toHaveBeenCalledExactlyOnceWith(approvalReceipt)
     expect(onPreDeposit).toHaveBeenCalledOnce()
     expect(onSucceeded).toHaveBeenCalledExactlyOnceWith(depositReceipt)
-    expect(approve).toHaveBeenCalledOnce()
+    expect(approve).toHaveBeenCalledExactlyOnceWith(
+      mockWalletClient,
+      expect.objectContaining({ amount: validParameters.amount }),
+    )
     expect(writeContract).toHaveBeenCalledOnce()
     expect(onSettled).toHaveBeenCalledOnce()
+  })
+
+  it('approves approvalAmount instead of amount when given', async function () {
+    const approvalReceipt = { status: 'success' } as TransactionReceipt
+    const depositReceipt = { status: 'success' } as TransactionReceipt
+    const approvalAmount = validParameters.amount * BigInt(10)
+
+    vi.mocked(balanceOf).mockResolvedValue(validParameters.amount)
+    vi.mocked(quoteDeposit).mockResolvedValue(BigInt(7))
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt)
+      .mockResolvedValueOnce(approvalReceipt)
+      .mockResolvedValueOnce(depositReceipt)
+
+    const { promise } = requestDeposit({ ...validParameters, approvalAmount })
+
+    await promise
+
+    expect(approve).toHaveBeenCalledExactlyOnceWith(
+      mockWalletClient,
+      expect.objectContaining({ amount: approvalAmount }),
+    )
+    // Only the allowance is enlarged - the deposit still moves the requested amount.
+    // Asserted positionally: amount is args[1], so a reordering can't slip through.
+    expect(writeContract).toHaveBeenCalledWith(
+      mockWalletClient,
+      expect.objectContaining({
+        args: [
+          zeroAddress,
+          validParameters.amount,
+          BigInt(0),
+          zeroAddress,
+          zeroAddress,
+          true,
+          BigInt(0),
+        ],
+      }),
+    )
   })
 
   it('emits "approve-transaction-reverted" when approval reverts', async function () {

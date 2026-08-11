@@ -5,12 +5,11 @@ import Skeleton from 'react-loading-skeleton'
 
 import { usePoolForm } from '../_context/poolFormContext'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
+import { type PoolOperation } from '../_types/operations'
 
 import { Deposit } from './deposit'
 import { PoolReview } from './poolReview'
 import { Withdraw } from './withdraw'
-
-type ActiveTab = 'deposit' | 'withdraw'
 
 const SideDrawer = function () {
   const { drawerMode, setDrawerQueryString } = useDrawerQueryString()
@@ -24,16 +23,18 @@ const SideDrawer = function () {
 }
 
 export const PoolForm = function () {
-  const { pool, updateSharesInput } = usePoolForm()
-  const [activeTab, setActiveTab] = useState<ActiveTab>('deposit')
+  const { pool, resetSettings, updateSharesInput } = usePoolForm()
+  const [activeTab, setActiveTab] = useState<PoolOperation>('deposit')
 
   const switchToDeposit = function () {
     updateSharesInput('0')
+    resetSettings()
     setActiveTab('deposit')
   }
 
   const switchToWithdraw = function () {
     updateSharesInput('0')
+    resetSettings()
     setActiveTab('withdraw')
   }
 

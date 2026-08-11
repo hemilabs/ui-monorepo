@@ -6,9 +6,10 @@ import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 
 import {
-  REDEEM_SLIPPAGE_BPS,
+  defaultRedeemSlippage,
   applySlippage,
 } from '../../../_constants/slippage'
+import { percentToBps } from '../../../_utils/slippage'
 import { useQuoteRedeem } from '../../../pool/[shareAddress]/_hooks/useQuoteRedeem'
 import { useSharesToAssets } from '../../../pool/[shareAddress]/_hooks/useSharesToAssets'
 import { useWithdraw } from '../../../pool/[shareAddress]/_hooks/useWithdraw'
@@ -54,7 +55,7 @@ export const RetryFailedWithdraw = function ({
 
   const assetsOutMin =
     assetOut > BigInt(0)
-      ? applySlippage(assetOut, REDEEM_SLIPPAGE_BPS)
+      ? applySlippage(assetOut, percentToBps(defaultRedeemSlippage))
       : BigInt(0)
 
   const { data: quote } = useQuoteRedeem({

@@ -158,6 +158,101 @@ describe('requestRedeem', function () {
     expect(onSettled).toHaveBeenCalledOnce()
   })
 
+  // 100 shares against a 100.05 balance is inside the 0.1% dust window, so
+  // calculateAdjustedShares snaps up and approval must follow it, not the request.
+  const dustSnapBalance = BigInt(10005)
+  const dustSnapShares = BigInt(10000)
+
+  it('approves the adjusted shares, not the requested ones, when the dust snap applies', async function () {
+    const approvalReceipt = { status: 'success' } as TransactionReceipt
+    const withdrawReceipt = { status: 'success' } as TransactionReceipt
+
+    vi.mocked(balanceOf).mockResolvedValue(dustSnapBalance)
+    vi.mocked(quoteRedeem).mockResolvedValue(BigInt(7))
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt)
+      .mockResolvedValueOnce(approvalReceipt)
+      .mockResolvedValueOnce(withdrawReceipt)
+
+    const { promise } = requestRedeem({
+      ...validParameters,
+      shares: dustSnapShares,
+    })
+
+    await promise
+
+    expect(approve).toHaveBeenCalledExactlyOnceWith(
+      mockWalletClient,
+      expect.objectContaining({ amount: dustSnapBalance }),
+    )
+  })
+
+  it('fails loudly when approvalAmount is below the adjusted shares', async function () {
+    vi.mocked(balanceOf).mockResolvedValue(dustSnapBalance)
+    vi.mocked(quoteRedeem).mockResolvedValue(BigInt(7))
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+
+    const { emitter, promise } = requestRedeem({
+      ...validParameters,
+      // Below adjustedShares once the dust snap rounds up: approving this would
+      // revert the redeem, so the caller is told rather than silently corrected.
+      approvalAmount: dustSnapShares,
+      shares: dustSnapShares,
+    })
+
+    const onUnexpectedError = vi.fn()
+    emitter.on('unexpected-error', onUnexpectedError)
+
+    await promise
+
+    expect(onUnexpectedError).toHaveBeenCalledExactlyOnceWith(expect.any(Error))
+    expect(approve).not.toHaveBeenCalled()
+    expect(writeContract).not.toHaveBeenCalled()
+  })
+
+  it('approves approvalAmount instead of the adjusted shares when given', async function () {
+    const approvalReceipt = { status: 'success' } as TransactionReceipt
+    const withdrawReceipt = { status: 'success' } as TransactionReceipt
+    const approvalAmount = validParameters.shares * BigInt(10)
+
+    vi.mocked(balanceOf).mockResolvedValue(validParameters.shares)
+    vi.mocked(quoteRedeem).mockResolvedValue(BigInt(7))
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt)
+      .mockResolvedValueOnce(approvalReceipt)
+      .mockResolvedValueOnce(withdrawReceipt)
+
+    const { promise } = requestRedeem({ ...validParameters, approvalAmount })
+
+    await promise
+
+    expect(approve).toHaveBeenCalledExactlyOnceWith(
+      mockWalletClient,
+      expect.objectContaining({ amount: approvalAmount }),
+    )
+    // Only the allowance is enlarged - the redeem still burns the requested shares.
+    // Asserted positionally: shares is args[1], so a reordering can't slip through.
+    expect(writeContract).toHaveBeenCalledWith(
+      mockWalletClient,
+      expect.objectContaining({
+        args: [
+          zeroAddress,
+          validParameters.shares,
+          BigInt(0),
+          zeroAddress,
+          zeroAddress,
+          true,
+          BigInt(0),
+          false,
+        ],
+      }),
+    )
+  })
+
   it('emits "withdraw-transaction-reverted" when request tx reverts', async function () {
     const receipt = { status: 'reverted' } as TransactionReceipt
 

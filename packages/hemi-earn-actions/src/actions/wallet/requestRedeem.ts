@@ -7,6 +7,7 @@ import { allowance, approve, balanceOf } from 'viem-erc20/actions'
 import { getHemiEarnRouterAddress } from '../../constants.ts'
 import { routerAbi } from '../../routerAbi.ts'
 import type { RequestRedeemEvents } from '../../types.ts'
+import { resolveApprovalAmount } from '../../utils.ts'
 import { quoteRedeem } from '../public/quoteRedeem.ts'
 
 const canRequestRedeem = function ({
@@ -45,6 +46,7 @@ const calculateAdjustedShares = function ({
 
 const runRequestRedeem = ({
   account,
+  approvalAmount,
   asset,
   assetsOutMin = BigInt(0),
   callbackFee,
@@ -57,6 +59,7 @@ const runRequestRedeem = ({
   walletClient,
 }: {
   account: Address
+  approvalAmount?: bigint
   asset: Address
   // Min assets accepted on fulfillment (slippage, enforced remotely); 0n disables it.
   assetsOutMin?: bigint
@@ -129,7 +132,10 @@ const runRequestRedeem = ({
 
         const approvalHash = await approve(walletClient, {
           address: shareToken,
-          amount: adjustedShares,
+          amount: resolveApprovalAmount({
+            approvalAmount,
+            required: adjustedShares,
+          }),
           spender: routerAddress,
         }).catch(function (error) {
           emitter.emit('user-signing-approval-error', error)

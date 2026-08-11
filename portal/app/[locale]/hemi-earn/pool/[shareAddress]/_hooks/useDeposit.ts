@@ -24,6 +24,7 @@ import { type EarnAsset, type EarnPool } from '../../../types'
 import { type DepositOperation, DepositStatus } from '../_types/operations'
 
 type UseDeposit = {
+  approvalAmount?: bigint
   callbackFee: bigint
   input: string
   on?: (emitter: EventEmitter<RequestDepositEvents>) => void
@@ -40,6 +41,7 @@ type UseDeposit = {
 }
 
 export const useDeposit = function ({
+  approvalAmount,
   callbackFee,
   input,
   on,
@@ -110,6 +112,7 @@ export const useDeposit = function ({
       const { emitter, promise } = requestDeposit({
         account: address,
         amount,
+        approvalAmount,
         asset: selectedAsset.address,
         callbackFee,
         operator: address,

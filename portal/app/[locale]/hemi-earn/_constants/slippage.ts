@@ -1,7 +1,17 @@
+// Percent values, matching what the Advanced settings panel shows the user.
 // Redeem is wider than deposit: amountOutMin is frozen across the ~7d cooldown,
 // so yield or fee drift in that window could otherwise revert claimUnstake.
-export const DEPOSIT_SLIPPAGE_BPS = BigInt(50)
-export const REDEEM_SLIPPAGE_BPS = BigInt(100)
+export const defaultDepositSlippage = 0.5
+export const defaultRedeemSlippage = 1
+
+export const highSlippageThreshold = 5
+export const veryHighSlippageThreshold = 10
+
+// Below this, minOut is close enough to the quote that any rate movement before the
+// remote fulfillment reverts the request — for a redeem, across the whole ~7d
+// cooldown. Warned about rather than blocked, same as the upper end.
+export const lowSlippageThreshold = 0.1
+export const maxSlippage = 100
 
 const BPS_DENOMINATOR = BigInt(10000)
 

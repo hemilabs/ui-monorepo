@@ -294,6 +294,25 @@
         "pool-deposits": "Depósitos do fundo",
         "title": "Métricas históricas"
       },
+      "settings": {
+        "accept-risk": "Entendo e aceito o risco",
+        "advanced-settings": "Configurações avançadas",
+        "approve-extra-deposit": "Aprovar {multiplier}x o depósito",
+        "approve-extra-withdrawal": "Aprovar {multiplier}x o saque",
+        "auto": "Auto",
+        "continue-anyway": "Continuar mesmo assim",
+        "high-slippage": "Slippage alto",
+        "high-slippage-value": "Slippage alto {value}%",
+        "low-slippage": "Slippage muito baixo",
+        "low-slippage-value": "Slippage baixo {value}%",
+        "max-slippage": "Slippage máximo",
+        "slippage-value": "Slippage {value}%",
+        "very-high-slippage": "Slippage muito alto",
+        "very-high-slippage-value": "Slippage muito alto {value}%",
+        "warning-description-deposit": "<highlight>Seu slippage está definido acima de {threshold}%.</highlight> Isso aumenta sua exposição ao impacto de preço. Você pode receber bem menos shares do que o cotado.",
+        "warning-description-withdrawal": "<highlight>Seu slippage está definido acima de {threshold}%.</highlight> Isso aumenta sua exposição ao impacto de preço. Você pode receber bem menos tokens do que o cotado.",
+        "warning-title": "Aviso de slippage alto"
+      },
       "total-deposits": "Depósitos totais do fundo",
       "withdraw-successful": "Saque realizado com sucesso"
     },

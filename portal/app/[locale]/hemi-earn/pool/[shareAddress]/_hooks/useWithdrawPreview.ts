@@ -7,6 +7,7 @@ import { type EvmToken } from 'types/token'
 import { type Address } from 'viem'
 import { useEstimateGas } from 'wagmi'
 
+import { applySlippage } from '../../../_constants/slippage'
 import { type QuoteRedeem } from '../_fetchers/fetchQuoteRedeem'
 import { withdrawPreviewOptions } from '../_fetchers/fetchWithdrawPreview'
 import { computeCrossChainFees } from '../_utils/crossChainFees'
@@ -89,18 +90,22 @@ const computeIsFeesError = ({
 // allowance failure is distinguishable from a preview failure, plus gas estimation.
 export const useWithdrawPreview = function ({
   account,
+  approvalAmount,
   asset,
   shareAddress,
   shares,
   shareToken,
+  slippageBps,
   spender,
   validInput,
 }: {
   account: Address | undefined
+  approvalAmount: bigint
   asset: Address
   shareAddress: Address
   shareToken: EvmToken
   shares: bigint
+  slippageBps: bigint
   spender: Address
   validInput: boolean
 }) {
@@ -131,7 +136,8 @@ export const useWithdrawPreview = function ({
 
   const assetOut = composed?.assetOut ?? BigInt(0)
   const peggedAmount = composed?.peggedAmount ?? BigInt(0)
-  const assetsOutMin = composed?.assetsOutMin ?? BigInt(0)
+  // assetOut already defaults to 0n, which applySlippage maps back to 0n.
+  const assetsOutMin = applySlippage(assetOut, slippageBps)
   const quote = composed?.quote
   const layerZeroFee = quote?.nativeFee ?? BigInt(0)
   const { bridgingFee, ethereumFee } = computeCrossChainFees({
@@ -148,7 +154,7 @@ export const useWithdrawPreview = function ({
 
   const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
     useEstimateApproveErc20Fees({
-      amount: shares,
+      amount: approvalAmount,
       enabled: needsApproval,
       spender,
       token: shareToken,

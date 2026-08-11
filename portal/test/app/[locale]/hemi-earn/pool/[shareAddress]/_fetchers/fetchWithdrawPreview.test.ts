@@ -57,7 +57,7 @@ describe('withdrawPreviewOptions', function () {
     validInput: true,
   }
 
-  it('composes sharesToAssets + quote in parallel and derives slippage', async function () {
+  it('composes sharesToAssets + quote in parallel', async function () {
     const queryClient = createQueryClient({
       assetOut: BigInt(900),
       peggedAmount: BigInt(950),
@@ -68,15 +68,12 @@ describe('withdrawPreviewOptions', function () {
     })
     const result = (await options.queryFn!({} as never)) as {
       assetOut: bigint
-      assetsOutMin: bigint
       peggedAmount: bigint
       quote: { callbackFee: bigint; isInstant: boolean; nativeFee: bigint }
     }
 
     expect(result.assetOut).toBe(BigInt(900))
     expect(result.peggedAmount).toBe(BigInt(950))
-    // applySlippage with REDEEM_SLIPPAGE_BPS=100 (1%): 900 * 0.99 = 891
-    expect(result.assetsOutMin).toBe(BigInt(891))
     expect(result.quote.nativeFee).toBe(BigInt(9))
     expect(queryClient.ensureQueryData).toHaveBeenCalledTimes(2)
   })

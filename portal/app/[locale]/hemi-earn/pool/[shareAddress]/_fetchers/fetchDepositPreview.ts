@@ -1,11 +1,6 @@
 import { type QueryClient, queryOptions } from '@tanstack/react-query'
 import { type Address } from 'viem'
 
-import {
-  DEPOSIT_SLIPPAGE_BPS,
-  applySlippage,
-} from '../../../_constants/slippage'
-
 import { depositSharesOptions } from './fetchDepositShares'
 import { quoteDepositOptions } from './fetchQuoteDeposit'
 
@@ -33,7 +28,9 @@ const getDepositPreviewQueryKey = ({
     amount.toString(),
   ] as const
 
-// Composes quote + deposit-shares. Allowance stays in useNeedsApproval so its error surfaces independently.
+// Composes quote + deposit-shares. Allowance stays in useNeedsApproval so its error
+// surfaces independently; sharesOutMin is derived in useDepositPreview so changing
+// slippage doesn't invalidate on-chain reads it has no bearing on.
 export const depositPreviewOptions = ({
   account,
   amount,
@@ -53,11 +50,7 @@ export const depositPreviewOptions = ({
           quoteDepositOptions({ amount, asset, queryClient, shareAddress }),
         ),
       ])
-      return {
-        quote,
-        shares,
-        sharesOutMin: applySlippage(shares, DEPOSIT_SLIPPAGE_BPS),
-      }
+      return { quote, shares }
     },
     queryKey: getDepositPreviewQueryKey({
       account,

@@ -9,7 +9,11 @@ type Props = {
 }
 
 export const ActionButton = ({ isOpen, setIsOpen }: Props) => (
-  <div className="group/icon">
+  <div
+    className={`group/icon ${
+      isOpen ? '[&>button>svg]:opacity-100 [&>button]:before:opacity-100' : ''
+    }`}
+  >
     <ButtonIcon
       onClick={() => setIsOpen?.(!isOpen)}
       size="xSmall"
@@ -17,9 +21,9 @@ export const ActionButton = ({ isOpen, setIsOpen }: Props) => (
       variant="tertiary"
     >
       <MoreItemsIcon
-        className={
-          '[&>path]:transition-colors [&>path]:duration-200 group-hover/icon:[&>path]:fill-neutral-950'
-        }
+        className={`[&>path]:transition-colors [&>path]:duration-200 group-hover/icon:[&>path]:fill-neutral-950 ${
+          isOpen ? '[&>path]:fill-neutral-950' : ''
+        }`}
       />
     </ButtonIcon>
   </div>

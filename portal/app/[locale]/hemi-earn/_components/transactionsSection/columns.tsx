@@ -104,6 +104,7 @@ export const buildColumns = ({
   },
   {
     cell: ({ row }) => <RowActions transaction={row.original} />,
+    header: () => <Header text={t('column.action')} />,
     id: 'actions',
     // Reordered to the front on mobile (hugs the left edge); md+ right-aligns. Wide enough for the CTA labels.
     meta: { className: 'justify-start md:justify-end', width: 180 },

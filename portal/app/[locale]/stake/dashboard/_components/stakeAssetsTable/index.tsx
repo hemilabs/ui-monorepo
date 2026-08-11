@@ -69,7 +69,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     ),
     header: () => <Header text={t('protocol')} />,
     id: 'protocol',
-    meta: { width: 150 },
+    meta: { className: 'justify-start flex-grow-0', width: 150 },
   },
   {
     cell: ({ row }) => (
@@ -80,7 +80,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     ),
     header: () => <Header text={t('asset')} />,
     id: 'asset',
-    meta: { width: 120 },
+    meta: { className: 'justify-start flex-grow-0', width: 120 },
   },
   {
     cell: ({ row }) => (
@@ -91,7 +91,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     ),
     header: () => <Header text={t('dashboard.staked')} />,
     id: 'staked',
-    meta: { width: 100 },
+    meta: { className: 'justify-start flex-grow-0', width: 100 },
   },
   {
     cell: ({ row }) => (
@@ -101,7 +101,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     ),
     header: () => <Header text={t('action')} />,
     id: 'action',
-    meta: { className: 'justify-end', width: 75 },
+    meta: { className: 'justify-start lg:justify-end', width: 75 },
   },
 ]
 

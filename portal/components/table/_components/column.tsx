@@ -17,7 +17,7 @@ export const Column = ({
   ...props
 }: ColumnProps) => (
   <td
-    className={`flex h-full min-h-16 w-full min-w-0 flex-grow items-center border-b border-solid py-2.5 first:[&>*]:pl-4 last:[&>*]:pr-4 ${
+    className={`flex h-full min-h-14 w-full min-w-0 flex-grow items-center border-b border-solid py-2.5 first:pl-4 last:pr-4 ${
       variantClassName[variant]
     } ${className ?? ''}`}
     {...props}

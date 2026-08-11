@@ -49,7 +49,7 @@ const stakingColumns = ({
     ),
     header: () => <Header text={t('table.locked-amount')} />,
     id: 'locked-amount',
-    meta: { width: 170 },
+    meta: { width: 180 },
   },
   {
     cell({ row }) {
@@ -64,7 +64,7 @@ const stakingColumns = ({
     },
     header: () => <Header text={t('table.lockup')} />,
     id: 'lockup',
-    meta: { width: 120 },
+    meta: { width: 80 },
   },
   {
     cell({ row }) {
@@ -77,17 +77,17 @@ const stakingColumns = ({
     },
     header: () => <Header text={t('voting-power')} />,
     id: 'voting-power',
-    meta: { width: 150 },
+    meta: { width: 110 },
   },
   {
     cell: ({ row }) => <RewardsDisplay tokenId={row.original.tokenId} />,
     header: () => <Header text={t('table.rewards')} />,
     id: 'rewards',
-    meta: { width: 170 },
+    meta: { width: 95 },
   },
   {
     cell: ({ row }) => (
-      <div className="flex w-full items-center justify-end gap-x-2">
+      <div className="flex w-full flex-row-reverse items-center justify-end gap-x-2 lg:flex-row lg:justify-end">
         <UnlockCta operation={row.original} />
         <ActionCell
           openRowId={openRowId}
@@ -98,7 +98,7 @@ const stakingColumns = ({
     ),
     header: () => <Header text={t('table.action')} />,
     id: 'action',
-    meta: { className: 'justify-end', width: 210 },
+    meta: { className: 'justify-start lg:justify-end', width: 280 },
   },
 ]
 
@@ -139,7 +139,10 @@ export function StakeTable({ data, filter = 'active', loading }: Props) {
     if (status === 'connecting') {
       return (
         <TableCard>
-          <Skeleton className="h-[calc(100%-3px)] w-full rounded-lg" />
+          <Skeleton
+            className="block h-full w-full rounded-lg"
+            containerClassName="block h-full"
+          />
         </TableCard>
       )
     }
@@ -165,6 +168,7 @@ export function StakeTable({ data, filter = 'active', loading }: Props) {
         columns={cols}
         containerClassName="flex h-full flex-col"
         data={data}
+        fitContainer
         loading={loading}
         priorityColumnIdsOnSmall={['action']}
       />

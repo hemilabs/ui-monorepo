@@ -356,6 +356,7 @@
       "claim-share-tokens": "Recibir share tokens",
       "claiming": "Recibiendo...",
       "column": {
+        "action": "Acción",
         "amount": "Cantidad",
         "date": "Fecha",
         "status": "Estado",
@@ -628,7 +629,6 @@
     "confirming": "Confirmando...",
     "connect-wallet-to-review": "Conecte su billetera para revisar su historial de transacciones.",
     "in-challenge-period": "En período de Desafío",
-    "loading-transactions": "Cargando transacciones",
     "ready-to-claim": "Listo para reclamar",
     "ready-to-confirm": "Listo para confirmar",
     "ready-to-prove": "Listo para probar",
@@ -746,7 +746,7 @@
         "all": "Todos",
         "bitcoin": "Bitcoin",
         "ethereum": "Ethereum",
-        "recent-transactions": "Transacciones Recientes"
+        "reload": "Recargar"
       },
       "tunnel-assets": "Tunelizar activos",
       "withdraw": "Retiro"

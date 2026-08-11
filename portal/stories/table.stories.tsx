@@ -32,7 +32,7 @@ const HemiToken = ({ className }: { className?: string }) => (
 )
 
 const TokenIcon = () => (
-  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-neutral-50 p-2">
+  <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-neutral-50 p-2">
     <HemiToken className="size-5" />
   </div>
 )

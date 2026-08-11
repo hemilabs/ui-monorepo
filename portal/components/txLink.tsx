@@ -1,6 +1,5 @@
 import { BtcTransaction } from 'btc-wallet/unisat'
 import { ExternalLink } from 'components/externalLink'
-import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import { useChain } from 'hooks/useChain'
 import { type RemoteChain } from 'types/chain'
 import { type Hash } from 'viem'
@@ -24,7 +23,7 @@ export const TxLink = function ({
   const hash = `${txHash.slice(0, 6)}...${txHash.slice(-4)}`
   const href = `${chain?.blockExplorers?.default.url}/tx/${txHash}`
   return (
-    <div className="group/txhash-link flex w-full items-center gap-x-2">
+    <div className="flex w-full items-center gap-x-2">
       <ExternalLink
         className={`cursor-pointer hover:text-neutral-950 ${textColors[textColor]}`}
         href={href}
@@ -33,7 +32,6 @@ export const TxLink = function ({
       >
         {hash}
       </ExternalLink>
-      <ArrowDownLeftIcon className="invisible group-hover/txhash-link:visible [&>path]:fill-neutral-950" />
     </div>
   )
 }

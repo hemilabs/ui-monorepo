@@ -1,6 +1,8 @@
-import { ButtonIcon } from 'components/button'
+import { Button } from 'components/button'
+import { Spinner } from 'components/spinner'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
+import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
 
 const ReloadIcon = (props: ComponentProps<'svg'>) => (
@@ -21,8 +23,11 @@ const ReloadIcon = (props: ComponentProps<'svg'>) => (
 )
 
 export const ReloadHistory = function () {
-  const { resyncHistory } = useTunnelHistory()
+  const { resyncHistory, syncStatus } = useTunnelHistory()
+  const t = useTranslations('tunnel-page.transaction-history.top-bar')
   const { track } = useUmami()
+
+  const isSyncing = syncStatus === 'syncing'
 
   const onResync = function () {
     resyncHistory()
@@ -31,14 +36,20 @@ export const ReloadHistory = function () {
 
   return (
     <div className="group">
-      <ButtonIcon
+      <Button
+        disabled={isSyncing}
         onClick={onResync}
         size="xSmall"
         type="button"
         variant="secondary"
       >
-        <ReloadIcon className="[&>path]:fill-neutral-500 [&>path]:transition-colors [&>path]:duration-200 [&>path]:group-hover:fill-neutral-950" />
-      </ButtonIcon>
+        {isSyncing ? (
+          <Spinner size={16} variant="orange" />
+        ) : (
+          <ReloadIcon className="[&>path]:fill-neutral-500 [&>path]:transition-colors [&>path]:duration-200 [&>path]:group-hover:fill-neutral-950" />
+        )}
+        {t('reload')}
+      </Button>
     </div>
   )
 }

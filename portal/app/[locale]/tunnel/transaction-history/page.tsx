@@ -17,7 +17,11 @@ const TransactionHistory = dynamic(
     ),
   {
     loading: () => (
-      <Skeleton className="h-80 w-full rounded-2xl md:h-[500px]" />
+      // Mirrors the table's own height and radius so the first paint matches it
+      <Skeleton
+        className="block h-[56dvh] w-full rounded-lg md:min-h-136"
+        containerClassName="block"
+      />
     ),
     ssr: false,
   },
@@ -38,7 +42,7 @@ const Page = function () {
         subtitle={t('transaction-history.subtitle')}
         title={t('transaction-history.title')}
       />
-      <div className="mt-6 rounded-2.5xl bg-neutral-100 p-1 text-sm font-medium md:mt-8">
+      <div className="mt-6 flex flex-col gap-y-4 text-sm font-medium md:mt-8">
         <TopBar
           filterOption={filterOption}
           onFilterOptionChange={setFilterOption}

@@ -75,9 +75,9 @@ Since the flow spans hours and can be interrupted, a withdrawal may be abandoned
 
 ### Bitcoin → Hemi (deposit)
 
-Bitcoin cannot be locked by a contract, so deposits are sent to a Bitcoin address controlled by a **vault**. Vaults are identified by index; the active one per network is configurable, and past vaults stay configured so older operations remain visible.
+Bitcoin cannot be locked by a contract, so deposits are sent to a Bitcoin address controlled by a **vault**. Vaults are identified by index; the active ones per network are configurable, and past vaults stay configured so older operations remain visible.
 
-Today a single configured vault serves both directions, so a deposit and a withdrawal always go through the same one. [Issue #2008](https://github.com/hemilabs/ui-monorepo/issues/2008) will make deposits and withdrawals configurable to use different vaults — not user-selectable, just resolved per flow — and history syncing will have to split by direction accordingly. Code that assumes one vault covers both directions is only correct until that lands.
+Each direction resolves its vault independently: deposits and withdrawals have their own configurable index, both falling back to the vault that used to serve the two flows when only that one is set. The vault is never user-selectable, just resolved per flow. They may still point at the same vault, so nothing may assume they differ either. Deposit history syncing scans the deposit vault, the withdrawal vault and every past vault, because deposits made back when a single vault served both directions may sit in the withdrawal one.
 
 1. The user sends BTC to the vault's custody address, with the destination Hemi address embedded in the transaction as an `OP_RETURN` output. This requires a Bitcoin wallet (Unisat or OKX) and an EVM wallet for the receiving address.
 2. The transaction is mined on Bitcoin. The hVM sees the deposit by watching Bitcoin's UTXO set.

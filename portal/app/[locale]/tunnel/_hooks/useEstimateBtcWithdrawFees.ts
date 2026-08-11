@@ -4,7 +4,7 @@ import { encodeInitiateWithdrawal } from 'hemi-viem/actions'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient } from 'hooks/useHemiClient'
-import { getVaultChildIndex } from 'utils/hemiClientExtraActions'
+import { getBitcoinWithdrawalVaultIndex } from 'utils/hemiClientExtraActions'
 import { type PublicClient } from 'viem'
 import { useEstimateGas } from 'wagmi'
 
@@ -17,7 +17,7 @@ async function getEncodeInitiateWithdrawal({
   btcAddress: string
   hemiClient: PublicClient
 }) {
-  const vaultIndex = await getVaultChildIndex(hemiClient)
+  const vaultIndex = await getBitcoinWithdrawalVaultIndex(hemiClient)
 
   return encodeInitiateWithdrawal({
     amount,

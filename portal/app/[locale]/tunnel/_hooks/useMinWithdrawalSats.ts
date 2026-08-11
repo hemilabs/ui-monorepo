@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getMinimumWithdrawalSats } from 'hemi-viem/actions'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { EvmToken } from 'types/token'
-import { getVaultChildIndex } from 'utils/hemiClientExtraActions'
+import { getBitcoinWithdrawalVaultIndex } from 'utils/hemiClientExtraActions'
 import { getVaultAddressByIndex } from 'utils/hemiMemoized'
 import { formatUnits } from 'viem'
 
@@ -16,7 +16,7 @@ export const useMinWithdrawalSats = function (hemiBitcoinToken: EvmToken) {
 
   const { data: minWithdrawalSats, ...rest } = useQuery({
     queryFn: () =>
-      getVaultChildIndex(hemiClient)
+      getBitcoinWithdrawalVaultIndex(hemiClient)
         .then(vaultIndex => getVaultAddressByIndex(hemiClient, vaultIndex))
         .then(vaultAddress =>
           getMinimumWithdrawalSats(hemiClient, { vaultAddress }),

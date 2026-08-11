@@ -131,6 +131,7 @@ export const AdvancedSettings = function ({
       <div className="relative z-10">
         <SettingsTrigger
           disabled={disabled}
+          isOpen={isOpen}
           level={getSlippageLevel(slippage ?? defaultSlippage)}
           onClick={isOpen ? closeAndCommit : openPanel}
           ref={triggerRef}

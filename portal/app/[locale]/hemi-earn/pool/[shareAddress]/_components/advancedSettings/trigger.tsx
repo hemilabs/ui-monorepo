@@ -8,6 +8,7 @@ import { type SlippageLevel } from '../../../../_utils/slippage'
 
 type Props = {
   disabled?: boolean
+  isOpen: boolean
   level: SlippageLevel
   onClick: VoidFunction
   ref?: Ref<HTMLButtonElement>
@@ -37,6 +38,7 @@ const badgeStyles: Record<SlippageLevel, string> = {
 
 export const SettingsTrigger = function ({
   disabled,
+  isOpen,
   level,
   onClick,
   ref,
@@ -54,6 +56,8 @@ export const SettingsTrigger = function ({
         </span>
       )}
       <ButtonIcon
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
         aria-label={t('advanced-settings')}
         disabled={disabled}
         onClick={onClick}

@@ -10,8 +10,8 @@ import {
 
 import { extraApprovalMultiplier } from '../../../../_utils/approval'
 import {
-  clampSlippage,
   getSlippageLevel,
+  needsRiskConfirmation,
   sanitizeSlippage,
 } from '../../../../_utils/slippage'
 import { usePoolForm } from '../../_context/poolFormContext'
@@ -46,22 +46,19 @@ export const AdvancedSettings = function ({
   )
   // Holds a high value awaiting the risk confirmation; never Auto, which is always safe.
   const [pendingSlippage, setPendingSlippage] = useState<number>()
-  const focusOnDismiss = useRef<HTMLElement | null>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
 
   // An empty field reads as Auto, so the button stays lit and the committed
   // value matches what the panel shows.
-  const draftSlippage = draft === '' ? undefined : clampSlippage(Number(draft))
+  const draftSlippage = draft === '' ? undefined : Number(draft)
   const draftLevel = getSlippageLevel(draftSlippage ?? defaultSlippage)
 
   const closeAndCommit = function () {
-    // Captured before the panel unmounts, so the risk dialog can hand focus back to
-    // whatever held it — by the time the dialog mounts, the input is already gone.
-    focusOnDismiss.current = document.activeElement as HTMLElement | null
     setIsOpen(false)
     if (draftSlippage === slippage) {
       return
     }
-    if (draftSlippage !== undefined && draftLevel !== 'normal') {
+    if (draftSlippage !== undefined && needsRiskConfirmation(draftLevel)) {
       setPendingSlippage(draftSlippage)
       return
     }
@@ -136,6 +133,7 @@ export const AdvancedSettings = function ({
           disabled={disabled}
           level={getSlippageLevel(slippage ?? defaultSlippage)}
           onClick={isOpen ? closeAndCommit : openPanel}
+          ref={triggerRef}
           slippage={slippage}
         />
       </div>
@@ -144,7 +142,6 @@ export const AdvancedSettings = function ({
           <SettingsPanel
             approveExtraAmount={approveExtraAmount}
             defaultSlippage={defaultSlippage}
-            disabled={disabled}
             draft={draft}
             level={draftLevel}
             multiplier={extraApprovalMultiplier}
@@ -163,7 +160,8 @@ export const AdvancedSettings = function ({
             updateSlippage(pendingSlippage)
             setPendingSlippage(undefined)
           }}
-          returnFocusTo={focusOnDismiss.current}
+          operation={operation}
+          returnFocusTo={triggerRef.current}
           slippage={pendingSlippage}
         />
       )}

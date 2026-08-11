@@ -23,16 +23,16 @@ describe('resolveApprovalAmount', function () {
 
   // The invariant: a smaller allowance than what the transaction pulls makes the
   // request revert on transfer, which is what the redeem dust snap used to cause.
-  it('ignores an approval amount below what the transaction pulls', function () {
-    expect(
+  it('rejects an approval amount below what the transaction pulls', function () {
+    expect(() =>
       resolveApprovalAmount({
         approvalAmount: BigInt(99),
         required: BigInt(100),
       }),
-    ).toBe(BigInt(100))
+    ).toThrow(/below the required/)
   })
 
-  it('ignores an approval amount equal to the required one', function () {
+  it('accepts an approval amount equal to the required one', function () {
     expect(
       resolveApprovalAmount({
         approvalAmount: BigInt(100),
@@ -41,12 +41,12 @@ describe('resolveApprovalAmount', function () {
     ).toBe(BigInt(100))
   })
 
-  it('never returns below the required amount for a zero approval amount', function () {
-    expect(
+  it('rejects a zero approval amount when something is required', function () {
+    expect(() =>
       resolveApprovalAmount({
         approvalAmount: BigInt(0),
         required: BigInt(100),
       }),
-    ).toBe(BigInt(100))
+    ).toThrow(/below the required/)
   })
 })

@@ -59,8 +59,6 @@ const runRequestRedeem = ({
   walletClient,
 }: {
   account: Address
-  // Allowance to request when approving; defaults to the adjusted shares. Larger values
-  // let the user pre-approve future redeems and skip the approval step next time.
   approvalAmount?: bigint
   asset: Address
   // Min assets accepted on fulfillment (slippage, enforced remotely); 0n disables it.

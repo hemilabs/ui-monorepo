@@ -3,43 +3,38 @@ import { describe, expect, it } from 'vitest'
 import {
   clampSlippage,
   getSlippageLevel,
+  needsRiskConfirmation,
   percentToBps,
   sanitizeSlippage,
 } from '../../../../../app/[locale]/hemi-earn/_utils/slippage'
 
 describe('clampSlippage', function () {
-  it('floors zero, which would make minOut equal the quote exactly', function () {
-    expect(clampSlippage(0)).toBe(0.1)
+  it('keeps zero, which is now warned about rather than corrected', function () {
+    expect(clampSlippage(0)).toBe(0)
   })
 
-  it('floors anything below the minimum', function () {
-    expect(clampSlippage(0.05)).toBe(0.1)
-  })
-
-  it('leaves the minimum itself untouched', function () {
-    expect(clampSlippage(0.1)).toBe(0.1)
-  })
-
-  it('leaves values above the minimum untouched', function () {
+  it('leaves any value inside the range untouched', function () {
+    expect(clampSlippage(0.05)).toBe(0.05)
     expect(clampSlippage(0.5)).toBe(0.5)
     expect(clampSlippage(20)).toBe(20)
   })
 
   // applySlippage throws outside the bps range and runs during render, so no value
-  // may escape upwards either.
+  // may escape either end.
   it('caps at the maximum', function () {
     expect(clampSlippage(100)).toBe(100)
     expect(clampSlippage(150)).toBe(100)
     expect(clampSlippage(Number.POSITIVE_INFINITY)).toBe(100)
   })
 
-  // NaN survives Math.min/Math.max and would reach BigInt(), throwing mid-render.
-  it('falls back to the minimum for NaN', function () {
-    expect(clampSlippage(Number.NaN)).toBe(0.1)
+  it('floors negatives at zero', function () {
+    expect(clampSlippage(-1)).toBe(0)
+    expect(clampSlippage(Number.NEGATIVE_INFINITY)).toBe(0)
   })
 
-  it('clamps negative infinity to the minimum', function () {
-    expect(clampSlippage(Number.NEGATIVE_INFINITY)).toBe(0.1)
+  // NaN survives Math.min/Math.max and would reach BigInt(), throwing mid-render.
+  it('falls back to zero for NaN', function () {
+    expect(clampSlippage(Number.NaN)).toBe(0)
   })
 })
 
@@ -50,10 +45,12 @@ describe('percentToBps', function () {
     expect(percentToBps(20)).toBe(BigInt(2000))
   })
 
-  it('converts one-decimal percents exactly', function () {
+  it('converts up to two decimals exactly', function () {
     expect(percentToBps(0.5)).toBe(BigInt(50))
     expect(percentToBps(12.5)).toBe(BigInt(1250))
     expect(percentToBps(0.1)).toBe(BigInt(10))
+    expect(percentToBps(0.25)).toBe(BigInt(25))
+    expect(percentToBps(0.05)).toBe(BigInt(5))
   })
 
   it('stays inside the range applySlippage accepts', function () {
@@ -62,6 +59,15 @@ describe('percentToBps', function () {
 })
 
 describe('getSlippageLevel', function () {
+  it('flags values below the low threshold, where minOut matches the quote', function () {
+    expect(getSlippageLevel(0)).toBe('low')
+    expect(getSlippageLevel(0.05)).toBe('low')
+  })
+
+  it('treats the low threshold itself as normal', function () {
+    expect(getSlippageLevel(0.1)).toBe('normal')
+  })
+
   it('treats values at or below the high threshold as normal', function () {
     expect(getSlippageLevel(0.5)).toBe('normal')
     expect(getSlippageLevel(4.9)).toBe('normal')
@@ -80,6 +86,18 @@ describe('getSlippageLevel', function () {
   })
 })
 
+describe('needsRiskConfirmation', function () {
+  it('gates only the upper end, where the cost is silent', function () {
+    expect(needsRiskConfirmation('high')).toBe(true)
+    expect(needsRiskConfirmation('veryHigh')).toBe(true)
+  })
+
+  it('lets a too-low value through, since it reverts rather than costs', function () {
+    expect(needsRiskConfirmation('low')).toBe(false)
+    expect(needsRiskConfirmation('normal')).toBe(false)
+  })
+})
+
 describe('sanitizeSlippage', function () {
   it('keeps an empty string so the field can be cleared', function () {
     expect(sanitizeSlippage('')).toBe('')
@@ -90,9 +108,11 @@ describe('sanitizeSlippage', function () {
     expect(sanitizeSlippage('100')).toBe('100')
   })
 
-  it('accepts a single decimal digit', function () {
+  it('accepts up to two decimals, which percentToBps maps exactly', function () {
     expect(sanitizeSlippage('0.5')).toBe('0.5')
     expect(sanitizeSlippage('12.5')).toBe('12.5')
+    expect(sanitizeSlippage('0.25')).toBe('0.25')
+    expect(sanitizeSlippage('0.05')).toBe('0.05')
   })
 
   it('allows a trailing dot while typing', function () {
@@ -112,8 +132,8 @@ describe('sanitizeSlippage', function () {
     expect(sanitizeSlippage('0')).toBe('0')
   })
 
-  it('rejects a second decimal digit', function () {
-    expect(sanitizeSlippage('0.25')).toBeNull()
+  it('rejects a third decimal digit', function () {
+    expect(sanitizeSlippage('0.255')).toBeNull()
   })
 
   it('rejects a leading dot', function () {

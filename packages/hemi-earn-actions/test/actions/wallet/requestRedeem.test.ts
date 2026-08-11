@@ -189,47 +189,27 @@ describe('requestRedeem', function () {
     )
   })
 
-  it('keeps the approval above the adjusted shares when approvalAmount is lower', async function () {
-    const approvalReceipt = { status: 'success' } as TransactionReceipt
-    const withdrawReceipt = { status: 'success' } as TransactionReceipt
-
+  it('fails loudly when approvalAmount is below the adjusted shares', async function () {
     vi.mocked(balanceOf).mockResolvedValue(dustSnapBalance)
     vi.mocked(quoteRedeem).mockResolvedValue(BigInt(7))
     vi.mocked(allowance).mockResolvedValue(BigInt(0))
-    vi.mocked(approve).mockResolvedValue(zeroHash)
-    vi.mocked(writeContract).mockResolvedValue(zeroHash)
-    vi.mocked(waitForTransactionReceipt)
-      .mockResolvedValueOnce(approvalReceipt)
-      .mockResolvedValueOnce(withdrawReceipt)
 
-    const { promise } = requestRedeem({
+    const { emitter, promise } = requestRedeem({
       ...validParameters,
-      // Below adjustedShares: approving this would revert the redeem.
+      // Below adjustedShares once the dust snap rounds up: approving this would
+      // revert the redeem, so the caller is told rather than silently corrected.
       approvalAmount: dustSnapShares,
       shares: dustSnapShares,
     })
 
+    const onUnexpectedError = vi.fn()
+    emitter.on('unexpected-error', onUnexpectedError)
+
     await promise
 
-    expect(approve).toHaveBeenCalledExactlyOnceWith(
-      mockWalletClient,
-      expect.objectContaining({ amount: dustSnapBalance }),
-    )
-    expect(writeContract).toHaveBeenCalledWith(
-      mockWalletClient,
-      expect.objectContaining({
-        args: [
-          zeroAddress,
-          dustSnapBalance,
-          BigInt(0),
-          zeroAddress,
-          zeroAddress,
-          true,
-          BigInt(0),
-          false,
-        ],
-      }),
-    )
+    expect(onUnexpectedError).toHaveBeenCalledExactlyOnceWith(expect.any(Error))
+    expect(approve).not.toHaveBeenCalled()
+    expect(writeContract).not.toHaveBeenCalled()
   })
 
   it('approves approvalAmount instead of the adjusted shares when given', async function () {

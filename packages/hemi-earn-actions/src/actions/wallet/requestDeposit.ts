@@ -51,8 +51,6 @@ const runRequestDeposit = ({
 }: {
   account: Address
   amount: bigint
-  // Allowance to request when approving; defaults to amount. Larger values let the
-  // user pre-approve future deposits and skip the approval step next time.
   approvalAmount?: bigint
   asset: Address
   callbackFee: bigint

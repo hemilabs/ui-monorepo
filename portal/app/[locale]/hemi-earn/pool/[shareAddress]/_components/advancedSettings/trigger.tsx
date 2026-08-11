@@ -1,5 +1,7 @@
+import { ButtonIcon } from 'components/button'
 import { WarningIcon } from 'components/icons/warningIcon'
 import { useTranslations } from 'next-intl'
+import { type Ref } from 'react'
 
 import { GearIcon } from '../../../../_icons/gearIcon'
 import { type SlippageLevel } from '../../../../_utils/slippage'
@@ -8,39 +10,36 @@ type Props = {
   disabled?: boolean
   level: SlippageLevel
   onClick: VoidFunction
+  ref?: Ref<HTMLButtonElement>
   slippage: number | undefined
-}
-
-const buttonStyles: Record<SlippageLevel, string> = {
-  high: 'text-amber-500 hover:bg-amber-50',
-  normal: 'text-neutral-500 hover:bg-neutral-100 hover:text-neutral-950',
-  veryHigh: 'text-rose-500 hover:bg-rose-50',
 }
 
 const labelStyles: Record<SlippageLevel, string> = {
   high: 'text-amber-500',
+  low: 'text-amber-500',
   normal: 'text-neutral-500',
   veryHigh: 'text-rose-500',
 }
 
-// Full sentences rather than a composed prefix — word order varies per locale.
-// `as const` keeps the literals so they still resolve against the typed messages.
 const labelKeys = {
   high: 'high-slippage-value',
+  low: 'low-slippage-value',
   normal: 'slippage-value',
   veryHigh: 'very-high-slippage-value',
 } as const satisfies Record<SlippageLevel, string>
 
 const badgeStyles: Record<SlippageLevel, string> = {
-  high: 'bg-amber-50',
+  high: 'bg-amber-50 text-amber-500',
+  low: 'bg-amber-50 text-amber-500',
   normal: '',
-  veryHigh: 'bg-rose-50',
+  veryHigh: 'bg-rose-50 text-rose-500',
 }
 
 export const SettingsTrigger = function ({
   disabled,
   level,
   onClick,
+  ref,
   slippage,
 }: Props) {
   const t = useTranslations('hemi-earn.pool.settings')
@@ -54,24 +53,24 @@ export const SettingsTrigger = function ({
           {t(labelKeys[level], { value: slippage })}
         </span>
       )}
-      <button
+      <ButtonIcon
         aria-label={t('advanced-settings')}
-        className={`flex size-6 items-center justify-center rounded-md transition-colors duration-200 hover:shadow-bs focus-visible:bg-neutral-100 focus-visible:outline-none disabled:opacity-55 disabled:hover:bg-transparent disabled:hover:shadow-none ${buttonStyles[level]}`}
         disabled={disabled}
         onClick={onClick}
+        ref={ref}
+        size="xxSmall"
         type="button"
+        variant="tertiary"
       >
-        <span className="relative flex">
-          <GearIcon />
-          {level !== 'normal' && (
-            <span
-              className={`absolute -bottom-0.5 -right-0.5 flex size-2 items-center justify-center rounded-full ${badgeStyles[level]}`}
-            >
-              <WarningIcon className="size-1.5" />
-            </span>
-          )}
-        </span>
-      </button>
+        <GearIcon className="text-neutral-500" />
+        {level !== 'normal' && (
+          <span
+            className={`absolute bottom-0.5 right-0.5 flex size-2 items-center justify-center rounded-full ${badgeStyles[level]}`}
+          >
+            <WarningIcon className="size-1.5" />
+          </span>
+        )}
+      </ButtonIcon>
     </div>
   )
 }

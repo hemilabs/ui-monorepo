@@ -4,7 +4,6 @@ import {
   defaultDepositSlippage,
   defaultRedeemSlippage,
   maxSlippage,
-  minSlippage,
   applySlippage,
 } from '../../../../../app/[locale]/hemi-earn/_constants/slippage'
 import { percentToBps } from '../../../../../app/[locale]/hemi-earn/_utils/slippage'
@@ -72,9 +71,7 @@ describe('applySlippage', function () {
       applySlippage(BigInt(1000), percentToBps(maxSlippage)),
     ).not.toThrow()
     expect(percentToBps(maxSlippage)).toBe(BigInt(10000))
-    expect(() =>
-      applySlippage(BigInt(1000), percentToBps(minSlippage)),
-    ).not.toThrow()
+    expect(() => applySlippage(BigInt(1000), percentToBps(0))).not.toThrow()
   })
 
   it('handles large bigint values without overflow', function () {

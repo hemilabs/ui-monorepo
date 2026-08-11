@@ -11,10 +11,12 @@ import {
   veryHighSlippageThreshold,
 } from '../../../../_constants/slippage'
 import { getSlippageLevel } from '../../../../_utils/slippage'
+import { type PoolOperation } from '../../_types/operations'
 
 type Props = {
   onClose: VoidFunction
   onConfirm: VoidFunction
+  operation: PoolOperation
   // Captured by the caller before the settings panel unmounted, so focus can go
   // back to whatever held it rather than being dropped on the body.
   returnFocusTo: HTMLElement | null
@@ -24,6 +26,7 @@ type Props = {
 export const HighSlippageModal = function ({
   onClose,
   onConfirm,
+  operation,
   returnFocusTo,
   slippage,
 }: Props) {
@@ -53,18 +56,23 @@ export const HighSlippageModal = function ({
         <div className="flex flex-col gap-y-3 p-6">
           <h3 className="text-neutral-950">{t('warning-title')}</h3>
           <p className="text-sm text-neutral-500">
-            {t.rich('warning-description', {
-              highlight: (chunks: ReactNode) => (
-                <span
-                  className={isVeryHigh ? 'text-rose-500' : 'text-amber-500'}
-                >
-                  {chunks}
-                </span>
-              ),
-              threshold: isVeryHigh
-                ? veryHighSlippageThreshold
-                : highSlippageThreshold,
-            })}
+            {t.rich(
+              operation === 'deposit'
+                ? 'warning-description-deposit'
+                : 'warning-description-withdrawal',
+              {
+                highlight: (chunks: ReactNode) => (
+                  <span
+                    className={isVeryHigh ? 'text-rose-500' : 'text-amber-500'}
+                  >
+                    {chunks}
+                  </span>
+                ),
+                threshold: isVeryHigh
+                  ? veryHighSlippageThreshold
+                  : highSlippageThreshold,
+              },
+            )}
           </p>
         </div>
         <label
@@ -77,7 +85,7 @@ export const HighSlippageModal = function ({
             onChange={setAccepted}
             ref={checkboxRef}
           />
-          <span className="text-sm font-medium text-neutral-950">
+          <span className="body-text-medium text-neutral-950">
             {t('accept-risk')}
           </span>
         </label>

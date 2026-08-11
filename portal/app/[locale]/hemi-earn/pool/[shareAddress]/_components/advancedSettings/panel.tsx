@@ -9,7 +9,6 @@ import { type PoolOperation } from '../../_types/operations'
 type Props = {
   approveExtraAmount: boolean
   defaultSlippage: number
-  disabled: boolean
   draft: string
   level: SlippageLevel
   multiplier: number
@@ -22,16 +21,23 @@ type Props = {
 
 const levelStyles: Record<SlippageLevel, string> = {
   high: 'text-amber-500',
+  low: 'text-amber-500',
   normal: 'text-neutral-900',
   veryHigh: 'text-rose-500',
 }
+
+const warningKeys = {
+  high: 'high-slippage',
+  low: 'low-slippage',
+  normal: '',
+  veryHigh: 'very-high-slippage',
+} as const satisfies Record<SlippageLevel, string>
 
 const slippageInputId = 'earn-max-slippage'
 
 export const SettingsPanel = function ({
   approveExtraAmount,
   defaultSlippage,
-  disabled,
   draft,
   level,
   multiplier,
@@ -63,12 +69,12 @@ export const SettingsPanel = function ({
 
   return (
     <div className="flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-y-1 rounded-lg bg-white p-1 shadow-xl">
-      <div className="px-3 py-1.5 text-sm font-medium text-neutral-500">
+      <div className="body-text-medium px-3 py-1.5 text-neutral-500">
         {t('advanced-settings')}
       </div>
       <div className="flex items-center justify-between gap-x-2 px-3 py-1">
         <label
-          className="text-sm font-medium text-neutral-900"
+          className="body-text-medium text-neutral-900"
           htmlFor={slippageInputId}
         >
           {t('max-slippage')}
@@ -79,8 +85,7 @@ export const SettingsPanel = function ({
               isAuto
                 ? 'text-orange-600'
                 : 'text-neutral-500 hover:text-neutral-950'
-            } disabled:opacity-55`}
-            disabled={disabled}
+            }`}
             onClick={onAutoClick}
             type="button"
           >
@@ -89,7 +94,6 @@ export const SettingsPanel = function ({
           <div className="flex min-w-0 items-center">
             <input
               className={`w-8 bg-transparent text-right outline-none placeholder:text-neutral-500 ${valueStyle}`}
-              disabled={disabled}
               id={slippageInputId}
               inputMode="decimal"
               onChange={e => onDraftChange(e.target.value)}
@@ -108,23 +112,16 @@ export const SettingsPanel = function ({
           className={`flex items-center gap-x-1 px-3 py-1 ${levelStyles[level]}`}
         >
           <WarningIcon />
-          <span className="text-sm font-medium">
-            {t(level === 'veryHigh' ? 'very-high-slippage' : 'high-slippage')}
-          </span>
+          <span className="body-text-medium">{t(warningKeys[level])}</span>
         </div>
       )}
       <div className="flex items-center justify-between gap-x-2 px-3 py-1">
-        <span
-          className={`text-sm font-medium text-neutral-900 ${
-            disabled ? 'opacity-55' : ''
-          }`}
-        >
+        <span className="body-text-medium text-neutral-900">
           {approvalLabel}
         </span>
         <Toggle
           ariaLabel={approvalLabel}
           checked={approveExtraAmount}
-          disabled={disabled}
           id="earn-extra-approval-toggle"
           onCheckedChange={onApproveExtraAmountChange}
         />

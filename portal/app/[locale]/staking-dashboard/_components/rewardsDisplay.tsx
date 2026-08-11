@@ -39,14 +39,18 @@ function RewardAmount({
 
 export function RewardsDisplay({ tokenId }: Props) {
   const t = useTranslations('staking-dashboard.table')
-  const { hasError, tokens: rewardTokens } = useRewardTokens()
+  const { hasError, isPending, tokens: rewardTokens } = useRewardTokens()
 
   if (hasError) {
     return <span className="text-sm text-neutral-950">-</span>
   }
 
-  if (rewardTokens.length === 0) {
+  if (isPending) {
     return <Skeleton className="h-10 w-20" />
+  }
+
+  if (rewardTokens.length === 0) {
+    return <span className="text-sm text-neutral-950">-</span>
   }
 
   return (

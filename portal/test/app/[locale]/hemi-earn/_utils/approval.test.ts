@@ -23,12 +23,16 @@ describe('getExtraApprovalAmount', function () {
     expect(extraApprovalMultiplier).toBe(10)
   })
 
-  it('returns zero for a zero amount rather than undefined', function () {
-    expect(getExtraApprovalAmount(BigInt(0), true)).toBe(BigInt(0))
+  it('returns undefined for a zero amount', function () {
+    expect(getExtraApprovalAmount(BigInt(0), true)).toBeUndefined()
   })
 })
 
 describe('getApprovalAmount', function () {
+  it('falls back to the amount when there is no extra allowance to request', function () {
+    expect(getApprovalAmount(BigInt(0), true)).toBe(BigInt(0))
+  })
+
   it('falls back to the operation amount when the setting is off', function () {
     expect(getApprovalAmount(BigInt(100), false)).toBe(BigInt(100))
   })

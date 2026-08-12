@@ -118,9 +118,15 @@ const FilterHeader = function ({
         })
       }
       place()
+      // The menu is portaled and fixed, so it can't follow the header on its
+      // own: close it rather than leave it at stale coordinates.
       const close = () => setIsOpen(false)
       window.addEventListener('scroll', close, true)
-      return () => window.removeEventListener('scroll', close, true)
+      window.addEventListener('resize', close)
+      return function () {
+        window.removeEventListener('scroll', close, true)
+        window.removeEventListener('resize', close)
+      }
     },
     [align, isOpen],
   )

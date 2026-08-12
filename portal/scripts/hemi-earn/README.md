@@ -179,7 +179,7 @@ The production keeper can resolve a REMOTE_FAILED request (or a mid-cooldown red
 Two actions, one dispatch:
 
 - `--action cancel` — pre-flight probes `failedRequests` then `unstakeRequests` (matches the production `Agent.cancel` order) and picks the branch automatically. Errors out with a diagnostic if the request is in neither map.
-- `--action retry` — pre-flight requires the request to be in `failedRequests`; post-flight re-reads and reports whether the entry cleared (success) or is still populated (underlying failure still active — clear it via `fail-gateway --mode off` first).
+- `--action retry` — pre-flight requires the request to be in `failedRequests`; post-flight re-reads and reports whether the entry cleared (success) or is still populated (underlying failure still active — clear it via `fail-gateway --kind <deposit|redeem> --mode off` first).
 
 Signer is the default anvil `#0`, which the sandbox `setup` registers as a keeper on the `ToggleableAgent`. `--agent` is required — copy it from the address banner `setup` prints.
 

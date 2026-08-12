@@ -205,7 +205,7 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
       },
     ]
 
-    it('groups by strategy and includes the reserve buffer in protocol mode', function () {
+    it('groups by strategy and appends the reserve buffer in protocol mode', function () {
       const items = toCompositionItems({
         data,
         reserveBufferLabel,
@@ -226,16 +226,16 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
           share: 25,
         },
         {
-          amount: 40,
-          isReserveBuffer: true,
-          name: reserveBufferLabel,
-          share: 20,
-        },
-        {
           amount: 30,
           isReserveBuffer: false,
           name: 'Strategy A1',
           share: 15,
+        },
+        {
+          amount: 40,
+          isReserveBuffer: true,
+          name: reserveBufferLabel,
+          share: 20,
         },
       ])
     })
@@ -301,7 +301,8 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
       ).toEqual(['Strategy USDC', 'Strategy USDT', 'Strategy frxUSD'])
     })
 
-    it('ranks the reserve buffer by size, like any other item', function () {
+    // Idle funds aren't a position, so the grouping stays put no matter the size.
+    it('keeps the reserve buffer last even when it outweighs every strategy', function () {
       const items = toCompositionItems({
         data: [
           {
@@ -317,16 +318,16 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
 
       expect(items).toEqual([
         {
-          amount: 75,
-          isReserveBuffer: true,
-          name: reserveBufferLabel,
-          share: 75,
-        },
-        {
           amount: 25,
           isReserveBuffer: false,
           name: 'Strategy',
           share: 25,
+        },
+        {
+          amount: 75,
+          isReserveBuffer: true,
+          name: reserveBufferLabel,
+          share: 75,
         },
       ])
     })

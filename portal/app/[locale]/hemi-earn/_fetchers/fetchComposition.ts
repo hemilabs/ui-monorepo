@@ -68,7 +68,7 @@ const toCompositionData = function (
   return data
 }
 
-// 'protocol' groups by strategy and adds idle funds (withdrawable − totalDebt)
+// 'protocol' groups by strategy and appends idle funds (withdrawable − totalDebt)
 // as a reserve buffer; 'token' groups by token (idle already included).
 export const toCompositionItems = function ({
   data,
@@ -87,6 +87,10 @@ export const toCompositionItems = function ({
         }))
       : data.flatMap(token => token.strategies)
 
+  const visible = items
+    .filter(item => item.amount > 0)
+    .sort((a, b) => b.amount - a.amount)
+
   if (viewMode === 'protocol') {
     const reserveBuffer = Math.max(
       0,
@@ -95,8 +99,9 @@ export const toCompositionItems = function ({
         0,
       ),
     )
+
     if (reserveBuffer > 0) {
-      items.push({
+      visible.push({
         amount: reserveBuffer,
         isReserveBuffer: true,
         name: reserveBufferLabel,
@@ -104,9 +109,6 @@ export const toCompositionItems = function ({
     }
   }
 
-  const visible = items
-    .filter(item => item.amount > 0)
-    .sort((a, b) => b.amount - a.amount)
   const total = visible.reduce((sum, item) => sum + item.amount, 0)
   return visible.map(item => ({
     amount: item.amount,

@@ -114,7 +114,7 @@ export const TransactionHistory = function ({
       return (
         <TableCard>
           <Skeleton
-            className="block h-full w-full rounded-lg"
+            className="block size-full rounded-lg"
             containerClassName="block h-full"
           />
         </TableCard>

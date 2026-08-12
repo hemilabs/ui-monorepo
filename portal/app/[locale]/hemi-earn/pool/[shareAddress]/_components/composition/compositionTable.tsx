@@ -9,6 +9,8 @@ import {
   useGetCompositionColumns,
 } from './compositionColumns'
 
+// Not the shared `Column`: this table's rows are shorter than the 56px it
+// enforces with `min-h-14`, so it defines the cell chrome on its own.
 const CompositionCell = ({ className, ...props }: ComponentProps<'td'>) => (
   <td
     className={`flex size-full flex-grow cursor-pointer items-center border-b border-solid border-neutral-100 py-3 first:pl-4 last:pr-4 group-hover/row:bg-neutral-50 ${

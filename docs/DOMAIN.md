@@ -107,6 +107,50 @@ The native tunnel is not the only route in and out of Hemi. For EVM ↔ EVM tran
 - The Portal only links out to partners. It does not execute or track those transfers, and the UI states they are used at the user's own risk.
 - Some tokens cannot be tunneled natively and are whitelisted to specific partners instead: USDC and USDT on both Ethereum and Hemi, cbBTC on Ethereum only. For those, the partner list replaces the native form instead of sitting next to it.
 
+## Staking
+
+The "Stake" entry of the nav covers two unrelated products, sharing a word and nothing else — different contracts, different tokens, different purpose. Only the first is described here; **boost staking**, where allowlisted tokens are parked in a staking contract, is not documented yet.
+
+### Governance staking (veHEMI)
+
+Governance staking lives on `/staking-dashboard`. The user locks HEMI in the [`VeHemi`](https://github.com/hemilabs/veHEMI/blob/main/src/VeHemi.sol) contract on Hemi and receives an ERC-721 (symbol `veHemi`) representing that lock. The design is a voting-escrow one, in the veCRV tradition: the longer the lock, the more weight it carries. It is a mainnet feature; testnet is gated behind `NEXT_PUBLIC_ENABLE_STAKE_GOVERNANCE_TESTNET` and uses a testnet token.
+
+Lock parameters, all enforced by the contract:
+
+| Parameter                                                                                                                | Value                                 | Notes                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [`MIN_LOCK_AMOUNT`](https://github.com/hemilabs/veHEMI/blob/c6a65c74154377e8720f584b364bdc109fbdedc5/src/VeHemi.sol#L92) | 10 HEMI                               | Below it, [`createLock` reverts with `AmountTooSmall`](https://github.com/hemilabs/veHEMI/blob/c6a65c74154377e8720f584b364bdc109fbdedc5/src/VeHemi.sol#L964) |
+| [`SIX_DAYS`](https://github.com/hemilabs/veHEMI/blob/c6a65c74154377e8720f584b364bdc109fbdedc5/src/VeHemi.sol#L89)        | 525,960 s, approximately 6 days       | `YEAR / 60`, with `YEAR = 365.25 days`; the epoch every timestamp is rounded to                                                                              |
+| [Minimum lock](https://github.com/hemilabs/veHEMI/blob/c6a65c74154377e8720f584b364bdc109fbdedc5/src/VeHemi.sol#L960)     | `2 * SIX_DAYS`, approximately 12 days | The UI announces 12 days and clamps the value it sends up to the exact constant                                                                              |
+| [`MAX_TIME`](https://github.com/hemilabs/veHEMI/blob/c6a65c74154377e8720f584b364bdc109fbdedc5/src/VeHemi.sol#L90)        | `4 * YEAR`, i.e. 1461 days            | `createLock` and `increaseUnlockTime` reject anything longer                                                                                                 |
+
+The links point at a pinned commit, so the lines stay meaningful; `main` is the authority on the current source, and the chain on the deployed values.
+
+Lock durations are given as a duration from now, and the resulting unlock time is rounded **down** to the epoch grid, so the actual unlock date is at most one epoch earlier than requested. The epoch is a "six days" that is not exactly six days, and the UI's 6 calendar-day slider steps approximate the grid rather than matching it — so treat every duration the UI shows as approximate and let the contract decide the real unlock date.
+
+The 10 HEMI minimum is only enforced on-chain: the staking form does not validate it, so a smaller amount can be submitted and reverts with `AmountTooSmall`. Tracked in [vetro-monorepo#646](https://github.com/vetro-protocol/vetro-monorepo/issues/646).
+
+Weight — used both for voting and for reward distribution — is `amount * (lock end - now) / MAX_TIME`. It therefore grows linearly with the remaining lock time and decays linearly to zero at the unlock date: 100 HEMI locked for the maximum four years starts at roughly 100 veHEMI, the same amount locked for one year at roughly 25. "Roughly" because the unlock date is rounded down to the epoch grid and the per-second slope is truncated, so the figure sits slightly below the round number.
+
+A position can only grow:
+
+- **Increase the amount**: more HEMI is added to the same NFT. There is no owner check on-chain, so anyone can top up anyone's position.
+- **Extend the lock**: only the owner, and the new end — again a duration from now, rounded down — must be strictly later than the current one and still within four years from now.
+
+Nothing shrinks a position: there is no partial withdrawal and no way to shorten a lock. The principal comes back through `withdraw`, which is only callable once the lock has expired and which burns the NFT. A user may hold as many positions as they want; each is independent.
+
+Owning a position may also accrue **rewards** distributed by the protocol through the veHEMI rewards contract, in one or more reward tokens. Rewards are allocated per position by the same decaying weight — the Portal's APR estimate reads it back with `balanceOfNFT`. Claiming is per position and takes everything at once, across every reward token, and is paid out to the position's owner: the row's menu offers the action only while that position has something to claim, and claiming leaves the lock untouched, so the position keeps running afterwards. The APR shown next to it is an estimate: the Portal projects the position's weight over the next 61 six-day epochs and dots it against the rewards-per-veHEMI series served by `portal-backend/api` under `/ve-hemi-rewards/{chainId}`.
+
+Positions are ERC-721s. The Portal only ever creates them through `createLock`, which mints transferable, non-forfeitable positions, and it exposes no transfer action of its own — so transfers happen outside of it. It does show their consequences: the positions query matches the connected address as current owner _or_ as a past owner, and rows are tagged as received, transferred away or delegated away.
+
+The Portal does not support voting or delegating: the contracts carry both, but the interface for them is expected to live on external sites. What the Portal shows is the resulting weight, and the two cards on top of the dashboard are not the same quantity: "Your positions" sums the weight of the connected account's own positions that are still delegated to itself, so it drops to zero for a position delegated away, while "Total voting power" is `getVotes` for the account and therefore counts every position delegated **to** it, including other people's.
+
+The dashboard lists positions under two tabs, **Active** and **Burned**. Burned is the subgraph's `withdrawn` status, written when the contract emits `Withdraw` — which covers the ordinary unlock at expiry as well as a forfeit, the admin claw-back path the Portal does not expose.
+
+Statuses follow the same shape as the tunnel ones but per operation: `StakingDashboardStatus` covers the approval and the lock transaction (`APPROVAL_TX_PENDING` → `APPROVAL_TX_COMPLETED` → `STAKE_TX_PENDING` → `STAKE_TX_CONFIRMED`, with `*_FAILED` branches) and is reused for the increase-amount and extend flows, while `UnlockingDashboardStatus` and `CollectAllRewardsDashboardStatus` cover unlocking and claiming.
+
+The list of positions comes from the veHEMI subgraph through `portal-backend/api` (`/subgraphs/{chainId}/locks/{address}`); everything that decays — voting power, claimable rewards, time remaining — is read live from the chain.
+
 ## Subgraphs
 
 The Portal needs a user's full operation history across the three chains of the active network type — Hemi, the EVM L1 and Bitcoin — and rebuilding it by scanning blocks over RPC is slow and rate-limited. Subgraphs (The Graph) index the relevant events so history can be queried in bulk.
@@ -121,6 +165,7 @@ History itself is assembled in web workers so the UI stays responsive. The worke
 
 - [Hemi docs](https://docs.hemi.xyz), in particular [Tunnels](https://docs.hemi.xyz/foundational-topics/the-architecture/tunneling), [Ethereum Tunnel](https://docs.hemi.xyz/foundational-topics/the-architecture/tunneling/ethereum-tunnel), [Bitcoin Tunnel](https://docs.hemi.xyz/foundational-topics/the-architecture/tunneling/bitcoin-tunnel) and [Network details](https://docs.hemi.xyz/discover/network-details)
 - [Whitepaper](https://static.hemi.xyz/whitepaper.pdf), for the detail on hVM, hBK and Proof-of-Proof
+- [hemilabs/veHEMI](https://github.com/hemilabs/veHEMI), the governance staking contracts: [`VeHemi.sol`](https://github.com/hemilabs/veHEMI/blob/main/src/VeHemi.sol) for the locks themselves, plus the delegation contract and the Aragon adapter its README describes
 - [hemilabs/bitcoin-tunnel-contracts](https://github.com/hemilabs/bitcoin-tunnel-contracts), the Bitcoin tunnel contracts: [`BitcoinTunnelManager.sol`](https://github.com/hemilabs/bitcoin-tunnel-contracts/blob/main/contracts/BitcoinTunnelManager.sol) and the [`SimpleBitcoinVault`](https://github.com/hemilabs/bitcoin-tunnel-contracts/tree/main/contracts/vaults/SimpleBitcoinVault) family, which hold the deposit, withdrawal and challenge logic described above. Its `main` branch is not necessarily what is deployed, so treat it as a reference for mechanics and the chain as the authority on values
 
 The timings and limits quoted here — wait times, confirmations, minimums, fees — are indicative. They come from deployed contracts and from a roadmap that is still moving, so code should read them from the chain, and this document should be re-checked against the docs before any of them is relied upon.

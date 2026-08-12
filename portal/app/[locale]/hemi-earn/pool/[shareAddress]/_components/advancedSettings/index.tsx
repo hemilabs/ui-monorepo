@@ -15,7 +15,7 @@ import {
   sanitizeSlippage,
 } from '../../../../_utils/slippage'
 import { usePoolForm } from '../../_context/poolFormContext'
-import { getDefaultSlippage } from '../../_hooks/useSlippageBps'
+import { getDefaultSlippage } from '../../_hooks/useSlippage'
 import { type PoolOperation } from '../../_types/operations'
 
 import { HighSlippageModal } from './highSlippageModal'

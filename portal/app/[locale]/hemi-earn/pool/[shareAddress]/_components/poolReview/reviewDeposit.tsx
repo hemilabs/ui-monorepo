@@ -54,7 +54,7 @@ import { type EarnTransaction } from '../../../../types'
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
-import { useSlippageBps } from '../../_hooks/useSlippageBps'
+import { useSlippageBps } from '../../_hooks/useSlippage'
 import { DepositStatus, type DepositStatusType } from '../../_types/operations'
 
 import { RetryDeposit } from './retryDeposit'

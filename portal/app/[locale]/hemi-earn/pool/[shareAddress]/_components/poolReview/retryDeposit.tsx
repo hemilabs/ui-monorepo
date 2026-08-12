@@ -12,7 +12,7 @@ import { useDeposit } from '../../_hooks/useDeposit'
 import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useDrawerQueryString } from '../../_hooks/useDrawerQueryString'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
-import { useSlippage } from '../../_hooks/useSlippageBps'
+import { useSlippage } from '../../_hooks/useSlippage'
 import { type DepositOperationRunning } from '../../_types/operations'
 
 export const RetryDeposit = function () {

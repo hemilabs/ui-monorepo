@@ -66,7 +66,7 @@ import { usePoolForm } from '../../_context/poolFormContext'
 import { useEarnCooldownRemaining } from '../../_hooks/useEarnCooldownRemaining'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
 import { useSharesToAssets } from '../../_hooks/useSharesToAssets'
-import { useSlippageBps } from '../../_hooks/useSlippageBps'
+import { useSlippageBps } from '../../_hooks/useSlippage'
 import {
   WithdrawStatus,
   type WithdrawStatusType,

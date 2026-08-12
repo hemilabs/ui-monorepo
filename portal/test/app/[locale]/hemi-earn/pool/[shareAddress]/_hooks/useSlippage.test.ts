@@ -4,7 +4,7 @@ import {
   defaultDepositSlippage,
   defaultRedeemSlippage,
 } from '../../../../../../../app/[locale]/hemi-earn/_constants/slippage'
-import { getDefaultSlippage } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_hooks/useSlippageBps'
+import { getDefaultSlippage } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_hooks/useSlippage'
 
 describe('getDefaultSlippage', function () {
   it('resolves the deposit default', function () {

@@ -21,7 +21,7 @@ import { usePoolForm } from '../_context/poolFormContext'
 import { useDeposit } from '../_hooks/useDeposit'
 import { useDepositPreview } from '../_hooks/useDepositPreview'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
-import { useSlippage } from '../_hooks/useSlippageBps'
+import { useSlippage } from '../_hooks/useSlippage'
 import { type DepositOperationRunning } from '../_types/operations'
 import {
   computeIsLoading,

@@ -10,7 +10,7 @@ import { percentToBps } from '../../../../_utils/slippage'
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
 import { useSharesToAssets } from '../../_hooks/useSharesToAssets'
-import { useSlippage } from '../../_hooks/useSlippageBps'
+import { useSlippage } from '../../_hooks/useSlippage'
 import { useWithdraw } from '../../_hooks/useWithdraw'
 import { type WithdrawOperationRunning } from '../../_types/operations'
 

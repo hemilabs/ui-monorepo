@@ -201,14 +201,11 @@ const meta = {
     placeholder: { control: false },
   },
   component: Table,
-  // Replicates the StakeTable shell so stories match the height the table
-  // occupies on the staking dashboard (`h-[56dvh]` / `md:min-h-136`).
+  // Replicates the StakeTable shell: the dashboard's `PageLayout` padding
+  // (`superWide`) and the height the table occupies there.
   decorators: [
     Story => (
-      <div
-        className="w-full p-2 text-sm font-medium"
-        style={{ maxWidth: '56rem' }}
-      >
+      <div className="w-full px-2 text-sm font-medium md:px-4 xl:px-6">
         <div className="h-[56dvh] md:min-h-136">
           <Story />
         </div>

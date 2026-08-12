@@ -53,9 +53,11 @@ export const RetryFailedWithdraw = function ({
     shares,
   })
 
+  const slippage = defaultRedeemSlippage
+
   const assetsOutMin =
     assetOut > BigInt(0)
-      ? applySlippage(assetOut, percentToBps(defaultRedeemSlippage))
+      ? applySlippage(assetOut, percentToBps(slippage))
       : BigInt(0)
 
   const { data: quote } = useQuoteRedeem({
@@ -91,6 +93,7 @@ export const RetryFailedWithdraw = function ({
     priorApprovalTxHash: transaction.approvalTxHash,
     selectedAsset: asset,
     shares,
+    slippage,
     // Hide the specific failed row from the table once this retry is signed.
     supersedesInitiateTxHash: transaction.requestTxHash,
   })

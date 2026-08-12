@@ -16,11 +16,12 @@ import { useAccount as useEvmAccount } from 'wagmi'
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { getExtraApprovalAmount } from '../../../_utils/approval'
+import { percentToBps } from '../../../_utils/slippage'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useDeposit } from '../_hooks/useDeposit'
 import { useDepositPreview } from '../_hooks/useDepositPreview'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
-import { useSlippageBps } from '../_hooks/useSlippageBps'
+import { useSlippage } from '../_hooks/useSlippageBps'
 import { type DepositOperationRunning } from '../_types/operations'
 import {
   computeIsLoading,
@@ -64,7 +65,8 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
 
   const amount = parseTokenUnits(input, selectedAsset.token)
   const routerAddress = getHemiEarnRouterAddress()
-  const slippageBps = useSlippageBps('deposit')
+  const slippage = useSlippage('deposit')
+  const slippageBps = percentToBps(slippage)
   const extraApprovalAmount = getExtraApprovalAmount(amount, approveExtraAmount)
 
   const { data: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
@@ -142,6 +144,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     pool,
     selectedAsset,
     sharesOutMin,
+    slippage,
     updateDepositOperation,
   })
 

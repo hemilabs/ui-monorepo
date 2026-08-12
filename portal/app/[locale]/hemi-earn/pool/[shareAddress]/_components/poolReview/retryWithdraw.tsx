@@ -6,10 +6,11 @@ import { parseTokenUnits } from 'utils/token'
 
 import { applySlippage } from '../../../../_constants/slippage'
 import { getExtraApprovalAmount } from '../../../../_utils/approval'
+import { percentToBps } from '../../../../_utils/slippage'
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
 import { useSharesToAssets } from '../../_hooks/useSharesToAssets'
-import { useSlippageBps } from '../../_hooks/useSlippageBps'
+import { useSlippage } from '../../_hooks/useSlippageBps'
 import { useWithdraw } from '../../_hooks/useWithdraw'
 import { type WithdrawOperationRunning } from '../../_types/operations'
 
@@ -28,7 +29,8 @@ export const RetryWithdraw = function () {
   } = usePoolForm()
 
   const t = useTranslations()
-  const slippageBps = useSlippageBps('withdraw')
+  const slippage = useSlippage('withdraw')
+  const slippageBps = percentToBps(slippage)
   // Input is in share units — the Router burns shares directly; assetsOutMin comes from the asset preview below.
   const shares = parseTokenUnits(input, pool.shareToken)
 
@@ -81,6 +83,7 @@ export const RetryWithdraw = function () {
     priorApprovalTxHash: withdrawOperation?.approvalTxHash,
     selectedAsset,
     shares,
+    slippage,
     // Hide the specific failed row once this retry is signed (transactionHash is the failed redeem's hash).
     supersedesInitiateTxHash: withdrawOperation?.transactionHash,
     updateWithdrawOperation,

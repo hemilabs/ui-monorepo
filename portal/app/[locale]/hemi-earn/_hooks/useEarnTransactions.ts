@@ -77,6 +77,7 @@ const localToEarnDepositTransaction = (
   requestedAt: String(local.startedAt),
   requestId: `local-${local.startedAt}`,
   requestTxHash: local.initiateTxHash as Hash,
+  slippage: local.slippage,
   status: localDepositStatus(local.operation),
 })
 
@@ -97,6 +98,7 @@ const localToEarnWithdrawTransaction = (
   requestedAt: String(local.startedAt),
   requestId: `local-${local.startedAt}`,
   requestTxHash: local.initiateTxHash as Hash,
+  slippage: local.slippage,
   status: localWithdrawStatus(local.operation),
 })
 

@@ -45,6 +45,8 @@ type UseWithdraw = {
   selectedAsset: EarnAsset
   // Withdraw amount in shareToken units; the Router's requestRedeem burns this many shares on Hemi.
   shares: bigint
+  // Recorded on the local entry so a retry can replay what this attempt used.
+  slippage: number
   // Retry callers pass the FAILED attempt's initiateTxHash; once the new withdraw is signed,
   // that entry is flagged settled so the old failure doesn't show beside the new attempt.
   supersedesInitiateTxHash?: Hash
@@ -62,6 +64,7 @@ export const useWithdraw = function ({
   priorApprovalTxHash,
   selectedAsset,
   shares,
+  slippage,
   supersedesInitiateTxHash,
   updateWithdrawOperation,
 }: UseWithdraw) {
@@ -134,6 +137,7 @@ export const useWithdraw = function ({
         kind: 'REDEEM' as const,
         operator: address,
         shareAddress: pool.shareAddress,
+        slippage,
         startedAt,
       }
 

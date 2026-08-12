@@ -9,7 +9,10 @@ import { type PoolOperation } from '../_types/operations'
 export const getDefaultSlippage = (operation: PoolOperation) =>
   operation === 'deposit' ? defaultDepositSlippage : defaultRedeemSlippage
 
-export const useSlippageBps = function (operation: PoolOperation) {
+export const useSlippage = function (operation: PoolOperation) {
   const { slippage } = usePoolForm()
-  return percentToBps(clampSlippage(slippage ?? getDefaultSlippage(operation)))
+  return clampSlippage(slippage ?? getDefaultSlippage(operation))
 }
+
+export const useSlippageBps = (operation: PoolOperation) =>
+  percentToBps(useSlippage(operation))

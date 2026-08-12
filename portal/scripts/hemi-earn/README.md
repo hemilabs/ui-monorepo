@@ -50,13 +50,14 @@ All sandbox actions are dispatched through a single pnpm script that forwards it
 pnpm --filter portal sandbox:hemi-earn -- <subcommand> [flags]
 ```
 
-| Subcommand     | Purpose                                                                                                                  |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `setup`        | Start Anvil + deploy mocks + fund the test account.                                                                      |
-| `mint`         | Mint from any ERC20-mock — top up an EOA or inject yield into the vault (see [Minting](#minting)).                       |
-| `mining`       | Toggle Anvil's interval mining at runtime (see [Slow mining](#slow-mining)).                                             |
-| `relayer`      | Emulate the production keeper: claim mature cooldown redeems and bridge cancellation requests (see [Relayer](#relayer)). |
-| `fail-gateway` | Toggle `PreviewableGatewayMock` into a failure mode (see [Failure simulation](#failure-simulation)).                     |
+| Subcommand     | Purpose                                                                                                                      |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `setup`        | Start Anvil + deploy mocks + fund the test account.                                                                          |
+| `mint`         | Mint from any ERC20-mock — top up an EOA or inject yield into the vault (see [Minting](#minting)).                           |
+| `mining`       | Toggle Anvil's interval mining at runtime (see [Slow mining](#slow-mining)).                                                 |
+| `relayer`      | Emulate the production keeper: claim mature cooldown redeems and bridge cancellation requests (see [Relayer](#relayer)).     |
+| `fail-gateway` | Toggle `PreviewableGatewayMock` into a failure mode (see [Failure simulation](#failure-simulation)).                         |
+| `keeper`       | Fire `Agent.cancel` / `Agent.retry` to simulate the "keeper wins the race" scenario (see [Keeper actions](#keeper-actions)). |
 
 Building blocks used by `setup` (`deployMocks.ts`, `fundAccount.ts`) are still invocable directly for advanced cases:
 
@@ -74,6 +75,7 @@ Flags are parsed by the handler of each subcommand.
 - `mining` — `--seconds` / `-s` (default `6`, `0` returns to instant mining), `--fork-url` / `-f` (default `http://127.0.0.1:8545`).
 - `relayer` — `--router` / `-r` (required), `--agent` / `-a` (required) — both come from the address banner `setup` prints; `--fork-url` / `-f`, `--deployer-pk`, `--poll` (seconds between ticks, default `1`), `--from-block N` (first block to backfill from, default `0` — full history), `--disable-autoclaim` (observe events but skip the claim; simulates a downed keeper).
 - `fail-gateway` — either `--status` (read-only, prints the current state) or `--kind` / `-k` (`deposit` | `redeem`) + `--mode` / `-m` (`off` | `on` | `slippage` | `fee` | `unknown`). Optional: `--fork-url` / `-f`, `--deployer-pk`.
+- `keeper` — `--action` (`cancel` | `retry`), `--agent` / `-a` (from the `setup` banner), `--request-id` / `-i` (uint256). Optional: `--value` (wei, retry only), `--fork-url` / `-f`, `--deployer-pk`.
 
 ## Cooldown
 
@@ -168,6 +170,37 @@ pnpm --filter portal sandbox:hemi-earn -- fail-gateway --kind deposit --mode fee
 # Reset both sides so operations succeed again
 pnpm --filter portal sandbox:hemi-earn -- fail-gateway --kind deposit --mode off
 pnpm --filter portal sandbox:hemi-earn -- fail-gateway --kind redeem --mode off
+```
+
+## Keeper actions
+
+The production keeper can resolve a REMOTE_FAILED request (or a mid-cooldown redeem) before the user clicks the recovery CTA in the portal — the "keeper wins the race" path. When that happens on-chain, `Agent.failedRequests[id].tokenIn` (or `Agent.unstakeRequests[id].share`) goes to zero and the portal must hide its recovery CTAs on the next refetch. The `keeper` subcommand fires those Agent-side actions manually so that branch of the UI is testable end-to-end.
+
+Two actions, one dispatch:
+
+- `--action cancel` — pre-flight probes `failedRequests` then `unstakeRequests` (matches the production `Agent.cancel` order) and picks the branch automatically. Errors out with a diagnostic if the request is in neither map.
+- `--action retry` — pre-flight requires the request to be in `failedRequests`; post-flight re-reads and reports whether the entry cleared (success) or is still populated (underlying failure still active — clear it via `fail-gateway --mode off` first).
+
+Signer is the default anvil `#0`, which the sandbox `setup` registers as a keeper on the `ToggleableAgent`. `--agent` is required — copy it from the address banner `setup` prints.
+
+```bash
+# Cancel a stuck REMOTE_FAILED request (failed branch — after fail-gateway + submit)
+pnpm --filter portal sandbox:hemi-earn -- keeper \
+  --action cancel \
+  --agent 0x2279b7a0a67db372996a5fab50d91eaa73d2ebe6 \
+  --request-id 42
+
+# Cancel a redeem mid-cooldown (unstake branch — before the relayer autoclaim fires)
+pnpm --filter portal sandbox:hemi-earn -- keeper \
+  --action cancel \
+  --agent 0x2279b7a0a67db372996a5fab50d91eaa73d2ebe6 \
+  --request-id 43
+
+# Retry a REMOTE_FAILED redeem after clearing the failure mode
+pnpm --filter portal sandbox:hemi-earn -- keeper \
+  --action retry \
+  --agent 0x2279b7a0a67db372996a5fab50d91eaa73d2ebe6 \
+  --request-id 44
 ```
 
 ## Mock contracts

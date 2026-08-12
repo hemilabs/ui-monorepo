@@ -229,7 +229,10 @@ export const Loading: Story = {
   },
   render: () => (
     <TableCard>
-      <Skeleton className="h-[calc(100%-3px)] w-full rounded-lg" />
+      <Skeleton
+        className="block size-full rounded-lg"
+        containerClassName="block h-full"
+      />
     </TableCard>
   ),
 }

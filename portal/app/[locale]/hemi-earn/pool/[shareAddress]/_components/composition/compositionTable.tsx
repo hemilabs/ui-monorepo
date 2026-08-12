@@ -11,7 +11,7 @@ import {
 
 const CompositionCell = ({ className, ...props }: ComponentProps<'td'>) => (
   <td
-    className={`flex size-full flex-grow cursor-pointer items-center border-b border-solid border-neutral-100 py-3 group-hover/row:bg-neutral-50 first:[&>*]:pl-4 last:[&>*]:pr-4 ${
+    className={`flex size-full flex-grow cursor-pointer items-center border-b border-solid border-neutral-100 py-3 first:pl-4 last:pr-4 group-hover/row:bg-neutral-50 ${
       className ?? ''
     }`}
     {...props}

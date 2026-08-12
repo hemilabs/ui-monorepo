@@ -189,23 +189,23 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
     const reserveBufferLabel = 'Reserve Buffer'
     const data: CompositionData = [
       {
-        strategies: [
-          { amount: 75, name: 'Strategy A1' },
-          { amount: 50, name: 'Strategy A2' },
-        ],
-        symbol: 'WBTC',
-        totalDebt: 125,
-        withdrawable: 150, // 25 idle
+        strategies: [{ amount: 50, name: 'Strategy B1' }],
+        symbol: 'cbBTC',
+        totalDebt: 50,
+        withdrawable: 60, // 10 idle
       },
       {
-        strategies: [{ amount: 25, name: 'Strategy B1' }],
-        symbol: 'cbBTC',
-        totalDebt: 25,
-        withdrawable: 50, // 25 idle
+        strategies: [
+          { amount: 30, name: 'Strategy A1' },
+          { amount: 80, name: 'Strategy A2' },
+        ],
+        symbol: 'WBTC',
+        totalDebt: 110,
+        withdrawable: 140, // 30 idle
       },
     ]
 
-    it('groups by strategy and appends the reserve buffer in protocol mode', function () {
+    it('groups by strategy and includes the reserve buffer in protocol mode', function () {
       const items = toCompositionItems({
         data,
         reserveBufferLabel,
@@ -214,28 +214,28 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
 
       expect(items).toEqual([
         {
-          amount: 75,
-          isReserveBuffer: false,
-          name: 'Strategy A1',
-          share: 37.5,
-        },
-        {
-          amount: 50,
+          amount: 80,
           isReserveBuffer: false,
           name: 'Strategy A2',
-          share: 25,
-        },
-        {
-          amount: 25,
-          isReserveBuffer: false,
-          name: 'Strategy B1',
-          share: 12.5,
+          share: 40,
         },
         {
           amount: 50,
+          isReserveBuffer: false,
+          name: 'Strategy B1',
+          share: 25,
+        },
+        {
+          amount: 40,
           isReserveBuffer: true,
           name: reserveBufferLabel,
-          share: 25,
+          share: 20,
+        },
+        {
+          amount: 30,
+          isReserveBuffer: false,
+          name: 'Strategy A1',
+          share: 15,
         },
       ])
     })
@@ -249,15 +249,83 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
 
       expect(items).toEqual([
         {
-          amount: 150,
+          amount: 140,
           isReserveBuffer: false,
           name: 'WBTC',
+          share: 70,
+        },
+        {
+          amount: 60,
+          isReserveBuffer: false,
+          name: 'cbBTC',
+          share: 30,
+        },
+      ])
+    })
+
+    it('orders items from the highest to the lowest share', function () {
+      const unordered: CompositionData = [
+        {
+          strategies: [{ amount: 3180, name: 'Strategy USDT' }],
+          symbol: 'USDT',
+          totalDebt: 3180,
+          withdrawable: 3180,
+        },
+        {
+          strategies: [{ amount: 6675, name: 'Strategy USDC' }],
+          symbol: 'USDC',
+          totalDebt: 6675,
+          withdrawable: 6675,
+        },
+        {
+          strategies: [{ amount: 145, name: 'Strategy frxUSD' }],
+          symbol: 'frxUSD',
+          totalDebt: 145,
+          withdrawable: 145,
+        },
+      ]
+
+      expect(
+        toCompositionItems({
+          data: unordered,
+          reserveBufferLabel,
+          viewMode: 'token',
+        }).map(item => item.name),
+      ).toEqual(['USDC', 'USDT', 'frxUSD'])
+      expect(
+        toCompositionItems({
+          data: unordered,
+          reserveBufferLabel,
+          viewMode: 'protocol',
+        }).map(item => item.name),
+      ).toEqual(['Strategy USDC', 'Strategy USDT', 'Strategy frxUSD'])
+    })
+
+    it('ranks the reserve buffer by size, like any other item', function () {
+      const items = toCompositionItems({
+        data: [
+          {
+            strategies: [{ amount: 25, name: 'Strategy' }],
+            symbol: 'WBTC',
+            totalDebt: 25,
+            withdrawable: 100, // 75 idle
+          },
+        ],
+        reserveBufferLabel,
+        viewMode: 'protocol',
+      })
+
+      expect(items).toEqual([
+        {
+          amount: 75,
+          isReserveBuffer: true,
+          name: reserveBufferLabel,
           share: 75,
         },
         {
-          amount: 50,
+          amount: 25,
           isReserveBuffer: false,
-          name: 'cbBTC',
+          name: 'Strategy',
           share: 25,
         },
       ])

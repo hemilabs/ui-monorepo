@@ -32,8 +32,8 @@ const HemiToken = ({ className }: { className?: string }) => (
 )
 
 const TokenIcon = () => (
-  <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-neutral-50 p-2">
-    <HemiToken className="size-5" />
+  <div className="inline-flex rounded-lg bg-neutral-50 p-2">
+    <HemiToken className="size-6" />
   </div>
 )
 
@@ -84,7 +84,7 @@ const ActionCell = ({ timeRemaining }: { timeRemaining: string }) => (
 const columns: ColumnDef<Row>[] = [
   {
     cell: ({ row }) => (
-      <div className="flex items-center gap-x-3">
+      <div className="flex items-center gap-x-5">
         <TokenIcon />
         <div className="flex flex-col">
           <span className="text-neutral-950">{row.original.lockedAmount}</span>
@@ -205,7 +205,10 @@ const meta = {
   // occupies on the staking dashboard (`h-[56dvh]` / `md:min-h-136`).
   decorators: [
     Story => (
-      <div className="w-full max-w-4xl p-2 text-sm font-medium">
+      <div
+        className="w-full p-2 text-sm font-medium"
+        style={{ maxWidth: '56rem' }}
+      >
         <div className="h-[56dvh] md:min-h-136">
           <Story />
         </div>

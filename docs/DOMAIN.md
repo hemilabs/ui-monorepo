@@ -149,7 +149,7 @@ The dashboard lists positions under two tabs, **Active** and **Burned**. Burned 
 
 Statuses follow the same shape as the tunnel ones but per operation: `StakingDashboardStatus` covers the approval and the lock transaction (`APPROVAL_TX_PENDING` → `APPROVAL_TX_COMPLETED` → `STAKE_TX_PENDING` → `STAKE_TX_CONFIRMED`, with `*_FAILED` branches) and is reused for the increase-amount and extend flows, while `UnlockingDashboardStatus` and `CollectAllRewardsDashboardStatus` cover unlocking and claiming.
 
-The list of positions comes from the veHEMI subgraph through `portal-backend/api` (`/subgraphs/{chainId}/locks/{address}`); everything that decays — voting power, claimable rewards, time remaining — is read live from the chain.
+The list of positions comes from the veHEMI subgraph through `portal-backend/api` (`/subgraphs/{chainId}/locks/{address}`). Voting power, claimable rewards and the APR are read live from the chain. The countdown to unlock is derived in the browser from the `timestamp` and `lockTime` the subgraph returns.
 
 ## Subgraphs
 

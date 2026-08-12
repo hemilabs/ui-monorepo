@@ -1,8 +1,12 @@
-import { useQuery } from '@tanstack/react-query'
+import { queryOptions, useQuery } from '@tanstack/react-query'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { EvmToken } from 'types/token'
 import { calculateRewards } from 've-hemi-rewards/actions'
 import type { Address } from 'viem'
+
+type HemiWalletClient = ReturnType<
+  typeof useHemiWalletClient
+>['hemiWalletClient']
 
 export const getCalculateRewardsQueryKey = ({
   chainId,
@@ -13,6 +17,30 @@ export const getCalculateRewardsQueryKey = ({
   rewardToken: string
   tokenId: bigint
 }) => ['calculateRewards', tokenId.toString(), rewardToken, chainId]
+
+// Shared by the cell that renders the amount and by `useHasRewards`, so both
+// observe the same query instead of one of them reading what the other cached.
+export const getCalculateRewardsQueryOptions = ({
+  chainId,
+  enabled = true,
+  hemiWalletClient,
+  rewardToken,
+  tokenId,
+}: {
+  chainId: number
+  enabled?: boolean
+  hemiWalletClient: HemiWalletClient
+  rewardToken: string
+  tokenId: bigint
+}) =>
+  queryOptions({
+    enabled:
+      enabled && !!hemiWalletClient && !!rewardToken && tokenId > BigInt(0),
+    queryFn: () =>
+      calculateRewards(hemiWalletClient!, tokenId, rewardToken as Address),
+    queryKey: getCalculateRewardsQueryKey({ chainId, rewardToken, tokenId }),
+    refetchInterval: 24000, // 24 seconds
+  })
 
 export const useCalculateRewards = function ({
   enabled = true,
@@ -27,18 +55,13 @@ export const useCalculateRewards = function ({
 }) {
   const { hemiWalletClient } = useHemiWalletClient()
 
-  const queryKey = getCalculateRewardsQueryKey({
-    chainId: token.chainId,
-    rewardToken,
-    tokenId,
-  })
-
-  return useQuery({
-    enabled:
-      enabled && !!hemiWalletClient && !!rewardToken && tokenId > BigInt(0),
-    queryFn: () =>
-      calculateRewards(hemiWalletClient!, tokenId, rewardToken as Address),
-    queryKey,
-    refetchInterval: 24000, // 24 seconds
-  })
+  return useQuery(
+    getCalculateRewardsQueryOptions({
+      chainId: token.chainId,
+      enabled,
+      hemiWalletClient,
+      rewardToken,
+      tokenId,
+    }),
+  )
 }

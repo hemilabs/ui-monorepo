@@ -6,12 +6,13 @@ import { parseTokenUnits } from 'utils/token'
 
 import { applySlippage } from '../../../../_constants/slippage'
 import { getExtraApprovalAmount } from '../../../../_utils/approval'
+import { percentToBps } from '../../../../_utils/slippage'
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useDeposit } from '../../_hooks/useDeposit'
 import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useDrawerQueryString } from '../../_hooks/useDrawerQueryString'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
-import { useSlippageBps } from '../../_hooks/useSlippageBps'
+import { useSlippage } from '../../_hooks/useSlippage'
 import { type DepositOperationRunning } from '../../_types/operations'
 
 export const RetryDeposit = function () {
@@ -31,7 +32,8 @@ export const RetryDeposit = function () {
 
   const t = useTranslations()
 
-  const slippageBps = useSlippageBps('deposit')
+  const slippage = useSlippage('deposit')
+  const slippageBps = percentToBps(slippage)
   const amount = parseTokenUnits(input, selectedAsset.token)
   const { data: quote } = useQuoteDeposit({
     amount,
@@ -80,6 +82,7 @@ export const RetryDeposit = function () {
     priorApprovalTxHash: depositOperation?.approvalTxHash,
     selectedAsset,
     sharesOutMin,
+    slippage,
     // Hide the specific failed row once this retry is signed (transactionHash is the failed deposit's hash).
     supersedesInitiateTxHash: depositOperation?.transactionHash,
     updateDepositOperation,

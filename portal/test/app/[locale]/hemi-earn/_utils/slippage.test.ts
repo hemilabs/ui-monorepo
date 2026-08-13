@@ -5,6 +5,7 @@ import {
   getSlippageLevel,
   needsRiskConfirmation,
   percentToBps,
+  resolveRetrySlippage,
   sanitizeSlippage,
 } from '../../../../../app/[locale]/hemi-earn/_utils/slippage'
 
@@ -35,6 +36,28 @@ describe('clampSlippage', function () {
   // NaN survives Math.min/Math.max and would reach BigInt(), throwing mid-render.
   it('falls back to zero for NaN', function () {
     expect(clampSlippage(Number.NaN)).toBe(0)
+  })
+})
+
+describe('resolveRetrySlippage', function () {
+  it('replays the value the failed attempt was signed with', function () {
+    expect(resolveRetrySlippage({ fallback: 0.5, slippage: 8 })).toBe(8)
+  })
+
+  // Entries written before the field existed, so the retry must still resolve to something.
+  it('falls back when the entry predates the field', function () {
+    expect(resolveRetrySlippage({ fallback: 0.5 })).toBe(0.5)
+  })
+
+  it('keeps a recorded zero rather than treating it as missing', function () {
+    expect(resolveRetrySlippage({ fallback: 0.5, slippage: 0 })).toBe(0)
+  })
+
+  // The value round-trips through localStorage, so it reaches applySlippage unvalidated.
+  it('clamps a recorded value that is out of range', function () {
+    expect(resolveRetrySlippage({ fallback: 1, slippage: 150 })).toBe(100)
+    expect(resolveRetrySlippage({ fallback: 1, slippage: -5 })).toBe(0)
+    expect(resolveRetrySlippage({ fallback: 1, slippage: Number.NaN })).toBe(0)
   })
 })
 

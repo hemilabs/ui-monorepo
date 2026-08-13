@@ -14,10 +14,11 @@ import { useAccount as useEvmAccount } from 'wagmi'
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { getExtraApprovalAmount } from '../../../_utils/approval'
+import { percentToBps } from '../../../_utils/slippage'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useAssetsToShares } from '../_hooks/useAssetsToShares'
 import { useMaxWithdrawableAsset } from '../_hooks/useMaxWithdrawableAsset'
-import { useSlippageBps } from '../_hooks/useSlippageBps'
+import { useSlippage } from '../_hooks/useSlippage'
 import { useUserShareValue } from '../_hooks/useUserShareValue'
 import { useWithdraw } from '../_hooks/useWithdraw'
 import { useWithdrawPreview } from '../_hooks/useWithdrawPreview'
@@ -69,7 +70,8 @@ export const Withdraw = function ({
     withdrawMode,
   } = usePoolForm()
 
-  const slippageBps = useSlippageBps('withdraw')
+  const slippage = useSlippage('withdraw')
+  const slippageBps = percentToBps(slippage)
 
   const { address, status } = useEvmAccount()
 
@@ -205,6 +207,7 @@ export const Withdraw = function ({
     pool,
     selectedAsset,
     shares,
+    slippage,
     updateWithdrawOperation,
   })
 

@@ -61,6 +61,9 @@ export type EarnTransaction = {
   // Keeper retries of a remote-failed request; 0 until the first retry.
   retryCount?: number
   settlement?: EarnSettlement
+  // Percent the request was signed with. Local rows only — an indexed row is past the
+  // point of being re-sent, so nothing reads it there.
+  slippage?: number
   status: EarnTransactionStatusType
 }
 
@@ -109,6 +112,9 @@ type LocalEarnOperationBase = {
   settlement?: EarnSettlement
   settled?: boolean
   shareAddress: Address
+  // Percent — the unit the settings panel edits and clampSlippage works in. Holds the
+  // effective value, so "Auto" is resolved at sign time and a retry replays the real number.
+  slippage?: number
   // Unix seconds — must match TTL_SECONDS' unit in localEarnOperationsContext (the GC compares them).
   startedAt: number
 }

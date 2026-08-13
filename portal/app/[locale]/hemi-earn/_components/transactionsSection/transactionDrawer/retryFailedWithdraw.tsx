@@ -9,7 +9,7 @@ import {
   defaultRedeemSlippage,
   applySlippage,
 } from '../../../_constants/slippage'
-import { percentToBps } from '../../../_utils/slippage'
+import { percentToBps, resolveRetrySlippage } from '../../../_utils/slippage'
 import { useQuoteRedeem } from '../../../pool/[shareAddress]/_hooks/useQuoteRedeem'
 import { useSharesToAssets } from '../../../pool/[shareAddress]/_hooks/useSharesToAssets'
 import { useWithdraw } from '../../../pool/[shareAddress]/_hooks/useWithdraw'
@@ -53,9 +53,14 @@ export const RetryFailedWithdraw = function ({
     shares,
   })
 
+  const slippage = resolveRetrySlippage({
+    fallback: defaultRedeemSlippage,
+    slippage: transaction.slippage,
+  })
+
   const assetsOutMin =
     assetOut > BigInt(0)
-      ? applySlippage(assetOut, percentToBps(defaultRedeemSlippage))
+      ? applySlippage(assetOut, percentToBps(slippage))
       : BigInt(0)
 
   const { data: quote } = useQuoteRedeem({
@@ -91,6 +96,7 @@ export const RetryFailedWithdraw = function ({
     priorApprovalTxHash: transaction.approvalTxHash,
     selectedAsset: asset,
     shares,
+    slippage,
     // Hide the specific failed row from the table once this retry is signed.
     supersedesInitiateTxHash: transaction.requestTxHash,
   })

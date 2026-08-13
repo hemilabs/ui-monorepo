@@ -34,6 +34,8 @@ type UseDeposit = {
   priorApprovalTxHash?: Hash
   selectedAsset: EarnAsset
   sharesOutMin: bigint
+  // Recorded on the local entry so a retry can replay what this attempt used.
+  slippage: number
   // Retry callers pass the FAILED attempt's initiateTxHash; once the new deposit is signed,
   // that exact entry is flagged settled so the old failure doesn't show beside the new attempt.
   supersedesInitiateTxHash?: Hash
@@ -49,6 +51,7 @@ export const useDeposit = function ({
   priorApprovalTxHash,
   selectedAsset,
   sharesOutMin,
+  slippage,
   supersedesInitiateTxHash,
   updateDepositOperation,
 }: UseDeposit) {
@@ -103,6 +106,7 @@ export const useDeposit = function ({
         kind: 'DEPOSIT' as const,
         operator: address,
         shareAddress: pool.shareAddress,
+        slippage,
         startedAt,
       }
 

@@ -10,7 +10,7 @@ import {
   defaultDepositSlippage,
   applySlippage,
 } from '../../../_constants/slippage'
-import { percentToBps } from '../../../_utils/slippage'
+import { percentToBps, resolveRetrySlippage } from '../../../_utils/slippage'
 import { useDeposit } from '../../../pool/[shareAddress]/_hooks/useDeposit'
 import { useDepositShares } from '../../../pool/[shareAddress]/_hooks/useDepositShares'
 import { useQuoteDeposit } from '../../../pool/[shareAddress]/_hooks/useQuoteDeposit'
@@ -56,8 +56,13 @@ export const RetryFailedDeposit = function ({
     shareAddress: pool.shareAddress,
   })
 
+  const slippage = resolveRetrySlippage({
+    fallback: defaultDepositSlippage,
+    slippage: transaction.slippage,
+  })
+
   const sharesOutMin = shares
-    ? applySlippage(shares, percentToBps(defaultDepositSlippage))
+    ? applySlippage(shares, percentToBps(slippage))
     : BigInt(0)
 
   const { mutate: runDeposit } = useDeposit({
@@ -85,6 +90,7 @@ export const RetryFailedDeposit = function ({
     priorApprovalTxHash: transaction.approvalTxHash,
     selectedAsset: asset,
     sharesOutMin,
+    slippage,
     // Hide the specific failed row from the table once this retry is signed.
     supersedesInitiateTxHash: transaction.requestTxHash,
   })

@@ -12,11 +12,8 @@ import { useRewardTokensAddresses as useRewardTokensQuery } from './useRewardTok
 
 export const useRewardTokens = function () {
   const { id } = useHemi()
-  const {
-    data: rewardTokenAddresses = [],
-    isLoading: isLoadingTokenAddresses,
-    status: addressesStatus,
-  } = useRewardTokensQuery()
+  const { data: rewardTokenAddresses = [], status: addressesStatus } =
+    useRewardTokensQuery()
 
   const tokenQueries = useQueries({
     queries: rewardTokenAddresses.map((address: Address) => ({
@@ -28,17 +25,10 @@ export const useRewardTokens = function () {
     })),
   })
 
-  const isLoading =
-    isLoadingTokenAddresses || tokenQueries.some(query => query.isLoading)
-
   const { hasError, isPending } = getRewardTokensStatus({
     addressesStatus,
     tokenStatuses: tokenQueries.map(query => query.status),
   })
-
-  const errors = tokenQueries
-    .filter(query => query.isError)
-    .map(query => query.error)
 
   const tokens = useMemo(
     () =>
@@ -48,5 +38,5 @@ export const useRewardTokens = function () {
     [tokenQueries],
   )
 
-  return { errors, hasError, isLoading, isPending, tokens }
+  return { hasError, isPending, tokens }
 }

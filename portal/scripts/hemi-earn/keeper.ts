@@ -45,7 +45,7 @@ function printUsage() {
     '  -i, --request-id ID     uint256 requestId to act on (required)',
   )
   console.error(
-    '  [--value WEI]           msg.value in wei (default 0; only used by retry)',
+    '  [--value WEI]           msg.value in wei (default 0; top-up under strict-fee mode)',
   )
   console.error(
     '  [-f FORK_URL]           anvil RPC (default http://127.0.0.1:8545)',
@@ -160,12 +160,14 @@ async function runCancel({
   agent,
   publicClient,
   requestId,
+  value,
   walletClient,
 }: {
   account: NonNullable<WalletClient['account']>
   agent: Address
   publicClient: PublicClient
   requestId: bigint
+  value: bigint
   walletClient: WalletClient
 }) {
   const failedTokenIn = await readFailedTokenIn({
@@ -199,6 +201,7 @@ async function runCancel({
     args: [requestId],
     chain: walletClient.chain,
     functionName: 'cancel',
+    value,
   })
   const receipt = await publicClient.waitForTransactionReceipt({ hash })
   if (receipt.status !== 'success') {
@@ -295,7 +298,14 @@ export async function runKeeper(argv: string[]) {
   log(`action=${action} agent=${agent} requestId=${requestId}`)
 
   if (action === 'cancel') {
-    await runCancel({ account, agent, publicClient, requestId, walletClient })
+    await runCancel({
+      account,
+      agent,
+      publicClient,
+      requestId,
+      value,
+      walletClient,
+    })
     return
   }
   await runRetry({

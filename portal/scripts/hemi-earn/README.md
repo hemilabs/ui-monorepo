@@ -75,7 +75,7 @@ Flags are parsed by the handler of each subcommand.
 - `mining` — `--seconds` / `-s` (default `6`, `0` returns to instant mining), `--fork-url` / `-f` (default `http://127.0.0.1:8545`).
 - `relayer` — `--router` / `-r` (required), `--agent` / `-a` (required) — both come from the address banner `setup` prints; `--fork-url` / `-f`, `--deployer-pk`, `--poll` (seconds between ticks, default `1`), `--from-block N` (first block to backfill from, default `0` — full history), `--disable-autoclaim` (observe events but skip the claim; simulates a downed keeper).
 - `fail-gateway` — either `--status` (read-only, prints the current state) or `--kind` / `-k` (`deposit` | `redeem`) + `--mode` / `-m` (`off` | `on` | `slippage` | `fee` | `unknown`). Optional: `--fork-url` / `-f`, `--deployer-pk`.
-- `keeper` — `--action` (`cancel` | `retry`), `--agent` / `-a` (from the `setup` banner), `--request-id` / `-i` (uint256). Optional: `--value` (wei, retry only), `--fork-url` / `-f`, `--deployer-pk`.
+- `keeper` — `--action` (`cancel` | `retry`), `--agent` / `-a` (from the `setup` banner), `--request-id` / `-i` (uint256). Optional: `--value` (wei, used to top up `msg.value` under the mock's strict-fee mode), `--fork-url` / `-f`, `--deployer-pk`.
 
 ## Cooldown
 

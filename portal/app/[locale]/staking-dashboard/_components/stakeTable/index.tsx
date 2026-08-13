@@ -87,7 +87,7 @@ const stakingColumns = ({
   },
   {
     cell: ({ row }) => (
-      <div className="flex w-full flex-row-reverse items-center justify-end gap-x-2 lg:flex-row lg:justify-end">
+      <div className="flex w-full flex-row-reverse items-center justify-end gap-x-2 lg:flex-row">
         <UnlockCta operation={row.original} />
         <ActionCell
           openRowId={openRowId}

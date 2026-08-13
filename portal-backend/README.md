@@ -1,6 +1,6 @@
 # Portal Backend
 
-The portal backend is composed by an API and several cron jobs.
+The portal backend is composed of an API and several cron jobs.
 
 ## API
 

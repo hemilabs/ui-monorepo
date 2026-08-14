@@ -25,6 +25,7 @@ import { IconContainer } from '../iconContainer'
 import { ItemContainer, ItemText, Row } from '../navItem'
 
 import atlasIcon from './_images/atlas.png'
+import brownFiIcon from './_images/brownFi.svg'
 import dodoIcon from './_images/dodo.png'
 import dzapIcon from './_images/dzap.png'
 import eisenIcon from './_images/eisen.png'
@@ -238,6 +239,12 @@ const DexImpl = function () {
                 href="https://lunarfinance.io/"
                 icon={<Image alt="LunarFi" src={lunarFiIcon} />}
                 text="LunarFi"
+              />
+              <ExternalLink
+                event="nav - brownfi"
+                href="https://app.brownfi.io/clamm/swap"
+                icon={<Image alt="BrownFi" src={brownFiIcon} />}
+                text="BrownFi"
               />
             </div>
           </div>,

@@ -194,6 +194,7 @@ const analyticsEvents = [
   'nav - dodo',
   'nav - atlas',
   'nav - lunarfi',
+  'nav - brownfi',
   // custom Tokens for the tunnel
   'custom erc20 - cancel',
   'custom erc20 - open modal',

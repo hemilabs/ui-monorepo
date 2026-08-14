@@ -72,7 +72,7 @@ const connectors = connectorsForWallets(
   },
 )
 
-export const allEvmNetworksWalletConfig = createConfig({
+const allEvmNetworksWalletConfig = createConfig({
   chains: allEvmNetworks,
   connectors: [
     walletConnect({

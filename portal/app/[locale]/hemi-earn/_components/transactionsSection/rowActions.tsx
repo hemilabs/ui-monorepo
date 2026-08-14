@@ -89,7 +89,7 @@ export const RowActions = function ({ transaction }: Props) {
 
   return (
     <>
-      <div className="flex items-center gap-x-2 pr-4">
+      <div className="flex items-center gap-x-2">
         {showRemoteFailed ? (
           <RemoteFailedCta
             fallback={viewButton}

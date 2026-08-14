@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { ButtonLink } from 'components/button'
 import { Table } from 'components/table'
 import { Header } from 'components/table/_components/header'
+import { TableCard } from 'components/table/tableCard'
 import { TokenLogo } from 'components/tokenLogo'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
@@ -68,7 +69,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     ),
     header: () => <Header text={t('protocol')} />,
     id: 'protocol',
-    meta: { width: 150 },
+    meta: { className: 'justify-start flex-grow-0', width: 150 },
   },
   {
     cell: ({ row }) => (
@@ -79,7 +80,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     ),
     header: () => <Header text={t('asset')} />,
     id: 'asset',
-    meta: { width: 120 },
+    meta: { className: 'justify-start flex-grow-0', width: 120 },
   },
   {
     cell: ({ row }) => (
@@ -90,7 +91,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     ),
     header: () => <Header text={t('dashboard.staked')} />,
     id: 'staked',
-    meta: { width: 100 },
+    meta: { className: 'justify-start flex-grow-0', width: 100 },
   },
   {
     cell: ({ row }) => (
@@ -100,7 +101,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     ),
     header: () => <Header text={t('action')} />,
     id: 'action',
-    meta: { className: 'justify-end', width: 75 },
+    meta: { className: 'justify-start lg:justify-end', width: 75 },
   },
 ]
 
@@ -155,21 +156,25 @@ export const StakeAssetsTable = function () {
 
   const cols = useMemo(() => stakeColumns({ t }), [t])
 
+  const isEmpty = tokensWithPosition.length === 0 && !isLoading
+
   return (
-    <div className="w-full rounded-xl text-sm font-medium">
-      <div className="h-[56dvh] overflow-hidden md:min-h-136">
-        <Table
-          columns={cols}
-          data={sortedTokens}
-          loading={isLoading}
-          onRowClick={handleRowClick}
-          placeholder={
-            tokensWithPosition.length === 0 && (
-              <WelcomeStake href={`/${stakeMoreUrl}`} onClick={goToStakePage} />
-            )
-          }
-          priorityColumnIdsOnSmall={['action']}
-        />
+    <div className="w-full text-sm font-medium">
+      <div className="h-[56dvh] md:min-h-136">
+        {isEmpty ? (
+          <TableCard>
+            <WelcomeStake href={`/${stakeMoreUrl}`} onClick={goToStakePage} />
+          </TableCard>
+        ) : (
+          <Table
+            columns={cols}
+            containerClassName="flex h-full flex-col"
+            data={sortedTokens}
+            loading={isLoading}
+            onRowClick={handleRowClick}
+            priorityColumnIdsOnSmall={['action']}
+          />
+        )}
       </div>
     </div>
   )

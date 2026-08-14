@@ -1,29 +1,26 @@
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueries } from '@tanstack/react-query'
+import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useHemiToken } from 'hooks/useHemiToken'
 
-import { getCalculateRewardsQueryKey } from './useCalculateRewards'
+import { getCalculateRewardsQueryOptions } from './useCalculateRewards'
 import { useRewardTokens } from './useRewardTokens'
 
 export function useHasRewards(tokenId: bigint) {
-  const queryClient = useQueryClient()
   const token = useHemiToken()
-  const { isLoading, tokens: rewardTokens } = useRewardTokens()
+  const { hemiWalletClient } = useHemiWalletClient()
+  const { tokens: rewardTokens } = useRewardTokens()
 
-  const totalRewards = rewardTokens.reduce(function (total, { address }) {
-    const queryKey = getCalculateRewardsQueryKey({
-      chainId: token.chainId,
-      rewardToken: address,
-      tokenId,
-    })
-
-    const data = queryClient.getQueryData<bigint>(queryKey)
-
-    return total + (data ?? BigInt(0))
-  }, BigInt(0))
-
-  return {
-    hasRewards: totalRewards > BigInt(0),
-    isLoading,
-    totalRewards,
-  }
+  return useQueries({
+    combine: results => ({
+      hasRewards: results.some(({ data }) => (data ?? BigInt(0)) > BigInt(0)),
+    }),
+    queries: rewardTokens.map(({ address }) =>
+      getCalculateRewardsQueryOptions({
+        chainId: token.chainId,
+        hemiWalletClient,
+        rewardToken: address,
+        tokenId,
+      }),
+    ),
+  })
 }

@@ -30,6 +30,7 @@ import { useTableData } from './_hooks/useTableData'
 import { useTableVirtualizer } from './_hooks/useTableVirtualizer'
 
 type TableHeaderProps<TData> = {
+  fitContainer: boolean
   hasVerticalBodyScrollbar: boolean
   headerScrollRef: RefObject<HTMLDivElement | null>
   smallBreakpoint: number
@@ -39,6 +40,7 @@ type TableHeaderProps<TData> = {
 }
 
 const TableHeader = <TData,>({
+  fitContainer,
   hasVerticalBodyScrollbar,
   headerScrollRef,
   smallBreakpoint,
@@ -47,7 +49,7 @@ const TableHeader = <TData,>({
   width,
 }: TableHeaderProps<TData>) => (
   <div
-    className={`rounded-t-xl bg-neutral-100 pb-1.5 ${
+    className={`rounded-t-lg bg-neutral-100 pb-1.5 shadow-bs ${
       hasVerticalBodyScrollbar && width >= smallBreakpoint ? 'pr-2.5' : ''
     }`}
   >
@@ -65,9 +67,11 @@ const TableHeader = <TData,>({
                     header.column.columnDef.meta?.className ?? 'justify-start'
                   }
                   key={header.id}
-                  style={{
-                    width: header.column.columnDef.meta?.width,
-                  }}
+                  style={
+                    fitContainer
+                      ? { flexBasis: header.column.columnDef.meta?.width }
+                      : { width: header.column.columnDef.meta?.width }
+                  }
                 >
                   {flexRender(
                     header.column.columnDef.header,
@@ -226,7 +230,7 @@ function StaticTableBody<TData>({
     <div
       className={
         bodyContainerClassName ??
-        '-mt-1.5 mb-1 overflow-hidden rounded-xl bg-white shadow-md'
+        '-mt-1.5 mb-1 overflow-hidden rounded-lg bg-white shadow-sm'
       }
     >
       <div
@@ -274,6 +278,7 @@ export type TableProps<TData> = {
   containerClassName?: string
   data: TData[] | undefined
   fetchNextPage?: VoidFunction
+  fitContainer?: boolean
   hasNextPage?: boolean
   isFetching?: boolean
   loading?: boolean
@@ -295,6 +300,7 @@ export function Table<TData>({
   containerClassName,
   data,
   fetchNextPage,
+  fitContainer = false,
   hasNextPage = false,
   isFetching = false,
   loading = false,
@@ -304,7 +310,7 @@ export function Table<TData>({
   placeholder,
   priorityColumnIdsOnSmall,
   rowClassName,
-  rowSize = 64,
+  rowSize = 56,
   skeletonRows = 4,
   smallBreakpoint = screenBreakpoints.lg,
 }: TableProps<TData>) {
@@ -335,6 +341,10 @@ export function Table<TData>({
     state: { columnOrder },
   })
 
+  const fitToContainer = fitContainer && width >= smallBreakpoint
+
+  // Always the floor, even when fitting the container: below it the columns
+  // would shrink past their content and overlap, so the table scrolls instead.
   const tableMinWidth = table
     .getVisibleLeafColumns()
     .reduce((sum, column) => sum + (column.columnDef.meta?.width ?? 0), 0)
@@ -363,6 +373,7 @@ export function Table<TData>({
   return (
     <div className={rootClassName}>
       <TableHeader
+        fitContainer={fitToContainer}
         hasVerticalBodyScrollbar={hasVerticalBodyScrollbar}
         headerScrollRef={headerScrollRef}
         smallBreakpoint={smallBreakpoint}

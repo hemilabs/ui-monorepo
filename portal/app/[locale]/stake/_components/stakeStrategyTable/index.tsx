@@ -28,7 +28,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     ),
     header: () => <Header text={t('protocol')} />,
     id: 'protocol',
-    meta: { width: 150 },
+    meta: { className: 'justify-start flex-grow-0', width: 150 },
   },
   {
     cell: ({ row }) => (
@@ -39,7 +39,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     ),
     header: () => <Header text={t('asset')} />,
     id: 'asset',
-    meta: { width: 120 },
+    meta: { className: 'justify-start flex-grow-0', width: 120 },
   },
   {
     cell: ({ row }) => (
@@ -50,7 +50,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     ),
     header: () => <Header text={t('wallet-balance')} />,
     id: 'wallet-balance',
-    meta: { width: 100 },
+    meta: { className: 'justify-start flex-grow-0', width: 100 },
   },
   {
     cell: function CallToAction({ row }) {
@@ -80,7 +80,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     },
     header: () => <Header text={t('stake.action')} />,
     id: 'action',
-    meta: { width: 80 },
+    meta: { className: 'justify-end', width: 80 },
   },
 ]
 
@@ -101,10 +101,11 @@ export const StakeStrategyTable = function ({ data, loading }: Props) {
   )
 
   return (
-    <div className="w-full rounded-xl text-sm font-medium">
-      <div className="h-[56dvh] overflow-hidden md:min-h-136">
+    <div className="w-full text-sm font-medium">
+      <div className="h-[56dvh] md:min-h-136">
         <Table
           columns={cols}
+          containerClassName="flex h-full flex-col"
           data={data}
           loading={loading}
           priorityColumnIdsOnSmall={['action']}

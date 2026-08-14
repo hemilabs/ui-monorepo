@@ -375,6 +375,7 @@
       "claim-share-tokens": "Claim share tokens",
       "claiming": "Claiming...",
       "column": {
+        "action": "Action",
         "amount": "Amount",
         "date": "Date",
         "status": "Status",
@@ -586,12 +587,12 @@
     "subheading": "Stake your ${symbol} to participate in governance and earn staking rewards.",
     "switch-to-start-staking": "You can switch networks to start staking your HEMI.",
     "table": {
+      "action": "Action",
       "active": "Active",
       "add-liquidity-to-lockup": "Add ${symbol} to this lockup",
       "add-time-to-lockup": "Add time to this lockup",
       "apr": "{percentage}% APR",
       "burned": "Burned",
-      "claimable-rewards": "Claimable rewards",
       "connect-to-hemi": "Connect to {network} to view your stake positions.",
       "connect-to-stake": "Connect your wallet to view your ${symbol} staked.",
       "get-started": "Get started by staking your ${symbol}",
@@ -602,7 +603,8 @@
       "no-hemi-staked": "No ${symbol} staked",
       "on": "On {date}",
       "position-delegated-to-you": "Position delegated to you",
-      "time-remaining": "Time remaining",
+      "rewards": "Rewards",
+      "rewards-available": "{count} Available",
       "tx": "Tx",
       "unlock": "Unlock",
       "unlocked": "Unlocked",
@@ -646,7 +648,6 @@
     "confirming": "Confirming...",
     "connect-wallet-to-review": "Connect your wallet to review transaction history.",
     "in-challenge-period": "In Challenge period",
-    "loading-transactions": "Loading transactions",
     "ready-to-claim": "Ready to claim",
     "ready-to-confirm": "Ready to confirm",
     "ready-to-prove": "Ready to prove",
@@ -764,7 +765,7 @@
         "all": "All",
         "bitcoin": "Bitcoin",
         "ethereum": "Ethereum",
-        "recent-transactions": "Recent Transactions"
+        "reload": "Reload"
       },
       "tunnel-assets": "Tunnel assets",
       "withdraw": "Withdraw"

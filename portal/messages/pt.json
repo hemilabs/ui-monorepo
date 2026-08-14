@@ -375,6 +375,7 @@
       "claim-share-tokens": "Receber share tokens",
       "claiming": "Recebendo...",
       "column": {
+        "action": "Ação",
         "amount": "Quantia",
         "date": "Data",
         "status": "Status",
@@ -586,12 +587,12 @@
     "subheading": "Faça staking de ${symbol} para participar da governança do protocolo e receber recompensas.",
     "switch-to-start-staking": "Você pode mudar de rede para começar a fazer staking do seu HEMI.",
     "table": {
+      "action": "Ação",
       "active": "Ativo",
       "add-liquidity-to-lockup": "Adicionar ${symbol} a este bloqueio",
       "add-time-to-lockup": "Adicionar tempo a este bloqueio",
       "apr": "{percentage}% TNA",
       "burned": "Queimado",
-      "claimable-rewards": "Recompensas reclamáveis",
       "connect-to-hemi": "Conecte à {network} para ver as suas posições de stake.",
       "connect-to-stake": "Conecte a sua carteira para ver o seu ${symbol} em stake.",
       "get-started": "Comece a fazer stake com seu ${symbol}",
@@ -602,7 +603,8 @@
       "no-hemi-staked": "Sem ${symbol} staked",
       "on": "Em {date}",
       "position-delegated-to-you": "Posição delegada para você",
-      "time-remaining": "Tempo restante",
+      "rewards": "Recompensas",
+      "rewards-available": "{count, plural, one {# disponível} other {# disponíveis}}",
       "tx": "Tx",
       "unlock": "Desbloquear",
       "unlocked": "Desbloqueado",
@@ -646,7 +648,6 @@
     "confirming": "A confirmar...",
     "connect-wallet-to-review": "Conecte a sua carteira para rever o histórico de transações.",
     "in-challenge-period": "Em período de desafio",
-    "loading-transactions": "A carregar transações",
     "ready-to-claim": "Pronto para reclamar",
     "ready-to-confirm": "Pronto para confirmar",
     "ready-to-prove": "Pronto para provar",
@@ -764,7 +765,7 @@
         "all": "Todas",
         "bitcoin": "Bitcoin",
         "ethereum": "Ethereum",
-        "recent-transactions": "Transações Recentes"
+        "reload": "Recarregar"
       },
       "tunnel-assets": "Tunelar ativos",
       "withdraw": "Retirar"

@@ -16,8 +16,10 @@ export function useScrollbarDetection<TData>({
   useEffect(
     function detectScrollbar() {
       if (ref.current) {
-        const hasScroll = ref.current.scrollHeight > ref.current.clientHeight
-        setHasScrollbar(hasScroll)
+        // Only when the scrollbar takes up width: overlay scrollbars (macOS)
+        // leave the body full width, so compensating the header would misalign it.
+        const scrollbarWidth = ref.current.offsetWidth - ref.current.clientWidth
+        setHasScrollbar(scrollbarWidth > 0)
       }
     },
     [data, height, ref],

@@ -1,6 +1,7 @@
 import pMemoize from 'promise-mem'
 import { getPublicClient } from 'utils/chainClients'
 import { type Chain, type Hash, type TransactionReceipt } from 'viem'
+import { getBlock, getTransactionReceipt } from 'viem/actions'
 
 const clients = new Map<Chain['id'], ReturnType<typeof getPublicClient>>()
 
@@ -18,7 +19,7 @@ const getClient = function (chainId: Chain['id']) {
 
 export const getEvmBlock = pMemoize(
   (blockNumber: bigint | number, chainId: Chain['id']) =>
-    getClient(chainId).getBlock({ blockNumber: BigInt(blockNumber) }),
+    getBlock(getClient(chainId), { blockNumber: BigInt(blockNumber) }),
   { resolver: (blockNumber, chainId) => `${blockNumber}-${chainId}` },
 )
 
@@ -26,12 +27,10 @@ export const getEvmTransactionReceipt = (
   hash: Hash,
   chainId: Chain['id'],
 ): Promise<TransactionReceipt | null> =>
-  getClient(chainId)
-    .getTransactionReceipt({ hash })
-    .catch(function (err) {
-      // Do nothing if the TX was not found, as that throws
-      if (err.name === 'TransactionReceiptNotFoundError') {
-        return null
-      }
-      throw err
-    })
+  getTransactionReceipt(getClient(chainId), { hash }).catch(function (err) {
+    // Do nothing if the TX was not found, as that throws
+    if (err.name === 'TransactionReceiptNotFoundError') {
+      return null
+    }
+    throw err
+  })

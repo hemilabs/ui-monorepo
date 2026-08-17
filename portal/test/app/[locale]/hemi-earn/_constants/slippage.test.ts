@@ -51,7 +51,7 @@ describe('applySlippage', function () {
     expect(applySlippage(BigInt(1000), BigInt(0))).toBe(BigInt(1000))
   })
 
-  it('rejects bps above BPS_DENOMINATOR', function () {
+  it('rejects bps above bpsDenominator', function () {
     expect(() => applySlippage(BigInt(1000), BigInt(10001))).toThrow(RangeError)
   })
 
@@ -59,12 +59,12 @@ describe('applySlippage', function () {
     expect(() => applySlippage(BigInt(1000), BigInt(-1))).toThrow(RangeError)
   })
 
-  it('clamps to 1n at bps = BPS_DENOMINATOR (100% slippage)', function () {
+  it('clamps to 1n at bps = bpsDenominator (100% slippage)', function () {
     // (1000 * 0) / 10000 = 0 → clamp to 1
     expect(applySlippage(BigInt(1000), BigInt(10000))).toBe(BigInt(1))
   })
 
-  // applySlippage throws outside [0, BPS_DENOMINATOR] and is now called during render
+  // applySlippage throws outside [0, bpsDenominator] and is now called during render
   // with a user-set value, so maxSlippage must never map past that ceiling.
   it('accepts the whole user-selectable range without throwing', function () {
     expect(() =>

@@ -3,10 +3,10 @@ import { parseArgs } from 'node:util'
 import { isAddress, parseAbiItem, type Address, type Hex } from 'viem'
 
 import { scriptArgs } from './cli.ts'
-import { DEFAULT_DEPLOYER_PK, DEFAULT_FORK_URL } from './constants.ts'
+import { defaultDeployerPk, defaultForkUrl } from './constants.ts'
 import { buildClients } from './rpcClients.ts'
 
-const DEFAULT_POLL_SECS = 1
+const defaultPollSecs = 1
 
 const unstakeRequestedAbi = parseAbiItem(
   'event UnstakeRequested(uint256 indexed requestId, uint256 claimableAt)',
@@ -42,7 +42,7 @@ function printUsage() {
   )
   console.error('  [--deployer-pk PK]      signer for keeper txs')
   console.error(
-    `  [--poll N]              poll interval in seconds (default ${DEFAULT_POLL_SECS})`,
+    `  [--poll N]              poll interval in seconds (default ${defaultPollSecs})`,
   )
   console.error(
     '  [--from-block N]        first block to scan for keeper events (default 0 — full backfill)',
@@ -85,7 +85,7 @@ function parseRelayerArgs(argv: string[]) {
     printUsage()
     process.exit(1)
   }
-  const pollSecs = values.poll ? Number(values.poll) : DEFAULT_POLL_SECS
+  const pollSecs = values.poll ? Number(values.poll) : defaultPollSecs
   if (!Number.isFinite(pollSecs) || pollSecs <= 0) {
     printUsage()
     process.exit(1)
@@ -93,10 +93,9 @@ function parseRelayerArgs(argv: string[]) {
 
   return {
     agent,
-    deployerPk:
-      (values['deployer-pk'] as Hex | undefined) ?? DEFAULT_DEPLOYER_PK,
+    deployerPk: (values['deployer-pk'] as Hex | undefined) ?? defaultDeployerPk,
     disableAutoclaim: values['disable-autoclaim'] === true,
-    forkUrl: values['fork-url'] ?? DEFAULT_FORK_URL,
+    forkUrl: values['fork-url'] ?? defaultForkUrl,
     fromBlock: parseFromBlock(values['from-block']),
     pollMs: Math.round(pollSecs * 1000),
     router,

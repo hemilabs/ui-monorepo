@@ -7,7 +7,7 @@ import { type Address } from 'viem'
 // package — in production the portal reads `Gateway.PEGGED_TOKEN()` on-chain,
 // but the sandbox setup needs the address BEFORE deploying the gateway. Update
 // this if Vetro ever redeploys the pegged token contract.
-export const VETBTC_PROD: Address = '0xf196C68233464A16CFDa319a47c21f4cECa62001'
+export const vetBtcProd: Address = '0xf196C68233464A16CFDa319a47c21f4cECa62001'
 
 const btcGateway = gateways.find(g => g.pegBaseSymbol === 'BTC')
 if (!btcGateway) {
@@ -15,12 +15,12 @@ if (!btcGateway) {
     "No gateway with pegBaseSymbol='BTC' in @vetro-protocol/gateway",
   )
 }
-export const GATEWAY_PROD: Address = btcGateway.address
+export const gatewayProd: Address = btcGateway.address
 
-export const STAKING_PROD: Address = sVetBtcAddress
+export const stakingProd: Address = sVetBtcAddress
 
-export const DEFAULT_FORK_URL = 'http://127.0.0.1:8545'
+export const defaultForkUrl = 'http://127.0.0.1:8545'
 
-export const DEFAULT_DEPLOYER_PK = TEST_PRIVATE_KEY
+export const defaultDeployerPk = TEST_PRIVATE_KEY
 
-export const DEFAULT_INTERVAL_MINING_SECS = 6
+export const defaultIntervalMiningSecs = 6

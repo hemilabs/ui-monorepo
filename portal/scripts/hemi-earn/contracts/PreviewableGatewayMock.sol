@@ -15,7 +15,7 @@ import {ERC20Mock} from "src/mocks/ERC20Mock.sol";
 ///         exactly `amountOut` of `tokenOut` on redeem — the canonical
 ///         inverse of `previewRedeem`.
 /// @dev Storage layout mirrors `GatewayMock.sol` byte-for-byte so a hot
-///      `anvil_setCode` at GATEWAY_PROD preserves any storage already set
+///      `anvil_setCode` at gatewayProd preserves any storage already set
 ///      by the deploy (depositRateBps / redeemRateBps / fail flags).
 ///      Keep this file in sync if `GatewayMock.sol` changes.
 contract PreviewableGatewayMock {

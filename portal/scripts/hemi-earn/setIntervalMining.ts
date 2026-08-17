@@ -2,11 +2,11 @@ import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
 
 import { scriptArgs } from './cli.ts'
-import { DEFAULT_FORK_URL, DEFAULT_INTERVAL_MINING_SECS } from './constants.ts'
+import { defaultForkUrl, defaultIntervalMiningSecs } from './constants.ts'
 import { anvilRpc } from './rpcClients.ts'
 
 async function setIntervalMining({
-  forkUrl = DEFAULT_FORK_URL,
+  forkUrl = defaultForkUrl,
   seconds,
 }: {
   forkUrl?: string
@@ -37,7 +37,7 @@ export async function runSetIntervalMining(argv: string[]) {
   const seconds =
     values.seconds !== undefined
       ? Number(values.seconds)
-      : DEFAULT_INTERVAL_MINING_SECS
+      : defaultIntervalMiningSecs
 
   if (!Number.isInteger(seconds) || seconds < 0) {
     console.error(

@@ -5,6 +5,7 @@ import { DisplayAmount } from 'components/displayAmount'
 import { useVeHemiToken } from 'hooks/useVeHemiToken'
 import { useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
+import { walletIsConnected } from 'utils/wallet'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -13,15 +14,14 @@ import { useTotalVotingPower } from '../_hooks/useTotalVotingPower'
 
 export const VotingPowerSummary = function () {
   const t = useTranslations('staking-dashboard')
-  const { address, status } = useAccount()
+  const { status } = useAccount()
   const { data: veHemiToken } = useVeHemiToken()
   const { data: totalVotingPower, isError: isTotalError } =
     useTotalVotingPower()
   const { data: positionsSum, isError: isSumError } =
     usePositionsVotingPowerSum()
 
-  const isWalletReady =
-    status === 'connected' || (status === 'reconnecting' && !!address)
+  const isConnected = walletIsConnected(status)
 
   const formatVeHemi = (value: bigint): ReactNode =>
     veHemiToken ? (
@@ -34,15 +34,15 @@ export const VotingPowerSummary = function () {
   return (
     <div className="flex w-full flex-col flex-wrap items-center justify-between gap-6 xs:flex-row md:flex-nowrap [&>.card-container]:w-full [&>.card-container]:max-md:min-w-0 [&>.card-container]:max-md:basis-full">
       <CardInfo<bigint>
-        data={isWalletReady ? positionsSum : undefined}
+        data={isConnected ? positionsSum : undefined}
         formatValue={formatVeHemi}
-        isError={isWalletReady ? isSumError : false}
+        isError={!isConnected || isSumError}
         label={t('your-positions')}
       />
       <CardInfo<bigint>
-        data={isWalletReady ? totalVotingPower : undefined}
+        data={isConnected ? totalVotingPower : undefined}
         formatValue={formatVeHemi}
-        isError={isWalletReady ? isTotalError : false}
+        isError={!isConnected || isTotalError}
         label={t('total-voting-power')}
       />
     </div>

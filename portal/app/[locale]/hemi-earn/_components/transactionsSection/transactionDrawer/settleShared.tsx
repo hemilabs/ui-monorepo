@@ -61,7 +61,7 @@ const SettleForm = ({
 type SettleOperation = 'CLAIM' | 'RECOVER'
 
 // (kind, operation) matrix so the Router action and its label stay in lockstep across call sites.
-const SETTLE_CONFIG = {
+const settleConfig = {
   DEPOSIT: {
     CLAIM: { action: claimDeposit, label: 'claim-share-tokens' },
     RECOVER: { action: recoverDeposit, label: 'recover-funds' },
@@ -96,7 +96,7 @@ export const SettleCta = function ({
   const tCommon = useTranslations('common')
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
 
-  const { action, label } = SETTLE_CONFIG[transaction.kind][operation]
+  const { action, label } = settleConfig[transaction.kind][operation]
   const deliversShares =
     (transaction.kind === 'DEPOSIT') === (operation === 'CLAIM')
 

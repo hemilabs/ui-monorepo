@@ -10,14 +10,14 @@ import {
 } from 'viem'
 
 import { scriptArgs } from './cli.ts'
-import { DEFAULT_DEPLOYER_PK, DEFAULT_FORK_URL } from './constants.ts'
+import { defaultDeployerPk, defaultForkUrl } from './constants.ts'
 import { buildClients } from './rpcClients.ts'
 
-const ACTION_VALUES = ['cancel', 'retry'] as const
-type Action = (typeof ACTION_VALUES)[number]
+const actionValues = ['cancel', 'retry'] as const
+type Action = (typeof actionValues)[number]
 
 const isAction = (v: unknown): v is Action =>
-  (ACTION_VALUES as readonly string[]).includes(v as string)
+  (actionValues as readonly string[]).includes(v as string)
 
 const failedRequestsAbi = parseAbiItem(
   'function failedRequests(uint256) view returns ((address tokenIn, uint256 amountIn, bytes msgIn, uint256 nativeFee))',
@@ -102,10 +102,8 @@ function parseKeeperArgs(argv: string[]) {
   return {
     action: values.action,
     agent,
-    deployerPk: validateDeployerPk(
-      values['deployer-pk'] ?? DEFAULT_DEPLOYER_PK,
-    ),
-    forkUrl: values['fork-url'] ?? DEFAULT_FORK_URL,
+    deployerPk: validateDeployerPk(values['deployer-pk'] ?? defaultDeployerPk),
+    forkUrl: values['fork-url'] ?? defaultForkUrl,
     requestId: parseNonNegativeBigInt(rawId, '--request-id'),
     value:
       values.value === undefined

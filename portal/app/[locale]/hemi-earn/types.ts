@@ -115,7 +115,7 @@ type LocalEarnOperationBase = {
   // Percent — the unit the settings panel edits and clampSlippage works in. Holds the
   // effective value, so "Auto" is resolved at sign time and a retry replays the real number.
   slippage?: number
-  // Unix seconds — must match TTL_SECONDS' unit in localEarnOperationsContext (the GC compares them).
+  // Unix seconds — must match ttlSeconds' unit in localEarnOperationsContext (the GC compares them).
   startedAt: number
 }
 

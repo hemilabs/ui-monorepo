@@ -13,17 +13,17 @@ export const veryHighSlippageThreshold = 10
 export const lowSlippageThreshold = 0.1
 export const maxSlippage = 100
 
-const BPS_DENOMINATOR = BigInt(10000)
+const bpsDenominator = BigInt(10000)
 
 // Clamp to 1n so a floor-divided 0n can't become an on-chain "accept zero out";
 // reject out-of-range bps so a misconfigured value can't slip into the same failure mode.
 export function applySlippage(amount: bigint, bps: bigint): bigint {
-  if (bps < BigInt(0) || bps > BPS_DENOMINATOR) {
+  if (bps < BigInt(0) || bps > bpsDenominator) {
     throw new RangeError(
-      `applySlippage: bps must be in [0, ${BPS_DENOMINATOR}], got ${bps}`,
+      `applySlippage: bps must be in [0, ${bpsDenominator}], got ${bps}`,
     )
   }
   if (amount <= BigInt(0)) return BigInt(0)
-  const result = (amount * (BPS_DENOMINATOR - bps)) / BPS_DENOMINATOR
+  const result = (amount * (bpsDenominator - bps)) / bpsDenominator
   return result > BigInt(0) ? result : BigInt(1)
 }

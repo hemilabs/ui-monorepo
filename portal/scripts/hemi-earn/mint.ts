@@ -9,7 +9,7 @@ import {
 } from 'viem'
 
 import { scriptArgs } from './cli.ts'
-import { DEFAULT_DEPLOYER_PK, DEFAULT_FORK_URL } from './constants.ts'
+import { defaultDeployerPk, defaultForkUrl } from './constants.ts'
 import { buildClients } from './rpcClients.ts'
 
 const mintAbi = parseAbiItem('function mint(address,uint256)')
@@ -71,7 +71,7 @@ function parseMintArgs(argv: string[]) {
     process.exit(1)
   }
 
-  const deployerPk = (values['deployer-pk'] ?? DEFAULT_DEPLOYER_PK) as Hex
+  const deployerPk = (values['deployer-pk'] ?? defaultDeployerPk) as Hex
   if (!/^0x[0-9a-fA-F]{64}$/.test(deployerPk)) {
     console.error(
       '✗ --deployer-pk must be a 32-byte hex string starting with 0x',
@@ -83,7 +83,7 @@ function parseMintArgs(argv: string[]) {
   return {
     ...parseAmount(values.amount),
     deployerPk,
-    forkUrl: values['fork-url'] ?? DEFAULT_FORK_URL,
+    forkUrl: values['fork-url'] ?? defaultForkUrl,
     to: to as Address,
     token: token as Address,
   }

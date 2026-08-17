@@ -5,11 +5,11 @@ import { type Abi, type Address, type Hex } from 'viem'
 import { loadArtifact } from './artifacts.ts'
 import { scriptArgs } from './cli.ts'
 import {
-  DEFAULT_DEPLOYER_PK,
-  DEFAULT_FORK_URL,
-  GATEWAY_PROD,
-  STAKING_PROD,
-  VETBTC_PROD,
+  defaultDeployerPk,
+  defaultForkUrl,
+  gatewayProd,
+  stakingProd,
+  vetBtcProd,
 } from './constants.ts'
 import { anvilRpc, buildClients } from './rpcClients.ts'
 
@@ -25,8 +25,8 @@ export type DeployedMocks = {
 }
 
 export async function deployMocks({
-  deployerPk = DEFAULT_DEPLOYER_PK,
-  forkUrl = DEFAULT_FORK_URL,
+  deployerPk = defaultDeployerPk,
+  forkUrl = defaultForkUrl,
 }: {
   deployerPk?: Hex
   forkUrl?: string
@@ -132,55 +132,55 @@ export async function deployMocks({
   await aliasCode({
     artifact: peggedTokenMock,
     label: 'vetBTC',
-    prod: VETBTC_PROD,
+    prod: vetBtcProd,
   })
   await aliasCode({
     artifact: gatewayMock,
-    ctorArgs: [VETBTC_PROD],
+    ctorArgs: [vetBtcProd],
     label: 'Gateway',
-    prod: GATEWAY_PROD,
+    prod: gatewayProd,
   })
   // ERC4626Mock's constructor reads asset_.decimals(), so the pegged-token
   // alias must exist before the staking mock deploys.
   await aliasCode({
     artifact: stakingVaultMock,
-    ctorArgs: [VETBTC_PROD],
+    ctorArgs: [vetBtcProd],
     label: 'Staking',
-    prod: STAKING_PROD,
+    prod: stakingProd,
   })
 
   console.log('\nPhase 3 — wire state at aliased addresses:')
   await writeAndWait({
     abi: peggedTokenMock.abi,
-    address: VETBTC_PROD,
-    args: [GATEWAY_PROD],
+    address: vetBtcProd,
+    args: [gatewayProd],
     functionName: 'setGateway',
-    label: 'vetBTC.setGateway(GATEWAY_PROD)',
+    label: 'vetBTC.setGateway(gatewayProd)',
   })
   await writeAndWait({
     abi: gatewayMock.abi,
-    address: GATEWAY_PROD,
+    address: gatewayProd,
     args: [10_000n],
     functionName: 'setDepositRateBps',
     label: 'Gateway.setDepositRateBps(10000)',
   })
   await writeAndWait({
     abi: gatewayMock.abi,
-    address: GATEWAY_PROD,
+    address: gatewayProd,
     args: [10_000n],
     functionName: 'setRedeemRateBps',
     label: 'Gateway.setRedeemRateBps(10000)',
   })
 
-  console.log('\nPhase 4 — Router + Agent (local, share=STAKING_PROD):')
+  console.log('\nPhase 4 — Router + Agent (local, share=stakingProd):')
   const agent = await deploy({
-    args: [hemiBTC, STAKING_PROD],
+    args: [hemiBTC, stakingProd],
     artifact: agentMock,
     label: 'Agent',
   })
   console.log(`  Agent      ${agent}`)
   const router = await deploy({
-    args: [hemiBTC, STAKING_PROD],
+    args: [hemiBTC, stakingProd],
     artifact: routerMock,
     label: 'Router',
   })
@@ -232,7 +232,7 @@ export async function deployMocks({
     await writeAndWait({
       abi: routerMock.abi,
       address: router,
-      args: [addr, STAKING_PROD, addr, STAKING_PROD, true],
+      args: [addr, stakingProd, addr, stakingProd, true],
       functionName: 'updateAssetData',
       label: `router.updateAssetData(${name})`,
     })
@@ -241,14 +241,14 @@ export async function deployMocks({
   console.log('\nPhase 7 — enable cooldown (1 day):')
   await writeAndWait({
     abi: stakingVaultMock.abi,
-    address: STAKING_PROD,
+    address: stakingProd,
     args: [true],
     functionName: 'updateCooldownEnabled',
     label: 'staking.updateCooldownEnabled(true)',
   })
   await writeAndWait({
     abi: stakingVaultMock.abi,
-    address: STAKING_PROD,
+    address: stakingProd,
     args: [86_400n],
     functionName: 'updateCooldownDuration',
     label: 'staking.updateCooldownDuration(86400)',
@@ -257,11 +257,11 @@ export async function deployMocks({
   return {
     agent,
     cbBtc,
-    gateway: GATEWAY_PROD,
+    gateway: gatewayProd,
     hemiBTC,
     router,
-    staking: STAKING_PROD,
-    vetBTC: VETBTC_PROD,
+    staking: stakingProd,
+    vetBTC: vetBtcProd,
     wbtc,
   }
 }

@@ -184,7 +184,7 @@ function buildReceiveStep({
   }
 }
 
-const FAILED_STATUSES: WithdrawStatusType[] = [
+const failedStatuses: WithdrawStatusType[] = [
   WithdrawStatus.APPROVAL_TX_FAILED,
   WithdrawStatus.WITHDRAW_TX_FAILED,
 ]
@@ -473,7 +473,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   }
 
   const getCallToAction = function () {
-    if (FAILED_STATUSES.includes(withdrawStatus)) {
+    if (failedStatuses.includes(withdrawStatus)) {
       return <RetryWithdraw />
     }
     if (isRemoteFailed(settledRow)) {

@@ -8,15 +8,16 @@ import {
   useMemo,
 } from 'react'
 import useLocalStorageState from 'use-local-storage-state'
+import { secondsPerDay } from 'utils/time'
 import { type Address, type Hash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { hashesMatch } from '../_utils/hashes'
 import { type EarnSettlement, type LocalEarnOperation } from '../types'
 
-const STORAGE_KEY = 'hemi-earn:local-operations'
-const TTL_SECONDS = 90 * 24 * 60 * 60
-const MAX_ENTRIES_PER_ACCOUNT = 100
+const storageKey = 'hemi-earn:local-operations'
+const ttlSeconds = 90 * secondsPerDay
+const maxEntriesPerAccount = 100
 
 type Store = Record<string, LocalEarnOperation[]>
 
@@ -48,11 +49,11 @@ const normalizeAccount = (account: Address) => account.toLowerCase() as Address
 
 const garbageCollect = function (entries: LocalEarnOperation[]) {
   const nowSec = Math.floor(Date.now() / 1000)
-  const recent = entries.filter(e => nowSec - e.startedAt < TTL_SECONDS)
-  if (recent.length <= MAX_ENTRIES_PER_ACCOUNT) return recent
+  const recent = entries.filter(e => nowSec - e.startedAt < ttlSeconds)
+  if (recent.length <= maxEntriesPerAccount) return recent
   return [...recent]
     .sort((a, b) => b.startedAt - a.startedAt)
-    .slice(0, MAX_ENTRIES_PER_ACCOUNT)
+    .slice(0, maxEntriesPerAccount)
 }
 
 // Key by initiateTxHash once known; before that, the (account, startedAt) tuple identifies the signing session.
@@ -72,7 +73,7 @@ export const LocalEarnOperationsProvider = function ({
   children: ReactNode
 }) {
   const { address } = useAccount()
-  const [store, setStore] = useLocalStorageState<Store>(STORAGE_KEY, {
+  const [store, setStore] = useLocalStorageState<Store>(storageKey, {
     defaultValue: {},
   })
 

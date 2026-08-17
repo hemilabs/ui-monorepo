@@ -6,7 +6,7 @@ import { unixNowTimestamp } from 'utils/time'
 // Local countdown from the subgraph's claimableAt (unix seconds, set on Ethereum — authoritative
 // for maturity, free of the LayerZero drift a local requestedAt + duration would carry). Ticks
 // every 60s; returns undefined until the input exists.
-const TICK_MS = 60_000
+const tickMs = 60_000
 
 const nowInSeconds = () => Number(unixNowTimestamp())
 
@@ -27,7 +27,7 @@ export function useEarnCooldownRemaining(
   useEffect(
     function tick() {
       if (claimableAt === undefined) return undefined
-      const id = setInterval(() => setNowSec(nowInSeconds()), TICK_MS)
+      const id = setInterval(() => setNowSec(nowInSeconds()), tickMs)
       return () => clearInterval(id)
     },
     [claimableAt],

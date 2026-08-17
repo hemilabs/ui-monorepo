@@ -9,17 +9,13 @@ import {
 } from 'viem'
 
 import { scriptArgs } from './cli.ts'
-import {
-  DEFAULT_DEPLOYER_PK,
-  DEFAULT_FORK_URL,
-  GATEWAY_PROD,
-} from './constants.ts'
+import { defaultDeployerPk, defaultForkUrl, gatewayProd } from './constants.ts'
 import { buildClients } from './rpcClients.ts'
 
-const MODE_NAMES = ['NONE', 'SLIPPAGE', 'FEE', 'UNKNOWN'] as const
-type ModeName = (typeof MODE_NAMES)[number]
+const modeNames = ['NONE', 'SLIPPAGE', 'FEE', 'UNKNOWN'] as const
+type ModeName = (typeof modeNames)[number]
 
-const MODE_ARG_TO_UINT: Record<string, number> = {
+const modeArgToUint: Record<string, number> = {
   fee: 2,
   slippage: 1,
   unknown: 3,
@@ -72,15 +68,15 @@ function printUsage() {
   console.error('  [--deployer-pk PK]      signer for setter txs')
 }
 
-const KIND_VALUES = ['deposit', 'redeem'] as const
-type Kind = (typeof KIND_VALUES)[number]
-const MODE_VALUES = ['off', 'on', 'slippage', 'fee', 'unknown'] as const
-type Mode = (typeof MODE_VALUES)[number]
+const kindValues = ['deposit', 'redeem'] as const
+type Kind = (typeof kindValues)[number]
+const modeValues = ['off', 'on', 'slippage', 'fee', 'unknown'] as const
+type Mode = (typeof modeValues)[number]
 
 const isKind = (v: unknown): v is Kind =>
-  (KIND_VALUES as readonly string[]).includes(v as string)
+  (kindValues as readonly string[]).includes(v as string)
 const isMode = (v: unknown): v is Mode =>
-  (MODE_VALUES as readonly string[]).includes(v as string)
+  (modeValues as readonly string[]).includes(v as string)
 
 function parseFailGatewayArgs(argv: string[]) {
   const { values } = parseArgs({
@@ -95,7 +91,7 @@ function parseFailGatewayArgs(argv: string[]) {
     strict: true,
   })
 
-  const forkUrl = values['fork-url'] ?? DEFAULT_FORK_URL
+  const forkUrl = values['fork-url'] ?? defaultForkUrl
 
   if (values.status === true) {
     if (values.kind !== undefined || values.mode !== undefined) {
@@ -106,13 +102,13 @@ function parseFailGatewayArgs(argv: string[]) {
     // --status is read-only, so any user-supplied --deployer-pk is unused;
     // fall back to the default so a stale env var can't gate the read.
     return {
-      deployerPk: DEFAULT_DEPLOYER_PK as Hex,
+      deployerPk: defaultDeployerPk as Hex,
       forkUrl,
       status: true as const,
     }
   }
 
-  const deployerPk = (values['deployer-pk'] ?? DEFAULT_DEPLOYER_PK) as Hex
+  const deployerPk = (values['deployer-pk'] ?? defaultDeployerPk) as Hex
   if (!/^0x[0-9a-fA-F]{64}$/.test(deployerPk)) {
     console.error(
       '✗ --deployer-pk must be a 32-byte hex string starting with 0x',
@@ -161,7 +157,7 @@ async function writeAndWait<
   const hash = await walletClient.writeContract({
     abi: abi as Abi,
     account,
-    address: GATEWAY_PROD,
+    address: gatewayProd,
     args: args as never,
     chain: walletClient.chain,
     functionName: functionName as never,
@@ -176,22 +172,22 @@ async function readStatus(publicClient: PublicClient) {
   const [deposit, redeem, depositMode, redeemMode] = await Promise.all([
     publicClient.readContract({
       abi: [shouldFailDepositAbi],
-      address: GATEWAY_PROD,
+      address: gatewayProd,
       functionName: 'shouldFailDeposit',
     }),
     publicClient.readContract({
       abi: [shouldFailRedeemAbi],
-      address: GATEWAY_PROD,
+      address: gatewayProd,
       functionName: 'shouldFailRedeem',
     }),
     publicClient.readContract({
       abi: [depositFailureModeAbi],
-      address: GATEWAY_PROD,
+      address: gatewayProd,
       functionName: 'depositFailureMode',
     }),
     publicClient.readContract({
       abi: [redeemFailureModeAbi],
-      address: GATEWAY_PROD,
+      address: gatewayProd,
       functionName: 'redeemFailureMode',
     }),
   ])
@@ -204,10 +200,10 @@ function formatStatus(s: {
   redeem: boolean
   redeemMode: number
 }) {
-  const depositName: ModeName = MODE_NAMES[s.depositMode] ?? 'NONE'
-  const redeemName: ModeName = MODE_NAMES[s.redeemMode] ?? 'NONE'
+  const depositName: ModeName = modeNames[s.depositMode] ?? 'NONE'
+  const redeemName: ModeName = modeNames[s.redeemMode] ?? 'NONE'
   return (
-    `PreviewableGatewayMock @ ${GATEWAY_PROD}\n` +
+    `PreviewableGatewayMock @ ${gatewayProd}\n` +
     `  deposit=${s.deposit} depositMode=${depositName}\n` +
     `  redeem=${s.redeem} redeemMode=${redeemName}`
   )
@@ -226,7 +222,7 @@ async function clearLegacyIfSet({
 }) {
   const currentBool = await publicClient.readContract({
     abi: [kind === 'deposit' ? shouldFailDepositAbi : shouldFailRedeemAbi],
-    address: GATEWAY_PROD,
+    address: gatewayProd,
     functionName: kind === 'deposit' ? 'shouldFailDeposit' : 'shouldFailRedeem',
   })
   if (!currentBool) return
@@ -259,7 +255,7 @@ async function clearModeIfSet({
 }) {
   const currentMode = await publicClient.readContract({
     abi: [kind === 'deposit' ? depositFailureModeAbi : redeemFailureModeAbi],
-    address: GATEWAY_PROD,
+    address: gatewayProd,
     functionName:
       kind === 'deposit' ? 'depositFailureMode' : 'redeemFailureMode',
   })
@@ -311,7 +307,7 @@ async function applyFailure({
     return
   }
 
-  const uint = mode === 'off' ? 0 : MODE_ARG_TO_UINT[mode]
+  const uint = mode === 'off' ? 0 : modeArgToUint[mode]
   await writeAndWait({
     abi: [
       kind === 'deposit' ? setDepositFailureModeAbi : setRedeemFailureModeAbi,
@@ -325,7 +321,7 @@ async function applyFailure({
   })
   await clearLegacyIfSet({ account, kind, publicClient, walletClient })
 
-  const modeName: ModeName = MODE_NAMES[uint] ?? 'NONE'
+  const modeName: ModeName = modeNames[uint] ?? 'NONE'
   console.log(`✓ ${kind}FailureMode=${modeName}`)
 }
 

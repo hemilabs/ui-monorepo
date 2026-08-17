@@ -4,8 +4,7 @@ import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 
-// Governance-controlled and rarely changes; cache for hours to avoid refetch on every focus/reconnect.
-const STALE_TIME_MS = 4 * 60 * 60 * 1000
+import { cooldownStaleTimeMs } from '../_constants/cooldown'
 
 // True when the caller is subject to the withdraw cooldown — the inverse of resolveIsInstant, for gating UI on one boolean.
 export const useIsCooldownEligible = ({
@@ -26,5 +25,5 @@ export const useIsCooldownEligible = ({
       return !isInstant
     },
     queryKey: ['hemi-earn', 'cooldown-eligible', stakingVault, account],
-    staleTime: STALE_TIME_MS,
+    staleTime: cooldownStaleTimeMs,
   })

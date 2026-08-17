@@ -25,10 +25,10 @@ vi.mock('@vetro-protocol/treasury/actions', () => ({
 }))
 vi.mock('viem/actions', () => ({ readContract: vi.fn() }))
 
-const GATEWAY = '0xCBA2Ffa0AC52d7871a4221a871793Eb788013faB' as Address
-const TREASURY = '0x1111111111111111111111111111111111111111' as Address
-const ORACLE = '0x2222222222222222222222222222222222222222' as Address
-const WBTC = '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599' as Address
+const gatewayAddress = '0xCBA2Ffa0AC52d7871a4221a871793Eb788013faB' as Address
+const treasuryAddress = '0x1111111111111111111111111111111111111111' as Address
+const oracleAddress = '0x2222222222222222222222222222222222222222' as Address
+const wbtcAddress = '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599' as Address
 
 // Each whitelisted token's oracle reports its price in the gateway's peg unit.
 // `latestRoundData` returns the price as the `answer` field of the round tuple;
@@ -59,11 +59,10 @@ const seedToken = (
 
 describe('app/[locale]/hemi-earn/_fetchers/fetchOraclePrices', function () {
   beforeEach(function () {
-    vi.clearAllMocks()
-    vi.mocked(getTreasury).mockResolvedValue(TREASURY)
+    vi.mocked(getTreasury).mockResolvedValue(treasuryAddress)
     vi.mocked(getTokenConfig).mockResolvedValue([
       zeroAddress,
-      ORACLE,
+      oracleAddress,
       BigInt(0),
       true,
       true,
@@ -73,23 +72,23 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchOraclePrices', function () {
 
   it("keys each whitelisted token's oracle price by its uppercased symbol", async function () {
     const queryClient = createTestQueryClient()
-    seedToken(queryClient, WBTC, 'WBTC')
-    vi.mocked(getWhitelistedTokens).mockResolvedValue([WBTC])
+    seedToken(queryClient, wbtcAddress, 'WBTC')
+    vi.mocked(getWhitelistedTokens).mockResolvedValue([wbtcAddress])
     // 0.998 WBTC/BTC at 8 decimals.
     mockOracleRead(BigInt(99800000), 8)
 
-    const result = await fetchOraclePrices(queryClient, GATEWAY)
+    const result = await fetchOraclePrices(queryClient, gatewayAddress)
 
     expect(result).toEqual({ WBTC: '0.998' })
   })
 
   it('uppercases mixed-case token symbols so the alias lookup matches', async function () {
     const queryClient = createTestQueryClient()
-    seedToken(queryClient, WBTC, 'wBTC')
-    vi.mocked(getWhitelistedTokens).mockResolvedValue([WBTC])
+    seedToken(queryClient, wbtcAddress, 'wBTC')
+    vi.mocked(getWhitelistedTokens).mockResolvedValue([wbtcAddress])
     mockOracleRead(BigInt(100000000), 8)
 
-    const result = await fetchOraclePrices(queryClient, GATEWAY)
+    const result = await fetchOraclePrices(queryClient, gatewayAddress)
 
     expect(result).toEqual({ WBTC: '1' })
   })
@@ -98,7 +97,7 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchOraclePrices', function () {
     const queryClient = createTestQueryClient()
     vi.mocked(getWhitelistedTokens).mockResolvedValue([])
 
-    const result = await fetchOraclePrices(queryClient, GATEWAY)
+    const result = await fetchOraclePrices(queryClient, gatewayAddress)
 
     expect(result).toEqual({})
   })

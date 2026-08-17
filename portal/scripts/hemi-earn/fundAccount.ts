@@ -4,18 +4,14 @@ import { isAddress, parseEther, toHex, type Address, type Hex } from 'viem'
 
 import { loadArtifact } from './artifacts.ts'
 import { scriptArgs } from './cli.ts'
-import {
-  DEFAULT_DEPLOYER_PK,
-  DEFAULT_FORK_URL,
-  GATEWAY_PROD,
-} from './constants.ts'
+import { defaultDeployerPk, defaultForkUrl, gatewayProd } from './constants.ts'
 import { anvilRpc, buildClients } from './rpcClients.ts'
 
 export async function fundAccount({
   address,
   cbBtc,
-  deployerPk = DEFAULT_DEPLOYER_PK,
-  forkUrl = DEFAULT_FORK_URL,
+  deployerPk = defaultDeployerPk,
+  forkUrl = defaultForkUrl,
   hemiBTC,
   wbtc,
 }: {
@@ -44,7 +40,7 @@ export async function fundAccount({
 
   const mints: [string, Address, Address, bigint][] = [
     ['hemiBTC (user)', hemiBTC, address, parseEther('10')],
-    ['hemiBTC (gateway liquidity)', hemiBTC, GATEWAY_PROD, parseEther('100')],
+    ['hemiBTC (gateway liquidity)', hemiBTC, gatewayProd, parseEther('100')],
   ]
   if (wbtc) mints.push(['WBTC (user)', wbtc, address, parseEther('10')])
   if (cbBtc) mints.push(['cbBTC (user)', cbBtc, address, parseEther('10')])

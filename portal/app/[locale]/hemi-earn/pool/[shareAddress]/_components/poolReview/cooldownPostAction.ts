@@ -4,7 +4,11 @@ import {
 } from 'components/reviewOperation/progressStatus'
 import { type useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
-import { secondsToDaysAndHours, secondsToWholeDays } from 'utils/time'
+import {
+  secondsPerHour,
+  secondsToDaysAndHours,
+  secondsToWholeDays,
+} from 'utils/time'
 
 export type CooldownPostAction = {
   description: ReactNode
@@ -20,7 +24,7 @@ export type CooldownInputs = {
   unstakeMined: boolean
 }
 
-const RECOVER_PATH_STATUSES = new Set<string | undefined>([
+const recoverPathStatuses = new Set<string | undefined>([
   'CANCELLED',
   'RECOVERED',
 ])
@@ -38,7 +42,7 @@ export function deriveCooldownPostAction({
 }: CooldownInputs): CooldownPostAction | undefined {
   if (isCooldownEligible === false) return undefined
   // Recover path: cooldown was bypassed, shares come straight back — no milestone here (the recover step carries the state).
-  if (RECOVER_PATH_STATUSES.has(subgraphStatus)) {
+  if (recoverPathStatuses.has(subgraphStatus)) {
     return undefined
   }
   // Cooldown is over once the timer elapses or the row reaches FULFILLED/FINALIZED (both imply
@@ -73,7 +77,7 @@ export function deriveCooldownPostAction({
   }
 
   // Under an hour: show "less than an hour" — a precise countdown would lie given the minute-resolution tick.
-  if (cooldownRemainingSec < 3600) {
+  if (cooldownRemainingSec < secondsPerHour) {
     return {
       description: t('wait-cooldown-countdown-soon'),
       status: ProgressStatus.PROGRESS,

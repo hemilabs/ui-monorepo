@@ -6,7 +6,7 @@ import { runRelayer } from './relayer.ts'
 import { runSetIntervalMining } from './setIntervalMining.ts'
 import { runSetup } from './setup.ts'
 
-const HANDLERS = {
+const handlers = {
   'fail-gateway': runFailGateway,
   'keeper': runKeeper,
   'mining': runSetIntervalMining,
@@ -19,11 +19,11 @@ function printUsage() {
   console.error(
     'Usage: pnpm --filter portal sandbox:hemi-earn -- <subcommand> [flags]',
   )
-  console.error(`Subcommands: ${Object.keys(HANDLERS).join(', ')}`)
+  console.error(`Subcommands: ${Object.keys(handlers).join(', ')}`)
 }
 
 const [subcommand, ...rest] = scriptArgs()
-const handler = HANDLERS[subcommand as keyof typeof HANDLERS]
+const handler = handlers[subcommand as keyof typeof handlers]
 
 if (!handler) {
   printUsage()

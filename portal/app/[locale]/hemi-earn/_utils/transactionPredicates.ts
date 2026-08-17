@@ -85,7 +85,7 @@ export const isCooldownMature = (
 
 // Grace before offering Retry/Cancel on a remote failure, so the keeper gets first crack at
 // auto-recovering it. Anchored on the request's receivedAt (== the failure block).
-const REMOTE_FAILED_GRACE_SECONDS = 120
+const remoteFailedGraceSeconds = 120
 
 // Grace gate for the remote-failed CTAs: stay quiet right after the failure so the keeper can
 // auto-recover, unless slippage (needs a user call), a keeper retry already failed, or the grace elapsed.
@@ -105,5 +105,5 @@ export const shouldShowRemoteFailedCtas = function ({
   if ((tx.retryCount ?? 0) > 0) return true
   // Guard against a missing / '0' / non-numeric receivedAt so the grace can't be skipped by Number(...) === 0.
   const receivedAt = Number(tx.receivedAt ?? 0)
-  return receivedAt > 0 && nowSec - receivedAt > REMOTE_FAILED_GRACE_SECONDS
+  return receivedAt > 0 && nowSec - receivedAt > remoteFailedGraceSeconds
 }

@@ -11,6 +11,7 @@ import {
   formatPercentage,
   formatShortDate,
 } from 'utils/format'
+import { secondsPerDay } from 'utils/time'
 import {
   VictoryArea,
   VictoryAxis,
@@ -64,10 +65,10 @@ const AreaGradient = () => (
 )
 
 const periodDurations: Record<MetricPeriod, number> = {
-  '1m': 30 * 24 * 60 * 60 * 1000,
-  '1w': 7 * 24 * 60 * 60 * 1000,
-  '1y': 365 * 24 * 60 * 60 * 1000,
-  '3m': 90 * 24 * 60 * 60 * 1000,
+  '1m': 30 * secondsPerDay * 1000,
+  '1w': 7 * secondsPerDay * 1000,
+  '1y': 365 * secondsPerDay * 1000,
+  '3m': 90 * secondsPerDay * 1000,
 }
 
 const getPlaceholderXTicks = function (period: MetricPeriod) {

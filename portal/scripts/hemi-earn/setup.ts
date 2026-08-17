@@ -5,11 +5,11 @@ import { isAddress, type Address, type Hex } from 'viem'
 import { hemi } from 'viem/chains'
 
 import { scriptArgs } from './cli.ts'
-import { DEFAULT_DEPLOYER_PK } from './constants.ts'
+import { defaultDeployerPk } from './constants.ts'
 import { deployMocks } from './deployMocks.ts'
 import { fundAccount } from './fundAccount.ts'
 
-const BOX_WIDTH = 78
+const boxWidth = 78
 
 export async function runSetup(argv: string[]) {
   const { values } = parseArgs({
@@ -43,7 +43,7 @@ export async function runSetup(argv: string[]) {
 
   const userAddress = values.address as Address
   const deployerPk =
-    (values['deployer-pk'] as Hex | undefined) ?? DEFAULT_DEPLOYER_PK
+    (values['deployer-pk'] as Hex | undefined) ?? defaultDeployerPk
 
   let forkUrl: string
   if (values['fork-url']) {
@@ -76,12 +76,12 @@ export async function runSetup(argv: string[]) {
     wbtc: deployed.wbtc,
   })
 
-  const bar = '═'.repeat(BOX_WIDTH)
+  const bar = '═'.repeat(boxWidth)
   console.log(`\n╔${bar}╗`)
-  console.log(`║${'  Hemi Earn sandbox ready.'.padEnd(BOX_WIDTH)}║`)
+  console.log(`║${'  Hemi Earn sandbox ready.'.padEnd(boxWidth)}║`)
   console.log(`╠${bar}╣`)
   for (const [label, addr] of Object.entries(deployed)) {
-    const line = `  ${label.padEnd(10)} ${addr}`.padEnd(BOX_WIDTH)
+    const line = `  ${label.padEnd(10)} ${addr}`.padEnd(boxWidth)
     console.log(`║${line}║`)
   }
   console.log(`╚${bar}╝`)

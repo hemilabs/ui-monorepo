@@ -10,7 +10,7 @@ import { PoolToast } from '../pool/[shareAddress]/_components/poolToast'
 import { type EarnTransactionKindType } from '../types'
 
 // Match the <Toast> primitive's 10s auto-close so its close animation isn't cut short.
-const TOAST_MS = 10_000
+const toastMs = 10_000
 
 type Props = {
   kind: EarnTransactionKindType
@@ -83,7 +83,7 @@ export const EarnSuccessToast = function ({ kind, title }: Props) {
   useEffect(
     function unlatchAfterToastWindow() {
       if (latchedKey === undefined) return undefined
-      const timer = setTimeout(() => setLatched(null), TOAST_MS)
+      const timer = setTimeout(() => setLatched(null), toastMs)
       return () => clearTimeout(timer)
     },
     [latchedKey],

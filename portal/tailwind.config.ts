@@ -5,6 +5,9 @@ const config: Config = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    // Vite's entry files live at the package root
+    './index.html',
+    './*.tsx',
   ],
   plugins: [],
   theme: {

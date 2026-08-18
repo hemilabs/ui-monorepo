@@ -1,11 +1,15 @@
 {
   "ignore": ["subgraphs/utils/index.ts"],
-  "ignoreBinaries": ["ipconfig", "jq"],
-  "ignoreDependencies": ["eslint-config-next", "eslint-config-prettier"],
+  "ignoreBinaries": ["jq"],
+  "ignoreDependencies": ["eslint-config-prettier"],
   "workspaces": {
     "portal": {
       "typescript": {
-        "config": ["tsconfig.json", "scripts/hemi-earn/tsconfig.json"]
+        "config": [
+          "tsconfig.json",
+          "tsconfig.build.json",
+          "scripts/hemi-earn/tsconfig.json"
+        ]
       }
     },
     "portal-backend/api": {

@@ -4,7 +4,7 @@ The Portal is a Web3 app that allows users to interact with Hemi, an L2 that int
 
 ## Structure
 
-The portal is a Next app that uses static building and the app router. As it is a static page, it does not rely with SSR features (Except on local development).
+The portal is being migrated from Next to Vite (see [#2194](https://github.com/hemilabs/ui-monorepo/issues/2194)). The build already runs on Vite and produces a static bundle, while the routes under `app/` still use the Next app router until the routing step lands. It has never relied on SSR.
 
 Some relevant folders are:
 
@@ -24,6 +24,8 @@ Follow the steps in the [main README](../README.md). No extra actions are needed
 
 The environment variables are defined in the `.env` file at the root of the project.
 The prefix `NEXT_PUBLIC_` is required for the variables to be available in the browser. A few variables can be set locally (in a `.env.local`), in addition to the ones already defined in the `.env`.
+
+> Vite only exposes variables prefixed with `VITE_`, so these reads resolve to `undefined` under the new build. The rename happens in the routing step of the migration, when the code that consumes them enters the bundle.
 
 This is the list of all variables that can be configured:
 
@@ -100,4 +102,4 @@ Run the following command:
 pnpm build
 ```
 
-The .out folder's content should be deployed as a static page.
+The `dist` folder's content should be deployed as a static page.

@@ -8,12 +8,12 @@ import { TunnelHistoryProvider } from 'context/tunnelHistoryContext'
 import { WalletsContext } from 'context/walletsContext'
 import { interDisplay, interVariable } from 'fonts/index'
 import { type Locale, routing } from 'i18n/routing'
-import { Metadata } from 'next'
+import { type Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
-import { Suspense } from 'react'
+import { type ReactNode, Suspense } from 'react'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { Analytics } from './_components/analytics'
@@ -57,7 +57,10 @@ export const generateStaticParams = async () =>
 export default async function RootLayout({
   children,
   params,
-}: LayoutProps<'/[locale]'>) {
+}: {
+  children: ReactNode
+  params: Promise<{ locale: string }>
+}) {
   const { locale } = await params
 
   if (!hasLocale(routing.locales, locale)) {

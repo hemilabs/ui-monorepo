@@ -4,19 +4,28 @@
     "allowImportingTsExtensions": true,
     "baseUrl": "./",
     "erasableSyntaxOnly": true,
+    // Dropped by @tsconfig/vite-react, and esbuild compiles file by file, so
+    // without it nothing catches a type re-exported as a value.
+    "isolatedModules": true,
     "lib": ["dom", "dom.iterable", "esnext", "WebWorker"],
-    "target": "es6"
+    "resolveJsonModule": true,
+    // @tsconfig/vite-react dropped `strict` in v8; viem's generics collapse to
+    // `never` without strictNullChecks.
+    "strict": true,
+    // Turning this on means marking every type-only import across the portal.
+    // It is unrelated to the bundler swap, so it waits until the app is in its
+    // final shape.
+    "verbatimModuleSyntax": false
   },
-  "exclude": ["out", "scripts/hemi-earn/**/*"],
-  "extends": "@tsconfig/next/tsconfig.json",
+  "exclude": ["dist", "out", "scripts/hemi-earn/**/*"],
+  "extends": "@tsconfig/vite-react/tsconfig.json",
   "include": [
     "intl.d.ts",
-    "next-env.d.ts",
+    "nextImages.d.ts",
     "react-table.d.ts",
     "reset.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
     "../packages/btc-wallet/global.d.ts"
   ]
 }

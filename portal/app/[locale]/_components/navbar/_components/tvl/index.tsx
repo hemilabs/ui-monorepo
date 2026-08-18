@@ -1,7 +1,7 @@
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTvl } from 'hooks/useTvl'
 import { useTranslations } from 'next-intl'
-import React, { type ReactNode, Suspense } from 'react'
+import { type ReactNode, Suspense } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { DollarSign } from './dollarSign'

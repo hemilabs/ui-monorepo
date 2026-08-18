@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { Tab, Tabs } from 'components/tabs'
-import type { ComponentProps } from 'react'
-import { useState } from 'react'
+import { type ComponentProps, useState } from 'react'
 
 type StoryProps = ComponentProps<typeof Tabs> & {
   size: ComponentProps<typeof Tab>['size']

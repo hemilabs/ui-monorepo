@@ -1,9 +1,9 @@
 import { ButtonLink, type ButtonSize } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
-import { Link } from 'components/link'
+import { type Link } from 'components/link'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import React, { ComponentProps, Suspense } from 'react'
+import { type ComponentProps, Suspense } from 'react'
 
 type Props = Pick<ComponentProps<typeof Link>, 'href' | 'onClick'> & {
   size?: ButtonSize

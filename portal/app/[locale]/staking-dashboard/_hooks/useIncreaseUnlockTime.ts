@@ -12,8 +12,7 @@ import {
   StakingPosition,
 } from 'types/stakingDashboard'
 import { unixNowTimestamp } from 'utils/time'
-import { IncreaseUnlockTimeEvents } from 've-hemi-actions'
-import { SixDaysSeconds } from 've-hemi-actions'
+import { IncreaseUnlockTimeEvents, SixDaysSeconds } from 've-hemi-actions'
 import { increaseUnlockTime } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 

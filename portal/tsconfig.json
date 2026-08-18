@@ -21,7 +21,6 @@
   "extends": "@tsconfig/vite-react/tsconfig.json",
   "include": [
     "intl.d.ts",
-    "nextImages.d.ts",
     "react-table.d.ts",
     "reset.d.ts",
     "**/*.ts",

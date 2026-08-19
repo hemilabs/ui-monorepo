@@ -6,10 +6,12 @@ import { useTranslations } from 'next-intl'
 import { ReceivingAddressLabel } from './receivingAddress'
 
 const toggleId = 'use-custom-bitcoin-address'
+const errorId = 'custom-bitcoin-address-error'
 
 type Props = {
   address: string | undefined
   customAddress: string
+  disabled: boolean
   isCustomAddressValid: boolean
   onCustomAddressChange: (customAddress: string) => void
   onUseCustomAddressChange: (useCustomAddress: boolean) => void
@@ -21,6 +23,7 @@ type Props = {
 export const BitcoinReceivingAddress = function ({
   address,
   customAddress,
+  disabled,
   isCustomAddressValid,
   onCustomAddressChange,
   onUseCustomAddressChange,
@@ -46,6 +49,7 @@ export const BitcoinReceivingAddress = function ({
           <Toggle
             ariaLabel={t('custom-address')}
             checked={useCustomAddress}
+            disabled={disabled}
             id={toggleId}
             onCheckedChange={onUseCustomAddressChange}
           />
@@ -56,10 +60,13 @@ export const BitcoinReceivingAddress = function ({
         {useCustomAddress ? (
           <>
             <input
-              // the input is only rendered while the toggle is on, so mounting
-              // it is the moment the user asked for a custom address
+              aria-describedby={isCustomAddressValid ? undefined : errorId}
+              aria-invalid={!isCustomAddressValid}
+              aria-label={receivingText}
+              // mounting only happens when the user turns the toggle on
               autoFocus
-              className="min-w-0 flex-1 bg-transparent text-neutral-950 placeholder:text-neutral-500 focus:outline-none"
+              className="min-w-0 flex-1 bg-transparent text-neutral-950 placeholder:text-neutral-500 focus:outline-none disabled:cursor-not-allowed"
+              disabled={disabled}
               onChange={e => onCustomAddressChange(e.target.value)}
               placeholder={t('custom-address-placeholder')}
               spellCheck={false}
@@ -72,7 +79,7 @@ export const BitcoinReceivingAddress = function ({
               ) : (
                 <div className="flex shrink-0 items-center gap-x-1 text-rose-600">
                   <WarningIcon />
-                  <span>{t('invalid-address')}</span>
+                  <span id={errorId}>{t('invalid-address')}</span>
                 </div>
               ))}
           </>

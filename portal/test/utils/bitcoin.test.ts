@@ -111,6 +111,29 @@ describe('utils/bitcoin', function () {
       ).toBe(false)
     })
 
+    it('should reject a witness version Bitcoin does not define', function () {
+      // bech32 encodes versions up to 31, but Bitcoin only defines 0 to 16
+      expect(
+        isValidBtcAddress(
+          'bc13qyqszqgpqyqszqgpqyqszqgpqyqszqgpw8fxwv',
+          'livenet',
+        ),
+      ).toBe(false)
+      expect(
+        isValidBtcAddress(
+          'bc1lqyqszqgpqyqszqgpqyqszqgpqyqszqgphhul64',
+          'livenet',
+        ),
+      ).toBe(false)
+      // v16 is the last defined one, and is still accepted
+      expect(
+        isValidBtcAddress(
+          'bc1sqyqszqgpqyqszqgpqyqszqgpqyqszqgp9e7dr8',
+          'livenet',
+        ),
+      ).toBe(true)
+    })
+
     it('should reject a witness v0 address of an invalid length', function () {
       expect(
         isValidBtcAddress(

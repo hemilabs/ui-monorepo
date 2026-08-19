@@ -30,6 +30,7 @@ import { useBtcWithdrawalTunnelFees } from '../_hooks/useBtcTunnelFees'
 import { useEstimateBtcWithdrawFees } from '../_hooks/useEstimateBtcWithdrawFees'
 import { useEstimateWithdrawFees } from '../_hooks/useEstimateWithdrawFees'
 import { useMinWithdrawalSats } from '../_hooks/useMinWithdrawalSats'
+import { useReceivingBitcoinAddress } from '../_hooks/useReceivingBitcoinAddress'
 import {
   type EvmTunneling,
   type HemiToBitcoinTunneling,
@@ -38,9 +39,9 @@ import {
 } from '../_hooks/useTunnelState'
 import { useWithdraw } from '../_hooks/useWithdraw'
 
+import { BitcoinReceivingAddress } from './bitcoinReceivingAddress'
 import { FormContent, TunnelForm } from './form'
 import { HemiBtcFeesSummary } from './hemiBtcFeesSummary'
-import { ReceivingAddress } from './receivingAddress'
 import { SubmitEvmWithdrawal } from './submitEvmWithdrawal'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 import { TunnelProviderToggle } from './tunnelProviderToggle'
@@ -91,6 +92,32 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     withdrawError,
   } = useWithdrawBitcoin()
 
+  const amountValidation = validateSubmit({
+    amountInput: fromInput,
+    balance: bitcoinBalance,
+    minAmount: minWithdrawalFormattedSats,
+    operation: 'withdrawal',
+    t,
+    token: fromToken,
+  })
+  const { errorKey } = amountValidation
+
+  const {
+    canSubmit,
+    customAddress,
+    isCustomAddressValid,
+    receivingAddress,
+    reset: resetReceivingAddress,
+    setCustomAddress,
+    setUseCustomAddress,
+    useCustomAddress,
+    validationError,
+  } = useReceivingBitcoinAddress({
+    amountValidation,
+    network: toNetworkId,
+    walletAddress: btcAddress,
+  })
+
   useEffect(
     function handleSuccess() {
       if (withdrawBitcoinReceipt?.status !== 'success' || !isWithdrawing) {
@@ -98,10 +125,12 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       }
       setIsWithdrawing(false)
       resetStateAfterOperation()
+      resetReceivingAddress()
       track?.('btc - withdraw success')
     },
     [
       isWithdrawing,
+      resetReceivingAddress,
       resetStateAfterOperation,
       setIsWithdrawing,
       track,
@@ -139,6 +168,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     clearWithdrawBitcoinState()
     withdrawBitcoin({
       amount,
+      btcAddress: receivingAddress!,
       l1ChainId: toNetworkId,
       l2ChainId: fromNetworkId,
     })
@@ -163,28 +193,15 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     )
   }
 
-  const {
-    canSubmit,
-    error: validationError,
-    errorKey,
-  } = validateSubmit({
-    amountInput: fromInput,
-    balance: bitcoinBalance,
-    minAmount: minWithdrawalFormattedSats,
-    operation: 'withdrawal',
-    t,
-    token: fromToken,
-  })
-
   const canWithdraw = !isLoadingMinWithdrawalSats && canSubmit
-  const feeEstimationEnabled = !!btcAddress && canWithdraw
+  const feeEstimationEnabled = !!receivingAddress && canWithdraw
 
   const disableForm = !canWithdraw || isWithdrawing
 
   const { fees: estimatedFees, isError: isEstimateFeesError } =
     useEstimateBtcWithdrawFees({
       amount,
-      btcAddress,
+      btcAddress: receivingAddress,
       enabled: feeEstimationEnabled,
     })
 
@@ -226,8 +243,12 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     <TunnelForm
       belowForm={
         <div className="relative -translate-y-7">
-          <ReceivingAddress
+          <BitcoinReceivingAddress
             address={btcAddress ? formatBtcAddress(btcAddress) : undefined}
+            customAddress={customAddress}
+            isCustomAddressValid={isCustomAddressValid}
+            onCustomAddressChange={setCustomAddress}
+            onUseCustomAddressChange={setUseCustomAddress}
             receivingText={t('tunnel-page.form.bitcoin-receiving-address')}
             tooltipText={t(
               'tunnel-page.form.bitcoin-receiving-address-description',
@@ -235,6 +256,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
                 symbol: toToken.symbol,
               },
             )}
+            useCustomAddress={useCustomAddress}
           />
           {renderFees()}
         </div>

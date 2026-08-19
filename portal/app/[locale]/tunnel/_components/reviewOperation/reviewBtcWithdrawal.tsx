@@ -1,6 +1,5 @@
 'use client'
 
-import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import { Operation } from 'components/reviewOperation/operation'
 import {
@@ -56,8 +55,6 @@ const ReviewContent = function ({
   const fromChain = useChain(withdrawal.l2ChainId)!
   const toChain = useChain(withdrawal.l1ChainId)!
 
-  const { address: btcAddress } = useBtcAccount()
-
   const showWithdrawalStepFees = [
     BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING,
     BtcWithdrawStatus.WITHDRAWAL_FAILED,
@@ -74,8 +71,10 @@ const ReviewContent = function ({
     isError: isBitcoinWithdrawalEstimateFeesError,
   } = useEstimateBtcWithdrawFees({
     amount: parseTokenUnits(withdrawal.amount, fromToken),
-    btcAddress,
-    enabled: !!btcAddress && showWithdrawalStepFees,
+    // fees depend on the address the withdrawal targets, which is not
+    // necessarily the one of the currently connected wallet
+    btcAddress: withdrawal.to,
+    enabled: !!withdrawal.to && showWithdrawalStepFees,
   })
 
   const isValidUuid = withdrawal.uuid !== undefined

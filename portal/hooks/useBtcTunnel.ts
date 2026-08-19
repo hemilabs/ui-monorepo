@@ -295,7 +295,6 @@ export const useDepositBitcoin = function () {
 
 export const useWithdrawBitcoin = function () {
   const bitcoin = useBitcoin()
-  const { address: btcAddress } = useBtcAccount()
   const { address: hemiAddress } = useEvmAccount()
   const hemi = useHemi()
   const hemiClient = useHemiClient()
@@ -314,8 +313,10 @@ export const useWithdrawBitcoin = function () {
   } = useMutation({
     async mutationFn({
       amount,
+      btcAddress,
     }: {
       amount: bigint
+      btcAddress: string
       l1ChainId: BtcChain['id']
       l2ChainId: Chain['id']
     }) {
@@ -326,7 +327,7 @@ export const useWithdrawBitcoin = function () {
       const [transactionHash, vaultFee] = await Promise.all([
         hemiWalletClient!.initiateWithdrawal({
           amount,
-          btcAddress: btcAddress!,
+          btcAddress,
           from: hemiAddress!,
           vaultIndex,
         }),
@@ -338,7 +339,10 @@ export const useWithdrawBitcoin = function () {
 
       return { transactionHash, vaultFee }
     },
-    onSuccess({ transactionHash, vaultFee }, { amount, l1ChainId, l2ChainId }) {
+    onSuccess(
+      { transactionHash, vaultFee },
+      { amount, btcAddress, l1ChainId, l2ChainId },
+    ) {
       // Calculate net amount after vault fee
       const amountAfterFeesDeduction = (amount - vaultFee).toString()
 
@@ -353,7 +357,7 @@ export const useWithdrawBitcoin = function () {
         l2Token: getNativeToken(bitcoin.id)!.extensions!.bridgeInfo![hemi.id]
           .tokenAddress!,
         status: BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING,
-        to: btcAddress!,
+        to: btcAddress,
         transactionHash,
       })
       updateTxHash(transactionHash, { history: 'push' })

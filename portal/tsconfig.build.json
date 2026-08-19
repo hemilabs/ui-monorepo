@@ -1,0 +1,4 @@
+{
+  "exclude": ["dist", "out", "scripts/hemi-earn/**/*", "test"],
+  "extends": "./tsconfig.json"
+}

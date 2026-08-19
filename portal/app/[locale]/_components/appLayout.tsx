@@ -5,12 +5,12 @@ import { ConnectWalletsDrawer } from 'components/connectWallets/connectWalletsDr
 import { Drawer } from 'components/drawer'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useUmami } from 'hooks/useUmami'
-import React, {
+import {
   Suspense,
   useCallback,
   useEffect,
   useState,
-  ReactNode,
+  type ReactNode,
 } from 'react'
 import { screenBreakpoints } from 'styles'
 

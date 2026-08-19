@@ -2,7 +2,6 @@ import pMemoize from 'promise-mem'
 import { tokenList } from 'tokenList'
 import { stakeProtocols, type StakeProtocols, StakeToken } from 'types/stake'
 import { EvmToken, L2Token, Token } from 'types/token'
-import { Token as TokenType } from 'types/token'
 import { getPublicClient } from 'utils/chainClients'
 import {
   type Address,
@@ -38,7 +37,7 @@ export const getTokenByAddress = function (
   )
 }
 
-export const isCustomToken = (userTokenList: TokenType[], token: TokenType) =>
+export const isCustomToken = (userTokenList: Token[], token: Token) =>
   userTokenList.some(
     t => t.address === token.address && t.chainId === token.chainId,
   )

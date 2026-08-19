@@ -130,10 +130,12 @@ const WatchEvmWithdrawal = function ({
   return null
 }
 
-// See https://github.com/vercel/next.js/issues/31009#issuecomment-11463441611
-// and https://github.com/vercel/next.js/issues/31009#issuecomment-1338645354
+// Module scope with the URL spelled out inline: Vite only rewrites
+// `new URL(..., import.meta.url)` when it can read the literal statically.
 const getWorker = () =>
-  new Worker(new URL('../../workers/watchEvmWithdrawals.ts', import.meta.url))
+  new Worker(new URL('../../workers/watchEvmWithdrawals.ts', import.meta.url), {
+    type: 'module',
+  })
 
 export const EvmWithdrawalsStateUpdater = function () {
   const { isConnected } = useAccount()

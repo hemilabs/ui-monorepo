@@ -54,6 +54,7 @@ const SyncHistoryWorker = function ({
       // load the Worker
       workerRef.current = new Worker(
         new URL('../workers/history.ts', import.meta.url),
+        { type: 'module' },
       ) as AppToWebWorker
 
       // listen for state updates and forward to our history reducer

@@ -40,11 +40,8 @@ export const getBitcoinTimestamp = function (timestamp: number) {
   return Math.min(now, timestamp)
 }
 
-// The addresses are decoded rather than turned into an output script with
-// `address.toOutputScript`, because that function needs an ECC library to
-// validate taproot addresses, and would reject every "bc1p..." address without
-// it. Decoding validates the checksum and the network, which is what matters
-// for an address that is only going to receive funds.
+// Decoding is used instead of `address.toOutputScript` because that function
+// needs an ECC library and rejects every taproot ("bc1p...") address without it.
 
 const isValidBech32Address = function (
   address: string,
@@ -55,16 +52,14 @@ const isValidBech32Address = function (
     if (prefix !== network.bech32) {
       return false
     }
-    // Witness v0 is either P2WPKH (20 bytes) or P2WSH (32 bytes), and v1 is
-    // P2TR (32 bytes). Later versions are not defined yet, so for those only
-    // the size range BIP141 allows is checked.
+    // bech32 encodes witness versions up to 31, but Bitcoin only defines 0 to 16
     if (version === 0) {
       return data.length === 20 || data.length === 32
     }
     if (version === 1) {
       return data.length === 32
     }
-    return data.length >= 2 && data.length <= 40
+    return version <= 16 && data.length >= 2 && data.length <= 40
   } catch {
     return false
   }

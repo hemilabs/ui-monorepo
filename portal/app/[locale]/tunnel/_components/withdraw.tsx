@@ -246,6 +246,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
           <BitcoinReceivingAddress
             address={btcAddress ? formatBtcAddress(btcAddress) : undefined}
             customAddress={customAddress}
+            disabled={isWithdrawing}
             isCustomAddressValid={isCustomAddressValid}
             onCustomAddressChange={setCustomAddress}
             onUseCustomAddressChange={setUseCustomAddress}

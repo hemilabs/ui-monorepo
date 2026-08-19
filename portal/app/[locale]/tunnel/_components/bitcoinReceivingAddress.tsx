@@ -32,6 +32,8 @@ export const BitcoinReceivingAddress = function ({
   useCustomAddress,
 }: Props) {
   const t = useTranslations('tunnel-page.form')
+  // an empty field is not an error yet, it is just not filled in
+  const showError = customAddress !== '' && !isCustomAddressValid
 
   return (
     // the top padding accounts for the 28px this container is tucked behind the
@@ -60,28 +62,29 @@ export const BitcoinReceivingAddress = function ({
         {useCustomAddress ? (
           <>
             <input
-              aria-describedby={isCustomAddressValid ? undefined : errorId}
-              aria-invalid={!isCustomAddressValid}
+              aria-describedby={showError ? errorId : undefined}
+              aria-invalid={showError}
               aria-label={receivingText}
+              // addresses are never capitalized, and mobile keyboards would
+              // otherwise produce a mixed case one, which is invalid
+              autoCapitalize="none"
               // mounting only happens when the user turns the toggle on
               autoFocus
               className="min-w-0 flex-1 bg-transparent text-neutral-950 placeholder:text-neutral-500 focus:outline-none disabled:cursor-not-allowed"
               disabled={disabled}
-              onChange={e => onCustomAddressChange(e.target.value)}
+              onChange={e => onCustomAddressChange(e.target.value.trim())}
               placeholder={t('custom-address-placeholder')}
               spellCheck={false}
               type="text"
               value={customAddress}
             />
-            {customAddress !== '' &&
-              (isCustomAddressValid ? (
-                <GreenCheckIcon />
-              ) : (
-                <div className="flex shrink-0 items-center gap-x-1 text-rose-600">
-                  <WarningIcon />
-                  <span id={errorId}>{t('invalid-address')}</span>
-                </div>
-              ))}
+            {showError && (
+              <div className="flex shrink-0 items-center gap-x-1 text-rose-600">
+                <WarningIcon />
+                <span id={errorId}>{t('invalid-address')}</span>
+              </div>
+            )}
+            {customAddress !== '' && isCustomAddressValid && <GreenCheckIcon />}
           </>
         ) : (
           <span className="text-neutral-950">{address ?? '-'}</span>

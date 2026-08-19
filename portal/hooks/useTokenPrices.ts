@@ -2,7 +2,7 @@ import { queryOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
 import fetch from 'fetch-plus-plus'
 import { isValidUrl } from 'utils/url'
 
-const portalApiUrl = process.env.NEXT_PUBLIC_PORTAL_API_URL
+const portalApiUrl = import.meta.env.VITE_PORTAL_API_URL
 
 type Prices = Record<string, string>
 

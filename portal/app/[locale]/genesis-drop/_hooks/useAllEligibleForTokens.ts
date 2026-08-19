@@ -8,7 +8,7 @@ import { useAccount } from 'wagmi'
 
 import { filterExclusiveGroups } from '../_utils'
 
-const portalApiUrl = process.env.NEXT_PUBLIC_PORTAL_API_URL
+const portalApiUrl = import.meta.env.VITE_PORTAL_API_URL
 
 const byClaimGroupId = (a: EligibilityData, b: EligibilityData) =>
   a.claimGroupId - b.claimGroupId

@@ -1,3 +1,4 @@
+import { schnorr } from '@noble/curves/secp256k1'
 import * as bitcoin from 'bitcoinjs-lib'
 import { type BtcChain } from 'btc-wallet/chains'
 
@@ -41,7 +42,19 @@ export const getBitcoinTimestamp = function (timestamp: number) {
 }
 
 // Decoding is used instead of `address.toOutputScript` because that function
-// needs an ECC library and rejects every taproot ("bc1p...") address without it.
+// needs a full ECC implementation and rejects every taproot ("bc1p...") address
+// without it.
+
+// A taproot witness program is an x-only public key, so it must be a point on
+// the curve. Funds sent to one that is not are unspendable.
+const isXOnlyPubKey = function (program: Buffer) {
+  try {
+    schnorr.utils.lift_x(BigInt(`0x${program.toString('hex')}`))
+    return true
+  } catch {
+    return false
+  }
+}
 
 const isValidBech32Address = function (
   address: string,
@@ -49,17 +62,17 @@ const isValidBech32Address = function (
 ) {
   try {
     const { data, prefix, version } = bitcoin.address.fromBech32(address)
-    if (prefix !== network.bech32) {
+    // bech32 encodes witness versions up to 31, but Bitcoin only defines 0 to 16
+    if (prefix !== network.bech32 || version > 16) {
       return false
     }
-    // bech32 encodes witness versions up to 31, but Bitcoin only defines 0 to 16
     if (version === 0) {
       return data.length === 20 || data.length === 32
     }
     if (version === 1) {
-      return data.length === 32
+      return data.length === 32 && isXOnlyPubKey(data)
     }
-    return version <= 16 && data.length >= 2 && data.length <= 40
+    return data.length >= 2 && data.length <= 40
   } catch {
     return false
   }

@@ -111,6 +111,16 @@ describe('utils/bitcoin', function () {
       ).toBe(false)
     })
 
+    it('should reject a taproot address that is not a curve point', function () {
+      // valid bech32m, but its witness program is x = 0, which is not on the curve
+      expect(
+        isValidBtcAddress(
+          'bc1pqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqpqqenm',
+          'livenet',
+        ),
+      ).toBe(false)
+    })
+
     it('should reject a witness version Bitcoin does not define', function () {
       // bech32 encodes versions up to 31, but Bitcoin only defines 0 to 16
       expect(

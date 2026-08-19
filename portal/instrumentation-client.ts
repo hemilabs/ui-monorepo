@@ -112,7 +112,7 @@ function enableSentry() {
     release,
     tracesSampleRate:
       import.meta.env.VITE_TRACES_SAMPLE_RATE &&
-      !Number.isNaN(import.meta.env.VITE_TRACES_SAMPLE_RATE)
+      !Number.isNaN(Number(import.meta.env.VITE_TRACES_SAMPLE_RATE))
         ? Number(import.meta.env.VITE_TRACES_SAMPLE_RATE)
         : undefined,
     // Custom transport wrapper to prevent phantom releases created by browser

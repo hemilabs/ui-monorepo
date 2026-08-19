@@ -30,12 +30,14 @@ const withdrawalBitcoinVaults: Record<Chain['id'], number> = {
 }
 
 const pastBitcoinVaults: Record<Chain['id'], number[]> = {
-  [hemi.id]:
-    import.meta.env.VITE_BITCOIN_PAST_VAULTS_MAINNET?.split(',')?.map(Number) ??
-    [],
-  [hemiSepolia.id]:
-    import.meta.env.VITE_BITCOIN_PAST_VAULTS_SEPOLIA?.split(',')?.map(Number) ??
-    [],
+  [hemi.id]: (import.meta.env.VITE_BITCOIN_PAST_VAULTS_MAINNET ?? '')
+    .split(',')
+    .filter(Boolean)
+    .map(Number),
+  [hemiSepolia.id]: (import.meta.env.VITE_BITCOIN_PAST_VAULTS_SEPOLIA ?? '')
+    .split(',')
+    .filter(Boolean)
+    .map(Number),
 }
 
 // In incoming iterations, the vault index will be determined programmatically

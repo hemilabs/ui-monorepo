@@ -43,8 +43,8 @@ export const RetryBtcWithdraw = function ({ withdrawal }: Props) {
 
     withdrawBitcoin({
       amount: BigInt(amount),
-      // retry the withdrawal to the address it originally targeted, which may
-      // not be the one of the connected wallet
+      // the address it originally targeted, which may not be the connected
+      // wallet's
       btcAddress: to,
       l1ChainId,
       l2ChainId,

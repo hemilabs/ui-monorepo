@@ -1,5 +1,5 @@
 import { OrangeCheckIcon } from 'components/icons/orangeCheckIcon'
-import Image from 'next/image'
+import { Image } from 'components/image'
 import { ReactNode } from 'react'
 
 import { ClockIcon } from './_icons/clockIcon'
@@ -30,9 +30,7 @@ export function SubStep({ description, status }: Props) {
           {isProgress && (
             <Image
               alt="Loading indicator"
-              className="animate-spin object-contain"
-              fill
-              priority
+              className="absolute inset-0 size-full animate-spin object-contain"
               src={gradientLoadingImg}
             />
           )}

@@ -1,5 +1,5 @@
+import { Image } from 'components/image'
 import { CustomToken } from 'components/tokenSelector/token'
-import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
 
@@ -11,9 +11,11 @@ export const TokenPreview = function ({ isLoading, token }: Props) {
   const t = useTranslations('token-custom-drawer')
   return (
     <div className="relative z-0 border-b border-t border-dashed border-neutral-300/55 bg-neutral-50">
-      <div className="absolute bottom-0 left-0 right-0 top-0">
-        <Image alt="Token Preview background" fill src={background} />
-      </div>
+      <Image
+        alt="Token Preview background"
+        className="absolute inset-0 size-full"
+        src={background}
+      />
       <div className="relative z-10 mx-auto w-3/4 py-1.5">
         {token || isLoading ? (
           <CustomToken token={token} />

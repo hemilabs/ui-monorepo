@@ -1,5 +1,5 @@
 import { OrangeCheckIcon } from 'components/icons/orangeCheckIcon'
-import Image from 'next/image'
+import { Image } from 'components/image'
 
 import { ErrorIcon } from './_icons/errorIcon'
 import gradientLoadingImg from './_images/gradient_loading.png'
@@ -31,7 +31,9 @@ export const PositionStatus = function ({ position, status }: Props) {
         <Image
           alt="Loading icon"
           className="animate-spin"
+          height={20}
           src={gradientLoadingImg}
+          width={20}
         />
       )}
       <div

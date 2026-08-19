@@ -1,7 +1,7 @@
 'use client'
 
 import { ExclamationMark } from 'components/icons/exclamationMark'
-import Image from 'next/image'
+import { Image } from 'components/image'
 
 import 'styles/globals.css'
 
@@ -13,7 +13,11 @@ export default function NotFound() {
       <Image
         alt="404"
         className="absolute inset-0 -top-64 m-auto w-72 md:w-fit"
+        fetchPriority="high"
+        height={402}
+        loading="eager"
         src={Error404}
+        width={973}
       />
       <div className="z-10 m-auto flex flex-col items-center gap-4">
         <ExclamationMark />

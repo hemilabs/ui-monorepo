@@ -11,11 +11,9 @@ type Props = {
 }
 
 /**
- * Owns the address a Bitcoin withdrawal pays out to: the one of the connected
- * wallet by default, or a custom one entered by the user.
- *
- * The address check is merged into the amount validation, because the submit
- * button validates it as the last step - an invalid amount is reported first.
+ * Owns the address a Bitcoin withdrawal pays out to: the connected wallet's
+ * address by default, or a custom one entered by the user. The address check is
+ * merged into the amount validation, as the submit button reports it last.
  */
 export const useReceivingBitcoinAddress = function ({
   amountValidation,
@@ -26,7 +24,6 @@ export const useReceivingBitcoinAddress = function ({
   const [useCustomAddress, setUseCustomAddress] = useState(false)
   const t = useTranslations('tunnel-page.submit-button')
 
-  // the wallet address needs no validation, only the one the user types
   const isCustomAddressValid =
     !useCustomAddress || isValidBtcAddress(customAddress, network)
 

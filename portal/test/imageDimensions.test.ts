@@ -1,27 +1,39 @@
 import { protocolImages } from 'app/[locale]/stake/protocols/protocolImages'
-import error404 from 'app/_images/404.svg'
-import svg500 from 'components/error500/500.svg'
-import gradientLoading from 'components/reviewOperation/_images/gradient_loading.png'
+import { error404 } from 'app/_images/error404'
+import { errorArtwork } from 'components/error500/errorArtwork'
+import { gradientLoading } from 'components/reviewOperation/_images/gradientLoading'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { describe, expect, it } from 'vitest'
 
 // The `width`/`height` declared next to each image define the aspect ratio the
 // browser reserves before the asset loads. next/image derived them from the
-// file, so they could not drift; now they are written by hand and nothing else
-// would catch a swapped asset.
+// file, so they could not drift; now they are written by hand, and the modules
+// asserted here are the same ones the components render from.
 
+const rootSvgTag = function (svg: string) {
+  const tag = /<svg\b[^>]*>/.exec(svg)
+  if (!tag) {
+    throw new Error('no <svg> element found')
+  }
+  return tag[0]
+}
+
+// Only the root tag is scanned: `stroke-width` on a child matches a bare
+// /width=/ and would silently win over the viewBox fallback.
 const svgSize = function (svg: string) {
-  const width = /\bwidth=['"]([\d.]+)/.exec(svg)
-  const height = /\bheight=['"]([\d.]+)/.exec(svg)
+  const tag = rootSvgTag(svg)
+  const width = /[\s]width=['"]([\d.]+)/.exec(tag)
+  const height = /[\s]height=['"]([\d.]+)/.exec(tag)
   if (width && height) {
-    return { height: Math.round(+height[1]), width: Math.round(+width[1]) }
+    return { height: +height[1], width: +width[1] }
   }
-  const viewBox = /viewBox=['"][\d.-]+ +[\d.-]+ +([\d.]+) +([\d.]+)/.exec(svg)
-  return {
-    height: Math.round(+viewBox![2]),
-    width: Math.round(+viewBox![1]),
+  const viewBox =
+    /viewBox=['"]\s*[\d.-]+[\s,]+[\d.-]+[\s,]+([\d.]+)[\s,]+([\d.]+)/.exec(tag)
+  if (!viewBox) {
+    throw new Error(`no width/height and no usable viewBox in ${tag}`)
   }
+  return { height: +viewBox[2], width: +viewBox[1] }
 }
 
 const pngSize = (bytes: Buffer) => ({
@@ -29,12 +41,22 @@ const pngSize = (bytes: Buffer) => ({
   width: bytes.readUInt32BE(16),
 })
 
-// Vite inlines small assets as a data URI and emits the rest as a path rooted
-// at the portal directory, so both shapes reach the app.
+// Vite serves an asset as a path or inlines it as a data URI, and small SVGs
+// come back base64 encoded whenever they contain <text>, <foreignObject> or a
+// nested quote.
 const intrinsicSize = function (src: string) {
-  const svgDataUri = 'data:image/svg+xml,'
-  if (src.startsWith(svgDataUri)) {
-    return svgSize(decodeURIComponent(src.slice(svgDataUri.length)))
+  const svgUtf8 = 'data:image/svg+xml,'
+  const svgBase64 = 'data:image/svg+xml;base64,'
+  if (src.startsWith(svgBase64)) {
+    return svgSize(
+      Buffer.from(src.slice(svgBase64.length), 'base64').toString('utf8'),
+    )
+  }
+  if (src.startsWith(svgUtf8)) {
+    return svgSize(decodeURIComponent(src.slice(svgUtf8.length)))
+  }
+  if (src.startsWith('data:image/png;base64,')) {
+    return pngSize(Buffer.from(src.split(',')[1], 'base64'))
   }
   const file = join(__dirname, '..', decodeURIComponent(src))
   return src.endsWith('.png')
@@ -53,17 +75,13 @@ describe('declared image dimensions', function () {
   })
 
   it.each([
-    { height: 402, name: '404.svg', src: error404, width: 973 },
-    { height: 349, name: '500.svg', src: svg500, width: 941 },
-    {
-      height: 20,
-      name: 'gradient_loading.png',
-      src: gradientLoading,
-      width: 20,
-    },
+    { image: error404, name: '404.svg' },
+    { image: errorArtwork, name: '500.svg' },
+    { image: gradientLoading, name: 'gradient_loading.png' },
   ])(
-    '$name matches the dimensions its component declares',
-    function ({ height, src, width }) {
+    '$name matches the dimensions declared alongside it',
+    function ({ image }) {
+      const { height, src, width } = image
       expect(intrinsicSize(src)).toEqual({ height, width })
     },
   )

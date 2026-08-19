@@ -1,4 +1,8 @@
-import { calculateDepositAmount, getBitcoinTimestamp } from 'utils/bitcoin'
+import {
+  calculateDepositAmount,
+  getBitcoinTimestamp,
+  isValidBtcAddress,
+} from 'utils/bitcoin'
 import { describe, expect, it, vi } from 'vitest'
 
 describe('utils/bitcoin', function () {
@@ -35,6 +39,97 @@ describe('utils/bitcoin', function () {
       vi.setSystemTime(now)
 
       expect(getBitcoinTimestamp(blockTime)).toBe(Math.floor(now / 1000))
+    })
+  })
+  describe('isValidBtcAddress', function () {
+    it('should accept every mainnet address type', function () {
+      const addresses = [
+        '1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2', // P2PKH
+        '3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy', // P2SH
+        'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4', // P2WPKH
+        'bc1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3qccfmv3', // P2WSH
+        'bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr', // P2TR
+      ]
+      addresses.forEach(address =>
+        expect(isValidBtcAddress(address, 'livenet')).toBe(true),
+      )
+    })
+
+    it('should accept every testnet address type', function () {
+      const addresses = [
+        'mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfn', // P2PKH
+        'tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx', // P2WPKH
+        'tb1pqqqqp399et2xygdj5xreqhjjvcmzhxw4aywxecjdzew6hylgvsesf3hn0c', // P2TR
+      ]
+      addresses.forEach(address =>
+        expect(isValidBtcAddress(address, 'testnet')).toBe(true),
+      )
+    })
+
+    it('should reject an address that belongs to the other network', function () {
+      expect(
+        isValidBtcAddress('1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2', 'testnet'),
+      ).toBe(false)
+      expect(
+        isValidBtcAddress(
+          'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4',
+          'testnet',
+        ),
+      ).toBe(false)
+      expect(
+        isValidBtcAddress(
+          'bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcr',
+          'testnet',
+        ),
+      ).toBe(false)
+      expect(
+        isValidBtcAddress('mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfn', 'livenet'),
+      ).toBe(false)
+      expect(
+        isValidBtcAddress(
+          'tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx',
+          'livenet',
+        ),
+      ).toBe(false)
+    })
+
+    it('should reject an address with a wrong checksum', function () {
+      expect(
+        isValidBtcAddress('1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN3', 'livenet'),
+      ).toBe(false)
+      expect(
+        isValidBtcAddress(
+          'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t5',
+          'livenet',
+        ),
+      ).toBe(false)
+      expect(
+        isValidBtcAddress(
+          'bc1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqkedrcx',
+          'livenet',
+        ),
+      ).toBe(false)
+    })
+
+    it('should reject a witness v0 address of an invalid length', function () {
+      expect(
+        isValidBtcAddress(
+          'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7k7grplx',
+          'livenet',
+        ),
+      ).toBe(false)
+    })
+
+    it('should reject strings that are not addresses', function () {
+      const values = [
+        '',
+        '   ',
+        '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
+        '12w8F8XVTxJMHgtvFTQ8G8WewExiMCTABE',
+      ]
+      values.forEach(value =>
+        expect(isValidBtcAddress(value, 'livenet')).toBe(false),
+      )
     })
   })
 })

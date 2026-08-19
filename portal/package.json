@@ -31,6 +31,7 @@
     "@vetro-protocol/treasury": "1.0.0",
     "@wagmi/core": "2.17.3",
     "big.js": "7.0.1",
+    "bitcoinjs-lib": "6.1.7",
     "btc-wallet": "workspace:*",
     "camelcase-keys": "10.0.0",
     "crypto-shortener": "1.2.0",

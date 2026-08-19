@@ -290,6 +290,9 @@ importers:
       big.js:
         specifier: 7.0.1
         version: 7.0.1
+      bitcoinjs-lib:
+        specifier: 6.1.7
+        version: 6.1.7
       btc-wallet:
         specifier: workspace:*
         version: link:../packages/btc-wallet

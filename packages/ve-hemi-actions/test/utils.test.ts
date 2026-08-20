@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   MaxLockDurationSeconds,
-  MinLockAmount,
+  minLockAmount,
   MinLockDurationSeconds,
 } from '../constants'
 import {
@@ -15,8 +15,8 @@ import {
 describe('validateCreateLockInputs', function () {
   const validParams = {
     account: '0x1234567890123456789012345678901234567890' as const,
-    amount: MinLockAmount,
-    approvalAmount: MinLockAmount,
+    amount: minLockAmount,
+    approvalAmount: minLockAmount,
     chainId: hemiSepolia.id,
     lockDurationInSeconds: 30 * 24 * 60 * 60, // 30 days
   }
@@ -65,8 +65,8 @@ describe('validateCreateLockInputs', function () {
     expect(
       validateCreateLockInputs({
         ...validParams,
-        amount: MinLockAmount - BigInt(1),
-        approvalAmount: MinLockAmount - BigInt(1),
+        amount: minLockAmount - BigInt(1),
+        approvalAmount: minLockAmount - BigInt(1),
       }),
     ).toBe('amount is less than the minimum lock amount')
   })
@@ -75,8 +75,8 @@ describe('validateCreateLockInputs', function () {
     expect(
       validateCreateLockInputs({
         ...validParams,
-        amount: MinLockAmount,
-        approvalAmount: MinLockAmount,
+        amount: minLockAmount,
+        approvalAmount: minLockAmount,
       }),
     ).toBeUndefined()
   })

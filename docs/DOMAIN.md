@@ -128,7 +128,7 @@ The links point at a pinned commit, so the lines stay meaningful; `main` is the 
 
 Lock durations are given as a duration from now, and the resulting unlock time is rounded **down** to the epoch grid, so the actual unlock date is at most one epoch earlier than requested. The epoch is a "six days" that is not exactly six days, and the UI's 6 calendar-day slider steps approximate the grid rather than matching it — so treat every duration the UI shows as approximate and let the contract decide the real unlock date.
 
-The 10 HEMI minimum is only enforced on-chain: the staking form does not validate it, so a smaller amount can be submitted and reverts with `AmountTooSmall`. Tracked in [#2189](https://github.com/hemilabs/ui-monorepo/issues/2189).
+The 10 HEMI minimum is hardcoded as `minLockAmount` in the `ve-hemi-actions` package (it isn't readable from the contract, since `MIN_LOCK_AMOUNT` is private) and enforced both by `validateCreateLockInputs`, so any caller of the `createLock` action is protected, and by the staking form, which blocks submission and shows an error below 10 HEMI.
 
 Weight — used both for voting and for reward distribution — is `amount * (lock end - now) / MAX_TIME`. It therefore grows linearly with the remaining lock time and decays linearly to zero at the unlock date: 100 HEMI locked for the maximum four years starts at roughly 100 veHEMI, the same amount locked for one year at roughly 25. "Roughly" because the unlock date is rounded down to the epoch grid and the per-second slope is truncated, so the figure sits slightly below the round number.
 

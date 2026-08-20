@@ -21,7 +21,7 @@ export const MinLockDurationSeconds = SixDaysSeconds * 2
 
 // MIN_LOCK_AMOUNT in the contract is a private constant set to 10 HEMI.
 // See https://github.com/hemilabs/veHEMI/blob/c6a65c74154377e8720f584b364bdc109fbdedc5/src/VeHemi.sol#L964
-export const MinLockAmount = parseUnits('10', 18)
+export const minLockAmount = parseUnits('10', 18)
 
 export const getVeHemiContractAddress = function (chainId: number) {
   const address = VE_HEMI_CONTRACT_ADDRESSES[chainId]

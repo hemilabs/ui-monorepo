@@ -16,7 +16,7 @@ import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
 import { walletIsConnected } from 'utils/wallet'
-import { getVeHemiContractAddress, MinLockAmount } from 've-hemi-actions'
+import { getVeHemiContractAddress, minLockAmount } from 've-hemi-actions'
 import { formatUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
@@ -74,7 +74,7 @@ export const Stake = function () {
   } = validateSubmit({
     amountInput: input,
     balance: walletTokenBalance,
-    minAmount: formatUnits(MinLockAmount, token.decimals),
+    minAmount: formatUnits(minLockAmount, token.decimals),
     operation: 'stake',
     t,
     token,

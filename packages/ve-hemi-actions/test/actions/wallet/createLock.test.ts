@@ -9,7 +9,7 @@ import {
   getHemiTokenAddress,
   memoizedGetHemiTokenAddress,
 } from '../../../actions/public/veHemi'
-import { getVeHemiContractAddress, MinLockAmount } from '../../../constants'
+import { getVeHemiContractAddress, minLockAmount } from '../../../constants'
 
 vi.mock('viem/actions', () => ({
   waitForTransactionReceipt: vi.fn(),
@@ -27,11 +27,11 @@ vi.mock('../../../actions/public/veHemi', () => ({
   memoizedGetHemiTokenAddress: vi.fn(),
 }))
 
-const sufficientBalance = MinLockAmount + BigInt(1000)
+const sufficientBalance = minLockAmount + BigInt(1000)
 
 const validParameters = {
   account: '0x1234567890123456789012345678901234567890' as const,
-  amount: MinLockAmount,
+  amount: minLockAmount,
   lockDurationInSeconds: BigInt(30 * 24 * 60 * 60), // 30 days
   walletClient: { chain: hemiSepolia },
 }
@@ -77,7 +77,7 @@ describe('createLock', function () {
   it('should emit "lock-creation-failed-validation" if amount is less than the minimum lock amount', async function () {
     const { emitter, promise } = createLock({
       ...validParameters,
-      amount: MinLockAmount - BigInt(1),
+      amount: minLockAmount - BigInt(1),
     })
 
     const lockCreationFailedValidation = vi.fn()
@@ -153,7 +153,7 @@ describe('createLock', function () {
     })
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
 
-    const customApprovalAmount = MinLockAmount + BigInt(500)
+    const customApprovalAmount = minLockAmount + BigInt(500)
 
     const { emitter, promise } = createLock({
       ...validParameters,

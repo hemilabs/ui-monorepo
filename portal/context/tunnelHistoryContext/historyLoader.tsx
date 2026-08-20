@@ -156,6 +156,12 @@ export const HistoryLoader = function ({
   useEffect(
     function resetState() {
       if (!supportedEvmChain || address !== loadedAddress) {
+        // flush any pending debounced save for the previous account before
+        // resetting - otherwise the next account's save call would replace
+        // its queued args (the debounce is shared across addresses), and
+        // the previous account's latest history/sync cursor would never
+        // be persisted
+        debouncedSaveToStorage.flush()
         setLoadedAddress(undefined)
         dispatch({ type: 'reset' })
       }

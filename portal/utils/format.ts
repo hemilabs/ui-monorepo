@@ -2,7 +2,7 @@ import Big from 'big.js'
 import { type Account } from 'btc-wallet/unisat'
 import { shorten } from 'crypto-shortener'
 import { smartRound } from 'smart-round'
-import { type Address, type Hash } from 'viem'
+import { type Address } from 'viem'
 
 export const formatBtcAddress = (account: Account) =>
   shorten(account, { length: 5 })
@@ -16,7 +16,7 @@ const fiatRounderTVL = smartRound(6, 0, 0)
 // Same config as fiatRounder, but I think it reads better to use a different rounder
 const percentageRounder = smartRound(6, 2, 2)
 
-export const formatEvmHash = (txHash: Hash) =>
+export const formatEvmHash = (txHash: string) =>
   shorten(txHash, { length: 4, prefixes: ['0x'] })
 
 export const formatNumber = (value: number | string) =>

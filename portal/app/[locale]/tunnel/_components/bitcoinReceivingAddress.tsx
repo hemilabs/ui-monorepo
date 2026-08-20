@@ -2,6 +2,7 @@ import { GreenCheckIcon } from 'components/icons/greenCheckIcon'
 import { WarningIcon } from 'components/icons/warningIcon'
 import { Toggle } from 'components/toggle'
 import { useTranslations } from 'next-intl'
+import { useState } from 'react'
 
 import { ReceivingAddressLabel } from './receivingAddress'
 
@@ -32,8 +33,9 @@ export const BitcoinReceivingAddress = function ({
   tooltipText,
 }: Props) {
   const t = useTranslations('tunnel-page.form')
-  // an empty field is not an error yet, it is just not filled in
-  const showError = customAddress !== '' && !isCustomAddressValid
+  const [touched, setTouched] = useState(false)
+  // an untouched field is not an error yet, it is just not filled in
+  const showError = touched && !isCustomAddressValid
 
   return (
     // the top padding accounts for the 28px this container is tucked behind the
@@ -72,6 +74,7 @@ export const BitcoinReceivingAddress = function ({
               autoFocus
               className="min-w-0 flex-1 bg-transparent text-neutral-950 placeholder:text-neutral-500 focus:outline-none disabled:cursor-not-allowed"
               disabled={disabled}
+              onBlur={() => setTouched(true)}
               onChange={e => onCustomAddressChange(e.target.value.trim())}
               placeholder={t('custom-address-placeholder')}
               spellCheck={false}

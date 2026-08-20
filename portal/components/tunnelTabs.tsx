@@ -5,17 +5,14 @@ import { Tab, Tabs } from 'components/tabs'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import { useUmami } from 'hooks/useUmami'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { Suspense } from 'react'
+import { lazy, Suspense } from 'react'
 import { UrlObject } from 'url'
 
-const ActionableOperations = dynamic(
-  () =>
-    import('components/actionableOperations').then(
-      mod => mod.ActionableOperations,
-    ),
-  { ssr: false },
+const ActionableOperations = lazy(() =>
+  import('components/actionableOperations').then(mod => ({
+    default: mod.ActionableOperations,
+  })),
 )
 
 const UI = function ({
@@ -55,7 +52,9 @@ const UI = function ({
         >
           <div className="flex items-center justify-center gap-x-2">
             <span>{t('transaction-history.title')}</span>
-            <ActionableOperations />
+            <Suspense>
+              <ActionableOperations />
+            </Suspense>
           </div>
         </Tab>
       </Tabs>

@@ -1,13 +1,17 @@
 'use client'
 
-import dynamic from 'next/dynamic'
+import { lazy, Suspense } from 'react'
 
-const LocalePageRedirect = dynamic(
-  () =>
-    import('components/localePageRedirect').then(mod => mod.LocalePageRedirect),
-  { ssr: false },
+const LocalePageRedirect = lazy(() =>
+  import('components/localePageRedirect').then(mod => ({
+    default: mod.LocalePageRedirect,
+  })),
 )
 
-const Page = () => <LocalePageRedirect redirectPage="/tunnel" />
+const Page = () => (
+  <Suspense>
+    <LocalePageRedirect redirectPage="/tunnel" />
+  </Suspense>
+)
 
 export default Page

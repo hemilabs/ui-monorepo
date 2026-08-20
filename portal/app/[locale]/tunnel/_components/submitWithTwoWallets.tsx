@@ -6,8 +6,8 @@ import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useUmami } from 'hooks/useUmami'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
+import { lazy, Suspense } from 'react'
 
 import { ConnectBtcWallet } from './connectBtcWallet'
 
@@ -17,12 +17,10 @@ type Props = {
   validationError: string | undefined
 }
 
-const ConnectEvmWallet = dynamic(
-  () => import('components/connectEvmWallet').then(mod => mod.ConnectEvmWallet),
-  {
-    loading: () => <ButtonLoader />,
-    ssr: false,
-  },
+const ConnectEvmWallet = lazy(() =>
+  import('components/connectEvmWallet').then(mod => ({
+    default: mod.ConnectEvmWallet,
+  })),
 )
 
 export const SubmitWithTwoWallets = function ({
@@ -49,7 +47,11 @@ export const SubmitWithTwoWallets = function ({
   }
 
   if (evmWalletStatus !== 'connected') {
-    return <ConnectEvmWallet />
+    return (
+      <Suspense fallback={<ButtonLoader />}>
+        <ConnectEvmWallet />
+      </Suspense>
+    )
   }
 
   if (btcWalletStatus !== 'connected') {

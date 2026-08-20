@@ -2,8 +2,6 @@ import { lazy, Suspense } from 'react'
 
 import { type BaseTooltipProps } from './base'
 
-// Can't use dynamic here, because the fallback depends on the consumer.
-// next/dynamic offers a static fallback, defined at import time.
 const BaseTooltip = lazy(() =>
   import('./base').then(mod => ({ default: mod.BaseTooltip })),
 )

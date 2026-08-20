@@ -1,4 +1,3 @@
-import dynamic from 'next/dynamic'
 import { lazy, Suspense } from 'react'
 import { type Chain } from 'viem'
 
@@ -14,12 +13,10 @@ const AddChain = lazy(() =>
   import('./addChain').then(mod => ({ default: mod.AddChain })),
 )
 
-const AddChainButton = dynamic(
-  () => import('./addChain/addChainButton').then(mod => mod.AddChainButton),
-  {
-    loading: () => <span aria-hidden="true" className="block h-7" />,
-    ssr: false,
-  },
+const AddChainButton = lazy(() =>
+  import('./addChain/addChainButton').then(mod => ({
+    default: mod.AddChainButton,
+  })),
 )
 
 export const AddChainAutomatically = function ({ chain, layer }: Props) {
@@ -27,7 +24,11 @@ export const AddChainAutomatically = function ({ chain, layer }: Props) {
     <ChainIdentityRow
       chain={chain}
       layer={layer}
-      trailing={<AddChainButton chain={chain} />}
+      trailing={
+        <Suspense fallback={<span aria-hidden="true" className="block h-7" />}>
+          <AddChainButton chain={chain} />
+        </Suspense>
+      }
     />
   )
 

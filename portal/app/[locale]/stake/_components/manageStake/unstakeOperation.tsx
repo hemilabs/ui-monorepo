@@ -5,8 +5,8 @@ import { Spinner } from 'components/spinner'
 import { ToastLoader } from 'components/toast/toastLoader'
 import { useAmount } from 'hooks/useAmount'
 import { useHemi } from 'hooks/useHemi'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
+import { type ComponentProps, lazy, Suspense } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {
   UnstakeStatusEnum,
@@ -22,28 +22,26 @@ import { useEstimateUnstakeFees } from '../../_hooks/useEstimateUnstakeFees'
 import { useStakedBalance } from '../../_hooks/useStakedBalance'
 import { useUnstake } from '../../_hooks/useUnstake'
 
-const StakeToast = dynamic(
-  () => import('../stakeToast').then(mod => mod.StakeToast),
-  {
-    loading: () => <ToastLoader />,
-    ssr: false,
-  },
-)
-
 import { UnstakeMaxBalance } from './maxBalance'
 import { Operation } from './operation'
 import { Preview } from './preview'
 import { SubmitButton } from './submitButton'
 import { UnstakeCallToAction } from './unstakeCallToAction'
 
-const StakedBalance = dynamic(
-  () => import('../stakedBalance').then(mod => mod.StakedBalance),
-  {
-    loading: () => (
-      <Skeleton className="h-full" containerClassName="basis-1/3" />
-    ),
-    ssr: false,
-  },
+const StakeToast = lazy(() =>
+  import('../stakeToast').then(mod => ({ default: mod.StakeToast })),
+)
+
+const LazyStakedBalance = lazy(() =>
+  import('../stakedBalance').then(mod => ({ default: mod.StakedBalance })),
+)
+
+const StakedBalance = (props: ComponentProps<typeof LazyStakedBalance>) => (
+  <Suspense
+    fallback={<Skeleton className="h-full" containerClassName="basis-1/3" />}
+  >
+    <LazyStakedBalance {...props} />
+  </Suspense>
 )
 
 type Props = {
@@ -143,11 +141,13 @@ export const UnstakeOperation = function ({
     <>
       {unstakeStatus === UnstakeStatusEnum.UNSTAKE_TX_CONFIRMED &&
         unStakeTransactionHash && (
-          <StakeToast
-            chainId={token.chainId}
-            txHash={unStakeTransactionHash}
-            type="unstake"
-          />
+          <Suspense fallback={<ToastLoader />}>
+            <StakeToast
+              chainId={token.chainId}
+              txHash={unStakeTransactionHash}
+              type="unstake"
+            />
+          </Suspense>
         )}
       <Operation
         amount={amountInput}

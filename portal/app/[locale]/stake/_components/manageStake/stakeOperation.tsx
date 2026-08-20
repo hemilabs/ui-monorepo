@@ -15,8 +15,8 @@ import { useAmount } from 'hooks/useAmount'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useHemi } from 'hooks/useHemi'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
+import { lazy, Suspense } from 'react'
 import {
   StakeOperations,
   StakeStatusEnum,
@@ -33,20 +33,16 @@ import { useAccount } from 'wagmi'
 import { useEstimateStakeFees } from '../../_hooks/useEstimateStakeFees'
 import { useStake } from '../../_hooks/useStake'
 
-const StakeToast = dynamic(
-  () => import('../stakeToast').then(mod => mod.StakeToast),
-  {
-    loading: () => <ToastLoader />,
-    ssr: false,
-  },
-)
-
 import { StakeMaxBalance } from './maxBalance'
 import { Operation } from './operation'
 import { Preview } from './preview'
 import { StakeCallToAction } from './stakeCallToAction'
 import { StrategyDetails } from './strategyDetails'
 import { SubmitButton } from './submitButton'
+
+const StakeToast = lazy(() =>
+  import('../stakeToast').then(mod => ({ default: mod.StakeToast })),
+)
 
 type AllowanceQuery = Omit<
   UseQueryOptions<bigint, Error, bigint>,
@@ -289,11 +285,13 @@ export const StakeOperation = function ({
   return (
     <>
       {stakeStatus === StakeStatusEnum.STAKE_TX_CONFIRMED && (
-        <StakeToast
-          chainId={token.chainId}
-          txHash={stakeTransactionHash!}
-          type="stake"
-        />
+        <Suspense fallback={<ToastLoader />}>
+          <StakeToast
+            chainId={token.chainId}
+            txHash={stakeTransactionHash!}
+            type="stake"
+          />
+        </Suspense>
       )}
       <Operation
         amount={amountInput}

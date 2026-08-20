@@ -1,8 +1,7 @@
 'use client'
 
 import { featureFlags } from 'app/featureFlags'
-import dynamic from 'next/dynamic'
-import { ReactNode } from 'react'
+import { lazy, ReactNode, Suspense } from 'react'
 
 import { Badge } from '../badge'
 
@@ -26,11 +25,9 @@ import { VideoAsset } from './_components/videoAsset'
 
 const Separator = () => <div className="my-1 h-px w-full bg-neutral-100" />
 
-const Help = dynamic(() => import('./_components/help').then(mod => mod.Help), {
-  // Render the closed version of the help button
-  loading: () => <HelpButton isOpen={false} />,
-  ssr: false,
-})
+const Help = lazy(() =>
+  import('./_components/help').then(mod => ({ default: mod.Help })),
+)
 
 const PaddedListItem = ({
   children,
@@ -47,7 +44,10 @@ export const NavbarDesktop = () => (
         <HomeLink />
         <Badge />
       </div>
-      <Help />
+      {/* Render the closed version of the help button while it loads */}
+      <Suspense fallback={<HelpButton isOpen={false} />}>
+        <Help />
+      </Suspense>
     </div>
     <ul className="z-10 flex h-full flex-col gap-y-0.5 overflow-y-auto overflow-x-hidden [&>li:not(.no-padding)]:px-3">
       {featureFlags.enableHemiEarnPage && (

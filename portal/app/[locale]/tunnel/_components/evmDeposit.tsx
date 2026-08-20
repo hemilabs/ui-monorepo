@@ -9,9 +9,8 @@ import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useNetworkType } from 'hooks/useNetworkType'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { getL1StandardBridgeAddress } from 'utils/chain'
 import { getTotal } from 'utils/getTotal'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
@@ -30,9 +29,10 @@ import { FormContent, TunnelForm } from './form'
 import { SubmitEvmDeposit } from './submitEvmDeposit'
 import { TunnelProviderToggle } from './tunnelProviderToggle'
 
-const SetMaxEvmBalance = dynamic(
-  () => import('components/setMaxBalance').then(mod => mod.SetMaxEvmBalance),
-  { ssr: false },
+const SetMaxEvmBalance = lazy(() =>
+  import('components/setMaxBalance').then(mod => ({
+    default: mod.SetMaxEvmBalance,
+  })),
 )
 
 type OperationRunning = 'idle' | 'approving' | 'depositing'
@@ -230,12 +230,14 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
             isRunningOperation={isRunningOperation}
             provider={renderTunnelProviderToggle()}
             setMaxBalanceButton={
-              <SetMaxEvmBalance
-                disabled={isRunningOperation}
-                gas={depositGasFees}
-                onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
-                token={fromToken}
-              />
+              <Suspense>
+                <SetMaxEvmBalance
+                  disabled={isRunningOperation}
+                  gas={depositGasFees}
+                  onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
+                  token={fromToken}
+                />
+              </Suspense>
             }
             tokenApproval={
               operatesNativeToken ? null : (

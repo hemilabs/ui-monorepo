@@ -3,11 +3,12 @@
 import { ButtonIcon } from 'components/button'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { HamburgerIcon } from 'components/icons/hamburgerIcon'
-import dynamic from 'next/dynamic'
+import { lazy, Suspense } from 'react'
 
-const WalletConnection = dynamic(
-  () => import('components/connectWallets').then(mod => mod.WalletConnection),
-  { loading: () => <div className="flex-1" />, ssr: false },
+const WalletConnection = lazy(() =>
+  import('components/connectWallets').then(mod => ({
+    default: mod.WalletConnection,
+  })),
 )
 
 type Props = {
@@ -18,7 +19,9 @@ type Props = {
 
 export const MobileBottomBar = ({ closeMenu, isMenuOpen, openMenu }: Props) => (
   <div className="fixed inset-x-0 bottom-0 z-50 flex h-14 items-center border-t border-neutral-300/55 bg-white px-3 sm:hidden">
-    <WalletConnection placement="bottom-bar" />
+    <Suspense fallback={<div className="flex-1" />}>
+      <WalletConnection placement="bottom-bar" />
+    </Suspense>
     <div className="ml-auto">
       {/* When opening (hamburger): stopImmediatePropagation blocks
        * useOnClickOutside on any open drawer so it doesn't close on the

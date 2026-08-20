@@ -3,9 +3,8 @@
 import { TokenInput } from 'components/tokenInput'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { useTokenBalance } from 'hooks/useBalance'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { type EvmToken } from 'types/token'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
@@ -37,9 +36,10 @@ import { OperationBelowForm } from './operationBelowForm'
 import { PoolFormContent } from './poolFormContent'
 import { SubmitDeposit } from './submitDeposit'
 
-const SetMaxEvmBalance = dynamic(
-  () => import('components/setMaxBalance').then(mod => mod.SetMaxEvmBalance),
-  { ssr: false },
+const SetMaxEvmBalance = lazy(() =>
+  import('components/setMaxBalance').then(mod => ({
+    default: mod.SetMaxEvmBalance,
+  })),
 )
 
 type Props = {
@@ -220,12 +220,14 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
             }
             label={t('common.deposit')}
             maxBalanceButton={
-              <SetMaxEvmBalance
-                disabled={isRunningOperation}
-                gas={depositGasFees + layerZeroFee}
-                onSetMaxBalance={updateInput}
-                token={selectedAsset.token}
-              />
+              <Suspense>
+                <SetMaxEvmBalance
+                  disabled={isRunningOperation}
+                  gas={depositGasFees + layerZeroFee}
+                  onSetMaxBalance={updateInput}
+                  token={selectedAsset.token}
+                />
+              </Suspense>
             }
             onChange={updateInput}
             token={selectedAsset.token}

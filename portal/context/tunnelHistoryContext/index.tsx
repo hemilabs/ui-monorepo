@@ -1,10 +1,11 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import {
   createContext,
   Dispatch,
+  lazy,
   ReactNode,
+  Suspense,
   useMemo,
   useReducer,
   useState,
@@ -17,9 +18,8 @@ import {
 import { historyReducer, initialState } from './reducer'
 import { HistoryActions, type HistoryReducerState } from './types'
 
-const HistoryLoader = dynamic(
-  () => import('./historyLoader').then(mod => mod.HistoryLoader),
-  { ssr: false },
+const HistoryLoader = lazy(() =>
+  import('./historyLoader').then(mod => ({ default: mod.HistoryLoader })),
 )
 
 type TunnelHistoryContext = {
@@ -101,12 +101,14 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
 
   return (
     <TunnelHistoryContext.Provider value={historyContext}>
-      <HistoryLoader
-        dispatch={dispatch}
-        forceResync={forceResync}
-        history={history}
-        setForceResync={setForceResync}
-      />
+      <Suspense>
+        <HistoryLoader
+          dispatch={dispatch}
+          forceResync={forceResync}
+          history={history}
+          setForceResync={setForceResync}
+        />
+      </Suspense>
       {children}
     </TunnelHistoryContext.Provider>
   )

@@ -2,8 +2,7 @@ import { useVisualViewportSize } from '@hemilabs/react-hooks/useVisualViewportSi
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { Modal } from 'components/modal'
 import { useUmami } from 'hooks/useUmami'
-import dynamic from 'next/dynamic'
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { screenBreakpoints } from 'styles'
 import { RemoteChain } from 'types/chain'
@@ -33,12 +32,8 @@ const TokenListLoading = function () {
   )
 }
 
-const TokenList = dynamic(
-  () => import('./tokenList').then(mod => mod.TokenList),
-  {
-    loading: TokenListLoading,
-    ssr: false,
-  },
+const TokenList = lazy(() =>
+  import('./tokenList').then(mod => ({ default: mod.TokenList })),
 )
 
 type Props = {
@@ -85,12 +80,14 @@ export const TokenSelector = function ({
         )}
       </button>
       {showTokenSelector && typeof chainId === 'number' && (
-        <TokenList
-          chainId={chainId}
-          closeModal={closeModal}
-          onSelectToken={handleSelection}
-          tokens={tokens}
-        />
+        <Suspense fallback={<TokenListLoading />}>
+          <TokenList
+            chainId={chainId}
+            closeModal={closeModal}
+            onSelectToken={handleSelection}
+            tokens={tokens}
+          />
+        </Suspense>
       )}
     </>
   )

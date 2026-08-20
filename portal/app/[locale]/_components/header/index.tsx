@@ -4,18 +4,16 @@ import { CloseIcon } from 'components/icons/closeIcon'
 import { HamburgerIcon } from 'components/icons/hamburgerIcon'
 import { StakeTabs } from 'components/stakeTabs'
 import { TunnelTabs } from 'components/tunnelTabs'
-import dynamic from 'next/dynamic'
+import { lazy, Suspense } from 'react'
 
 import { Badge } from '../badge'
 
 import { HomeLink } from './homeLink'
 
-const WalletConnection = dynamic(
-  () => import('components/connectWallets').then(mod => mod.WalletConnection),
-  {
-    loading: () => <div className="ml-auto" />,
-    ssr: false,
-  },
+const WalletConnection = lazy(() =>
+  import('components/connectWallets').then(mod => ({
+    default: mod.WalletConnection,
+  })),
 )
 
 type Props = {
@@ -40,7 +38,9 @@ export const Header = ({ isMenuOpen, openNavbar, toggleMenu }: Props) => (
       <TunnelTabs />
       <GenesisDropTabs />
     </div>
-    <WalletConnection />
+    <Suspense fallback={<div className="ml-auto" />}>
+      <WalletConnection />
+    </Suspense>
     <div className="hidden sm:flex md:hidden">
       <ButtonIcon
         onClick={toggleMenu}

@@ -1,9 +1,13 @@
 'use client'
 
-import dynamic from 'next/dynamic'
+import { lazy, Suspense } from 'react'
 
-const EarnCard = dynamic(() => import('./earnCard').then(mod => mod.EarnCard), {
-  ssr: false,
-})
+const EarnCard = lazy(() =>
+  import('./earnCard').then(mod => ({ default: mod.EarnCard })),
+)
 
-export const AppOverlays = () => <EarnCard />
+export const AppOverlays = () => (
+  <Suspense>
+    <EarnCard />
+  </Suspense>
+)

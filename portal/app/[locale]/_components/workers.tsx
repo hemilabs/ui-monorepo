@@ -1,26 +1,26 @@
 'use client'
 
-import dynamic from 'next/dynamic'
+import { lazy, Suspense } from 'react'
 
-const SyncHistoryWorkers = dynamic(
-  () =>
-    import('components/syncHistoryWorkers').then(mod => mod.SyncHistoryWorkers),
-  { ssr: false },
+const SyncHistoryWorkers = lazy(() =>
+  import('components/syncHistoryWorkers').then(mod => ({
+    default: mod.SyncHistoryWorkers,
+  })),
 )
 
-const TunnelStatusUpdaters = dynamic(
-  () =>
-    import('components/tunnelStatusUpdaters').then(
-      mod => mod.TunnelStatusUpdaters,
-    ),
-  {
-    ssr: false,
-  },
+const TunnelStatusUpdaters = lazy(() =>
+  import('components/tunnelStatusUpdaters').then(mod => ({
+    default: mod.TunnelStatusUpdaters,
+  })),
 )
 
 export const Workers = () => (
   <>
-    <SyncHistoryWorkers />
-    <TunnelStatusUpdaters />
+    <Suspense>
+      <SyncHistoryWorkers />
+    </Suspense>
+    <Suspense>
+      <TunnelStatusUpdaters />
+    </Suspense>
   </>
 )

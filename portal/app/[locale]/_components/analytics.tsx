@@ -1,13 +1,11 @@
 'use client'
 
 import { UmamiAnalyticsProvider } from 'components/umamiAnalyticsProvider'
-import dynamic from 'next/dynamic'
 import { useLocale } from 'next-intl'
-import { ComponentProps, Suspense } from 'react'
+import { ComponentProps, lazy, Suspense } from 'react'
 
-const GlobalTracking = dynamic(
-  () => import('./globalTracking').then(mod => mod.GlobalTracking),
-  { ssr: false },
+const GlobalTracking = lazy(() =>
+  import('./globalTracking').then(mod => ({ default: mod.GlobalTracking })),
 )
 
 export const Analytics = function ({

@@ -2,29 +2,16 @@
 
 import { PageLayout } from 'components/pageLayout'
 import { PageTitle } from 'components/pageTitle'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { type FilterOptions, TopBar } from './_components/topBar'
 
-// using CSR because useWindowSize doesn't work on SSR
-const TransactionHistory = dynamic(
-  () =>
-    import('./_components/transactionHistory').then(
-      mod => mod.TransactionHistory,
-    ),
-  {
-    loading: () => (
-      // Mirrors the table's own height and radius so the first paint matches it
-      <Skeleton
-        className="block h-[56dvh] w-full rounded-lg md:min-h-136"
-        containerClassName="block"
-      />
-    ),
-    ssr: false,
-  },
+const TransactionHistory = lazy(() =>
+  import('./_components/transactionHistory').then(mod => ({
+    default: mod.TransactionHistory,
+  })),
 )
 
 const Page = function () {
@@ -47,10 +34,20 @@ const Page = function () {
           filterOption={filterOption}
           onFilterOptionChange={setFilterOption}
         />
-        <TransactionHistory
-          filterOption={filterOption}
-          setFilterOption={setFilterOption}
-        />
+        <Suspense
+          fallback={
+            // Mirrors the table's own height and radius so the first paint matches it
+            <Skeleton
+              className="block h-[56dvh] w-full rounded-lg md:min-h-136"
+              containerClassName="block"
+            />
+          }
+        >
+          <TransactionHistory
+            filterOption={filterOption}
+            setFilterOption={setFilterOption}
+          />
+        </Suspense>
       </div>
     </PageLayout>
   )

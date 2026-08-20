@@ -1,8 +1,7 @@
 'use client'
 
 import { PageLayout } from 'components/pageLayout'
-import dynamic from 'next/dynamic'
-import { type ReactNode } from 'react'
+import { lazy, type ReactNode, Suspense } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { InfoCards } from './_components/infoCards'
@@ -16,12 +15,10 @@ const PoolsListSkeleton = () => (
   </div>
 )
 
-const PoolsSection = dynamic(
-  () => import('./_components/poolsSection').then(mod => mod.PoolsSection),
-  {
-    loading: () => <PoolsListSkeleton />,
-    ssr: false,
-  },
+const PoolsSection = lazy(() =>
+  import('./_components/poolsSection').then(mod => ({
+    default: mod.PoolsSection,
+  })),
 )
 
 // Bails out of rendering the data section if the share registry can't be
@@ -41,7 +38,9 @@ export default function Page() {
       <TopSection />
       <TokensGate>
         <InfoCards />
-        <PoolsSection />
+        <Suspense fallback={<PoolsListSkeleton />}>
+          <PoolsSection />
+        </Suspense>
         <TransactionsSection />
       </TokensGate>
     </PageLayout>

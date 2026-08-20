@@ -3,18 +3,16 @@ import { ButtonLoader } from 'components/buttonLoader'
 import { useChain } from 'hooks/useChain'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useSwitchChain } from 'hooks/useSwitchChain'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
+import { lazy, Suspense } from 'react'
 import { RemoteChain } from 'types/chain'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
-const ConnectEvmWallet = dynamic(
-  () => import('components/connectEvmWallet').then(mod => mod.ConnectEvmWallet),
-  {
-    loading: () => <ButtonLoader />,
-    ssr: false,
-  },
+const ConnectEvmWallet = lazy(() =>
+  import('components/connectEvmWallet').then(mod => ({
+    default: mod.ConnectEvmWallet,
+  })),
 )
 
 type Props = {
@@ -55,6 +53,11 @@ export const SubmitWhenConnectedToChain = function ({
   }
 
   return (
-    <ConnectEvmWallet buttonSize={submitButtonSize} text={connectWalletText} />
+    <Suspense fallback={<ButtonLoader />}>
+      <ConnectEvmWallet
+        buttonSize={submitButtonSize}
+        text={connectWalletText}
+      />
+    </Suspense>
   )
 }

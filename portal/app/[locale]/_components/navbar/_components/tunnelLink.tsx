@@ -1,18 +1,15 @@
 import { TunnelIcon as BaseIcon } from 'components/icons/tunnelIcon'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { ComponentProps, Suspense } from 'react'
+import { ComponentProps, lazy, Suspense } from 'react'
 
 import { ItemLink } from './itemLink'
 
-const ActionableOperations = dynamic(
-  () =>
-    import('components/actionableOperations').then(
-      mod => mod.ActionableOperations,
-    ),
-  { ssr: false },
+const ActionableOperations = lazy(() =>
+  import('components/actionableOperations').then(mod => ({
+    default: mod.ActionableOperations,
+  })),
 )
 
 const UI = ({ href, icon, text }: ComponentProps<typeof ItemLink>) => (

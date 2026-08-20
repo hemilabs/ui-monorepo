@@ -2,9 +2,8 @@
 
 import { ToastLoader } from 'components/toast/toastLoader'
 import { useHemiToken } from 'hooks/useHemiToken'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { Suspense } from 'react'
+import { lazy, Suspense } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {
   CollectAllRewardsDashboardStatus,
@@ -18,12 +17,8 @@ import { useDrawerStakingQueryString } from '../_hooks/useDrawerStakingQueryStri
 import { Stake } from './stake'
 import { StakeReview } from './stakeReview'
 
-const StakeToast = dynamic(
-  () => import('./stakeToast').then(mod => mod.StakeToast),
-  {
-    loading: () => <ToastLoader />,
-    ssr: false,
-  },
+const StakeToast = lazy(() =>
+  import('./stakeToast').then(mod => ({ default: mod.StakeToast })),
 )
 
 const SideDrawer = function () {
@@ -82,22 +77,28 @@ export const StakeForm = function () {
   return (
     <>
       {showStakeToast && (
-        <StakeToast
-          title={t('staking-dashboard.stake-successful')}
-          transactionHash={stakingDashboardOperation.transactionHash!}
-        />
+        <Suspense fallback={<ToastLoader />}>
+          <StakeToast
+            title={t('staking-dashboard.stake-successful')}
+            transactionHash={stakingDashboardOperation.transactionHash!}
+          />
+        </Suspense>
       )}
       {showUnlockToast && (
-        <StakeToast
-          title={t('staking-dashboard.unlock-successful')}
-          transactionHash={unlockingDashboardOperation.transactionHash!}
-        />
+        <Suspense fallback={<ToastLoader />}>
+          <StakeToast
+            title={t('staking-dashboard.unlock-successful')}
+            transactionHash={unlockingDashboardOperation.transactionHash!}
+          />
+        </Suspense>
       )}
       {showCollectRewardsToast && (
-        <StakeToast
-          title={t('staking-dashboard.claim-rewards-successful')}
-          transactionHash={collectRewardsDashboardOperation.transactionHash!}
-        />
+        <Suspense fallback={<ToastLoader />}>
+          <StakeToast
+            title={t('staking-dashboard.claim-rewards-successful')}
+            transactionHash={collectRewardsDashboardOperation.transactionHash!}
+          />
+        </Suspense>
       )}
       <Stake />
       <Suspense>

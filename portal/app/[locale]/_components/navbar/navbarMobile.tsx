@@ -1,7 +1,6 @@
 import { featureFlags } from 'app/featureFlags'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { ComponentProps } from 'react'
+import { ComponentProps, lazy, Suspense } from 'react'
 
 import { BitcoinKitLink } from './_components/bitcoinKitLink'
 import { Dex } from './_components/dex'
@@ -21,11 +20,9 @@ import { StakeMobile } from './_components/stake'
 import { TunnelLink } from './_components/tunnelLink'
 import { Tvl } from './_components/tvl'
 
-const Help = dynamic(() => import('./_components/help').then(mod => mod.Help), {
-  // Render the closed version of the help button
-  loading: () => <HelpButton isOpen={false} />,
-  ssr: false,
-})
+const Help = lazy(() =>
+  import('./_components/help').then(mod => ({ default: mod.Help })),
+)
 
 const FullItem = (props: ComponentProps<'li'>) => (
   <li className="w-full" {...props} />
@@ -147,7 +144,10 @@ export const NavbarMobile = function () {
         </ul>
       </div>
       <div className="flex w-full shrink-0 items-center gap-x-3 bg-white p-5 [&_a]:w-full [&_button]:size-11">
-        <Help />
+        {/* Render the closed version of the help button while it loads */}
+        <Suspense fallback={<HelpButton isOpen={false} />}>
+          <Help />
+        </Suspense>
         <GetStarted size="xLarge" />
       </div>
     </div>

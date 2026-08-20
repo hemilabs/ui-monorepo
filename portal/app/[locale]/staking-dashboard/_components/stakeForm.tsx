@@ -34,12 +34,22 @@ const SideDrawer = function () {
     unlockingDashboardOperation,
   } = useStakingDashboard()
 
-  if (
-    !drawerMode ||
-    (!collectRewardsDashboardOperation &&
-      !stakingDashboardOperation &&
-      !unlockingDashboardOperation)
-  ) {
+  // Each drawer mode reads a different piece of state. If that state is
+  // missing (for example, after reloading the page with a stale drawerMode
+  // in the URL), the matching review component would crash trying to read
+  // it, so the drawer must not be rendered in that case.
+  const hasRequiredOperation: Record<
+    NonNullable<typeof drawerMode>,
+    boolean
+  > = {
+    claimingRewards: !!collectRewardsDashboardOperation,
+    increasingAmount: !!stakingDashboardOperation,
+    increasingUnlockTime: !!stakingDashboardOperation,
+    staking: true,
+    unlocking: !!unlockingDashboardOperation,
+  }
+
+  if (!drawerMode || !hasRequiredOperation[drawerMode]) {
     return null
   }
 

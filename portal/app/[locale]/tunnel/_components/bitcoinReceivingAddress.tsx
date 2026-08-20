@@ -58,7 +58,7 @@ export const BitcoinReceivingAddress = function ({
         </div>
       </div>
       <div className="mt-4 h-px w-full bg-neutral-200" />
-      <div className="mt-4 flex h-[18px] items-center gap-x-2">
+      <div className="mt-4 flex h-4.5 items-center gap-x-2">
         {useCustomAddress ? (
           <>
             <input

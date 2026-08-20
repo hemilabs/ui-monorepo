@@ -36,7 +36,7 @@ const Points = ({
 const Container = ({ children }: { children: ReactNode }) => (
   <div className="h-24 w-full [&>div]:h-full [&>div]:overflow-hidden">
     <Card>
-      <div className="relative">{children}</div>
+      <div className="relative h-full">{children}</div>
     </Card>
   </div>
 )
@@ -46,9 +46,9 @@ export const EarnedPoints = function () {
 
   return (
     <Container>
-      <div className="p-2">
+      <div className="h-full p-2">
         <div
-          className="flex flex-shrink-0 flex-col gap-y-3 rounded-lg border border-solid border-[#FDEFE8] p-4"
+          className="flex h-full flex-col justify-center gap-y-2 rounded-lg border border-solid border-[#FDEFE8] p-4"
           style={{
             // Easier to read here than converting it into a inline tailwind class or in another file (the config).
             background:

@@ -1,6 +1,6 @@
 import { Card } from 'components/card'
+import { Image } from 'components/image'
 import { useTokenPrices } from 'hooks/useTokenPrices'
-import Image, { StaticImageData } from 'next/image'
 import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 import { formatFiatNumber, formatTVL } from 'utils/format'
@@ -16,7 +16,7 @@ import starIcon from './icons/star.svg'
 
 type Props = {
   heading: string
-  icon: StaticImageData
+  icon: string
   iconAlt: string
   points: string
 }

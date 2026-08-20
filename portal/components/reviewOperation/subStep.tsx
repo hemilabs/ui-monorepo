@@ -1,9 +1,9 @@
 import { OrangeCheckIcon } from 'components/icons/orangeCheckIcon'
-import Image from 'next/image'
+import { Image } from 'components/image'
 import { ReactNode } from 'react'
 
 import { ClockIcon } from './_icons/clockIcon'
-import gradientLoadingImg from './_images/gradient_loading.png'
+import { gradientLoading } from './_images/gradientLoading'
 import { ProgressStatus, type ProgressStatusType } from './progressStatus'
 
 type Props = {
@@ -30,10 +30,9 @@ export function SubStep({ description, status }: Props) {
           {isProgress && (
             <Image
               alt="Loading indicator"
-              className="animate-spin object-contain"
-              fill
-              priority
-              src={gradientLoadingImg}
+              className="absolute inset-0 size-full animate-spin object-contain"
+              loading="eager"
+              src={gradientLoading.src}
             />
           )}
           <ClockIcon />

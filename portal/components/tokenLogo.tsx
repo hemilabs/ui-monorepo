@@ -1,6 +1,6 @@
+import { Image } from 'components/image'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useNetworkType } from 'hooks/useNetworkType'
-import Image from 'next/image'
 import { type Token } from 'types/token'
 import { isBtcNetworkId } from 'utils/chain'
 import { getNativeToken } from 'utils/nativeToken'

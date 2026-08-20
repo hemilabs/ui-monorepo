@@ -1,12 +1,12 @@
 import * as Sentry from '@sentry/nextjs'
 import { ExternalLink } from 'components/externalLink'
 import { ExclamationMark } from 'components/icons/exclamationMark'
+import { Image } from 'components/image'
 import hemiSocials from 'hemi-socials'
-import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect } from 'react'
 
-import svg500Error from './500.svg'
+import { errorArtwork } from './errorArtwork'
 
 const { discordUrl } = hemiSocials
 
@@ -37,7 +37,7 @@ export const Error500 = function ({
       <Image
         alt="hemi 500 error background"
         className="absolute inset-0 -top-15 -z-10 m-auto w-4/5"
-        src={svg500Error}
+        {...errorArtwork}
       />
       <div className="m-auto flex flex-col items-center gap-4">
         <ExclamationMark />

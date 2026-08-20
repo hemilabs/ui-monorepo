@@ -75,12 +75,17 @@ import satoshi from './images/satoshi.png'
 
 ...
 
-export const protocolImages: Record<StakeProtocols, StaticImageData> = {
+export const protocolImages: Record<
+  StakeProtocols,
+  { className?: string; height: number; src: string; width: number }
+> = {
     ...
-    satoshi,
+    satoshi: { height: 20, src: satoshi, width: 80 },
     ...
 }
 ```
+
+`height` and `width` are the image's own dimensions in pixels. They reserve the box before the asset loads, so the table does not jump; `className` is only needed when the logo has to be rendered at a size other than its own.
 
 ## Step 5 - Check if token is whitelisted
 

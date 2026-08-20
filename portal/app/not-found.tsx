@@ -1,11 +1,11 @@
 'use client'
 
 import { ExclamationMark } from 'components/icons/exclamationMark'
-import Image from 'next/image'
+import { Image } from 'components/image'
 
 import 'styles/globals.css'
 
-import Error404 from './_images/404.svg'
+import { error404 } from './_images/error404'
 
 export default function NotFound() {
   return (
@@ -13,7 +13,7 @@ export default function NotFound() {
       <Image
         alt="404"
         className="absolute inset-0 -top-64 m-auto w-72 md:w-fit"
-        src={Error404}
+        {...error404}
       />
       <div className="z-10 m-auto flex flex-col items-center gap-4">
         <ExclamationMark />

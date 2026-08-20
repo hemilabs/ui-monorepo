@@ -2,8 +2,8 @@
 
 import { AnalyticsEvent } from 'app/analyticsEvents'
 import { ExternalLink } from 'components/externalLink'
+import { Image } from 'components/image'
 import { useUmami } from 'hooks/useUmami'
-import Image, { StaticImageData } from 'next/image'
 
 const colorVariants = {
   black: 'text-neutral-950',
@@ -15,12 +15,12 @@ type ColorVariant = keyof typeof colorVariants
 
 type Props = {
   altText: string
-  bgImage: StaticImageData
+  bgImage: string
   event: AnalyticsEvent
   href: string
   heading: string
   headingColor: ColorVariant
-  icon: StaticImageData
+  icon: string
   subHeading: string
   subHeadingColor?: ColorVariant
 }
@@ -43,15 +43,13 @@ export const DemoCard = function ({
   return (
     <div className="solid group/demo-card relative h-[270px] flex-shrink flex-grow rounded-[17px] border border-neutral-300/55 hover:cursor-pointer md:h-56 md:w-[295px] md:flex-shrink-0 md:flex-grow-0">
       <div className="absolute left-6 top-5 -z-10 h-12 w-12">
-        <Image alt={altText} fill priority={true} src={icon} />
+        <Image alt={altText} className="size-full" loading="eager" src={icon} />
       </div>
       <Image
         alt={altText}
-        className="-z-20 rounded-2xl duration-150 group-hover/demo-card:opacity-88"
-        fill
-        priority={true}
+        className="absolute inset-0 -z-20 size-full rounded-2xl object-cover duration-150 group-hover/demo-card:opacity-88"
+        loading="eager"
         src={bgImage}
-        style={{ objectFit: 'cover' }}
       />
       <div className="h-full">
         <ExternalLink

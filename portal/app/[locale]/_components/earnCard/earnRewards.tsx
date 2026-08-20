@@ -1,5 +1,5 @@
+import { Image } from 'components/image'
 import { Locale } from 'i18n/routing'
-import Image, { type StaticImageData } from 'next/image'
 import { useLocale, useTranslations } from 'next-intl'
 import { MouseEventHandler } from 'react'
 
@@ -44,7 +44,7 @@ const PoweredBy = () => (
   </p>
 )
 
-const imageMap: Record<Locale, StaticImageData> = {
+const imageMap: Record<Locale, string> = {
   en: earnEn,
   es: earnEs,
   pt: earnPt,

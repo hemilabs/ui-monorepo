@@ -71,8 +71,6 @@ const ReviewContent = function ({
     isError: isBitcoinWithdrawalEstimateFeesError,
   } = useEstimateBtcWithdrawFees({
     amount: parseTokenUnits(withdrawal.amount, fromToken),
-    // fees depend on the address the withdrawal targets, not necessarily the
-    // connected wallet's
     btcAddress: withdrawal.to,
     enabled: !!withdrawal.to && showWithdrawalStepFees,
   })

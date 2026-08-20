@@ -3,7 +3,7 @@ import fetch from 'fetch-plus-plus'
 import { useHemi } from 'hooks/useHemi'
 import { isValidUrl } from 'utils/url'
 
-const portalApiUrl = process.env.NEXT_PUBLIC_PORTAL_API_URL
+const portalApiUrl = import.meta.env.VITE_PORTAL_API_URL
 
 export function useRewardsPerVeHEMI() {
   const { id: chainId } = useHemi()

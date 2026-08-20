@@ -14,7 +14,7 @@ import { parseTokenUnits } from './token'
 
 export const isStakeEnabledOnTestnet = (networkType: NetworkType) =>
   networkType !== 'testnet' ||
-  process.env.NEXT_PUBLIC_ENABLE_STAKE_TESTNET === 'true'
+  import.meta.env.VITE_ENABLE_STAKE_TESTNET === 'true'
 
 type CanSubmit = Omit<Parameters<typeof validateInput>[0], 'token'> & {
   token: EvmToken

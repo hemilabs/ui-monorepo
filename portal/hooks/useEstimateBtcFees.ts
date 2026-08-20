@@ -4,8 +4,8 @@ import { createBtcApi, type Utxo } from 'utils/btcApi'
 
 import { useNetworkType } from './useNetworkType'
 
-const btcInputsSize = parseInt(process.env.NEXT_PUBLIC_BTC_INPUTS_SIZE!)
-const btcOutputsSize = parseInt(process.env.NEXT_PUBLIC_BTC_OUTPUTS_SIZE!)
+const btcInputsSize = parseInt(import.meta.env.VITE_BTC_INPUTS_SIZE!)
+const btcOutputsSize = parseInt(import.meta.env.VITE_BTC_OUTPUTS_SIZE!)
 // the value sent + OP_RETURN with hemi address
 const expectedOutputs = 2
 

@@ -5,7 +5,7 @@ import fetch from 'fetch-plus-plus'
 import { isValidUrl } from 'utils/url'
 import { type Address } from 'viem'
 
-const apiUrl = process.env.NEXT_PUBLIC_VETRO_API_URL
+const apiUrl = import.meta.env.VITE_VETRO_API_URL
 export const isApyApiConfigured = apiUrl !== undefined && isValidUrl(apiUrl)
 
 type ApyByVault = Partial<Record<Address, { apy: number }>>

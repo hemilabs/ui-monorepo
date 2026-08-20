@@ -23,9 +23,9 @@ export const Analytics = function ({
       <UmamiAnalyticsProvider
         autoTrack={false}
         processUrl={removeLocaleAndTrailingSlash}
-        {...(process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true' && {
-          src: process.env.NEXT_PUBLIC_ANALYTICS_URL,
-          websiteId: process.env.NEXT_PUBLIC_ANALYTICS_WEBSITE_ID,
+        {...(import.meta.env.VITE_ENABLE_ANALYTICS === 'true' && {
+          src: import.meta.env.VITE_ANALYTICS_URL,
+          websiteId: import.meta.env.VITE_ANALYTICS_WEBSITE_ID,
         })}
       >
         <Suspense>

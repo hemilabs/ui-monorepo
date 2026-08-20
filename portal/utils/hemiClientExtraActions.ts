@@ -5,39 +5,39 @@ import { Chain, type Client } from 'viem'
 // be. Both fall back to the vault that used to serve the two flows.
 const depositBitcoinVaults: Record<Chain['id'], number> = {
   [hemi.id]: Number.parseInt(
-    process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_DEPOSIT_VAULT_MAINNET ||
-      process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET ||
+    import.meta.env.VITE_DEFAULT_BITCOIN_DEPOSIT_VAULT_MAINNET ||
+      import.meta.env.VITE_DEFAULT_BITCOIN_VAULT_MAINNET ||
       '0',
   ),
   [hemiSepolia.id]: Number.parseInt(
-    process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_DEPOSIT_VAULT_SEPOLIA ||
-      process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA ||
+    import.meta.env.VITE_DEFAULT_BITCOIN_DEPOSIT_VAULT_SEPOLIA ||
+      import.meta.env.VITE_DEFAULT_BITCOIN_VAULT_SEPOLIA ||
       '0',
   ),
 }
 
 const withdrawalBitcoinVaults: Record<Chain['id'], number> = {
   [hemi.id]: Number.parseInt(
-    process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_WITHDRAWAL_VAULT_MAINNET ||
-      process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET ||
+    import.meta.env.VITE_DEFAULT_BITCOIN_WITHDRAWAL_VAULT_MAINNET ||
+      import.meta.env.VITE_DEFAULT_BITCOIN_VAULT_MAINNET ||
       '0',
   ),
   [hemiSepolia.id]: Number.parseInt(
-    process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_WITHDRAWAL_VAULT_SEPOLIA ||
-      process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA ||
+    import.meta.env.VITE_DEFAULT_BITCOIN_WITHDRAWAL_VAULT_SEPOLIA ||
+      import.meta.env.VITE_DEFAULT_BITCOIN_VAULT_SEPOLIA ||
       '0',
   ),
 }
 
 const pastBitcoinVaults: Record<Chain['id'], number[]> = {
-  [hemi.id]:
-    process.env.NEXT_PUBLIC_BITCOIN_PAST_VAULTS_MAINNET?.split(',')?.map(
-      Number,
-    ) ?? [],
-  [hemiSepolia.id]:
-    process.env.NEXT_PUBLIC_BITCOIN_PAST_VAULTS_SEPOLIA?.split(',')?.map(
-      Number,
-    ) ?? [],
+  [hemi.id]: (import.meta.env.VITE_BITCOIN_PAST_VAULTS_MAINNET ?? '')
+    .split(',')
+    .filter(Boolean)
+    .map(Number),
+  [hemiSepolia.id]: (import.meta.env.VITE_BITCOIN_PAST_VAULTS_SEPOLIA ?? '')
+    .split(',')
+    .filter(Boolean)
+    .map(Number),
 }
 
 // In incoming iterations, the vault index will be determined programmatically

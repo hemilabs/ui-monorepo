@@ -5,6 +5,7 @@ When adding/removing environment variables, check if updates are required in any
 ## Documentation
 
 - portal/README.md
+- docs/DOMAIN.md, when the variable is named in it (feature flags usually are)
 
 ## Default values
 
@@ -30,3 +31,5 @@ Update these files to forward variables from the CI environment (Github Actions)
 
 - .github/actions/deploy-portal
 - .github/workflows/hostinger-deployment.yml
+
+Both still pass the `NEXT_PUBLIC_` names. That holds only while `main` builds with Next, so the deploy step of the migration ([#2194](https://github.com/hemilabs/ui-monorepo/issues/2194)) has to land before this branch reaches `main`: `vite build` ignores anything not prefixed `VITE_`, so every value CI provides would be dropped and the defaults committed in `portal/.env` would win, silently and with a green build. That step retires both files, moving the build to Cloudflare where the variables are configured per environment.

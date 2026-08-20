@@ -23,51 +23,58 @@ Follow the steps in the [main README](../README.md). No extra actions are needed
 ### Configuration and Environment variables
 
 The environment variables are defined in the `.env` file at the root of the project.
-The prefix `NEXT_PUBLIC_` is required for the variables to be available in the browser. A few variables can be set locally (in a `.env.local`), in addition to the ones already defined in the `.env`.
+The prefix `VITE_` is required: Vite only exposes variables carrying it to the browser, and inlines them at build time. A few variables can be set locally (in a `.env.local`), in addition to the ones already defined in the `.env`.
 
-> Vite only exposes variables prefixed with `VITE_`, so these reads resolve to `undefined` under the new build. The rename happens in the routing step of the migration, when the code that consumes them enters the bundle.
+> If you have a `.env.local` from before the Vite migration, rename its keys from `NEXT_PUBLIC_` to `VITE_`. It is gitignored, so the rename does not reach it on its own, and a stale key is read as `undefined` without any warning.
 
 This is the list of all variables that can be configured:
 
 ```sh
 # Use this variables to override RPC urls per chain. In order to join multiple RPC urls, join them with the "+" character.
-# For example NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA="https://rpc1.testnet.com/rpc+https://rpc2.testnet.com/rpc"
-NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET=<urls>
-NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA=<urls>
-NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET=<urls>
-NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA=<urls>
+# For example VITE_CUSTOM_RPC_URL_SEPOLIA="https://rpc1.testnet.com/rpc+https://rpc2.testnet.com/rpc"
+VITE_CUSTOM_RPC_URL_HEMI_MAINNET=<urls>
+VITE_CUSTOM_RPC_URL_HEMI_SEPOLIA=<urls>
+VITE_CUSTOM_RPC_URL_MAINNET=<urls>
+VITE_CUSTOM_RPC_URL_SEPOLIA=<urls>
 # enable logging on web workers
-NEXT_PUBLIC_WORKERS_DEBUG_ENABLE=<true|false>
+VITE_WORKERS_DEBUG_ENABLE=<true|false>
 # These env variables are required for Enabling Analytics
-NEXT_PUBLIC_ENABLE_ANALYTICS=<true|false> # Enable Analytics with Umami
-NEXT_PUBLIC_ANALYTICS_URL=<url> # Umami analytics URL
-NEXT_PUBLIC_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
+VITE_ENABLE_ANALYTICS=<true|false> # Enable Analytics with Umami
+VITE_ANALYTICS_URL=<url> # Umami analytics URL
+VITE_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
 # These env variables are required for enabling the following features
-NEXT_PUBLIC_ENABLE_HEMI_EARN_PAGE=<true|false> # Enable the Hemi Earn page
-NEXT_PUBLIC_ENABLE_STAKE_GOVERNANCE_TESTNET=<true|false> # Enable stake governance on Testnet, for local development
-NEXT_PUBLIC_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development
-NEXT_PUBLIC_ENABLE_CLAIM_REWARDS_TESTNET=<true|false> # Enable claim rewards on Testnet, for local development
+VITE_ENABLE_HEMI_EARN_PAGE=<true|false> # Enable the Hemi Earn page
+VITE_ENABLE_STAKE_GOVERNANCE_TESTNET=<true|false> # Enable stake governance on Testnet, for local development
+VITE_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development
+VITE_ENABLE_CLAIM_REWARDS_TESTNET=<true|false> # Enable claim rewards on Testnet, for local development
 # Bitcoin configuring
-NEXT_PUBLIC_BITCOIN_PAST_VAULTS_MAINNET=1,2 # Comma-separated list of past vault indexes. Do not include the active ones.
-NEXT_PUBLIC_BITCOIN_PAST_VAULTS_SEPOLIA=1,2,3 # Comma-separated list of past vault indexes. Do not include the active ones.
-NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET=3 # Vault index to use for bitcoin in hemi mainnet, when the deposit and withdrawal ones are not set. Defaults to 0
-NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA=4 # Vault index to use for bitcoin in hemi sepolia, when the deposit and withdrawal ones are not set. Defaults to 0
-NEXT_PUBLIC_DEFAULT_BITCOIN_DEPOSIT_VAULT_MAINNET=5 # Vault index to deposit bitcoin in hemi mainnet. Defaults to NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET
-NEXT_PUBLIC_DEFAULT_BITCOIN_DEPOSIT_VAULT_SEPOLIA=6 # Vault index to deposit bitcoin in hemi sepolia. Defaults to NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA
-NEXT_PUBLIC_DEFAULT_BITCOIN_WITHDRAWAL_VAULT_MAINNET=3 # Vault index to withdraw bitcoin from hemi mainnet. Defaults to NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET
-NEXT_PUBLIC_DEFAULT_BITCOIN_WITHDRAWAL_VAULT_SEPOLIA=4 # Vault index to withdraw bitcoin from hemi sepolia. Defaults to NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA
+VITE_BITCOIN_PAST_VAULTS_MAINNET=1,2 # Comma-separated list of past vault indexes. Do not include the active ones.
+VITE_BITCOIN_PAST_VAULTS_SEPOLIA=1,2,3 # Comma-separated list of past vault indexes. Do not include the active ones.
+VITE_DEFAULT_BITCOIN_VAULT_MAINNET=3 # Vault index to use for bitcoin in hemi mainnet, when the deposit and withdrawal ones are not set. Defaults to 0
+VITE_DEFAULT_BITCOIN_VAULT_SEPOLIA=4 # Vault index to use for bitcoin in hemi sepolia, when the deposit and withdrawal ones are not set. Defaults to 0
+VITE_DEFAULT_BITCOIN_DEPOSIT_VAULT_MAINNET=5 # Vault index to deposit bitcoin in hemi mainnet. Defaults to VITE_DEFAULT_BITCOIN_VAULT_MAINNET
+VITE_DEFAULT_BITCOIN_DEPOSIT_VAULT_SEPOLIA=6 # Vault index to deposit bitcoin in hemi sepolia. Defaults to VITE_DEFAULT_BITCOIN_VAULT_SEPOLIA
+VITE_DEFAULT_BITCOIN_WITHDRAWAL_VAULT_MAINNET=3 # Vault index to withdraw bitcoin from hemi mainnet. Defaults to VITE_DEFAULT_BITCOIN_VAULT_MAINNET
+VITE_DEFAULT_BITCOIN_WITHDRAWAL_VAULT_SEPOLIA=4 # Vault index to withdraw bitcoin from hemi sepolia. Defaults to VITE_DEFAULT_BITCOIN_VAULT_SEPOLIA
+VITE_BTC_INPUTS_SIZE=105 # Assumed size in vbytes of a single transaction input, used to estimate bitcoin fees
+VITE_BTC_OUTPUTS_SIZE=25 # Assumed size in vbytes of a single transaction output, used to estimate bitcoin fees
 # Backend API URL
-NEXT_PUBLIC_PORTAL_API_URL=<url> # To get the token prices, user points, TVL and more
-NEXT_PUBLIC_VETRO_API_URL=<url> # Vetro API URL; powers the Hemi Earn page (variable-stake APY and user rewards)
+VITE_PORTAL_API_URL=<url> # To get the token prices, user points, TVL and more
+VITE_VETRO_API_URL=<url> # Vetro API URL; powers the Hemi Earn page (variable-stake APY and user rewards)
 # The following variables could be used to customize the contracts addresses used by Hemi (for example, for testing with a forked blockchain):
-NEXT_PUBLIC_ADDRESS_MANAGER=<address>
-NEXT_PUBLIC_L2_BRIDGE=<address>
-NEXT_PUBLIC_L2_OUTPUT_ORACLE_PROXY=<address>
-NEXT_PUBLIC_OPTIMISM_PORTAL_PROXY=<address>
-NEXT_PUBLIC_PROXY_OVM_L1_CROSS_DOMAIN_MESSENGER=<address>
-NEXT_PUBLIC_PROXY_OVM_L1_STANDARD_BRIDGE=<address>
+VITE_ADDRESS_MANAGER=<address>
+VITE_L2_BRIDGE=<address>
+VITE_L2_OUTPUT_ORACLE_PROXY=<address>
+VITE_OPTIMISM_PORTAL_PROXY=<address>
+VITE_PROXY_OVM_L1_CROSS_DOMAIN_MESSENGER=<address>
+VITE_PROXY_OVM_L1_STANDARD_BRIDGE=<address>
 # Use it to enable wallet connect
-NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=<wallet-connect-id>
+VITE_WALLET_CONNECT_PROJECT_ID=<wallet-connect-id>
+# Error reporting with Sentry. Not wired under Vite yet: instrumentation-client.ts is a Next convention file that nothing imports
+VITE_SENTRY_DSN=<dsn> # Sentry DSN
+VITE_SENTRY_FILTER_KEY_ID=<string> # Application key used to tell first-party frames from third-party ones
+VITE_SENTRY_RELEASE=<string> # Release name, in the "portal@yyyymmdd_sequence" format. Envelopes not matching it are rewritten
+VITE_TRACES_SAMPLE_RATE=<number> # Ratio of transactions sampled for tracing. Ignored when not a number
 ```
 
 If not defined, the contracts addresses used will be the ones defined in [hemi-viem](https://github.com/hemilabs/hemi-viem).

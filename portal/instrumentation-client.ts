@@ -65,19 +65,19 @@ function enableSentry() {
   // complexity IMO.
   const releaseNameRegex = /^portal@\d{8}_\d+$/
 
-  // Inlined at build time via NEXT_PUBLIC_ prefix, so it cannot be tampered
+  // Inlined at build time via the VITE_ prefix, so it cannot be tampered
   // with by browser extensions overwriting globalThis.SENTRY_RELEASE.
   // See https://github.com/getsentry/sentry-javascript-bundler-plugins/issues/791
-  const release = process.env.NEXT_PUBLIC_SENTRY_RELEASE
+  const release = import.meta.env.VITE_SENTRY_RELEASE
 
   Sentry.init({
     denyUrls: [
       // Filter all Wallet Connect related urls
       /(https|wss):\/\/.*\.walletconnect\.(com|org)/,
-      process.env.NEXT_PUBLIC_PORTAL_API_URL,
+      import.meta.env.VITE_PORTAL_API_URL,
       // filter in case any of the env variables are undefined, although in prod all should be defined.
     ].filter(Boolean) as (string | RegExp)[],
-    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    dsn: import.meta.env.VITE_SENTRY_DSN,
     ignoreErrors,
     // Integrations listed here are added alongside the default ones.
     integrations: [
@@ -105,15 +105,15 @@ function enableSentry() {
         // Should skip all errors that are entirely made of third party frames in the stack trace.
         // Let's start with this, we can make it more strict if needed.
         behaviour: 'drop-error-if-exclusively-contains-third-party-frames',
-        filterKeys: [process.env.NEXT_PUBLIC_SENTRY_FILTER_KEY_ID!],
+        filterKeys: [import.meta.env.VITE_SENTRY_FILTER_KEY_ID!],
       }),
     ],
     normalizeDepth: 6,
     release,
     tracesSampleRate:
-      process.env.NEXT_PUBLIC_TRACES_SAMPLE_RATE &&
-      !Number.isNaN(process.env.NEXT_PUBLIC_TRACES_SAMPLE_RATE)
-        ? Number(process.env.NEXT_PUBLIC_TRACES_SAMPLE_RATE)
+      import.meta.env.VITE_TRACES_SAMPLE_RATE &&
+      !Number.isNaN(Number(import.meta.env.VITE_TRACES_SAMPLE_RATE))
+        ? Number(import.meta.env.VITE_TRACES_SAMPLE_RATE)
         : undefined,
     // Custom transport wrapper to prevent phantom releases created by browser
     // extensions that pollute globalThis.SENTRY_RELEASE. Rewrites any foreign
@@ -139,7 +139,7 @@ function enableSentry() {
   })
 }
 
-if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+if (import.meta.env.VITE_SENTRY_DSN) {
   enableSentry()
 }
 

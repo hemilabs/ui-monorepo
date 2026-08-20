@@ -20,7 +20,7 @@ import { getWithdrawals } from 'viem/op-stack'
 import { isL2NetworkId } from './chain'
 
 const getSubgraphBaseUrl = (chainId: Chain['id']) =>
-  `${process.env.NEXT_PUBLIC_PORTAL_API_URL}/subgraphs/${chainId}`
+  `${import.meta.env.VITE_PORTAL_API_URL}/subgraphs/${chainId}`
 
 const request = <TResponse>(
   url: string,

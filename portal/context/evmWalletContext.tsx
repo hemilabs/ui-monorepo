@@ -32,7 +32,7 @@ const queryClient = new QueryClient()
 
 const appName = 'Hemi Portal'
 const projectId =
-  process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ?? 'YOUR_PROJECT_ID'
+  import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID || 'YOUR_PROJECT_ID'
 
 // All wallets to show in the UI
 const configuredWallets = [

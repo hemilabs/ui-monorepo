@@ -6,7 +6,6 @@ import 'styles/globals.css'
 import { ConnectWalletDrawerProvider } from 'context/connectWalletDrawerContext'
 import { TunnelHistoryProvider } from 'context/tunnelHistoryContext'
 import { WalletsContext } from 'context/walletsContext'
-import { interDisplay, interVariable } from 'fonts/index'
 import { type Locale, routing } from 'i18n/routing'
 import { type Metadata } from 'next'
 import { notFound } from 'next/navigation'
@@ -72,9 +71,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body
-        className={`${interVariable.variable} ${interDisplay.variable} w-svw overflow-y-hidden`}
-      >
+      <body className="w-svw overflow-y-hidden">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <NuqsAdapter>
             <SkeletonTheme baseColor="#E5E5E5" highlightColor="#FAFAFA">

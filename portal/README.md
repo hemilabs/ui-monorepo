@@ -12,6 +12,7 @@ Some relevant folders are:
 - [/components](./components/) folder, which contains reusable components to the entire app that are not tied to a specific page.
 - [/hooks](./hooks/) folder, which contains reusable hooks to the entire app that are not tied to a specific page.
 - [/messages/](./messages/) folder, which contain a file per locale with all the translated resources.
+- [/public](./public/) folder, which is served verbatim at the site root, so `public/fonts/inter/...` is reachable at `/fonts/inter/...`. Both `index.html` and `styles/globals.css` reference it by absolute URL.
 - [/test](./test/) folder, which contains some tests for different portal files. These tests are for plain Typescript functions, and not for components.
 - [/types](./types/) folder, which contains many reusable Typescript types across the entire app
 - [/utils](./utils/) folder, which contains most of the logic that is not tied to UI.

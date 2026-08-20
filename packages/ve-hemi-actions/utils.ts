@@ -4,6 +4,7 @@ import { isAddress, parseEventLogs, zeroAddress } from 'viem'
 import { veHemiAbi } from './abi.ts'
 import {
   MaxLockDurationSeconds,
+  MinLockAmount,
   MinLockDurationSeconds,
   SupportedChains,
 } from './constants.ts'
@@ -86,6 +87,10 @@ export const validateCreateLockInputs = function ({
   const amountError = validateAmount(amount)
   if (amountError) {
     return amountError
+  }
+
+  if (amount < MinLockAmount) {
+    return 'amount is less than the minimum lock amount'
   }
 
   const approvalError = validateApprovalAmount(amount, approvalAmount)

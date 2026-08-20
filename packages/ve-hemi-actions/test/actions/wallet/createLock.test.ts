@@ -9,7 +9,7 @@ import {
   getHemiTokenAddress,
   memoizedGetHemiTokenAddress,
 } from '../../../actions/public/veHemi'
-import { getVeHemiContractAddress } from '../../../constants'
+import { getVeHemiContractAddress, MinLockAmount } from '../../../constants'
 
 vi.mock('viem/actions', () => ({
   waitForTransactionReceipt: vi.fn(),
@@ -27,9 +27,11 @@ vi.mock('../../../actions/public/veHemi', () => ({
   memoizedGetHemiTokenAddress: vi.fn(),
 }))
 
+const sufficientBalance = MinLockAmount + BigInt(1000)
+
 const validParameters = {
   account: '0x1234567890123456789012345678901234567890' as const,
-  amount: BigInt(100),
+  amount: MinLockAmount,
   lockDurationInSeconds: BigInt(30 * 24 * 60 * 60), // 30 days
   walletClient: { chain: hemiSepolia },
 }
@@ -72,6 +74,22 @@ describe('createLock', function () {
     )
   })
 
+  it('should emit "lock-creation-failed-validation" if amount is less than the minimum lock amount', async function () {
+    const { emitter, promise } = createLock({
+      ...validParameters,
+      amount: MinLockAmount - BigInt(1),
+    })
+
+    const lockCreationFailedValidation = vi.fn()
+    emitter.on('lock-creation-failed-validation', lockCreationFailedValidation)
+
+    await promise
+
+    expect(lockCreationFailedValidation).toHaveBeenCalledExactlyOnceWith(
+      'amount is less than the minimum lock amount',
+    )
+  })
+
   it('should emit "lock-creation-failed-validation" if user has insufficient balance', async function () {
     vi.mocked(balanceOf).mockResolvedValue(BigInt(50))
 
@@ -88,7 +106,7 @@ describe('createLock', function () {
   })
 
   it('should approve tokens if allowance is insufficient', async function () {
-    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(balanceOf).mockResolvedValue(sufficientBalance)
     vi.mocked(allowance).mockResolvedValue(BigInt(50))
     vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValue({
@@ -127,7 +145,7 @@ describe('createLock', function () {
   })
 
   it('should use custom approval amount if provided', async function () {
-    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(balanceOf).mockResolvedValue(sufficientBalance)
     vi.mocked(allowance).mockResolvedValue(BigInt(0))
     vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValue({
@@ -135,7 +153,7 @@ describe('createLock', function () {
     })
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
 
-    const customApprovalAmount = BigInt(500)
+    const customApprovalAmount = MinLockAmount + BigInt(500)
 
     const { emitter, promise } = createLock({
       ...validParameters,
@@ -222,7 +240,7 @@ describe('createLock', function () {
   })
 
   it('should handle approve transaction failure', async function () {
-    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(balanceOf).mockResolvedValue(sufficientBalance)
     vi.mocked(allowance).mockResolvedValue(BigInt(0))
     vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt)
@@ -251,7 +269,7 @@ describe('createLock', function () {
   })
 
   it('should handle user rejecting approval', async function () {
-    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(balanceOf).mockResolvedValue(sufficientBalance)
     vi.mocked(allowance).mockResolvedValue(BigInt(0))
     vi.mocked(approve).mockRejectedValue(new Error('User rejected'))
 
@@ -273,8 +291,8 @@ describe('createLock', function () {
   })
 
   it('should handle user rejecting lock creation', async function () {
-    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
-    vi.mocked(allowance).mockResolvedValue(BigInt(200))
+    vi.mocked(balanceOf).mockResolvedValue(sufficientBalance)
+    vi.mocked(allowance).mockResolvedValue(sufficientBalance)
     vi.mocked(writeContract).mockRejectedValue(new Error('User rejected'))
 
     const { emitter, promise } = createLock(validParameters)
@@ -298,8 +316,8 @@ describe('createLock', function () {
   })
 
   it('should handle lock creation transaction failure', async function () {
-    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
-    vi.mocked(allowance).mockResolvedValue(BigInt(200))
+    vi.mocked(balanceOf).mockResolvedValue(sufficientBalance)
+    vi.mocked(allowance).mockResolvedValue(sufficientBalance)
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValue({
       status: 'reverted',
@@ -329,7 +347,7 @@ describe('createLock', function () {
   })
 
   it('should handle approval failure during waitForTransactionReceipt', async function () {
-    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(balanceOf).mockResolvedValue(sufficientBalance)
     vi.mocked(allowance).mockResolvedValue(BigInt(0))
     vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockRejectedValue(
@@ -351,8 +369,8 @@ describe('createLock', function () {
   })
 
   it('should handle lock creation failure during waitForTransactionReceipt', async function () {
-    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
-    vi.mocked(allowance).mockResolvedValue(BigInt(200))
+    vi.mocked(balanceOf).mockResolvedValue(sufficientBalance)
+    vi.mocked(allowance).mockResolvedValue(sufficientBalance)
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockRejectedValue(
       new Error('Network error'),

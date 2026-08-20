@@ -8,6 +8,7 @@ export type {
 export {
   getVeHemiContractAddress,
   MaxLockDurationSeconds,
+  MinLockAmount,
   MinLockDurationSeconds,
   SixDaysSeconds,
 } from './constants.ts'

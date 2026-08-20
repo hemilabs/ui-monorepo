@@ -37,9 +37,7 @@ export const Error500 = function ({
       <Image
         alt="hemi 500 error background"
         className="absolute inset-0 -top-15 -z-10 m-auto w-4/5"
-        height={errorArtwork.height}
-        src={errorArtwork.src}
-        width={errorArtwork.width}
+        {...errorArtwork}
       />
       <div className="m-auto flex flex-col items-center gap-4">
         <ExclamationMark />

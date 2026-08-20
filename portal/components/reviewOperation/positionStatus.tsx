@@ -31,9 +31,7 @@ export const PositionStatus = function ({ position, status }: Props) {
         <Image
           alt="Loading icon"
           className="animate-spin"
-          height={gradientLoading.height}
-          src={gradientLoading.src}
-          width={gradientLoading.width}
+          {...gradientLoading}
         />
       )}
       <div

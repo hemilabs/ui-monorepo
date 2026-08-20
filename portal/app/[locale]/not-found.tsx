@@ -15,9 +15,7 @@ export default function NotFound() {
       <Image
         alt="404"
         className="absolute inset-0 -top-64 m-auto w-72 md:w-fit"
-        height={error404.height}
-        src={error404.src}
-        width={error404.width}
+        {...error404}
       />
       <div className="z-10 m-auto flex flex-col items-center gap-4">
         <ExclamationMark />

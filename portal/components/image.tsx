@@ -1,8 +1,6 @@
 import { type ComponentProps } from 'react'
 
-// A bare <img> loads eagerly, so dropping next/image regressed every list of
-// logos into fetching all of them on mount. These restore the defaults it set.
-// `alt` is required so decorative images have to opt out with an empty string
+// `alt` is required so a decorative image has to opt out with an empty string
 // rather than by omission.
 export const Image = ({
   alt,

@@ -34,7 +34,7 @@ const Points = ({
 >) => <p className={`text-xl font-semibold ${color}`}>{points}</p>
 
 const Container = ({ children }: { children: ReactNode }) => (
-  <div className="h-24 w-full [&>div]:overflow-hidden">
+  <div className="h-24 w-full [&>div]:h-full [&>div]:overflow-hidden">
     <Card>
       <div className="relative">{children}</div>
     </Card>

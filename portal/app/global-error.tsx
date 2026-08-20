@@ -15,11 +15,8 @@ const GlobalError = (props: Pick<ComponentProps<typeof Error500>, 'error'>) => (
     <head>
       <title>Hemi Portal</title>
       <link href="/favicon.ico" rel="icon" />
-      <link href="https://fonts.googleapis.com" rel="preconnect" />
-      <link href="https://fonts.gstatic.com" rel="preconnect" />
-      <link rel="stylesheet" />
     </head>
-    <body className="inter-font m-0 h-screen">
+    <body className="m-0 h-screen">
       <Error500
         {...props}
         // I couldn't find a way to read these from the translation files,

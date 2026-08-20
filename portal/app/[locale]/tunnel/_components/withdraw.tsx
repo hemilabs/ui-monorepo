@@ -105,12 +105,12 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   const {
     canSubmit,
     customAddress,
+    customAddressEnabled,
     isCustomAddressValid,
     receivingAddress,
     reset: resetReceivingAddress,
     setCustomAddress,
-    setUseCustomAddress,
-    useCustomAddress,
+    setCustomAddressEnabled,
     validationError,
   } = useReceivingBitcoinAddress({
     amountValidation,
@@ -226,10 +226,11 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
           <BitcoinReceivingAddress
             address={btcAddress ? formatBtcAddress(btcAddress) : undefined}
             customAddress={customAddress}
+            customAddressEnabled={customAddressEnabled}
             disabled={isWithdrawing}
             isCustomAddressValid={isCustomAddressValid}
             onCustomAddressChange={setCustomAddress}
-            onUseCustomAddressChange={setUseCustomAddress}
+            onCustomAddressEnabledChange={setCustomAddressEnabled}
             receivingText={t('tunnel-page.form.bitcoin-receiving-address')}
             tooltipText={t(
               'tunnel-page.form.bitcoin-receiving-address-description',
@@ -237,7 +238,6 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
                 symbol: toToken.symbol,
               },
             )}
-            useCustomAddress={useCustomAddress}
           />
           <FeesContainer>
             <HemiBtcFeesSummary amount={amount} token={fromToken} />

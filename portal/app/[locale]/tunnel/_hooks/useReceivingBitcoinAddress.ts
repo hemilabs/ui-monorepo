@@ -21,24 +21,24 @@ export const useReceivingBitcoinAddress = function ({
   walletAddress,
 }: Props) {
   const [customAddress, setCustomAddress] = useState('')
-  const [useCustomAddress, setUseCustomAddress] = useState(false)
+  const [customAddressEnabled, setCustomAddressEnabled] = useState(false)
   const t = useTranslations('tunnel-page.submit-button')
 
   const isCustomAddressValid =
-    !useCustomAddress || isValidBtcAddress(customAddress, network)
+    !customAddressEnabled || isValidBtcAddress(customAddress, network)
 
   return {
     canSubmit: amountValidation.canSubmit && isCustomAddressValid,
     customAddress,
+    customAddressEnabled,
     isCustomAddressValid,
-    receivingAddress: useCustomAddress ? customAddress : walletAddress,
+    receivingAddress: customAddressEnabled ? customAddress : walletAddress,
     reset: useCallback(function () {
       setCustomAddress('')
-      setUseCustomAddress(false)
+      setCustomAddressEnabled(false)
     }, []),
     setCustomAddress,
-    setUseCustomAddress,
-    useCustomAddress,
+    setCustomAddressEnabled,
     validationError:
       amountValidation.error ??
       (isCustomAddressValid ? undefined : t('input-a-correct-custom-address')),

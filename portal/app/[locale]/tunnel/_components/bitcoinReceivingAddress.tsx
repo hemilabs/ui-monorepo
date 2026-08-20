@@ -11,25 +11,25 @@ const errorId = 'custom-bitcoin-address-error'
 type Props = {
   address: string | undefined
   customAddress: string
+  customAddressEnabled: boolean
   disabled: boolean
   isCustomAddressValid: boolean
   onCustomAddressChange: (customAddress: string) => void
-  onUseCustomAddressChange: (useCustomAddress: boolean) => void
+  onCustomAddressEnabledChange: (customAddressEnabled: boolean) => void
   receivingText: string
   tooltipText: string
-  useCustomAddress: boolean
 }
 
 export const BitcoinReceivingAddress = function ({
   address,
   customAddress,
+  customAddressEnabled,
   disabled,
   isCustomAddressValid,
   onCustomAddressChange,
-  onUseCustomAddressChange,
+  onCustomAddressEnabledChange,
   receivingText,
   tooltipText,
-  useCustomAddress,
 }: Props) {
   const t = useTranslations('tunnel-page.form')
   // an empty field is not an error yet, it is just not filled in
@@ -50,16 +50,16 @@ export const BitcoinReceivingAddress = function ({
           </label>
           <Toggle
             ariaLabel={t('custom-address')}
-            checked={useCustomAddress}
+            checked={customAddressEnabled}
             disabled={disabled}
             id={toggleId}
-            onCheckedChange={onUseCustomAddressChange}
+            onCheckedChange={onCustomAddressEnabledChange}
           />
         </div>
       </div>
       <div className="mt-4 h-px w-full bg-neutral-200" />
       <div className="mt-4 flex h-4.5 items-center gap-x-2">
-        {useCustomAddress ? (
+        {customAddressEnabled ? (
           <>
             <input
               aria-describedby={showError ? errorId : undefined}

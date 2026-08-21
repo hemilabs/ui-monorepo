@@ -3,6 +3,7 @@ import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { type UseQueryOptions } from '@tanstack/react-query'
 import { DrawerParagraph } from 'components/drawer'
 import { HemiFees } from 'components/hemiFees'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import {
   ProgressStatus,
   type ProgressStatusType,
@@ -16,7 +17,6 @@ import { useTokenBalance } from 'hooks/useBalance'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
-import { lazy, Suspense } from 'react'
 import {
   StakeOperations,
   StakeStatusEnum,
@@ -40,8 +40,9 @@ import { StakeCallToAction } from './stakeCallToAction'
 import { StrategyDetails } from './strategyDetails'
 import { SubmitButton } from './submitButton'
 
-const StakeToast = lazy(() =>
-  import('../stakeToast').then(mod => ({ default: mod.StakeToast })),
+const StakeToast = lazyWithFallback(
+  () => import('../stakeToast').then(mod => ({ default: mod.StakeToast })),
+  <ToastLoader />,
 )
 
 type AllowanceQuery = Omit<
@@ -285,13 +286,11 @@ export const StakeOperation = function ({
   return (
     <>
       {stakeStatus === StakeStatusEnum.STAKE_TX_CONFIRMED && (
-        <Suspense fallback={<ToastLoader />}>
-          <StakeToast
-            chainId={token.chainId}
-            txHash={stakeTransactionHash!}
-            type="stake"
-          />
-        </Suspense>
+        <StakeToast
+          chainId={token.chainId}
+          txHash={stakeTransactionHash!}
+          type="stake"
+        />
       )}
       <Operation
         amount={amountInput}

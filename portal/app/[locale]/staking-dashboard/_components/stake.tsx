@@ -2,13 +2,14 @@
 
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
+import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useTranslations } from 'next-intl'
-import { lazy, Suspense, useState } from 'react'
+import { useState } from 'react'
 import { StakingOperationRunning } from 'types/stakingDashboard'
 import { getTotal } from 'utils/getTotal'
 import { getNativeToken } from 'utils/nativeToken'
@@ -27,12 +28,6 @@ import { daysToSeconds } from '../_utils/lockCreationTimes'
 import { FormContent, StakingForm } from './form'
 import { isValidLockup } from './lockup'
 import { SubmitStake } from './submitStake'
-
-const SetMaxEvmBalance = lazy(() =>
-  import('components/setMaxBalance').then(mod => ({
-    default: mod.SetMaxEvmBalance,
-  })),
-)
 
 export const Stake = function () {
   const token = useHemiToken()
@@ -176,14 +171,12 @@ export const Stake = function () {
           }
           isRunningOperation={isRunningOperation}
           setMaxBalanceButton={
-            <Suspense>
-              <SetMaxEvmBalance
-                disabled={isRunningOperation}
-                gas={createLockGasFees}
-                onSetMaxBalance={updateInput}
-                token={token}
-              />
-            </Suspense>
+            <SetMaxEvmBalance
+              disabled={isRunningOperation}
+              gas={createLockGasFees}
+              onSetMaxBalance={updateInput}
+              token={token}
+            />
           }
         />
       }

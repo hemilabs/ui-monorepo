@@ -1,14 +1,14 @@
 'use client'
 
-import { lazy, Suspense } from 'react'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 
-const SyncHistoryWorkers = lazy(() =>
+const SyncHistoryWorkers = lazyWithFallback(() =>
   import('components/syncHistoryWorkers').then(mod => ({
     default: mod.SyncHistoryWorkers,
   })),
 )
 
-const TunnelStatusUpdaters = lazy(() =>
+const TunnelStatusUpdaters = lazyWithFallback(() =>
   import('components/tunnelStatusUpdaters').then(mod => ({
     default: mod.TunnelStatusUpdaters,
   })),
@@ -16,11 +16,7 @@ const TunnelStatusUpdaters = lazy(() =>
 
 export const Workers = () => (
   <>
-    <Suspense>
-      <SyncHistoryWorkers />
-    </Suspense>
-    <Suspense>
-      <TunnelStatusUpdaters />
-    </Suspense>
+    <SyncHistoryWorkers />
+    <TunnelStatusUpdaters />
   </>
 )

@@ -1,19 +1,12 @@
 import { Button, ButtonSize } from 'components/button'
-import { ButtonLoader } from 'components/buttonLoader'
+import { LazyConnectEvmWallet } from 'components/lazyConnectEvmWallet'
 import { useChain } from 'hooks/useChain'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useSwitchChain } from 'hooks/useSwitchChain'
 import { useTranslations } from 'next-intl'
-import { lazy, Suspense } from 'react'
 import { RemoteChain } from 'types/chain'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
-
-const ConnectEvmWallet = lazy(() =>
-  import('components/connectEvmWallet').then(mod => ({
-    default: mod.ConnectEvmWallet,
-  })),
-)
 
 type Props = {
   chainId: RemoteChain['id']
@@ -53,11 +46,9 @@ export const SubmitWhenConnectedToChain = function ({
   }
 
   return (
-    <Suspense fallback={<ButtonLoader />}>
-      <ConnectEvmWallet
-        buttonSize={submitButtonSize}
-        text={connectWalletText}
-      />
-    </Suspense>
+    <LazyConnectEvmWallet
+      buttonSize={submitButtonSize}
+      text={connectWalletText}
+    />
   )
 }

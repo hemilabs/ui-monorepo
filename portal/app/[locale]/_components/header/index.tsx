@@ -2,18 +2,20 @@ import { GenesisDropTabs } from 'app/[locale]/genesis-drop/_components/genesisDr
 import { ButtonIcon } from 'components/button'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { HamburgerIcon } from 'components/icons/hamburgerIcon'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { StakeTabs } from 'components/stakeTabs'
 import { TunnelTabs } from 'components/tunnelTabs'
-import { lazy, Suspense } from 'react'
 
 import { Badge } from '../badge'
 
 import { HomeLink } from './homeLink'
 
-const WalletConnection = lazy(() =>
-  import('components/connectWallets').then(mod => ({
-    default: mod.WalletConnection,
-  })),
+const WalletConnection = lazyWithFallback(
+  () =>
+    import('components/connectWallets').then(mod => ({
+      default: mod.WalletConnection,
+    })),
+  <div className="ml-auto" />,
 )
 
 type Props = {
@@ -38,9 +40,7 @@ export const Header = ({ isMenuOpen, openNavbar, toggleMenu }: Props) => (
       <TunnelTabs />
       <GenesisDropTabs />
     </div>
-    <Suspense fallback={<div className="ml-auto" />}>
-      <WalletConnection />
-    </Suspense>
+    <WalletConnection />
     <div className="hidden sm:flex md:hidden">
       <ButtonIcon
         onClick={toggleMenu}

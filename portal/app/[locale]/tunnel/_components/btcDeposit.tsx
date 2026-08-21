@@ -1,13 +1,15 @@
 'use client'
 
 import { useDebounce } from '@hemilabs/react-hooks/useDebounce'
+import { lazyWithFallback } from 'components/lazyWithFallback'
+import { SetMaxBtcBalance } from 'components/setMaxBalance'
 import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { formatEvmAddress } from 'utils/format'
 import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
@@ -23,13 +25,7 @@ import { FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 
-const SetMaxBtcBalance = lazy(() =>
-  import('components/setMaxBalance').then(mod => ({
-    default: mod.SetMaxBtcBalance,
-  })),
-)
-
-const WalletsConnected = lazy(() =>
+const WalletsConnected = lazyWithFallback(() =>
   import('./walletsConnected').then(mod => ({ default: mod.WalletsConnected })),
 )
 
@@ -191,11 +187,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
           <BtcFees amount={amountBigInt} />
         </div>
       }
-      bottomSection={
-        <Suspense>
-          <WalletsConnected />
-        </Suspense>
-      }
+      bottomSection={<WalletsConnected />}
       formContent={
         <FormContent
           calculateReceiveAmount={calculateReceiveAmount}
@@ -206,13 +198,11 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
           }
           isRunningOperation={isDepositing}
           setMaxBalanceButton={
-            <Suspense>
-              <SetMaxBtcBalance
-                disabled={isDepositing}
-                onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
-                token={fromToken}
-              />
-            </Suspense>
+            <SetMaxBtcBalance
+              disabled={isDepositing}
+              onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
+              token={fromToken}
+            />
           }
           tunnelState={state}
         />

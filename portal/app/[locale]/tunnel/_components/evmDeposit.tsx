@@ -4,13 +4,14 @@ import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { CustomTunnelsThroughPartners } from 'components/customTunnelsThroughPartners'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
+import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
-import { lazy, Suspense, useState } from 'react'
+import { useState } from 'react'
 import { getL1StandardBridgeAddress } from 'utils/chain'
 import { getTotal } from 'utils/getTotal'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
@@ -28,12 +29,6 @@ import { Erc20TokenApproval } from './erc20TokenApproval'
 import { FormContent, TunnelForm } from './form'
 import { SubmitEvmDeposit } from './submitEvmDeposit'
 import { TunnelProviderToggle } from './tunnelProviderToggle'
-
-const SetMaxEvmBalance = lazy(() =>
-  import('components/setMaxBalance').then(mod => ({
-    default: mod.SetMaxEvmBalance,
-  })),
-)
 
 type OperationRunning = 'idle' | 'approving' | 'depositing'
 
@@ -230,14 +225,12 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
             isRunningOperation={isRunningOperation}
             provider={renderTunnelProviderToggle()}
             setMaxBalanceButton={
-              <Suspense>
-                <SetMaxEvmBalance
-                  disabled={isRunningOperation}
-                  gas={depositGasFees}
-                  onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
-                  token={fromToken}
-                />
-              </Suspense>
+              <SetMaxEvmBalance
+                disabled={isRunningOperation}
+                gas={depositGasFees}
+                onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
+                token={fromToken}
+              />
             }
             tokenApproval={
               operatesNativeToken ? null : (

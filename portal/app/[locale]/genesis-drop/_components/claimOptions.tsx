@@ -1,5 +1,6 @@
 import { MutationStatus } from '@tanstack/react-query'
 import { Button } from 'components/button'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { Spinner } from 'components/spinner'
 import {
   LockupMonths,
@@ -8,20 +9,20 @@ import {
 } from 'genesis-drop-actions'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { lazy, Suspense, useState } from 'react'
+import { useState } from 'react'
 import { Hash, Hex } from 'viem'
 
 import { useClaimTokens } from '../_hooks/useClaimTokens'
 
 import { Strategy } from './strategy'
 
-const TermsAndConditions = lazy(() =>
+const TermsAndConditions = lazyWithFallback(() =>
   import('./termsAndConditions').then(mod => ({
     default: mod.TermsAndConditions,
   })),
 )
 
-const ClaimDrawer = lazy(() =>
+const ClaimDrawer = lazyWithFallback(() =>
   import('./claimDrawer').then(mod => ({ default: mod.ClaimDrawer })),
 )
 
@@ -169,32 +170,28 @@ export const ClaimOptions = function ({ eligibility }: Props) {
         </div>
       </div>
       {termsAndConditions.show && (
-        <Suspense>
-          <TermsAndConditions
-            onAccept={handleAcceptTermsAndConditions}
-            onClose={function () {
-              track?.('genesis-drop - terms rejected', {
-                lockupMonths: termsAndConditions.lockup!,
-              })
-              setTermsAndConditions({ lockup: undefined, show: false })
-            }}
-          />
-        </Suspense>
+        <TermsAndConditions
+          onAccept={handleAcceptTermsAndConditions}
+          onClose={function () {
+            track?.('genesis-drop - terms rejected', {
+              lockupMonths: termsAndConditions.lockup!,
+            })
+            setTermsAndConditions({ lockup: undefined, show: false })
+          }}
+        />
       )}
       {showDrawer && (
-        <Suspense>
-          <ClaimDrawer
-            eligibility={eligibility}
-            isRetrying={isRetrying}
-            lockupMonths={termsAndConditions.lockup!}
-            onClose={closeDrawer}
-            onRetry={handleRetry}
-            ratio={defaultRatio}
-            status={claimStatus}
-            termsSignature={signedTerms!}
-            transactionHash={transactionHash}
-          />
-        </Suspense>
+        <ClaimDrawer
+          eligibility={eligibility}
+          isRetrying={isRetrying}
+          lockupMonths={termsAndConditions.lockup!}
+          onClose={closeDrawer}
+          onRetry={handleRetry}
+          ratio={defaultRatio}
+          status={claimStatus}
+          termsSignature={signedTerms!}
+          transactionHash={transactionHash}
+        />
       )}
     </>
   )

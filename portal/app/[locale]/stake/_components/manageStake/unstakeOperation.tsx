@@ -1,4 +1,5 @@
 import { HemiFees } from 'components/hemiFees'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { Spinner } from 'components/spinner'
@@ -6,7 +7,6 @@ import { ToastLoader } from 'components/toast/toastLoader'
 import { useAmount } from 'hooks/useAmount'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
-import { type ComponentProps, lazy, Suspense } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {
   UnstakeStatusEnum,
@@ -28,20 +28,15 @@ import { Preview } from './preview'
 import { SubmitButton } from './submitButton'
 import { UnstakeCallToAction } from './unstakeCallToAction'
 
-const StakeToast = lazy(() =>
-  import('../stakeToast').then(mod => ({ default: mod.StakeToast })),
+const StakeToast = lazyWithFallback(
+  () => import('../stakeToast').then(mod => ({ default: mod.StakeToast })),
+  <ToastLoader />,
 )
 
-const LazyStakedBalance = lazy(() =>
-  import('../stakedBalance').then(mod => ({ default: mod.StakedBalance })),
-)
-
-const StakedBalance = (props: ComponentProps<typeof LazyStakedBalance>) => (
-  <Suspense
-    fallback={<Skeleton className="h-full" containerClassName="basis-1/3" />}
-  >
-    <LazyStakedBalance {...props} />
-  </Suspense>
+const StakedBalance = lazyWithFallback(
+  () =>
+    import('../stakedBalance').then(mod => ({ default: mod.StakedBalance })),
+  <Skeleton className="h-full" containerClassName="basis-1/3" />,
 )
 
 type Props = {
@@ -141,13 +136,11 @@ export const UnstakeOperation = function ({
     <>
       {unstakeStatus === UnstakeStatusEnum.UNSTAKE_TX_CONFIRMED &&
         unStakeTransactionHash && (
-          <Suspense fallback={<ToastLoader />}>
-            <StakeToast
-              chainId={token.chainId}
-              txHash={unStakeTransactionHash}
-              type="unstake"
-            />
-          </Suspense>
+          <StakeToast
+            chainId={token.chainId}
+            txHash={unStakeTransactionHash}
+            type="unstake"
+          />
         )}
       <Operation
         amount={amountInput}

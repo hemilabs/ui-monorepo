@@ -1,12 +1,13 @@
 import { TunnelIcon as BaseIcon } from 'components/icons/tunnelIcon'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import { useTranslations } from 'next-intl'
-import { ComponentProps, lazy, Suspense } from 'react'
+import { ComponentProps, Suspense } from 'react'
 
 import { ItemLink } from './itemLink'
 
-const ActionableOperations = lazy(() =>
+const ActionableOperations = lazyWithFallback(() =>
   import('components/actionableOperations').then(mod => ({
     default: mod.ActionableOperations,
   })),
@@ -19,10 +20,7 @@ const UI = ({ href, icon, text }: ComponentProps<typeof ItemLink>) => (
     icon={icon}
     rightSection={
       <div className="ml-auto hidden md:block">
-        {/* Initially users will be disconnected, so no need for a fallback here. */}
-        <Suspense>
-          <ActionableOperations />
-        </Suspense>
+        <ActionableOperations />
       </div>
     }
     text={text}

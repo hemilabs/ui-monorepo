@@ -1,11 +1,10 @@
 'use client'
 
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import {
   createContext,
   Dispatch,
-  lazy,
   ReactNode,
-  Suspense,
   useMemo,
   useReducer,
   useState,
@@ -18,7 +17,7 @@ import {
 import { historyReducer, initialState } from './reducer'
 import { HistoryActions, type HistoryReducerState } from './types'
 
-const HistoryLoader = lazy(() =>
+const HistoryLoader = lazyWithFallback(() =>
   import('./historyLoader').then(mod => ({ default: mod.HistoryLoader })),
 )
 
@@ -101,14 +100,12 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
 
   return (
     <TunnelHistoryContext.Provider value={historyContext}>
-      <Suspense>
-        <HistoryLoader
-          dispatch={dispatch}
-          forceResync={forceResync}
-          history={history}
-          setForceResync={setForceResync}
-        />
-      </Suspense>
+      <HistoryLoader
+        dispatch={dispatch}
+        forceResync={forceResync}
+        history={history}
+        setForceResync={setForceResync}
+      />
       {children}
     </TunnelHistoryContext.Provider>
   )

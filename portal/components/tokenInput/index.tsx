@@ -1,23 +1,11 @@
+import { Balance } from 'components/cryptoBalance'
 import { RenderFiatBalance } from 'components/fiatBalance'
 import { useTranslations } from 'next-intl'
-import { ComponentProps, ComponentType, lazy, ReactNode, Suspense } from 'react'
-import Skeleton from 'react-loading-skeleton'
+import { ComponentProps, ComponentType, ReactNode } from 'react'
 import { Token } from 'types/token'
 import { parseTokenUnits } from 'utils/token'
 
 import { isInputError } from './utils'
-
-const LazyBalance = lazy(() =>
-  import('components/cryptoBalance').then(mod => ({ default: mod.Balance })),
-)
-
-const Balance = (props: ComponentProps<typeof LazyBalance>) => (
-  <Suspense
-    fallback={<Skeleton className="h-full" containerClassName="basis-1/3" />}
-  >
-    <LazyBalance {...props} />
-  </Suspense>
-)
 
 type Props<T extends Token> = {
   balanceComponent?: ComponentType<{

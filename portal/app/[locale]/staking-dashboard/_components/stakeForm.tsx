@@ -1,9 +1,10 @@
 'use client'
 
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { ToastLoader } from 'components/toast/toastLoader'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTranslations } from 'next-intl'
-import { lazy, Suspense } from 'react'
+import { Suspense } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {
   CollectAllRewardsDashboardStatus,
@@ -17,8 +18,9 @@ import { useDrawerStakingQueryString } from '../_hooks/useDrawerStakingQueryStri
 import { Stake } from './stake'
 import { StakeReview } from './stakeReview'
 
-const StakeToast = lazy(() =>
-  import('./stakeToast').then(mod => ({ default: mod.StakeToast })),
+const StakeToast = lazyWithFallback(
+  () => import('./stakeToast').then(mod => ({ default: mod.StakeToast })),
+  <ToastLoader />,
 )
 
 const SideDrawer = function () {
@@ -77,28 +79,22 @@ export const StakeForm = function () {
   return (
     <>
       {showStakeToast && (
-        <Suspense fallback={<ToastLoader />}>
-          <StakeToast
-            title={t('staking-dashboard.stake-successful')}
-            transactionHash={stakingDashboardOperation.transactionHash!}
-          />
-        </Suspense>
+        <StakeToast
+          title={t('staking-dashboard.stake-successful')}
+          transactionHash={stakingDashboardOperation.transactionHash!}
+        />
       )}
       {showUnlockToast && (
-        <Suspense fallback={<ToastLoader />}>
-          <StakeToast
-            title={t('staking-dashboard.unlock-successful')}
-            transactionHash={unlockingDashboardOperation.transactionHash!}
-          />
-        </Suspense>
+        <StakeToast
+          title={t('staking-dashboard.unlock-successful')}
+          transactionHash={unlockingDashboardOperation.transactionHash!}
+        />
       )}
       {showCollectRewardsToast && (
-        <Suspense fallback={<ToastLoader />}>
-          <StakeToast
-            title={t('staking-dashboard.claim-rewards-successful')}
-            transactionHash={collectRewardsDashboardOperation.transactionHash!}
-          />
-        </Suspense>
+        <StakeToast
+          title={t('staking-dashboard.claim-rewards-successful')}
+          transactionHash={collectRewardsDashboardOperation.transactionHash!}
+        />
       )}
       <Stake />
       <Suspense>

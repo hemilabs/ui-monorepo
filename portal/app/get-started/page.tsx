@@ -1,17 +1,7 @@
 'use client'
 
-import { lazy, Suspense } from 'react'
+import { LocalePageRedirect } from 'components/localePageRedirect'
 
-const LocalePageRedirect = lazy(() =>
-  import('components/localePageRedirect').then(mod => ({
-    default: mod.LocalePageRedirect,
-  })),
-)
-
-const Page = () => (
-  <Suspense>
-    <LocalePageRedirect redirectPage="/get-started" />
-  </Suspense>
-)
+const Page = () => <LocalePageRedirect redirectPage="/get-started" />
 
 export default Page

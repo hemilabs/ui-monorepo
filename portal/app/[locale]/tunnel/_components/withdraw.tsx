@@ -5,6 +5,8 @@ import { CustomTunnelsThroughPartners } from 'components/customTunnelsThroughPar
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
 import { WarningIcon } from 'components/icons/warningIcon'
+import { lazyWithFallback } from 'components/lazyWithFallback'
+import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { useAccounts } from 'hooks/useAccounts'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
@@ -13,7 +15,7 @@ import { useNetworks } from 'hooks/useNetworks'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { isEvmNetwork } from 'utils/chain'
 import { formatBtcAddress } from 'utils/format'
@@ -44,13 +46,7 @@ import { SubmitEvmWithdrawal } from './submitEvmWithdrawal'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 import { TunnelProviderToggle } from './tunnelProviderToggle'
 
-const SetMaxEvmBalance = lazy(() =>
-  import('components/setMaxBalance').then(mod => ({
-    default: mod.SetMaxEvmBalance,
-  })),
-)
-
-const WalletsConnected = lazy(() =>
+const WalletsConnected = lazyWithFallback(() =>
   import('./walletsConnected').then(mod => ({ default: mod.WalletsConnected })),
 )
 
@@ -228,11 +224,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
           </FeesContainer>
         </div>
       }
-      bottomSection={
-        <Suspense>
-          <WalletsConnected />
-        </Suspense>
-      }
+      bottomSection={<WalletsConnected />}
       formContent={
         <FormContent
           calculateReceiveAmount={calculateReceiveAmount}
@@ -245,14 +237,12 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
           }
           isRunningOperation={isWithdrawing}
           setMaxBalanceButton={
-            <Suspense>
-              <SetMaxEvmBalance
-                disabled={isWithdrawing}
-                gas={estimatedFees}
-                onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
-                token={fromToken}
-              />
-            </Suspense>
+            <SetMaxEvmBalance
+              disabled={isWithdrawing}
+              gas={estimatedFees}
+              onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
+              token={fromToken}
+            />
           }
           tunnelState={state}
         />
@@ -433,14 +423,12 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
             isRunningOperation={isWithdrawing}
             provider={<RenderTunnelProviderToggle />}
             setMaxBalanceButton={
-              <Suspense>
-                <SetMaxEvmBalance
-                  disabled={isWithdrawing}
-                  gas={withdrawGasFees}
-                  onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
-                  token={fromToken}
-                />
-              </Suspense>
+              <SetMaxEvmBalance
+                disabled={isWithdrawing}
+                gas={withdrawGasFees}
+                onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
+                token={fromToken}
+              />
             }
             tunnelState={{
               ...state,

@@ -1,15 +1,16 @@
 'use client'
 
 import { AnalyticsEvent } from 'app/analyticsEvents'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { Tab, Tabs } from 'components/tabs'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { lazy, Suspense } from 'react'
+import { Suspense } from 'react'
 import { UrlObject } from 'url'
 
-const ActionableOperations = lazy(() =>
+const ActionableOperations = lazyWithFallback(() =>
   import('components/actionableOperations').then(mod => ({
     default: mod.ActionableOperations,
   })),
@@ -52,9 +53,7 @@ const UI = function ({
         >
           <div className="flex items-center justify-center gap-x-2">
             <span>{t('transaction-history.title')}</span>
-            <Suspense>
-              <ActionableOperations />
-            </Suspense>
+            <ActionableOperations />
           </div>
         </Tab>
       </Tabs>

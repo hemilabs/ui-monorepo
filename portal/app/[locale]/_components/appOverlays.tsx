@@ -1,13 +1,9 @@
 'use client'
 
-import { lazy, Suspense } from 'react'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 
-const EarnCard = lazy(() =>
+const EarnCard = lazyWithFallback(() =>
   import('./earnCard').then(mod => ({ default: mod.EarnCard })),
 )
 
-export const AppOverlays = () => (
-  <Suspense>
-    <EarnCard />
-  </Suspense>
-)
+export const AppOverlays = () => <EarnCard />

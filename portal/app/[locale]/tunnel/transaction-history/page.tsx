@@ -1,17 +1,24 @@
 'use client'
 
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { PageLayout } from 'components/pageLayout'
 import { PageTitle } from 'components/pageTitle'
 import { useTranslations } from 'next-intl'
-import { lazy, Suspense, useState } from 'react'
+import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { type FilterOptions, TopBar } from './_components/topBar'
 
-const TransactionHistory = lazy(() =>
-  import('./_components/transactionHistory').then(mod => ({
-    default: mod.TransactionHistory,
-  })),
+const TransactionHistory = lazyWithFallback(
+  () =>
+    import('./_components/transactionHistory').then(mod => ({
+      default: mod.TransactionHistory,
+    })),
+  // Mirrors the table's own height and radius so the first paint matches it
+  <Skeleton
+    className="block h-[56dvh] w-full rounded-lg md:min-h-136"
+    containerClassName="block"
+  />,
 )
 
 const Page = function () {
@@ -34,20 +41,10 @@ const Page = function () {
           filterOption={filterOption}
           onFilterOptionChange={setFilterOption}
         />
-        <Suspense
-          fallback={
-            // Mirrors the table's own height and radius so the first paint matches it
-            <Skeleton
-              className="block h-[56dvh] w-full rounded-lg md:min-h-136"
-              containerClassName="block"
-            />
-          }
-        >
-          <TransactionHistory
-            filterOption={filterOption}
-            setFilterOption={setFilterOption}
-          />
-        </Suspense>
+        <TransactionHistory
+          filterOption={filterOption}
+          setFilterOption={setFilterOption}
+        />
       </div>
     </PageLayout>
   )

@@ -1,10 +1,11 @@
 'use client'
 
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { UmamiAnalyticsProvider } from 'components/umamiAnalyticsProvider'
 import { useLocale } from 'next-intl'
-import { ComponentProps, lazy, Suspense } from 'react'
+import { ComponentProps } from 'react'
 
-const GlobalTracking = lazy(() =>
+const GlobalTracking = lazyWithFallback(() =>
   import('./globalTracking').then(mod => ({ default: mod.GlobalTracking })),
 )
 
@@ -26,9 +27,7 @@ export const Analytics = function ({
           websiteId: import.meta.env.VITE_ANALYTICS_WEBSITE_ID,
         })}
       >
-        <Suspense>
-          <GlobalTracking />
-        </Suspense>
+        <GlobalTracking />
         {children}
       </UmamiAnalyticsProvider>
     </>

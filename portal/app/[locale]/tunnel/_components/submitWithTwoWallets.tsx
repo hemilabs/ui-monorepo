@@ -1,5 +1,5 @@
 import { Button } from 'components/button'
-import { ButtonLoader } from 'components/buttonLoader'
+import { LazyConnectEvmWallet } from 'components/lazyConnectEvmWallet'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useAccounts } from 'hooks/useAccounts'
@@ -7,7 +7,6 @@ import { useBitcoin } from 'hooks/useBitcoin'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { lazy, Suspense } from 'react'
 
 import { ConnectBtcWallet } from './connectBtcWallet'
 
@@ -16,12 +15,6 @@ type Props = {
   text: string
   validationError: string | undefined
 }
-
-const ConnectEvmWallet = lazy(() =>
-  import('components/connectEvmWallet').then(mod => ({
-    default: mod.ConnectEvmWallet,
-  })),
-)
 
 export const SubmitWithTwoWallets = function ({
   disabled,
@@ -47,11 +40,7 @@ export const SubmitWithTwoWallets = function ({
   }
 
   if (evmWalletStatus !== 'connected') {
-    return (
-      <Suspense fallback={<ButtonLoader />}>
-        <ConnectEvmWallet />
-      </Suspense>
-    )
+    return <LazyConnectEvmWallet />
   }
 
   if (btcWalletStatus !== 'connected') {

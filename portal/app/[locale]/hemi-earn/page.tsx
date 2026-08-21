@@ -1,7 +1,8 @@
 'use client'
 
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { PageLayout } from 'components/pageLayout'
-import { lazy, type ReactNode, Suspense } from 'react'
+import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { InfoCards } from './_components/infoCards'
@@ -15,10 +16,12 @@ const PoolsListSkeleton = () => (
   </div>
 )
 
-const PoolsSection = lazy(() =>
-  import('./_components/poolsSection').then(mod => ({
-    default: mod.PoolsSection,
-  })),
+const PoolsSection = lazyWithFallback(
+  () =>
+    import('./_components/poolsSection').then(mod => ({
+      default: mod.PoolsSection,
+    })),
+  <PoolsListSkeleton />,
 )
 
 // Bails out of rendering the data section if the share registry can't be
@@ -38,9 +41,7 @@ export default function Page() {
       <TopSection />
       <TokensGate>
         <InfoCards />
-        <Suspense fallback={<PoolsListSkeleton />}>
-          <PoolsSection />
-        </Suspense>
+        <PoolsSection />
         <TransactionsSection />
       </TokensGate>
     </PageLayout>

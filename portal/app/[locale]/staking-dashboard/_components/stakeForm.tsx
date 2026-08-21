@@ -34,12 +34,18 @@ const SideDrawer = function () {
     unlockingDashboardOperation,
   } = useStakingDashboard()
 
-  if (
-    !drawerMode ||
-    (!collectRewardsDashboardOperation &&
-      !stakingDashboardOperation &&
-      !unlockingDashboardOperation)
-  ) {
+  const hasRequiredOperation: Record<
+    NonNullable<typeof drawerMode>,
+    boolean
+  > = {
+    claimingRewards: !!collectRewardsDashboardOperation,
+    increasingAmount: !!stakingDashboardOperation,
+    increasingUnlockTime: !!stakingDashboardOperation,
+    staking: true,
+    unlocking: !!unlockingDashboardOperation,
+  }
+
+  if (!drawerMode || !hasRequiredOperation[drawerMode]) {
     return null
   }
 

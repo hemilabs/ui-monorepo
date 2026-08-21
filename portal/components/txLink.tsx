@@ -2,7 +2,8 @@ import { BtcTransaction } from 'btc-wallet/unisat'
 import { ExternalLink } from 'components/externalLink'
 import { useChain } from 'hooks/useChain'
 import { type RemoteChain } from 'types/chain'
-import { formatEvmHash } from 'utils/format'
+import { isEvmNetworkId } from 'utils/chain'
+import { formatBtcHash, formatEvmHash } from 'utils/format'
 import { type Hash } from 'viem'
 
 const textColors = {
@@ -22,9 +23,13 @@ export const TxLink = function ({
 }: Props) {
   const chain = useChain(chainId)
 
-  if (!txHash) {
+  if (typeof txHash !== 'string' || !txHash) {
     return null
   }
+
+  const hash = isEvmNetworkId(chainId)
+    ? formatEvmHash(txHash as Hash)
+    : formatBtcHash(txHash)
 
   const href = `${chain?.blockExplorers?.default.url}/tx/${txHash}`
   return (
@@ -35,7 +40,7 @@ export const TxLink = function ({
         // needed as there's event delegation in the row
         onClick={e => e.stopPropagation()}
       >
-        {formatEvmHash(txHash)}
+        {hash}
       </ExternalLink>
     </div>
   )

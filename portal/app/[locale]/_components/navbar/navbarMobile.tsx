@@ -1,5 +1,5 @@
 import { featureFlags } from 'app/featureFlags'
-import dynamic from 'next/dynamic'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
 
@@ -21,11 +21,10 @@ import { StakeMobile } from './_components/stake'
 import { TunnelLink } from './_components/tunnelLink'
 import { Tvl } from './_components/tvl'
 
-const Help = dynamic(() => import('./_components/help').then(mod => mod.Help), {
-  // Render the closed version of the help button
-  loading: () => <HelpButton isOpen={false} />,
-  ssr: false,
-})
+const Help = lazyWithFallback(
+  () => import('./_components/help').then(mod => ({ default: mod.Help })),
+  <HelpButton isOpen={false} />,
+)
 
 const FullItem = (props: ComponentProps<'li'>) => (
   <li className="w-full" {...props} />

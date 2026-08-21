@@ -1,21 +1,12 @@
 import { Button, ButtonSize } from 'components/button'
-import { ButtonLoader } from 'components/buttonLoader'
+import { LazyConnectEvmWallet } from 'components/lazyConnectEvmWallet'
 import { useChain } from 'hooks/useChain'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useSwitchChain } from 'hooks/useSwitchChain'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { RemoteChain } from 'types/chain'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
-
-const ConnectEvmWallet = dynamic(
-  () => import('components/connectEvmWallet').then(mod => mod.ConnectEvmWallet),
-  {
-    loading: () => <ButtonLoader />,
-    ssr: false,
-  },
-)
 
 type Props = {
   chainId: RemoteChain['id']
@@ -55,6 +46,9 @@ export const SubmitWhenConnectedToChain = function ({
   }
 
   return (
-    <ConnectEvmWallet buttonSize={submitButtonSize} text={connectWalletText} />
+    <LazyConnectEvmWallet
+      buttonSize={submitButtonSize}
+      text={connectWalletText}
+    />
   )
 }

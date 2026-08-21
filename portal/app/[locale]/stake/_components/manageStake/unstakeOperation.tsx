@@ -1,11 +1,11 @@
 import { HemiFees } from 'components/hemiFees'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { Spinner } from 'components/spinner'
 import { ToastLoader } from 'components/toast/toastLoader'
 import { useAmount } from 'hooks/useAmount'
 import { useHemi } from 'hooks/useHemi'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import {
@@ -22,28 +22,21 @@ import { useEstimateUnstakeFees } from '../../_hooks/useEstimateUnstakeFees'
 import { useStakedBalance } from '../../_hooks/useStakedBalance'
 import { useUnstake } from '../../_hooks/useUnstake'
 
-const StakeToast = dynamic(
-  () => import('../stakeToast').then(mod => mod.StakeToast),
-  {
-    loading: () => <ToastLoader />,
-    ssr: false,
-  },
-)
-
 import { UnstakeMaxBalance } from './maxBalance'
 import { Operation } from './operation'
 import { Preview } from './preview'
 import { SubmitButton } from './submitButton'
 import { UnstakeCallToAction } from './unstakeCallToAction'
 
-const StakedBalance = dynamic(
-  () => import('../stakedBalance').then(mod => mod.StakedBalance),
-  {
-    loading: () => (
-      <Skeleton className="h-full" containerClassName="basis-1/3" />
-    ),
-    ssr: false,
-  },
+const StakeToast = lazyWithFallback(
+  () => import('../stakeToast').then(mod => ({ default: mod.StakeToast })),
+  <ToastLoader />,
+)
+
+const StakedBalance = lazyWithFallback(
+  () =>
+    import('../stakedBalance').then(mod => ({ default: mod.StakedBalance })),
+  <Skeleton className="h-full" containerClassName="basis-1/3" />,
 )
 
 type Props = {

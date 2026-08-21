@@ -2,12 +2,12 @@
 
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
+import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { StakingOperationRunning } from 'types/stakingDashboard'
@@ -28,11 +28,6 @@ import { daysToSeconds } from '../_utils/lockCreationTimes'
 import { FormContent, StakingForm } from './form'
 import { isValidLockup } from './lockup'
 import { SubmitStake } from './submitStake'
-
-const SetMaxEvmBalance = dynamic(
-  () => import('components/setMaxBalance').then(mod => mod.SetMaxEvmBalance),
-  { ssr: false },
-)
 
 export const Stake = function () {
   const token = useHemiToken()

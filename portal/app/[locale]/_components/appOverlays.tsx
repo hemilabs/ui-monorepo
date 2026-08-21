@@ -1,9 +1,9 @@
 'use client'
 
-import dynamic from 'next/dynamic'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 
-const EarnCard = dynamic(() => import('./earnCard').then(mod => mod.EarnCard), {
-  ssr: false,
-})
+const EarnCard = lazyWithFallback(() =>
+  import('./earnCard').then(mod => ({ default: mod.EarnCard })),
+)
 
 export const AppOverlays = () => <EarnCard />

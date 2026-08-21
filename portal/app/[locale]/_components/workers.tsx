@@ -1,21 +1,17 @@
 'use client'
 
-import dynamic from 'next/dynamic'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 
-const SyncHistoryWorkers = dynamic(
-  () =>
-    import('components/syncHistoryWorkers').then(mod => mod.SyncHistoryWorkers),
-  { ssr: false },
+const SyncHistoryWorkers = lazyWithFallback(() =>
+  import('components/syncHistoryWorkers').then(mod => ({
+    default: mod.SyncHistoryWorkers,
+  })),
 )
 
-const TunnelStatusUpdaters = dynamic(
-  () =>
-    import('components/tunnelStatusUpdaters').then(
-      mod => mod.TunnelStatusUpdaters,
-    ),
-  {
-    ssr: false,
-  },
+const TunnelStatusUpdaters = lazyWithFallback(() =>
+  import('components/tunnelStatusUpdaters').then(mod => ({
+    default: mod.TunnelStatusUpdaters,
+  })),
 )
 
 export const Workers = () => (

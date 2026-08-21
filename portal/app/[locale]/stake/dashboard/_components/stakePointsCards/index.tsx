@@ -33,8 +33,13 @@ const Points = ({
   'points'
 >) => <p className={`text-xl font-semibold ${color}`}>{points}</p>
 
+// No fixed height here on purpose: the parent row is a flex container, so
+// by default (align-items: stretch) every card is stretched to match the
+// tallest one. EarnedPoints, which is naturally shorter, fills that
+// stretched height itself (see its h-full chain) instead of the other
+// cards being clipped down to a fixed size.
 const Container = ({ children }: { children: ReactNode }) => (
-  <div className="h-24 w-full [&>div]:h-full [&>div]:overflow-hidden">
+  <div className="w-full [&>div]:h-full">
     <Card>
       <div className="relative h-full">{children}</div>
     </Card>

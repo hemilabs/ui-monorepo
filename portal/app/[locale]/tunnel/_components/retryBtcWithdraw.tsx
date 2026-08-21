@@ -39,10 +39,13 @@ export const RetryBtcWithdraw = function ({ withdrawal }: Props) {
     // once the user confirms the withdraw, the withdrawal will change its state
     // and this component gets unmounted
     setOperationStatus('withdrawing')
-    const { amount, l1ChainId, l2ChainId } = withdrawal
+    const { amount, l1ChainId, l2ChainId, to } = withdrawal
 
     withdrawBitcoin({
       amount: BigInt(amount),
+      // the address it originally targeted, which may not be the connected
+      // wallet's
+      btcAddress: to,
       l1ChainId,
       l2ChainId,
     })

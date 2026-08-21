@@ -2,7 +2,11 @@ import { hemiSepolia } from 'hemi-viem'
 import { zeroAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
 
-import { MaxLockDurationSeconds, MinLockDurationSeconds } from '../constants'
+import {
+  MaxLockDurationSeconds,
+  minLockAmount,
+  MinLockDurationSeconds,
+} from '../constants'
 import {
   validateCreateLockInputs,
   validateIncreaseAmountInputs,
@@ -11,8 +15,8 @@ import {
 describe('validateCreateLockInputs', function () {
   const validParams = {
     account: '0x1234567890123456789012345678901234567890' as const,
-    amount: BigInt(100),
-    approvalAmount: BigInt(100),
+    amount: minLockAmount,
+    approvalAmount: minLockAmount,
     chainId: hemiSepolia.id,
     lockDurationInSeconds: 30 * 24 * 60 * 60, // 30 days
   }
@@ -55,6 +59,26 @@ describe('validateCreateLockInputs', function () {
         amount: -BigInt(1),
       }),
     ).toBe('amount cannot be negative')
+  })
+
+  it('should return error for amount less than the minimum lock amount', function () {
+    expect(
+      validateCreateLockInputs({
+        ...validParams,
+        amount: minLockAmount - BigInt(1),
+        approvalAmount: minLockAmount - BigInt(1),
+      }),
+    ).toBe('amount is less than the minimum lock amount')
+  })
+
+  it('should accept the minimum lock amount', function () {
+    expect(
+      validateCreateLockInputs({
+        ...validParams,
+        amount: minLockAmount,
+        approvalAmount: minLockAmount,
+      }),
+    ).toBeUndefined()
   })
 
   it('should return error for short lock duration', function () {

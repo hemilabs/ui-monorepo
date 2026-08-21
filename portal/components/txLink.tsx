@@ -2,6 +2,8 @@ import { BtcTransaction } from 'btc-wallet/unisat'
 import { ExternalLink } from 'components/externalLink'
 import { useChain } from 'hooks/useChain'
 import { type RemoteChain } from 'types/chain'
+import { isEvmNetworkId } from 'utils/chain'
+import { formatBtcHash, formatEvmHash } from 'utils/format'
 import { type Hash } from 'viem'
 
 const textColors = {
@@ -12,7 +14,7 @@ const textColors = {
 type Props = {
   chainId: RemoteChain['id']
   textColor?: keyof typeof textColors
-  txHash: BtcTransaction | Hash
+  txHash: BtcTransaction | Hash | undefined
 }
 export const TxLink = function ({
   chainId,
@@ -20,7 +22,15 @@ export const TxLink = function ({
   txHash,
 }: Props) {
   const chain = useChain(chainId)
-  const hash = `${txHash.slice(0, 6)}...${txHash.slice(-4)}`
+
+  if (typeof txHash !== 'string' || !txHash) {
+    return null
+  }
+
+  const hash = isEvmNetworkId(chainId)
+    ? formatEvmHash(txHash as Hash)
+    : formatBtcHash(txHash)
+
   const href = `${chain?.blockExplorers?.default.url}/tx/${txHash}`
   return (
     <div className="flex w-full items-center">

@@ -175,6 +175,14 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     )
   }
 
+  function RenderFees() {
+    if (!canDeposit) {
+      return null
+    }
+
+    return <BtcFees amount={amountBigInt} />
+  }
+
   return (
     <TunnelForm
       belowForm={
@@ -189,7 +197,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
               },
             )}
           />
-          <BtcFees amount={amountBigInt} />
+          <RenderFees />
         </div>
       }
       bottomSection={<WalletsConnected />}

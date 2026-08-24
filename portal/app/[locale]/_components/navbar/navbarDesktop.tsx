@@ -1,7 +1,7 @@
 'use client'
 
 import { featureFlags } from 'app/featureFlags'
-import dynamic from 'next/dynamic'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { ReactNode } from 'react'
 
 import { Badge } from '../badge'
@@ -26,11 +26,10 @@ import { VideoAsset } from './_components/videoAsset'
 
 const Separator = () => <div className="my-1 h-px w-full bg-neutral-100" />
 
-const Help = dynamic(() => import('./_components/help').then(mod => mod.Help), {
-  // Render the closed version of the help button
-  loading: () => <HelpButton isOpen={false} />,
-  ssr: false,
-})
+const Help = lazyWithFallback(
+  () => import('./_components/help').then(mod => ({ default: mod.Help })),
+  <HelpButton isOpen={false} />,
+)
 
 const PaddedListItem = ({
   children,

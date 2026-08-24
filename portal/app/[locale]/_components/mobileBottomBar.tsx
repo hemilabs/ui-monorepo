@@ -3,11 +3,14 @@
 import { ButtonIcon } from 'components/button'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { HamburgerIcon } from 'components/icons/hamburgerIcon'
-import dynamic from 'next/dynamic'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 
-const WalletConnection = dynamic(
-  () => import('components/connectWallets').then(mod => mod.WalletConnection),
-  { loading: () => <div className="flex-1" />, ssr: false },
+const WalletConnection = lazyWithFallback(
+  () =>
+    import('components/connectWallets').then(mod => ({
+      default: mod.WalletConnection,
+    })),
+  <div className="flex-1" />,
 )
 
 type Props = {

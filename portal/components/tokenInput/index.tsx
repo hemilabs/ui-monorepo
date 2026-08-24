@@ -1,22 +1,11 @@
+import { Balance } from 'components/cryptoBalance'
 import { RenderFiatBalance } from 'components/fiatBalance'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { ComponentProps, ComponentType, ReactNode } from 'react'
-import Skeleton from 'react-loading-skeleton'
 import { Token } from 'types/token'
 import { parseTokenUnits } from 'utils/token'
 
 import { isInputError } from './utils'
-
-const Balance = dynamic(
-  () => import('components/cryptoBalance').then(mod => mod.Balance),
-  {
-    loading: () => (
-      <Skeleton className="h-full" containerClassName="basis-1/3" />
-    ),
-    ssr: false,
-  },
-)
 
 type Props<T extends Token> = {
   balanceComponent?: ComponentType<{

@@ -1,12 +1,13 @@
 'use client'
 
 import { useDebounce } from '@hemilabs/react-hooks/useDebounce'
+import { lazyWithFallback } from 'components/lazyWithFallback'
+import { SetMaxBtcBalance } from 'components/setMaxBalance'
 import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useUmami } from 'hooks/useUmami'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { formatEvmAddress } from 'utils/format'
@@ -24,14 +25,8 @@ import { FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 
-const SetMaxBtcBalance = dynamic(
-  () => import('components/setMaxBalance').then(mod => mod.SetMaxBtcBalance),
-  { ssr: false },
-)
-
-const WalletsConnected = dynamic(
-  () => import('./walletsConnected').then(mod => mod.WalletsConnected),
-  { ssr: false },
+const WalletsConnected = lazyWithFallback(() =>
+  import('./walletsConnected').then(mod => ({ default: mod.WalletsConnected })),
 )
 
 type BtcDepositProps = {

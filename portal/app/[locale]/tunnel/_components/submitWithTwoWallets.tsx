@@ -1,12 +1,11 @@
 import { Button } from 'components/button'
-import { ButtonLoader } from 'components/buttonLoader'
+import { LazyConnectEvmWallet } from 'components/lazyConnectEvmWallet'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useUmami } from 'hooks/useUmami'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 
 import { ConnectBtcWallet } from './connectBtcWallet'
@@ -16,14 +15,6 @@ type Props = {
   text: string
   validationError: string | undefined
 }
-
-const ConnectEvmWallet = dynamic(
-  () => import('components/connectEvmWallet').then(mod => mod.ConnectEvmWallet),
-  {
-    loading: () => <ButtonLoader />,
-    ssr: false,
-  },
-)
 
 export const SubmitWithTwoWallets = function ({
   disabled,
@@ -49,7 +40,7 @@ export const SubmitWithTwoWallets = function ({
   }
 
   if (evmWalletStatus !== 'connected') {
-    return <ConnectEvmWallet />
+    return <LazyConnectEvmWallet />
   }
 
   if (btcWalletStatus !== 'connected') {

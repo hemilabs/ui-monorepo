@@ -2,20 +2,20 @@ import { GenesisDropTabs } from 'app/[locale]/genesis-drop/_components/genesisDr
 import { ButtonIcon } from 'components/button'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { HamburgerIcon } from 'components/icons/hamburgerIcon'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { StakeTabs } from 'components/stakeTabs'
 import { TunnelTabs } from 'components/tunnelTabs'
-import dynamic from 'next/dynamic'
 
 import { Badge } from '../badge'
 
 import { HomeLink } from './homeLink'
 
-const WalletConnection = dynamic(
-  () => import('components/connectWallets').then(mod => mod.WalletConnection),
-  {
-    loading: () => <div className="ml-auto" />,
-    ssr: false,
-  },
+const WalletConnection = lazyWithFallback(
+  () =>
+    import('components/connectWallets').then(mod => ({
+      default: mod.WalletConnection,
+    })),
+  <div className="ml-auto" />,
 )
 
 type Props = {

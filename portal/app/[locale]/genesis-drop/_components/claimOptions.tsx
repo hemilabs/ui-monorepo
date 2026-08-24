@@ -1,5 +1,6 @@
 import { MutationStatus } from '@tanstack/react-query'
 import { Button } from 'components/button'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { Spinner } from 'components/spinner'
 import {
   LockupMonths,
@@ -7,7 +8,6 @@ import {
   type EligibilityData,
 } from 'genesis-drop-actions'
 import { useUmami } from 'hooks/useUmami'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { Hash, Hex } from 'viem'
@@ -16,12 +16,14 @@ import { useClaimTokens } from '../_hooks/useClaimTokens'
 
 import { Strategy } from './strategy'
 
-const TermsAndConditions = dynamic(() =>
-  import('./termsAndConditions').then(mod => mod.TermsAndConditions),
+const TermsAndConditions = lazyWithFallback(() =>
+  import('./termsAndConditions').then(mod => ({
+    default: mod.TermsAndConditions,
+  })),
 )
 
-const ClaimDrawer = dynamic(() =>
-  import('./claimDrawer').then(mod => mod.ClaimDrawer),
+const ClaimDrawer = lazyWithFallback(() =>
+  import('./claimDrawer').then(mod => ({ default: mod.ClaimDrawer })),
 )
 
 type Props = {

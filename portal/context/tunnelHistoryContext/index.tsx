@@ -1,6 +1,6 @@
 'use client'
 
-import dynamic from 'next/dynamic'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import {
   createContext,
   Dispatch,
@@ -17,9 +17,8 @@ import {
 import { historyReducer, initialState } from './reducer'
 import { HistoryActions, type HistoryReducerState } from './types'
 
-const HistoryLoader = dynamic(
-  () => import('./historyLoader').then(mod => mod.HistoryLoader),
-  { ssr: false },
+const HistoryLoader = lazyWithFallback(() =>
+  import('./historyLoader').then(mod => ({ default: mod.HistoryLoader })),
 )
 
 type TunnelHistoryContext = {

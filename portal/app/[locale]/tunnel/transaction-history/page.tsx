@@ -1,25 +1,12 @@
 'use client'
 
-import { lazyWithFallback } from 'components/lazyWithFallback'
 import { PageLayout } from 'components/pageLayout'
 import { PageTitle } from 'components/pageTitle'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import Skeleton from 'react-loading-skeleton'
 
 import { type FilterOptions, TopBar } from './_components/topBar'
-
-const TransactionHistory = lazyWithFallback(
-  () =>
-    import('./_components/transactionHistory').then(mod => ({
-      default: mod.TransactionHistory,
-    })),
-  // Mirrors the table's own height and radius so the first paint matches it
-  <Skeleton
-    className="block h-[56dvh] w-full rounded-lg md:min-h-136"
-    containerClassName="block"
-  />,
-)
+import { TransactionHistory } from './_components/transactionHistory'
 
 const Page = function () {
   const [filterOption, setFilterOption] = useState<FilterOptions>({

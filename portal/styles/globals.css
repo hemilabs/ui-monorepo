@@ -4,6 +4,68 @@
 @import '../components/drawer/drawer.css';
 @import 'tailwindcss/utilities';
 
+@font-face {
+  font-display: swap;
+  font-family: interDisplay;
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/inter/display/InterDisplay-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: interDisplay;
+  font-style: normal;
+  font-weight: 500;
+  src: url('/fonts/inter/display/InterDisplay-Medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: interDisplay;
+  font-style: normal;
+  font-weight: 600;
+  src: url('/fonts/inter/display/InterDisplay-SemiBold.woff2') format('woff2');
+}
+
+/* Metric-adjusted fallbacks: the overrides make the local font occupy the same
+ * space as Inter, so text does not shift when the woff2 lands. The percentages
+ * are next/font's, derived from the files' OS/2 metrics against Arial; changing
+ * a woff2 means recomputing them. Helvetica and Liberation Sans are listed
+ * because both are metric-compatible with Arial, so the same numbers hold. */
+@font-face {
+  ascent-override: 98.56%;
+  descent-override: 24.54%;
+  font-family: 'interDisplay Fallback';
+  line-gap-override: 0%;
+  size-adjust: 98.29%;
+  src: local('Arial'), local('Helvetica'), local('Liberation Sans');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: interVariable;
+  font-style: normal;
+  font-weight: 100 900;
+  src: url('/fonts/inter/variable/InterVariable.woff2') format('woff2');
+}
+
+/* Same as above, and this is the one that matters most: `*` uses
+ * font-inter-variable, so stale metrics here shift every string on the page. */
+@font-face {
+  ascent-override: 89.79%;
+  descent-override: 22.36%;
+  font-family: 'interVariable Fallback';
+  line-gap-override: 0%;
+  size-adjust: 107.89%;
+  src: local('Arial'), local('Helvetica'), local('Liberation Sans');
+}
+
+:root {
+  --font-inter-display: 'interDisplay', 'interDisplay Fallback', sans-serif;
+  --font-inter-variable: 'interVariable', 'interVariable Fallback', sans-serif;
+}
+
 @keyframes withdraw-progress {
   0% {
     height: 0;
@@ -24,7 +86,7 @@
   }
 }
 
-* {
+body {
   @apply font-inter-variable;
 }
 

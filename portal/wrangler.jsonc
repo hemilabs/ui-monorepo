@@ -10,10 +10,6 @@
   // web/src/index.ts in vetro-monorepo sets `'none'` (or `blob:` with Sentry)
   // because it has no web workers; copying that verbatim silently kills the
   // five under portal/workers, and tunnel history simply stops syncing.
-  //
-  // It also needs `font-src 'self'`: the Inter faces are fetched from our own
-  // origin by styles/globals.css, and a CSP that enumerates directives instead
-  // of leaning on `default-src` blocks them into the fallback font, silently.
   "assets": {
     "directory": "./dist",
     "not_found_handling": "single-page-application",

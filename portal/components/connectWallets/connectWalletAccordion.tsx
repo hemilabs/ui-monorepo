@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl'
 import { ReactNode, useState } from 'react'
 
 import { DownloadIcon } from './icons/download'
+import { QrcodePlaceholderIcon } from './icons/qrcodePlaceholder'
 
 // Base type for any wallet in the accordion
 type WalletItem = {
@@ -24,6 +25,7 @@ type WalletItem = {
 export type WalletItemState = {
   showCheck: boolean
   showInstall: boolean
+  showQrCode?: boolean
 }
 
 type Props<T extends WalletItem> = {
@@ -123,7 +125,8 @@ export function ConnectWalletAccordion<T extends WalletItem>({
             <h4 className="mb-3 mt-1 text-neutral-500">{t('wallets')}</h4>
             <div className="flex gap-2 overflow-x-auto p-1 md:grid md:grid-cols-3 md:overflow-x-visible md:p-0">
               {sortedWallets.map(function (wallet) {
-                const { showCheck, showInstall } = getWalletState(wallet)
+                const { showCheck, showInstall, showQrCode } =
+                  getWalletState(wallet)
 
                 return (
                   <button
@@ -153,6 +156,16 @@ export function ConnectWalletAccordion<T extends WalletItem>({
                           <DownloadIcon />
                           <span className="text-sm font-semibold">
                             {t('install')}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    {showQrCode && (
+                      <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-white/80 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:backdrop-blur-2">
+                        <div className="flex items-center gap-1 text-orange-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                          <QrcodePlaceholderIcon fill="currentColor" />
+                          <span className="text-sm font-semibold">
+                            {t('scan')}
                           </span>
                         </div>
                       </div>

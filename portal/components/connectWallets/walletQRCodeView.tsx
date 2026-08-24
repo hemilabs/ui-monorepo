@@ -6,7 +6,8 @@ import { QRCodeSVG } from 'qrcode.react'
 import { useEffect, useState } from 'react'
 import { isMobile, isAndroid, isIOS } from 'react-device-detect'
 import Skeleton from 'react-loading-skeleton'
-import { useConnect } from 'wagmi'
+import { useConfig, useConnect } from 'wagmi'
+import { getAccount } from 'wagmi/actions'
 
 import { QrcodePlaceholderIcon } from './icons/qrcodePlaceholder'
 import { getWalletConnectUri } from './utils/walletConnect'
@@ -61,6 +62,7 @@ type Props = {
 export function WalletQRCodeView({ onBack, wallet }: Props) {
   const t = useTranslations('connect-wallets')
   const [uri, setUri] = useState('')
+  const config = useConfig()
   const { connect, connectors, reset } = useConnect()
 
   const downloadUrl = getWalletDownloadUrl(wallet)
@@ -90,11 +92,16 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
       connect({ connector: walletConnectConnector })
 
       return function cleanup() {
-        walletConnectConnector.disconnect?.()
+        // Only tear down the pairing when the user leaves the QR view without
+        // connecting. After a successful scan the account is already connected,
+        // so disconnecting here would drop the freshly established session.
+        if (getAccount(config).status !== 'connected') {
+          walletConnectConnector.disconnect?.()
+        }
         reset()
       }
     },
-    [connect, connectors, reset],
+    [config, connect, connectors, reset],
   )
 
   return (

@@ -4,55 +4,14 @@ import { type EvmWalletData } from 'hooks/useAllWallets'
 import { useTranslations } from 'next-intl'
 import { QRCodeSVG } from 'qrcode.react'
 import { useEffect, useState } from 'react'
-import { isMobile, isAndroid, isIOS } from 'react-device-detect'
+import { isMobile } from 'react-device-detect'
 import Skeleton from 'react-loading-skeleton'
 import { useConfig, useConnect } from 'wagmi'
 import { getConnections } from 'wagmi/actions'
 
 import { QrcodePlaceholderIcon } from './icons/qrcodePlaceholder'
 import { getWalletConnectUri } from './utils/walletConnect'
-
-function getMobileDownloadUrl(downloadUrls: EvmWalletData['downloadUrls']) {
-  if (!downloadUrls) {
-    return undefined
-  }
-  if (isIOS && downloadUrls.ios) {
-    return downloadUrls.ios
-  }
-  if (isAndroid && downloadUrls.android) {
-    return downloadUrls.android
-  }
-
-  return downloadUrls.mobile || downloadUrls.browserExtension
-}
-
-function getDesktopDownloadUrl(downloadUrls: EvmWalletData['downloadUrls']) {
-  if (!downloadUrls) {
-    return undefined
-  }
-
-  return (
-    downloadUrls.browserExtension || downloadUrls.chrome || downloadUrls.firefox
-  )
-}
-
-function getWalletDownloadUrl(item: EvmWalletData) {
-  const { downloadUrls } = item
-
-  if (!downloadUrls) {
-    // If there is no download URL provided by the connector,
-    // the only option left is the generic walletConnect
-    const devices = isMobile ? 'Mobile' : 'Desktop,Web,Browser Extension'
-
-    return `https://walletguide.walletconnect.network/?devices=${encodeURIComponent(
-      devices,
-    )}`
-  }
-
-  return isMobile
-    ? getMobileDownloadUrl(downloadUrls)
-    : getDesktopDownloadUrl(downloadUrls)
-}
+import { getWalletDownloadUrl } from './utils/walletDownload'
 
 type Props = {
   onBack: VoidFunction

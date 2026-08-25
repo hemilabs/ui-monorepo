@@ -6,30 +6,53 @@ import { useConnect, useConnections, useDisconnect } from 'wagmi'
 
 import { getWalletConnectUri } from '../utils/walletConnect'
 import { getWalletDeepLink, hasDeepLinkSupport } from '../utils/walletDeepLinks'
+import { getWalletDownloadUrl } from '../utils/walletDownload'
 
 // These are the connector types that require a QR code to connect
 // It applies to desktop devices only
 const qrCodeConnectorTypes = ['walletConnect', 'binanceWallet']
+
+// Extension wallets that are not injected can still be connected by scanning a
+// WalletConnect QR code, because they ship a mobile app with WalletConnect
+// support. Extension-only wallets (e.g. MetaMask, Rabby, Phantom) are omitted:
+// when they are not installed the only option is to download the extension.
+const walletConnectQrCodeWalletIds = ['okx', 'tokenPocket']
 
 // walletConnect is a generic connector so we need to handle it differently
 // always showing the option to open the website so the user can connect their wallet
 const isWalletConnect = (wallet: EvmWalletData) =>
   wallet.connector?.type === 'walletConnect'
 
-function getDesktopWalletState(wallet: EvmWalletData) {
-  const hasConnector = !!wallet.connector
-  const needsQRCode = wallet.connector?.type
-    ? qrCodeConnectorTypes.includes(wallet.connector.type)
-    : false
+// Whether the wallet can be connected directly through its own injected/SDK
+// connector (i.e. not through a QR code).
+const canConnectWithConnector = function (wallet: EvmWalletData) {
+  const connectorType = wallet.connector?.type
+  return !!connectorType && !qrCodeConnectorTypes.includes(connectorType)
+}
 
-  const canConnect = !isWalletConnect(wallet) && hasConnector && !needsQRCode
-  // WalletConnect and other QR-based connectors are connected by scanning a QR
-  // code, not by installing anything, so they get their own affordance.
-  const showQrCode = isWalletConnect(wallet) || needsQRCode
+// Whether the wallet is connected by scanning a QR code. This is the dedicated
+// WalletConnect wallet, Binance, or a WalletConnect-capable extension wallet
+// that is not currently connectable through its own connector.
+const usesQrCodeConnection = function (wallet: EvmWalletData) {
+  if (canConnectWithConnector(wallet)) {
+    return false
+  }
+  return (
+    wallet.id === 'walletConnect' ||
+    wallet.connector?.type === 'binanceWallet' ||
+    walletConnectQrCodeWalletIds.includes(wallet.id)
+  )
+}
+
+function getDesktopWalletState(wallet: EvmWalletData) {
+  const canConnect = canConnectWithConnector(wallet)
+  const showQrCode = usesQrCodeConnection(wallet)
 
   return {
     showCheck: canConnect,
-    showInstall: !hasConnector && !showQrCode,
+    // Everything that is neither directly connectable nor QR-based can only be
+    // installed (e.g. an uninstalled extension-only wallet).
+    showInstall: !canConnect && !showQrCode,
     showQrCode,
   }
 }
@@ -42,29 +65,6 @@ const getMobileWalletState = () => ({
 
 export const getEvmWalletState = (wallet: EvmWalletData): WalletItemState =>
   isMobile ? getMobileWalletState() : getDesktopWalletState(wallet)
-
-// Internal type with additional properties needed for connection logic
-type EvmWalletWithState = EvmWalletData & {
-  canConnectDirectly: boolean
-  needsQRCode: boolean
-}
-
-function getEvmWalletWithState(wallet: EvmWalletData): EvmWalletWithState {
-  const hasConnector = !!wallet.connector
-  const needsQRCode = wallet.connector?.type
-    ? qrCodeConnectorTypes.includes(wallet.connector.type)
-    : false
-
-  const canConnectDirectly = isMobile
-    ? true
-    : !isWalletConnect(wallet) && hasConnector && !needsQRCode
-
-  return {
-    ...wallet,
-    canConnectDirectly,
-    needsQRCode,
-  }
-}
 
 type UseEvmWalletConnectReturn = {
   // Returns true if detail view (QR code) should be shown
@@ -122,15 +122,17 @@ export function useEvmWalletConnect(): UseEvmWalletConnectReturn {
 
   const handleConnect = useCallback(
     async function (wallet: EvmWalletData) {
-      const walletWithState = getEvmWalletWithState(wallet)
       const supportsDeepLink = hasDeepLinkSupport(wallet.id)
 
+      // Preserve the original direct-connect condition: on mobile any injected
+      // wallet (except WalletConnect) connects directly, on desktop only wallets
+      // reachable through their own (non-QR) connector do.
+      const canConnectDirectly = isMobile
+        ? !isWalletConnect(wallet)
+        : canConnectWithConnector(wallet)
+
       // Desktop or mobile with connector: connect directly
-      if (
-        walletWithState.canConnectDirectly &&
-        wallet.connector &&
-        !isWalletConnect(wallet)
-      ) {
+      if (canConnectDirectly && wallet.connector) {
         // Disconnect all existing connections before connecting a new wallet
         // This prevents multiple simultaneous connections in wagmi v2
         await disconnectAll()
@@ -143,7 +145,17 @@ export function useEvmWalletConnect(): UseEvmWalletConnectReturn {
         return connectWithDeepLink(wallet)
       }
 
-      // For wallets that need QR code (desktop without direct connection)
+      // Desktop extension-only wallet that is not installed: there is nothing to
+      // scan, so send the user to its download page instead of a QR code.
+      if (!isMobile && !usesQrCodeConnection(wallet)) {
+        const downloadUrl = getWalletDownloadUrl(wallet)
+        if (downloadUrl) {
+          window.open(downloadUrl, '_blank', 'noopener,noreferrer')
+        }
+        return false
+      }
+
+      // For wallets that need QR code (desktop QR wallets, or mobile fallback)
       // Return true to show the QR code view, which handles
       // starting the WalletConnect session on its own
       return true

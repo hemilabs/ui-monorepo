@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import { isMobile, isAndroid, isIOS } from 'react-device-detect'
 import Skeleton from 'react-loading-skeleton'
 import { useConfig, useConnect } from 'wagmi'
-import { getAccount } from 'wagmi/actions'
+import { getConnections } from 'wagmi/actions'
 
 import { QrcodePlaceholderIcon } from './icons/qrcodePlaceholder'
 import { getWalletConnectUri } from './utils/walletConnect'
@@ -92,10 +92,15 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
       connect({ connector: walletConnectConnector })
 
       return function cleanup() {
-        // Only tear down the pairing when the user leaves the QR view without
-        // connecting. After a successful scan the account is already connected,
-        // so disconnecting here would drop the freshly established session.
-        if (getAccount(config).status !== 'connected') {
+        // Only tear down the pairing when this WalletConnect connector did not
+        // end up connected. Checking this connector's own active connection
+        // (instead of the global account status) avoids leaving a dangling
+        // pairing when a different connector happens to be connected or
+        // reconnecting at this moment.
+        const isConnected = getConnections(config).some(
+          connection => connection.connector.uid === walletConnectConnector.uid,
+        )
+        if (!isConnected) {
           walletConnectConnector.disconnect?.()
         }
         reset()

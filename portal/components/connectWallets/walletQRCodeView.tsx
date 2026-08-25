@@ -6,7 +6,8 @@ import { QRCodeSVG } from 'qrcode.react'
 import { useEffect, useState } from 'react'
 import { isMobile, isAndroid, isIOS } from 'react-device-detect'
 import Skeleton from 'react-loading-skeleton'
-import { useConnect } from 'wagmi'
+import { useConfig, useConnect } from 'wagmi'
+import { getConnections } from 'wagmi/actions'
 
 import { QrcodePlaceholderIcon } from './icons/qrcodePlaceholder'
 import { getWalletConnectUri } from './utils/walletConnect'
@@ -61,6 +62,7 @@ type Props = {
 export function WalletQRCodeView({ onBack, wallet }: Props) {
   const t = useTranslations('connect-wallets')
   const [uri, setUri] = useState('')
+  const config = useConfig()
   const { connect, connectors, reset } = useConnect()
 
   const downloadUrl = getWalletDownloadUrl(wallet)
@@ -90,11 +92,21 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
       connect({ connector: walletConnectConnector })
 
       return function cleanup() {
-        walletConnectConnector.disconnect?.()
+        // Only tear down the pairing when this WalletConnect connector did not
+        // end up connected. Checking this connector's own active connection
+        // (instead of the global account status) avoids leaving a dangling
+        // pairing when a different connector happens to be connected or
+        // reconnecting at this moment.
+        const isConnected = getConnections(config).some(
+          connection => connection.connector.uid === walletConnectConnector.uid,
+        )
+        if (!isConnected) {
+          walletConnectConnector.disconnect?.()
+        }
         reset()
       }
     },
-    [connect, connectors, reset],
+    [config, connect, connectors, reset],
   )
 
   return (

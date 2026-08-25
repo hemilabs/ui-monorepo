@@ -23,16 +23,21 @@ function getDesktopWalletState(wallet: EvmWalletData) {
     : false
 
   const canConnect = !isWalletConnect(wallet) && hasConnector && !needsQRCode
+  // WalletConnect and other QR-based connectors are connected by scanning a QR
+  // code, not by installing anything, so they get their own affordance.
+  const showQrCode = isWalletConnect(wallet) || needsQRCode
 
   return {
     showCheck: canConnect,
-    showInstall: isWalletConnect(wallet) || !hasConnector || needsQRCode,
+    showInstall: !hasConnector && !showQrCode,
+    showQrCode,
   }
 }
 
 const getMobileWalletState = () => ({
   showCheck: false,
   showInstall: false,
+  showQrCode: false,
 })
 
 export const getEvmWalletState = (wallet: EvmWalletData): WalletItemState =>

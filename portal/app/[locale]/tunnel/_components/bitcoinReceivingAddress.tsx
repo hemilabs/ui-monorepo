@@ -14,7 +14,7 @@ type Props = {
   customAddress: string
   customAddressEnabled: boolean
   disabled: boolean
-  isCustomAddressValid: boolean
+  isCustomAddressValid: boolean | undefined
   onCustomAddressChange: (customAddress: string) => void
   onCustomAddressEnabledChange: (customAddressEnabled: boolean) => void
   receivingText: string
@@ -35,7 +35,7 @@ export const BitcoinReceivingAddress = function ({
   const t = useTranslations('tunnel-page.form')
   const [touched, setTouched] = useState(false)
   // an untouched field is not an error yet, it is just not filled in
-  const showError = touched && !isCustomAddressValid
+  const showError = touched && isCustomAddressValid === false
 
   return (
     // the top padding accounts for the 28px this container is tucked behind the
@@ -87,7 +87,7 @@ export const BitcoinReceivingAddress = function ({
                 <span id={errorId}>{t('invalid-address')}</span>
               </div>
             )}
-            {customAddress !== '' && isCustomAddressValid && <GreenCheckIcon />}
+            {isCustomAddressValid === true && <GreenCheckIcon />}
           </>
         ) : (
           <span className="text-neutral-950">{address ?? '-'}</span>

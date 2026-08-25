@@ -1,8 +1,9 @@
 import { type BtcChain } from 'btc-wallet/chains'
 import { useTranslations } from 'next-intl'
 import { useCallback, useState } from 'react'
-import { isValidBtcAddress } from 'utils/bitcoin'
 import type { validateSubmit } from 'utils/validateSubmit'
+
+import { useIsValidBtcAddress } from './useIsValidBtcAddress'
 
 type Props = {
   amountValidation: ReturnType<typeof validateSubmit>
@@ -24,11 +25,32 @@ export const useReceivingBitcoinAddress = function ({
   const [customAddressEnabled, setCustomAddressEnabled] = useState(false)
   const t = useTranslations('tunnel-page.submit-button')
 
-  const isCustomAddressValid =
-    !customAddressEnabled || isValidBtcAddress(customAddress, network)
+  const { data, isError } = useIsValidBtcAddress({
+    address: customAddress,
+    enabled: customAddressEnabled,
+    network,
+  })
+
+  const isCustomAddressValid = customAddress === '' ? false : data
+
+  const getAddressError = function () {
+    if (!customAddressEnabled) {
+      return undefined
+    }
+    if (isError) {
+      return t('try-again')
+    }
+    return isCustomAddressValid === false
+      ? t('input-a-correct-custom-address')
+      : undefined
+  }
+
+  const canSubmit =
+    amountValidation.canSubmit &&
+    (!customAddressEnabled || isCustomAddressValid === true)
 
   return {
-    canSubmit: amountValidation.canSubmit && isCustomAddressValid,
+    canSubmit,
     customAddress,
     customAddressEnabled,
     isCustomAddressValid,
@@ -39,8 +61,6 @@ export const useReceivingBitcoinAddress = function ({
     }, []),
     setCustomAddress,
     setCustomAddressEnabled,
-    validationError:
-      amountValidation.error ??
-      (isCustomAddressValid ? undefined : t('input-a-correct-custom-address')),
+    validationError: amountValidation.error ?? getAddressError(),
   }
 }

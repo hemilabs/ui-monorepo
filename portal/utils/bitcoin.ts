@@ -1,5 +1,3 @@
-import { schnorr } from '@noble/curves/secp256k1'
-import * as bitcoin from 'bitcoinjs-lib'
 import { type BtcChain } from 'btc-wallet/chains'
 
 import {
@@ -41,69 +39,15 @@ export const getBitcoinTimestamp = function (timestamp: number) {
   return Math.min(now, timestamp)
 }
 
-// Decoding is used instead of `address.toOutputScript` because that function
-// needs a full ECC implementation and rejects every taproot ("bc1p...") address
-// without it.
-
-// A taproot witness program is an x-only public key, so it must be a point on
-// the curve. Funds sent to one that is not are unspendable.
-const isXOnlyPubKey = function (program: Buffer) {
-  try {
-    schnorr.utils.lift_x(BigInt(`0x${program.toString('hex')}`))
-    return true
-  } catch {
-    return false
-  }
+const networkAddressPrefixes = {
+  livenet: { base58: ['1', '3'], bech32: 'bc1' },
+  testnet: { base58: ['2', 'm', 'n'], bech32: 'tb1' },
 }
 
-const isValidBech32Address = function (
-  address: string,
-  network: bitcoin.Network,
-) {
-  try {
-    const { data, prefix, version } = bitcoin.address.fromBech32(address)
-    // bech32 encodes witness versions up to 31, but Bitcoin only defines 0 to 16
-    if (prefix !== network.bech32 || version > 16) {
-      return false
-    }
-    if (version === 0) {
-      return data.length === 20 || data.length === 32
-    }
-    if (version === 1) {
-      return data.length === 32 && isXOnlyPubKey(data)
-    }
-    return data.length >= 2 && data.length <= 40
-  } catch {
-    return false
-  }
-}
-
-const isValidBase58Address = function (
-  address: string,
-  network: bitcoin.Network,
-) {
-  try {
-    const { version } = bitcoin.address.fromBase58Check(address)
-    return version === network.pubKeyHash || version === network.scriptHash
-  } catch {
-    return false
-  }
-}
-
-/**
- * Checks whether the given string is a Bitcoin address that can receive funds
- * on the given network. Addresses that are only valid on another network are
- * rejected, as the tunnel contract does not check the network itself - it only
- * verifies that the address can be converted into a script.
- */
-export const isValidBtcAddress = function (
+export const isAddressOfBitcoinNetwork = function (
   address: string,
   network: BtcChain['id'],
 ) {
-  const btcNetwork =
-    bitcoin.networks[network === 'livenet' ? 'bitcoin' : network]
-  return (
-    isValidBech32Address(address, btcNetwork) ||
-    isValidBase58Address(address, btcNetwork)
-  )
+  const { base58, bech32 } = networkAddressPrefixes[network]
+  return address.toLowerCase().startsWith(bech32) || base58.includes(address[0])
 }

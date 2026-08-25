@@ -142,5 +142,3 @@ function enableSentry() {
 if (import.meta.env.VITE_SENTRY_DSN) {
   enableSentry()
 }
-
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart

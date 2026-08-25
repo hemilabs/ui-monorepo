@@ -1,8 +1,8 @@
 import { useDocumentTitle } from 'hooks/useDocumentTitle'
-import { PropsWithChildren } from 'react'
+import { Outlet } from 'react-router'
 
-export default function EcosystemLayout({ children }: PropsWithChildren) {
+export default function EcosystemLayout() {
   useDocumentTitle('Ecosystem | Hemi Portal')
 
-  return <>{children}</>
+  return <Outlet />
 }

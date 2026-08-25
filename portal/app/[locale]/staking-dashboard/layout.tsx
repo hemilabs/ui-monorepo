@@ -1,12 +1,16 @@
 import { useDocumentTitle } from 'hooks/useDocumentTitle'
-import { PropsWithChildren } from 'react'
+import { Outlet } from 'react-router'
 
 import StakingDashboardLayoutClient from './_components/stakingDashboardLayoutClient'
 
-const StakingDashboardLayout = function ({ children }: PropsWithChildren) {
+const StakingDashboardLayout = function () {
   useDocumentTitle('Staking dashboard | Hemi Portal')
 
-  return <StakingDashboardLayoutClient>{children}</StakingDashboardLayoutClient>
+  return (
+    <StakingDashboardLayoutClient>
+      <Outlet />
+    </StakingDashboardLayoutClient>
+  )
 }
 
 export default StakingDashboardLayout

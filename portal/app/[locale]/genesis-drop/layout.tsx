@@ -4,16 +4,13 @@ import { PageLayout } from 'components/pageLayout'
 import { TestnetDisabled } from 'components/testnetDisabled'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
-import { ReactNode, Suspense } from 'react'
+import { Suspense } from 'react'
+import { Outlet } from 'react-router'
 
 import { GenesisDropTabs } from './_components/genesisDropTabs'
 import { isClaimRewardsEnabledOnTestnet } from './_utils'
 
-type Props = {
-  children: ReactNode
-}
-
-const Page = function ({ children }: Props) {
+const Page = function () {
   const [networkType] = useNetworkType()
   const t = useTranslations('genesis-drop')
 
@@ -26,7 +23,7 @@ const Page = function ({ children }: Props) {
     )
   }
 
-  return children
+  return <Outlet />
 }
 
 const Tabs = function () {
@@ -38,13 +35,13 @@ const Tabs = function () {
   ) : null
 }
 
-const Layout = ({ children }: Props) => (
+const Layout = () => (
   <>
     <Tabs />
     <PageLayout variant="genesisDrop">
       <div className="flex w-full flex-col items-center gap-y-2">
         <Suspense>
-          <Page>{children}</Page>
+          <Page />
         </Suspense>
       </div>
     </PageLayout>

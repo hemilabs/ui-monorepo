@@ -1,8 +1,8 @@
 import { useDocumentTitle } from 'hooks/useDocumentTitle'
-import { PropsWithChildren } from 'react'
+import { Outlet } from 'react-router'
 
-export default function GetStartedLayout({ children }: PropsWithChildren) {
+export default function GetStartedLayout() {
   useDocumentTitle('Get Started | Hemi Portal')
 
-  return <>{children}</>
+  return <Outlet />
 }

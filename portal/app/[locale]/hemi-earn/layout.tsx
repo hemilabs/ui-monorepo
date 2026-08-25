@@ -5,7 +5,7 @@ import { PageLayout } from 'components/pageLayout'
 import { TestnetDisabled } from 'components/testnetDisabled'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
-import { type ReactNode } from 'react'
+import { Outlet } from 'react-router'
 
 import NotFound from '../not-found'
 
@@ -13,11 +13,7 @@ import { EarnStatusUpdaters } from './_components/earnStatusUpdaters'
 import { TopSection } from './_components/topSection'
 import { LocalEarnOperationsProvider } from './_context/localEarnOperationsContext'
 
-type Props = {
-  children: ReactNode
-}
-
-const Layout = function ({ children }: Props) {
+const Layout = function () {
   const [networkType] = useNetworkType()
   const t = useTranslations('hemi-earn')
 
@@ -37,7 +33,7 @@ const Layout = function ({ children }: Props) {
   return (
     <LocalEarnOperationsProvider>
       <EarnStatusUpdaters />
-      {children}
+      <Outlet />
     </LocalEarnOperationsProvider>
   )
 }

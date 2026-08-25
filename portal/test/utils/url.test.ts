@@ -107,6 +107,40 @@ describe('utils/url', function () {
       ).toEqual({ hash: '', pathname: '/p', search: '?n=1&ok=false' })
     })
 
+    it('splits a query already embedded in the pathname', function () {
+      expect(
+        toLocation({
+          pathname: '/stake/dashboard?mode=manage',
+          query: { networkType: 'testnet' },
+        }),
+      ).toEqual({
+        hash: '',
+        pathname: '/stake/dashboard',
+        search: '?networkType=testnet&mode=manage',
+      })
+    })
+
+    it('lets the query object win over the embedded one', function () {
+      expect(
+        toLocation({
+          pathname: '/p?networkType=mainnet',
+          query: { networkType: 'testnet' },
+        }),
+      ).toEqual({
+        hash: '',
+        pathname: '/p',
+        search: '?networkType=testnet',
+      })
+    })
+
+    it('keeps a hash embedded in the pathname', function () {
+      expect(toLocation({ pathname: '/p#top' })).toEqual({
+        hash: '#top',
+        pathname: '/p',
+        search: '',
+      })
+    })
+
     it('repeats a key for array values instead of joining them', function () {
       expect(
         toLocation({ pathname: '/p', query: { tag: ['a', 'b'] } }),

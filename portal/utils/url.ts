@@ -61,10 +61,21 @@ export const toLocation = function (href: Href) {
     return { hash, pathname, search }
   }
 
+  // The pathname can arrive with a query already in it, since `components/link`
+  // wraps a plain string href into `{ pathname, query }` to inject networkType,
+  // and reading it verbatim would emit a second `?`.
+  const fromPathname = parsePath(href.pathname ?? '')
+  const query = toSearchParams(href.query)
+  new URLSearchParams(fromPathname.search).forEach(function (value, key) {
+    if (!query.has(key)) {
+      query.append(key, value)
+    }
+  })
+
   return {
-    hash: prefixed(href.hash ?? '', '#'),
-    pathname: href.pathname ?? '',
-    search: prefixed(toSearchParams(href.query).toString(), '?'),
+    hash: prefixed(href.hash ?? '', '#') || fromPathname.hash || '',
+    pathname: fromPathname.pathname ?? '',
+    search: prefixed(query.toString(), '?'),
   }
 }
 

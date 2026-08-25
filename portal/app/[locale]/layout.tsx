@@ -4,7 +4,7 @@ import { TunnelHistoryProvider } from 'context/tunnelHistoryContext'
 import { WalletsContext } from 'context/walletsContext'
 import { DocumentTitleProvider } from 'hooks/useDocumentTitle'
 import { getMessages } from 'i18n/messages'
-import { type Locale, resolveLocale, routing } from 'i18n/routing'
+import { type Locale, preferredLocale, routing } from 'i18n/routing'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { Suspense, use, useEffect } from 'react'
 import { SkeletonTheme } from 'react-loading-skeleton'
@@ -19,7 +19,6 @@ import { Workers } from './_components/workers'
 
 const Shell = function ({ locale }: { locale: Locale }) {
   const messages = use(getMessages(locale))
-
   useEffect(
     function syncDocumentLanguage() {
       document.documentElement.lang = locale
@@ -65,7 +64,7 @@ const Shell = function ({ locale }: { locale: Locale }) {
 
 export const LocaleLayout = function () {
   const { locale } = useParams()
-  const { pathname, search } = useLocation()
+  const { hash, pathname, search } = useLocation()
 
   if (!hasLocale(routing.locales, locale)) {
     // Keep everything after the unknown locale, so a link shared with a locale
@@ -74,10 +73,7 @@ export const LocaleLayout = function () {
     return (
       <Navigate
         replace
-        to={{
-          pathname: `/${resolveLocale(navigator.language)}${rest}`,
-          search,
-        }}
+        to={{ hash, pathname: `/${preferredLocale()}${rest}`, search }}
       />
     )
   }

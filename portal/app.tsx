@@ -5,7 +5,7 @@ import TunnelPage from 'app/[locale]/tunnel/page'
 import TransactionHistoryPage from 'app/[locale]/tunnel/transaction-history/page'
 import { UntranslatedError500 } from 'components/error500'
 import { ErrorBoundary } from 'components/errorBoundary'
-import { resolveLocale } from 'i18n/routing'
+import { preferredLocale } from 'i18n/routing'
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v8'
 import {
   BrowserRouter,
@@ -16,20 +16,30 @@ import {
 } from 'react-router'
 
 const ToPreferredLocale = function () {
-  const { search } = useLocation()
+  const { hash, search } = useLocation()
 
   return (
     <Navigate
       replace
-      to={{ pathname: `/${resolveLocale(navigator.language)}`, search }}
+      to={{ hash, pathname: `/${preferredLocale()}`, search }}
     />
   )
 }
 
+const ToTunnel = function () {
+  const { hash, pathname, search } = useLocation()
+
+  return (
+    <Navigate replace to={{ hash, pathname: `${pathname}/tunnel`, search }} />
+  )
+}
+
 export const App = () => (
+  // Outermost on purpose: anything thrown above this, including reading the
+  // browser language, would take the whole page down with nothing to show.
   <ErrorBoundary
     // A hard reload rather than the boundary's reset: whatever threw here is
-    // above the router, so re-rendering the same tree would just throw again.
+    // above the router, so re-rendering the same tree would throw again.
     fallback={
       <UntranslatedError500 reset={() => window.location.replace('/')} />
     }
@@ -39,7 +49,7 @@ export const App = () => (
         <Routes>
           <Route element={<ToPreferredLocale />} path="/" />
           <Route element={<LocaleLayout />} path="/:locale">
-            <Route element={<Navigate replace to="tunnel" />} index />
+            <Route element={<ToTunnel />} index />
             <Route element={<TunnelLayout />} path="tunnel">
               <Route element={<TunnelPage />} index />
               <Route

@@ -25,3 +25,5 @@ export const resolveLocale = function (language: string) {
   const [candidate] = language.split('-')
   return hasLocale(locales, candidate) ? candidate : defaultLocale
 }
+
+export const preferredLocale = () => resolveLocale(navigator.language)

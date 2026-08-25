@@ -3,9 +3,9 @@
 import { AnalyticsEvent } from 'app/analyticsEvents'
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { Tab, Tabs } from 'components/tabs'
-import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import { useUmami } from 'hooks/useUmami'
+import { usePathname } from 'i18n/navigation'
 import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
 import { UrlObject } from 'url'
@@ -24,7 +24,7 @@ const UI = function ({
   onTabClick?: ((eventName: AnalyticsEvent) => void) | undefined
   tunnelHref: UrlObject | string
 }) {
-  const pathname = usePathnameWithoutLocale()
+  const pathname = usePathname()
   const t = useTranslations('tunnel-page')
 
   if (!isSamePathOrUnder(pathname, '/tunnel')) {

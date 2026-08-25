@@ -7,10 +7,9 @@ import { Header } from 'components/table/_components/header'
 import { TableCard } from 'components/table/tableCard'
 import { TokenLogo } from 'components/tokenLogo'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { useUmami } from 'hooks/useUmami'
-import { useRouter } from 'i18n/navigation'
+import { usePathname, useRouter } from 'i18n/navigation'
 import { useTranslations } from 'next-intl'
 import { MouseEvent, useCallback, useMemo } from 'react'
 import { priorityStakeTokensToSort, StakeToken } from 'types/stake'
@@ -31,7 +30,7 @@ type ActionProps = {
 }
 
 const CallToAction = function ({ stake }: ActionProps) {
-  const pathname = usePathnameWithoutLocale()
+  const pathname = usePathname()
 
   const queryString = queryStringObjectToString({
     mode: 'manage',

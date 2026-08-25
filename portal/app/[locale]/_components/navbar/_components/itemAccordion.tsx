@@ -3,9 +3,8 @@ import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { Chevron } from 'components/icons/chevron'
 import { Link } from 'components/link'
 import { NetworkType, useNetworkType } from 'hooks/useNetworkType'
-import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useUmami } from 'hooks/useUmami'
-import { useRouter } from 'i18n/navigation'
+import { usePathname, useRouter } from 'i18n/navigation'
 import { Suspense, startTransition, useEffect, useRef, useState } from 'react'
 import { screenBreakpoints } from 'styles'
 import { UrlObject } from 'url'
@@ -37,7 +36,7 @@ function ItemAccordionUI({
 }: Omit<Props, 'event' | 'urlToBeSelected'> & { networkType: NetworkType }) {
   const [isOpen, setIsOpen] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
-  const pathname = usePathnameWithoutLocale()
+  const pathname = usePathname()
   const router = useRouter()
 
   function matchesPath(path: string, url?: string | UrlObject) {

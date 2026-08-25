@@ -1,6 +1,6 @@
 import { Link } from 'components/link'
-import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useUmami } from 'hooks/useUmami'
+import { usePathname } from 'i18n/navigation'
 import { cloneElement, isValidElement, Suspense } from 'react'
 import { isSamePathOrUnder } from 'utils/url'
 
@@ -65,7 +65,7 @@ export const PageLink = function ({
   text,
   urlToBeSelected = href,
 }: ItemLinkProps) {
-  const pathname = usePathnameWithoutLocale()
+  const pathname = usePathname()
 
   const selected =
     typeof urlToBeSelected === 'string'

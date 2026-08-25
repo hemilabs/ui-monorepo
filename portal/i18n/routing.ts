@@ -1,3 +1,4 @@
+import { hasLocale } from 'next-intl'
 import { defineRouting } from 'next-intl/routing'
 
 const defaultLocale = 'en' as const
@@ -19,3 +20,8 @@ export const routing = defineRouting({
   localeDetection: false,
   locales,
 })
+
+export const resolveLocale = function (language: string) {
+  const [candidate] = language.split('-')
+  return hasLocale(locales, candidate) ? candidate : defaultLocale
+}

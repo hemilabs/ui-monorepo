@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react'
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
@@ -11,7 +12,17 @@ export default defineConfig({
   // this the workers throw ReferenceError as soon as they hit the network.
   define: { global: 'globalThis' },
   plugins: [react(), polyfills()],
-  resolve: { tsconfigPaths: true },
+  resolve: {
+    // packages/btc-wallet reaches for the `Buffer` global, and the plugin
+    // injects its shim into that file. The shim only resolves from here,
+    // where the plugin is installed, so point at it explicitly.
+    alias: {
+      'vite-plugin-node-polyfills/shims/buffer': fileURLToPath(
+        import.meta.resolve('vite-plugin-node-polyfills/shims/buffer'),
+      ),
+    },
+    tsconfigPaths: true,
+  },
   worker: {
     // Worker bundles get their own plugin pipeline, the top-level `plugins`
     // above do not apply to them.

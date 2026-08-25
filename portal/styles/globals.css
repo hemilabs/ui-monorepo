@@ -87,7 +87,7 @@
 }
 
 body {
-  @apply font-inter-variable;
+  @apply w-svw overflow-y-hidden font-inter-variable;
 }
 
 h1,

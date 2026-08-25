@@ -19,7 +19,7 @@
     "tsc:check": "tsc"
   },
   "dependencies": {
-    "hemi-viem": "2.8.0",
+    "hemi-viem": "2.9.0",
     "to-promise-event": "1.0.0",
     "viem-erc20": "2.0.0"
   },

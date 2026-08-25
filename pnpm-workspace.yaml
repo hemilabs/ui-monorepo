@@ -16,6 +16,7 @@ minimumReleaseAge: 10080 # 7 days in minutes
 minimumReleaseAgeExclude:
   - '@hemilabs/*'
   - '@vetro-protocol/*'
+  - 'hemi-viem'
 
 onlyBuiltDependencies:
   - '@parcel/watcher' # native file watcher used by next-intl in dev mode

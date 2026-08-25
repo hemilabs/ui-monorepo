@@ -90,8 +90,8 @@ importers:
   packages/genesis-drop-actions:
     dependencies:
       hemi-viem:
-        specifier: 2.8.0
-        version: 2.8.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+        specifier: 2.9.0
+        version: 2.9.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       to-promise-event:
         specifier: 1.0.0
         version: 1.0.0
@@ -118,8 +118,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       hemi-viem:
-        specifier: 2.8.0
-        version: 2.8.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+        specifier: 2.9.0
+        version: 2.9.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       to-promise-event:
         specifier: 1.0.0
         version: 1.0.0
@@ -146,8 +146,8 @@ importers:
   packages/hemi-tunnel-actions:
     dependencies:
       hemi-viem:
-        specifier: 2.8.0
-        version: 2.8.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+        specifier: 2.9.0
+        version: 2.9.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       to-promise-event:
         specifier: 1.0.0
         version: 1.0.0
@@ -174,8 +174,8 @@ importers:
   packages/hemi-viem-stake-actions:
     dependencies:
       hemi-viem:
-        specifier: 2.8.0
-        version: 2.8.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+        specifier: 2.9.0
+        version: 2.9.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
     devDependencies:
       '@tsconfig/node24':
         specifier: 24.0.3
@@ -190,8 +190,8 @@ importers:
   packages/ve-hemi-actions:
     dependencies:
       hemi-viem:
-        specifier: 2.8.0
-        version: 2.8.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+        specifier: 2.9.0
+        version: 2.9.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       promise-mem:
         specifier: 1.0.4
         version: 1.0.4
@@ -221,8 +221,8 @@ importers:
   packages/ve-hemi-rewards:
     dependencies:
       hemi-viem:
-        specifier: 2.8.0
-        version: 2.8.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+        specifier: 2.9.0
+        version: 2.9.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       to-promise-event:
         specifier: 1.0.0
         version: 1.0.0
@@ -327,8 +327,8 @@ importers:
         specifier: workspace:*
         version: link:../packages/hemi-tunnel-actions
       hemi-viem:
-        specifier: 2.8.0
-        version: 2.8.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+        specifier: 2.9.0
+        version: 2.9.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       hemi-viem-stake-actions:
         specifier: workspace:*
         version: link:../packages/hemi-viem-stake-actions
@@ -502,8 +502,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/hemi-earn-actions
       hemi-viem:
-        specifier: 2.8.0
-        version: 2.8.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+        specifier: 2.9.0
+        version: 2.9.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       promise-mem:
         specifier: 1.0.4
         version: 1.0.4
@@ -11014,10 +11014,10 @@ packages:
         integrity: sha512-CRCFsr+kM5cWHWhOu+cJbZvjnSpLCknMoJY+QnwAWIIjg2xJezfbmN1U/CRTh2ATXQ0uDZPbqhGtGObp0ZivtQ==,
       }
 
-  hemi-viem@2.8.0:
+  hemi-viem@2.9.0:
     resolution:
       {
-        integrity: sha512-dRaG6RaFa8R8JeXU5cjxGNggQzU7E8ZY61U33ARSgZ/DDkh26u1/lAL/n44zQqSMjY4s6CBmqkrrFcG7VkqFAw==,
+        integrity: sha512-Ab/pqc/H0C/0VcKQaoVm/fwrU8IP8D1R43VZUzFyqTIoGZ7Kft/fTglEkwwdSQaGPzx6rc7luVHaKWhD0xCptA==,
       }
     peerDependencies:
       viem: ^2.x
@@ -25329,7 +25329,7 @@ snapshots:
 
   hemi-socials@2.1.0: {}
 
-  hemi-viem@2.8.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)):
+  hemi-viem@2.9.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)):
     dependencies:
       viem: 2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
 

@@ -4,6 +4,7 @@ import {
   isValidUrl,
   queryStringObjectToString,
   toLocation,
+  unlocalizedPathname,
 } from 'utils/url'
 import { describe, expect, it } from 'vitest'
 
@@ -144,6 +145,36 @@ describe('utils/url', function () {
 
     it('does not match an unrelated path', function () {
       expect(isSamePathOrUnder('/stake', '/tunnel')).toBe(false)
+    })
+  })
+
+  describe('unlocalizedPathname', function () {
+    it('strips the locale segment', function () {
+      expect(unlocalizedPathname('/en/tunnel', 'en')).toBe('/tunnel')
+      expect(unlocalizedPathname('/pt/tunnel/transaction-history', 'pt')).toBe(
+        '/tunnel/transaction-history',
+      )
+    })
+
+    it('drops the trailing slash a Next bookmark still carries', function () {
+      expect(unlocalizedPathname('/en/tunnel/', 'en')).toBe('/tunnel')
+      expect(unlocalizedPathname('/es/stake/dashboard/', 'es')).toBe(
+        '/stake/dashboard',
+      )
+    })
+
+    it('returns the root for the locale on its own', function () {
+      expect(unlocalizedPathname('/en', 'en')).toBe('/')
+      expect(unlocalizedPathname('/en/', 'en')).toBe('/')
+    })
+
+    it('leaves a path that does not carry the locale alone', function () {
+      expect(unlocalizedPathname('/tunnel', 'en')).toBe('/tunnel')
+    })
+
+    it('does not strip a segment that merely starts with the locale', function () {
+      expect(unlocalizedPathname('/entities', 'en')).toBe('/entities')
+      expect(unlocalizedPathname('/english/docs', 'en')).toBe('/english/docs')
     })
   })
 })

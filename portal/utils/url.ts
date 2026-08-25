@@ -1,3 +1,4 @@
+import { type Locale } from 'i18n/routing'
 import { type UrlObject } from 'url'
 
 export const isRelativeUrl = (url: string) => url.startsWith('/')
@@ -74,3 +75,18 @@ export const toLocation = function (href: Href) {
 // those checks miss the section root.
 export const isSamePathOrUnder = (pathname: string, base: string) =>
   pathname === base || pathname.startsWith(`${base}/`)
+
+// Strips the locale segment and any trailing slash. Next's static export
+// produced both, so bookmarks from before the migration still carry a trailing
+// slash that every comparison against a plain path would miss.
+export const unlocalizedPathname = function (pathname: string, locale: Locale) {
+  const prefix = `/${locale}`
+  const unlocalized = pathname.startsWith(`${prefix}/`)
+    ? pathname.slice(prefix.length)
+    : pathname === prefix
+      ? '/'
+      : pathname
+
+  const trimmed = unlocalized.replace(/\/+$/, '')
+  return trimmed || '/'
+}

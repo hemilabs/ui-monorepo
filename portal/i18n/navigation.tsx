@@ -2,13 +2,13 @@ import { type Locale } from 'i18n/routing'
 import { useLocale } from 'next-intl'
 import { type ComponentProps, startTransition, useMemo } from 'react'
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router'
-import { type Href, toLocation } from 'utils/url'
+import { type Href, toLocation, unlocalizedPathname } from 'utils/url'
 
 type NavigateOptions = {
   locale?: Locale
 }
 
-const withLocale = function (href: Href, locale: string) {
+const withLocale = function (href: Href, locale: Locale) {
   const { hash, pathname, search } = toLocation(href)
   return { hash, pathname: `/${locale}${pathname}`, search }
 }
@@ -16,14 +16,8 @@ const withLocale = function (href: Href, locale: string) {
 export const usePathname = function () {
   const locale = useLocale()
   const { pathname } = useLocation()
-  const prefix = `/${locale}`
 
-  if (pathname === prefix) {
-    return '/'
-  }
-  return pathname.startsWith(`${prefix}/`)
-    ? pathname.slice(prefix.length)
-    : pathname
+  return unlocalizedPathname(pathname, locale)
 }
 
 export const useRouter = function () {
@@ -35,9 +29,9 @@ export const useRouter = function () {
   return useMemo(
     () => ({
       back: () => navigate(-1),
-      // In a transition, so switching locale keeps the current screen up while
-      // the new messages chunk loads instead of blanking to the Suspense
-      // fallback the whole app sits under.
+      // In a transition so a suspending destination keeps the current screen
+      // up: the Suspense around the Outlet has no fallback, so committing it
+      // would blank the content area.
       push: (href: Href, options?: NavigateOptions) =>
         startTransition(() =>
           navigate(withLocale(href, options?.locale ?? locale)),

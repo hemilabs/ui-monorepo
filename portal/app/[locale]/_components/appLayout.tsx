@@ -53,14 +53,14 @@ export const AppLayout = function ({ children }: Props) {
   const [navbarDrawerMounted, setNavbarDrawerMounted] = useState(false)
   const { width } = useWindowSize()
   const { closeDrawer, isDrawerOpen } = useDrawerContext()
-  const { key: locationKey } = useLocation()
+  const { pathname } = useLocation()
   const scrollContainer = useRef<HTMLDivElement>(null)
 
   useEffect(
     function scrollToTopOnNavigation() {
       scrollContainer.current?.scrollTo({ top: 0 })
     },
-    [locationKey],
+    [pathname],
   )
 
   const openNavbar = useCallback(function openNavbar() {

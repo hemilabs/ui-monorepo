@@ -66,8 +66,10 @@ export const toLocation = function (href: Href) {
   // and reading it verbatim would emit a second `?`.
   const fromPathname = parsePath(href.pathname ?? '')
   const query = toSearchParams(href.query)
+
+  const overridden = new Set(query.keys())
   new URLSearchParams(fromPathname.search).forEach(function (value, key) {
-    if (!query.has(key)) {
+    if (!overridden.has(key)) {
       query.append(key, value)
     }
   })

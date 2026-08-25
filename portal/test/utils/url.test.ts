@@ -107,6 +107,20 @@ describe('utils/url', function () {
       ).toEqual({ hash: '', pathname: '/p', search: '?n=1&ok=false' })
     })
 
+    it('keeps every repeated value embedded in the pathname', function () {
+      expect(toLocation({ pathname: '/p?tag=a&tag=b' })).toEqual({
+        hash: '',
+        pathname: '/p',
+        search: '?tag=a&tag=b',
+      })
+    })
+
+    it('drops every embedded value for a key the query overrides', function () {
+      expect(
+        toLocation({ pathname: '/p?tag=a&tag=b', query: { tag: 'c' } }),
+      ).toEqual({ hash: '', pathname: '/p', search: '?tag=c' })
+    })
+
     it('splits a query already embedded in the pathname', function () {
       expect(
         toLocation({

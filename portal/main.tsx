@@ -10,7 +10,6 @@ import { createRoot } from 'react-dom/client'
 import { App } from './app'
 
 const reloadKey = 'vite:preloadError:reloaded'
-const settledAfter = 10_000
 
 const alreadyReloaded = function () {
   try {
@@ -20,37 +19,27 @@ const alreadyReloaded = function () {
   }
 }
 
-const rememberReload = function () {
+const canRememberReload = function () {
   try {
     sessionStorage.setItem(reloadKey, 'true')
+    return sessionStorage.getItem(reloadKey) === 'true'
   } catch {
-    // Nothing to do: alreadyReloaded already fails safe without storage.
+    return false
   }
 }
 
-// Running this long means the reload worked, so a later failure is another
-// deploy rather than the same one looping.
-setTimeout(function forgetReload() {
-  try {
-    sessionStorage.removeItem(reloadKey)
-  } catch {
-    // Nothing to remove.
-  }
-}, settledAfter)
-
 // A deploy rotates the chunk hashes, so a tab left open across one asks for a
 // name the server no longer has, and reloading picks up the fresh index.html.
-// Guarded so a chunk missing for any other reason falls through to the error
-// boundary instead of reloading forever.
+// Once per session: a chunk missing for any other reason falls through to the
+// error boundary rather than reloading in a loop.
 window.addEventListener(
   'vite:preloadError',
   function reloadOnStaleChunk(event) {
-    if (alreadyReloaded()) {
+    if (alreadyReloaded() || !canRememberReload()) {
       return
     }
 
     event.preventDefault()
-    rememberReload()
     window.location.reload()
   },
 )

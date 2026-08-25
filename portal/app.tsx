@@ -30,7 +30,10 @@ const ToTunnel = function () {
   const { hash, pathname, search } = useLocation()
 
   return (
-    <Navigate replace to={{ hash, pathname: `${pathname}/tunnel`, search }} />
+    <Navigate
+      replace
+      to={{ hash, pathname: `${pathname.replace(/\/+$/, '')}/tunnel`, search }}
+    />
   )
 }
 
@@ -40,8 +43,12 @@ export const App = () => (
   <ErrorBoundary
     // A hard reload rather than the boundary's reset: whatever threw here is
     // above the router, so re-rendering the same tree would throw again.
+    // Sized here because this renders straight into #root, outside the app
+    // layout that would otherwise give the centering something to work with.
     fallback={
-      <UntranslatedError500 reset={() => window.location.replace('/')} />
+      <div className="h-dvh">
+        <UntranslatedError500 reset={() => window.location.replace('/')} />
+      </div>
     }
   >
     <BrowserRouter>

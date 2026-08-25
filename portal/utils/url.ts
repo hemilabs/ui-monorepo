@@ -19,7 +19,9 @@ export const queryStringObjectToString = function (
   return stringified ? `?${stringified}` : ''
 }
 
-export type Href = string | UrlObject
+// `search` is left out on purpose: `components/link` merges `networkType` into
+// `query`, so honouring both would mean one of them silently losing.
+export type Href = string | Omit<UrlObject, 'search'>
 
 const toSearchParams = function (query: UrlObject['query']) {
   if (typeof query === 'string') {

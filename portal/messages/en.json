@@ -84,6 +84,7 @@
     "get-wallet": "Get {wallet}",
     "install": "Install",
     "installed": "Installed",
+    "qr-code-error": "Couldn't load the QR code.",
     "scan": "Scan",
     "scan-with": "Scan with {wallet}",
     "status": {

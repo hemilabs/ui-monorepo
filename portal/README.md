@@ -4,7 +4,7 @@ The Portal is a Web3 app that allows users to interact with Hemi, an L2 that int
 
 ## Structure
 
-The portal is being migrated from Next to Vite (see [#2194](https://github.com/hemilabs/ui-monorepo/issues/2194)). The build runs on Vite and produces a static bundle, and routing is now react-router: `app.tsx` at the root holds the route table, and `main.tsx` is the entry. It has never relied on SSR. Only the tunnel routes are wired so far; the pages under `app/` that are not in `app.tsx` yet are unreachable until the remaining routes land.
+The portal is being migrated from Next to Vite (see [#2194](https://github.com/hemilabs/ui-monorepo/issues/2194)). The build runs on Vite and produces a static bundle, and routing is now react-router: `app.tsx` at the root holds the route table, and `main.tsx` is the entry. It has never relied on SSR. Every page is wired in `app.tsx`.
 
 Some relevant folders are:
 

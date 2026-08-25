@@ -1,3 +1,4 @@
+import { useDebounce } from '@hemilabs/react-hooks/useDebounce'
 import { type BtcChain } from 'btc-wallet/chains'
 import { useTranslations } from 'next-intl'
 import { useCallback, useState } from 'react'
@@ -24,41 +25,51 @@ export const useReceivingBitcoinAddress = function ({
   const [customAddress, setCustomAddress] = useState('')
   const [customAddressEnabled, setCustomAddressEnabled] = useState(false)
   const [customAddressTouched, setCustomAddressTouched] = useState(false)
+  const debouncedCustomAddress = useDebounce(customAddress, 300)
   const t = useTranslations('tunnel-page.submit-button')
 
   const { data, isError } = useIsValidBtcAddress({
-    address: customAddress,
+    address: debouncedCustomAddress,
     enabled: customAddressEnabled,
     network,
   })
 
-  const isCustomAddressValid = customAddress === '' ? false : data
+  // until the debounce catches up, the answer belongs to a previous address
+  const isChecked = customAddress === debouncedCustomAddress
+
+  const getIsCustomAddressValid = function () {
+    if (customAddress === '') {
+      return false
+    }
+    return isChecked ? data : undefined
+  }
 
   const getAddressError = function () {
     if (!customAddressEnabled || !customAddressTouched) {
       return undefined
     }
-    if (isError) {
-      return t('try-again')
-    }
     if (customAddress === '') {
       return t('enter-a-custom-address')
     }
-    return isCustomAddressValid === false
-      ? t('input-a-correct-custom-address')
-      : undefined
+    if (!isChecked) {
+      return undefined
+    }
+    if (isError) {
+      return t('try-again')
+    }
+    return data === false ? t('input-a-correct-custom-address') : undefined
   }
 
   const canSubmit =
     amountValidation.canSubmit &&
-    (!customAddressEnabled || isCustomAddressValid === true)
+    (!customAddressEnabled || (isChecked && data === true))
 
   return {
     canSubmit,
     customAddress,
     customAddressEnabled,
     customAddressTouched,
-    isCustomAddressValid,
+    isCustomAddressValid: getIsCustomAddressValid(),
     receivingAddress: customAddressEnabled ? customAddress : walletAddress,
     reset: useCallback(function () {
       setCustomAddress('')

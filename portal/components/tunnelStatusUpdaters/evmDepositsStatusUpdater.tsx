@@ -5,8 +5,8 @@ import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useEvmDeposits } from 'hooks/useEvmDeposits'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
+import { useOptimisticSearchParams } from 'nuqs/adapters/react-router/v8'
 import { useEffect, useMemo } from 'react'
-import { useSearchParams } from 'react-router'
 import { EvmDepositOperation, EvmDepositStatus } from 'types/tunnel'
 import { isNativeAddress } from 'utils/nativeToken'
 import { isPendingOperation } from 'utils/tunnel'
@@ -38,7 +38,7 @@ const WatchEvmDeposit = function ({
     deposit.l2ChainId,
   )
   const queryClient = useQueryClient()
-  const [searchParams] = useSearchParams()
+  const searchParams = useOptimisticSearchParams()
   const txHash = searchParams.get('txHash')
 
   useEffect(

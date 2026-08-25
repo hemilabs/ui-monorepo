@@ -13,7 +13,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { useLocation } from 'react-router'
+import { useLocation, useNavigationType } from 'react-router'
 import { screenBreakpoints } from 'styles'
 
 import { AppLayoutContainer } from './appLayoutContainer'
@@ -54,13 +54,18 @@ export const AppLayout = function ({ children }: Props) {
   const { width } = useWindowSize()
   const { closeDrawer, isDrawerOpen } = useDrawerContext()
   const { pathname } = useLocation()
+  const navigationType = useNavigationType()
   const scrollContainer = useRef<HTMLDivElement>(null)
 
+  // Skipped on a pop so the browser's own scroll restoration survives Back.
   useEffect(
     function scrollToTopOnNavigation() {
+      if (navigationType === 'POP') {
+        return
+      }
       scrollContainer.current?.scrollTo({ top: 0 })
     },
-    [pathname],
+    [navigationType, pathname],
   )
 
   const openNavbar = useCallback(function openNavbar() {

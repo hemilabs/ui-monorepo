@@ -4,6 +4,7 @@ import { lazyWithFallback } from 'components/lazyWithFallback'
 import { UmamiAnalyticsProvider } from 'components/umamiAnalyticsProvider'
 import { useLocale } from 'next-intl'
 import { ComponentProps, useCallback } from 'react'
+import { parsePath } from 'react-router'
 import { unlocalizedPathname } from 'utils/url'
 
 const GlobalTracking = lazyWithFallback(() =>
@@ -17,10 +18,8 @@ export const Analytics = function ({
 
   const processUrl = useCallback(
     function stripLocale(url: string) {
-      const [pathname = '', ...rest] = url.split('?')
-      const search = rest.join('?')
-      const path = unlocalizedPathname(pathname, locale)
-      return search ? `${path}?${search}` : path
+      const { pathname = '', search = '' } = parsePath(url)
+      return `${unlocalizedPathname(pathname, locale)}${search}`
     },
     [locale],
   )

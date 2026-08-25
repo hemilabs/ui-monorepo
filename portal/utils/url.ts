@@ -1,4 +1,5 @@
 import { type Locale } from 'i18n/routing'
+import { parsePath } from 'react-router'
 import { type UrlObject } from 'url'
 
 export const isRelativeUrl = (url: string) => url.startsWith('/')
@@ -56,13 +57,8 @@ const prefixed = function (value: string, character: string) {
 
 export const toLocation = function (href: Href) {
   if (typeof href === 'string') {
-    const [beforeHash = '', ...hashParts] = href.split('#')
-    const [pathname = '', ...searchParts] = beforeHash.split('?')
-    return {
-      hash: prefixed(hashParts.join('#'), '#'),
-      pathname,
-      search: prefixed(searchParts.join('?'), '?'),
-    }
+    const { hash = '', pathname = '', search = '' } = parsePath(href)
+    return { hash, pathname, search }
   }
 
   return {
@@ -72,15 +68,11 @@ export const toLocation = function (href: Href) {
   }
 }
 
-// Next's static export produced trailing slashes, so call sites used to compare
-// against `/tunnel/`. react-router pathnames have none, which silently made
-// those checks miss the section root.
 export const isSamePathOrUnder = (pathname: string, base: string) =>
   pathname === base || pathname.startsWith(`${base}/`)
 
-// Strips the locale segment and any trailing slash. Next's static export
-// produced both, so bookmarks from before the migration still carry a trailing
-// slash that every comparison against a plain path would miss.
+// Trailing slashes are stripped because older bookmarks still carry one, and
+// every comparison against a plain path would miss.
 export const unlocalizedPathname = function (pathname: string, locale: Locale) {
   const prefix = `/${locale}`
   const unlocalized = pathname.startsWith(`${prefix}/`)

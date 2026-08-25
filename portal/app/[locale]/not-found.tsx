@@ -1,8 +1,6 @@
-'use client'
-
-import 'styles/globals.css'
 import { ExclamationMark } from 'components/icons/exclamationMark'
 import { Image } from 'components/image'
+import { Link } from 'components/link'
 import { useTranslations } from 'next-intl'
 
 import { error404 } from '../_images/error404'
@@ -11,7 +9,7 @@ export default function NotFound() {
   const t = useTranslations('error-pages')
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-full">
       <Image
         alt="404"
         className="absolute inset-0 -top-64 m-auto w-72 md:w-fit"
@@ -27,12 +25,12 @@ export default function NotFound() {
             {t('not-found.description')}
           </h3>
         </div>
-        <a
+        <Link
           className="button--base button-primary button-small button-regular"
           href="/"
         >
           {t('not-found.action')}
-        </a>
+        </Link>
       </div>
     </div>
   )

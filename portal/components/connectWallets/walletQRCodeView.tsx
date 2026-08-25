@@ -45,9 +45,15 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
         return undefined
       }
 
-      const walletConnectConnector = connectors.find(
-        ({ id }) => id === 'walletConnect',
-      )
+      // Prefer the wallet's own connector when it is a WalletConnect type so
+      // that its dedicated storage / SDK instance is used instead of the
+      // generic fallback. This avoids a mismatch between the connector that
+      // owns the WalletConnect session state and the one the QR view is
+      // driving (which would prevent `display_uri` from being emitted).
+      const walletConnectConnector =
+        wallet.connector?.type === 'walletConnect'
+          ? wallet.connector
+          : connectors.find(({ id }) => id === 'walletConnect')
 
       if (!walletConnectConnector) {
         return undefined
@@ -133,7 +139,7 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
         reset()
       }
     },
-    [config, connect, connectors, reset, retryCount],
+    [config, connect, connectors, reset, retryCount, wallet],
   )
 
   return (

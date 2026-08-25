@@ -19,7 +19,7 @@
     "tsc:check": "tsc"
   },
   "dependencies": {
-    "hemi-viem": "2.8.0"
+    "hemi-viem": "2.9.0"
   },
   "devDependencies": {
     "@tsconfig/node24": "24.0.3",

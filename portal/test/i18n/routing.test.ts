@@ -14,6 +14,12 @@ describe('i18n/routing', function () {
       expect(resolveLocale('en-GB')).toBe('en')
     })
 
+    it('matches regardless of case, since the tag is case-insensitive', function () {
+      expect(resolveLocale('PT-BR')).toBe('pt')
+      expect(resolveLocale('ES')).toBe('es')
+      expect(resolveLocale('En-GB')).toBe('en')
+    })
+
     it('falls back to the default for an unsupported language', function () {
       expect(resolveLocale('fr')).toBe('en')
       expect(resolveLocale('de-DE')).toBe('en')

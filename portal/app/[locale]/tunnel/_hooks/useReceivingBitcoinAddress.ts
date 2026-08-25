@@ -23,6 +23,7 @@ export const useReceivingBitcoinAddress = function ({
 }: Props) {
   const [customAddress, setCustomAddress] = useState('')
   const [customAddressEnabled, setCustomAddressEnabled] = useState(false)
+  const [customAddressTouched, setCustomAddressTouched] = useState(false)
   const t = useTranslations('tunnel-page.submit-button')
 
   const { data, isError } = useIsValidBtcAddress({
@@ -34,11 +35,14 @@ export const useReceivingBitcoinAddress = function ({
   const isCustomAddressValid = customAddress === '' ? false : data
 
   const getAddressError = function () {
-    if (!customAddressEnabled) {
+    if (!customAddressEnabled || !customAddressTouched) {
       return undefined
     }
     if (isError) {
       return t('try-again')
+    }
+    if (customAddress === '') {
+      return t('enter-a-custom-address')
     }
     return isCustomAddressValid === false
       ? t('input-a-correct-custom-address')
@@ -53,14 +57,17 @@ export const useReceivingBitcoinAddress = function ({
     canSubmit,
     customAddress,
     customAddressEnabled,
+    customAddressTouched,
     isCustomAddressValid,
     receivingAddress: customAddressEnabled ? customAddress : walletAddress,
     reset: useCallback(function () {
       setCustomAddress('')
       setCustomAddressEnabled(false)
+      setCustomAddressTouched(false)
     }, []),
     setCustomAddress,
     setCustomAddressEnabled,
+    setCustomAddressTouched,
     validationError: amountValidation.error ?? getAddressError(),
   }
 }

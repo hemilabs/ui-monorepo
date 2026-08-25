@@ -13,14 +13,16 @@ export default defineConfig({
   define: { global: 'globalThis' },
   plugins: [react(), polyfills()],
   resolve: {
-    // packages/btc-wallet reaches for the `Buffer` global, and the plugin
-    // injects its shim into that file. The shim only resolves from here,
-    // where the plugin is installed, so point at it explicitly.
-    alias: {
-      'vite-plugin-node-polyfills/shims/buffer': fileURLToPath(
-        import.meta.resolve('vite-plugin-node-polyfills/shims/buffer'),
+    // The plugin injects its shims into whichever file touches `Buffer`,
+    // `global` or `process`, including files under packages/, where the plugin
+    // is not installed and the import cannot resolve. Mapping all three keeps
+    // the next one from failing the build the same way.
+    alias: ['buffer', 'global', 'process'].map(shim => ({
+      find: `vite-plugin-node-polyfills/shims/${shim}`,
+      replacement: fileURLToPath(
+        import.meta.resolve(`vite-plugin-node-polyfills/shims/${shim}`),
       ),
-    },
+    })),
     tsconfigPaths: true,
   },
   worker: {

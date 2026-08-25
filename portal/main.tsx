@@ -1,5 +1,5 @@
-// Next auto-loaded this by convention and Vite does not, so without the import
-// no Sentry client is ever configured and every captureException is a no-op.
+// This import is what configures the Sentry client. Nothing else references
+// the module, so dropping it silently turns every captureException into a no-op.
 import './instrumentation-client'
 import 'react-loading-skeleton/dist/skeleton.css'
 import 'styles/globals.css'

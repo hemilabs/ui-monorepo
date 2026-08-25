@@ -11,13 +11,14 @@ type Props = {
   defaultTitle: string
 }
 
-const DocumentTitleContext = createContext<(title: string | undefined) => void>(
+const DocumentTitleContext = createContext<(title?: string) => void>(
   function ignoreTitle() {},
 )
 
-// A single effect owns `document.title`. Writing it from both a layout and its
-// route would always resolve in the layout's favour, since effects run child
-// first, so routes register their title here instead.
+// The registration has to go through state: the provider owns the only write,
+// so it can fall back to `defaultTitle` on a route that claims no title, and a
+// layout writing `document.title` itself would beat its own route anyway, since
+// effects run child first.
 export const DocumentTitleProvider = function ({
   children,
   defaultTitle,
@@ -45,7 +46,7 @@ export const useDocumentTitle = function (title: string) {
   useEffect(
     function claimDocumentTitle() {
       setTitle(title)
-      return () => setTitle(undefined)
+      return () => setTitle()
     },
     [setTitle, title],
   )

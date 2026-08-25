@@ -36,7 +36,6 @@ export const BitcoinReceivingAddress = function ({
   tooltipText,
 }: Props) {
   const t = useTranslations('tunnel-page.form')
-  // an empty field is not a wrong address, so it is only reported on the CTA
   const showError =
     customAddressTouched &&
     customAddress !== '' &&
@@ -72,8 +71,6 @@ export const BitcoinReceivingAddress = function ({
               aria-describedby={showError ? errorId : undefined}
               aria-invalid={showError}
               aria-label={receivingText}
-              // addresses are never capitalized, and mobile keyboards would
-              // otherwise produce a mixed case one, which is invalid
               autoCapitalize="none"
               // mounting only happens when the user turns the toggle on
               autoFocus

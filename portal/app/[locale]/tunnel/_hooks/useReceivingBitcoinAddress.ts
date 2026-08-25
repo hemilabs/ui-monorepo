@@ -34,7 +34,6 @@ export const useReceivingBitcoinAddress = function ({
     network,
   })
 
-  // until the debounce catches up, the answer belongs to a previous address
   const isChecked = customAddress === debouncedCustomAddress
 
   const getIsCustomAddressValid = function () {

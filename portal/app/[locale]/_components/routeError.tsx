@@ -10,16 +10,16 @@ type Props = {
 // would also do, but without remounting the route layouts underneath it and
 // dropping the state they hold.
 export const RouteError = function ({ reset }: Props) {
-  const { pathname } = useLocation()
-  const erroredAt = useRef(pathname)
+  const { pathname, search } = useLocation()
+  const erroredAt = useRef(`${pathname}${search}`)
 
   useEffect(
     function resetOnNavigation() {
-      if (pathname !== erroredAt.current) {
+      if (`${pathname}${search}` !== erroredAt.current) {
         reset()
       }
     },
-    [pathname, reset],
+    [pathname, reset, search],
   )
 
   return <LocalizedError500 reset={reset} />

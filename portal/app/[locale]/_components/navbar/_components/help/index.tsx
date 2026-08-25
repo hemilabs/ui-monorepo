@@ -8,7 +8,6 @@ import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useUmami } from 'hooks/useUmami'
 import { useRouter } from 'i18n/navigation'
 import { getLocalizedLocaleName, locales } from 'i18n/routing'
-import { useSearchParams } from 'next/navigation'
 import { Locale, useLocale, useTranslations } from 'next-intl'
 import {
   type ComponentProps,
@@ -17,6 +16,7 @@ import {
   useState,
 } from 'react'
 import ReactDOM from 'react-dom'
+import { useSearchParams } from 'react-router'
 import { getPortalContainer } from 'utils/document'
 
 import { CmcAttribution } from '../cmcAttribution'
@@ -140,7 +140,7 @@ const ItemWithSubmenu = function ({
 
 const LanguageMenu = function ({ active }: LanguageProps) {
   const pathname = usePathnameWithoutLocale()
-  const searchParams = useSearchParams()
+  const [searchParams] = useSearchParams()
   const router = useRouter()
 
   const onClick = function (locale: Locale) {

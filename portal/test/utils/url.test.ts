@@ -1,4 +1,10 @@
-import { isRelativeUrl, isValidUrl, queryStringObjectToString } from 'utils/url'
+import {
+  isRelativeUrl,
+  isSamePathOrUnder,
+  isValidUrl,
+  queryStringObjectToString,
+  toLocation,
+} from 'utils/url'
 import { describe, expect, it } from 'vitest'
 
 describe('utils/url', function () {
@@ -39,6 +45,105 @@ describe('utils/url', function () {
       expect(queryStringObjectToString({ a: 'b', c: 'd', e: '3' })).toBe(
         '?a=b&c=d&e=3',
       )
+    })
+  })
+
+  describe('toLocation', function () {
+    it('splits a plain string path', function () {
+      expect(toLocation('/tunnel')).toEqual({
+        hash: '',
+        pathname: '/tunnel',
+        search: '',
+      })
+    })
+
+    it('splits search and hash out of a string', function () {
+      expect(toLocation('/tunnel?networkType=testnet#top')).toEqual({
+        hash: '#top',
+        pathname: '/tunnel',
+        search: '?networkType=testnet',
+      })
+    })
+
+    it('keeps extra separators inside the search and the hash', function () {
+      expect(toLocation('/p?a=1?2#x#y')).toEqual({
+        hash: '#x#y',
+        pathname: '/p',
+        search: '?a=1?2',
+      })
+    })
+
+    it('builds the search from an object query', function () {
+      expect(
+        toLocation({ pathname: '/stake', query: { networkType: 'mainnet' } }),
+      ).toEqual({
+        hash: '',
+        pathname: '/stake',
+        search: '?networkType=mainnet',
+      })
+    })
+
+    it('accepts a query already serialized as a string', function () {
+      expect(toLocation({ pathname: '/stake', query: 'a=1&b=2' })).toEqual({
+        hash: '',
+        pathname: '/stake',
+        search: '?a=1&b=2',
+      })
+    })
+
+    it('drops undefined and null values', function () {
+      expect(
+        toLocation({
+          pathname: '/stake',
+          query: { a: undefined, b: null, c: 'kept' },
+        }),
+      ).toEqual({ hash: '', pathname: '/stake', search: '?c=kept' })
+    })
+
+    it('stringifies numbers and booleans', function () {
+      expect(
+        toLocation({ pathname: '/p', query: { n: 1, ok: false } }),
+      ).toEqual({ hash: '', pathname: '/p', search: '?n=1&ok=false' })
+    })
+
+    it('repeats a key for array values instead of joining them', function () {
+      expect(
+        toLocation({ pathname: '/p', query: { tag: ['a', 'b'] } }),
+      ).toEqual({ hash: '', pathname: '/p', search: '?tag=a&tag=b' })
+    })
+
+    it('normalizes a hash that already carries its separator', function () {
+      expect(toLocation({ hash: '#top', pathname: '/p' })).toEqual({
+        hash: '#top',
+        pathname: '/p',
+        search: '',
+      })
+      expect(toLocation({ hash: 'top', pathname: '/p' })).toEqual({
+        hash: '#top',
+        pathname: '/p',
+        search: '',
+      })
+    })
+  })
+
+  describe('isSamePathOrUnder', function () {
+    it('matches the section root itself', function () {
+      expect(isSamePathOrUnder('/tunnel', '/tunnel')).toBe(true)
+    })
+
+    it('matches a path under the section', function () {
+      expect(isSamePathOrUnder('/tunnel/transaction-history', '/tunnel')).toBe(
+        true,
+      )
+    })
+
+    it('does not match a sibling that merely shares the prefix', function () {
+      expect(isSamePathOrUnder('/tunnels', '/tunnel')).toBe(false)
+      expect(isSamePathOrUnder('/tunnel-history', '/tunnel')).toBe(false)
+    })
+
+    it('does not match an unrelated path', function () {
+      expect(isSamePathOrUnder('/stake', '/tunnel')).toBe(false)
     })
   })
 })

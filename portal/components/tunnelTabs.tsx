@@ -9,6 +9,7 @@ import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
 import { UrlObject } from 'url'
+import { isSamePathOrUnder } from 'utils/url'
 
 const ActionableOperations = lazyWithFallback(() =>
   import('components/actionableOperations').then(mod => ({
@@ -26,11 +27,11 @@ const UI = function ({
   const pathname = usePathnameWithoutLocale()
   const t = useTranslations('tunnel-page')
 
-  if (!pathname.startsWith(`/tunnel/`)) {
+  if (!isSamePathOrUnder(pathname, '/tunnel')) {
     return null
   }
 
-  const isInTransactionHistory = pathname === `/tunnel/transaction-history/`
+  const isInTransactionHistory = pathname === '/tunnel/transaction-history'
 
   return (
     <div className="flex items-center justify-center gap-x-4 max-md:px-4">
@@ -38,7 +39,7 @@ const UI = function ({
         <Tab
           href={tunnelHref}
           onClick={onTabClick ? () => onTabClick('header - tunnel') : undefined}
-          selected={pathname === '/tunnel/'}
+          selected={pathname === '/tunnel'}
         >
           <span className="flex h-full min-h-7 items-center justify-center">
             {t('title')}

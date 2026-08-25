@@ -6,6 +6,7 @@ import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
 import { isStakeEnabledOnTestnet } from 'utils/stake'
+import { isSamePathOrUnder } from 'utils/url'
 
 const StakeTabsImpl = function () {
   const [networkType] = useNetworkType()
@@ -13,14 +14,14 @@ const StakeTabsImpl = function () {
   const t = useTranslations('stake-page')
 
   if (
-    !pathname.startsWith(`/stake/`) ||
+    !isSamePathOrUnder(pathname, '/stake') ||
     !isStakeEnabledOnTestnet(networkType)
   ) {
     return null
   }
 
-  const isInDashboard = pathname === `/stake/dashboard/`
-  const isInStake = pathname === `/stake/`
+  const isInDashboard = pathname === '/stake/dashboard'
+  const isInStake = pathname === '/stake'
 
   return (
     <div className="relative z-20 flex items-center justify-center gap-x-4 sm:flex-col sm:gap-y-4">

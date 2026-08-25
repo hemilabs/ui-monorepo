@@ -1,5 +1,4 @@
 import { usePathname } from 'i18n/navigation'
-import { useLocale } from 'next-intl'
 
 /**
  * Hook that returns the pathname without the locale. Useful for relative links
@@ -7,8 +6,4 @@ import { useLocale } from 'next-intl'
  * (for example, adding a particular query string).
  * @returns The full pathname without the locale
  */
-export const usePathnameWithoutLocale = function () {
-  const locale = useLocale()
-  // replace only replaces the first match, which should always be at the beginning
-  return usePathname().replace(`/${locale}`, '')
-}
+export const usePathnameWithoutLocale = usePathname

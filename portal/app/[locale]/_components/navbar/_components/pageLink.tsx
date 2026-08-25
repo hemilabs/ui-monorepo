@@ -2,6 +2,7 @@ import { Link } from 'components/link'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useUmami } from 'hooks/useUmami'
 import { cloneElement, isValidElement, Suspense } from 'react'
+import { isSamePathOrUnder } from 'utils/url'
 
 import { IconContainer as DefaultIconContainer } from './iconContainer'
 import { ItemContainer, ItemLinkProps, ItemText, Row } from './navItem'
@@ -68,9 +69,9 @@ export const PageLink = function ({
 
   const selected =
     typeof urlToBeSelected === 'string'
-      ? pathname.startsWith(urlToBeSelected)
+      ? isSamePathOrUnder(pathname, urlToBeSelected)
       : !!urlToBeSelected.pathname &&
-        pathname.startsWith(urlToBeSelected.pathname)
+        isSamePathOrUnder(pathname, urlToBeSelected.pathname)
 
   const props = {
     href,

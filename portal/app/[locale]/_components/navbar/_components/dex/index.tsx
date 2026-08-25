@@ -8,7 +8,6 @@ import { DexIcon as BaseDexIcon } from 'components/icons/dexIcon'
 import { Image } from 'components/image'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
-import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import {
   type ComponentProps,
@@ -62,14 +61,12 @@ const ItemTitle = ({ text }: Pick<Props, 'text'>) => (
   </div>
 )
 
-type ItemLinkProps = Props & Required<Pick<ComponentProps<typeof Link>, 'href'>>
-
 const ExternalLink = function ({
   event,
   href,
   icon,
   text,
-}: Omit<ItemLinkProps, 'href'> & Pick<ComponentProps<'a'>, 'href'>) {
+}: Props & Pick<ComponentProps<'a'>, 'href'>) {
   const { enabled, track } = useUmami()
   const addTracking = () => (enabled && event ? () => track(event) : undefined)
   return (
@@ -87,10 +84,7 @@ const ExternalLink = function ({
   )
 }
 
-const HemiSwapLink = function ({
-  event,
-  text,
-}: Omit<ItemLinkProps, 'href'> & Pick<ComponentProps<'a'>, 'href'>) {
+const HemiSwapLink = function ({ event, text }: Props) {
   const { enabled, track } = useUmami()
   const addTracking = () => (enabled && event ? () => track(event) : undefined)
   return (

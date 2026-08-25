@@ -9,6 +9,7 @@ import { useRouter } from 'i18n/navigation'
 import { Suspense, startTransition, useEffect, useRef, useState } from 'react'
 import { screenBreakpoints } from 'styles'
 import { UrlObject } from 'url'
+import { isSamePathOrUnder } from 'utils/url'
 
 import {
   AccordionContainer,
@@ -41,9 +42,9 @@ function ItemAccordionUI({
 
   function matchesPath(path: string, url?: string | UrlObject) {
     if (typeof url === 'string') {
-      return path.startsWith(url)
+      return isSamePathOrUnder(path, url)
     }
-    return !!url?.pathname && path.startsWith(url.pathname)
+    return !!url?.pathname && isSamePathOrUnder(path, url.pathname)
   }
 
   const hasSelectedItem = items.some(({ urlToBeSelected }) =>

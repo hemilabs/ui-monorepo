@@ -16,7 +16,7 @@ minimumReleaseAge: 10080 # 7 days in minutes
 minimumReleaseAgeExclude:
   - '@hemilabs/*'
   - '@vetro-protocol/*'
-  - 'hemi-viem' # first-party too, but published unscoped so the globs miss it
+  - 'hemi-viem'
 
 onlyBuiltDependencies:
   - '@parcel/watcher' # native file watcher used by next-intl in dev mode

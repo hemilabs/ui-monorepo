@@ -9,6 +9,7 @@ import {
 import { veHemiAbi } from './abi.ts'
 import {
   MaxLockDurationSeconds,
+  minLockAmount,
   MinLockDurationSeconds,
   SupportedChains,
 } from './constants.ts'
@@ -91,6 +92,10 @@ export const validateCreateLockInputs = function ({
   const amountError = validateAmount(amount)
   if (amountError) {
     return amountError
+  }
+
+  if (amount < minLockAmount) {
+    return 'amount is less than the minimum lock amount'
   }
 
   const approvalError = validateApprovalAmount(amount, approvalAmount)

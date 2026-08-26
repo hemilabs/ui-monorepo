@@ -4,7 +4,7 @@ import { TunnelHistoryProvider } from 'context/tunnelHistoryContext'
 import { WalletsContext } from 'context/walletsContext'
 import { DocumentTitleProvider } from 'hooks/useDocumentTitle'
 import { getMessages } from 'i18n/messages'
-import { type Locale, preferredLocale, routing } from 'i18n/routing'
+import { type Locale, locales, preferredLocale } from 'i18n/routing'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { Suspense, use, useEffect } from 'react'
 import { SkeletonTheme } from 'react-loading-skeleton'
@@ -66,7 +66,7 @@ export const LocaleLayout = function () {
   const { locale } = useParams()
   const { hash, pathname, search } = useLocation()
 
-  if (!hasLocale(routing.locales, locale)) {
+  if (!hasLocale(locales, locale)) {
     return (
       <Navigate
         replace

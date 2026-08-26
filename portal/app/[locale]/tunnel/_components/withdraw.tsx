@@ -107,13 +107,11 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     canSubmitAddress,
     customAddress,
     customAddressEnabled,
-    customAddressTouched,
     isCustomAddressValid,
     receivingAddress,
     reset: resetReceivingAddress,
     setCustomAddress,
     setCustomAddressEnabled,
-    setCustomAddressTouched,
   } = useReceivingBitcoinAddress({
     network: toNetworkId,
     walletAddress: btcAddress,
@@ -252,12 +250,10 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
             address={btcAddress ? formatBtcAddress(btcAddress) : undefined}
             customAddress={customAddress}
             customAddressEnabled={customAddressEnabled}
-            customAddressTouched={customAddressTouched}
             disabled={isWithdrawing}
             isCustomAddressValid={isCustomAddressValid}
             onCustomAddressChange={setCustomAddress}
             onCustomAddressEnabledChange={setCustomAddressEnabled}
-            onCustomAddressTouchedChange={setCustomAddressTouched}
             receivingText={t('tunnel-page.form.bitcoin-receiving-address')}
             tooltipText={t(
               'tunnel-page.form.bitcoin-receiving-address-description',

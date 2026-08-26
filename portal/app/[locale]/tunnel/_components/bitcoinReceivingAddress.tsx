@@ -12,12 +12,10 @@ type Props = {
   address: string | undefined
   customAddress: string
   customAddressEnabled: boolean
-  customAddressTouched: boolean
   disabled: boolean
   isCustomAddressValid: boolean | undefined
   onCustomAddressChange: (customAddress: string) => void
   onCustomAddressEnabledChange: (customAddressEnabled: boolean) => void
-  onCustomAddressTouchedChange: (customAddressTouched: boolean) => void
   receivingText: string
   tooltipText: string
 }
@@ -26,20 +24,15 @@ export const BitcoinReceivingAddress = function ({
   address,
   customAddress,
   customAddressEnabled,
-  customAddressTouched,
   disabled,
   isCustomAddressValid,
   onCustomAddressChange,
   onCustomAddressEnabledChange,
-  onCustomAddressTouchedChange,
   receivingText,
   tooltipText,
 }: Props) {
   const t = useTranslations('tunnel-page.form')
-  const showError =
-    customAddressTouched &&
-    customAddress !== '' &&
-    isCustomAddressValid === false
+  const showError = customAddress !== '' && isCustomAddressValid === false
 
   return (
     // the top padding accounts for the 28px this container is tucked behind the
@@ -76,7 +69,6 @@ export const BitcoinReceivingAddress = function ({
               autoFocus
               className="min-w-0 flex-1 bg-transparent text-neutral-950 placeholder:text-neutral-500 focus:outline-none disabled:cursor-not-allowed"
               disabled={disabled}
-              onBlur={() => onCustomAddressTouchedChange(true)}
               onChange={e => onCustomAddressChange(e.target.value.trim())}
               placeholder={t('custom-address-placeholder')}
               spellCheck={false}

@@ -6,7 +6,7 @@ import { useConnect, useConnections, useDisconnect } from 'wagmi'
 
 import { getWalletConnectUri } from '../utils/walletConnect'
 import { getWalletDeepLink, hasDeepLinkSupport } from '../utils/walletDeepLinks'
-import { getWalletDownloadUrl } from '../utils/walletDownload'
+import { getWalletDownloadUrl } from '../utils/walletDownloadUrl'
 
 // These are the connector types that require a QR code to connect
 // It applies to desktop devices only

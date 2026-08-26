@@ -9,9 +9,8 @@ import Skeleton from 'react-loading-skeleton'
 import { useConfig, useConnect } from 'wagmi'
 import { getConnections } from 'wagmi/actions'
 
-import { QrcodePlaceholderIcon } from './icons/qrcodePlaceholder'
 import { getWalletConnectUri } from './utils/walletConnect'
-import { getWalletDownloadUrl } from './utils/walletDownload'
+import { getWalletDownloadUrl } from './utils/walletDownloadUrl'
 
 // If no QR code URI is produced within this window, surface a retry option so
 // the user is never stuck looking at an endless loading skeleton.
@@ -160,7 +159,7 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
           </span>
         </h4>
         <div className="hidden md:block">
-          <QrcodePlaceholderIcon />
+          {/* Empty column to push the previous h4 to the center */}
         </div>
       </div>
       <div className="flex h-full flex-col items-center justify-center gap-3 py-3.5">

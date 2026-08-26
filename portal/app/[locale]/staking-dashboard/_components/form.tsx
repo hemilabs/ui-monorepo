@@ -2,8 +2,8 @@ import { Card } from 'components/card'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { useStakingDashboard } from '../_context/stakingDashboardContext'
 

@@ -2,8 +2,8 @@
 
 import { Button, ButtonIcon } from 'components/button'
 import { Tooltip } from 'components/tooltip'
-import { useTranslations } from 'next-intl'
 import { type MouseEvent, useState } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { claimRecoverSettlement } from '../../_utils/settlement'
 import {

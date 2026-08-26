@@ -1,7 +1,7 @@
 import { ExclamationMark } from 'components/icons/exclamationMark'
 import { Image } from 'components/image'
 import { Link } from 'components/link'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { error404 } from '../_images/error404'
 

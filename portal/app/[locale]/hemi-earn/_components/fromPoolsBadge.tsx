@@ -3,8 +3,8 @@
 import { useQueries } from '@tanstack/react-query'
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
-import { useTranslations } from 'next-intl'
 import { type EvmToken } from 'types/token'
+import { useTranslations } from 'use-intl'
 import { formatNumber } from 'utils/format'
 import { formatUnits } from 'viem'
 

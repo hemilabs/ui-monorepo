@@ -1,7 +1,7 @@
 import { Image } from 'components/image'
 import { CustomToken } from 'components/tokenSelector/token'
-import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
+import { useTranslations } from 'use-intl'
 
 import background from './previewBackground.svg'
 

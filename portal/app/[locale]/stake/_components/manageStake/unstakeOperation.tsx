@@ -6,13 +6,13 @@ import { Spinner } from 'components/spinner'
 import { ToastLoader } from 'components/toast/toastLoader'
 import { useAmount } from 'hooks/useAmount'
 import { useHemi } from 'hooks/useHemi'
-import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import {
   UnstakeStatusEnum,
   type StakeOperations,
   type StakeToken,
 } from 'types/stake'
+import { useTranslations } from 'use-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
 import { parseTokenUnits } from 'utils/token'

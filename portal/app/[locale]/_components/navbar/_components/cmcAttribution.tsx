@@ -1,5 +1,5 @@
 import { ExternalLink } from 'components/externalLink'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 export const CmcAttribution = function () {
   const t = useTranslations('navbar')

@@ -3,9 +3,9 @@
 import { PageLayout } from 'components/pageLayout'
 import { PageTitle } from 'components/pageTitle'
 import { useTokenPrices } from 'hooks/useTokenPrices'
-import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import { priorityStakeTokensToSort } from 'types/stake'
+import { useTranslations } from 'use-intl'
 import { sortTokens } from 'utils/sortTokens'
 
 import { StakeStrategyTable } from './_components/stakeStrategyTable'

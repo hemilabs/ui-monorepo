@@ -1,8 +1,8 @@
 import { ExternalLink } from 'components/externalLink'
 import { CheckMark } from 'components/icons/checkMark'
 import { Tooltip } from 'components/tooltip'
-import { useTranslations } from 'next-intl'
 import { ComponentProps, useEffect, useState } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { Clipboard } from './icons/clipboard'
 

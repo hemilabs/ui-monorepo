@@ -11,13 +11,13 @@ import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
-import { useTranslations } from 'next-intl'
 import { ReactNode, useState } from 'react'
 import {
   StakingDashboardStatus,
   type StakingDashboardStatusType,
   type StakingOperationRunning,
 } from 'types/stakingDashboard'
+import { useTranslations } from 'use-intl'
 import { getTotal } from 'utils/getTotal'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'

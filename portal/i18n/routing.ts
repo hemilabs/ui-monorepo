@@ -1,4 +1,4 @@
-import { hasLocale } from 'next-intl'
+import { hasLocale } from 'use-intl'
 
 const defaultLocale = 'en' as const
 export const locales = [defaultLocale, 'es', 'pt'] as const

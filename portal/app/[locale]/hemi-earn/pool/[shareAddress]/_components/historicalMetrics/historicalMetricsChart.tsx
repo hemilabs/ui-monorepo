@@ -1,10 +1,10 @@
 'use client'
 
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
-import { useLocale } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { screenBreakpoints } from 'styles'
 import { EvmToken } from 'types/token'
+import { useLocale } from 'use-intl'
 import {
   formatCompactFiatParts,
   formatDate,

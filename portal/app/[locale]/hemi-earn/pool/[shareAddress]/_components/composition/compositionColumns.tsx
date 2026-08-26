@@ -1,7 +1,7 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { Header } from 'components/table/_components/header'
-import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
+import { useTranslations } from 'use-intl'
 import { formatFiatNumber, formatPercentage } from 'utils/format'
 
 import { type CompositionItem } from '../../_hooks/useComposition'

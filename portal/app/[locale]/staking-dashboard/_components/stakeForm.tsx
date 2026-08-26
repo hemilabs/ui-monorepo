@@ -3,7 +3,6 @@
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { ToastLoader } from 'components/toast/toastLoader'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {
@@ -11,6 +10,7 @@ import {
   StakingDashboardStatus,
   UnlockingDashboardStatus,
 } from 'types/stakingDashboard'
+import { useTranslations } from 'use-intl'
 
 import { useStakingDashboard } from '../_context/stakingDashboardContext'
 import { useDrawerStakingQueryString } from '../_hooks/useDrawerStakingQueryString'

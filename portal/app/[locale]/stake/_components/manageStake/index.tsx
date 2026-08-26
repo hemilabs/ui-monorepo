@@ -1,9 +1,9 @@
 'use client'
 
 import { Drawer } from 'components/drawer'
-import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { type StakeOperations, type StakeToken } from 'types/stake'
+import { useTranslations } from 'use-intl'
 
 import { type DrawerModes } from '../../_hooks/useDrawerStakeQueryString'
 

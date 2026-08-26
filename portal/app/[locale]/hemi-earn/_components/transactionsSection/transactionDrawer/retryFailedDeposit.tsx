@@ -2,8 +2,8 @@
 
 import { Button } from 'components/button'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
-import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
+import { useTranslations } from 'use-intl'
 import { formatUnits } from 'viem'
 
 import {

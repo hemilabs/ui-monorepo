@@ -1,6 +1,6 @@
 import { BitcoinKitIcon } from 'components/icons/bitcoinKit'
-import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { ItemLink } from './itemLink'
 

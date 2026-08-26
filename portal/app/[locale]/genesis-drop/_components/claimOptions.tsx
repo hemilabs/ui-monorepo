@@ -8,8 +8,8 @@ import {
   type EligibilityData,
 } from 'genesis-drop-actions'
 import { useUmami } from 'hooks/useUmami'
-import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { useTranslations } from 'use-intl'
 import { Hash, Hex } from 'viem'
 
 import { useClaimTokens } from '../_hooks/useClaimTokens'

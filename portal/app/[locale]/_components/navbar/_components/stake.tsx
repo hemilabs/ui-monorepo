@@ -1,7 +1,7 @@
 import { StakeIcon } from 'components/icons/stakeIcon'
 import { Link } from 'components/link'
-import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { IconContainer } from './iconContainer'
 import { ItemAccordion } from './itemAccordion'

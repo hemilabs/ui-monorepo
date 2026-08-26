@@ -3,9 +3,9 @@
 import { PageLayout } from 'components/pageLayout'
 import { TestnetDisabled } from 'components/testnetDisabled'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
 import { Outlet } from 'react-router'
+import { useTranslations } from 'use-intl'
 
 import { GenesisDropTabs } from './_components/genesisDropTabs'
 import { isClaimRewardsEnabledOnTestnet } from './_utils'

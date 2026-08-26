@@ -1,8 +1,8 @@
 'use client'
 
 import { DisplayAmount } from 'components/displayAmount'
-import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
+import { useTranslations } from 'use-intl'
 import { formatUnits } from 'viem'
 
 type Props = {

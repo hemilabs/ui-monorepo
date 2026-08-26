@@ -1,6 +1,6 @@
-import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { Token } from 'types/token'
+import { useTranslations } from 'use-intl'
 
 import { DisplayAmount } from './displayAmount'
 

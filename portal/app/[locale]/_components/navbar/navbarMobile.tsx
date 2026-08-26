@@ -1,7 +1,7 @@
 import { featureFlags } from 'app/featureFlags'
 import { lazyWithFallback } from 'components/lazyWithFallback'
-import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { BitcoinKitLink } from './_components/bitcoinKitLink'
 import { Dex } from './_components/dex'

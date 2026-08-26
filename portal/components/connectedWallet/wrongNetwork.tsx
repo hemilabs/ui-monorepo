@@ -1,7 +1,7 @@
 import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { Chevron } from 'components/icons/chevron'
-import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { EvmChainsMenu } from './evmChainsMenu'
 

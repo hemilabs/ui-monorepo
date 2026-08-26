@@ -1,6 +1,6 @@
 import { InboxIcon } from 'components/icons/inboxIcon'
 import { InformationBox } from 'components/informationBox'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 export const NoTransactions = function () {
   const t = useTranslations('hemi-earn.transactions')

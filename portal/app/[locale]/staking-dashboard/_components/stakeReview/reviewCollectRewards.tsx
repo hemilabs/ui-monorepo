@@ -8,11 +8,11 @@ import {
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useTranslations } from 'next-intl'
 import {
   CollectAllRewardsDashboardStatus,
   CollectAllRewardsDashboardStatusType,
 } from 'types/stakingDashboard'
+import { useTranslations } from 'use-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 

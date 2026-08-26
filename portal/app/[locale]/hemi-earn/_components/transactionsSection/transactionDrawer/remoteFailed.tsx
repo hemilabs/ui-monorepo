@@ -5,8 +5,8 @@ import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { WarningBox } from 'components/warningBox'
 import { type EventEmitter } from 'events'
 import { type RetryRequestEvents } from 'hemi-earn-actions'
-import { useTranslations } from 'next-intl'
 import { type MouseEvent, type ReactNode } from 'react'
+import { useTranslations } from 'use-intl'
 
 import {
   useCancelRequest,

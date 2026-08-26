@@ -1,7 +1,7 @@
 'use client'
 
 import { DrawerParagraph, DrawerTopSection } from 'components/drawer'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { BtcWallet } from './wallets/btcWallet'
 import { EvmWallet } from './wallets/evmWallet'

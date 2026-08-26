@@ -7,7 +7,7 @@ import { Stargate } from 'components/customTunnelsThroughPartners/stargate'
 import { WarningIcon } from 'components/icons/warningIcon'
 import { Tab, Tabs } from 'components/tabs'
 import { useUmami } from 'hooks/useUmami'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { Chain } from 'viem'
 

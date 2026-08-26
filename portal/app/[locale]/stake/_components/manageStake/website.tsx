@@ -1,7 +1,7 @@
 import { ExternalLink } from 'components/externalLink'
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
-import { useTranslations } from 'next-intl'
 import { StakeToken } from 'types/stake'
+import { useTranslations } from 'use-intl'
 
 type Props = {
   token: StakeToken

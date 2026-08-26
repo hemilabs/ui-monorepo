@@ -16,13 +16,13 @@ import { useAmount } from 'hooks/useAmount'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useHemi } from 'hooks/useHemi'
-import { useTranslations } from 'next-intl'
 import {
   StakeOperations,
   StakeStatusEnum,
   type StakeStatusEnumType,
   type StakeToken,
 } from 'types/stake'
+import { useTranslations } from 'use-intl'
 import { normalizeTokenAddressForAllowance } from 'utils/allowanceQueryKey'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'

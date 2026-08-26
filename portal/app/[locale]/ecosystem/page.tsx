@@ -3,7 +3,7 @@
 import { PageLayout } from 'components/pageLayout'
 import { PageTitle } from 'components/pageTitle'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { DemoCard } from './_components/demoCard'
 import bitcoinKitImg from './_images/bitcoin_kit_large.png'

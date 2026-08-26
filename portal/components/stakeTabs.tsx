@@ -3,8 +3,8 @@
 import { Tab, Tabs } from 'components/tabs'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathname } from 'i18n/navigation'
-import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
+import { useTranslations } from 'use-intl'
 import { isStakeEnabledOnTestnet } from 'utils/stake'
 import { isSamePathOrUnder } from 'utils/url'
 

@@ -1,6 +1,6 @@
-import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 import { StakeToken } from 'types/stake'
+import { useTranslations } from 'use-intl'
 
 import { Tvl } from './tvl'
 import { Website } from './website'

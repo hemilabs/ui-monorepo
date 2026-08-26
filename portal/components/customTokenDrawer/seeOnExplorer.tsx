@@ -1,7 +1,7 @@
 import { ExternalLink } from 'components/externalLink'
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import { useChain } from 'hooks/useChain'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 import { type Chain, isAddress } from 'viem'
 
 type Props = {

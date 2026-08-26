@@ -1,8 +1,8 @@
 'use client'
 
 import { Locale } from 'i18n/routing'
-import { useLocale } from 'next-intl'
 import { ReactElement } from 'react'
+import { useLocale } from 'use-intl'
 
 const svgClasses = 'absolute mix-blend-soft-light'
 

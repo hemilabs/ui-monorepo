@@ -10,9 +10,9 @@ import {
   recoverDeposit,
   recoverRedeem,
 } from 'hemi-earn-actions/actions'
-import { useTranslations } from 'next-intl'
 import { type FormEvent, type ReactNode } from 'react'
 import { type EvmToken } from 'types/token'
+import { useTranslations } from 'use-intl'
 import { isAddressEqual } from 'viem'
 
 import { useEarnPools } from '../../../_hooks/useEarnPools'

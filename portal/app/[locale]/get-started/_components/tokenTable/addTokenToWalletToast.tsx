@@ -1,7 +1,7 @@
 'use client'
 
 import { Toast } from 'components/toast'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 type Props = {
   variant: 'error' | 'success'

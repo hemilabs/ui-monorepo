@@ -2,9 +2,9 @@
 
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { UmamiAnalyticsProvider } from 'components/umamiAnalyticsProvider'
-import { useLocale } from 'next-intl'
 import { ComponentProps, useCallback } from 'react'
 import { parsePath } from 'react-router'
+import { useLocale } from 'use-intl'
 import { unlocalizedPathname } from 'utils/url'
 
 const GlobalTracking = lazyWithFallback(() =>

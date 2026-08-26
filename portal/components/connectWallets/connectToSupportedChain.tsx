@@ -1,6 +1,6 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 export const ConnectToSupportedChain = function () {
   const t = useTranslations()

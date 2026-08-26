@@ -1,7 +1,7 @@
 'use client'
 
 import { MagnifyingGlassIcon } from 'components/icons/magnifyingGlassIcon'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 export const NoMatchingTokens = function () {
   const t = useTranslations('get-started')

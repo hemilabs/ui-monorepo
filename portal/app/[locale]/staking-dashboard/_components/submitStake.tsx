@@ -3,11 +3,11 @@
 import { Button, ButtonSize } from 'components/button'
 import { Spinner } from 'components/spinner'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
-import { useTranslations } from 'next-intl'
 import {
   type StakingDashboardToken,
   type StakingOperationRunning,
 } from 'types/stakingDashboard'
+import { useTranslations } from 'use-intl'
 
 type Props = {
   buttonSize?: ButtonSize

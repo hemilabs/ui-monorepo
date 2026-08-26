@@ -1,5 +1,5 @@
-import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
+import { useTranslations } from 'use-intl'
 import { isNativeToken } from 'utils/nativeToken'
 import { queryStringObjectToString } from 'utils/url'
 import { zeroAddress } from 'viem'

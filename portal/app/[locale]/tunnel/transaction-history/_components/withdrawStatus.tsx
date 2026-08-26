@@ -1,4 +1,3 @@
-import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import {
   BtcWithdrawStatus,
@@ -7,6 +6,7 @@ import {
   ToEvmWithdrawOperation,
   WithdrawTunnelOperation,
 } from 'types/tunnel'
+import { useTranslations } from 'use-intl'
 import { isToEvmWithdraw } from 'utils/tunnel'
 
 import { EvmWithdrawalWaitTimeToProve } from '../../_components/evmWithdrawalWaitTime'

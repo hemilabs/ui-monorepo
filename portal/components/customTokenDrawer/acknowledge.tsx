@@ -1,7 +1,7 @@
 'use client'
 
 import { Checkbox } from 'components/checkbox'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 type Props = {
   acknowledged: boolean

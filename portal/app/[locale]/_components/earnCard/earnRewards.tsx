@@ -1,7 +1,7 @@
 import { Image } from 'components/image'
 import { Locale } from 'i18n/routing'
-import { useLocale, useTranslations } from 'next-intl'
 import { MouseEventHandler } from 'react'
+import { useLocale, useTranslations } from 'use-intl'
 
 import earnEn from './icons/en.svg'
 import earnEs from './icons/es.svg'

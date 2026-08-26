@@ -1,9 +1,9 @@
 import { DisplayAmount } from 'components/displayAmount'
 import { TokenLogo } from 'components/tokenLogo'
-import { useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type EvmToken } from 'types/token'
+import { useTranslations } from 'use-intl'
 import { formatUnits } from 'viem'
 
 const Row = ({ children, label }: { children: ReactNode; label: string }) => (

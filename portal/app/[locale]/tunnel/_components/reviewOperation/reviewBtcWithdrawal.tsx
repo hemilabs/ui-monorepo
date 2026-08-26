@@ -12,7 +12,6 @@ import { WarningBox } from 'components/warningBox'
 import { useChain } from 'hooks/useChain'
 import { useSimpleVaultGracePeriod } from 'hooks/useSimpleVaultGracePeriod'
 import { useToken } from 'hooks/useToken'
-import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
 import {
@@ -20,6 +19,7 @@ import {
   type BtcWithdrawStatusType,
   type ToBtcWithdrawOperation,
 } from 'types/tunnel'
+import { useTranslations } from 'use-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { secondsToHours } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'

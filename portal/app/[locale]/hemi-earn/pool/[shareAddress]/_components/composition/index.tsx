@@ -1,9 +1,9 @@
 'use client'
 
 import { Card } from 'components/card'
-import { useTranslations } from 'next-intl'
 import { useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
+import { useTranslations } from 'use-intl'
 import { type Address, type Chain } from 'viem'
 
 import { CompositionIcon } from '../../../../_icons/compositionIcon'

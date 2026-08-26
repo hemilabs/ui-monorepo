@@ -1,8 +1,8 @@
 import { Balance } from 'components/cryptoBalance'
 import { RenderFiatBalance } from 'components/fiatBalance'
-import { useTranslations } from 'next-intl'
 import { ComponentProps, ComponentType, ReactNode } from 'react'
 import { Token } from 'types/token'
+import { useTranslations } from 'use-intl'
 import { parseTokenUnits } from 'utils/token'
 
 import { isInputError } from './utils'

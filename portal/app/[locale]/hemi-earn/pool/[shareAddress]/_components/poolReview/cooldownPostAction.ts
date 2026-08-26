@@ -2,8 +2,8 @@ import {
   ProgressStatus,
   type ProgressStatusType,
 } from 'components/reviewOperation/progressStatus'
-import { type useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
+import { type useTranslations } from 'use-intl'
 import {
   secondsPerHour,
   secondsToDaysAndHours,

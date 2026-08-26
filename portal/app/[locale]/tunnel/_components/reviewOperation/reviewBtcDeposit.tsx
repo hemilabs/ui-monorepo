@@ -13,13 +13,13 @@ import { useChain } from 'hooks/useChain'
 import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
 import { useHemi } from 'hooks/useHemi'
 import { useToken } from 'hooks/useToken'
-import { useTranslations } from 'next-intl'
 import { EvmToken, type BtcToken } from 'types/token'
 import {
   type BtcDepositOperation,
   BtcDepositStatus,
   type BtcDepositStatusType,
 } from 'types/tunnel'
+import { useTranslations } from 'use-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'

@@ -1,6 +1,6 @@
 import { type Locale } from 'i18n/routing'
 import { useLocale } from 'next-intl'
-import { type ComponentProps, startTransition, useMemo } from 'react'
+import { type ComponentProps, useMemo } from 'react'
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router'
 import { type Href, toLocation, unlocalizedPathname } from 'utils/url'
 
@@ -29,19 +29,12 @@ export const useRouter = function () {
   return useMemo(
     () => ({
       back: () => navigate(-1),
-      // In a transition so a suspending destination keeps the current screen
-      // up: the Suspense around the Outlet has no fallback, so committing it
-      // would blank the content area.
       push: (href: Href, options?: NavigateOptions) =>
-        startTransition(() =>
-          navigate(withLocale(href, options?.locale ?? locale)),
-        ),
+        navigate(withLocale(href, options?.locale ?? locale)),
       replace: (href: Href, options?: NavigateOptions) =>
-        startTransition(() =>
-          navigate(withLocale(href, options?.locale ?? locale), {
-            replace: true,
-          }),
-        ),
+        navigate(withLocale(href, options?.locale ?? locale), {
+          replace: true,
+        }),
     }),
     [locale, navigate],
   )

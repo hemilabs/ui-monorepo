@@ -1,22 +1,22 @@
-import EcosystemLayout from 'app/[locale]/ecosystem/layout'
-import EcosystemPage from 'app/[locale]/ecosystem/page'
-import GenesisDropLayout from 'app/[locale]/genesis-drop/layout'
-import GenesisDropPage from 'app/[locale]/genesis-drop/page'
-import GetStartedLayout from 'app/[locale]/get-started/layout'
-import GetStartedPage from 'app/[locale]/get-started/page'
-import HemiEarnLayout from 'app/[locale]/hemi-earn/layout'
-import HemiEarnPage from 'app/[locale]/hemi-earn/page'
-import PoolPage from 'app/[locale]/hemi-earn/pool/[shareAddress]/page'
+import { EcosystemLayout } from 'app/[locale]/ecosystem/layout'
+import { EcosystemPage } from 'app/[locale]/ecosystem/page'
+import { GenesisDropLayout } from 'app/[locale]/genesis-drop/layout'
+import { GenesisDropPage } from 'app/[locale]/genesis-drop/page'
+import { GetStartedLayout } from 'app/[locale]/get-started/layout'
+import { GetStartedPage } from 'app/[locale]/get-started/page'
+import { HemiEarnLayout } from 'app/[locale]/hemi-earn/layout'
+import { HemiEarnPage } from 'app/[locale]/hemi-earn/page'
+import { PoolPage } from 'app/[locale]/hemi-earn/pool/[shareAddress]/page'
 import { LocaleLayout } from 'app/[locale]/layout'
-import NotFound from 'app/[locale]/not-found'
-import StakeDashboardPage from 'app/[locale]/stake/dashboard/page'
-import StakeLayout from 'app/[locale]/stake/layout'
-import StakePage from 'app/[locale]/stake/page'
-import StakingDashboardLayout from 'app/[locale]/staking-dashboard/layout'
-import StakingDashboardPage from 'app/[locale]/staking-dashboard/page'
+import { NotFound } from 'app/[locale]/not-found'
+import { StakeDashboardPage } from 'app/[locale]/stake/dashboard/page'
+import { StakeLayout } from 'app/[locale]/stake/layout'
+import { StakePage } from 'app/[locale]/stake/page'
+import { StakingDashboardLayout } from 'app/[locale]/staking-dashboard/layout'
+import { StakingDashboardPage } from 'app/[locale]/staking-dashboard/page'
 import { TunnelLayout } from 'app/[locale]/tunnel/layout'
-import TunnelPage from 'app/[locale]/tunnel/page'
-import TransactionHistoryPage from 'app/[locale]/tunnel/transaction-history/page'
+import { TunnelPage } from 'app/[locale]/tunnel/page'
+import { TransactionHistoryPage } from 'app/[locale]/tunnel/transaction-history/page'
 import { featureFlags } from 'app/featureFlags'
 import { UntranslatedError500 } from 'components/error500'
 import { ErrorBoundary } from 'components/errorBoundary'
@@ -30,17 +30,12 @@ import {
   useLocation,
 } from 'react-router'
 
-// The paths the Next redirect pages served, kept so existing bookmarks and
-// shared links still land where they did. `/stake` and the `staking-dashbord`
-// typo were aliases, not plain locale prefixes.
-const legacyPaths = {
-  '/demos': '/ecosystem',
-  '/genesis-drop': '/genesis-drop',
-  '/get-started': '/get-started',
-  '/hemi-earn': '/hemi-earn',
+// The two entry paths that do not simply gain a locale: `/stake` pointed at the
+// dashboard, and the folder shipped misspelled. Everything else is handled by
+// the fallback in the locale layout.
+const pathAliases = {
   '/stake': '/stake/dashboard',
   '/staking-dashbord': '/staking-dashboard',
-  '/tunnel': '/tunnel',
 }
 
 const ToPreferredLocale = function ({ path = '' }: { path?: string }) {
@@ -105,7 +100,7 @@ export const App = () => (
             }
             path="/"
           />
-          {Object.entries(legacyPaths).map(([from, to]) => (
+          {Object.entries(pathAliases).map(([from, to]) => (
             <Route
               element={<ToPreferredLocale path={to} />}
               key={from}

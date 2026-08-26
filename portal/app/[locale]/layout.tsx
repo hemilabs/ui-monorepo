@@ -67,13 +67,10 @@ export const LocaleLayout = function () {
   const { hash, pathname, search } = useLocation()
 
   if (!hasLocale(routing.locales, locale)) {
-    // Keep everything after the unknown locale, so a link shared with a locale
-    // we do not support still lands on the page it pointed at.
-    const rest = pathname.replace(/^\/[^/]*/, '').replace(/\/+$/, '')
     return (
       <Navigate
         replace
-        to={{ hash, pathname: `/${preferredLocale()}${rest}`, search }}
+        to={{ hash, pathname: `/${preferredLocale()}${pathname}`, search }}
       />
     )
   }

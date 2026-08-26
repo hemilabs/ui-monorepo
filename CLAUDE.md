@@ -149,7 +149,7 @@ const useMyHook = function () {
 }
 ```
 
-- All strings that are visible to users must be translated depending on the locale. We use `next-intl` for translated resources.
+- All strings that are visible to users must be translated depending on the locale. We use `use-intl` for translated resources.
 - Use function-based components in React.
 
 ## Portal rules

@@ -23,6 +23,7 @@ export type HemiEarnAssetConfig = AssetData & {
 // One representative config per share OFT. A share can accept multiple deposit
 // assets (e.g. USDC + USDT → sVUSD), so `share`/`remoteShare` repeat across
 // configs while `asset` does not — consumers that key off the share (pools,
+// TVL) must dedupe first or they double-count.
 export const uniqueShareConfigs = (configs: HemiEarnAssetConfig[]) => [
   ...new Map(
     configs.map(config => [config.share.toLowerCase(), config]),

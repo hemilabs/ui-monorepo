@@ -1,11 +1,14 @@
-import { Metadata } from 'next'
+import { useDocumentTitle } from 'hooks/useDocumentTitle'
+import { Outlet } from 'react-router'
 
 import StakeLayoutClient from './_components/stakeLayoutClient'
 
-export const metadata: Metadata = {
-  title: 'Stake | Hemi Portal',
-}
+export const StakeLayout = function () {
+  useDocumentTitle('Stake | Hemi Portal')
 
-export default function StakeLayout(props: { children: React.ReactNode }) {
-  return <StakeLayoutClient {...props} />
+  return (
+    <StakeLayoutClient>
+      <Outlet />
+    </StakeLayoutClient>
+  )
 }

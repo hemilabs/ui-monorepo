@@ -13,7 +13,7 @@ import demosIcon from './_images/demos_small.png'
 import pureFinanceImg from './_images/pure_finance_large.png'
 import pureFinanceIcon from './_images/pure_finance_small.svg'
 
-const Ecosystem = function () {
+export const EcosystemPage = function () {
   const t = useTranslations('ecosystem')
   const [networkType] = useNetworkType()
 
@@ -59,5 +59,3 @@ const Ecosystem = function () {
     </PageLayout>
   )
 }
-
-export default Ecosystem

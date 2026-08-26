@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react'
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
@@ -11,7 +12,19 @@ export default defineConfig({
   // this the workers throw ReferenceError as soon as they hit the network.
   define: { global: 'globalThis' },
   plugins: [react(), polyfills()],
-  resolve: { tsconfigPaths: true },
+  resolve: {
+    // The plugin injects its shims into whichever file touches `Buffer`,
+    // `global` or `process`, including files under packages/, where the plugin
+    // is not installed and the import cannot resolve. Mapping all three keeps
+    // the next one from failing the build the same way.
+    alias: ['buffer', 'global', 'process'].map(shim => ({
+      find: `vite-plugin-node-polyfills/shims/${shim}`,
+      replacement: fileURLToPath(
+        import.meta.resolve(`vite-plugin-node-polyfills/shims/${shim}`),
+      ),
+    })),
+    tsconfigPaths: true,
+  },
   worker: {
     // Worker bundles get their own plugin pipeline, the top-level `plugins`
     // above do not apply to them.

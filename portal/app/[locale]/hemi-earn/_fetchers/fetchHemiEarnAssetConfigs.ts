@@ -23,7 +23,7 @@ export type HemiEarnAssetConfig = AssetData & {
 // One representative config per share OFT. A share can accept multiple deposit
 // assets (e.g. USDC + USDT → sVUSD), so `share`/`remoteShare` repeat across
 // configs while `asset` does not — consumers that key off the share (pools,
-// TVL, static params) must dedupe first or they double-count.
+// TVL) must dedupe first or they double-count.
 export const uniqueShareConfigs = (configs: HemiEarnAssetConfig[]) => [
   ...new Map(
     configs.map(config => [config.share.toLowerCase(), config]),
@@ -75,9 +75,8 @@ const findHemiToken =
     })
 
 // Builds the Hemi Earn asset registry on-chain: each gateway's whitelisted
-// Ethereum tokens → their Hemi counterparts → `Router.assetsData`. Pure async
-// (no queryClient) so it can run at build time in `generateStaticParams`.
-export const fetchHemiEarnAssetConfigs = async function (): Promise<
+// Ethereum tokens → their Hemi counterparts → `Router.assetsData`.
+const fetchHemiEarnAssetConfigs = async function (): Promise<
   HemiEarnAssetConfig[]
 > {
   const hemiClient = getPublicClient(hemi.id)

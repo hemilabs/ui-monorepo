@@ -11,7 +11,7 @@ import { sortTokens } from 'utils/sortTokens'
 import { StakeStrategyTable } from './_components/stakeStrategyTable'
 import { useWalletBalances } from './_hooks/useWalletBalances'
 
-export default function Page() {
+export const StakePage = function () {
   const t = useTranslations('stake-page')
   const { loading: isLoadingBalance, tokensWalletBalance } = useWalletBalances()
 

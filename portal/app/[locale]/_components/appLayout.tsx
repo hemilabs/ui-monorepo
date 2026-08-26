@@ -9,9 +9,11 @@ import {
   Suspense,
   useCallback,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from 'react'
+import { useLocation, useNavigationType } from 'react-router'
 import { screenBreakpoints } from 'styles'
 
 import { AppLayoutContainer } from './appLayoutContainer'
@@ -51,6 +53,20 @@ export const AppLayout = function ({ children }: Props) {
   const [navbarDrawerMounted, setNavbarDrawerMounted] = useState(false)
   const { width } = useWindowSize()
   const { closeDrawer, isDrawerOpen } = useDrawerContext()
+  const { pathname } = useLocation()
+  const navigationType = useNavigationType()
+  const scrollContainer = useRef<HTMLDivElement>(null)
+
+  // Skipped on a pop so the browser's own scroll restoration survives Back.
+  useEffect(
+    function scrollToTopOnNavigation() {
+      if (navigationType === 'POP') {
+        return
+      }
+      scrollContainer.current?.scrollTo({ top: 0 })
+    },
+    [navigationType, pathname],
+  )
 
   const openNavbar = useCallback(function openNavbar() {
     setIsNavbarOpen(true)
@@ -106,7 +122,7 @@ export const AppLayout = function ({ children }: Props) {
           <div className="relative md:hidden">
             <TestnetIndicator />
           </div>
-          <div className="h-full overflow-y-auto">
+          <div className="h-full overflow-y-auto" ref={scrollContainer}>
             <div className="relative h-full overflow-x-hidden pb-3 pt-4 md:pt-12">
               {children}
             </div>

@@ -5,7 +5,7 @@ import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { useSearchParams } from 'next/navigation'
+import { useOptimisticSearchParams } from 'nuqs/adapters/react-router/v8'
 import { useEffect, useMemo } from 'react'
 import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { isNativeAddress } from 'utils/nativeToken'
@@ -44,7 +44,7 @@ const WatchEvmWithdrawal = function ({
     withdrawal.l1ChainId,
   )
   const queryClient = useQueryClient()
-  const searchParams = useSearchParams()
+  const searchParams = useOptimisticSearchParams()
   const txHash = searchParams.get('txHash')
 
   useEffect(

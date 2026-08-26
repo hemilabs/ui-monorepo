@@ -8,7 +8,7 @@ import { AddHemiToken } from './_components/addHemiToken'
 import { AddHemiWallet } from './_components/addHemiWallet'
 import { LearnMore } from './_components/learnMore'
 
-const GetStarted = function () {
+export const GetStartedPage = function () {
   const t = useTranslations('get-started')
 
   return (
@@ -22,5 +22,3 @@ const GetStarted = function () {
     </PageLayout>
   )
 }
-
-export default GetStarted

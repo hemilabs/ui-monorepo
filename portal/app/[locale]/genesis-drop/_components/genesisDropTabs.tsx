@@ -1,7 +1,8 @@
 import { Tab, Tabs } from 'components/tabs'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
+import { usePathname } from 'i18n/navigation'
 import { Suspense } from 'react'
+import { isSamePathOrUnder } from 'utils/url'
 import { useAccount } from 'wagmi'
 
 import { useAllEligibleForTokens } from '../_hooks/useAllEligibleForTokens'
@@ -13,12 +14,12 @@ import { ClaimGroupName } from './claimGroupsName'
 const GenesisDropTabsImpl = function () {
   const { address } = useAccount()
   const [networkType] = useNetworkType()
-  const pathname = usePathnameWithoutLocale()
+  const pathname = usePathname()
   const [selectedClaimGroup] = useSelectedClaimGroup()
 
   const enabled =
     isClaimRewardsEnabledOnTestnet(networkType) &&
-    pathname.startsWith('/genesis-drop')
+    isSamePathOrUnder(pathname, '/genesis-drop')
 
   const { data: eligibleTokens } = useAllEligibleForTokens({ enabled })
 

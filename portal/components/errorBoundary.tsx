@@ -4,9 +4,13 @@ import * as Sentry from '@sentry/nextjs'
 import { GenericError } from 'components/genericError'
 import React from 'react'
 
+type FallbackProps = {
+  reset: VoidFunction
+}
+
 type Props = {
   children: React.ReactNode
-  fallback?: React.ReactNode
+  fallback?: React.ReactNode | ((props: FallbackProps) => React.ReactNode)
 }
 
 type State = {
@@ -30,11 +34,18 @@ export class ErrorBoundary extends React.Component<Props, State> {
     return { hasError: true }
   }
 
+  reset = () => this.setState({ hasError: false })
+
   render() {
-    if (this.state.hasError) {
-      return this.props.fallback ?? <GenericError />
+    if (!this.state.hasError) {
+      return this.props.children
     }
 
-    return this.props.children
+    const { fallback } = this.props
+    if (typeof fallback === 'function') {
+      return fallback({ reset: this.reset })
+    }
+
+    return fallback ?? <GenericError />
   }
 }

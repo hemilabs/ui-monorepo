@@ -4,12 +4,11 @@ import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
 import { LanguageIcon } from 'components/icons/languageIcon'
 import { LegalIcon } from 'components/icons/legalIcon'
-import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useUmami } from 'hooks/useUmami'
-import { useRouter } from 'i18n/navigation'
+import { usePathname, useRouter } from 'i18n/navigation'
 import { getLocalizedLocaleName, locales } from 'i18n/routing'
-import { useSearchParams } from 'next/navigation'
 import { Locale, useLocale, useTranslations } from 'next-intl'
+import { useOptimisticSearchParams } from 'nuqs/adapters/react-router/v8'
 import {
   type ComponentProps,
   type MouseEventHandler,
@@ -139,8 +138,8 @@ const ItemWithSubmenu = function ({
 }
 
 const LanguageMenu = function ({ active }: LanguageProps) {
-  const pathname = usePathnameWithoutLocale()
-  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const searchParams = useOptimisticSearchParams()
   const router = useRouter()
 
   const onClick = function (locale: Locale) {

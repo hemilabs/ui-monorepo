@@ -4,11 +4,11 @@ The Portal is a Web3 app that allows users to interact with Hemi, an L2 that int
 
 ## Structure
 
-The portal is being migrated from Next to Vite (see [#2194](https://github.com/hemilabs/ui-monorepo/issues/2194)). The build already runs on Vite and produces a static bundle, while the routes under `app/` still use the Next app router until the routing step lands. It has never relied on SSR.
+The portal is being migrated from Next to Vite (see [#2194](https://github.com/hemilabs/ui-monorepo/issues/2194)). The build runs on Vite and produces a static bundle, and routing is now react-router: `app.tsx` at the root holds the route table, and `main.tsx` is the entry. It has never relied on SSR. Every page is wired in `app.tsx`.
 
 Some relevant folders are:
 
-- [/app](./app/) folder, which contains the Next's App router code
+- [/app](./app/) folder, which holds the pages and their co-located `_components`/`_hooks`/`_utils`. The `[locale]` folder name is a leftover from the Next app router and no longer drives routing, which `app.tsx` does.
 - [/components](./components/) folder, which contains reusable components to the entire app that are not tied to a specific page.
 - [/hooks](./hooks/) folder, which contains reusable hooks to the entire app that are not tied to a specific page.
 - [/messages/](./messages/) folder, which contain a file per locale with all the translated resources.

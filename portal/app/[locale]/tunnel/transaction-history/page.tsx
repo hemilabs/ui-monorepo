@@ -8,7 +8,7 @@ import { useState } from 'react'
 import { type FilterOptions, TopBar } from './_components/topBar'
 import { TransactionHistory } from './_components/transactionHistory'
 
-const Page = function () {
+export const TransactionHistoryPage = function () {
   const [filterOption, setFilterOption] = useState<FilterOptions>({
     action: 'all',
     operation: 'all',
@@ -36,5 +36,3 @@ const Page = function () {
     </PageLayout>
   )
 }
-
-export default Page

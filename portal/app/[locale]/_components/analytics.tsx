@@ -3,7 +3,9 @@
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { UmamiAnalyticsProvider } from 'components/umamiAnalyticsProvider'
 import { useLocale } from 'next-intl'
-import { ComponentProps } from 'react'
+import { ComponentProps, useCallback } from 'react'
+import { parsePath } from 'react-router'
+import { unlocalizedPathname } from 'utils/url'
 
 const GlobalTracking = lazyWithFallback(() =>
   import('./globalTracking').then(mod => ({ default: mod.GlobalTracking })),
@@ -14,14 +16,19 @@ export const Analytics = function ({
 }: Pick<ComponentProps<typeof UmamiAnalyticsProvider>, 'children'>) {
   const locale = useLocale()
 
-  const removeLocaleAndTrailingSlash = (url: string) =>
-    (url.endsWith('/') ? url.slice(0, -1) : url).replace(`/${locale}`, '')
+  const processUrl = useCallback(
+    function stripLocale(url: string) {
+      const { pathname = '', search = '' } = parsePath(url)
+      return `${unlocalizedPathname(pathname, locale)}${search}`
+    },
+    [locale],
+  )
 
   return (
     <>
       <UmamiAnalyticsProvider
         autoTrack={false}
-        processUrl={removeLocaleAndTrailingSlash}
+        processUrl={processUrl}
         {...(import.meta.env.VITE_ENABLE_ANALYTICS === 'true' && {
           src: import.meta.env.VITE_ANALYTICS_URL,
           websiteId: import.meta.env.VITE_ANALYTICS_WEBSITE_ID,

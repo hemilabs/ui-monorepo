@@ -6,7 +6,7 @@ import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useBtcWithdrawals } from 'hooks/useBtcWithdrawals'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { useSearchParams } from 'next/navigation'
+import { useOptimisticSearchParams } from 'nuqs/adapters/react-router/v8'
 import { useEffect } from 'react'
 import { BtcWithdrawStatus, ToBtcWithdrawOperation } from 'types/tunnel'
 import {
@@ -32,7 +32,7 @@ function WatchBitcoinWithdrawal({
   const { updateWithdrawal } = useTunnelHistory()
   const { queryKey: btcBalanceQueryKey } = useBitcoinBalance()
   const queryClient = useQueryClient()
-  const searchParams = useSearchParams()
+  const searchParams = useOptimisticSearchParams()
   const txHash = searchParams.get('txHash')
 
   useEffect(

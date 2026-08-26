@@ -53,7 +53,7 @@ function StakingContent() {
   )
 }
 
-function Page() {
+export const StakingDashboardPage = function () {
   const t = useTranslations('staking-dashboard')
   const [networkType] = useNetworkType()
   const { symbol } = useHemiToken()
@@ -73,5 +73,3 @@ function Page() {
     </PageLayout>
   )
 }
-
-export default Page

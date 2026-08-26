@@ -1,104 +1,83 @@
-// Turbopack requires skeleton.css be loaded before globals.css
-// otherwise it overrides a bunch of styles which breaks skeletons
-import 'react-loading-skeleton/dist/skeleton.css'
-import 'styles/globals.css'
-
+import { ErrorBoundary } from 'components/errorBoundary'
 import { ConnectWalletDrawerProvider } from 'context/connectWalletDrawerContext'
 import { TunnelHistoryProvider } from 'context/tunnelHistoryContext'
 import { WalletsContext } from 'context/walletsContext'
-import { type Locale, routing } from 'i18n/routing'
-import { type Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import { NextIntlClientProvider, hasLocale } from 'next-intl'
-import { setRequestLocale } from 'next-intl/server'
-import { NuqsAdapter } from 'nuqs/adapters/next/app'
-import { type ReactNode, Suspense } from 'react'
+import { DocumentTitleProvider } from 'hooks/useDocumentTitle'
+import { getMessages } from 'i18n/messages'
+import { type Locale, preferredLocale, routing } from 'i18n/routing'
+import { hasLocale, NextIntlClientProvider } from 'next-intl'
+import { Suspense, use, useEffect } from 'react'
 import { SkeletonTheme } from 'react-loading-skeleton'
+import { Navigate, Outlet, useLocation, useParams } from 'react-router'
 
 import { Analytics } from './_components/analytics'
 import { AppLayout } from './_components/appLayout'
 import { AppOverlays } from './_components/appOverlays'
 import { NavbarDesktop } from './_components/navbar/navbarDesktop'
+import { RouteError } from './_components/routeError'
 import { Workers } from './_components/workers'
 
-type PageProps = {
-  params: Promise<{ locale: Locale }>
-}
-
-async function getMessages(locale: Locale) {
-  // See https://github.com/amannn/next-intl/issues/663
-  // and https://next-intl.dev/docs/getting-started/app-router/with-i18n-routing#add-setrequestlocale-to-all-relevant-layouts-and-pages
-  setRequestLocale(locale)
-
-  try {
-    return (await import(`../../messages/${locale}.json`)).default
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
-    notFound()
-  }
-  return undefined
-}
-
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
-  const { locale } = await params
-  const { metadata } = await getMessages(locale)
-
-  return {
-    title: metadata.title,
-  }
-}
-
-export const generateStaticParams = async () =>
-  routing.locales.map(locale => ({ locale }))
-
-export default async function RootLayout({
-  children,
-  params,
-}: {
-  children: ReactNode
-  params: Promise<{ locale: string }>
-}) {
-  const { locale } = await params
-
-  if (!hasLocale(routing.locales, locale)) {
-    notFound()
-    return undefined
-  }
-
-  const messages = await getMessages(locale)
+const Shell = function ({ locale }: { locale: Locale }) {
+  const messages = use(getMessages(locale))
+  useEffect(
+    function syncDocumentLanguage() {
+      document.documentElement.lang = locale
+    },
+    [locale],
+  )
 
   return (
-    <html lang={locale}>
-      <body className="w-svw overflow-y-hidden">
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <NuqsAdapter>
-            <SkeletonTheme baseColor="#E5E5E5" highlightColor="#FAFAFA">
-              <WalletsContext locale={locale}>
-                <ConnectWalletDrawerProvider>
-                  <Analytics>
-                    <TunnelHistoryProvider>
-                      <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
-                        <div className="max-xl:hidden">
-                          <NavbarDesktop />
-                        </div>
-                        <AppLayout>
-                          {/* Last resort Suspense wrapper usage.
-                        Ideally, Suspense wrappers should be added where needed in each page */}
-                          <Suspense>{children}</Suspense>
-                          <AppOverlays />
-                          <Workers />
-                        </AppLayout>
-                      </div>
-                    </TunnelHistoryProvider>
-                  </Analytics>
-                </ConnectWalletDrawerProvider>
-              </WalletsContext>
-            </SkeletonTheme>
-          </NuqsAdapter>
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <DocumentTitleProvider defaultTitle={messages.metadata.title}>
+        <SkeletonTheme baseColor="#E5E5E5" highlightColor="#FAFAFA">
+          <WalletsContext locale={locale}>
+            <ConnectWalletDrawerProvider>
+              <Analytics>
+                <TunnelHistoryProvider>
+                  <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
+                    <div className="max-xl:hidden">
+                      <NavbarDesktop />
+                    </div>
+                    <AppLayout>
+                      <ErrorBoundary
+                        fallback={({ reset }) => <RouteError reset={reset} />}
+                      >
+                        {/* Last resort Suspense wrapper usage.
+                      Ideally, Suspense wrappers should be added where needed in each page */}
+                        <Suspense>
+                          <Outlet />
+                        </Suspense>
+                      </ErrorBoundary>
+                      <AppOverlays />
+                      <Workers />
+                    </AppLayout>
+                  </div>
+                </TunnelHistoryProvider>
+              </Analytics>
+            </ConnectWalletDrawerProvider>
+          </WalletsContext>
+        </SkeletonTheme>
+      </DocumentTitleProvider>
+    </NextIntlClientProvider>
+  )
+}
+
+export const LocaleLayout = function () {
+  const { locale } = useParams()
+  const { hash, pathname, search } = useLocation()
+
+  if (!hasLocale(routing.locales, locale)) {
+    return (
+      <Navigate
+        replace
+        to={{ hash, pathname: `/${preferredLocale()}${pathname}`, search }}
+      />
+    )
+  }
+
+  return (
+    <Suspense>
+      <Shell locale={locale} />
+    </Suspense>
   )
 }

@@ -6,7 +6,7 @@ import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { useSearchParams } from 'next/navigation'
+import { useOptimisticSearchParams } from 'nuqs/adapters/react-router/v8'
 import { useEffect } from 'react'
 import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { isPendingOperation } from 'utils/tunnel'
@@ -38,7 +38,7 @@ const WatchBtcDeposit = function ({
   const { updateDeposit } = useTunnelHistory()
   const { queryKey: btcBalanceQueryKey } = useBitcoinBalance()
   const queryClient = useQueryClient()
-  const searchParams = useSearchParams()
+  const searchParams = useOptimisticSearchParams()
   const txHash = searchParams.get('txHash')
 
   useEffect(

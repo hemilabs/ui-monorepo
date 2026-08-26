@@ -103,7 +103,8 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   const { errorKey } = amountValidation
 
   const {
-    canSubmit,
+    addressError,
+    canSubmitAddress,
     customAddress,
     customAddressEnabled,
     customAddressTouched,
@@ -113,9 +114,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     setCustomAddress,
     setCustomAddressEnabled,
     setCustomAddressTouched,
-    validationError,
   } = useReceivingBitcoinAddress({
-    amountValidation,
     network: toNetworkId,
     walletAddress: btcAddress,
   })
@@ -195,7 +194,11 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     )
   }
 
-  const canWithdraw = !isLoadingMinWithdrawalSats && canSubmit
+  const canWithdraw = [
+    !isLoadingMinWithdrawalSats,
+    amountValidation.canSubmit,
+    canSubmitAddress,
+  ].every(Boolean)
   const feeEstimationEnabled = !!receivingAddress && canWithdraw
 
   const disableForm = !canWithdraw || isWithdrawing
@@ -294,7 +297,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
         <SubmitWithTwoWallets
           disabled={disableForm}
           text={getSubmitText()}
-          validationError={validationError}
+          validationError={amountValidation.error ?? addressError}
         />
       }
     />

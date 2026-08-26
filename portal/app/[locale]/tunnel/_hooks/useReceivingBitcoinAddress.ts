@@ -2,23 +2,19 @@ import { useDebounce } from '@hemilabs/react-hooks/useDebounce'
 import { type BtcChain } from 'btc-wallet/chains'
 import { useTranslations } from 'next-intl'
 import { useCallback, useState } from 'react'
-import type { validateSubmit } from 'utils/validateSubmit'
 
 import { useIsValidBtcAddress } from './useIsValidBtcAddress'
 
 type Props = {
-  amountValidation: ReturnType<typeof validateSubmit>
   network: BtcChain['id']
   walletAddress: string | undefined
 }
 
 /**
  * Owns the address a Bitcoin withdrawal pays out to: the connected wallet's
- * address by default, or a custom one entered by the user. The address check is
- * merged into the amount validation, as the submit button reports it last.
+ * address by default, or a custom one entered by the user.
  */
 export const useReceivingBitcoinAddress = function ({
-  amountValidation,
   network,
   walletAddress,
 }: Props) {
@@ -59,12 +55,11 @@ export const useReceivingBitcoinAddress = function ({
     return data === false ? t('input-a-correct-custom-address') : undefined
   }
 
-  const canSubmit =
-    amountValidation.canSubmit &&
-    (!customAddressEnabled || (isChecked && data === true))
+  const canSubmitAddress = !customAddressEnabled || (isChecked && data === true)
 
   return {
-    canSubmit,
+    addressError: getAddressError(),
+    canSubmitAddress,
     customAddress,
     customAddressEnabled,
     customAddressTouched,
@@ -78,6 +73,5 @@ export const useReceivingBitcoinAddress = function ({
     setCustomAddress,
     setCustomAddressEnabled,
     setCustomAddressTouched,
-    validationError: amountValidation.error ?? getAddressError(),
   }
 }

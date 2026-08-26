@@ -5,19 +5,27 @@ import { PageLayout } from 'components/pageLayout'
 import { TestnetDisabled } from 'components/testnetDisabled'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
-import { Outlet } from 'react-router'
+import { Outlet, useMatch } from 'react-router'
+import { isAddress } from 'viem'
 
-import NotFound from '../not-found'
+import { NotFound } from '../not-found'
 
 import { EarnStatusUpdaters } from './_components/earnStatusUpdaters'
 import { TopSection } from './_components/topSection'
 import { LocalEarnOperationsProvider } from './_context/localEarnOperationsContext'
 
-const Layout = function () {
+export const HemiEarnLayout = function () {
   const [networkType] = useNetworkType()
+  const pool = useMatch('/:locale/hemi-earn/pool/:shareAddress')
   const t = useTranslations('hemi-earn')
 
   if (!featureFlags.enableHemiEarnPage) {
+    return <NotFound />
+  }
+
+  // Checked up here rather than in the page: below this point the layout has
+  // already mounted the delivery watcher, and a 404 has no business polling.
+  if (pool && !isAddress(pool.params.shareAddress ?? '')) {
     return <NotFound />
   }
 
@@ -37,4 +45,3 @@ const Layout = function () {
     </LocalEarnOperationsProvider>
   )
 }
-export default Layout

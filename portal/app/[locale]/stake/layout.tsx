@@ -3,7 +3,7 @@ import { Outlet } from 'react-router'
 
 import StakeLayoutClient from './_components/stakeLayoutClient'
 
-export default function StakeLayout() {
+export const StakeLayout = function () {
   useDocumentTitle('Stake | Hemi Portal')
 
   return (

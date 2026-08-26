@@ -29,7 +29,7 @@ const hasAllocation = function (
   return allocation.amount > BigInt(0)
 }
 
-export default function Page() {
+export const GenesisDropPage = function () {
   const { status } = useAccount()
 
   const { data: allEligibility } = useAllEligibleForTokens()

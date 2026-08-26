@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 
 import { error404 } from '../_images/error404'
 
-export default function NotFound() {
+export const NotFound = function () {
   const t = useTranslations('error-pages')
 
   return (

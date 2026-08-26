@@ -35,7 +35,7 @@ const Tabs = function () {
   ) : null
 }
 
-const Layout = () => (
+export const GenesisDropLayout = () => (
   <>
     <Tabs />
     <PageLayout variant="genesisDrop">
@@ -47,5 +47,3 @@ const Layout = () => (
     </PageLayout>
   </>
 )
-
-export default Layout

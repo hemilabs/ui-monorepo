@@ -11,7 +11,7 @@ import {
   YourStake,
 } from './_components/stakePointsCards'
 
-const Page = function () {
+export const StakeDashboardPage = function () {
   const t = useTranslations('stake-page')
 
   return (
@@ -33,5 +33,3 @@ const Page = function () {
     </PageLayout>
   )
 }
-
-export default Page

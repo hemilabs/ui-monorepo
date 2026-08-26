@@ -35,15 +35,13 @@ const TokensGate = function ({ children }: { children: ReactNode }) {
   return <>{children}</>
 }
 
-export default function Page() {
-  return (
-    <PageLayout variant="wide">
-      <TopSection />
-      <TokensGate>
-        <InfoCards />
-        <PoolsSection />
-        <TransactionsSection />
-      </TokensGate>
-    </PageLayout>
-  )
-}
+export const HemiEarnPage = () => (
+  <PageLayout variant="wide">
+    <TopSection />
+    <TokensGate>
+      <InfoCards />
+      <PoolsSection />
+      <TransactionsSection />
+    </TokensGate>
+  </PageLayout>
+)

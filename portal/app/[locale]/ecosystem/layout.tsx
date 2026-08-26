@@ -1,7 +1,7 @@
 import { useDocumentTitle } from 'hooks/useDocumentTitle'
 import { Outlet } from 'react-router'
 
-export default function EcosystemLayout() {
+export const EcosystemLayout = function () {
   useDocumentTitle('Ecosystem | Hemi Portal')
 
   return <Outlet />

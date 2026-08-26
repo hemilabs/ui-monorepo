@@ -3,7 +3,7 @@ import { Outlet } from 'react-router'
 
 import StakingDashboardLayoutClient from './_components/stakingDashboardLayoutClient'
 
-const StakingDashboardLayout = function () {
+export const StakingDashboardLayout = function () {
   useDocumentTitle('Staking dashboard | Hemi Portal')
 
   return (
@@ -12,5 +12,3 @@ const StakingDashboardLayout = function () {
     </StakingDashboardLayoutClient>
   )
 }
-
-export default StakingDashboardLayout

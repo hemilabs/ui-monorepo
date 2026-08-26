@@ -23,7 +23,7 @@ export const useReceivingBitcoinAddress = function ({
   const debouncedCustomAddress = useDebounce(customAddress, 300)
   const t = useTranslations('tunnel-page.submit-button')
 
-  const { data, isError } = useIsValidBtcAddress({
+  const { data, isError, isLoading } = useIsValidBtcAddress({
     address: debouncedCustomAddress,
     enabled: customAddressEnabled,
     network,
@@ -56,11 +56,15 @@ export const useReceivingBitcoinAddress = function ({
 
   const canSubmitAddress = !customAddressEnabled || (isChecked && data === true)
 
+  const isCheckingAddress =
+    customAddressEnabled && customAddress !== '' && (!isChecked || isLoading)
+
   return {
     addressError: getAddressError(),
     canSubmitAddress,
     customAddress,
     customAddressEnabled,
+    isCheckingAddress,
     isCustomAddressValid: getIsCustomAddressValid(),
     receivingAddress: customAddressEnabled ? customAddress : walletAddress,
     reset: useCallback(function () {

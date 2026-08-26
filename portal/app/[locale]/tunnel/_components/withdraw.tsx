@@ -107,6 +107,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     canSubmitAddress,
     customAddress,
     customAddressEnabled,
+    isCheckingAddress,
     isCustomAddressValid,
     receivingAddress,
     reset: resetReceivingAddress,
@@ -251,6 +252,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
             customAddress={customAddress}
             customAddressEnabled={customAddressEnabled}
             disabled={isWithdrawing}
+            isCheckingAddress={isCheckingAddress}
             isCustomAddressValid={isCustomAddressValid}
             onCustomAddressChange={setCustomAddress}
             onCustomAddressEnabledChange={setCustomAddressEnabled}

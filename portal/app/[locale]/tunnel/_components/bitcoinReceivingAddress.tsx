@@ -1,5 +1,6 @@
 import { GreenCheckIcon } from 'components/icons/greenCheckIcon'
 import { WarningIcon } from 'components/icons/warningIcon'
+import { Spinner } from 'components/spinner'
 import { Toggle } from 'components/toggle'
 import { useTranslations } from 'next-intl'
 
@@ -13,6 +14,7 @@ type Props = {
   customAddress: string
   customAddressEnabled: boolean
   disabled: boolean
+  isCheckingAddress: boolean
   isCustomAddressValid: boolean | undefined
   onCustomAddressChange: (customAddress: string) => void
   onCustomAddressEnabledChange: (customAddressEnabled: boolean) => void
@@ -25,6 +27,7 @@ export const BitcoinReceivingAddress = function ({
   customAddress,
   customAddressEnabled,
   disabled,
+  isCheckingAddress,
   isCustomAddressValid,
   onCustomAddressChange,
   onCustomAddressEnabledChange,
@@ -81,6 +84,7 @@ export const BitcoinReceivingAddress = function ({
                 <span id={errorId}>{t('invalid-address')}</span>
               </div>
             )}
+            {isCheckingAddress && <Spinner size="xSmall" variant="orange" />}
             {isCustomAddressValid === true && <GreenCheckIcon />}
           </>
         ) : (

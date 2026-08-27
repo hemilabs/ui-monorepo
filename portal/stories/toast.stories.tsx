@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { Toast } from 'components/toast'
+import { NextIntlClientProvider } from 'next-intl'
+import { NuqsTestingAdapter } from 'nuqs/adapters/testing'
 
 const meta = {
   args: {
@@ -16,8 +18,7 @@ const meta = {
     tx: { control: false },
     variant: {
       control: 'inline-radio',
-      mapping: { none: undefined },
-      options: ['none', 'success', 'error'],
+      options: ['success', 'error'],
     },
   },
   component: Toast,
@@ -48,6 +49,15 @@ export const WithTransaction: Story = {
 }
 
 export const WithGoTo: Story = {
+  decorators: [
+    Story => (
+      <NextIntlClientProvider locale="en" messages={{}}>
+        <NuqsTestingAdapter>
+          <Story />
+        </NuqsTestingAdapter>
+      </NextIntlClientProvider>
+    ),
+  ],
   parameters: {
     controls: { disable: true },
   },

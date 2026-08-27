@@ -82,8 +82,7 @@ function enableSentry() {
     ignoreErrors,
     // Integrations listed here are added alongside the default ones.
     integrations: [
-      // `@sentry/nextjs` added this to its defaults and `@sentry/react` does
-      // not, so without it `tracesSampleRate` below silently does nothing.
+      // Required for `tracesSampleRate` below to do anything.
       Sentry.browserTracingIntegration(),
       // See https://docs.sentry.io/platforms/javascript/guides/react/configuration/integrations/captureconsole/
       Sentry.captureConsoleIntegration({

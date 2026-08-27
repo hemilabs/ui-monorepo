@@ -66,6 +66,11 @@ function enableSentry() {
   // See https://github.com/getsentry/sentry-javascript-bundler-plugins/issues/791
   const release = import.meta.env.VITE_SENTRY_RELEASE
 
+  // Matching frames against bundle keys only works once the bundler plugin has
+  // stamped them. With no key every frame reads as third party and the whole
+  // event is dropped, so the integration has to stay out rather than filter.
+  const filterKey = import.meta.env.VITE_SENTRY_FILTER_KEY_ID
+
   Sentry.init({
     denyUrls: [
       // Filter all Wallet Connect related urls
@@ -98,12 +103,17 @@ function enableSentry() {
         },
       }),
       // See https://docs.sentry.io/platforms/javascript/guides/react/configuration/filtering/#using-thirdpartyerrorfilterintegration
-      Sentry.thirdPartyErrorFilterIntegration({
-        // Should skip all errors that are entirely made of third party frames in the stack trace.
-        // Let's start with this, we can make it more strict if needed.
-        behaviour: 'drop-error-if-exclusively-contains-third-party-frames',
-        filterKeys: [import.meta.env.VITE_SENTRY_FILTER_KEY_ID!],
-      }),
+      ...(filterKey
+        ? [
+            Sentry.thirdPartyErrorFilterIntegration({
+              // Should skip all errors that are entirely made of third party frames in the stack trace.
+              // Let's start with this, we can make it more strict if needed.
+              behaviour:
+                'drop-error-if-exclusively-contains-third-party-frames',
+              filterKeys: [filterKey],
+            }),
+          ]
+        : []),
     ],
     normalizeDepth: 6,
     release,

@@ -1,6 +1,6 @@
 // This import is what configures the Sentry client. Nothing else references
 // the module, so dropping it silently turns every captureException into a no-op.
-import './instrumentation-client'
+import './instrument'
 import 'react-loading-skeleton/dist/skeleton.css'
 import 'styles/globals.css'
 

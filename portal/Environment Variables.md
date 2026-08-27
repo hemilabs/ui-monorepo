@@ -23,7 +23,8 @@ The `portal/scripts/generateServerConfig.js` script that emitted the `.htaccess`
 
 Changes related to Sentry:
 
-- portal/instrumentation-client.ts
+- portal/instrument.ts
+- portal/vite.config.ts
 
 ## Actions
 

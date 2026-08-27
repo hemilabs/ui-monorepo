@@ -1,11 +1,14 @@
 import Big from 'big.js'
-import { type Account } from 'btc-wallet/unisat'
+import { type Account, type BtcTransaction } from 'btc-wallet/unisat'
 import { shorten } from 'crypto-shortener'
 import { smartRound } from 'smart-round'
 import { type Address, type Hash } from 'viem'
 
 export const formatBtcAddress = (account: Account) =>
   shorten(account, { length: 5 })
+
+export const formatBtcHash = (txHash: BtcTransaction) =>
+  shorten(txHash, { length: 4 })
 
 export const formatEvmAddress = (address: Address) =>
   shorten(address, { length: 4, prefixes: ['0x'] })

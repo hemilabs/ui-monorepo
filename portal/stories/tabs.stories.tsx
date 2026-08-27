@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Tab, Tabs } from 'components/tabs'
 import { type ComponentProps, useState } from 'react'
 

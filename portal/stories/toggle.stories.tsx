@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Toggle } from 'components/toggle'
 import type { ComponentProps } from 'react'
 import { useArgs } from 'storybook/preview-api'

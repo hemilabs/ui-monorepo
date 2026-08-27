@@ -1,4 +1,4 @@
-import type { Preview } from '@storybook/nextjs'
+import type { Preview } from '@storybook/react-vite'
 import { createElement } from 'react'
 import { SkeletonTheme } from 'react-loading-skeleton'
 

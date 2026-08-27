@@ -68,7 +68,6 @@ export const BitcoinReceivingAddress = function ({
               aria-invalid={showError}
               aria-label={receivingText}
               autoCapitalize="none"
-              // mounting only happens when the user turns the toggle on
               autoFocus
               className="min-w-0 flex-1 bg-transparent text-neutral-950 placeholder:text-neutral-500 focus:outline-none disabled:cursor-not-allowed"
               disabled={disabled}

@@ -12,6 +12,7 @@ import { useTranslations } from 'next-intl'
 import { ConnectBtcWallet } from './connectBtcWallet'
 
 type Props = {
+  btcWalletRequired: boolean
   disabled: boolean
   text: string
   validationError: string | undefined
@@ -26,6 +27,7 @@ const ConnectEvmWallet = dynamic(
 )
 
 export const SubmitWithTwoWallets = function ({
+  btcWalletRequired,
   disabled,
   text,
   validationError,
@@ -36,7 +38,7 @@ export const SubmitWithTwoWallets = function ({
   const t = useTranslations('tunnel-page.submit-button')
   const { track } = useUmami()
 
-  if (allDisconnected) {
+  if (btcWalletRequired && allDisconnected) {
     const onClick = function () {
       openDrawer()
       track?.('form - connect wallets')
@@ -52,7 +54,7 @@ export const SubmitWithTwoWallets = function ({
     return <ConnectEvmWallet />
   }
 
-  if (btcWalletStatus !== 'connected') {
+  if (btcWalletRequired && btcWalletStatus !== 'connected') {
     return <ConnectBtcWallet />
   }
 
@@ -65,6 +67,10 @@ export const SubmitWithTwoWallets = function ({
       {text}
     </Button>
   )
+
+  if (!btcWalletRequired) {
+    return <SubmitWhenConnected submitButton={submitButton} />
+  }
 
   return (
     <SubmitWhenConnectedToChain

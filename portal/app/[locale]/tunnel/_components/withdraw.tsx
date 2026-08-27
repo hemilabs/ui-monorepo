@@ -56,6 +56,18 @@ const WalletsConnected = dynamic(
   { ssr: false },
 )
 
+const areRequiredWalletsConnected = ({
+  btcWalletRequired,
+  btcWalletStatus,
+  evmWalletStatus,
+}: {
+  btcWalletRequired: boolean
+  btcWalletStatus: ReturnType<typeof useAccounts>['btcWalletStatus']
+  evmWalletStatus: ReturnType<typeof useAccounts>['evmWalletStatus']
+}) =>
+  walletIsConnected(evmWalletStatus) &&
+  (!btcWalletRequired || walletIsConnected(btcWalletStatus))
+
 type BtcWithdrawProps = {
   state: TypedTunnelState<HemiToBitcoinTunneling>
 }
@@ -193,6 +205,13 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     )
   }
 
+  const btcWalletRequired = !customAddressEnabled
+  const requiredWalletsConnected = areRequiredWalletsConnected({
+    btcWalletRequired,
+    btcWalletStatus,
+    evmWalletStatus,
+  })
+
   const canWithdraw = [
     !isLoadingMinWithdrawalSats,
     amountValidation.canSubmit,
@@ -272,11 +291,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
         <FormContent
           calculateReceiveAmount={calculateReceiveAmount}
           errorKey={
-            walletIsConnected(btcWalletStatus) &&
-            walletIsConnected(evmWalletStatus) &&
-            balanceLoaded
-              ? errorKey
-              : undefined
+            requiredWalletsConnected && balanceLoaded ? errorKey : undefined
           }
           isRunningOperation={isWithdrawing}
           setMaxBalanceButton={
@@ -293,6 +308,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       onSubmit={disableForm ? undefined : handleWithdraw}
       submitButton={
         <SubmitWithTwoWallets
+          btcWalletRequired={btcWalletRequired}
           disabled={disableForm}
           text={getSubmitText()}
           validationError={amountValidation.error ?? addressError}

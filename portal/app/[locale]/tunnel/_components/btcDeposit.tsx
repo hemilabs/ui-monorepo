@@ -223,6 +223,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
       onSubmit={handleDeposit}
       submitButton={
         <SubmitWithTwoWallets
+          btcWalletRequired
           disabled={!canDeposit || isDepositing || isMinDepositsSatsLoading}
           text={isDepositing ? t('common.depositing') : t('common.deposit')}
           validationError={validationError}

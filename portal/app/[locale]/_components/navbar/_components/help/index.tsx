@@ -1,4 +1,5 @@
 import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
+import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { AnalyticsEvent } from 'app/analyticsEvents'
 import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
@@ -17,7 +18,8 @@ import {
   useState,
 } from 'react'
 import ReactDOM from 'react-dom'
-import { getPortalContainer } from 'utils/document'
+import { screenBreakpoints } from 'styles'
+import { getDrawerPortalContainer, getPortalContainer } from 'utils/document'
 
 import { CmcAttribution } from '../cmcAttribution'
 import { TermsAndConditions } from '../termsAndConditions'
@@ -195,7 +197,14 @@ export const Help = function () {
   const t = useTranslations('navbar.help')
   const activeLocale = useLocale()
 
-  const helpPortalContainer = getPortalContainer()
+  const { width } = useWindowSize()
+  // Below `xl`, the navbar is rendered inside a Drawer portaled to body, so
+  // portal the panel to body too — otherwise it lands in #app-layout-container,
+  // whose backdrop-blur traps it under the Drawer overlay, which eats the clicks.
+  const isInlineNavbar = width >= screenBreakpoints.xl
+  const helpPortalContainer = isInlineNavbar
+    ? getPortalContainer()
+    : getDrawerPortalContainer()
 
   return (
     <div className="cursor-pointer" ref={ref}>
@@ -206,7 +215,7 @@ export const Help = function () {
         helpPortalContainer &&
         ReactDOM.createPortal(
           <div
-            className="absolute bottom-0 left-0 z-30 flex h-36 w-full flex-col items-start rounded-t-2xl bg-white p-4 shadow-lg md:top-0 md:h-fit md:w-64 md:translate-x-52 md:translate-y-12 md:rounded-lg md:p-1 lg:translate-x-2 lg:translate-y-2"
+            className="absolute bottom-0 left-0 z-30 flex h-36 w-full flex-col items-start rounded-t-2xl bg-white p-4 shadow-lg md:top-0 md:h-fit md:w-64 md:translate-x-58 md:translate-y-2 md:rounded-lg md:p-1 xl:translate-x-2"
             onMouseDown={e => e.stopPropagation()}
             onTouchStart={e => e.stopPropagation()}
           >

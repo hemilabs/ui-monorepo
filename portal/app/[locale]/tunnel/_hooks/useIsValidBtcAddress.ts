@@ -20,9 +20,9 @@ export const useIsValidBtcAddress = function ({
   return useQuery({
     enabled: enabled && address !== '',
     queryFn: () =>
-      isValidBtcAddress(hemiClient, address).then(
-        isValid => isValid && isAddressOfBitcoinNetwork(address, network),
-      ),
+      isAddressOfBitcoinNetwork(address, network)
+        ? isValidBtcAddress(hemiClient, address)
+        : Promise.resolve(false),
     queryKey: ['is-valid-btc-address', hemi.id, network, address],
     staleTime: Infinity,
   })

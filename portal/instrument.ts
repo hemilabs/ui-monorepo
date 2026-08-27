@@ -1,4 +1,11 @@
 import * as Sentry from '@sentry/react'
+import { useEffect } from 'react'
+import {
+  createRoutesFromChildren,
+  matchRoutes,
+  useLocation,
+  useNavigationType,
+} from 'react-router'
 
 const unsupportedWalletErrors = [
   '@polkadot/keyring requires direct dependencies',
@@ -82,8 +89,16 @@ function enableSentry() {
     ignoreErrors,
     // Integrations listed here are added alongside the default ones.
     integrations: [
-      // Required for `tracesSampleRate` below to do anything.
-      Sentry.browserTracingIntegration(),
+      // Required for `tracesSampleRate` below to do anything. The router-aware
+      // one names transactions after the route pattern rather than the raw URL,
+      // so every share address does not become its own transaction.
+      Sentry.reactRouterBrowserTracingIntegration({
+        createRoutesFromChildren,
+        matchRoutes,
+        useEffect,
+        useLocation,
+        useNavigationType,
+      }),
       // See https://docs.sentry.io/platforms/javascript/guides/react/configuration/integrations/captureconsole/
       Sentry.captureConsoleIntegration({
         levels: ['error', 'warn'],

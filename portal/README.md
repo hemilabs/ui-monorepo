@@ -73,7 +73,7 @@ VITE_PROXY_OVM_L1_STANDARD_BRIDGE=<address>
 VITE_WALLET_CONNECT_PROJECT_ID=<wallet-connect-id>
 # Error reporting with Sentry
 VITE_SENTRY_DSN=<dsn> # Sentry DSN. Also what enables the build-time plugin
-VITE_SENTRY_FILTER_KEY_ID=<string> # Application key used to tell first-party frames from third-party ones. Must reach the build, or every event is dropped
+VITE_SENTRY_FILTER_KEY_ID=<string> # Application key used to tell first-party frames from third-party ones. The filtering is skipped when it does not reach the build
 VITE_SENTRY_RELEASE=<string> # Release name, in the "portal@yyyymmdd_sequence" format. Envelopes not matching it are rewritten
 VITE_TRACES_SAMPLE_RATE=<number> # Ratio of transactions sampled for tracing. Ignored when not a number
 ```

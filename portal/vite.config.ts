@@ -28,11 +28,16 @@ export default defineConfig(function ({ mode }) {
                 name: env.VITE_SENTRY_RELEASE,
               }
             : undefined,
-        // Matches what `@sentry/nextjs` did: the maps exist only long enough to
-        // be uploaded, so the bundle never ships the sources. Note the plugin
-        // deletes them even when no upload happened, which is also what the
-        // Next build did.
-        sourcemaps: { filesToDeleteAfterUpload: ['./dist/**/*.map'] },
+        // The maps exist only long enough to be uploaded, so the bundle never
+        // ships the sources. The plugin deletes them even when no upload
+        // happened, which is why this is unconditional. Anchored to this file
+        // rather than the cwd, since the glob is resolved against wherever the
+        // build was started from.
+        sourcemaps: {
+          filesToDeleteAfterUpload: [
+            fileURLToPath(new URL('dist/**/*.map', import.meta.url)),
+          ],
+        },
         telemetry: false,
       }),
     )

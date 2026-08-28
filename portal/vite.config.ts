@@ -7,8 +7,6 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 const polyfills = () => nodePolyfills({ include: ['http', 'https', 'util'] })
 
 export default defineConfig(function ({ mode }) {
-  // `process.env` never sees the `.env` files here, unlike under Next, and the
-  // filter key only lives there: no CI job passes it.
   const env = loadEnv(mode, process.cwd(), '')
 
   const plugins: PluginOption[] = [react(), polyfills()]
@@ -51,10 +49,9 @@ export default defineConfig(function ({ mode }) {
       // window between writing and deleting.
       sourcemap: env.VITE_SENTRY_DSN ? 'hidden' : false,
     },
-    // Not for our code: stream-http and readable-stream, which the http/https
-    // polyfills pull in, read the bare `global` at module scope. The plugin
-    // injects its shim into the main bundle but not into worker ones, so without
-    // this the workers throw ReferenceError as soon as they hit the network.
+    // stream-http and readable-stream, pulled in by the http/https polyfills,
+    // read the bare `global`. The polyfill plugin shims it in the main bundle
+    // but not in worker ones.
     define: { global: 'globalThis' },
     plugins,
     resolve: {

@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react'
 import { EcosystemLayout } from 'app/[locale]/ecosystem/layout'
 import { EcosystemPage } from 'app/[locale]/ecosystem/page'
 import { GenesisDropLayout } from 'app/[locale]/genesis-drop/layout'
@@ -29,6 +30,10 @@ import {
   Routes,
   useLocation,
 } from 'react-router'
+
+// Without this the route tree never reaches Sentry, and every transaction is
+// named after the raw pathname instead of the pattern it matched.
+const SentryRoutes = Sentry.wrapReactRouterRouting(Routes)
 
 // The two entry paths that do not simply gain a locale: `/stake` pointed at the
 // dashboard, and the folder shipped misspelled. Everything else is handled by
@@ -91,7 +96,7 @@ export const App = () => (
   >
     <BrowserRouter>
       <NuqsAdapter>
-        <Routes>
+        <SentryRoutes>
           <Route
             element={
               <ToPreferredLocale
@@ -142,7 +147,7 @@ export const App = () => (
             </Route>
             <Route element={<NotFound />} path="*" />
           </Route>
-        </Routes>
+        </SentryRoutes>
       </NuqsAdapter>
     </BrowserRouter>
   </ErrorBoundary>

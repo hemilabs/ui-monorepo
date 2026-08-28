@@ -7,13 +7,13 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 const polyfills = () => nodePolyfills({ include: ['http', 'https', 'util'] })
 
 export default defineConfig(function ({ mode }) {
-  // `process.env` never sees the `.env` files here, unlike under Next, and the
-  // filter key only lives there: no CI job passes it.
   const env = loadEnv(mode, process.cwd(), '')
+
+  const instrumentForSentry = !!env.VITE_SENTRY_DSN && !process.env.STORYBOOK
 
   const plugins: PluginOption[] = [react(), polyfills()]
 
-  if (env.VITE_SENTRY_DSN) {
+  if (instrumentForSentry) {
     plugins.push(
       sentryVitePlugin({
         applicationKey: env.VITE_SENTRY_FILTER_KEY_ID,
@@ -28,11 +28,16 @@ export default defineConfig(function ({ mode }) {
                 name: env.VITE_SENTRY_RELEASE,
               }
             : undefined,
-        // Matches what `@sentry/nextjs` did: the maps exist only long enough to
-        // be uploaded, so the bundle never ships the sources. Note the plugin
-        // deletes them even when no upload happened, which is also what the
-        // Next build did.
-        sourcemaps: { filesToDeleteAfterUpload: ['./dist/**/*.map'] },
+        // The maps exist only long enough to be uploaded, so the bundle never
+        // ships the sources. The plugin deletes them even when no upload
+        // happened, which is why this is unconditional. Anchored to this file
+        // rather than the cwd, since the glob is resolved against wherever the
+        // build was started from.
+        sourcemaps: {
+          filesToDeleteAfterUpload: [
+            fileURLToPath(new URL('dist/**/*.map', import.meta.url)),
+          ],
+        },
         telemetry: false,
       }),
     )
@@ -44,12 +49,11 @@ export default defineConfig(function ({ mode }) {
       // is done, so nothing generates them when it is not running. "hidden"
       // also drops the sourceMappingURL, keeping them out of reach in the
       // window between writing and deleting.
-      sourcemap: env.VITE_SENTRY_DSN ? 'hidden' : false,
+      sourcemap: instrumentForSentry ? 'hidden' : false,
     },
-    // Not for our code: stream-http and readable-stream, which the http/https
-    // polyfills pull in, read the bare `global` at module scope. The plugin
-    // injects its shim into the main bundle but not into worker ones, so without
-    // this the workers throw ReferenceError as soon as they hit the network.
+    // stream-http and readable-stream, pulled in by the http/https polyfills,
+    // read the bare `global`. The polyfill plugin shims it in the main bundle
+    // but not in worker ones.
     define: { global: 'globalThis' },
     plugins,
     resolve: {

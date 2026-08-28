@@ -9,9 +9,11 @@ const polyfills = () => nodePolyfills({ include: ['http', 'https', 'util'] })
 export default defineConfig(function ({ mode }) {
   const env = loadEnv(mode, process.cwd(), '')
 
+  const instrumentForSentry = !!env.VITE_SENTRY_DSN && !process.env.STORYBOOK
+
   const plugins: PluginOption[] = [react(), polyfills()]
 
-  if (env.VITE_SENTRY_DSN) {
+  if (instrumentForSentry) {
     plugins.push(
       sentryVitePlugin({
         applicationKey: env.VITE_SENTRY_FILTER_KEY_ID,
@@ -47,7 +49,7 @@ export default defineConfig(function ({ mode }) {
       // is done, so nothing generates them when it is not running. "hidden"
       // also drops the sourceMappingURL, keeping them out of reach in the
       // window between writing and deleting.
-      sourcemap: env.VITE_SENTRY_DSN ? 'hidden' : false,
+      sourcemap: instrumentForSentry ? 'hidden' : false,
     },
     // stream-http and readable-stream, pulled in by the http/https polyfills,
     // read the bare `global`. The polyfill plugin shims it in the main bundle

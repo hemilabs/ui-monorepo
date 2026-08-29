@@ -8,6 +8,7 @@ import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
+import { walletIsConnected } from 'utils/wallet'
 
 import { ConnectBtcWallet } from './connectBtcWallet'
 
@@ -50,7 +51,7 @@ export const SubmitWithTwoWallets = function ({
     )
   }
 
-  if (evmWalletStatus !== 'connected') {
+  if (!walletIsConnected(evmWalletStatus)) {
     return <ConnectEvmWallet />
   }
 

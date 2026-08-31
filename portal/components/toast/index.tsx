@@ -5,6 +5,7 @@ import { ExternalLink } from 'components/externalLink'
 import { CheckCircleIcon } from 'components/icons/checkCircleIcon'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { InfoIcon } from 'components/icons/infoIcon'
+import { useTranslations } from 'next-intl'
 import { type ComponentProps, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 
@@ -41,6 +42,7 @@ export const Toast = function ({
   variant = 'success',
 }: Props) {
   const [closedToast, setClosedToast] = useState(false)
+  const t = useTranslations('common')
 
   useEffect(
     function autoCloseToast() {
@@ -67,12 +69,12 @@ export const Toast = function ({
   return ReactDOM.createPortal(
     <div className="group fixed inset-x-4 bottom-20 z-40 flex flex-col gap-y-3 overflow-hidden rounded-lg bg-neutral-950 p-3 text-white shadow-sm md:bottom-auto md:left-auto md:right-8 md:top-20 md:w-96">
       <div className="flex flex-col gap-y-0.5">
-        <div className="flex h-4.5 items-center gap-x-2">
+        <div className="flex min-h-4.5 items-center gap-x-2">
           <ToastIcon variant={variant} />
           <p className="text-sm font-medium text-white">{title}</p>
           <button
-            aria-label="Close notification"
-            className="ml-auto size-4 shrink-0 transition-opacity duration-200 focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100"
+            aria-label={t('close-notification')}
+            className="ml-auto size-4 shrink-0 transition-opacity duration-200 focus-visible:opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100"
             onClick={() => setClosedToast(true)}
           >
             <CloseIcon className="size-full [&>path]:fill-neutral-400 [&>path]:hover:fill-white" />

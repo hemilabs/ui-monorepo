@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { Toast } from 'components/toast'
+import messages from 'messages/en.json'
 import { NextIntlClientProvider } from 'next-intl'
 import { NuqsTestingAdapter } from 'nuqs/adapters/testing'
 
@@ -22,6 +23,13 @@ const meta = {
     },
   },
   component: Toast,
+  decorators: [
+    Story => (
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <Story />
+      </NextIntlClientProvider>
+    ),
+  ],
   title: 'Components/Toast',
 } satisfies Meta<typeof Toast>
 
@@ -51,11 +59,9 @@ export const WithTransaction: Story = {
 export const WithGoTo: Story = {
   decorators: [
     Story => (
-      <NextIntlClientProvider locale="en" messages={{}}>
-        <NuqsTestingAdapter>
-          <Story />
-        </NuqsTestingAdapter>
-      </NextIntlClientProvider>
+      <NuqsTestingAdapter>
+        <Story />
+      </NuqsTestingAdapter>
     ),
   ],
   parameters: {

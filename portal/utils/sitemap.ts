@@ -6,19 +6,6 @@ type Params = {
   routes: readonly string[]
 }
 
-const escapeXml = (value: string) =>
-  value.replace(
-    /[&<>"']/g,
-    character =>
-      ({
-        '"': '&quot;',
-        '&': '&amp;',
-        "'": '&apos;',
-        '<': '&lt;',
-        '>': '&gt;',
-      })[character]!,
-  )
-
 const toUrl = ({
   baseUrl,
   locale,
@@ -27,7 +14,7 @@ const toUrl = ({
   baseUrl: string
   locale: Locale
   route: string
-}) => escapeXml(`${baseUrl.replace(/\/+$/, '')}/${locale}${route}`)
+}) => new URL(`/${locale}${route}`, baseUrl).toString().replace(/&/g, '&amp;')
 
 export const buildSitemap = function ({ baseUrl, locales, routes }: Params) {
   const entries = routes.flatMap(route =>
@@ -35,11 +22,11 @@ export const buildSitemap = function ({ baseUrl, locales, routes }: Params) {
       const alternates = locales
         .map(
           alternate =>
-            `    <xhtml:link rel="alternate" hreflang="${alternate}" href="${toUrl({ baseUrl, locale: alternate, route })}" />`,
+            `<xhtml:link rel="alternate" hreflang="${alternate}" href="${toUrl({ baseUrl, locale: alternate, route })}" />`,
         )
         .join('\n')
 
-      return `  <url>\n    <loc>${toUrl({ baseUrl, locale, route })}</loc>\n${alternates}\n  </url>`
+      return `<url>\n<loc>${toUrl({ baseUrl, locale, route })}</loc>\n${alternates}\n</url>`
     }),
   )
 

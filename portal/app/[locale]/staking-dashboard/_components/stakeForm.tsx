@@ -21,7 +21,7 @@ import { StakeReview } from './stakeReview'
 const StakeToast = dynamic(
   () => import('./stakeToast').then(mod => mod.StakeToast),
   {
-    loading: () => <ToastLoader className="h-16" />,
+    loading: () => <ToastLoader />,
     ssr: false,
   },
 )

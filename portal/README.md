@@ -71,7 +71,13 @@ VITE_PROXY_OVM_L1_CROSS_DOMAIN_MESSENGER=<address>
 VITE_PROXY_OVM_L1_STANDARD_BRIDGE=<address>
 # Use it to enable wallet connect
 VITE_WALLET_CONNECT_PROJECT_ID=<wallet-connect-id>
-# Error reporting with Sentry
+# Sitemap
+PORTAL_SITE_URL=<url> # Base URL the sitemap is built from. Read at build time. Without it no sitemap.xml is emitted
+# Error reporting with Sentry. The unprefixed ones are read at build time and never reach the browser
+SENTRY_AUTH_TOKEN=<token> # Authorizes the source map upload
+SENTRY_ENVIRONMENT=<string> # Environment the release is deployed to. Together with VITE_SENTRY_RELEASE it is what names the release
+SENTRY_ORG=<string> # Sentry organization slug
+SENTRY_PROJECT=<string> # Sentry project slug
 VITE_SENTRY_DSN=<dsn> # Sentry DSN. Also what enables the build-time plugin
 VITE_SENTRY_FILTER_KEY_ID=<string> # Application key used to tell first-party frames from third-party ones. The filtering is skipped when it does not reach the build
 VITE_SENTRY_RELEASE=<string> # Release name, in the "portal@yyyymmdd_sequence" format. Envelopes not matching it are rewritten

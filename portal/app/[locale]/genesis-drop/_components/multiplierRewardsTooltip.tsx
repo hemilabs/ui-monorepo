@@ -1,7 +1,7 @@
 import { InfoIcon } from 'components/icons/infoIcon'
 import { Tooltip } from 'components/tooltip'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 type Props = {
   multiplier?: number

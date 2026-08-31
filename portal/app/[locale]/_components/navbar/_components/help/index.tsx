@@ -7,7 +7,6 @@ import { LegalIcon } from 'components/icons/legalIcon'
 import { useUmami } from 'hooks/useUmami'
 import { usePathname, useRouter } from 'i18n/navigation'
 import { getLocalizedLocaleName, locales } from 'i18n/routing'
-import { Locale, useLocale, useTranslations } from 'next-intl'
 import { useOptimisticSearchParams } from 'nuqs/adapters/react-router/v8'
 import {
   type ComponentProps,
@@ -16,6 +15,7 @@ import {
   useState,
 } from 'react'
 import ReactDOM from 'react-dom'
+import { Locale, useLocale, useTranslations } from 'use-intl'
 import { getPortalContainer } from 'utils/document'
 
 import { CmcAttribution } from '../cmcAttribution'

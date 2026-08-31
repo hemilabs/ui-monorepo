@@ -2,7 +2,7 @@
 
 import { PageLayout } from 'components/pageLayout'
 import { PageTitle } from 'components/pageTitle'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { AddHemiToken } from './_components/addHemiToken'
 import { AddHemiWallet } from './_components/addHemiWallet'

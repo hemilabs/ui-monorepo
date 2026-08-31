@@ -1,5 +1,5 @@
 import { LazyConnectEvmWallet } from 'components/lazyConnectEvmWallet'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 export const DisconnectedState = function () {
   const t = useTranslations('common')

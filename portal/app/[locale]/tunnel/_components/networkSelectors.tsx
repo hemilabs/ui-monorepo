@@ -1,7 +1,7 @@
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
-import { useTranslations } from 'next-intl'
 import { RemoteChain } from 'types/chain'
+import { useTranslations } from 'use-intl'
 
 import { type TunnelState } from '../_hooks/useTunnelState'
 

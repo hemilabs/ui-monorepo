@@ -1,6 +1,6 @@
 import { hemi as hemiMainnet, hemiSepolia } from 'hemi-viem'
 import { useHemi } from 'hooks/useHemi'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 import { Chain } from 'viem'
 
 type Props = {

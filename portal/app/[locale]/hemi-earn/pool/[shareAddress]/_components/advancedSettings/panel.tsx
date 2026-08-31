@@ -1,7 +1,7 @@
 import { WarningIcon } from 'components/icons/warningIcon'
 import { Toggle } from 'components/toggle'
-import { useTranslations } from 'next-intl'
 import { type KeyboardEvent } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { type SlippageLevel } from '../../../../_utils/slippage'
 import { type PoolOperation } from '../../_types/operations'

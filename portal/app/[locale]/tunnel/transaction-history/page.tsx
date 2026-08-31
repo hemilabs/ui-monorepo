@@ -2,8 +2,8 @@
 
 import { PageLayout } from 'components/pageLayout'
 import { PageTitle } from 'components/pageTitle'
-import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { type FilterOptions, TopBar } from './_components/topBar'
 import { TransactionHistory } from './_components/transactionHistory'

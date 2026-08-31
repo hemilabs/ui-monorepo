@@ -3,9 +3,9 @@
 import { HemiSymbolWhite } from 'components/icons/hemiSymbolWhite'
 import { Spinner } from 'components/spinner'
 import { type EligibilityData } from 'genesis-drop-actions'
-import { useTranslations } from 'next-intl'
 import { useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
+import { useTranslations } from 'use-intl'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 

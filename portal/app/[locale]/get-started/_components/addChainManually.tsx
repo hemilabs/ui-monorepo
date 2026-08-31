@@ -1,4 +1,4 @@
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 import { Chain } from 'viem'
 
 import { ChainHeaderRow } from './addChain/chainHeaderRow'

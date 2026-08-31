@@ -19,9 +19,7 @@ minimumReleaseAgeExclude:
   - 'hemi-viem'
 
 onlyBuiltDependencies:
-  - '@parcel/watcher' # native file watcher used by next-intl in dev mode
-  - '@sentry/cli' # downloads sentry-cli binary for sourcemap upload during `next build`
-  - '@swc/core' # SWC platform binary used by next-intl's build-time AST transforms
+  - '@sentry/cli' # downloads the sentry-cli binary @sentry/vite-plugin uses to upload source maps
   - 'esbuild' # platform binary used by vitest (via vite) for test transforms
   - 'sharp' # libvips bindings required by Next.js production image optimization
   - 'unrs-resolver' # Rust resolver required by eslint-import-resolver-typescript during lint

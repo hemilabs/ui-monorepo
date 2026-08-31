@@ -3,8 +3,8 @@
 import { Button } from 'components/button'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { WarningBox } from 'components/warningBox'
-import { useTranslations } from 'next-intl'
 import { type FormEvent, type ReactNode } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { useClaimUnstake } from '../../../_hooks/useClaimUnstake'
 import { unstakeSettlement } from '../../../_utils/settlement'

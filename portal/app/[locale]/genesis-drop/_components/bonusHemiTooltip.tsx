@@ -1,7 +1,7 @@
 import { InfoIcon } from 'components/icons/infoIcon'
 import { Tooltip } from 'components/tooltip'
-import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
+import { useTranslations } from 'use-intl'
 
 type Props = {
   bonus: ReactNode

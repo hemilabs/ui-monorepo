@@ -1,4 +1,11 @@
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from '@sentry/react'
+import { useEffect } from 'react'
+import {
+  createRoutesFromChildren,
+  matchRoutes,
+  useLocation,
+  useNavigationType,
+} from 'react-router'
 
 const unsupportedWalletErrors = [
   '@polkadot/keyring requires direct dependencies',
@@ -30,10 +37,6 @@ function enableSentry() {
     // Coming from an extension probably, we don't use anything related to this
     `Failed to execute 'transaction' on 'IDBDatabase'`,
     'Database deleted by request of the user',
-    // Nextjs errors when pre-fetching is aborted due to user navigation.
-    // See https://github.com/vercel/next.js/pull/73975 and https://github.com/vercel/next.js/pull/73985
-    // should not happen anymore after Next 15.3
-    'Falling back to browser navigation',
     // user has not enough gas
     'insufficient funds for gas * price + value',
     // Metamask error
@@ -70,6 +73,11 @@ function enableSentry() {
   // See https://github.com/getsentry/sentry-javascript-bundler-plugins/issues/791
   const release = import.meta.env.VITE_SENTRY_RELEASE
 
+  // Matching frames against bundle keys only works once the bundler plugin has
+  // stamped them. With no key every frame reads as third party and the whole
+  // event is dropped, so the integration has to stay out rather than filter.
+  const filterKey = import.meta.env.VITE_SENTRY_FILTER_KEY_ID
+
   Sentry.init({
     denyUrls: [
       // Filter all Wallet Connect related urls
@@ -81,17 +89,25 @@ function enableSentry() {
     ignoreErrors,
     // Integrations listed here are added alongside the default ones.
     integrations: [
-      // See https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/integrations/captureconsole/
+      // Required for `tracesSampleRate` below to do anything. The router-aware
+      // one names transactions after the route pattern rather than the raw URL,
+      // so every share address does not become its own transaction.
+      Sentry.reactRouterBrowserTracingIntegration({
+        createRoutesFromChildren,
+        matchRoutes,
+        useEffect,
+        useLocation,
+        useNavigationType,
+      }),
+      // See https://docs.sentry.io/platforms/javascript/guides/react/configuration/integrations/captureconsole/
       Sentry.captureConsoleIntegration({
         levels: ['error', 'warn'],
       }),
-      // See https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/integrations/extraerrordata/
+      // See https://docs.sentry.io/platforms/javascript/guides/react/configuration/integrations/extraerrordata/
       Sentry.extraErrorDataIntegration(),
-      // See https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/integrations/httpclient/
+      // See https://docs.sentry.io/platforms/javascript/guides/react/configuration/integrations/httpclient/
       Sentry.httpClientIntegration(),
-      // This overrides the default implementation of the RewriteFrames
-      // integration from sentry/nextjs. It adds the decodeURI() to fix a mismatch
-      // of sourceMaps in reported issues.
+      // decodeURI() is what fixes a source map mismatch in reported issues.
       // ref: https://github.com/getsentry/sentry/issues/19713#issuecomment-696614341
       Sentry.rewriteFramesIntegration({
         iteratee(frame) {
@@ -100,13 +116,18 @@ function enableSentry() {
           return frame
         },
       }),
-      // See https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/filtering/#using-thirdpartyerrorfilterintegration
-      Sentry.thirdPartyErrorFilterIntegration({
-        // Should skip all errors that are entirely made of third party frames in the stack trace.
-        // Let's start with this, we can make it more strict if needed.
-        behaviour: 'drop-error-if-exclusively-contains-third-party-frames',
-        filterKeys: [import.meta.env.VITE_SENTRY_FILTER_KEY_ID!],
-      }),
+      // See https://docs.sentry.io/platforms/javascript/guides/react/configuration/filtering/#using-thirdpartyerrorfilterintegration
+      ...(filterKey
+        ? [
+            Sentry.thirdPartyErrorFilterIntegration({
+              // Should skip all errors that are entirely made of third party frames in the stack trace.
+              // Let's start with this, we can make it more strict if needed.
+              behaviour:
+                'drop-error-if-exclusively-contains-third-party-frames',
+              filterKeys: [filterKey],
+            }),
+          ]
+        : []),
     ],
     normalizeDepth: 6,
     release,

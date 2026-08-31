@@ -5,10 +5,10 @@ import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useTranslations } from 'next-intl'
 import { FormEvent } from 'react'
 import { StakingOperationRunning } from 'types/stakingDashboard'
 import { Token } from 'types/token'
+import { useTranslations } from 'use-intl'
 
 import { SubmitStake } from '../../submitStake'
 

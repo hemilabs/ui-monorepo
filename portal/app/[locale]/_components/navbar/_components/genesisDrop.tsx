@@ -1,5 +1,5 @@
 import { GenesisDropIcon } from 'components/icons/genesisDropIcon'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { ItemLink } from './itemLink'
 

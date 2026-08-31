@@ -6,7 +6,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 import { isValidUrl } from 'utils/url'
 import { type Address, type Chain } from 'viem'
 

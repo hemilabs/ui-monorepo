@@ -1,7 +1,7 @@
 import { DisplayAmount } from 'components/displayAmount'
-import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
+import { useTranslations } from 'use-intl'
 import { formatUnits } from 'viem'
 
 import { useBtcWithdrawalTunnelFees } from '../_hooks/useBtcTunnelFees'

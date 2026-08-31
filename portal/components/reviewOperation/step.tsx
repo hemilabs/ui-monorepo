@@ -1,9 +1,9 @@
 import { DisplayAmount } from 'components/displayAmount'
 import { ShortVerticalLine, LongVerticalLine } from 'components/verticalLines'
-import { useTranslations } from 'next-intl'
 import { ComponentProps, ReactNode } from 'react'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
+import { useTranslations } from 'use-intl'
 
 import { FeesIcon } from './_icons/feesIcon'
 import { OneRowBox, TwoRowBox } from './box'

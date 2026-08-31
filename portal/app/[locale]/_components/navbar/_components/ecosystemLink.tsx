@@ -1,5 +1,5 @@
 import { EcosystemIcon } from 'components/icons/ecosystemIcon'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { ItemLink } from './itemLink'
 

@@ -1,11 +1,11 @@
 import { ButtonLink } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
 import { type EvmWalletData } from 'hooks/useAllWallets'
-import { useTranslations } from 'next-intl'
 import { QRCodeSVG } from 'qrcode.react'
 import { useEffect, useState } from 'react'
 import { isMobile, isAndroid, isIOS } from 'react-device-detect'
 import Skeleton from 'react-loading-skeleton'
+import { useTranslations } from 'use-intl'
 import { useConfig, useConnect } from 'wagmi'
 import { getConnections } from 'wagmi/actions'
 

@@ -1,8 +1,8 @@
 import { LockupMonths } from 'genesis-drop-actions'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
+import { useTranslations } from 'use-intl'
 
 import { useClaimGroupConfiguration } from '../_hooks/useClaimGroupConfiguration'
 import { RecommendationLevel } from '../_types'

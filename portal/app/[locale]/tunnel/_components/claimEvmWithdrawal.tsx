@@ -1,9 +1,9 @@
 'use client'
 
 import { Button } from 'components/button'
-import { useTranslations } from 'next-intl'
 import { type FormEvent, useContext } from 'react'
 import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
+import { useTranslations } from 'use-intl'
 
 import { ToEvmWithdrawalContext } from '../_context/toEvmWithdrawalContext'
 import { useClaimTransaction } from '../_hooks/useClaimTransaction'

@@ -1,6 +1,6 @@
 'use client'
 
-import * as Sentry from '@sentry/nextjs'
+import * as Sentry from '@sentry/react'
 import { Connector, watchAccount } from '@wagmi/core'
 import { WalletConnector } from 'btc-wallet/connectors/types'
 import { useAccountEffect as useBtcAccountEffect } from 'btc-wallet/hooks/useAccountEffect'

@@ -3,8 +3,8 @@
 import { Link } from 'components/link'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathname } from 'i18n/navigation'
-import { useTranslations } from 'next-intl'
 import { MouseEvent } from 'react'
+import { useTranslations } from 'use-intl'
 
 const SvgContainer = () => (
   <svg

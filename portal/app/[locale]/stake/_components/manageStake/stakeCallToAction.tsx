@@ -1,6 +1,6 @@
 import { Button } from 'components/button'
-import { useTranslations } from 'next-intl'
 import { StakeStatusEnum, type StakeStatusEnumType } from 'types/stake'
+import { useTranslations } from 'use-intl'
 
 import { CallToAction } from './callToAction'
 

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { type ColumnDef } from '@tanstack/react-table'
 import { EmptyIcon } from 'app/[locale]/staking-dashboard/_icons/emptyIcon'
 import { MoreItemsIcon } from 'app/[locale]/staking-dashboard/_icons/moreItemsIcon'

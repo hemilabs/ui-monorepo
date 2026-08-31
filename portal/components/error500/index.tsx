@@ -2,8 +2,8 @@ import { ExternalLink } from 'components/externalLink'
 import { ExclamationMark } from 'components/icons/exclamationMark'
 import { Image } from 'components/image'
 import hemiSocials from 'hemi-socials'
-import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { errorArtwork } from './errorArtwork'
 

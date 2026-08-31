@@ -1,9 +1,9 @@
 import { Button } from 'components/button'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { type UnlockingOperationRunning } from 'types/stakingDashboard'
+import { useTranslations } from 'use-intl'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useUnlock } from '../../_hooks/useUnlock'

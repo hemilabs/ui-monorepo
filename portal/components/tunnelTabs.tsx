@@ -6,9 +6,9 @@ import { Tab, Tabs } from 'components/tabs'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import { useUmami } from 'hooks/useUmami'
 import { usePathname } from 'i18n/navigation'
-import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
 import { UrlObject } from 'url'
+import { useTranslations } from 'use-intl'
 import { isSamePathOrUnder } from 'utils/url'
 
 const ActionableOperations = lazyWithFallback(() =>

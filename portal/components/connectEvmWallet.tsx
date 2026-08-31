@@ -1,7 +1,7 @@
 import { Button, ButtonSize } from 'components/button'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useUmami } from 'hooks/useUmami'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 export const ConnectEvmWallet = function ({
   buttonSize = 'xLarge',

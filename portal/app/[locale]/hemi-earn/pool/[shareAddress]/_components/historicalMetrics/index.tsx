@@ -1,10 +1,10 @@
 'use client'
 
 import { Card } from 'components/card'
-import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type EvmToken } from 'types/token'
+import { useTranslations } from 'use-intl'
 import { type Address } from 'viem'
 
 import { HistoricalMetricsIcon } from '../../../../_icons/historicalMetricsIcon'

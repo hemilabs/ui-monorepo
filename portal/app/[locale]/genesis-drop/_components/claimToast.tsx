@@ -1,6 +1,6 @@
 import { Toast } from 'components/toast'
 import { useHemi } from 'hooks/useHemi'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 import { formatEvmHash } from 'utils/format'
 import { Hash } from 'viem'
 

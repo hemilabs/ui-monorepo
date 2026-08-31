@@ -1,7 +1,7 @@
 import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
 import { useToken } from 'hooks/useToken'
 import { useUmami } from 'hooks/useUmami'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 import { toChecksumAddress } from 'utils/address'
 import { type Chain, isAddress } from 'viem'
 

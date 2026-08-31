@@ -1,5 +1,4 @@
-import { hasLocale } from 'next-intl'
-import { defineRouting } from 'next-intl/routing'
+import { hasLocale } from 'use-intl'
 
 const defaultLocale = 'en' as const
 export const locales = [defaultLocale, 'es', 'pt'] as const
@@ -14,12 +13,6 @@ export function getLocalizedLocaleName(locale: Locale) {
   }
   return localeName
 }
-
-export const routing = defineRouting({
-  defaultLocale,
-  localeDetection: false,
-  locales,
-})
 
 export const resolveLocale = function (language: string) {
   const [candidate] = language.toLowerCase().split('-')

@@ -1,6 +1,6 @@
 import { useChain } from 'hooks/useChain'
-import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
+import { useTranslations } from 'use-intl'
 import { isNativeAddress } from 'utils/nativeToken'
 import { queryStringObjectToString } from 'utils/url'
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { PageTitle } from 'components/pageTitle'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { TransactionsTable } from './transactionsTable'
 

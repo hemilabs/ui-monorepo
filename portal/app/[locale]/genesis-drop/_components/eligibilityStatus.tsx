@@ -1,4 +1,4 @@
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 const Text = ({ value }: { value: string }) => (
   <div className="relative flex w-full items-center justify-center [&>svg]:h-20">

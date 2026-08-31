@@ -2,7 +2,7 @@
 
 import { Button } from 'components/button'
 import { Modal } from 'components/modal'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { useCancelRedeem } from '../../_hooks/useCancelRedeem'
 import { type EarnTransaction } from '../../types'

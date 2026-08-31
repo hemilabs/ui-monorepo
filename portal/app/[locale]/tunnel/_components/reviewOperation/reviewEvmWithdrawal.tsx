@@ -7,7 +7,6 @@ import {
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useChain } from 'hooks/useChain'
 import { useToken } from 'hooks/useToken'
-import { useTranslations } from 'next-intl'
 import { ReactNode, useContext } from 'react'
 import { EvmToken } from 'types/token'
 import {
@@ -15,6 +14,7 @@ import {
   type MessageStatusType,
   type ToEvmWithdrawOperation,
 } from 'types/tunnel'
+import { useTranslations } from 'use-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 

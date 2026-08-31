@@ -1,7 +1,7 @@
 import { ExplorerIcon } from 'components/icons/explorerIcon'
 import { useHemi } from 'hooks/useHemi'
-import { useTranslations } from 'next-intl'
 import { ComponentProps, Suspense } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { ExternalLinkUI } from './externalLink'
 import { ItemLink } from './itemLink'

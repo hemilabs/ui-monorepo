@@ -2,7 +2,7 @@ import { CheckCircleIcon } from 'components/icons/checkCircleIcon'
 import { ErrorIcon } from 'components/icons/errorIcon'
 import { ReturnCircleIcon } from 'components/icons/returnCircleIcon'
 import { WarningIcon } from 'components/icons/warningIcon'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { useRemoteFailedState } from '../../_hooks/useRemoteFailedState'
 import { decodeFailureReason } from '../../_utils/decodeFailureReason'

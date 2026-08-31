@@ -1,7 +1,7 @@
 import { type Locale } from 'i18n/routing'
-import { useLocale } from 'next-intl'
 import { type ComponentProps, useMemo } from 'react'
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router'
+import { useLocale } from 'use-intl'
 import { type Href, toLocation, unlocalizedPathname } from 'utils/url'
 
 type NavigateOptions = {

@@ -1,8 +1,8 @@
 import { ExternalLink } from 'components/externalLink'
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import { useChain } from 'hooks/useChain'
-import { useTranslations } from 'next-intl'
 import { RemoteChain } from 'types/chain'
+import { useTranslations } from 'use-intl'
 
 type Props = {
   chainId: RemoteChain['id']

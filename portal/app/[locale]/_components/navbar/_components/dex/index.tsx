@@ -8,7 +8,6 @@ import { DexIcon as BaseDexIcon } from 'components/icons/dexIcon'
 import { Image } from 'components/image'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
-import { useTranslations } from 'next-intl'
 import {
   type ComponentProps,
   type MouseEventHandler,
@@ -18,6 +17,7 @@ import {
 } from 'react'
 import ReactDOM from 'react-dom'
 import { screenBreakpoints } from 'styles'
+import { useTranslations } from 'use-intl'
 import { getDrawerPortalContainer, getPortalContainer } from 'utils/document'
 
 import { IconContainer } from '../iconContainer'

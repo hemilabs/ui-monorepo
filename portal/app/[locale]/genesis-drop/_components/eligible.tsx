@@ -3,7 +3,7 @@ import { Spinner } from 'components/spinner'
 import { Tooltip } from 'components/tooltip'
 import { type EligibilityData } from 'genesis-drop-actions'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { useGetClaimTransaction } from '../_hooks/useGetClaimTransaction'
 import { useIsClaimable } from '../_hooks/useIsClaimable'

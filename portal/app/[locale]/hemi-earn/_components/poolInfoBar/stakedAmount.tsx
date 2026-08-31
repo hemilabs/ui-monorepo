@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { sharesToPeggedOptions } from '../../_fetchers/fetchSharesToPegged'
 import { useEarnPositions } from '../../_hooks/useEarnPositions'

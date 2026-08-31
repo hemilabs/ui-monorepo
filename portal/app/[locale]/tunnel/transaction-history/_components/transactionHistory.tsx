@@ -5,10 +5,10 @@ import { TableCard } from 'components/table/tableCard'
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { useTranslations } from 'next-intl'
 import { useCallback, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { TunnelOperation } from 'types/tunnel'
+import { useTranslations } from 'use-intl'
 import {
   isBtcOperation,
   isDeposit,

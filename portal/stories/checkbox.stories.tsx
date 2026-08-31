@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Checkbox } from 'components/checkbox'
 import type { ComponentProps } from 'react'
 import { useArgs } from 'storybook/preview-api'

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ExternalLink } from 'components/externalLink'
 import { Chevron } from 'components/icons/chevron'
 import { WarningBox } from 'components/warningBox'

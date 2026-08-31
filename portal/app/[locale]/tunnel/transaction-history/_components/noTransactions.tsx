@@ -2,7 +2,7 @@ import { ButtonLink } from 'components/button'
 import { InboxIcon } from 'components/icons/inboxIcon'
 import { InformationBox } from 'components/informationBox'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 export const NoTransactions = function () {
   const t = useTranslations('tunnel-page.transaction-history')

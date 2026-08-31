@@ -6,7 +6,7 @@ import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useUmami } from 'hooks/useUmami'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { ConnectBtcWallet } from './connectBtcWallet'
 

@@ -1,6 +1,6 @@
 // Load polyfill for Intl.DurationFormat - Note this will load even when not needed.
 import '@formatjs/intl-durationformat/polyfill'
-import { useLocale } from 'next-intl'
+import { useLocale } from 'use-intl'
 
 type DurationTimeProps = {
   seconds: number

@@ -2,8 +2,8 @@ import { TunnelIcon as BaseIcon } from 'components/icons/tunnelIcon'
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
-import { useTranslations } from 'next-intl'
 import { ComponentProps, Suspense } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { ItemLink } from './itemLink'
 

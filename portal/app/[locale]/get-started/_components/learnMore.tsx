@@ -4,7 +4,7 @@ import { Card } from 'components/card'
 import { ExternalLink } from 'components/externalLink'
 import { Image } from 'components/image'
 import { useUmami } from 'hooks/useUmami'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import btcWallet from '../_assets/btcWallet.svg'
 import evmWallet from '../_assets/evmWallet.svg'

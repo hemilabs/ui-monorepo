@@ -36,7 +36,7 @@ import { useStake } from '../../_hooks/useStake'
 const StakeToast = dynamic(
   () => import('../stakeToast').then(mod => mod.StakeToast),
   {
-    loading: () => <ToastLoader />,
+    loading: () => <ToastLoader className="h-24.5" />,
     ssr: false,
   },
 )

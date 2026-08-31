@@ -1,6 +1,5 @@
 'use client'
 
-import { ToastLoader } from 'components/toast/toastLoader'
 import { useHemiToken } from 'hooks/useHemiToken'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -21,7 +20,12 @@ import { StakeReview } from './stakeReview'
 const StakeToast = dynamic(
   () => import('./stakeToast').then(mod => mod.StakeToast),
   {
-    loading: () => <ToastLoader />,
+    loading: () => (
+      <Skeleton
+        className="h-16 w-full rounded-lg md:w-96"
+        containerClassName="fixed bottom-20 inset-x-4 z-40 md:bottom-auto md:left-auto md:right-8 md:top-20"
+      />
+    ),
     ssr: false,
   },
 )

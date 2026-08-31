@@ -2,7 +2,6 @@ import { HemiFees } from 'components/hemiFees'
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { Spinner } from 'components/spinner'
-import { ToastLoader } from 'components/toast/toastLoader'
 import { useAmount } from 'hooks/useAmount'
 import { useHemi } from 'hooks/useHemi'
 import dynamic from 'next/dynamic'
@@ -25,7 +24,12 @@ import { useUnstake } from '../../_hooks/useUnstake'
 const StakeToast = dynamic(
   () => import('../stakeToast').then(mod => mod.StakeToast),
   {
-    loading: () => <ToastLoader />,
+    loading: () => (
+      <Skeleton
+        className="h-16 w-full rounded-lg md:w-96"
+        containerClassName="fixed bottom-20 inset-x-4 z-40 md:bottom-auto md:left-auto md:right-8 md:top-20"
+      />
+    ),
     ssr: false,
   },
 )

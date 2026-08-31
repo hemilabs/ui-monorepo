@@ -21,7 +21,7 @@ FROM node:24.14.0-alpine3.23
 # Patch vulnerabilities
 RUN apk update
 RUN apk add --upgrade musl=1.2.5-r23 musl-utils=1.2.5-r23
-RUN apk add --upgrade openssl=3.5.7-r0
+RUN apk add --upgrade openssl=3.5.8-r0
 RUN corepack enable
 # npm is unused at runtime (the app uses pnpm); removing it shrinks the image
 # and eliminates its transitive vulnerabilities (e.g. sigstore).

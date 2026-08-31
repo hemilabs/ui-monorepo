@@ -1,5 +1,6 @@
 import {
   formatBtcAddress,
+  formatBtcHash,
   formatCompactFiat,
   formatCompactFiatParts,
   formatDate,
@@ -37,6 +38,16 @@ describe('utils/format', function () {
           '0x5a3f5c2b87c9e4d1e3e0e5c27691d3a04e94f08b3f6a1d4b4d6b96e20b91c8e6',
         ),
       ).toBe('0x5a3f...c8e6')
+    })
+  })
+
+  describe('formatBtcHash', function () {
+    it('should format a btc tx hash correctly', function () {
+      expect(
+        formatBtcHash(
+          '5a3f5c2b87c9e4d1e3e0e5c27691d3a04e94f08b3f6a1d4b4d6b96e20b91c8e6',
+        ),
+      ).toBe('5a3f...c8e6')
     })
   })
 

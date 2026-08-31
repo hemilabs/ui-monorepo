@@ -4,6 +4,8 @@ import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv, type PluginOption } from 'vite'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
+import { sitemap } from './plugins/sitemap'
+
 const polyfills = () => nodePolyfills({ include: ['http', 'https', 'util'] })
 
 export default defineConfig(function ({ mode }) {
@@ -12,6 +14,15 @@ export default defineConfig(function ({ mode }) {
   const instrumentForSentry = !!env.VITE_SENTRY_DSN && !process.env.STORYBOOK
 
   const plugins: PluginOption[] = [react(), polyfills()]
+
+  if (env.PORTAL_SITE_URL) {
+    plugins.push(
+      sitemap({
+        baseUrl: env.PORTAL_SITE_URL,
+        includeHemiEarn: env.VITE_ENABLE_HEMI_EARN_PAGE === 'true',
+      }),
+    )
+  }
 
   if (instrumentForSentry) {
     plugins.push(

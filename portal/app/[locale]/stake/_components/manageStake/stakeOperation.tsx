@@ -9,6 +9,7 @@ import {
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { Spinner } from 'components/spinner'
+import { ToastLoader } from 'components/toast/toastLoader'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import { useAmount } from 'hooks/useAmount'
 import { useTokenBalance } from 'hooks/useBalance'
@@ -16,7 +17,6 @@ import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useHemi } from 'hooks/useHemi'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import Skeleton from 'react-loading-skeleton'
 import {
   StakeOperations,
   StakeStatusEnum,
@@ -36,12 +36,7 @@ import { useStake } from '../../_hooks/useStake'
 const StakeToast = dynamic(
   () => import('../stakeToast').then(mod => mod.StakeToast),
   {
-    loading: () => (
-      <Skeleton
-        className="h-24.5 w-full rounded-lg md:w-96"
-        containerClassName="fixed bottom-20 inset-x-4 z-40 md:bottom-auto md:left-auto md:right-8 md:top-20"
-      />
-    ),
+    loading: () => <ToastLoader variant="withCallToAction" />,
     ssr: false,
   },
 )

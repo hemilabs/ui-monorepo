@@ -49,11 +49,13 @@ export const RetryBtcWithdraw = function ({ withdrawal }: Props) {
     })
   }
 
+  const isReadyToRetry = !!withdrawal.to
+
   return (
     <DrawerCallToAction
       onSubmit={handleRetry}
       submitButton={
-        <Button disabled={isWithdrawing} size="small">
+        <Button disabled={!isReadyToRetry || isWithdrawing} size="small">
           {t(isWithdrawing ? 'withdrawing' : 'try-again')}
         </Button>
       }

@@ -1,3 +1,4 @@
+import { cloudflare } from '@cloudflare/vite-plugin'
 import { sentryVitePlugin } from '@sentry/vite-plugin'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath } from 'node:url'
@@ -13,7 +14,7 @@ export default defineConfig(function ({ mode }) {
 
   const instrumentForSentry = !!env.VITE_SENTRY_DSN && !process.env.STORYBOOK
 
-  const plugins: PluginOption[] = [react(), polyfills()]
+  const plugins: PluginOption[] = [react(), cloudflare(), polyfills()]
 
   if (env.PORTAL_SITE_URL) {
     plugins.push(

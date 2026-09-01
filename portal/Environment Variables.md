@@ -17,7 +17,7 @@ Any environment variable that can is shared across all environments and is not a
 
 Changes related to security headers - for example, when adding a new external url to fetch from, or download images from.
 
-The `portal/scripts/generateServerConfig.js` script that emitted the `.htaccess` was removed with the Next build. Its replacement is the Cloudflare Worker, which is added in the deploy step of the migration ([#2194](https://github.com/hemilabs/ui-monorepo/issues/2194)). Until then this branch ships no security headers, so it only goes to the Cloudflare migration preview, never to the official staging or production environments.
+- portal/utils/securityHeaders.ts
 
 ## Instrumentation
 

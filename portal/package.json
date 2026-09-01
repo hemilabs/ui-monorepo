@@ -70,6 +70,8 @@
     "wagmi": "2.15.7"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "1.23.1",
+    "@cloudflare/workers-types": "4.20260504.1",
     "@hemilabs/anvil-fork-setup": "2.0.0",
     "@sentry/vite-plugin": "5.3.0",
     "@storybook/react-vite": "10.4.4",
@@ -93,7 +95,8 @@
     "typescript": "5.8.3",
     "vite": "8.0.13",
     "vite-plugin-node-polyfills": "0.28.0",
-    "vitest": "4.1.6"
+    "vitest": "4.1.6",
+    "wrangler": "4.63.0"
   },
   "engines": {
     "node": ">=22.22.0"

@@ -1,17 +1,16 @@
 {
   "name": "portal-migration",
+  "main": "./server.ts",
   "compatibility_date": "2026-02-05",
   "workers_dev": false,
   "preview_urls": true,
-  // Assets only, no "main": this environment exists to review the migration as
-  // it lands, and is retired once the branch reaches the official staging.
-  //
-  // When the headers Worker replaces this, its CSP needs `worker-src 'self'`.
-  // web/src/index.ts in vetro-monorepo sets `'none'` (or `blob:` with Sentry)
-  // because it has no web workers; copying that verbatim silently kills the
-  // five under portal/workers, and tunnel history simply stops syncing.
+  // No "directory" here: `pnpm build` writes the path wrangler reads, so every
+  // wrangler command needs a build first or it fails asking for this property.
   "assets": {
-    "directory": "./dist",
+    "binding": "ASSETS",
     "not_found_handling": "single-page-application",
+    // Without this Cloudflare serves the assets directly and the Worker never
+    // runs, so no response carries the security headers.
+    "run_worker_first": true,
   },
 }

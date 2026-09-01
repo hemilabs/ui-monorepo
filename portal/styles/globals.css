@@ -122,3 +122,7 @@ input[type='range']:active::-moz-range-thumb {
 .hoverable-text {
   @apply text-orange-600 hover:text-orange-700;
 }
+
+.toast-position {
+  @apply fixed inset-x-4 bottom-20 z-40 md:bottom-auto md:left-auto md:right-8 md:top-20;
+}

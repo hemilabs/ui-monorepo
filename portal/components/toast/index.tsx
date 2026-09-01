@@ -67,7 +67,7 @@ export const Toast = function ({
   // ancestor in the app layout would create a subordinate stacking context
   // and trap the toast behind any open drawer regardless of z-index.
   return ReactDOM.createPortal(
-    <div className="group fixed inset-x-4 bottom-20 z-40 flex flex-col gap-y-3 overflow-hidden rounded-lg bg-neutral-950 p-3 text-white shadow-sm md:bottom-auto md:left-auto md:right-8 md:top-20 md:w-96">
+    <div className="toast-position group flex flex-col gap-y-3 overflow-hidden rounded-lg bg-neutral-950 p-3 text-white shadow-sm md:w-96">
       <div className="flex flex-col gap-y-0.5">
         <div className="flex min-h-4.5 items-center gap-x-2">
           <ToastIcon variant={variant} />

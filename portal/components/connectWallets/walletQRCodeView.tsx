@@ -12,8 +12,7 @@ import { getConnections } from 'wagmi/actions'
 import { getWalletConnectUri } from './utils/walletConnect'
 import { getWalletDownloadUrl } from './utils/walletDownloadUrl'
 
-// If no QR code URI is produced within this window, surface a retry option so
-// the user is never stuck looking at an endless loading skeleton.
+// If no QR code URI is produced within this window, surface a retry option.
 const qrCodeTimeoutMs = 15_000
 
 type Props = {
@@ -53,11 +52,7 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
         return undefined
       }
 
-      // Prefer the wallet's own connector when it is a WalletConnect type so
-      // that its dedicated storage / SDK instance is used instead of the
-      // generic fallback. This avoids a mismatch between the connector that
-      // owns the WalletConnect session state and the one the QR view is
-      // driving (which would prevent `display_uri` from being emitted).
+      // Prefer the wallet's own connector when it is a WalletConnect.
       const walletConnectConnector =
         wallet.connector?.type === 'walletConnect'
           ? wallet.connector
@@ -81,15 +76,7 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
       async function startConnection(
         connector: NonNullable<typeof walletConnectConnector>,
       ) {
-        // A previous visit may leave a WalletConnect session cached in the
-        // provider storage. This is common in browsers that ship their own
-        // wallet (e.g. Brave). wagmi skips creating a new pairing while such a
-        // session exists, so no `display_uri` is emitted and the QR code never
-        // appears (the skeleton stays forever). Tear down the stale session
-        // first so a fresh pairing, and therefore a fresh URI, is generated.
-        // The disconnect publishes to the relay and can stall when it is
-        // unreachable, so it is capped with a short race to never block the URI
-        // generation below.
+        // Fix for Brave.
         try {
           const provider = await connector.getProvider()
           // @ts-expect-error - provider session type isn't inferred
@@ -107,8 +94,6 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
           return
         }
 
-        // Generate WalletConnect URI. The listener is attached before starting
-        // the connection so the `display_uri` event is not missed.
         const { cancel, promise } = getWalletConnectUri(connector)
         cancelUriRequest = cancel
         promise

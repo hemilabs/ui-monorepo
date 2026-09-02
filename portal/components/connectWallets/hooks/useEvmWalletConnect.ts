@@ -8,31 +8,17 @@ import { getWalletConnectUri } from '../utils/walletConnect'
 import { getWalletDeepLink, hasDeepLinkSupport } from '../utils/walletDeepLinks'
 import { getWalletDownloadUrl } from '../utils/walletDownloadUrl'
 
-// These are the connector types that require a QR code to connect
-// It applies to desktop devices only
 const qrCodeConnectorTypes = ['walletConnect', 'binanceWallet']
-
-// Extension wallets that are not injected can still be connected by scanning a
-// WalletConnect QR code, because they ship a mobile app with WalletConnect
-// support. Extension-only wallets (e.g. MetaMask, Rabby, Phantom) are omitted:
-// when they are not installed the only option is to download the extension.
 const walletConnectQrCodeWalletIds = ['okx', 'tokenPocket']
 
-// walletConnect is a generic connector so we need to handle it differently
-// always showing the option to open the website so the user can connect their wallet
 const isWalletConnect = (wallet: EvmWalletData) =>
   wallet.connector?.type === 'walletConnect'
 
-// Whether the wallet can be connected directly through its own injected/SDK
-// connector (i.e. not through a QR code).
 const canConnectWithConnector = function (wallet: EvmWalletData) {
   const connectorType = wallet.connector?.type
   return !!connectorType && !qrCodeConnectorTypes.includes(connectorType)
 }
 
-// Whether the wallet is connected by scanning a QR code. This is the dedicated
-// WalletConnect wallet, Binance, or a WalletConnect-capable extension wallet
-// that is not currently connectable through its own connector.
 const usesQrCodeConnection = function (wallet: EvmWalletData) {
   if (canConnectWithConnector(wallet)) {
     return false
@@ -50,8 +36,6 @@ function getDesktopWalletState(wallet: EvmWalletData) {
 
   return {
     showCheck: canConnect,
-    // Everything that is neither directly connectable nor QR-based can only be
-    // installed (e.g. an uninstalled extension-only wallet).
     showInstall: !canConnect && !showQrCode,
     showQrCode,
   }
@@ -124,30 +108,23 @@ export function useEvmWalletConnect(): UseEvmWalletConnectReturn {
   const handleConnect = useCallback(
     async function (wallet: EvmWalletData) {
       const supportsDeepLink = hasDeepLinkSupport(wallet.id)
-
-      // Preserve the original direct-connect condition: on mobile any injected
-      // wallet (except WalletConnect) connects directly, on desktop only wallets
-      // reachable through their own (non-QR) connector do.
       const canConnectDirectly = isMobile
         ? !isWalletConnect(wallet)
         : canConnectWithConnector(wallet)
 
       // Desktop or mobile with connector: connect directly
       if (canConnectDirectly && wallet.connector) {
-        // Disconnect all existing connections before connecting a new wallet
-        // This prevents multiple simultaneous connections in wagmi v2
         await disconnectAll()
         await connectAsync({ connector: wallet.connector })
         return false
       }
 
-      // Mobile without connector but with deep link support (TokenPocket, OKX, Phantom)
+      // Mobile with deep link support (TokenPocket, OKX, Phantom)
       if (isMobile && supportsDeepLink && !wallet.connector) {
         return connectWithDeepLink(wallet)
       }
 
-      // Desktop extension-only wallet that is not installed: there is nothing to
-      // scan, so send the user to its download page instead of a QR code.
+      // Desktop extension-only wallet that is not installed: download page
       if (!isMobile && !usesQrCodeConnection(wallet)) {
         const downloadUrl = getWalletDownloadUrl(wallet)
         if (downloadUrl) {
@@ -156,9 +133,7 @@ export function useEvmWalletConnect(): UseEvmWalletConnectReturn {
         return false
       }
 
-      // For wallets that need QR code (desktop QR wallets, or mobile fallback)
-      // Return true to show the QR code view, which handles
-      // starting the WalletConnect session on its own
+      // Return true to show the QR code view
       return true
     },
     [connectAsync, connectWithDeepLink, disconnectAll],

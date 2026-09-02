@@ -202,7 +202,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     return t('tunnel-page.submit-button.initiate-withdrawal')
   }
 
-  function RenderFees() {
+  function renderFees() {
     if (!canWithdraw) {
       return null
     }
@@ -236,7 +236,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
               },
             )}
           />
-          <RenderFees />
+          {renderFees()}
         </div>
       }
       bottomSection={<WalletsConnected />}

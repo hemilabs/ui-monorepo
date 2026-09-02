@@ -175,7 +175,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     )
   }
 
-  function RenderFees() {
+  function renderFees() {
     if (!canDeposit) {
       return null
     }
@@ -197,7 +197,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
               },
             )}
           />
-          <RenderFees />
+          {renderFees()}
         </div>
       }
       bottomSection={<WalletsConnected />}

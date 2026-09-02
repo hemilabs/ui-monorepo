@@ -202,6 +202,26 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     return t('tunnel-page.submit-button.initiate-withdrawal')
   }
 
+  function renderFees() {
+    if (!feeEstimationEnabled) {
+      return null
+    }
+
+    return (
+      <FeesContainer>
+        <HemiBtcFeesSummary amount={amount} token={fromToken} />
+        <EvmFeesSummary
+          gas={gas}
+          operationToken={fromToken}
+          total={getTotal({
+            fromInput,
+            fromToken,
+          })}
+        />
+      </FeesContainer>
+    )
+  }
+
   return (
     <TunnelForm
       belowForm={
@@ -216,17 +236,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
               },
             )}
           />
-          <FeesContainer>
-            <HemiBtcFeesSummary amount={amount} token={fromToken} />
-            <EvmFeesSummary
-              gas={gas}
-              operationToken={fromToken}
-              total={getTotal({
-                fromInput,
-                fromToken,
-              })}
-            />
-          </FeesContainer>
+          {renderFees()}
         </div>
       }
       bottomSection={<WalletsConnected />}

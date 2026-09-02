@@ -17,6 +17,7 @@
     "balance": "Saldo",
     "cancel": "Cancelar",
     "close": "Fechar",
+    "close-notification": "Fechar a notificação",
     "connect-to-network": "Conectar à {network}",
     "connect-to-supported-network": "Conectar a uma rede suportada",
     "connect-wallet": "Conectar Carteira",

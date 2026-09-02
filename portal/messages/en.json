@@ -17,6 +17,7 @@
     "balance": "Balance",
     "cancel": "Cancel",
     "close": "Close",
+    "close-notification": "Close notification",
     "connect-to-network": "Connect to {network}",
     "connect-to-supported-network": "Connect to supported network",
     "connect-wallet": "Connect Wallet",

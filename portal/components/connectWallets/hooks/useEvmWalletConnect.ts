@@ -102,7 +102,8 @@ export function useEvmWalletConnect(): UseEvmWalletConnectReturn {
         // This follows RainbowKit's pattern:
         // https://github.com/rainbow-me/rainbowkit/blob/d1c94fbb7a6c5a78a5f618f4bf3061dd074c2807/packages/rainbowkit/src/components/ConnectOptions/DesktopOptions.tsx#L115
         connectAsync({ connector: wcConnector })
-        const uri = await getWalletConnectUri(wcConnector)
+        const { promise } = getWalletConnectUri(wcConnector)
+        const uri = await promise
 
         if (uri) {
           const deepLink = getWalletDeepLink(wallet.id)

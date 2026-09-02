@@ -36,17 +36,6 @@ export const EvmWallet = function () {
   const { handleConnect } = useEvmWalletConnect()
   const [isConnectingWithQrCode, setIsConnectingWithQrCode] = useState(false)
 
-  const onConnect = useCallback(
-    async function (wallet: Parameters<typeof handleConnect>[0]) {
-      const showDetailView = await handleConnect(wallet)
-      if (showDetailView) {
-        setIsConnectingWithQrCode(true)
-      }
-      return showDetailView
-    },
-    [handleConnect],
-  )
-
   useEffect(
     function resetConnectingWithQrCodeOnceSettled() {
       if (status === 'connected' || status === 'disconnected') {
@@ -61,11 +50,9 @@ export const EvmWallet = function () {
     [connector, disconnect],
   )
 
-  // When reopening the drawer, if the wallet was in a "connecting" state, it
-  // shall be disconnected to prevent the "skeleton" to be shown indefinitely.
-  useEffect(function disconnectIfWaitingForQrCode() {
+  useEffect(function resetStaleConnectingStatus() {
     if (status === 'connecting') {
-      disconnect({ connector })
+      disconnect()
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -105,7 +92,8 @@ export const EvmWallet = function () {
       event="evm connect"
       getWalletState={getEvmWalletState}
       icon={<EthLogo />}
-      onConnect={onConnect}
+      onConnect={handleConnect}
+      onDetailViewToggle={setIsConnectingWithQrCode}
       renderDetailView={(wallet, onBack) => (
         <WalletQRCodeView onBack={onBack} wallet={wallet} />
       )}

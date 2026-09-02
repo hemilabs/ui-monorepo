@@ -34,6 +34,8 @@ type Props<T extends WalletItem> = {
   icon: ReactNode
   // Return value indicates if QR code view should be shown
   onConnect: (wallet: T) => boolean | Promise<boolean>
+  // Notifies whether the detail view is shown
+  onDetailViewToggle?: (isShowing: boolean) => void
   renderDetailView?: (wallet: T, onBack: VoidFunction) => ReactNode
   renderLogo: (wallet: T) => ReactNode
   text: string
@@ -45,6 +47,7 @@ export function ConnectWalletAccordion<T extends WalletItem>({
   getWalletState,
   icon,
   onConnect,
+  onDetailViewToggle,
   renderDetailView,
   renderLogo,
   text,
@@ -64,6 +67,7 @@ export function ConnectWalletAccordion<T extends WalletItem>({
     const result = await onConnect(wallet)
     if (renderDetailView && result) {
       setSelectedWallet(wallet)
+      onDetailViewToggle?.(true)
     }
   }
 
@@ -174,7 +178,10 @@ export function ConnectWalletAccordion<T extends WalletItem>({
             } transition-transform duration-300`}
           >
             {showDetailView
-              ? renderDetailView(selectedWallet, () => setSelectedWallet(null))
+              ? renderDetailView(selectedWallet, function () {
+                  setSelectedWallet(null)
+                  onDetailViewToggle?.(false)
+                })
               : null}
           </div>
         </div>

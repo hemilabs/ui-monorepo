@@ -1,7 +1,16 @@
 import { type Connector } from 'wagmi'
 
-export const getWalletConnectUri = (connector: Connector): Promise<string> =>
-  new Promise(function (resolve) {
+type WalletConnectUriRequest = {
+  cancel: VoidFunction
+  promise: Promise<string>
+}
+
+export const getWalletConnectUri = function (
+  connector: Connector,
+): WalletConnectUriRequest {
+  let removeListener: VoidFunction | undefined
+
+  const promise = new Promise<string>(function (resolve) {
     connector
       .getProvider()
       .then(function (provider) {
@@ -14,12 +23,22 @@ export const getWalletConnectUri = (connector: Connector): Promise<string> =>
         }
 
         // Standard WalletConnect flow
-        // @ts-expect-error - TS can't infer provider type
-        provider.once('display_uri', function (uri: string) {
+        function onDisplayUri(uri: string) {
           resolve(uri)
-        })
+        }
+        // @ts-expect-error - TS can't infer provider type
+        provider.once('display_uri', onDisplayUri)
+        removeListener = () =>
+          // @ts-expect-error - TS can't infer provider type
+          provider.removeListener('display_uri', onDisplayUri)
       })
       .catch(function () {
         resolve('')
       })
   })
+
+  return {
+    cancel: () => removeListener?.(),
+    promise,
+  }
+}

@@ -6,7 +6,7 @@ import { QRCodeSVG } from 'qrcode.react'
 import { useCallback, useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import Skeleton from 'react-loading-skeleton'
-import { useConfig, useConnect } from 'wagmi'
+import { useConfig, useConnect, useDisconnect } from 'wagmi'
 import { getConnections } from 'wagmi/actions'
 
 import { getWalletConnectUri } from './utils/walletConnect'
@@ -29,12 +29,21 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
   const [retryCount, setRetryCount] = useState(0)
   const config = useConfig()
   const { connect, connectors, reset } = useConnect()
+  const { disconnect } = useDisconnect()
 
   const downloadUrl = getWalletDownloadUrl(wallet)
 
   const retry = useCallback(function retry() {
     setRetryCount(count => count + 1)
   }, [])
+
+  const handleBack = useCallback(
+    function handleBack() {
+      disconnect()
+      onBack()
+    },
+    [disconnect, onBack],
+  )
 
   useEffect(
     // This function generates the WalletConnect URI when the component mounts
@@ -59,6 +68,7 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
       }
 
       let cancelled = false
+      let cancelUriRequest: VoidFunction | undefined
       setUri('')
       setHasTimedOut(false)
 
@@ -99,7 +109,9 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
 
         // Generate WalletConnect URI. The listener is attached before starting
         // the connection so the `display_uri` event is not missed.
-        getWalletConnectUri(connector)
+        const { cancel, promise } = getWalletConnectUri(connector)
+        cancelUriRequest = cancel
+        promise
           .then(function (generatedUri) {
             if (cancelled) {
               return
@@ -124,6 +136,7 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
       return function cleanup() {
         cancelled = true
         window.clearTimeout(timeoutId)
+        cancelUriRequest?.()
         // Only tear down the pairing when this WalletConnect connector did not
         // end up connected. Checking this connector's own active connection
         // (instead of the global account status) avoids leaving a dangling
@@ -146,7 +159,7 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
       <div className="flex items-center gap-2 md:justify-between">
         <button
           className="group text-neutral-600 hover:text-neutral-950"
-          onClick={onBack}
+          onClick={handleBack}
         >
           <Chevron.Left className="size-5 group-hover:[&>path]:fill-neutral-950" />
         </button>

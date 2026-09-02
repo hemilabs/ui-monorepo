@@ -1,7 +1,7 @@
 import Skeleton from 'react-loading-skeleton'
 
 const heights = {
-  default: 'h-16',
+  default: 'h-[62px]',
   withCallToAction: 'h-24.5',
 } as const
 

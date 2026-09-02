@@ -176,7 +176,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
   }
 
   function renderFees() {
-    if (!canDeposit) {
+    if (!canDeposit || amountBigInt === BigInt(0)) {
       return null
     }
 

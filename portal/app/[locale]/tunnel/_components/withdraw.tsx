@@ -203,7 +203,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   }
 
   function renderFees() {
-    if (!canWithdraw) {
+    if (!feeEstimationEnabled) {
       return null
     }
 

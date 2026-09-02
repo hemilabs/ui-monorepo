@@ -88,16 +88,14 @@ const buildFetchDomains = function (
   ])
 
   const apiOrigins = [getOrigin(portalApiUrl), getOrigin(vetroApiUrl)]
-  apiOrigins
-    .filter(origin => origin !== undefined)
-    .forEach(origin => domains.add(origin))
+  apiOrigins.filter(Boolean).forEach(origin => domains.add(origin))
 
   // Only the origin is allow-listed, so a custom RPC carrying a port or a path
   // still matches the responses the client gets back.
   customRpcUrls
     .flatMap(urls => (urls ?? '').split('+'))
     .map(getOrigin)
-    .filter(origin => origin !== undefined)
+    .filter(Boolean)
     .forEach(origin => domains.add(origin))
 
   if (hosts.analytics) {

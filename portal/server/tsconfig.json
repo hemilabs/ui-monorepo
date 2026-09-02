@@ -5,9 +5,10 @@
   },
   "extends": "../tsconfig.json",
   "include": [
+    "../reset.d.ts",
+    "../utils/securityHeaders.ts",
     "index.ts",
-    "worker-configuration.d.ts",
-    "../utils/securityHeaders.ts"
+    "worker-configuration.d.ts"
   ],
   "exclude": []
 }

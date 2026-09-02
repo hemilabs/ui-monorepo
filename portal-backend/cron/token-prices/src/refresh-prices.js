@@ -7,6 +7,8 @@ const config = require('./config')
 
 const coinMarketCap = config.get('coinMarketCap')
 
+const hasPrice = ({ quote }) => typeof quote?.USD?.price === 'number'
+
 async function fetchPrices() {
   const url =
     'https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest'
@@ -17,11 +19,17 @@ async function fetchPrices() {
   }
   const fullUrl = `${url}?${new URLSearchParams(params).toString()}`
   const res = await fetchJson(fullUrl, { headers })
+  const tokens = Object.values(res.data)
+  const unpriced = tokens.filter(token => !hasPrice(token))
+  if (unpriced.length > 0) {
+    console.warn(
+      `Skipped tokens without a price: ${unpriced.map(({ symbol }) => symbol).join(', ')}`,
+    )
+  }
   return Object.fromEntries(
-    Object.values(res.data).map(({ quote, symbol }) => [
-      symbol.toUpperCase(),
-      quote.USD.price,
-    ]),
+    tokens
+      .filter(hasPrice)
+      .map(({ quote, symbol }) => [symbol.toUpperCase(), quote.USD.price]),
   )
 }
 

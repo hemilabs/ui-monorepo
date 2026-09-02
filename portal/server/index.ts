@@ -1,9 +1,4 @@
-/// <reference types="@cloudflare/workers-types" />
 import { buildSecurityHeaders } from 'utils/securityHeaders'
-
-type Env = {
-  ASSETS: Fetcher
-}
 
 const securityHeaders = buildSecurityHeaders({
   analyticsEnabled: import.meta.env.VITE_ENABLE_ANALYTICS === 'true',
@@ -21,7 +16,9 @@ const securityHeaders = buildSecurityHeaders({
 
 export default {
   async fetch(request, env) {
-    const response = await env.ASSETS.fetch(request)
+    const response = await env.ASSETS.fetch(request).catch(
+      () => new Response('Internal Server Error', { status: 500 }),
+    )
 
     // `upgrade-insecure-requests` rewrites every request to https, which the
     // dev server does not speak, so `dev:wifi` on a phone would never load.

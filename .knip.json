@@ -6,9 +6,10 @@
     "portal": {
       "typescript": {
         "config": [
-          "tsconfig.json",
+          "scripts/hemi-earn/tsconfig.json",
+          "server/tsconfig.json",
           "tsconfig.build.json",
-          "scripts/hemi-earn/tsconfig.json"
+          "tsconfig.json"
         ]
       }
     },

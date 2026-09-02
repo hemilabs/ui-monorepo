@@ -23,14 +23,12 @@ describe('buildSecurityHeaders', function () {
     expect(Object.keys(buildSecurityHeaders(baseConfig)).sort()).toStrictEqual([
       'Content-Security-Policy',
       'Cross-Origin-Opener-Policy',
-      'Expect-CT',
       'Permissions-Policy',
       'Referrer-Policy',
       'Strict-Transport-Security',
       'X-Content-Type-Options',
       'X-Download-Options',
       'X-Frame-Options',
-      'X-XSS-Protection',
     ])
   })
 
@@ -38,7 +36,7 @@ describe('buildSecurityHeaders', function () {
     const headers = buildSecurityHeaders(baseConfig)
 
     expect(directive(headers, 'frame-ancestors')).toBe("frame-ancestors 'none'")
-    expect(headers['X-Frame-Options']).toBe('SAMEORIGIN')
+    expect(headers['X-Frame-Options']).toBe('DENY')
   })
 
   it('allows the origins the app fetches from', function () {

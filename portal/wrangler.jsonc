@@ -1,16 +1,12 @@
 {
   "name": "portal-migration",
-  "main": "./server.ts",
+  "main": "./server/index.ts",
   "compatibility_date": "2026-02-05",
   "workers_dev": false,
   "preview_urls": true,
-  // No "directory" here: `pnpm build` writes the path wrangler reads, so every
-  // wrangler command needs a build first or it fails asking for this property.
   "assets": {
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    // Without this Cloudflare serves the assets directly and the Worker never
-    // runs, so no response carries the security headers.
     "run_worker_first": true,
   },
 }

@@ -10,22 +10,11 @@ type SecurityHeadersConfig = {
   vetroApiUrl?: string
 }
 
-// This used to run at build time, where a malformed value failed the build.
-// It now runs when the Worker starts, so throwing here takes the site down.
-const parseUrl = function (url?: string) {
-  if (!url) {
-    return null
-  }
-  try {
-    return new URL(url)
-  } catch {
-    return null
-  }
-}
+const parseUrl = (url?: string) => (url ? URL.parse(url) : null)
 
-const getOrigin = (url?: string) => parseUrl(url)?.origin ?? null
+const getOrigin = (url?: string) => parseUrl(url)?.origin
 
-const getDomain = (url?: string) => parseUrl(url)?.hostname ?? null
+const getDomain = (url?: string) => parseUrl(url)?.hostname
 
 const fontDomains = [
   'https://fonts.googleapis.com',
@@ -42,8 +31,8 @@ const imageSrcUrls = [
 const frameSrcUrls = ['https://*.walletconnect.org']
 
 type ThirdPartyHosts = {
-  analytics: string | null
-  errorTracking: string | null
+  analytics?: string
+  errorTracking?: string
 }
 
 const getThirdPartyHosts = function ({
@@ -56,11 +45,12 @@ const getThirdPartyHosts = function ({
 
   return {
     analytics:
-      analyticsEnabled && analyticsDomain !== null
+      analyticsEnabled && !!analyticsDomain
         ? `https://${analyticsDomain}`
-        : null,
-    errorTracking:
-      errorTrackingDomain !== null ? `https://${errorTrackingDomain}` : null,
+        : undefined,
+    errorTracking: errorTrackingDomain
+      ? `https://${errorTrackingDomain}`
+      : undefined,
   }
 }
 
@@ -99,7 +89,7 @@ const buildFetchDomains = function (
 
   const apiOrigins = [getOrigin(portalApiUrl), getOrigin(vetroApiUrl)]
   apiOrigins
-    .filter(origin => origin !== null)
+    .filter(origin => origin !== undefined)
     .forEach(origin => domains.add(origin))
 
   // Only the origin is allow-listed, so a custom RPC carrying a port or a path
@@ -107,14 +97,14 @@ const buildFetchDomains = function (
   customRpcUrls
     .flatMap(urls => (urls ?? '').split('+'))
     .map(getOrigin)
-    .filter(origin => origin !== null)
+    .filter(origin => origin !== undefined)
     .forEach(origin => domains.add(origin))
 
-  if (hosts.analytics !== null) {
+  if (hosts.analytics) {
     domains.add(hosts.analytics)
     domains.add('https://cloudflareinsights.com')
   }
-  if (hosts.errorTracking !== null) {
+  if (hosts.errorTracking) {
     domains.add(hosts.errorTracking)
   }
 
@@ -124,13 +114,13 @@ const buildFetchDomains = function (
 const buildScriptDomains = function (hosts: ThirdPartyHosts) {
   const domains = new Set<string>()
 
-  if (hosts.analytics !== null) {
+  if (hosts.analytics) {
     domains.add(hosts.analytics)
     domains.add('https://static.cloudflareinsights.com')
     domains.add('https://challenges.cloudflare.com')
     domains.add('https://ajax.cloudflare.com')
   }
-  if (hosts.errorTracking !== null) {
+  if (hosts.errorTracking) {
     domains.add(hosts.errorTracking)
   }
 
@@ -144,20 +134,16 @@ export const buildSecurityHeaders = function (config: SecurityHeadersConfig) {
   const fonts = fontDomains.join(' ')
 
   return {
-    // There is no `worker-src` on purpose: it falls back to `default-src`, and
-    // the five under portal/workers are same-origin. Setting it to 'none', as
-    // an app without web workers would, stops tunnel history from syncing.
+    // No `worker-src` on purpose: it falls back to `script-src`, which allows
+    // 'self', and the five under portal/workers are same-origin. Dropping
+    // 'self' from `script-src` stops tunnel history from syncing.
     'Content-Security-Policy': `default-src 'self'; script-src 'self' 'unsafe-inline' ${scriptDomains}; style-src 'self' 'unsafe-inline'; img-src 'self' ${imageSrcUrls.join(' ')} blob: data:; connect-src 'self' ${fetchDomains}; frame-src 'self' ${frameSrcUrls.join(' ')}; frame-ancestors 'none'; block-all-mixed-content; upgrade-insecure-requests; font-src 'self' ${fonts}; style-src-elem 'self' 'unsafe-inline' ${fonts};`,
     'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
-    // Expect-CT and X-XSS-Protection are dead in current browsers. They are
-    // kept so this serves exactly what the .htaccess it replaces served.
-    'Expect-CT': 'max-age=86400, enforce',
     'Permissions-Policy': 'geolocation=(), microphone=()',
-    'Referrer-Policy': 'no-referrer-when-downgrade',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
     'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
     'X-Content-Type-Options': 'nosniff',
     'X-Download-Options': 'noopen',
-    'X-Frame-Options': 'SAMEORIGIN',
-    'X-XSS-Protection': '1; mode=block',
+    'X-Frame-Options': 'DENY',
   }
 }

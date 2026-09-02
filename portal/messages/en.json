@@ -102,6 +102,7 @@
       "heading": "Demos",
       "sub-heading": "Biometric verification solutions for Web3 applications."
     },
+    "document-title": "Ecosystem",
     "heading": "Demos",
     "purefinance": {
       "heading": "Pure Finance",
@@ -199,6 +200,7 @@
     "block-explorer-url": "Block explorer URL",
     "chain-id": "Chain ID",
     "currency-symbol": "Currency symbol",
+    "document-title": "Get Started",
     "heading": "Get started on Hemi",
     "l1-address": "L1 address",
     "l2-address": "L2 address",
@@ -496,6 +498,7 @@
       "total-staked-on-hemi": "Total Staked on Hemi",
       "your-stake": "Your Stake"
     },
+    "document-title": "Stake",
     "drawer": {
       "approve-and-stake": "Approve and Stake",
       "description-manage-stake": "Top up your stake, or withdraw anytime—you're in full control!",
@@ -542,6 +545,7 @@
       "subheading": "We’re processing your reward claim. You can follow the progress below."
     },
     "claim-rewards-successful": "Claim rewards successful",
+    "document-title": "Governance staking",
     "drawer": {
       "approving": "Approving {symbol}",
       "claim-rewards": "Claim rewards on {network}",
@@ -657,6 +661,7 @@
     "withdrawal-challenged": "Withdrawal challenged"
   },
   "tunnel-page": {
+    "document-title": "Tunnel",
     "form": {
       "balance": "Balance",
       "bitcoin-receiving-address": "Receiving Bitcoin address",

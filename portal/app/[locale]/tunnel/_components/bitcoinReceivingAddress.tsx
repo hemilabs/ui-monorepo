@@ -1,4 +1,4 @@
-import { GreenCheckIcon } from 'components/icons/greenCheckIcon'
+import { CheckCircleIcon } from 'components/icons/checkCircleIcon'
 import { WarningIcon } from 'components/icons/warningIcon'
 import { Spinner } from 'components/spinner'
 import { Toggle } from 'components/toggle'
@@ -84,7 +84,9 @@ export const BitcoinReceivingAddress = function ({
               </div>
             )}
             {isCheckingAddress && <Spinner size="xSmall" variant="orange" />}
-            {isCustomAddressValid === true && <GreenCheckIcon />}
+            {isCustomAddressValid === true && (
+              <CheckCircleIcon className="size-4 shrink-0 text-emerald-500" />
+            )}
           </>
         ) : (
           <span className="text-neutral-950">{address ?? '-'}</span>

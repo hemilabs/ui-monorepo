@@ -54,7 +54,9 @@ export const useReceivingBitcoinAddress = function ({
     return data === false ? t('input-a-correct-custom-address') : undefined
   }
 
-  const canSubmitAddress = !customAddressEnabled || (isChecked && data === true)
+  const canSubmitAddress = customAddressEnabled
+    ? isChecked && data === true
+    : walletAddress !== undefined
 
   const isCheckingAddress =
     customAddressEnabled && customAddress !== '' && (!isChecked || isLoading)

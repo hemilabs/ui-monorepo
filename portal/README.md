@@ -13,7 +13,7 @@ Some relevant folders are:
 - [/hooks](./hooks/) folder, which contains reusable hooks to the entire app that are not tied to a specific page.
 - [/messages/](./messages/) folder, which contain a file per locale with all the translated resources.
 - [/public](./public/) folder, which is served verbatim at the site root.
-- [server.ts](./server.ts), the Cloudflare Worker that serves the built assets and sets the security headers on every response.
+- [server/index.ts](./server/index.ts), the Cloudflare Worker that serves the built assets and sets the security headers on every response.
 - [/test](./test/) folder, which contains some tests for different portal files. These tests are for plain Typescript functions, and not for components.
 - [/types](./types/) folder, which contains many reusable Typescript types across the entire app
 - [/utils](./utils/) folder, which contains most of the logic that is not tied to UI.

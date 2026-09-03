@@ -77,6 +77,7 @@
     "connect-evm-wallet": "Conectar a sua Carteira EVM",
     "connect-to-see-balance": "Conectar a uma rede suportada para ver o seu saldo",
     "copy-address": "Copiar Endereço",
+    "copy-link": "Copiar Link",
     "disconnect": "Desconectar",
     "dont-have": "Não tem {wallet}?",
     "evm-wallet": "Carteira EVM",

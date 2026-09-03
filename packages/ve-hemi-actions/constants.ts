@@ -1,6 +1,5 @@
 import { hemi, hemiSepolia } from 'hemi-viem'
-import type { Address } from 'viem'
-import { parseUnits } from 'viem'
+import { type Address, parseUnits } from 'viem'
 
 const VE_HEMI_CONTRACT_ADDRESSES: Record<number, Address> = {
   [hemi.id]: '0x371d3718D5b7F75EAb050FAe6Da7DF3092031c89',

@@ -116,7 +116,11 @@ export function ConnectWalletAccordion<T extends WalletItem>({
           isOpen ? 'max-h-120' : 'max-h-0'
         }`}
       >
-        <div className="relative overflow-hidden">
+        <div
+          className={`relative overflow-hidden ${
+            showDetailView ? 'md:min-h-120' : ''
+          }`}
+        >
           <div
             className={`p-3 transition-transform duration-300 ${
               showDetailView ? '-translate-x-full' : 'translate-x-0'

@@ -42,7 +42,7 @@ import { SubmitButton } from './submitButton'
 
 const StakeToast = lazyWithFallback(
   () => import('../stakeToast').then(mod => ({ default: mod.StakeToast })),
-  <ToastLoader />,
+  <ToastLoader variant="withCallToAction" />,
 )
 
 type AllowanceQuery = Omit<

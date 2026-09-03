@@ -184,7 +184,7 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
             variant="secondary"
           >
             <ClipboardIcon />
-            {copyLabel}
+            <span aria-live="polite">{copyLabel}</span>
           </Button>
         </div>
 

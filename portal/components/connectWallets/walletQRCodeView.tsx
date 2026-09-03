@@ -1,58 +1,19 @@
-import { ButtonLink } from 'components/button'
+import { Button, ButtonLink } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
 import { type EvmWalletData } from 'hooks/useAllWallets'
 import { useTranslations } from 'next-intl'
 import { QRCodeSVG } from 'qrcode.react'
-import { useEffect, useState } from 'react'
-import { isMobile, isAndroid, isIOS } from 'react-device-detect'
+import { useCallback, useEffect, useState } from 'react'
+import { isMobile } from 'react-device-detect'
 import Skeleton from 'react-loading-skeleton'
-import { useConfig, useConnect } from 'wagmi'
+import { useConfig, useConnect, useDisconnect } from 'wagmi'
 import { getConnections } from 'wagmi/actions'
 
-import { QrcodePlaceholderIcon } from './icons/qrcodePlaceholder'
 import { getWalletConnectUri } from './utils/walletConnect'
+import { getWalletDownloadUrl } from './utils/walletDownloadUrl'
 
-function getMobileDownloadUrl(downloadUrls: EvmWalletData['downloadUrls']) {
-  if (!downloadUrls) {
-    return undefined
-  }
-  if (isIOS && downloadUrls.ios) {
-    return downloadUrls.ios
-  }
-  if (isAndroid && downloadUrls.android) {
-    return downloadUrls.android
-  }
-
-  return downloadUrls.mobile || downloadUrls.browserExtension
-}
-
-function getDesktopDownloadUrl(downloadUrls: EvmWalletData['downloadUrls']) {
-  if (!downloadUrls) {
-    return undefined
-  }
-
-  return (
-    downloadUrls.browserExtension || downloadUrls.chrome || downloadUrls.firefox
-  )
-}
-
-function getWalletDownloadUrl(item: EvmWalletData) {
-  const { downloadUrls } = item
-
-  if (!downloadUrls) {
-    // If there is no download URL provided by the connector,
-    // the only option left is the generic walletConnect
-    const devices = isMobile ? 'Mobile' : 'Desktop,Web,Browser Extension'
-
-    return `https://walletguide.walletconnect.network/?devices=${encodeURIComponent(
-      devices,
-    )}`
-  }
-
-  return isMobile
-    ? getMobileDownloadUrl(downloadUrls)
-    : getDesktopDownloadUrl(downloadUrls)
-}
+// If no QR code URI is produced within this window, surface a retry option.
+const qrCodeTimeoutMs = 15_000
 
 type Props = {
   onBack: VoidFunction
@@ -61,11 +22,27 @@ type Props = {
 
 export function WalletQRCodeView({ onBack, wallet }: Props) {
   const t = useTranslations('connect-wallets')
+  const tCommon = useTranslations('common')
   const [uri, setUri] = useState('')
+  const [hasTimedOut, setHasTimedOut] = useState(false)
+  const [retryCount, setRetryCount] = useState(0)
   const config = useConfig()
   const { connect, connectors, reset } = useConnect()
+  const { disconnect } = useDisconnect()
 
   const downloadUrl = getWalletDownloadUrl(wallet)
+
+  const retry = useCallback(function retry() {
+    setRetryCount(count => count + 1)
+  }, [])
+
+  const handleBack = useCallback(
+    function handleBack() {
+      disconnect()
+      onBack()
+    },
+    [disconnect, onBack],
+  )
 
   useEffect(
     // This function generates the WalletConnect URI when the component mounts
@@ -75,23 +52,76 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
         return undefined
       }
 
-      const walletConnectConnector = connectors.find(
-        ({ id }) => id === 'walletConnect',
-      )
+      // Prefer the wallet's own connector when it is a WalletConnect.
+      const walletConnectConnector =
+        wallet.connector?.type === 'walletConnect'
+          ? wallet.connector
+          : connectors.find(({ id }) => id === 'walletConnect')
 
       if (!walletConnectConnector) {
         return undefined
       }
 
-      // Generate WalletConnect URI
-      getWalletConnectUri(walletConnectConnector)
-        .then(setUri)
-        .catch(() => setUri(''))
+      let cancelled = false
+      let cancelUriRequest: VoidFunction | undefined
+      setUri('')
+      setHasTimedOut(false)
 
-      // Start connection
-      connect({ connector: walletConnectConnector })
+      const timeoutId = window.setTimeout(function markTimedOut() {
+        if (!cancelled) {
+          setHasTimedOut(true)
+        }
+      }, qrCodeTimeoutMs)
+
+      async function startConnection(
+        connector: NonNullable<typeof walletConnectConnector>,
+      ) {
+        // Fix for Brave.
+        try {
+          const provider = await connector.getProvider()
+          // @ts-expect-error - provider session type isn't inferred
+          if (provider?.session) {
+            await Promise.race([
+              connector.disconnect(),
+              new Promise(resolve => window.setTimeout(resolve, 3_000)),
+            ])
+          }
+        } catch {
+          // Ignore and still attempt to connect below.
+        }
+
+        if (cancelled) {
+          return
+        }
+
+        const { cancel, promise } = getWalletConnectUri(connector)
+        cancelUriRequest = cancel
+        promise
+          .then(function (generatedUri) {
+            if (cancelled) {
+              return
+            }
+            setUri(generatedUri)
+            if (generatedUri) {
+              window.clearTimeout(timeoutId)
+            }
+          })
+          .catch(function () {
+            if (!cancelled) {
+              setUri('')
+            }
+          })
+
+        // Start connection
+        connect({ connector })
+      }
+
+      startConnection(walletConnectConnector)
 
       return function cleanup() {
+        cancelled = true
+        window.clearTimeout(timeoutId)
+        cancelUriRequest?.()
         // Only tear down the pairing when this WalletConnect connector did not
         // end up connected. Checking this connector's own active connection
         // (instead of the global account status) avoids leaving a dangling
@@ -106,7 +136,7 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
         reset()
       }
     },
-    [config, connect, connectors, reset],
+    [config, connect, connectors, reset, retryCount, wallet],
   )
 
   return (
@@ -114,7 +144,7 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
       <div className="flex items-center gap-2 md:justify-between">
         <button
           className="group text-neutral-600 hover:text-neutral-950"
-          onClick={onBack}
+          onClick={handleBack}
         >
           <Chevron.Left className="size-5 group-hover:[&>path]:fill-neutral-950" />
         </button>
@@ -127,13 +157,20 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
           </span>
         </h4>
         <div className="hidden md:block">
-          <QrcodePlaceholderIcon />
+          {/* Empty column to push the previous h4 to the center */}
         </div>
       </div>
       <div className="flex h-full flex-col items-center justify-center gap-3 py-3.5">
         <div className="hidden size-full items-center justify-center rounded-md bg-neutral-50/80 shadow-bs md:flex">
           {uri ? (
             <QRCodeSVG size={240} value={uri} />
+          ) : hasTimedOut ? (
+            <div className="flex flex-col items-center gap-3 p-4 text-center">
+              <p className="text-sm text-neutral-500">{t('qr-code-error')}</p>
+              <Button onClick={retry} size="xSmall" variant="secondary">
+                {tCommon('try-again')}
+              </Button>
+            </div>
           ) : (
             <Skeleton className="size-60" />
           )}

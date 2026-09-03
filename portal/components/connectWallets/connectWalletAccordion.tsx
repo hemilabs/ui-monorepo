@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl'
 import { ReactNode, useState } from 'react'
 
 import { DownloadIcon } from './icons/download'
-import { QrcodePlaceholderIcon } from './icons/qrcodePlaceholder'
+import { MiniQrCodeIcon } from './icons/miniQrCodeIcon'
 
 // Base type for any wallet in the accordion
 type WalletItem = {
@@ -32,10 +32,10 @@ type Props<T extends WalletItem> = {
   event: AnalyticsEvent
   getWalletState: (wallet: T) => WalletItemState
   icon: ReactNode
-  // Returns boolean or Promise<boolean> indicating if detail view should be shown
-  // If not provided or returns true, and renderDetailView exists, detail view is shown
-  onConnect: (wallet: T) => boolean | Promise<boolean> | void
-  // Optional - if provided, enables detail view (e.g., QR code for EVM)
+  // Return value indicates if QR code view should be shown
+  onConnect: (wallet: T) => boolean | Promise<boolean>
+  // Notifies whether the detail view is shown
+  onDetailViewToggle?: (isShowing: boolean) => void
   renderDetailView?: (wallet: T, onBack: VoidFunction) => ReactNode
   renderLogo: (wallet: T) => ReactNode
   text: string
@@ -47,6 +47,7 @@ export function ConnectWalletAccordion<T extends WalletItem>({
   getWalletState,
   icon,
   onConnect,
+  onDetailViewToggle,
   renderDetailView,
   renderLogo,
   text,
@@ -64,12 +65,9 @@ export function ConnectWalletAccordion<T extends WalletItem>({
 
   const handleWalletClick = async function (wallet: T) {
     const result = await onConnect(wallet)
-
-    // If onConnect returns true (or void) and renderDetailView exists, show detail view
-    // This allows EVM wallets to show QR code after initiating connection
-    // If onConnect returns false, don't show detail view (e.g., direct connection succeeded)
-    if (renderDetailView && result !== false) {
+    if (renderDetailView && result) {
       setSelectedWallet(wallet)
+      onDetailViewToggle?.(true)
     }
   }
 
@@ -105,7 +103,6 @@ export function ConnectWalletAccordion<T extends WalletItem>({
           )}
         </div>
       </button>
-
       <div
         className={`h-px border-t border-neutral-300/55 ${
           isOpen ? 'block' : 'hidden'
@@ -118,9 +115,9 @@ export function ConnectWalletAccordion<T extends WalletItem>({
       >
         <div className="relative overflow-hidden">
           <div
-            className={`p-3 transition-transform duration-300 ${
+            className={`${
               showDetailView ? '-translate-x-full' : 'translate-x-0'
-            }`}
+            } p-3 transition-transform duration-300`}
           >
             <h4 className="mb-3 mt-1 text-neutral-500">{t('wallets')}</h4>
             <div className="flex gap-2 overflow-x-auto p-1 md:grid md:grid-cols-3 md:overflow-x-visible md:p-0">
@@ -163,7 +160,7 @@ export function ConnectWalletAccordion<T extends WalletItem>({
                     {showQrCode && (
                       <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-white/80 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:backdrop-blur-2">
                         <div className="flex items-center gap-1 text-orange-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                          <QrcodePlaceholderIcon fill="currentColor" />
+                          <MiniQrCodeIcon fill="currentColor" />
                           <span className="text-sm font-semibold">
                             {t('scan')}
                           </span>
@@ -175,16 +172,18 @@ export function ConnectWalletAccordion<T extends WalletItem>({
               })}
             </div>
           </div>
-          {renderDetailView && (
-            <div
-              className={`absolute inset-0 m-4 transition-transform duration-300 ${
-                showDetailView ? 'translate-x-0' : 'translate-x-full'
-              }`}
-            >
-              {selectedWallet &&
-                renderDetailView(selectedWallet, () => setSelectedWallet(null))}
-            </div>
-          )}
+          <div
+            className={`absolute inset-0 m-4 ${
+              showDetailView ? 'translate-x-0' : 'translate-x-full'
+            } transition-transform duration-300`}
+          >
+            {showDetailView
+              ? renderDetailView(selectedWallet, function () {
+                  setSelectedWallet(null)
+                  onDetailViewToggle?.(false)
+                })
+              : null}
+          </div>
         </div>
       </div>
     </div>

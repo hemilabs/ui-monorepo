@@ -12,7 +12,6 @@ import { getNativeToken } from 'utils/nativeToken'
 import { walletIsConnected } from 'utils/wallet'
 import {
   useAccount as useEvmAccount,
-  useConnect,
   useDisconnect as useEvmDisconnect,
 } from 'wagmi'
 
@@ -28,69 +27,34 @@ import {
 } from '../hooks/useEvmWalletConnect'
 import { WalletQRCodeView } from '../walletQRCodeView'
 
-const STALE_CONNECTING_MS = 10_000
-
 export const EvmWallet = function () {
   const { chain, chainId, connector, status } = useEvmAccount()
   const t = useTranslations('connect-wallets')
   const { evmWallets } = useAllWallets()
   const chainSupported = useChainIsSupported(chainId)
   const { disconnect } = useEvmDisconnect()
-  const { reset: resetConnect } = useConnect()
   const { handleConnect } = useEvmWalletConnect()
-
-  // Whether the pending connection is driven by the WalletConnect QR code view.
-  // While it is, the accordion (and its QR view) must stay mounted and the
-  // stale-connecting timeout must not fire, since the user needs time to scan.
   const [isConnectingWithQrCode, setIsConnectingWithQrCode] = useState(false)
 
-  const onConnect = useCallback(
-    async function (wallet: Parameters<typeof handleConnect>[0]) {
-      const showDetailView = await handleConnect(wallet)
-      if (showDetailView !== false) {
-        setIsConnectingWithQrCode(true)
-      }
-      return showDetailView
-    },
-    [handleConnect],
-  )
-
-  // Keep the QR-connecting flag honest: clear it as soon as the connection is
-  // no longer pending (connected, or the user left/the pairing expired), rather
-  // than waiting for the next connection attempt.
   useEffect(
-    function resetQrConnectingOnceSettled() {
-      if (status !== 'connecting') {
+    function resetConnectingWithQrCodeOnceSettled() {
+      if (status === 'connected' || status === 'disconnected') {
         setIsConnectingWithQrCode(false)
       }
     },
     [status],
   )
 
-  // Disconnect the specific connector that is currently connected
-  // This ensures proper cleanup and allows reconnecting the same wallet
   const disconnectWallet = useCallback(
     () => disconnect({ connector }),
     [connector, disconnect],
   )
 
-  useEffect(
-    function abortConnectingAfterTimeout() {
-      // Skip the abort while the WalletConnect QR code view is open: the user
-      // may need more time to scan, and the QR view manages its own lifecycle.
-      if (status !== 'connecting' || isConnectingWithQrCode) {
-        return undefined
-      }
-      const id = window.setTimeout(function () {
-        disconnectWallet()
-        resetConnect()
-      }, STALE_CONNECTING_MS)
-      return function clearConnectingAbortTimer() {
-        window.clearTimeout(id)
-      }
-    },
-    [disconnectWallet, isConnectingWithQrCode, resetConnect, status],
-  )
+  useEffect(function resetStaleConnectingStatus() {
+    if (status === 'connecting') {
+      disconnect()
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (walletIsConnected(status)) {
     return (
@@ -128,7 +92,8 @@ export const EvmWallet = function () {
       event="evm connect"
       getWalletState={getEvmWalletState}
       icon={<EthLogo />}
-      onConnect={onConnect}
+      onConnect={handleConnect}
+      onDetailViewToggle={setIsConnectingWithQrCode}
       renderDetailView={(wallet, onBack) => (
         <WalletQRCodeView onBack={onBack} wallet={wallet} />
       )}

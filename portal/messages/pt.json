@@ -84,6 +84,7 @@
     "get-wallet": "Obter {wallet}",
     "install": "Instalar",
     "installed": "Instalado",
+    "qr-code-error": "Não foi possível carregar o código QR.",
     "scan": "Escanear",
     "scan-with": "Escanear com {wallet}",
     "status": {

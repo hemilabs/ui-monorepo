@@ -76,8 +76,12 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
       if (!uri) {
         return
       }
-      window.navigator.clipboard.writeText(uri)
-      setCopied(true)
+      window.navigator.clipboard
+        .writeText(uri)
+        .then(() => setCopied(true))
+        .catch(function () {
+          // Don't show confirmation on error.
+        })
     },
     [uri],
   )
@@ -161,6 +165,7 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
           <div className="flex size-60 items-center justify-center">
             {uri ? (
               <button
+                aria-label={copyLabel}
                 className="cursor-pointer"
                 onClick={copyUri}
                 type="button"

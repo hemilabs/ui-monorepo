@@ -30,8 +30,8 @@
 
 /* Metric-adjusted fallbacks: the overrides make the local font occupy the same
  * space as Inter, so text does not shift when the woff2 lands. The percentages
- * are next/font's, derived from the files' OS/2 metrics against Arial; changing
- * a woff2 means recomputing them. Helvetica and Liberation Sans are listed
+ * are derived from the files' OS/2 metrics against Arial; changing a woff2
+ * means recomputing them. Helvetica and Liberation Sans are listed
  * because both are metric-compatible with Arial, so the same numbers hold. */
 @font-face {
   ascent-override: 98.56%;
@@ -50,8 +50,8 @@
   src: url('/fonts/inter/variable/InterVariable.woff2') format('woff2');
 }
 
-/* Same as above, and this is the one that matters most: `*` uses
- * font-inter-variable, so stale metrics here shift every string on the page. */
+/* Same as above. This one matters most: font-inter-variable is the page-wide
+ * default, so stale metrics here shift almost every string. */
 @font-face {
   ascent-override: 89.79%;
   descent-override: 22.36%;

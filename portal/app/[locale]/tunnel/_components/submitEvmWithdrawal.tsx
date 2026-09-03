@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from 'components/button'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { EvmToken } from 'types/token'

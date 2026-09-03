@@ -1,5 +1,3 @@
-'use client'
-
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'

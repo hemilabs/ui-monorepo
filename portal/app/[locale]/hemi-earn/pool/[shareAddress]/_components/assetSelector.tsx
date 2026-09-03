@@ -1,5 +1,3 @@
-'use client'
-
 import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { Chevron } from 'components/icons/chevron'
 import { Menu } from 'components/menu'

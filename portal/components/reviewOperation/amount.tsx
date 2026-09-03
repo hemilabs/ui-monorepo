@@ -1,5 +1,3 @@
-'use client'
-
 import { DisplayAmount } from 'components/displayAmount'
 import { Token } from 'types/token'
 import { useTranslations } from 'use-intl'

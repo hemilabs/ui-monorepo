@@ -1,5 +1,3 @@
-'use client'
-
 import { Button, ButtonIcon } from 'components/button'
 import { Tooltip } from 'components/tooltip'
 import { type MouseEvent, useState } from 'react'

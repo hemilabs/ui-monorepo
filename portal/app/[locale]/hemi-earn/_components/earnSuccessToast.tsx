@@ -1,5 +1,3 @@
-'use client'
-
 import { hemi } from 'hemi-viem'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { type Address, type Hash } from 'viem'

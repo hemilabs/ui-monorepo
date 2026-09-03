@@ -1,5 +1,3 @@
-'use client'
-
 import { featureFlags } from 'app/featureFlags'
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { ReactNode } from 'react'

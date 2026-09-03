@@ -1,5 +1,3 @@
-'use client'
-
 import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { TokenInput } from 'components/tokenInput'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'

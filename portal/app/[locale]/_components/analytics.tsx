@@ -1,5 +1,3 @@
-'use client'
-
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { UmamiAnalyticsProvider } from 'components/umamiAnalyticsProvider'
 import { ComponentProps, useCallback } from 'react'

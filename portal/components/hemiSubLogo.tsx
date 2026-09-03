@@ -1,5 +1,3 @@
-'use client'
-
 import { useHemi } from 'hooks/useHemi'
 import { orange600 } from 'styles'
 import { Token } from 'types/token'

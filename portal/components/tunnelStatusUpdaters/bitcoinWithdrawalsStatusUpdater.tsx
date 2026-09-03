@@ -1,5 +1,3 @@
-'use client'
-
 import { useQueryClient } from '@tanstack/react-query'
 import { WithWorker } from 'components/withWorker'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'

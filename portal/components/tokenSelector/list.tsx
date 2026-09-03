@@ -1,5 +1,3 @@
-'use client'
-
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { DatabaseIcon } from 'components/icons/databaseIcon'
 import { MultiTokensIcon } from 'components/icons/multiTokensIcon'

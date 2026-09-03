@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from 'components/button'
 import { useDrawerAnimatedClose } from 'components/drawer'
 import { InboxIcon } from 'components/icons/inboxIcon'

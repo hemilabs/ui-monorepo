@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from 'components/button'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
 import { type FormEvent, useEffect, useState } from 'react'

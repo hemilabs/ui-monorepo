@@ -1,5 +1,3 @@
-'use client'
-
 import Skeleton from 'react-loading-skeleton'
 
 import { useEarnPools } from '../_hooks/useEarnPools'

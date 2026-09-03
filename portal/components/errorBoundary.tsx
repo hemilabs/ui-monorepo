@@ -1,5 +1,3 @@
-'use client'
-
 import * as Sentry from '@sentry/react'
 import { GenericError } from 'components/genericError'
 import React from 'react'

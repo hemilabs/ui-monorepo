@@ -1,5 +1,3 @@
-'use client'
-
 import { HemiSymbolWhite } from 'components/icons/hemiSymbolWhite'
 import { Spinner } from 'components/spinner'
 import { type EligibilityData } from 'genesis-drop-actions'

@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from 'components/button'
 import { WalletIcon } from 'components/icons/walletIcon'
 import { InformationBox } from 'components/informationBox'

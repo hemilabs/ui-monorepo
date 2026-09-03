@@ -1,5 +1,3 @@
-'use client'
-
 import { PageLayout } from 'components/pageLayout'
 import { ReactNode } from 'react'
 

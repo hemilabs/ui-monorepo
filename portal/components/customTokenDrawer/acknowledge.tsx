@@ -1,5 +1,3 @@
-'use client'
-
 import { Checkbox } from 'components/checkbox'
 import { useTranslations } from 'use-intl'
 

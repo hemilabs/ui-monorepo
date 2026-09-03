@@ -1,5 +1,3 @@
-'use client'
-
 import { useDebounce } from '@hemilabs/react-hooks/useDebounce'
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { SetMaxBtcBalance } from 'components/setMaxBalance'

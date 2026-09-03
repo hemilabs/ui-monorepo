@@ -1,5 +1,3 @@
-'use client'
-
 import { isBtcTxHash } from 'btc-wallet/utils/hash'
 import { Drawer } from 'components/drawer'
 import { TransactionsInProgressContext } from 'context/transactionsInProgressContext'

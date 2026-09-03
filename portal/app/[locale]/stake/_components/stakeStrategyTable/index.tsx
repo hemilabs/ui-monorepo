@@ -1,5 +1,3 @@
-'use client'
-
 import { ColumnDef } from '@tanstack/react-table'
 import { ButtonLink } from 'components/button'
 import { Balance } from 'components/cryptoBalance'

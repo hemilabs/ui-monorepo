@@ -1,5 +1,3 @@
-'use client'
-
 import { Card } from 'components/card'
 import { Tab, Tabs } from 'components/tabs'
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'

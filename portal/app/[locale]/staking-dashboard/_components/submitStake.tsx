@@ -1,5 +1,3 @@
-'use client'
-
 import { Button, ButtonSize } from 'components/button'
 import { Spinner } from 'components/spinner'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'

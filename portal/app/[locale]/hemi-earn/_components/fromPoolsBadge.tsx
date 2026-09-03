@@ -1,5 +1,3 @@
-'use client'
-
 import { useQueries } from '@tanstack/react-query'
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'

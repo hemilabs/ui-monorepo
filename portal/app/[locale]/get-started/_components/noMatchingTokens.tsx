@@ -1,5 +1,3 @@
-'use client'
-
 import { MagnifyingGlassIcon } from 'components/icons/magnifyingGlassIcon'
 import { useTranslations } from 'use-intl'
 

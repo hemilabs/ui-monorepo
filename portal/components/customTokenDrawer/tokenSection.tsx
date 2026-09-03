@@ -1,5 +1,3 @@
-'use client'
-
 import { DrawerParagraph } from 'components/drawer'
 import { SearchInput } from 'components/inputText'
 import { ShortVerticalLine } from 'components/verticalLines'

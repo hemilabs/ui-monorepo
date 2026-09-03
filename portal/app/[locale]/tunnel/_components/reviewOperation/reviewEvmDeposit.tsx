@@ -1,5 +1,3 @@
-'use client'
-
 import { AddTokenToWallet } from 'components/addTokenToWallet'
 import { ChainIcon } from 'components/reviewOperation/chainIcon'
 import { ChainLabel } from 'components/reviewOperation/chainLabel'

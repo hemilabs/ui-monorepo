@@ -1,5 +1,3 @@
-'use client'
-
 import { Drawer } from 'components/drawer'
 import { Suspense, useEffect } from 'react'
 import { isAddressEqual, isHash } from 'viem'

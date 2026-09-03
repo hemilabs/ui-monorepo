@@ -1,5 +1,3 @@
-'use client'
-
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import Skeleton from 'react-loading-skeleton'
 import { screenBreakpoints } from 'styles'

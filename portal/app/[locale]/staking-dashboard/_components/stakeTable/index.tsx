@@ -1,5 +1,3 @@
-'use client'
-
 import { ColumnDef } from '@tanstack/react-table'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { Table } from 'components/table'

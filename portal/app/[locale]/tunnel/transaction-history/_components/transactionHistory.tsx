@@ -1,5 +1,3 @@
-'use client'
-
 import { Table } from 'components/table'
 import { TableCard } from 'components/table/tableCard'
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'

@@ -1,5 +1,3 @@
-'use client'
-
 import { DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { useTranslations } from 'use-intl'
 

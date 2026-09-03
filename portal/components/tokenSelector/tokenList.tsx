@@ -1,5 +1,3 @@
-'use client'
-
 import { useDebounce } from '@hemilabs/react-hooks/useDebounce'
 import { useVisualViewportSize } from '@hemilabs/react-hooks/useVisualViewportSize'
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'

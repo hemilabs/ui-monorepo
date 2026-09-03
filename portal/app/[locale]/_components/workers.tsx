@@ -1,5 +1,3 @@
-'use client'
-
 import { lazyWithFallback } from 'components/lazyWithFallback'
 
 const SyncHistoryWorkers = lazyWithFallback(() =>

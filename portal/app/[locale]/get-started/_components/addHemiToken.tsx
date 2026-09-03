@@ -1,5 +1,3 @@
-'use client'
-
 import { ColumnDef } from '@tanstack/react-table'
 import { Card } from 'components/card'
 import { SearchInput } from 'components/inputText'

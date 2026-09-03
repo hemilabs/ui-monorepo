@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from 'components/button'
 import { Checkbox } from 'components/checkbox'
 import { Modal } from 'components/modal'

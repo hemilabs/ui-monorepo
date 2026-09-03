@@ -1,5 +1,3 @@
-'use client'
-
 import { Locale } from 'i18n/routing'
 import { ReactElement } from 'react'
 import { useLocale } from 'use-intl'

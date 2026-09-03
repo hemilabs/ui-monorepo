@@ -39,20 +39,23 @@ export const RetryBtcWithdraw = function ({ withdrawal }: Props) {
     // once the user confirms the withdraw, the withdrawal will change its state
     // and this component gets unmounted
     setOperationStatus('withdrawing')
-    const { amount, l1ChainId, l2ChainId } = withdrawal
+    const { amount, l1ChainId, l2ChainId, to } = withdrawal
 
     withdrawBitcoin({
       amount: BigInt(amount),
+      btcAddress: to,
       l1ChainId,
       l2ChainId,
     })
   }
 
+  const isReadyToRetry = !!withdrawal.to
+
   return (
     <DrawerCallToAction
       onSubmit={handleRetry}
       submitButton={
-        <Button disabled={isWithdrawing} size="small">
+        <Button disabled={!isReadyToRetry || isWithdrawing} size="small">
           {t(isWithdrawing ? 'withdrawing' : 'try-again')}
         </Button>
       }

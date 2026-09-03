@@ -1,3 +1,5 @@
+import { type BtcChain } from 'btc-wallet/chains'
+
 import {
   type MempoolJsBitcoinTransaction,
   type TransactionReceipt,
@@ -35,4 +37,17 @@ export const getBitcoinTimestamp = function (timestamp: number) {
   // timestamps from btc are saved in unix format
   const now = Math.floor(new Date().getTime() / 1000)
   return Math.min(now, timestamp)
+}
+
+const networkAddressPrefixes = {
+  livenet: { base58: ['1', '3'], bech32: 'bc1' },
+  testnet: { base58: ['2', 'm', 'n'], bech32: 'tb1' },
+}
+
+export const isAddressOfBitcoinNetwork = function (
+  address: string,
+  network: BtcChain['id'],
+) {
+  const { base58, bech32 } = networkAddressPrefixes[network]
+  return address.toLowerCase().startsWith(bech32) || base58.includes(address[0])
 }

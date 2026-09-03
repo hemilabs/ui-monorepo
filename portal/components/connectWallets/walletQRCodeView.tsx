@@ -1,14 +1,15 @@
-import { ButtonLink } from 'components/button'
+import { Button, ButtonLink } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
 import { type EvmWalletData } from 'hooks/useAllWallets'
 import { useTranslations } from 'next-intl'
 import { QRCodeSVG } from 'qrcode.react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { isMobile, isAndroid, isIOS } from 'react-device-detect'
 import Skeleton from 'react-loading-skeleton'
 import { useConfig, useConnect } from 'wagmi'
 import { getConnections } from 'wagmi/actions'
 
+import { ClipboardIcon } from './icons/clipboard'
 import { QrcodePlaceholderIcon } from './icons/qrcodePlaceholder'
 import { getWalletConnectUri } from './utils/walletConnect'
 
@@ -61,11 +62,36 @@ type Props = {
 
 export function WalletQRCodeView({ onBack, wallet }: Props) {
   const t = useTranslations('connect-wallets')
+  const tCommon = useTranslations('common')
   const [uri, setUri] = useState('')
+  const [copied, setCopied] = useState(false)
   const config = useConfig()
   const { connect, connectors, reset } = useConnect()
 
   const downloadUrl = getWalletDownloadUrl(wallet)
+  const copyLabel = copied ? tCommon('copied') : t('copy-link')
+
+  const copyUri = useCallback(
+    function copyUri() {
+      if (!uri) {
+        return
+      }
+      window.navigator.clipboard.writeText(uri)
+      setCopied(true)
+    },
+    [uri],
+  )
+
+  useEffect(
+    function resetCopied() {
+      if (!copied) {
+        return undefined
+      }
+      const timeoutId = window.setTimeout(() => setCopied(false), 3000)
+      return () => window.clearTimeout(timeoutId)
+    },
+    [copied],
+  )
 
   useEffect(
     // This function generates the WalletConnect URI when the component mounts
@@ -131,12 +157,30 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
         </div>
       </div>
       <div className="flex h-full flex-col items-center justify-center gap-3 py-3.5">
-        <div className="hidden size-full items-center justify-center rounded-md bg-neutral-50/80 shadow-bs md:flex">
-          {uri ? (
-            <QRCodeSVG size={240} value={uri} />
-          ) : (
-            <Skeleton className="size-60" />
-          )}
+        <div className="hidden size-full flex-col items-center justify-center gap-2 rounded-md bg-neutral-50/80 shadow-bs md:flex">
+          <div className="flex size-60 items-center justify-center">
+            {uri ? (
+              <button
+                className="cursor-pointer"
+                onClick={copyUri}
+                type="button"
+              >
+                <QRCodeSVG size={240} value={uri} />
+              </button>
+            ) : (
+              <Skeleton className="size-60" />
+            )}
+          </div>
+          <Button
+            disabled={!uri}
+            onClick={copyUri}
+            size="xSmall"
+            type="button"
+            variant="secondary"
+          >
+            <ClipboardIcon />
+            {copyLabel}
+          </Button>
         </div>
 
         {downloadUrl && (

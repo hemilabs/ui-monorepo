@@ -217,7 +217,6 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     amountValidation.canSubmit,
     canSubmitAddress,
   ].every(Boolean)
-  const feeEstimationEnabled = !!receivingAddress && canWithdraw
 
   const disableForm = !canWithdraw || isWithdrawing
 
@@ -225,12 +224,12 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     useEstimateBtcWithdrawFees({
       amount,
       btcAddress: receivingAddress,
-      enabled: feeEstimationEnabled,
+      enabled: canWithdraw,
     })
 
   const gas = {
     amount: formatUnits(estimatedFees, fromChain?.nativeCurrency.decimals),
-    isError: isEstimateFeesError || !feeEstimationEnabled,
+    isError: isEstimateFeesError || !canWithdraw,
     label: t('common.network-gas-fee', { network: fromChain?.name }),
     token: getNativeToken(fromChain.id),
   }
@@ -243,7 +242,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   }
 
   function renderFees() {
-    if (!feeEstimationEnabled) {
+    if (!canWithdraw) {
       return null
     }
 

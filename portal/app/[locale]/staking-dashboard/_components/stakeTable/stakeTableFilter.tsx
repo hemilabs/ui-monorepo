@@ -1,5 +1,3 @@
-'use client'
-
 import { Tab, Tabs } from 'components/tabs'
 import { useUmami } from 'hooks/useUmami'
 import { StakingPositionStatus } from 'types/stakingDashboard'

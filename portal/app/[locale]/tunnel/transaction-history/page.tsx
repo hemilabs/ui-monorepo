@@ -1,5 +1,3 @@
-'use client'
-
 import { PageLayout } from 'components/pageLayout'
 import { PageTitle } from 'components/pageTitle'
 import { useState } from 'react'

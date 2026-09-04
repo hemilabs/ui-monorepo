@@ -1,5 +1,3 @@
-'use client'
-
 import { PageTitle } from 'components/pageTitle'
 import { useTranslations } from 'use-intl'
 

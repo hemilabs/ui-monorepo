@@ -1,5 +1,3 @@
-'use client'
-
 import { ButtonLink } from 'components/button'
 import { LiveIcon } from 'components/icons/liveIcon'
 import { useNetworkType } from 'hooks/useNetworkType'

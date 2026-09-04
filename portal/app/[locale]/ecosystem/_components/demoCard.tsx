@@ -1,5 +1,3 @@
-'use client'
-
 import { AnalyticsEvent } from 'app/analyticsEvents'
 import { ExternalLink } from 'components/externalLink'
 import { Image } from 'components/image'

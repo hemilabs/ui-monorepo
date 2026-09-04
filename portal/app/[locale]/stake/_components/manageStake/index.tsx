@@ -1,5 +1,3 @@
-'use client'
-
 import { Drawer } from 'components/drawer'
 import { useState } from 'react'
 import { type StakeOperations, type StakeToken } from 'types/stake'

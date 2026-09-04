@@ -1,5 +1,3 @@
-'use client'
-
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { ToastLoader } from 'components/toast/toastLoader'
 import { useHemiToken } from 'hooks/useHemiToken'

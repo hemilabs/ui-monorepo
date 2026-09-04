@@ -1,5 +1,3 @@
-'use client'
-
 import * as Sentry from '@sentry/react'
 import { Connector, watchAccount } from '@wagmi/core'
 import { WalletConnector } from 'btc-wallet/connectors/types'

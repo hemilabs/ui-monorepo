@@ -1,5 +1,3 @@
-'use client'
-
 import { Link } from 'components/link'
 import { type ComponentProps, type MouseEvent, type ReactNode } from 'react'
 

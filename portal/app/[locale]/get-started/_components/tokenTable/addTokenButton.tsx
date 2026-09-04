@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from 'components/button'
 import { CheckMark } from 'components/icons/checkMark'
 import { PlusIcon } from 'components/icons/plusIcon'

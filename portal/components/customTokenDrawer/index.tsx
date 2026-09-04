@@ -1,5 +1,3 @@
-'use client'
-
 import { useQueryClient } from '@tanstack/react-query'
 import { Button } from 'components/button'
 import { Drawer, DrawerParagraph, DrawerTopSection } from 'components/drawer'

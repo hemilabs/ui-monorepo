@@ -1,5 +1,3 @@
-'use client'
-
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { UmamiAnalyticsProvider } from 'components/umamiAnalyticsProvider'
 import { ComponentProps, useCallback } from 'react'
@@ -25,18 +23,16 @@ export const Analytics = function ({
   )
 
   return (
-    <>
-      <UmamiAnalyticsProvider
-        autoTrack={false}
-        processUrl={processUrl}
-        {...(import.meta.env.VITE_ENABLE_ANALYTICS === 'true' && {
-          src: import.meta.env.VITE_ANALYTICS_URL,
-          websiteId: import.meta.env.VITE_ANALYTICS_WEBSITE_ID,
-        })}
-      >
-        <GlobalTracking />
-        {children}
-      </UmamiAnalyticsProvider>
-    </>
+    <UmamiAnalyticsProvider
+      autoTrack={false}
+      processUrl={processUrl}
+      {...(import.meta.env.VITE_ENABLE_ANALYTICS === 'true' && {
+        src: import.meta.env.VITE_ANALYTICS_URL,
+        websiteId: import.meta.env.VITE_ANALYTICS_WEBSITE_ID,
+      })}
+    >
+      <GlobalTracking />
+      {children}
+    </UmamiAnalyticsProvider>
   )
 }

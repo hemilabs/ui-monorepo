@@ -1,5 +1,3 @@
-'use client'
-
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import {
   ProgressStatus,

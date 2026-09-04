@@ -1,5 +1,3 @@
-'use client'
-
 import { ButtonLink } from 'components/button'
 import { ExternalLink } from 'components/externalLink'
 import { CheckCircleIcon } from 'components/icons/checkCircleIcon'

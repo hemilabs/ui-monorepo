@@ -1,5 +1,3 @@
-'use client'
-
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import { Operation } from 'components/reviewOperation/operation'

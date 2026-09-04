@@ -1,5 +1,3 @@
-'use client'
-
 import Skeleton from 'react-loading-skeleton'
 import { formatPercentage } from 'utils/format'
 import { VictoryPie } from 'victory'

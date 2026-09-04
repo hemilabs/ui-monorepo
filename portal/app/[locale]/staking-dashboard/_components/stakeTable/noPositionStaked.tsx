@@ -1,5 +1,3 @@
-'use client'
-
 import { InformationBox } from 'components/informationBox'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTranslations } from 'use-intl'

@@ -1,5 +1,3 @@
-'use client'
-
 import { Toast } from 'components/toast'
 import { useTranslations } from 'use-intl'
 

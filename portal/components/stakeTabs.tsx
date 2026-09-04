@@ -1,5 +1,3 @@
-'use client'
-
 import { Tab, Tabs } from 'components/tabs'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathname } from 'i18n/navigation'

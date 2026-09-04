@@ -1,5 +1,3 @@
-'use client'
-
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { PageLayout } from 'components/pageLayout'
 import { type ReactNode } from 'react'

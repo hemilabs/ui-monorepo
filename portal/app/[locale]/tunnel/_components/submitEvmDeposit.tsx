@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from 'components/button'
 import { Spinner } from 'components/spinner'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'

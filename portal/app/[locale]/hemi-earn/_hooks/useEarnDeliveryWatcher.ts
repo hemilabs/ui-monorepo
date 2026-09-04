@@ -1,5 +1,3 @@
-'use client'
-
 import { useQueryClient } from '@tanstack/react-query'
 import { hemi } from 'hemi-viem'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'

@@ -1,5 +1,3 @@
-'use client'
-
 import { AddTokenToWallet } from 'components/addTokenToWallet'
 import { Button } from 'components/button'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'

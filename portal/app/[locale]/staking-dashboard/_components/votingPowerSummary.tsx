@@ -1,5 +1,3 @@
-'use client'
-
 import { CardInfo } from 'components/cardInfo'
 import { DisplayAmount } from 'components/displayAmount'
 import { useVeHemiToken } from 'hooks/useVeHemiToken'

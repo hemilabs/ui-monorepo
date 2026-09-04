@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from 'components/button'
 import { type FormEvent, useContext } from 'react'
 import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'

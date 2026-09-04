@@ -1,5 +1,3 @@
-'use client'
-
 import { useTranslations } from 'use-intl'
 import { formatFiatNumber } from 'utils/format'
 import { walletIsConnected } from 'utils/wallet'

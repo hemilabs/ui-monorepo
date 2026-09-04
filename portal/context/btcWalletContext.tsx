@@ -1,5 +1,3 @@
-'use client'
-
 import { bitcoinTestnet, bitcoinMainnet } from 'btc-wallet/chains'
 import { okx } from 'btc-wallet/connectors/okx'
 import { unisat } from 'btc-wallet/connectors/unisat'

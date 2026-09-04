@@ -1,5 +1,3 @@
-'use client'
-
 import { Button, ButtonLink } from 'components/button'
 import { ExternalLink } from 'components/externalLink'
 import { EligibilityData } from 'genesis-drop-actions'

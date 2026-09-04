@@ -1,5 +1,3 @@
-'use client'
-
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
 import { SetMaxEvmBalance } from 'components/setMaxBalance'

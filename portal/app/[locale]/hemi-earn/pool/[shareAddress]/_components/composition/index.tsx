@@ -1,5 +1,3 @@
-'use client'
-
 import { Card } from 'components/card'
 import { useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'

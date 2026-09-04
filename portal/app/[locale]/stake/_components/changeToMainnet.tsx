@@ -1,5 +1,3 @@
-'use client'
-
 import { Link } from 'components/link'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathname } from 'i18n/navigation'

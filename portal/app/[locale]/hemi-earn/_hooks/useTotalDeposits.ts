@@ -1,5 +1,3 @@
-'use client'
-
 import { useQueries } from '@tanstack/react-query'
 import Big from 'big.js'
 import { getTokenPrice } from 'utils/token'

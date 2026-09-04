@@ -1,5 +1,3 @@
-'use client'
-
 import { featureFlags } from 'app/featureFlags'
 import { PageLayout } from 'components/pageLayout'
 import { TestnetDisabled } from 'components/testnetDisabled'

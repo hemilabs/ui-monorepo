@@ -1,5 +1,3 @@
-'use client'
-
 import { DrawerSection, DrawerTopSection } from 'components/drawer'
 import Skeleton from 'react-loading-skeleton'
 

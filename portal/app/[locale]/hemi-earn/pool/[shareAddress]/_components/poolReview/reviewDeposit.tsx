@@ -1,5 +1,3 @@
-'use client'
-
 import { Operation } from 'components/reviewOperation/operation'
 import {
   ProgressStatus,

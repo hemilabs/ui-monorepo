@@ -1,5 +1,3 @@
-'use client'
-
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { ConnectWalletsDrawer } from 'components/connectWallets/connectWalletsDrawer'
 import { Drawer } from 'components/drawer'
@@ -24,8 +22,6 @@ import { NavbarResponsive } from './navbar/navbarResponsive'
 import { NavBarUrlSync } from './navbar/navBarUrlSync'
 import { TestnetIndicator } from './testnetIndicator'
 
-// Rendered only when the wallet drawer is open — never during static
-// prerendering — so useUmami (useSearchParams) is safe here.
 const WalletDrawer = function ({ closeDrawer }: { closeDrawer: VoidFunction }) {
   const { track } = useUmami()
 

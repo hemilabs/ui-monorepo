@@ -161,7 +161,7 @@ Furthermore, consider the [code structure](./portal/README.md#structure), which 
 
 ### Rules
 
-- This app uses the App router from next (v14). Therefore, below the `app` folder, each folder that contains a `page.tsx` is a route segment.
+- Routing lives in `app.tsx` at the portal root, wired with react-router. Pages still live below the `app` folder, but a folder holding a `page.tsx` is not a route on its own: it only becomes reachable once it is added to the route table in `app.tsx`.
 - When creating a new component, hook, or function utility, prefer co-locating these new files in their `_components`, `_hooks` or `_utils` that belong to the page where it is being used. This means that each page will have their own folders for these types of files.
   If the component/hook/util is generic enough, they can be created in/moved to their respective folder `components`/`hooks`/`utils` in the root of the portal project.
 - When adding new functions to either `utils` or `_utils`, if they contain logic, add tests in the `test` folder. If the function is only code that calls an external source, tests may be skipped.

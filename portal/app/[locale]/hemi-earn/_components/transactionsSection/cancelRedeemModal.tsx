@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from 'components/button'
 import { Modal } from 'components/modal'
 import { useTranslations } from 'use-intl'

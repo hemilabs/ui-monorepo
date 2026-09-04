@@ -1,5 +1,3 @@
-'use client'
-
 import { InRelativeTime } from 'components/inRelativeTime'
 import Skeleton from 'react-loading-skeleton'
 

@@ -1,5 +1,3 @@
-'use client'
-
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { Button } from 'components/button'
 import { useDrawerContext } from 'hooks/useDrawerContext'

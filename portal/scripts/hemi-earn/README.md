@@ -209,4 +209,4 @@ pnpm --filter portal sandbox:hemi-earn -- keeper \
 
 ## Why the nested `package.json`
 
-`portal/package.json` doesn't set `"type": "module"` (Next.js needs the default CJS resolution). The nested `package.json` in this folder scopes ESM to these scripts only, so Node can execute the `.ts` files with `import`/`export` syntax without touching the rest of `portal/`.
+It pins the Node floor these scripts need (`>=24`, which is what runs the `.ts` files directly) and keeps the folder a package boundary of its own. The `tsconfig.json` next to it does the same for typechecking: the portal excludes `scripts/hemi-earn/**/*`, so these files are checked against `@tsconfig/node24` instead of the app's browser config.

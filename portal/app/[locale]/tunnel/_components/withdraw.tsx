@@ -1,5 +1,3 @@
-'use client'
-
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { CustomTunnelsThroughPartners } from 'components/customTunnelsThroughPartners'
 import { EvmFeesSummary } from 'components/evmFeesSummary'

@@ -1,5 +1,3 @@
-'use client'
-
 import { AnalyticsEvent } from 'app/analyticsEvents'
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { Tab, Tabs } from 'components/tabs'

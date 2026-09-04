@@ -213,9 +213,6 @@ export const HistoryLoader = function ({
       if (
         !address ||
         !supportedEvmChain ||
-        // only save the history of the address it belongs to - on an account
-        // switch, this effect re-runs with the new address while the reducer
-        // still holds the previous account's history
         address !== loadedAddress ||
         !['finished', 'syncing'].includes(history.status) ||
         // if we started resync, do not save!
@@ -246,8 +243,6 @@ export const HistoryLoader = function ({
       if (!forceResync) {
         return
       }
-      // cancel any pending debounced save - otherwise its trailing call can
-      // run after the clear below and repopulate storage with stale data
       debouncedSaveToStorage.cancel()
       // clear local storage
       clearHistoryInLocalStorage({

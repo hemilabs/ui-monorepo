@@ -1,6 +1,6 @@
 {
   "name": "portal-migration",
-  "main": "./server/index.ts",
+  "main": "./worker/index.ts",
   "compatibility_date": "2026-02-05",
   "workers_dev": false,
   "preview_urls": true,

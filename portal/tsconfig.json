@@ -17,7 +17,7 @@
     // final shape.
     "verbatimModuleSyntax": false
   },
-  "exclude": ["dist", "out", "scripts/hemi-earn/**/*", "server/**/*"],
+  "exclude": ["dist", "out", "scripts/hemi-earn/**/*", "worker/**/*"],
   "extends": "@tsconfig/vite-react/tsconfig.json",
   "include": [
     "intl.d.ts",

@@ -9,6 +9,7 @@ const securityHeaders = buildSecurityHeaders({
     import.meta.env.VITE_CUSTOM_RPC_URL_MAINNET,
     import.meta.env.VITE_CUSTOM_RPC_URL_SEPOLIA,
   ],
+  isDev: import.meta.env.DEV,
   portalApiUrl: import.meta.env.VITE_PORTAL_API_URL,
   sentryDsn: import.meta.env.VITE_SENTRY_DSN,
   vetroApiUrl: import.meta.env.VITE_VETRO_API_URL,
@@ -19,12 +20,6 @@ export default {
     const response = await env.ASSETS.fetch(request).catch(
       () => new Response('Internal Server Error', { status: 500 }),
     )
-
-    // `upgrade-insecure-requests` rewrites every request to https, which the
-    // dev server does not speak, so `dev:wifi` on a phone would never load.
-    if (import.meta.env.DEV) {
-      return response
-    }
 
     const withSecurityHeaders = new Response(response.body, response)
 

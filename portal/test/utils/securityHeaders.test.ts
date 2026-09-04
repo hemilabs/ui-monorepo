@@ -32,6 +32,31 @@ describe('buildSecurityHeaders', function () {
     ])
   })
 
+  it('upgrades insecure requests when it is not development', function () {
+    expect(
+      buildSecurityHeaders(baseConfig)['Content-Security-Policy'],
+    ).toContain('upgrade-insecure-requests')
+  })
+
+  it('keeps the rest of the policy in development', function () {
+    const headers = buildSecurityHeaders({ ...baseConfig, isDev: true })
+
+    expect(headers['Content-Security-Policy']).not.toContain(
+      'upgrade-insecure-requests',
+    )
+    expect(directive(headers, 'default-src')).toBe("default-src 'self'")
+    expect(directive(headers, 'connect-src')).toContain("'self'")
+  })
+
+  it('lets the same-origin workers load', function () {
+    const headers = buildSecurityHeaders(baseConfig)
+
+    expect(directive(headers, 'script-src')).toBe(
+      "script-src 'self' 'unsafe-inline'",
+    )
+    expect(headers['Content-Security-Policy']).not.toContain('worker-src')
+  })
+
   it('refuses to be framed', function () {
     const headers = buildSecurityHeaders(baseConfig)
 

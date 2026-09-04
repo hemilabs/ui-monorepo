@@ -2,7 +2,7 @@
   "name": "portal",
   "version": "1.0.0",
   "scripts": {
-    "build": "vite build",
+    "build": "pnpm types:check && pnpm typecheck && vite build",
     "deploy": "pnpm run build",
     "dev": "vite",
     "dev:wifi": "vite --host",
@@ -10,7 +10,9 @@
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
     "test": "vitest run",
-    "typecheck": "wrangler types server/worker-configuration.d.ts && tsc -p tsconfig.build.json && tsc -p server/tsconfig.json",
+    "typecheck": "tsc -p tsconfig.build.json && tsc -p worker/tsconfig.json",
+    "types": "wrangler types worker/worker-configuration.d.ts --env-file=/dev/null",
+    "types:check": "wrangler types worker/worker-configuration.d.ts --env-file=/dev/null --check",
     "preview": "vite preview"
   },
   "dependencies": {

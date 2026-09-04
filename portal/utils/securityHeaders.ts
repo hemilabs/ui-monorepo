@@ -5,6 +5,7 @@ type SecurityHeadersConfig = {
   analyticsEnabled: boolean
   analyticsUrl?: string
   customRpcUrls: (string | undefined)[]
+  isDev?: boolean
   portalApiUrl?: string
   sentryDsn?: string
   vetroApiUrl?: string
@@ -125,17 +126,47 @@ const buildScriptDomains = function (hosts: ThirdPartyHosts) {
   return domains
 }
 
-export const buildSecurityHeaders = function (config: SecurityHeadersConfig) {
-  const hosts = getThirdPartyHosts(config)
-  const fetchDomains = Array.from(buildFetchDomains(config, hosts)).join(' ')
-  const scriptDomains = Array.from(buildScriptDomains(hosts)).join(' ')
-  const fonts = fontDomains.join(' ')
+const directive = (name: string, sources: string[]) =>
+  [name, ...sources.filter(Boolean)].join(' ')
 
-  return {
+const buildContentSecurityPolicy = ({
+  fetchDomains,
+  fonts,
+  isDev,
+  scriptDomains,
+}: {
+  fetchDomains: string[]
+  fonts: string[]
+  isDev: boolean
+  scriptDomains: string[]
+}) =>
+  [
+    directive('default-src', ["'self'"]),
     // No `worker-src` on purpose: it falls back to `script-src`, which allows
     // 'self', and the five under portal/workers are same-origin. Dropping
     // 'self' from `script-src` stops tunnel history from syncing.
-    'Content-Security-Policy': `default-src 'self'; script-src 'self' 'unsafe-inline' ${scriptDomains}; style-src 'self' 'unsafe-inline'; img-src 'self' ${imageSrcUrls.join(' ')} blob: data:; connect-src 'self' ${fetchDomains}; frame-src 'self' ${frameSrcUrls.join(' ')}; frame-ancestors 'none'; block-all-mixed-content; upgrade-insecure-requests; font-src 'self' ${fonts}; style-src-elem 'self' 'unsafe-inline' ${fonts};`,
+    directive('script-src', ["'self'", "'unsafe-inline'", ...scriptDomains]),
+    directive('style-src', ["'self'", "'unsafe-inline'"]),
+    directive('img-src', ["'self'", ...imageSrcUrls, 'blob:', 'data:']),
+    directive('connect-src', ["'self'", ...fetchDomains]),
+    directive('frame-src', ["'self'", ...frameSrcUrls]),
+    directive('frame-ancestors', ["'none'"]),
+    'block-all-mixed-content',
+    ...(isDev ? [] : ['upgrade-insecure-requests']),
+    directive('font-src', ["'self'", ...fonts]),
+    directive('style-src-elem', ["'self'", "'unsafe-inline'", ...fonts]),
+  ].join('; ')
+
+export const buildSecurityHeaders = function (config: SecurityHeadersConfig) {
+  const hosts = getThirdPartyHosts(config)
+
+  return {
+    'Content-Security-Policy': buildContentSecurityPolicy({
+      fetchDomains: Array.from(buildFetchDomains(config, hosts)),
+      fonts: fontDomains,
+      isDev: config.isDev ?? false,
+      scriptDomains: Array.from(buildScriptDomains(hosts)),
+    }),
     'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
     'Permissions-Policy': 'geolocation=(), microphone=()',
     'Referrer-Policy': 'strict-origin-when-cross-origin',

@@ -10,6 +10,7 @@ type Options = {
 }
 
 export const sitemap = ({ baseUrl, includeHemiEarn }: Options): Plugin => ({
+  applyToEnvironment: environment => environment.name === 'client',
   generateBundle() {
     this.emitFile({
       fileName: 'sitemap.xml',

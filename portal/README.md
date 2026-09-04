@@ -13,6 +13,7 @@ Some relevant folders are:
 - [/hooks](./hooks/) folder, which contains reusable hooks to the entire app that are not tied to a specific page.
 - [/messages/](./messages/) folder, which contain a file per locale with all the translated resources.
 - [/public](./public/) folder, which is served verbatim at the site root.
+- [worker/index.ts](./worker/index.ts), the Cloudflare Worker that serves the built assets and sets the security headers on every response.
 - [/test](./test/) folder, which contains some tests for different portal files. These tests are for plain Typescript functions, and not for components.
 - [/types](./types/) folder, which contains many reusable Typescript types across the entire app
 - [/utils](./utils/) folder, which contains most of the logic that is not tied to UI.
@@ -116,4 +117,12 @@ Run the following command:
 pnpm build
 ```
 
-The `dist` folder's content should be deployed as a static page.
+This emits the static assets and, alongside them, the Worker that serves those assets and sets the security headers on every response. Both are deployed to Cloudflare through its Git integration.
+
+`pnpm dev` serves the same headers, minus `upgrade-insecure-requests`: it rewrites every request to https, which the dev server does not speak. To exercise the production set, build first and then:
+
+```sh
+pnpm exec wrangler dev
+```
+
+The build is what points wrangler at the directory holding the assets, so the commands that serve or deploy them need it. Without `dist/` they fail with a complaint about a missing `directory` property. `wrangler types` runs either way.

@@ -1,14 +1,18 @@
 {
-  "ignore": ["subgraphs/utils/index.ts"],
+  "ignore": [
+    "portal/worker/worker-configuration.d.ts",
+    "subgraphs/utils/index.ts"
+  ],
   "ignoreBinaries": ["jq"],
   "ignoreDependencies": ["eslint-config-prettier"],
   "workspaces": {
     "portal": {
       "typescript": {
         "config": [
-          "tsconfig.json",
+          "scripts/hemi-earn/tsconfig.json",
+          "worker/tsconfig.json",
           "tsconfig.build.json",
-          "scripts/hemi-earn/tsconfig.json"
+          "tsconfig.json"
         ]
       }
     },

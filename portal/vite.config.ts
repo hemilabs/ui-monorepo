@@ -1,3 +1,4 @@
+import { cloudflare } from '@cloudflare/vite-plugin'
 import { sentryVitePlugin } from '@sentry/vite-plugin'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath } from 'node:url'
@@ -8,12 +9,15 @@ import { sitemap } from './plugins/sitemap'
 
 const polyfills = () => nodePolyfills({ include: ['http', 'https', 'util'] })
 
+const onlyClient = (environment: { name: string }) =>
+  environment.name === 'client'
+
 export default defineConfig(function ({ mode }) {
   const env = loadEnv(mode, process.cwd(), '')
 
   const instrumentForSentry = !!env.VITE_SENTRY_DSN && !process.env.STORYBOOK
 
-  const plugins: PluginOption[] = [react(), polyfills()]
+  const plugins: PluginOption[] = [react(), cloudflare(), polyfills()]
 
   if (env.PORTAL_SITE_URL) {
     plugins.push(
@@ -26,7 +30,7 @@ export default defineConfig(function ({ mode }) {
 
   if (instrumentForSentry) {
     plugins.push(
-      sentryVitePlugin({
+      ...sentryVitePlugin({
         applicationKey: env.VITE_SENTRY_FILTER_KEY_ID,
         authToken: env.SENTRY_AUTH_TOKEN,
         org: env.SENTRY_ORG,
@@ -50,7 +54,10 @@ export default defineConfig(function ({ mode }) {
           ],
         },
         telemetry: false,
-      }),
+      }).map(plugin => ({
+        ...plugin,
+        applyToEnvironment: onlyClient,
+      })),
     )
   }
 

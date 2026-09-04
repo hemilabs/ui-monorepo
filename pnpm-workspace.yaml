@@ -11,6 +11,7 @@ ignoredBuiltDependencies:
   - 'core-js' # only a sponsor-banner postinstall, no functional payload
   - 'keccak' # has a pure-JS fallback; the native addon is never loaded in the browser bundle
   - 'utf-8-validate' # optional native ws speedup; ws falls back to pure JS
+  - 'workerd' # wrangler dev fetches the runtime it needs on its own; vite build never uses it
 
 minimumReleaseAge: 10080 # 7 days in minutes
 minimumReleaseAgeExclude:

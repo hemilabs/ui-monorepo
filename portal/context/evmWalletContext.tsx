@@ -17,11 +17,12 @@ import {
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { featureFlags } from 'app/featureFlags'
 import { allEvmNetworks } from 'networks'
 import { isMobile } from 'react-device-detect'
 import { buildTransports } from 'utils/transport'
 import { WagmiProvider, createConfig } from 'wagmi'
-import { walletConnect } from 'wagmi/connectors'
+import { safe, walletConnect } from 'wagmi/connectors'
 
 type Props = {
   children: React.ReactNode
@@ -75,6 +76,7 @@ const connectors = connectorsForWallets(
 export const allEvmNetworksWalletConfig = createConfig({
   chains: allEvmNetworks,
   connectors: [
+    ...(featureFlags.enableSafeWallet ? [safe()] : []),
     walletConnect({
       projectId,
       showQrModal: false,

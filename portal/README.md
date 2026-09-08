@@ -42,6 +42,7 @@ NEXT_PUBLIC_ANALYTICS_URL=<url> # Umami analytics URL
 NEXT_PUBLIC_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
 # These env variables are required for enabling the following features
 NEXT_PUBLIC_ENABLE_HEMI_EARN_PAGE=<true|false> # Enable the Hemi Earn page
+NEXT_PUBLIC_ENABLE_SAFE_WALLET=<true|false> # Enable the Safe connector, needed to run the Portal as a Safe App
 NEXT_PUBLIC_ENABLE_STAKE_GOVERNANCE_TESTNET=<true|false> # Enable stake governance on Testnet, for local development
 NEXT_PUBLIC_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development
 NEXT_PUBLIC_ENABLE_CLAIM_REWARDS_TESTNET=<true|false> # Enable claim rewards on Testnet, for local development

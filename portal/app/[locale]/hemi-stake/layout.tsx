@@ -5,7 +5,7 @@ import { Outlet } from 'react-router'
 import { NotFound } from '../not-found'
 
 export const HemiStakeLayout = function () {
-  useDocumentTitle('hemi Stake | Hemi Portal')
+  useDocumentTitle('Hemi Stake | Hemi Portal')
 
   if (!featureFlags.enableHemiStakePage) {
     return <NotFound />

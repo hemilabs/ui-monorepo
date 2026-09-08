@@ -450,7 +450,7 @@
     }
   },
   "hemi-stake": {
-    "subheading": "Lock $HEMI from 12 days to 4 years. Earn every payout in HEMI, hemiBTC and USDC, and get a vote."
+    "subheading": "Lock ${symbol} from {minDays, plural, one {# day} other {# days}} to {maxYears, plural, one {# year} other {# years}}. Earn every payout in {symbol}, hemiBTC and USDC, and get a vote."
   },
   "metadata": {
     "title": "Hemi Portal"
@@ -476,7 +476,6 @@
       "language": "Language",
       "legal-and-privacy": "Legal and Privacy"
     },
-    "hemi-stake": "hemi Stake",
     "network": "Network",
     "network-status": "Network status",
     "stake": "Stake",

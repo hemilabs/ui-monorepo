@@ -13,7 +13,7 @@ const stakeLinks = (t: ReturnType<typeof useTranslations<'navbar'>>) => [
     ? {
         event: 'nav - hemi stake' as const,
         href: '/hemi-stake',
-        text: t('hemi-stake'),
+        text: 'Hemi Stake',
         urlToBeSelected: '/hemi-stake',
       }
     : {

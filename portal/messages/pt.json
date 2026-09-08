@@ -450,7 +450,7 @@
     }
   },
   "hemi-stake": {
-    "subheading": "Bloqueie $HEMI de 12 dias a 4 anos. Receba cada pagamento em HEMI, hemiBTC e USDC, e ganhe poder de voto."
+    "subheading": "Bloqueie ${symbol} de {minDays, plural, one {# dia} other {# dias}} a {maxYears, plural, one {# ano} other {# anos}}. Receba cada pagamento em {symbol}, hemiBTC e USDC, e ganhe poder de voto."
   },
   "metadata": {
     "title": "Portal Hemi"
@@ -476,7 +476,6 @@
       "language": "Idioma",
       "legal-and-privacy": "Legal e Privacidade"
     },
-    "hemi-stake": "hemi Stake",
     "network": "Rede",
     "network-status": "Estado da rede",
     "stake": "Stake",

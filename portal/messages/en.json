@@ -449,6 +449,9 @@
       "withdrawal": "Withdrawal"
     }
   },
+  "hemi-stake": {
+    "subheading": "Lock $HEMI from 12 days to 4 years. Earn every payout in HEMI, hemiBTC and USDC, and get a vote."
+  },
   "metadata": {
     "title": "Hemi Portal"
   },
@@ -473,6 +476,7 @@
       "language": "Language",
       "legal-and-privacy": "Legal and Privacy"
     },
+    "hemi-stake": "hemi Stake",
     "network": "Network",
     "network-status": "Network status",
     "stake": "Stake",

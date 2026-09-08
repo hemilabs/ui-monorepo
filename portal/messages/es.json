@@ -449,6 +449,9 @@
       "withdrawal": "Retiro"
     }
   },
+  "hemi-stake": {
+    "subheading": "Bloquee $HEMI desde 12 días hasta 4 años. Reciba cada pago en HEMI, hemiBTC y USDC, y obtenga poder de voto."
+  },
   "metadata": {
     "title": "Portal de Hemi"
   },
@@ -473,6 +476,7 @@
       "language": "Idioma",
       "legal-and-privacy": "Privacidad y Legales"
     },
+    "hemi-stake": "hemi Stake",
     "network": "Red",
     "network-status": "Estado de la red",
     "stake": "Stake",

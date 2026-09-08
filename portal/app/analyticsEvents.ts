@@ -1,5 +1,5 @@
 import { LockupMonths } from 'genesis-drop-actions'
-import { umamiAnalyticsContextFactory } from 'umami-analytics-next'
+import { umamiAnalyticsContextFactory } from 'umami-analytics'
 
 // all analytic events
 const analyticsEvents = [

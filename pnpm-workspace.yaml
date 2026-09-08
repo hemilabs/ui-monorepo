@@ -18,6 +18,7 @@ minimumReleaseAgeExclude:
   - '@hemilabs/*'
   - '@vetro-protocol/*'
   - 'hemi-viem'
+  - 'umami-analytics'
 
 onlyBuiltDependencies:
   - '@sentry/cli' # downloads the sentry-cli binary @sentry/vite-plugin uses to upload source maps

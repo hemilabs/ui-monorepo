@@ -73,6 +73,7 @@ const analyticsEvents = [
   'hemi earn - withdraw success',
   // nav bar
   'nav - hemi earn',
+  'nav - hemi stake',
   'nav - dex',
   'nav - docs',
   'nav - ecosystem',

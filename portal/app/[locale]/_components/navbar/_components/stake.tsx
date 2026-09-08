@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import { StakeIcon } from 'components/icons/stakeIcon'
 import { Link } from 'components/link'
 import { useState } from 'react'
@@ -8,6 +9,16 @@ import { ItemAccordion } from './itemAccordion'
 import { ItemContainer, ItemText, Row } from './navItem'
 
 const stakeLinks = (t: ReturnType<typeof useTranslations<'navbar'>>) => [
+  ...(featureFlags.enableHemiStakePage
+    ? [
+        {
+          event: 'nav - hemi stake' as const,
+          href: '/hemi-stake',
+          text: t('hemi-stake'),
+          urlToBeSelected: '/hemi-stake',
+        },
+      ]
+    : []),
   {
     event: 'nav - staking dashboard' as const,
     href: '/staking-dashboard',

@@ -9,7 +9,12 @@ const excluded: Record<string, string> = {
   '/hemi-earn/pool/[shareAddress]': 'dynamic, one URL per pool address',
 }
 
-const allPages = { includeHemiEarn: true, includeHemiStake: true }
+const stakeOn = { includeHemiEarn: true, includeHemiStake: true }
+const stakeOff = { includeHemiEarn: true, includeHemiStake: false }
+const routesInEitherState = [
+  ...sitemapRoutes(stakeOn),
+  ...sitemapRoutes(stakeOff),
+]
 
 const localeDir = path.join(import.meta.dirname, '../../app/[locale]')
 
@@ -28,9 +33,8 @@ const pageRoutes = function (dir: string, route = ''): string[] {
 
 describe('utils/sitemapRoutes', function () {
   it('should account for every page on disk', function () {
-    const listed = sitemapRoutes(allPages)
     const unaccounted = pageRoutes(localeDir).filter(
-      route => !listed.includes(route) && !(route in excluded),
+      route => !routesInEitherState.includes(route) && !(route in excluded),
     )
     expect(unaccounted).toEqual([])
   })
@@ -38,7 +42,7 @@ describe('utils/sitemapRoutes', function () {
   it('should not list a route without a page', function () {
     const onDisk = pageRoutes(localeDir)
     expect(
-      sitemapRoutes(allPages).filter(route => !onDisk.includes(route)),
+      routesInEitherState.filter(route => !onDisk.includes(route)),
     ).toEqual([])
   })
 })

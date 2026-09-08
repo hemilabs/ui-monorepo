@@ -24,6 +24,7 @@ export default defineConfig(function ({ mode }) {
       sitemap({
         baseUrl: env.PORTAL_SITE_URL,
         includeHemiEarn: env.VITE_ENABLE_HEMI_EARN_PAGE === 'true',
+        includeHemiStake: env.VITE_ENABLE_HEMI_STAKE_PAGE === 'true',
       }),
     )
   }

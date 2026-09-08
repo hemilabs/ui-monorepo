@@ -46,6 +46,7 @@ VITE_ANALYTICS_URL=<url> # Umami analytics URL
 VITE_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
 # These env variables are required for enabling the following features
 VITE_ENABLE_HEMI_EARN_PAGE=<true|false> # Enable the Hemi Earn page
+VITE_ENABLE_HEMI_STAKE_PAGE=<true|false> # Enable the hemi Stake page
 VITE_ENABLE_STAKE_GOVERNANCE_TESTNET=<true|false> # Enable stake governance on Testnet, for local development
 VITE_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development
 VITE_ENABLE_CLAIM_REWARDS_TESTNET=<true|false> # Enable claim rewards on Testnet, for local development

@@ -9,5 +9,14 @@ const contentRoutes = [
   '/tunnel/transaction-history',
 ] as const
 
-export const sitemapRoutes = (includeHemiEarn: boolean) =>
-  [...contentRoutes, ...(includeHemiEarn ? ['/hemi-earn'] : [])].sort()
+type Options = {
+  includeHemiEarn: boolean
+  includeHemiStake: boolean
+}
+
+export const sitemapRoutes = ({ includeHemiEarn, includeHemiStake }: Options) =>
+  [
+    ...contentRoutes,
+    ...(includeHemiEarn ? ['/hemi-earn'] : []),
+    ...(includeHemiStake ? ['/hemi-stake'] : []),
+  ].sort()

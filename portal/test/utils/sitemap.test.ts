@@ -4,14 +4,15 @@ import { sitemapRoutes } from 'utils/sitemapRoutes'
 import { describe, expect, it } from 'vitest'
 
 const baseUrl = 'https://app.hemi.xyz'
-const build = (includeHemiEarn = true) =>
-  buildSitemap({ baseUrl, locales, routes: sitemapRoutes(includeHemiEarn) })
+const allPages = { includeHemiEarn: true, includeHemiStake: true }
+const build = (flags = allPages) =>
+  buildSitemap({ baseUrl, locales, routes: sitemapRoutes(flags) })
 
 describe('utils/sitemap', function () {
   it('should emit one url per route per locale', function () {
     const xml = build()
     expect(xml.match(/<url>/g)).toHaveLength(
-      sitemapRoutes(true).length * locales.length,
+      sitemapRoutes(allPages).length * locales.length,
     )
   })
 
@@ -64,7 +65,16 @@ describe('utils/sitemap', function () {
   })
 
   it('should omit hemi earn when the flag is off', function () {
-    expect(build(false)).not.toContain('hemi-earn')
-    expect(build(true)).toContain('hemi-earn')
+    expect(build({ ...allPages, includeHemiEarn: false })).not.toContain(
+      'hemi-earn',
+    )
+    expect(build()).toContain('hemi-earn')
+  })
+
+  it('should omit hemi stake when the flag is off', function () {
+    expect(build({ ...allPages, includeHemiStake: false })).not.toContain(
+      'hemi-stake',
+    )
+    expect(build()).toContain('hemi-stake')
   })
 })

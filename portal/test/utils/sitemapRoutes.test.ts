@@ -9,6 +9,8 @@ const excluded: Record<string, string> = {
   '/hemi-earn/pool/[shareAddress]': 'dynamic, one URL per pool address',
 }
 
+const allPages = { includeHemiEarn: true, includeHemiStake: true }
+
 const localeDir = path.join(import.meta.dirname, '../../app/[locale]')
 
 const pageRoutes = function (dir: string, route = ''): string[] {
@@ -26,7 +28,7 @@ const pageRoutes = function (dir: string, route = ''): string[] {
 
 describe('utils/sitemapRoutes', function () {
   it('should account for every page on disk', function () {
-    const listed = sitemapRoutes(true)
+    const listed = sitemapRoutes(allPages)
     const unaccounted = pageRoutes(localeDir).filter(
       route => !listed.includes(route) && !(route in excluded),
     )
@@ -36,7 +38,7 @@ describe('utils/sitemapRoutes', function () {
   it('should not list a route without a page', function () {
     const onDisk = pageRoutes(localeDir)
     expect(
-      sitemapRoutes(true).filter(route => !onDisk.includes(route)),
+      sitemapRoutes(allPages).filter(route => !onDisk.includes(route)),
     ).toEqual([])
   })
 })

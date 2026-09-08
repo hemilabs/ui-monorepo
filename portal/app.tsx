@@ -82,6 +82,21 @@ const ToEcosystem = function () {
   )
 }
 
+const ToHemiStake = function () {
+  const { hash, pathname, search } = useLocation()
+
+  return (
+    <Navigate
+      replace
+      to={{
+        hash,
+        pathname: pathname.replace(/\/staking-dashboard\/?$/, '/hemi-stake'),
+        search,
+      }}
+    />
+  )
+}
+
 export const App = () => (
   // Outermost on purpose: anything thrown above this, including reading the
   // browser language, would take the whole page down with nothing to show.
@@ -144,12 +159,16 @@ export const App = () => (
               <Route element={<StakePage />} index />
               <Route element={<StakeDashboardPage />} path="dashboard" />
             </Route>
-            <Route
-              element={<StakingDashboardLayout />}
-              path="staking-dashboard"
-            >
-              <Route element={<StakingDashboardPage />} index />
-            </Route>
+            {featureFlags.enableHemiStakePage ? (
+              <Route element={<ToHemiStake />} path="staking-dashboard" />
+            ) : (
+              <Route
+                element={<StakingDashboardLayout />}
+                path="staking-dashboard"
+              >
+                <Route element={<StakingDashboardPage />} index />
+              </Route>
+            )}
             <Route element={<NotFound />} path="*" />
           </Route>
         </SentryRoutes>

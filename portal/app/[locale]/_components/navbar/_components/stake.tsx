@@ -9,22 +9,19 @@ import { ItemAccordion } from './itemAccordion'
 import { ItemContainer, ItemText, Row } from './navItem'
 
 const stakeLinks = (t: ReturnType<typeof useTranslations<'navbar'>>) => [
-  ...(featureFlags.enableHemiStakePage
-    ? [
-        {
-          event: 'nav - hemi stake' as const,
-          href: '/hemi-stake',
-          text: t('hemi-stake'),
-          urlToBeSelected: '/hemi-stake',
-        },
-      ]
-    : []),
-  {
-    event: 'nav - staking dashboard' as const,
-    href: '/staking-dashboard',
-    text: t('governance-staking'),
-    urlToBeSelected: '/staking-dashboard',
-  },
+  featureFlags.enableHemiStakePage
+    ? {
+        event: 'nav - hemi stake' as const,
+        href: '/hemi-stake',
+        text: t('hemi-stake'),
+        urlToBeSelected: '/hemi-stake',
+      }
+    : {
+        event: 'nav - staking dashboard' as const,
+        href: '/staking-dashboard',
+        text: t('governance-staking'),
+        urlToBeSelected: '/staking-dashboard',
+      },
   {
     event: 'nav - stake' as const,
     href: '/stake/dashboard',

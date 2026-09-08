@@ -332,9 +332,6 @@ importers:
       lodash:
         specifier: 4.18.1
         version: 4.18.1
-      next:
-        specifier: 16.2.12
-        version: 16.2.12(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       nuqs:
         specifier: 2.9.1
         version: 2.9.1(next@16.2.12(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
@@ -377,9 +374,9 @@ importers:
       smart-round:
         specifier: 3.0.0
         version: 3.0.0
-      umami-analytics-next:
-        specifier: 1.0.1
-        version: 1.0.1(next@16.2.12(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      umami-analytics:
+        specifier: 2.0.0
+        version: 2.0.0(react@19.2.8)
       use-intl:
         specifier: 4.11.0
         version: 4.11.0(react@19.2.8)
@@ -14869,16 +14866,14 @@ packages:
         integrity: sha512-9muQwa4wZG4dKi9gMAIBtnk2Pw87SRpvWTH6lOGm19V2Uqxr4uomUf2PGqPnWc+qs06sN8owUU4jfcoWOcfwVQ==,
       }
 
-  umami-analytics-next@1.0.1:
+  umami-analytics@2.0.0:
     resolution:
       {
-        integrity: sha512-0Vm4ds9C+o8rxoH0yBYcT7dmHOyIlzbaGvmMig0IcIEgj6SEhCS/HncX8mC8h9GZ5RZvMjzq6+IryVBLaEAIIw==,
+        integrity: sha512-cF/7Sa06UTWysJhZJZEpqH/7hkVPSo5bwXzXd7RDo837oFkdrtW2BI7JiUHJqgXQUkQdCdHfV8O89DqMg7u+gg==,
       }
     engines: { node: '>=16.9.0' }
     peerDependencies:
-      next: '>=13'
       react: '>=18'
-      react-dom: '>=18'
 
   unbash@3.0.0:
     resolution:
@@ -17930,7 +17925,8 @@ snapshots:
       '@tybys/wasm-util': 0.10.2
     optional: true
 
-  '@next/env@16.2.12': {}
+  '@next/env@16.2.12':
+    optional: true
 
   '@next/eslint-plugin-next@13.5.11':
     dependencies:
@@ -19366,6 +19362,7 @@ snapshots:
   '@swc/helpers@0.5.15':
     dependencies:
       tslib: 2.8.1
+    optional: true
 
   '@tanstack/query-core@5.100.9': {}
 
@@ -21300,7 +21297,8 @@ snapshots:
 
   cli-width@4.1.0: {}
 
-  client-only@0.0.1: {}
+  client-only@0.0.1:
+    optional: true
 
   cliui@6.0.0:
     dependencies:
@@ -24122,6 +24120,7 @@ snapshots:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
+    optional: true
 
   node-addon-api@2.0.2: {}
 
@@ -25818,6 +25817,7 @@ snapshots:
       react: 19.2.8
     optionalDependencies:
       '@babel/core': 7.29.0
+    optional: true
 
   sucrase@3.35.1:
     dependencies:
@@ -26098,11 +26098,9 @@ snapshots:
     dependencies:
       multiformats: 13.4.2
 
-  umami-analytics-next@1.0.1(next@16.2.12(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+  umami-analytics@2.0.0(react@19.2.8):
     dependencies:
-      next: 16.2.12(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react: 19.2.8
-      react-dom: 19.2.8(react@19.2.8)
 
   unbash@3.0.0: {}
 

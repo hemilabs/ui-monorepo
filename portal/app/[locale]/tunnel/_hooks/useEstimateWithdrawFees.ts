@@ -5,7 +5,7 @@ import { EvmToken } from 'types/token'
 import { getL2BridgeAddress } from 'utils/chain'
 import { isNativeAddress } from 'utils/nativeToken'
 import { Address, Chain } from 'viem'
-import { useEstimateGas } from 'wagmi'
+import { useAccount, useEstimateGas } from 'wagmi'
 
 export const useEstimateWithdrawFees = function ({
   amount,
@@ -18,16 +18,21 @@ export const useEstimateWithdrawFees = function ({
   fromToken: EvmToken
   l1ChainId: Chain['id']
 }) {
+  const { address } = useAccount()
+
   const l2BridgeAddress = getL2BridgeAddress(l1ChainId)
   const isNative = isNativeAddress(fromToken.address)
   const { data: gasUnits, isError } = useEstimateGas({
-    data: encodeInitiateWithdraw({
-      amount,
-      l2TokenAddress: isNative
-        ? NativeTokenSpecialAddressOnL2
-        : (fromToken.address as Address),
-    }),
-    query: { enabled },
+    data: address
+      ? encodeInitiateWithdraw({
+          amount,
+          l2TokenAddress: isNative
+            ? NativeTokenSpecialAddressOnL2
+            : (fromToken.address as Address),
+          to: address,
+        })
+      : undefined,
+    query: { enabled: enabled && !!address },
     to: l2BridgeAddress,
     value: isNative ? amount : undefined,
   })

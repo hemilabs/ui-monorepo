@@ -25,14 +25,27 @@ const fontDomains = [
 
 const imageSrcUrls = [
   website,
-  'https://*.walletconnect.com',
   'https://hemilabs.github.io',
-  'https://framerusercontent.com',
+  'https://framerusercontent.com', // TODO: remove, content should not be loaded from here.
+  // WalletConnect / Reown Appkit
+  // https://docs.reown.com/advanced/security/content-security-policy
+  'https://walletconnect.com',
+  'https://walletconnect.org',
+  'https://secure.walletconnect.com',
+  'https://secure.walletconnect.org',
+  'https://api.web3modal.com',
+  'https://api.web3modal.org',
 ]
 
 const frameSrcUrls = [
-  'https://*.walletconnect.org',
   'https://challenges.cloudflare.com',
+  // WalletConnect / Reown Appkit + Coinbase
+  // https://docs.reown.com/advanced/security/content-security-policy
+  'https://secure.walletconnect.com',
+  'https://secure.walletconnect.org',
+  'https://verify.walletconnect.com',
+  'https://verify.walletconnect.org',
+  'https://keys.coinbase.com',
 ]
 
 type ThirdPartyHosts = {
@@ -73,15 +86,31 @@ const buildFetchDomains = function (
     hemi.blockExplorers.default.url,
     hemiSepolia.blockExplorers.default.url,
     'https://api.studio.thegraph.com/',
+    // WalletConnect / Reown AppKit + Coinbase Wallet endpoints.
+    // https://docs.reown.com/advanced/security/content-security-policy
+    'https://api.web3modal.com',
     'https://api.web3modal.org',
-    'wss://*.walletconnect.com',
-    'https://*.walletconnect.com',
+    'https://echo.walletconnect.com',
+    'https://echo.walletconnect.org',
+    'https://keys.walletconnect.com',
+    'https://keys.walletconnect.org',
+    'https://notify.walletconnect.com',
+    'https://notify.walletconnect.org',
+    'https://pulse.walletconnect.com',
+    'https://pulse.walletconnect.org',
+    'https://push.walletconnect.com',
+    'https://push.walletconnect.org',
+    'https://relay.walletconnect.com',
+    'https://relay.walletconnect.org',
+    'https://rpc.walletconnect.com',
+    'https://rpc.walletconnect.org',
+    'wss://relay.walletconnect.com',
     'wss://relay.walletconnect.org',
-    'https://*.walletconnect.org',
     'https://cca-lite.coinbase.com',
     'https://chain-proxy.wallet.coinbase.com',
     'https://keys.coinbase.com',
-    'wss://www.walletlink.org/rpc',
+    'wss://www.walletlink.org',
+    // Binance
     'https://binance.nodereal.io',
     'https://bsc-dataseed2.ninicoin.io',
     'https://bscrpc.com',
@@ -89,6 +118,7 @@ const buildFetchDomains = function (
     'wss://nbstream.binance.click',
     'wss://nbstream.binance.com',
     'wss://nbstream.binance.info',
+    // Merkle
     'https://api.merkl.xyz',
   ])
 

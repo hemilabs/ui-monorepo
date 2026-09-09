@@ -97,7 +97,24 @@ describe('buildSecurityHeaders', function () {
     expect(connectSrc).toContain('https://blockstream.info')
     expect(connectSrc).toContain('https://mempool.space')
     expect(connectSrc).toContain('https://*.hemi.network')
-    expect(connectSrc).toContain('https://*.walletconnect.com')
+  })
+
+  it('allows the services used by the wallet connectors', function () {
+    const headers = buildSecurityHeaders(baseConfig)
+
+    expect(directive(headers, 'connect-src')).toContain(
+      'https://api.web3modal.com',
+    )
+    expect(directive(headers, 'connect-src')).toContain(
+      'wss://relay.walletconnect.com',
+    )
+    expect(directive(headers, 'frame-src')).toContain(
+      'https://keys.coinbase.com',
+    )
+    expect(directive(headers, 'frame-src')).toContain(
+      'https://verify.walletconnect.com',
+    )
+    expect(directive(headers, 'img-src')).toContain('https://walletconnect.org')
   })
 
   it('allow-lists only the origin of a custom rpc url', function () {

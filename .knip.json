@@ -4,7 +4,7 @@
     "subgraphs/utils/index.ts"
   ],
   "ignoreBinaries": ["jq"],
-  "ignoreDependencies": ["eslint-config-prettier"],
+  "ignoreDependencies": ["assemblyscript", "eslint-config-prettier"],
   "workspaces": {
     "portal": {
       "typescript": {
@@ -21,6 +21,9 @@
     },
     "subgraphs/*": {
       "entry": ["src/mappings/*.ts"]
+    },
+    "subgraphs/ve-hemi-subgraph": {
+      "entry": ["src/mappings/*.ts", "tests/**/*.test.ts"]
     }
   }
 }

@@ -12,4 +12,11 @@ type LockedPosition @entity(immutable: false) {
   tokenId: BigInt!
   transactionHash: Bytes!
   transferable: Boolean!
+  unlockTime: BigInt!
+}
+
+type LockStats @entity(immutable: false) {
+  activeLocks: Int!
+  id: String!
+  totalLockDuration: BigInt!
 }

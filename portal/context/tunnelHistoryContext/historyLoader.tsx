@@ -126,17 +126,19 @@ const debouncedSaveToStorage = debounce(
   { leading: true },
 )
 
-export const HistoryLoader = function ({
-  dispatch,
-  forceResync,
-  history,
-  setForceResync,
-}: {
+type Props = {
   dispatch: Dispatch<HistoryActions>
   forceResync: boolean
   history: HistoryReducerState
   setForceResync: Dispatch<SetStateAction<boolean>>
-}) {
+}
+
+const Loader = function ({
+  dispatch,
+  forceResync,
+  history,
+  setForceResync,
+}: Props) {
   const { address } = useAccount()
   const l2ChainId = useHemi().id
   const { remoteNetworks } = useNetworks()
@@ -268,4 +270,11 @@ export const HistoryLoader = function ({
   })
 
   return null
+}
+
+export const HistoryLoader = function (props: Props) {
+  const { address } = useAccount()
+  const [networkType] = useNetworkType()
+
+  return <Loader {...props} key={`${networkType}_${address}`} />
 }

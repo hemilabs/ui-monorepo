@@ -1,5 +1,4 @@
 import { lazyWithFallback } from 'components/lazyWithFallback'
-import { useNetworkType } from 'hooks/useNetworkType'
 import {
   createContext,
   Dispatch,
@@ -12,7 +11,6 @@ import {
   type DepositTunnelOperation,
   type WithdrawTunnelOperation,
 } from 'types/tunnel'
-import { useAccount } from 'wagmi'
 
 import { historyReducer, initialState } from './reducer'
 import { HistoryActions, type HistoryReducerState } from './types'
@@ -61,9 +59,6 @@ type Props = {
 }
 
 export const TunnelHistoryProvider = function ({ children }: Props) {
-  const { address } = useAccount()
-  const [networkType] = useNetworkType()
-
   // use this boolean to force a resync of the history
   const [forceResync, setForceResync] = useState(false)
 
@@ -107,7 +102,6 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
         dispatch={dispatch}
         forceResync={forceResync}
         history={history}
-        key={`${networkType}_${address}`}
         setForceResync={setForceResync}
       />
       {children}

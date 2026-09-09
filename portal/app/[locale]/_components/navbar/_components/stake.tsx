@@ -9,10 +9,10 @@ import { ItemContainer, ItemText, Row } from './navItem'
 
 const stakeLinks = (t: ReturnType<typeof useTranslations<'navbar'>>) => [
   {
-    event: 'nav - staking dashboard' as const,
-    href: '/staking-dashboard',
+    event: 'nav - hemi stake' as const,
+    href: '/hemi-stake',
     text: t('governance-staking'),
-    urlToBeSelected: '/staking-dashboard',
+    urlToBeSelected: '/hemi-stake',
   },
   {
     event: 'nav - stake' as const,

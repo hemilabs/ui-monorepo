@@ -87,6 +87,14 @@ describe('buildSecurityHeaders', function () {
     expect(headers['X-Frame-Options']).toBe('DENY')
   })
 
+  it('blocks document injection and native form submissions', function () {
+    const headers = buildSecurityHeaders(baseConfig)
+
+    expect(directive(headers, 'base-uri')).toBe("base-uri 'none'")
+    expect(directive(headers, 'form-action')).toBe("form-action 'none'")
+    expect(directive(headers, 'object-src')).toBe("object-src 'none'")
+  })
+
   it('allows the origins the app fetches from', function () {
     const connectSrc = directive(
       buildSecurityHeaders(baseConfig),

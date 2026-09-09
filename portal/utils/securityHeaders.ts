@@ -172,6 +172,9 @@ const buildContentSecurityPolicy = ({
 }) =>
   [
     directive('default-src', ["'self'"]),
+    directive('base-uri', ["'none'"]),
+    directive('form-action', ["'none'"]),
+    directive('object-src', ["'none'"]),
     // No `worker-src` on purpose: it falls back to `script-src`, which allows
     // 'self', and the five under portal/workers are same-origin. Dropping
     // 'self' from `script-src` stops tunnel history from syncing.

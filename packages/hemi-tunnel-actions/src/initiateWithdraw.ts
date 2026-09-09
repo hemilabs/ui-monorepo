@@ -32,12 +32,14 @@ const canInitiateWithdraw = async function ({
   checkBalance,
   l1Chain,
   l2Chain,
+  to,
 }: {
   account: Address
   amount: bigint
   checkBalance: () => Promise<string | undefined>
   l1Chain: Chain
   l2Chain: Chain
+  to: Address
 }): Promise<{
   canWithdraw: boolean
   reason?: string
@@ -47,6 +49,7 @@ const canInitiateWithdraw = async function ({
     amount,
     l1Chain,
     l2Chain,
+    to,
   })
   if (reason) {
     return { canWithdraw: false, reason }
@@ -69,6 +72,7 @@ type InitiateWithdraw = {
   l2PublicClient: PublicClient
   l2TokenAddress: Address
   l2WalletClient: WalletClient
+  to?: Address | undefined
   value?: bigint | undefined
 }
 
@@ -81,6 +85,7 @@ const runInitiateWithdraw = ({
   l2PublicClient,
   l2TokenAddress,
   l2WalletClient,
+  to = account,
   value,
 }: InitiateWithdraw) =>
   async function (emitter: EventEmitter<WithdrawEvents>) {
@@ -93,6 +98,7 @@ const runInitiateWithdraw = ({
         checkBalance,
         l1Chain,
         l2Chain,
+        to,
       }).catch(() => ({
         canWithdraw: false,
         reason: 'failed to validate inputs',
@@ -110,10 +116,10 @@ const runInitiateWithdraw = ({
         abi: l2BridgeAbi,
         account,
         address: l2Bridge,
-        // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/eth-bridge.ts#L178
-        args: [l2TokenAddress, amount, 0, '0x'],
+        // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/eth-bridge.ts#L189
+        args: [l2TokenAddress, to, amount, 0, '0x'],
         chain: l2Chain,
-        functionName: 'withdraw',
+        functionName: 'withdrawTo',
         value,
       }).catch(function (error) {
         emitter.emit('user-signing-withdraw-error', error)
@@ -153,15 +159,17 @@ const runInitiateWithdraw = ({
 export const encodeInitiateWithdraw = ({
   amount = BigInt(0),
   l2TokenAddress,
+  to,
 }: {
   amount: bigint | undefined
   l2TokenAddress: Address
+  to: Address
 }) =>
   encodeFunctionData({
     abi: l2BridgeAbi,
-    // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/eth-bridge.ts#L178
-    args: [l2TokenAddress, amount, 0, '0x'],
-    functionName: 'withdraw',
+    // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/eth-bridge.ts#L189
+    args: [l2TokenAddress, to, amount, 0, '0x'],
+    functionName: 'withdrawTo',
   })
 
 export const initiateWithdrawEth = ({

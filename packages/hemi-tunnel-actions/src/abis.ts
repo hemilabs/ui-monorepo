@@ -12,52 +12,8 @@ export const l1StandardBridgeAbi = [
         type: 'address',
       },
       {
-        internalType: 'uint256',
-        name: '_amount',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint32',
-        name: '_minGasLimit',
-        type: 'uint32',
-      },
-      {
-        internalType: 'bytes',
-        name: '_extraData',
-        type: 'bytes',
-      },
-    ],
-    name: 'depositERC20',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint32',
-        name: '_minGasLimit',
-        type: 'uint32',
-      },
-      {
-        internalType: 'bytes',
-        name: '_extraData',
-        type: 'bytes',
-      },
-    ],
-    name: 'depositETH',
-    outputs: [],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-] as const
-
-export const l2BridgeAbi = [
-  {
-    inputs: [
-      {
         internalType: 'address',
-        name: '_l2Token',
+        name: '_to',
         type: 'address',
       },
       {
@@ -76,7 +32,66 @@ export const l2BridgeAbi = [
         type: 'bytes',
       },
     ],
-    name: 'withdraw',
+    name: 'depositERC20To',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_to',
+        type: 'address',
+      },
+      {
+        internalType: 'uint32',
+        name: '_minGasLimit',
+        type: 'uint32',
+      },
+      {
+        internalType: 'bytes',
+        name: '_extraData',
+        type: 'bytes',
+      },
+    ],
+    name: 'depositETHTo',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+] as const
+
+export const l2BridgeAbi = [
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_l2Token',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_to',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_amount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint32',
+        name: '_minGasLimit',
+        type: 'uint32',
+      },
+      {
+        internalType: 'bytes',
+        name: '_extraData',
+        type: 'bytes',
+      },
+    ],
+    name: 'withdrawTo',
     outputs: [],
     stateMutability: 'payable',
     type: 'function',

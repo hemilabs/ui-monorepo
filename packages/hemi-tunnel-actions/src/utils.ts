@@ -87,14 +87,19 @@ export const validateInputs = function ({
   amount,
   l1Chain,
   l2Chain,
+  to,
 }: {
   account: Address
   amount: bigint
   l1Chain: Chain
   l2Chain: Chain
+  to: Address
 }) {
   if (!isAddress(account)) {
     return 'account is not a valid address'
+  }
+  if (!isAddress(to)) {
+    return 'to is not a valid address'
   }
   if (typeof amount !== 'bigint') {
     return 'amount is not a bigint'

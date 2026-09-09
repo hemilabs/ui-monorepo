@@ -1,4 +1,3 @@
-import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -146,26 +145,17 @@ export const HistoryLoader = function ({
   // use this boolean to check if the past history was restored from local storage
   const [loadedFromLocalStorage, setLoadedFromLocalStorage] = useState(false)
 
-  const supportedEvmChain = useConnectedToSupportedEvmChain()
-
   useEffect(
     function resetState() {
-      if (!supportedEvmChain || !loadedFromLocalStorage) {
-        setLoadedFromLocalStorage(false)
-        dispatch({ type: 'reset' })
-      }
+      setLoadedFromLocalStorage(false)
+      dispatch({ type: 'reset' })
     },
-    [
-      loadedFromLocalStorage,
-      dispatch,
-      setLoadedFromLocalStorage,
-      supportedEvmChain,
-    ],
+    [dispatch, setLoadedFromLocalStorage],
   )
 
   useEffect(
     function restoreFromLocalStorage() {
-      if (!address || loadedFromLocalStorage || !supportedEvmChain) {
+      if (!address || loadedFromLocalStorage) {
         return
       }
       setLoadedFromLocalStorage(true)
@@ -205,7 +195,6 @@ export const HistoryLoader = function ({
       loadedFromLocalStorage,
       remoteNetworks,
       setLoadedFromLocalStorage,
-      supportedEvmChain,
     ],
   )
 
@@ -213,7 +202,6 @@ export const HistoryLoader = function ({
     function offloadToStorage() {
       if (
         !address ||
-        !supportedEvmChain ||
         !loadedFromLocalStorage ||
         !['finished', 'syncing'].includes(history.status) ||
         // if we started resync, do not save!
@@ -230,7 +218,6 @@ export const HistoryLoader = function ({
       l2ChainId,
       loadedFromLocalStorage,
       remoteNetworks,
-      supportedEvmChain,
     ],
   )
 

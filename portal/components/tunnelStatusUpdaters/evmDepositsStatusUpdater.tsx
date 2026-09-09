@@ -2,7 +2,6 @@ import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useQueryClient } from '@tanstack/react-query'
 import { WithWorker } from 'components/withWorker'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
-import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useEvmDeposits } from 'hooks/useEvmDeposits'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useOptimisticSearchParams } from 'nuqs/adapters/react-router/v8'
@@ -137,9 +136,7 @@ export const EvmDepositsStatusUpdater = function () {
 
   const deposits = useEvmDeposits()
 
-  const unsupportedChain = useConnectedToUnsupportedEvmChain()
-
-  if (!isConnected || unsupportedChain) {
+  if (!isConnected) {
     return null
   }
 

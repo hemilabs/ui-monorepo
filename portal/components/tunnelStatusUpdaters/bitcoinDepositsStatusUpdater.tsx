@@ -2,7 +2,6 @@ import { useQueryClient } from '@tanstack/react-query'
 import { WithWorker } from 'components/withWorker'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
-import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useOptimisticSearchParams } from 'nuqs/adapters/react-router/v8'
 import { useEffect } from 'react'
@@ -136,9 +135,7 @@ export const BitcoinDepositsStatusUpdater = function () {
   const { isConnected } = useEvmAccount()
   const deposits = useBtcDeposits()
 
-  const unsupportedChain = useConnectedToUnsupportedEvmChain()
-
-  if (!isConnected || unsupportedChain) {
+  if (!isConnected) {
     return null
   }
 

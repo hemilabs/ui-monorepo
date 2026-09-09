@@ -53,7 +53,7 @@ describe('buildSecurityHeaders', function () {
     const headers = buildSecurityHeaders(baseConfig)
 
     expect(directive(headers, 'script-src')).toBe(
-      "script-src 'self' https://challenges.cloudflare.com 'nonce-test-nonce'",
+      "script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com 'nonce-test-nonce'",
     )
     expect(directive(headers, 'script-src')).not.toContain("'unsafe-inline'")
     expect(headers['Content-Security-Policy']).not.toContain('worker-src')
@@ -152,6 +152,12 @@ describe('buildSecurityHeaders', function () {
 
     expect(directive(headers, 'script-src')).not.toContain('umami.example.com')
     expect(directive(headers, 'connect-src')).not.toContain('umami.example.com')
+    expect(directive(headers, 'script-src')).toContain(
+      'https://static.cloudflareinsights.com',
+    )
+    expect(directive(headers, 'connect-src')).toContain(
+      'https://cloudflareinsights.com',
+    )
   })
 
   it('lets analytics load and report once enabled', function () {
@@ -166,6 +172,21 @@ describe('buildSecurityHeaders', function () {
     )
     expect(directive(headers, 'connect-src')).toContain(
       'https://cloudflareinsights.com',
+    )
+  })
+
+  it('preserves a nonstandard analytics port', function () {
+    const headers = buildSecurityHeaders({
+      ...baseConfig,
+      analyticsEnabled: true,
+      analyticsUrl: 'https://analytics.example.com:8443/script.js',
+    })
+
+    expect(directive(headers, 'script-src')).toContain(
+      'https://analytics.example.com:8443',
+    )
+    expect(directive(headers, 'connect-src')).toContain(
+      'https://analytics.example.com:8443',
     )
   })
 
@@ -187,7 +208,7 @@ describe('buildSecurityHeaders', function () {
     expect(directive(headers, 'connect-src')).toContain(
       'https://o123.ingest.de.sentry.io',
     )
-    expect(directive(headers, 'script-src')).toContain(
+    expect(directive(headers, 'script-src')).not.toContain(
       'https://o123.ingest.de.sentry.io',
     )
   })

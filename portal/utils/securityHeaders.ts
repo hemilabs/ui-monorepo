@@ -16,8 +16,6 @@ const parseUrl = (url?: string) => (url ? URL.parse(url) : null)
 
 const getOrigin = (url?: string) => parseUrl(url)?.origin
 
-const getDomain = (url?: string) => parseUrl(url)?.hostname
-
 const fontDomains = [
   'https://fonts.googleapis.com',
   'https://fonts.gstatic.com',
@@ -58,17 +56,13 @@ const getThirdPartyHosts = function ({
   analyticsUrl,
   sentryDsn,
 }: SecurityHeadersConfig) {
-  const analyticsDomain = getDomain(analyticsUrl)
-  const errorTrackingDomain = getDomain(sentryDsn)
+  const analyticsOrigin = getOrigin(analyticsUrl)
+  const errorTrackingOrigin = getOrigin(sentryDsn)
 
   return {
     analytics:
-      analyticsEnabled && !!analyticsDomain
-        ? `https://${analyticsDomain}`
-        : undefined,
-    errorTracking: errorTrackingDomain
-      ? `https://${errorTrackingDomain}`
-      : undefined,
+      analyticsEnabled && !!analyticsOrigin ? analyticsOrigin : undefined,
+    errorTracking: errorTrackingOrigin,
   }
 }
 
@@ -120,6 +114,8 @@ const buildFetchDomains = function (
     'wss://nbstream.binance.info',
     // Merkle
     'https://api.merkl.xyz',
+    // Cloudflare Web Analytics
+    'https://cloudflareinsights.com',
   ])
 
   const apiOrigins = [getOrigin(portalApiUrl), getOrigin(vetroApiUrl)]
@@ -135,7 +131,6 @@ const buildFetchDomains = function (
 
   if (hosts.analytics) {
     domains.add(hosts.analytics)
-    domains.add('https://cloudflareinsights.com')
   }
   if (hosts.errorTracking) {
     domains.add(hosts.errorTracking)
@@ -148,14 +143,12 @@ const buildScriptDomains = function (hosts: ThirdPartyHosts) {
   const domains = new Set([
     // Cloudflare bot management / Turnstile / challenge widget
     'https://challenges.cloudflare.com',
+    // Cloudflare Web Analytics
+    'https://static.cloudflareinsights.com',
   ])
 
   if (hosts.analytics) {
     domains.add(hosts.analytics)
-    domains.add('https://static.cloudflareinsights.com') // Web analytics beacon
-  }
-  if (hosts.errorTracking) {
-    domains.add(hosts.errorTracking)
   }
 
   return domains

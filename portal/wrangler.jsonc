@@ -1,12 +1,31 @@
 {
-  "name": "portal-migration",
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "hemi-portal",
   "main": "./worker/index.ts",
-  "compatibility_date": "2026-02-05",
+  "compatibility_date": "2026-09-01",
   "workers_dev": false,
   "preview_urls": true,
+  "upload_source_maps": true,
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 0.1,
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 0.1,
+    },
+  },
   "assets": {
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
     "run_worker_first": true,
+  },
+  "env": {
+    "production": {
+      "name": "hemi-portal",
+      "preview_urls": false,
+    },
+    "staging": {
+      "name": "hemi-portal-staging",
+    },
   },
 }

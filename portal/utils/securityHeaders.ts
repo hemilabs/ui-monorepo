@@ -112,6 +112,7 @@ const buildFetchDomains = function (
     'wss://nbstream.binance.click',
     'wss://nbstream.binance.com',
     'wss://nbstream.binance.info',
+    'wss://nbstream.yshyqxx.com',
     // Merkle
     'https://api.merkl.xyz',
     // Cloudflare Web Analytics

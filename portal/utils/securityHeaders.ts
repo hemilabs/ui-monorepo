@@ -7,6 +7,7 @@ type SecurityHeadersConfig = {
   customRpcUrls: (string | undefined)[]
   isDev?: boolean
   portalApiUrl?: string
+  scriptNonce: string
   sentryDsn?: string
   vetroApiUrl?: string
 }
@@ -29,7 +30,10 @@ const imageSrcUrls = [
   'https://framerusercontent.com',
 ]
 
-const frameSrcUrls = ['https://*.walletconnect.org']
+const frameSrcUrls = [
+  'https://*.walletconnect.org',
+  'https://challenges.cloudflare.com',
+]
 
 type ThirdPartyHosts = {
   analytics?: string
@@ -111,13 +115,14 @@ const buildFetchDomains = function (
 }
 
 const buildScriptDomains = function (hosts: ThirdPartyHosts) {
-  const domains = new Set<string>()
+  const domains = new Set([
+    // Cloudflare bot management / Turnstile / challenge widget
+    'https://challenges.cloudflare.com',
+  ])
 
   if (hosts.analytics) {
     domains.add(hosts.analytics)
-    domains.add('https://static.cloudflareinsights.com')
-    domains.add('https://challenges.cloudflare.com')
-    domains.add('https://ajax.cloudflare.com')
+    domains.add('https://static.cloudflareinsights.com') // Web analytics beacon
   }
   if (hosts.errorTracking) {
     domains.add(hosts.errorTracking)
@@ -134,18 +139,24 @@ const buildContentSecurityPolicy = ({
   fonts,
   isDev,
   scriptDomains,
+  scriptNonce,
 }: {
   fetchDomains: string[]
   fonts: string[]
   isDev: boolean
   scriptDomains: string[]
+  scriptNonce: string
 }) =>
   [
     directive('default-src', ["'self'"]),
     // No `worker-src` on purpose: it falls back to `script-src`, which allows
     // 'self', and the five under portal/workers are same-origin. Dropping
     // 'self' from `script-src` stops tunnel history from syncing.
-    directive('script-src', ["'self'", "'unsafe-inline'", ...scriptDomains]),
+    directive('script-src', [
+      "'self'",
+      ...scriptDomains,
+      isDev ? "'unsafe-inline'" : `'nonce-${scriptNonce}'`,
+    ]),
     directive('style-src', ["'self'", "'unsafe-inline'"]),
     directive('img-src', ["'self'", ...imageSrcUrls, 'blob:', 'data:']),
     directive('connect-src', ["'self'", ...fetchDomains]),
@@ -166,6 +177,7 @@ export const buildSecurityHeaders = function (config: SecurityHeadersConfig) {
       fonts: fontDomains,
       isDev: config.isDev ?? false,
       scriptDomains: Array.from(buildScriptDomains(hosts)),
+      scriptNonce: config.scriptNonce,
     }),
     'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
     'Permissions-Policy': 'geolocation=(), microphone=()',

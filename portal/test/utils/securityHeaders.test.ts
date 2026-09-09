@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 const baseConfig = {
   analyticsEnabled: false,
   customRpcUrls: [],
+  scriptNonce: 'test-nonce',
 }
 
 const directive = function (headers: Record<string, string>, name: string) {
@@ -48,13 +49,35 @@ describe('buildSecurityHeaders', function () {
     expect(directive(headers, 'connect-src')).toContain("'self'")
   })
 
-  it('lets the same-origin workers load', function () {
+  it('uses a nonce for scripts and lets the same-origin workers load', function () {
     const headers = buildSecurityHeaders(baseConfig)
 
     expect(directive(headers, 'script-src')).toBe(
-      "script-src 'self' 'unsafe-inline'",
+      "script-src 'self' https://challenges.cloudflare.com 'nonce-test-nonce'",
     )
+    expect(directive(headers, 'script-src')).not.toContain("'unsafe-inline'")
     expect(headers['Content-Security-Policy']).not.toContain('worker-src')
+  })
+
+  it('allows inline scripts only in development', function () {
+    const scriptSrc = directive(
+      buildSecurityHeaders({ ...baseConfig, isDev: true }),
+      'script-src',
+    )
+
+    expect(scriptSrc).toContain("'unsafe-inline'")
+    expect(scriptSrc).not.toContain("'nonce-test-nonce'")
+  })
+
+  it('allows Cloudflare challenges independently of analytics', function () {
+    const headers = buildSecurityHeaders(baseConfig)
+
+    expect(directive(headers, 'script-src')).toContain(
+      'https://challenges.cloudflare.com',
+    )
+    expect(directive(headers, 'frame-src')).toContain(
+      'https://challenges.cloudflare.com',
+    )
   })
 
   it('refuses to be framed', function () {

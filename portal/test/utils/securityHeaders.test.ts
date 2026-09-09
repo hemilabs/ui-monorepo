@@ -24,11 +24,12 @@ describe('buildSecurityHeaders', function () {
     expect(Object.keys(buildSecurityHeaders(baseConfig)).sort()).toStrictEqual([
       'Content-Security-Policy',
       'Cross-Origin-Opener-Policy',
+      'Cross-Origin-Resource-Policy',
+      'Origin-Agent-Cluster',
       'Permissions-Policy',
       'Referrer-Policy',
-      'Strict-Transport-Security',
       'X-Content-Type-Options',
-      'X-Download-Options',
+      'X-DNS-Prefetch-Control',
       'X-Frame-Options',
     ])
   })

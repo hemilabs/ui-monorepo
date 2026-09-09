@@ -207,10 +207,12 @@ export const buildSecurityHeaders = function (config: SecurityHeadersConfig) {
       scriptNonce: config.scriptNonce,
     }),
     'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+    'Cross-Origin-Resource-Policy': 'same-origin',
+    'Origin-Agent-Cluster': '?1',
     'Permissions-Policy': 'geolocation=(), microphone=()',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
-    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
     'X-Content-Type-Options': 'nosniff',
+    'X-DNS-Prefetch-Control': 'off',
     'X-Download-Options': 'noopen',
     'X-Frame-Options': 'DENY',
   }

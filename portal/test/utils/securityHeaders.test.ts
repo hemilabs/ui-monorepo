@@ -30,6 +30,7 @@ describe('buildSecurityHeaders', function () {
       'Referrer-Policy',
       'X-Content-Type-Options',
       'X-DNS-Prefetch-Control',
+      'X-Download-Options',
       'X-Frame-Options',
     ])
   })

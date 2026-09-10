@@ -5,6 +5,7 @@ packages:
   - 'portal-backend/cron/*'
   - 'subgraphs/*'
 blockExoticSubdeps: true
+saveExact: true
 
 ignoredBuiltDependencies:
   - 'bufferutil' # optional native ws speedup; ws falls back to pure JS

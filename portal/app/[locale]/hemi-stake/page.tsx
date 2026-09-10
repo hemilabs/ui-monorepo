@@ -1,3 +1,4 @@
+import { PageLayout } from 'components/pageLayout'
 import { PageTitle } from 'components/pageTitle'
 import { TestnetDisabled } from 'components/testnetDisabled'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -56,13 +57,15 @@ export const HemiStakePage = function () {
   const isEnabled = isStakingDashboardEnabledOnTestnet(networkType)
 
   return (
-    <div className="flex flex-col">
-      <PageTitle title={t('heading')} />
-      {isEnabled ? (
-        <StakingContent />
-      ) : (
-        <TestnetDisabled subtitle={t('switch-to-start-staking')} />
-      )}
-    </div>
+    <PageLayout variant="superWide">
+      <div className="flex flex-col">
+        <PageTitle title={t('heading')} />
+        {isEnabled ? (
+          <StakingContent />
+        ) : (
+          <TestnetDisabled subtitle={t('switch-to-start-staking')} />
+        )}
+      </div>
+    </PageLayout>
   )
 }

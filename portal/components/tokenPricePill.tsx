@@ -34,7 +34,7 @@ export const TokenPricePill = function ({
       onClick={onClick}
     >
       <span aria-hidden>
-        <TokenLogo size="xSmall" token={token} />
+        <TokenLogo size="xSmall" token={token} version="L1" />
       </span>
       <span className="sr-only">
         {t('token-price', { symbol: token.symbol })}

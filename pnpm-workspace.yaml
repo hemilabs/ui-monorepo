@@ -1,12 +1,3 @@
-packages:
-  - 'packages/*'
-  - 'portal'
-  - 'portal-backend/api'
-  - 'portal-backend/cron/*'
-  - 'subgraphs/*'
-blockExoticSubdeps: true
-saveExact: true
-
 allowBuilds:
   '@sentry/cli': true # downloads the sentry-cli binary @sentry/vite-plugin uses to upload source maps
   bufferutil: false # optional native ws speedup; ws falls back to pure JS
@@ -17,6 +8,15 @@ allowBuilds:
   unrs-resolver: true # Rust resolver required by eslint-import-resolver-typescript during lint
   utf-8-validate: false # optional native ws speedup; ws falls back to pure JS
   workerd: false # wrangler dev fetches the runtime it needs on its own; vite build never uses it
+
+packages:
+  - 'packages/*'
+  - 'portal'
+  - 'portal-backend/api'
+  - 'portal-backend/cron/*'
+  - 'subgraphs/*'
+
+blockExoticSubdeps: true
 
 minimumReleaseAge: 10080 # 7 days in minutes
 minimumReleaseAgeExclude:
@@ -37,3 +37,5 @@ patchedDependencies:
 
 publicHoistPattern:
   - '*eslint*'
+
+saveExact: true

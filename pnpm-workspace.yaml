@@ -7,12 +7,16 @@ packages:
 blockExoticSubdeps: true
 saveExact: true
 
-ignoredBuiltDependencies:
-  - 'bufferutil' # optional native ws speedup; ws falls back to pure JS
-  - 'core-js' # only a sponsor-banner postinstall, no functional payload
-  - 'keccak' # has a pure-JS fallback; the native addon is never loaded in the browser bundle
-  - 'utf-8-validate' # optional native ws speedup; ws falls back to pure JS
-  - 'workerd' # wrangler dev fetches the runtime it needs on its own; vite build never uses it
+allowBuilds:
+  '@sentry/cli': true # downloads the sentry-cli binary @sentry/vite-plugin uses to upload source maps
+  bufferutil: false # optional native ws speedup; ws falls back to pure JS
+  core-js: false # only a sponsor-banner postinstall, no functional payload
+  esbuild: true # platform binary used by vitest (via vite) for test transforms
+  keccak: false # has a pure-JS fallback; the native addon is never loaded in the browser bundle
+  sharp: true # libvips bindings required by Next.js production image optimization
+  unrs-resolver: true # Rust resolver required by eslint-import-resolver-typescript during lint
+  utf-8-validate: false # optional native ws speedup; ws falls back to pure JS
+  workerd: false # wrangler dev fetches the runtime it needs on its own; vite build never uses it
 
 minimumReleaseAge: 10080 # 7 days in minutes
 minimumReleaseAgeExclude:
@@ -20,12 +24,6 @@ minimumReleaseAgeExclude:
   - '@vetro-protocol/*'
   - 'hemi-viem'
   - 'umami-analytics'
-
-onlyBuiltDependencies:
-  - '@sentry/cli' # downloads the sentry-cli binary @sentry/vite-plugin uses to upload source maps
-  - 'esbuild' # platform binary used by vitest (via vite) for test transforms
-  - 'sharp' # libvips bindings required by Next.js production image optimization
-  - 'unrs-resolver' # Rust resolver required by eslint-import-resolver-typescript during lint
 
 overrides:
   brace-expansion@5: '5.0.8' # CVE-2026-13149 / CVE-2026-14257 DoS fixes

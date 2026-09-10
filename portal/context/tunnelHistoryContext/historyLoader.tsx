@@ -273,8 +273,7 @@ const Loader = function ({
 }
 
 export const HistoryLoader = function (props: Props) {
-  const { address } = useAccount()
-  const [networkType] = useNetworkType()
+  const l2ChainId = useHemi().id
 
-  return <Loader {...props} key={`${networkType}_${address}`} />
+  return <Loader {...props} key={l2ChainId} />
 }

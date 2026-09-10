@@ -7,7 +7,7 @@ import { type EarnTransaction } from '../types'
 export const earnTransactionsKeyPrefix = ['hemi-earn', 'transactions'] as const
 
 const getEarnRequestsUrl = (account: Address) =>
-  `${process.env.NEXT_PUBLIC_PORTAL_API_URL}/subgraphs/${hemi.id}/earn-requests/${account}`
+  `${import.meta.env.VITE_PORTAL_API_URL}/subgraphs/${hemi.id}/earn-requests/${account}`
 
 export const fetchEarnTransactions = async function ({
   account,

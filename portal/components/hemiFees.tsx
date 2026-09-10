@@ -1,6 +1,6 @@
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { useHemi } from 'hooks/useHemi'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 

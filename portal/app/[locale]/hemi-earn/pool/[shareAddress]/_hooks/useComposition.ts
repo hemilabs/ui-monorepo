@@ -1,12 +1,10 @@
-'use client'
-
 import {
   type QueryClient,
   queryOptions,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 import { isValidUrl } from 'utils/url'
 import { type Address, type Chain } from 'viem'
 
@@ -25,7 +23,7 @@ export type CompositionItem = {
   share: number
 }
 
-const apiUrl = process.env.NEXT_PUBLIC_VETRO_API_URL
+const apiUrl = import.meta.env.VITE_VETRO_API_URL
 const isVetroApiConfigured = apiUrl !== undefined && isValidUrl(apiUrl)
 
 type CompositionQueryOptions = {

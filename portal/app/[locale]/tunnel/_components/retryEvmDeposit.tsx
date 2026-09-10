@@ -1,10 +1,10 @@
 import { Button } from 'components/button'
 import { useToken } from 'hooks/useToken'
-import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
 import { EvmDepositOperation } from 'types/tunnel'
+import { useTranslations } from 'use-intl'
 import { formatUnits } from 'viem'
 
 import { useDeposit } from '../_hooks/useDeposit'

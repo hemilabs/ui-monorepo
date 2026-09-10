@@ -1,17 +1,17 @@
-'use client'
-
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { ConnectWalletsDrawer } from 'components/connectWallets/connectWalletsDrawer'
 import { Drawer } from 'components/drawer'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useUmami } from 'hooks/useUmami'
-import React, {
+import {
   Suspense,
   useCallback,
   useEffect,
+  useRef,
   useState,
-  ReactNode,
+  type ReactNode,
 } from 'react'
+import { useLocation, useNavigationType } from 'react-router'
 import { screenBreakpoints } from 'styles'
 
 import { AppLayoutContainer } from './appLayoutContainer'
@@ -22,8 +22,6 @@ import { NavbarResponsive } from './navbar/navbarResponsive'
 import { NavBarUrlSync } from './navbar/navBarUrlSync'
 import { TestnetIndicator } from './testnetIndicator'
 
-// Rendered only when the wallet drawer is open — never during static
-// prerendering — so useUmami (useSearchParams) is safe here.
 const WalletDrawer = function ({ closeDrawer }: { closeDrawer: VoidFunction }) {
   const { track } = useUmami()
 
@@ -51,6 +49,20 @@ export const AppLayout = function ({ children }: Props) {
   const [navbarDrawerMounted, setNavbarDrawerMounted] = useState(false)
   const { width } = useWindowSize()
   const { closeDrawer, isDrawerOpen } = useDrawerContext()
+  const { pathname } = useLocation()
+  const navigationType = useNavigationType()
+  const scrollContainer = useRef<HTMLDivElement>(null)
+
+  // Skipped on a pop so the browser's own scroll restoration survives Back.
+  useEffect(
+    function scrollToTopOnNavigation() {
+      if (navigationType === 'POP') {
+        return
+      }
+      scrollContainer.current?.scrollTo({ top: 0 })
+    },
+    [navigationType, pathname],
+  )
 
   const openNavbar = useCallback(function openNavbar() {
     setIsNavbarOpen(true)
@@ -106,7 +118,7 @@ export const AppLayout = function ({ children }: Props) {
           <div className="relative md:hidden">
             <TestnetIndicator />
           </div>
-          <div className="h-full overflow-y-auto">
+          <div className="h-full overflow-y-auto" ref={scrollContainer}>
             <div className="relative h-full overflow-x-hidden pb-3 pt-4 md:pt-12">
               {children}
             </div>

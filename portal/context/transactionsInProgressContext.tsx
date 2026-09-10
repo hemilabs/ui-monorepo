@@ -1,5 +1,3 @@
-'use client'
-
 import { createContext, ReactNode, useState } from 'react'
 import { DepositTunnelOperation } from 'types/tunnel'
 

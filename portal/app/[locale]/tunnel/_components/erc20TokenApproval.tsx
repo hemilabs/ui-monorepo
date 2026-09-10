@@ -1,7 +1,7 @@
 import { InfoIcon } from 'components/icons/infoIcon'
 import { Toggle } from 'components/toggle'
 import { Tooltip } from 'components/tooltip'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 type Props = {
   checked: boolean

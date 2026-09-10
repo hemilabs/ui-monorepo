@@ -1,4 +1,3 @@
-import { StaticImageData } from 'next/image'
 import { StakeProtocols } from 'types/stake'
 
 import babypie from './images/babypie.png'
@@ -27,30 +26,30 @@ import yieldNest from './images/yieldNest.svg'
 
 export const protocolImages: Record<
   StakeProtocols,
-  { src: StaticImageData; className?: string }
+  { className?: string; height: number; src: string; width: number }
 > = {
-  babypie: { className: 'w-20', src: babypie },
-  bedRock: { src: bedRock },
-  bitFi: { src: bitFi },
-  circle: { src: circle },
-  egEth: { className: 'w-21', src: eigenpie },
-  ethereum: { src: ethereum },
-  exSat: { src: exSat },
-  hemi: { src: hemi },
-  kelp: { src: kelp },
-  lorenzo: { src: lorenzo },
-  makerDao: { className: 'w-21', src: makerDao },
-  merlinChain: { className: 'w-29', src: merlinChain },
-  obeliskNodeDao: { src: obeliskNodeDao },
-  pumpBtc: { className: 'w-24', src: pumpBtc },
-  river: { src: river },
-  solv: { src: solv },
-  sumer: { className: 'w-15', src: sumer },
-  tether: { src: tether },
-  tetherGold: { src: tetherGold },
-  threshold: { src: threshold },
-  uniBtc: { src: bedRock },
-  uniRouter: { className: 'w-21', src: uniRouter },
-  wbtc: { src: wbtc },
-  yieldNest: { src: yieldNest },
+  babypie: { className: 'w-20', height: 36, src: babypie, width: 160 },
+  bedRock: { height: 24, src: bedRock, width: 113 },
+  bitFi: { height: 24, src: bitFi, width: 62 },
+  circle: { height: 18, src: circle, width: 71 },
+  egEth: { className: 'w-21', height: 40, src: eigenpie, width: 170 },
+  ethereum: { height: 20, src: ethereum, width: 80 },
+  exSat: { height: 19, src: exSat, width: 91 },
+  hemi: { height: 18, src: hemi, width: 63 },
+  kelp: { height: 20, src: kelp, width: 54 },
+  lorenzo: { height: 22, src: lorenzo, width: 84 },
+  makerDao: { className: 'w-21', height: 24, src: makerDao, width: 166 },
+  merlinChain: { className: 'w-29', height: 40, src: merlinChain, width: 232 },
+  obeliskNodeDao: { height: 18, src: obeliskNodeDao, width: 64 },
+  pumpBtc: { className: 'w-24', height: 72, src: pumpBtc, width: 282 },
+  river: { height: 18, src: river, width: 52 },
+  solv: { height: 16, src: solv, width: 56 },
+  sumer: { className: 'w-15', height: 40, src: sumer, width: 131 },
+  tether: { height: 14, src: tether, width: 63 },
+  tetherGold: { height: 20, src: tetherGold, width: 64 },
+  threshold: { height: 10, src: threshold, width: 108 },
+  uniBtc: { height: 24, src: bedRock, width: 113 },
+  uniRouter: { className: 'w-21', height: 48, src: uniRouter, width: 166 },
+  wbtc: { height: 18, src: wbtc, width: 61 },
+  yieldNest: { height: 18, src: yieldNest, width: 95 },
 }

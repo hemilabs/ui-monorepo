@@ -1,5 +1,4 @@
 import { useNetworkType } from 'hooks/useNetworkType'
-import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {
@@ -9,6 +8,7 @@ import {
   ToEvmWithdrawOperation,
   type WithdrawTunnelOperation,
 } from 'types/tunnel'
+import { useTranslations } from 'use-intl'
 import { isToEvmWithdraw } from 'utils/tunnel'
 
 import { CallToAction } from './callToAction'

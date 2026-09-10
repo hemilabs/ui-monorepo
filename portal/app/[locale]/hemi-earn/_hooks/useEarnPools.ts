@@ -1,5 +1,3 @@
-'use client'
-
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { useNetworkType } from 'hooks/useNetworkType'
 

@@ -1,5 +1,5 @@
 import { Card } from 'components/card'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 export const GenericError = function () {
   const t = useTranslations()

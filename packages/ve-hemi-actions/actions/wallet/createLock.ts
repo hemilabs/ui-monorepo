@@ -1,7 +1,11 @@
 import { EventEmitter } from 'events'
 import { toPromiseEvent } from 'to-promise-event'
-import type { Address, TransactionReceipt, WalletClient } from 'viem'
-import { encodeFunctionData } from 'viem'
+import {
+  type Address,
+  type TransactionReceipt,
+  type WalletClient,
+  encodeFunctionData,
+} from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { balanceOf } from 'viem-erc20/actions'
 

@@ -3,6 +3,7 @@ import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { type UseQueryOptions } from '@tanstack/react-query'
 import { DrawerParagraph } from 'components/drawer'
 import { HemiFees } from 'components/hemiFees'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import {
   ProgressStatus,
   type ProgressStatusType,
@@ -15,14 +16,13 @@ import { useAmount } from 'hooks/useAmount'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useHemi } from 'hooks/useHemi'
-import dynamic from 'next/dynamic'
-import { useTranslations } from 'next-intl'
 import {
   StakeOperations,
   StakeStatusEnum,
   type StakeStatusEnumType,
   type StakeToken,
 } from 'types/stake'
+import { useTranslations } from 'use-intl'
 import { normalizeTokenAddressForAllowance } from 'utils/allowanceQueryKey'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
@@ -33,20 +33,17 @@ import { useAccount } from 'wagmi'
 import { useEstimateStakeFees } from '../../_hooks/useEstimateStakeFees'
 import { useStake } from '../../_hooks/useStake'
 
-const StakeToast = dynamic(
-  () => import('../stakeToast').then(mod => mod.StakeToast),
-  {
-    loading: () => <ToastLoader variant="withCallToAction" />,
-    ssr: false,
-  },
-)
-
 import { StakeMaxBalance } from './maxBalance'
 import { Operation } from './operation'
 import { Preview } from './preview'
 import { StakeCallToAction } from './stakeCallToAction'
 import { StrategyDetails } from './strategyDetails'
 import { SubmitButton } from './submitButton'
+
+const StakeToast = lazyWithFallback(
+  () => import('../stakeToast').then(mod => ({ default: mod.StakeToast })),
+  <ToastLoader variant="withCallToAction" />,
+)
 
 type AllowanceQuery = Omit<
   UseQueryOptions<bigint, Error, bigint>,

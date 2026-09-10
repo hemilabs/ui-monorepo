@@ -1,5 +1,3 @@
-'use client'
-
 import { ColumnDef } from '@tanstack/react-table'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { Table } from 'components/table'
@@ -7,10 +5,10 @@ import { Header } from 'components/table/_components/header'
 import { TableCard } from 'components/table/tableCard'
 import { useHemi } from 'hooks/useHemi'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
-import { useTranslations } from 'next-intl'
 import { useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type StakingPosition } from 'types/stakingDashboard'
+import { useTranslations } from 'use-intl'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 

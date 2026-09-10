@@ -1,5 +1,5 @@
 import { Tooltip } from 'components/tooltip'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { OdysseyIcon } from '../_icons/odysseyIcon'
 import { PlusSignIcon } from '../_icons/plusSignIcon'

@@ -1,6 +1,6 @@
 import { Tab, Tabs } from 'components/tabs'
-import { useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
+import { useTranslations } from 'use-intl'
 
 type Props = {
   activeTab: 'deposit' | 'withdraw'

@@ -1,9 +1,7 @@
-'use client'
-
 import { PageLayout } from 'components/pageLayout'
 import { PageTitle } from 'components/pageTitle'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { DemoCard } from './_components/demoCard'
 import bitcoinKitImg from './_images/bitcoin_kit_large.png'
@@ -13,7 +11,7 @@ import demosIcon from './_images/demos_small.png'
 import pureFinanceImg from './_images/pure_finance_large.png'
 import pureFinanceIcon from './_images/pure_finance_small.svg'
 
-const Ecosystem = function () {
+export const EcosystemPage = function () {
   const t = useTranslations('ecosystem')
   const [networkType] = useNetworkType()
 
@@ -59,5 +57,3 @@ const Ecosystem = function () {
     </PageLayout>
   )
 }
-
-export default Ecosystem

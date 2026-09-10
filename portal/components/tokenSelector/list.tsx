@@ -1,13 +1,11 @@
-'use client'
-
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { DatabaseIcon } from 'components/icons/databaseIcon'
 import { MultiTokensIcon } from 'components/icons/multiTokensIcon'
 import { useHasScrolled } from 'hooks/useHasScrolled'
 import { useUserTokenList } from 'hooks/useUserTokenList'
-import { useTranslations } from 'next-intl'
 import { type ReactElement, useRef } from 'react'
 import { Token as TokenType } from 'types/token'
+import { useTranslations } from 'use-intl'
 import { isCustomToken } from 'utils/token'
 import { type Chain } from 'viem'
 

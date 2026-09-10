@@ -5,9 +5,9 @@ import {
 import { FiatBalance } from 'components/fiatBalance'
 import { useAllWallets } from 'hooks/useAllWallets'
 import { useChainIsSupported } from 'hooks/useChainIsSupported'
-import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
+import { useTranslations } from 'use-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { walletIsConnected } from 'utils/wallet'
 import {

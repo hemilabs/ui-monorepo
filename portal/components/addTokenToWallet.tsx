@@ -1,5 +1,3 @@
-'use client'
-
 import { useAddTokenToWallet } from 'hooks/useAddTokenToWallet'
 import { useWatchedAsset } from 'hooks/useWatchedAsset'
 import { type ComponentProps } from 'react'

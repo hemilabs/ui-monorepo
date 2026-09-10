@@ -1,8 +1,8 @@
 import { Button } from 'components/button'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
-import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { CollectAllRewardsOperationRunning } from 'types/stakingDashboard'
+import { useTranslations } from 'use-intl'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useCollectRewards } from '../../_hooks/useCollectAllRewards'

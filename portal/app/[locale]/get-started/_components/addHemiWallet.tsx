@@ -1,5 +1,3 @@
-'use client'
-
 import { Card } from 'components/card'
 import { Tab, Tabs } from 'components/tabs'
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
@@ -7,8 +5,8 @@ import { useHemi } from 'hooks/useHemi'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import { sepolia } from 'networks/sepolia'
-import { useTranslations } from 'next-intl'
 import { useQueryState, parseAsStringLiteral } from 'nuqs'
+import { useTranslations } from 'use-intl'
 import { type Chain } from 'viem'
 
 import { AddChainAutomatically } from './addChainAutomatically'

@@ -1,13 +1,11 @@
-'use client'
-
 import { ButtonLink } from 'components/button'
 import { ExternalLink } from 'components/externalLink'
 import { CheckCircleIcon } from 'components/icons/checkCircleIcon'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { InfoIcon } from 'components/icons/infoIcon'
-import { useTranslations } from 'next-intl'
 import { type ComponentProps, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
+import { useTranslations } from 'use-intl'
 
 type ToastVariant = 'error' | 'success'
 

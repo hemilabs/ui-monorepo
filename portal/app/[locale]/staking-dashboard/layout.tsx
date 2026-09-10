@@ -1,14 +1,14 @@
-import { Metadata } from 'next'
-import { PropsWithChildren } from 'react'
+import { useDocumentTitle } from 'hooks/useDocumentTitle'
+import { Outlet } from 'react-router'
 
 import StakingDashboardLayoutClient from './_components/stakingDashboardLayoutClient'
 
-export const metadata: Metadata = {
-  title: 'Staking dashboard | Hemi Portal',
+export const StakingDashboardLayout = function () {
+  useDocumentTitle('Staking dashboard | Hemi Portal')
+
+  return (
+    <StakingDashboardLayoutClient>
+      <Outlet />
+    </StakingDashboardLayoutClient>
+  )
 }
-
-const StakingDashboardLayout = ({ children }: PropsWithChildren) => (
-  <StakingDashboardLayoutClient>{children}</StakingDashboardLayoutClient>
-)
-
-export default StakingDashboardLayout

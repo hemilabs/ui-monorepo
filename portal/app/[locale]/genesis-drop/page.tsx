@@ -1,11 +1,9 @@
-'use client'
-
 import { HemiSymbolWhite } from 'components/icons/hemiSymbolWhite'
 import { Spinner } from 'components/spinner'
 import { type EligibilityData } from 'genesis-drop-actions'
-import { useTranslations } from 'next-intl'
 import { useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
+import { useTranslations } from 'use-intl'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
@@ -29,7 +27,7 @@ const hasAllocation = function (
   return allocation.amount > BigInt(0)
 }
 
-export default function Page() {
+export const GenesisDropPage = function () {
   const { status } = useAccount()
 
   const { data: allEligibility } = useAllEligibleForTokens()

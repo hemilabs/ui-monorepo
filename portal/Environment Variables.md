@@ -5,6 +5,7 @@ When adding/removing environment variables, check if updates are required in any
 ## Documentation
 
 - portal/README.md
+- docs/DOMAIN.md, when the variable is named in it (feature flags usually are)
 
 ## Default values
 
@@ -16,17 +17,15 @@ Any environment variable that can is shared across all environments and is not a
 
 Changes related to security headers - for example, when adding a new external url to fetch from, or download images from.
 
-- portal/scripts/generateServerConfig.js
+- portal/utils/securityHeaders.ts
 
 ## Instrumentation
 
 Changes related to Sentry:
 
-- portal/instrumentation-client.ts
+- portal/instrument.ts
+- portal/vite.config.ts
 
-## Actions
+## Deployment
 
-Update these files to forward variables from the CI environment (Github Actions) to the building process:
-
-- .github/actions/deploy-portal
-- .github/workflows/hostinger-deployment.yml
+Cloudflare builds and serves the portal through its Git integration. Add the variable to the Cloudflare project, per environment.

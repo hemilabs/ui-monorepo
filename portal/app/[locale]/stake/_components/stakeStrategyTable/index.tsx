@@ -1,5 +1,3 @@
-'use client'
-
 import { ColumnDef } from '@tanstack/react-table'
 import { ButtonLink } from 'components/button'
 import { Balance } from 'components/cryptoBalance'
@@ -7,9 +5,9 @@ import { FiatBalance } from 'components/fiatBalance'
 import { Table } from 'components/table'
 import { Header } from 'components/table/_components/header'
 import { TokenLogo } from 'components/tokenLogo'
-import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import { StakeToken } from 'types/stake'
+import { useTranslations } from 'use-intl'
 
 import { useDrawerStakeQueryString } from '../../_hooks/useDrawerStakeQueryString'
 import { ProtocolImage } from '../protocolImage'

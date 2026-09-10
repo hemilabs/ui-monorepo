@@ -13,7 +13,7 @@ const getQuery = function (q: UrlObject['query']): Record<string, string> {
     }
   } else if (typeof q === 'object' && q !== null) {
     for (const key in q) {
-      if (q[key] !== undefined) {
+      if (q[key] !== undefined && q[key] !== null) {
         query[key] = String(q[key])
       }
     }

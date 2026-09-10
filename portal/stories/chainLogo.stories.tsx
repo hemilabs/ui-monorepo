@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { bitcoinMainnet, bitcoinTestnet } from 'btc-wallet/chains'
 import { ChainLogo } from 'components/chainLogo'
 import { hemiMainnet } from 'networks/hemiMainnet'

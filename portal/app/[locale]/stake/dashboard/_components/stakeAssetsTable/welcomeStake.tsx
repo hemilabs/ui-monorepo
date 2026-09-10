@@ -1,6 +1,6 @@
 import { ButtonLink } from 'components/button'
-import { useTranslations } from 'next-intl'
 import { MouseEvent } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { StarIcon } from '../../../_components/icons/starIcon'
 

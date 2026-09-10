@@ -1,11 +1,9 @@
-'use client'
-
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
-import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { type EvmToken } from 'types/token'
+import { useTranslations } from 'use-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { validateSubmit } from 'utils/validateSubmit'
 import { walletIsConnected } from 'utils/wallet'

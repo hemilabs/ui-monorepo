@@ -1,7 +1,7 @@
 import { DurationTime } from 'components/durationTime'
-import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { StakingPositionStatus } from 'types/stakingDashboard'
+import { useTranslations } from 'use-intl'
 import { formatNumber } from 'utils/format'
 
 import { useCalculateApr } from '../../_hooks/useCalculateApr'

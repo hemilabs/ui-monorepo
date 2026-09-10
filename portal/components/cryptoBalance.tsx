@@ -1,5 +1,3 @@
-'use client'
-
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { DisplayAmount } from 'components/displayAmount'
 import { useTokenBalance } from 'hooks/useBalance'

@@ -1,5 +1,3 @@
-'use client'
-
 import { ColumnDef } from '@tanstack/react-table'
 import { Card } from 'components/card'
 import { SearchInput } from 'components/inputText'
@@ -9,10 +7,10 @@ import { Header } from 'components/table/_components/header'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiTokens } from 'hooks/useHemiTokens'
 import { useNetworks } from 'hooks/useNetworks'
-import { useTranslations } from 'next-intl'
 import { ComponentProps, useMemo, useState } from 'react'
 import { RemoteChain } from 'types/chain'
 import { EvmToken } from 'types/token'
+import { useTranslations } from 'use-intl'
 import { isAddress, isAddressEqual } from 'viem'
 
 import { NoMatchingTokens } from './noMatchingTokens'

@@ -1,5 +1,3 @@
-'use client'
-
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { getFailedRequest } from 'hemi-earn-actions/actions'
 import { mainnet } from 'networks/mainnet'

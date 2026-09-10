@@ -1,7 +1,5 @@
-'use client'
-
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { PageLayout } from 'components/pageLayout'
-import dynamic from 'next/dynamic'
 import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
@@ -16,12 +14,12 @@ const PoolsListSkeleton = () => (
   </div>
 )
 
-const PoolsSection = dynamic(
-  () => import('./_components/poolsSection').then(mod => mod.PoolsSection),
-  {
-    loading: () => <PoolsListSkeleton />,
-    ssr: false,
-  },
+const PoolsSection = lazyWithFallback(
+  () =>
+    import('./_components/poolsSection').then(mod => ({
+      default: mod.PoolsSection,
+    })),
+  <PoolsListSkeleton />,
 )
 
 // Bails out of rendering the data section if the share registry can't be
@@ -35,15 +33,13 @@ const TokensGate = function ({ children }: { children: ReactNode }) {
   return <>{children}</>
 }
 
-export default function Page() {
-  return (
-    <PageLayout variant="wide">
-      <TopSection />
-      <TokensGate>
-        <InfoCards />
-        <PoolsSection />
-        <TransactionsSection />
-      </TokensGate>
-    </PageLayout>
-  )
-}
+export const HemiEarnPage = () => (
+  <PageLayout variant="wide">
+    <TopSection />
+    <TokensGate>
+      <InfoCards />
+      <PoolsSection />
+      <TransactionsSection />
+    </TokensGate>
+  </PageLayout>
+)

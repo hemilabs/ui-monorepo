@@ -1,10 +1,8 @@
-'use client'
-
 import { ButtonLink } from 'components/button'
 import { ExternalLink } from 'components/externalLink'
 import { TokenLogo } from 'components/tokenLogo'
 import { useChain } from 'hooks/useChain'
-import { useLocale, useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'use-intl'
 import { formatCompactFiat, formatEvmAddress } from 'utils/format'
 
 import { formatApyDisplay } from '../../_utils/formatApy'

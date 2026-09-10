@@ -1,5 +1,3 @@
-'use client'
-
 import { ReactNode, useEffect, useRef } from 'react'
 
 type Props<T> = {
@@ -18,7 +16,7 @@ export const WithWorker = function <T extends Worker>({
       // load the Worker
       workerRef.current = getWorker()
 
-      if (process.env.NEXT_PUBLIC_WORKERS_DEBUG_ENABLE === 'true') {
+      if (import.meta.env.VITE_WORKERS_DEBUG_ENABLE === 'true') {
         // See https://github.com/debug-js/debug/issues/916#issuecomment-1539231712
         const debugString = localStorage.getItem('debug') ?? '*'
         workerRef.current.postMessage({

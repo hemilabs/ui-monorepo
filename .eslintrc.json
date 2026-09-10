@@ -1,7 +1,11 @@
 {
   "extends": ["bloq", "prettier"],
   "ignorePatterns": [
+    "portal/.next",
+    "portal/dist",
     "portal/next-env.d.ts",
+    "portal/out",
+    "portal/storybook-static",
     "subgraphs/**/*.ts",
     "!subgraphs/hemi-earn-requests-subgraph/src/**/*.ts",
     "!subgraphs/hemi-earn-requests-subgraph/tests/**/*.ts",
@@ -9,17 +13,8 @@
   ],
   "overrides": [
     {
-      "excludedFiles": [
-        "portal/scripts/hemi-earn/**/*.ts",
-        "portal/scripts/*.js",
-        "portal/*.config.js"
-      ],
-      "extends": [
-        "bloq/next",
-        "next/core-web-vitals",
-        "bloq/typescript",
-        "prettier"
-      ],
+      "excludedFiles": ["portal/scripts/hemi-earn/**/*.ts"],
+      "extends": ["bloq/esm", "bloq/react", "bloq/typescript", "prettier"],
       "files": ["packages/**/**/*.{js,ts,tsx}", "portal/**/*.{js,ts,tsx}"],
       "rules": {
         "@typescript-eslint/no-shadow": "error",
@@ -29,17 +24,15 @@
             "ignoreRestSiblings": true
           }
         ],
+        "jsx-a11y/anchor-has-content": "off",
+        "jsx-a11y/click-events-have-key-events": "off",
+        "jsx-a11y/interactive-supports-focus": "off",
+        "jsx-a11y/no-autofocus": "off",
+        "jsx-a11y/no-noninteractive-element-interactions": "off",
+        "jsx-a11y/no-noninteractive-element-to-interactive-role": "off",
+        "jsx-a11y/no-static-element-interactions": "off",
         "no-shadow": "off"
-      },
-      "settings": {
-        "next": {
-          "rootDir": ["portal"]
-        }
       }
-    },
-    {
-      "extends": ["bloq/node", "prettier"],
-      "files": ["portal/*.config.js", "portal/scripts/*.js"]
     },
     {
       "extends": ["bloq/node", "bloq/typescript", "prettier"],

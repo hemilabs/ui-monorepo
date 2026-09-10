@@ -4,9 +4,9 @@ import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useConfirmBitcoinDeposit } from 'hooks/useBtcTunnel'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
-import { useTranslations } from 'next-intl'
 import { type FormEvent, useEffect, useState } from 'react'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
+import { useTranslations } from 'use-intl'
 
 import { DrawerCallToAction } from './reviewOperation/drawerCallToAction'
 

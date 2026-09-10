@@ -1,9 +1,7 @@
-'use client'
-
 import { Button } from 'components/button'
 import { Spinner } from 'components/spinner'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { type WithdrawOperationRunning } from '../_types/operations'
 

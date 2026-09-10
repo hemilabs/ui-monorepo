@@ -1,7 +1,7 @@
 import { useNetworkType } from 'hooks/useNetworkType'
-import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
+import { useTranslations } from 'use-intl'
 import { secondsToHours, secondsToMinutes } from 'utils/time'
 
 import {

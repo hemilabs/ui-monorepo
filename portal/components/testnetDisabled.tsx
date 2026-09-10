@@ -1,11 +1,9 @@
-'use client'
-
 import { ButtonLink } from 'components/button'
 import { LiveIcon } from 'components/icons/liveIcon'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathname } from 'i18n/navigation'
-import { useTranslations } from 'next-intl'
 import { MouseEvent } from 'react'
+import { useTranslations } from 'use-intl'
 
 const variants = {
   card: 'mt-8 rounded-xl bg-white py-48 shadow-md',

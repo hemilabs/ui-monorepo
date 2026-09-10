@@ -2,7 +2,7 @@ import { CheckCircleIcon } from 'components/icons/checkCircleIcon'
 import { WarningIcon } from 'components/icons/warningIcon'
 import { Spinner } from 'components/spinner'
 import { Toggle } from 'components/toggle'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { ReceivingAddressLabel } from './receivingAddress'
 

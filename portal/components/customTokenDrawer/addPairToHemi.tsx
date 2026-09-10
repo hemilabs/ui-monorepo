@@ -1,6 +1,6 @@
 import { ExternalLink } from 'components/externalLink'
 import { WarningBox } from 'components/warningBox'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 import useLocalStorageState from 'use-local-storage-state'
 
 export const AddPairToHemi = function () {

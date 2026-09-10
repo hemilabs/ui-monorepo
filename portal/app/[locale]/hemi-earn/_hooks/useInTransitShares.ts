@@ -1,5 +1,3 @@
-'use client'
-
 import { sumInTransitSharesByShare } from '../_utils/earnRows'
 
 import { useEarnPools } from './useEarnPools'

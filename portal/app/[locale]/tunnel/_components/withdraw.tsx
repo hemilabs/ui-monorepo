@@ -1,10 +1,10 @@
-'use client'
-
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { CustomTunnelsThroughPartners } from 'components/customTunnelsThroughPartners'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
 import { WarningIcon } from 'components/icons/warningIcon'
+import { lazyWithFallback } from 'components/lazyWithFallback'
+import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { useAccounts } from 'hooks/useAccounts'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
@@ -12,10 +12,9 @@ import { useChain } from 'hooks/useChain'
 import { useNetworks } from 'hooks/useNetworks'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
-import dynamic from 'next/dynamic'
-import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
+import { useTranslations } from 'use-intl'
 import { isEvmNetwork } from 'utils/chain'
 import { formatBtcAddress } from 'utils/format'
 import { getTotal } from 'utils/getTotal'
@@ -46,14 +45,8 @@ import { SubmitEvmWithdrawal } from './submitEvmWithdrawal'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 import { TunnelProviderToggle } from './tunnelProviderToggle'
 
-const SetMaxEvmBalance = dynamic(
-  () => import('components/setMaxBalance').then(mod => mod.SetMaxEvmBalance),
-  { ssr: false },
-)
-
-const WalletsConnected = dynamic(
-  () => import('./walletsConnected').then(mod => mod.WalletsConnected),
-  { ssr: false },
+const WalletsConnected = lazyWithFallback(() =>
+  import('./walletsConnected').then(mod => ({ default: mod.WalletsConnected })),
 )
 
 const areRequiredWalletsConnected = ({

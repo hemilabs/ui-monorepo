@@ -1,9 +1,7 @@
-'use client'
-
 import { Tab, Tabs } from 'components/tabs'
 import { useUmami } from 'hooks/useUmami'
-import { useTranslations } from 'next-intl'
 import { StakingPositionStatus } from 'types/stakingDashboard'
+import { useTranslations } from 'use-intl'
 
 export type StakeTableFilterOptions = StakingPositionStatus
 

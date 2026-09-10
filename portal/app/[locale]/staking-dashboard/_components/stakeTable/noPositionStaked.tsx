@@ -1,8 +1,6 @@
-'use client'
-
 import { InformationBox } from 'components/informationBox'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { EmptyIcon } from '../../_icons/emptyIcon'
 

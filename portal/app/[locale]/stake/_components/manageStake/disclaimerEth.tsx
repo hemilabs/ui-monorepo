@@ -2,7 +2,7 @@ import { ExternalLink } from 'components/externalLink'
 import { Chevron } from 'components/icons/chevron'
 import { InfoIcon } from 'components/icons/infoIcon'
 import { WarningBox } from 'components/warningBox'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 const Icon = () => <InfoIcon className="[&>g>path]:fill-black" />
 

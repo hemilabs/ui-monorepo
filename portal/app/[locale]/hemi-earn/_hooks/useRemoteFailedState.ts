@@ -1,5 +1,3 @@
-'use client'
-
 import { unixNowTimestamp } from 'utils/time'
 import { isAddressEqual, zeroAddress } from 'viem'
 

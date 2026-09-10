@@ -1,5 +1,3 @@
-'use client'
-
 import { ErrorBoundary } from 'components/errorBoundary'
 import { ExternalLink } from 'components/externalLink'
 import { useNetworkType } from 'hooks/useNetworkType'

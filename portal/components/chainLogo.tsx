@@ -1,11 +1,11 @@
 import { bitcoinTestnet, bitcoinMainnet } from 'btc-wallet/chains'
 import { BtcLogo } from 'components/icons/btcLogo'
 import { EthLogo } from 'components/icons/ethLogo'
+import { Image } from 'components/image'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { mainnet } from 'networks/mainnet'
 import { sepolia } from 'networks/sepolia'
-import Image from 'next/image'
 import { type RemoteChain } from 'types/chain'
 
 const HemiTokenWithBackground = () => (

@@ -1,5 +1,3 @@
-'use client'
-
 import { PageLayout } from 'components/pageLayout'
 import { Suspense } from 'react'
 
@@ -27,12 +25,10 @@ const Tunnel = function () {
   )
 }
 
-export default function Page() {
-  return (
-    <PageLayout variant="center">
-      <Suspense>
-        <Tunnel />
-      </Suspense>
-    </PageLayout>
-  )
-}
+export const TunnelPage = () => (
+  <PageLayout variant="center">
+    <Suspense>
+      <Tunnel />
+    </Suspense>
+  </PageLayout>
+)

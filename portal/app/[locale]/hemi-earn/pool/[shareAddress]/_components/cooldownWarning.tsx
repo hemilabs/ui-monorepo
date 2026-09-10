@@ -1,6 +1,6 @@
 import { WarningIcon } from 'components/icons/warningIcon'
-import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
+import { useTranslations } from 'use-intl'
 import { secondsToWholeDays } from 'utils/time'
 import { type Address } from 'viem'
 

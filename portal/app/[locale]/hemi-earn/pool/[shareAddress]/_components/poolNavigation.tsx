@@ -1,5 +1,3 @@
-'use client'
-
 import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { Button, ButtonIcon } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
@@ -7,8 +5,8 @@ import { Menu } from 'components/menu'
 import { TokenLogo } from 'components/tokenLogo'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useRouter } from 'i18n/navigation'
-import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { useTranslations } from 'use-intl'
 import { queryStringObjectToString } from 'utils/url'
 
 import { useEarnPools } from '../../../_hooks/useEarnPools'

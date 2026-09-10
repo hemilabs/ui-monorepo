@@ -1,10 +1,8 @@
-'use client'
-
 import { Button } from 'components/button'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
-import { useTranslations } from 'next-intl'
 import { type FormEvent, useEffect, useState } from 'react'
 import { ToBtcWithdrawOperation } from 'types/tunnel'
+import { useTranslations } from 'use-intl'
 
 import { DrawerCallToAction } from './reviewOperation/drawerCallToAction'
 

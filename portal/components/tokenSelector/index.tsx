@@ -1,8 +1,8 @@
 import { useVisualViewportSize } from '@hemilabs/react-hooks/useVisualViewportSize'
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { Modal } from 'components/modal'
 import { useUmami } from 'hooks/useUmami'
-import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { screenBreakpoints } from 'styles'
@@ -33,12 +33,9 @@ const TokenListLoading = function () {
   )
 }
 
-const TokenList = dynamic(
-  () => import('./tokenList').then(mod => mod.TokenList),
-  {
-    loading: TokenListLoading,
-    ssr: false,
-  },
+const TokenList = lazyWithFallback(
+  () => import('./tokenList').then(mod => ({ default: mod.TokenList })),
+  <TokenListLoading />,
 )
 
 type Props = {

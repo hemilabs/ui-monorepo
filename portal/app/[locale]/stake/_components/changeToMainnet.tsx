@@ -1,10 +1,8 @@
-'use client'
-
 import { Link } from 'components/link'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
-import { useTranslations } from 'next-intl'
+import { usePathname } from 'i18n/navigation'
 import { MouseEvent } from 'react'
+import { useTranslations } from 'use-intl'
 
 const SvgContainer = () => (
   <svg
@@ -112,7 +110,7 @@ const SvgContainer = () => (
 
 export const ChangeToMainnet = function () {
   const [, setNetworkType] = useNetworkType()
-  const pathname = usePathnameWithoutLocale()
+  const pathname = usePathname()
   const t = useTranslations('stake-page')
 
   const onClick = function (e: MouseEvent<HTMLAnchorElement>) {

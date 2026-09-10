@@ -1,11 +1,9 @@
-'use client'
-
 import { Button } from 'components/button'
 import { WalletIcon } from 'components/icons/walletIcon'
 import { InformationBox } from 'components/informationBox'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useUmami } from 'hooks/useUmami'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 export const ConnectWallet = function () {
   const { openDrawer } = useDrawerContext()

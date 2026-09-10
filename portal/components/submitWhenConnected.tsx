@@ -1,17 +1,8 @@
 import { ButtonSize } from 'components/button'
-import { ButtonLoader } from 'components/buttonLoader'
-import dynamic from 'next/dynamic'
+import { LazyConnectEvmWallet } from 'components/lazyConnectEvmWallet'
 import { ReactNode } from 'react'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
-
-const ConnectEvmWallet = dynamic(
-  () => import('components/connectEvmWallet').then(mod => mod.ConnectEvmWallet),
-  {
-    loading: () => <ButtonLoader />,
-    ssr: false,
-  },
-)
 
 type Props = {
   connectWalletText?: string
@@ -31,6 +22,9 @@ export const SubmitWhenConnected = function ({
   }
 
   return (
-    <ConnectEvmWallet buttonSize={submitButtonSize} text={connectWalletText} />
+    <LazyConnectEvmWallet
+      buttonSize={submitButtonSize}
+      text={connectWalletText}
+    />
   )
 }

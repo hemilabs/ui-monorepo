@@ -5,7 +5,7 @@ import { type Address } from 'viem'
 export const earnCostBasisKeyPrefix = ['hemi-earn', 'cost-basis'] as const
 
 const getEarnCostBasisUrl = (account: Address) =>
-  `${process.env.NEXT_PUBLIC_PORTAL_API_URL}/subgraphs/${hemi.id}/earn-cost-basis/${account}`
+  `${import.meta.env.VITE_PORTAL_API_URL}/subgraphs/${hemi.id}/earn-cost-basis/${account}`
 
 export const fetchEarnCostBasis = async function ({
   account,

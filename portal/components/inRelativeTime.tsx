@@ -1,5 +1,5 @@
-import { useLocale } from 'next-intl'
 import { useEffect, useState } from 'react'
+import { useLocale } from 'use-intl'
 import { formatFutureTime, formatPastTime } from 'utils/format'
 
 const second = 1

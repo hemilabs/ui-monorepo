@@ -1,0 +1,165 @@
+import * as Sentry from '@sentry/react'
+import { useEffect } from 'react'
+import {
+  createRoutesFromChildren,
+  matchRoutes,
+  useLocation,
+  useNavigationType,
+} from 'react-router'
+
+const unsupportedWalletErrors = [
+  '@polkadot/keyring requires direct dependencies',
+  "Backpack couldn't override `window.ethereum`.",
+  'Cannot redefine property: ethereum',
+  // Nightly wallet
+  'Cannot set property ethereum of #<Window> which has only a getter',
+  'sendRequest() -> core.crypto.encode()',
+  'shouldSetPelagusForCurrentProvider is not a function',
+  'shouldSetTallyForCurrentProvider is not a function',
+  'Talisman extension has not been configured yet',
+]
+
+const walletConnectErrors = [
+  'Decoded payload on topic',
+  'Error: emitting session_request',
+  'Expired. pairing topic',
+  'No matching key',
+  // there are a few possible different errors after "Record was recently deleted"
+  'Record was recently deleted',
+  // See https://github.com/hemilabs/ui-monorepo/issues/1081
+  'this.provider.disconnect is not a function',
+]
+
+function enableSentry() {
+  const ignoreErrors = [
+    'Deprecation warning: tabReply will be removed',
+    'Error redefining provider into window.ethereum',
+    // Coming from an extension probably, we don't use anything related to this
+    `Failed to execute 'transaction' on 'IDBDatabase'`,
+    'Database deleted by request of the user',
+    // user has not enough gas
+    'insufficient funds for gas * price + value',
+    // Metamask error
+    "MetaMask: 'eth_accounts' unexpectedly updated accounts. Please report this bug",
+    // Another Metamask error
+    'MetaMetrics.getInstance().createEventBuilder is not a function.',
+    // From "TronWeb: 'tronWeb.sidechain' is deprecated and may be removed in the future. Please use the 'sunweb' sdk instead...",
+    "Please use the 'sunweb' sdk instead",
+    // user rejected a confirmation in the wallet
+    'rejected the request',
+    // React internal error thrown when something outside react modifies the DOM
+    // This is usually because of a browser extension or Chrome's built-in translate. There's no action to do.
+    // See https://blog.sentry.io/making-your-javascript-projects-less-noisy/#ignore-un-actionable-errors
+    'The node to be removed is not a child of this node.',
+    'The node before which the new node is to be inserted is not a child of this node.',
+    // MM already prompts to add the chain if switching to an unknown chain.
+    // All the other wallets tested work too, although without this error.
+    'Try adding the chain using wallet_addEthereumChain first',
+    // Thrown when firefox prevents an add-on from referencing a DOM element that has been removed.
+    `TypeError: can't access dead object`,
+    'User denied transaction signature',
+    ...unsupportedWalletErrors,
+    ...walletConnectErrors,
+  ]
+
+  // Matches the format "portal@yyyymmdd_sequence". The project name is
+  // hardcoded as we are not going to change it anytime soon. Reading it from an
+  // environment variable would be possible but it would add unnecessary
+  // complexity IMO.
+  const releaseNameRegex = /^portal@\d{8}_\d+$/
+
+  // Inlined at build time via the VITE_ prefix, so it cannot be tampered
+  // with by browser extensions overwriting globalThis.SENTRY_RELEASE.
+  // See https://github.com/getsentry/sentry-javascript-bundler-plugins/issues/791
+  const release = import.meta.env.VITE_SENTRY_RELEASE
+
+  // Matching frames against bundle keys only works once the bundler plugin has
+  // stamped them. With no key every frame reads as third party and the whole
+  // event is dropped, so the integration has to stay out rather than filter.
+  const filterKey = import.meta.env.VITE_SENTRY_FILTER_KEY_ID
+
+  Sentry.init({
+    denyUrls: [
+      // Filter all Wallet Connect related urls
+      /(https|wss):\/\/.*\.walletconnect\.(com|org)/,
+      import.meta.env.VITE_PORTAL_API_URL,
+      // filter in case any of the env variables are undefined, although in prod all should be defined.
+    ].filter(Boolean) as (string | RegExp)[],
+    dsn: import.meta.env.VITE_SENTRY_DSN,
+    ignoreErrors,
+    // Integrations listed here are added alongside the default ones.
+    integrations: [
+      // Required for `tracesSampleRate` below to do anything. The router-aware
+      // one names transactions after the route pattern rather than the raw URL,
+      // so every share address does not become its own transaction.
+      Sentry.reactRouterBrowserTracingIntegration({
+        createRoutesFromChildren,
+        matchRoutes,
+        useEffect,
+        useLocation,
+        useNavigationType,
+      }),
+      // See https://docs.sentry.io/platforms/javascript/guides/react/configuration/integrations/captureconsole/
+      Sentry.captureConsoleIntegration({
+        levels: ['error', 'warn'],
+      }),
+      // See https://docs.sentry.io/platforms/javascript/guides/react/configuration/integrations/extraerrordata/
+      Sentry.extraErrorDataIntegration(),
+      // See https://docs.sentry.io/platforms/javascript/guides/react/configuration/integrations/httpclient/
+      Sentry.httpClientIntegration(),
+      // decodeURI() is what fixes a source map mismatch in reported issues.
+      // ref: https://github.com/getsentry/sentry/issues/19713#issuecomment-696614341
+      Sentry.rewriteFramesIntegration({
+        iteratee(frame) {
+          const { origin } = new URL(frame.filename!)
+          frame.filename = decodeURI(frame.filename!.replace(origin, 'app://'))
+          return frame
+        },
+      }),
+      // See https://docs.sentry.io/platforms/javascript/guides/react/configuration/filtering/#using-thirdpartyerrorfilterintegration
+      ...(filterKey
+        ? [
+            Sentry.thirdPartyErrorFilterIntegration({
+              // Should skip all errors that are entirely made of third party frames in the stack trace.
+              // Let's start with this, we can make it more strict if needed.
+              behaviour:
+                'drop-error-if-exclusively-contains-third-party-frames',
+              filterKeys: [filterKey],
+            }),
+          ]
+        : []),
+    ],
+    normalizeDepth: 6,
+    release,
+    tracesSampleRate:
+      import.meta.env.VITE_TRACES_SAMPLE_RATE &&
+      !Number.isNaN(Number(import.meta.env.VITE_TRACES_SAMPLE_RATE))
+        ? Number(import.meta.env.VITE_TRACES_SAMPLE_RATE)
+        : undefined,
+    // Custom transport wrapper to prevent phantom releases created by browser
+    // extensions that pollute globalThis.SENTRY_RELEASE. Rewrites any foreign
+    // release in the envelope header to our own release. This covers sessions,
+    // client reports and other envelope types.
+    // See https://github.com/getsentry/sentry-javascript-bundler-plugins/issues/791
+    transport(options: Parameters<typeof Sentry.makeFetchTransport>[0]) {
+      const inner = Sentry.makeFetchTransport(options)
+      return {
+        ...inner,
+        send(envelope: Parameters<typeof inner.send>[0]) {
+          const [header] = envelope
+          if (
+            header.release &&
+            !releaseNameRegex.test(header.release as string)
+          ) {
+            header.release = release
+          }
+          return inner.send(envelope)
+        },
+      }
+    },
+  })
+}
+
+if (import.meta.env.VITE_SENTRY_DSN) {
+  enableSentry()
+}

@@ -1,5 +1,5 @@
-import { useLocale } from 'next-intl'
 import { EvmToken } from 'types/token'
+import { useLocale } from 'use-intl'
 import { formatCompactFiatParts, formatPercentage } from 'utils/format'
 
 import { type MetricType } from '../../../../types'

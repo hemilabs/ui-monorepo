@@ -1,6 +1,6 @@
 import { useChain } from 'hooks/useChain'
-import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
+import { useTranslations } from 'use-intl'
 import { Chain } from 'viem'
 
 import { PartnerImage } from './partnerImage'

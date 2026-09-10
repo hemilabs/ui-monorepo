@@ -5,7 +5,7 @@ import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useEvmDeposits } from 'hooks/useEvmDeposits'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { useSearchParams } from 'next/navigation'
+import { useOptimisticSearchParams } from 'nuqs/adapters/react-router/v8'
 import { useEffect, useMemo } from 'react'
 import { EvmDepositOperation, EvmDepositStatus } from 'types/tunnel'
 import { isNativeAddress } from 'utils/nativeToken'
@@ -38,7 +38,7 @@ const WatchEvmDeposit = function ({
     deposit.l2ChainId,
   )
   const queryClient = useQueryClient()
-  const searchParams = useSearchParams()
+  const searchParams = useOptimisticSearchParams()
   const txHash = searchParams.get('txHash')
 
   useEffect(
@@ -125,10 +125,12 @@ const WatchEvmDeposit = function ({
 const missingInformation = (deposit: EvmDepositOperation) =>
   !deposit.blockNumber || !deposit.timestamp
 
-// See https://github.com/vercel/next.js/issues/31009#issuecomment-11463441611
-// and https://github.com/vercel/next.js/issues/31009#issuecomment-1338645354
+// Module scope with the URL spelled out inline: Vite only rewrites
+// `new URL(..., import.meta.url)` when it can read the literal statically.
 const getWorker = () =>
-  new Worker(new URL('../../workers/watchEvmDeposits.ts', import.meta.url))
+  new Worker(new URL('../../workers/watchEvmDeposits.ts', import.meta.url), {
+    type: 'module',
+  })
 
 export const EvmDepositsStatusUpdater = function () {
   const { isConnected } = useAccount()

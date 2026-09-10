@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import type { ReactNode } from 'react'
 
 // "Not really a component" (issue #1993): the typography lives as global styles in

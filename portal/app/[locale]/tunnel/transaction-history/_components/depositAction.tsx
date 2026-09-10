@@ -1,6 +1,6 @@
 import { useNetworkType } from 'hooks/useNetworkType'
-import { useTranslations } from 'next-intl'
 import { BtcDepositStatus, DepositTunnelOperation } from 'types/tunnel'
+import { useTranslations } from 'use-intl'
 import { isBtcDeposit } from 'utils/tunnel'
 
 import { CallToAction } from './callToAction'

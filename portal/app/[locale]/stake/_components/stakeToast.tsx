@@ -1,7 +1,7 @@
 import { Toast } from 'components/toast'
 import { useChain } from 'hooks/useChain'
-import { useTranslations } from 'next-intl'
 import { RemoteChain } from 'types/chain'
+import { useTranslations } from 'use-intl'
 import { formatEvmHash } from 'utils/format'
 import { type Hash } from 'viem'
 

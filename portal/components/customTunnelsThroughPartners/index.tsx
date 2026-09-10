@@ -1,7 +1,7 @@
 import { Drawer, DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { WarningBox } from 'components/warningBox'
-import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
+import { useTranslations } from 'use-intl'
 
 import { Jumper } from './jumper'
 import { Orbiter } from './orbiter'

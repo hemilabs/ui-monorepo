@@ -1,21 +1,18 @@
-'use client'
-
 import { AnalyticsEvent } from 'app/analyticsEvents'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { Tab, Tabs } from 'components/tabs'
-import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import { useUmami } from 'hooks/useUmami'
-import dynamic from 'next/dynamic'
-import { useTranslations } from 'next-intl'
+import { usePathname } from 'i18n/navigation'
 import { Suspense } from 'react'
 import { UrlObject } from 'url'
+import { useTranslations } from 'use-intl'
+import { isSamePathOrUnder } from 'utils/url'
 
-const ActionableOperations = dynamic(
-  () =>
-    import('components/actionableOperations').then(
-      mod => mod.ActionableOperations,
-    ),
-  { ssr: false },
+const ActionableOperations = lazyWithFallback(() =>
+  import('components/actionableOperations').then(mod => ({
+    default: mod.ActionableOperations,
+  })),
 )
 
 const UI = function ({
@@ -25,14 +22,14 @@ const UI = function ({
   onTabClick?: ((eventName: AnalyticsEvent) => void) | undefined
   tunnelHref: UrlObject | string
 }) {
-  const pathname = usePathnameWithoutLocale()
+  const pathname = usePathname()
   const t = useTranslations('tunnel-page')
 
-  if (!pathname.startsWith(`/tunnel/`)) {
+  if (!isSamePathOrUnder(pathname, '/tunnel')) {
     return null
   }
 
-  const isInTransactionHistory = pathname === `/tunnel/transaction-history/`
+  const isInTransactionHistory = pathname === '/tunnel/transaction-history'
 
   return (
     <div className="flex items-center justify-center gap-x-4 max-md:px-4">
@@ -40,7 +37,7 @@ const UI = function ({
         <Tab
           href={tunnelHref}
           onClick={onTabClick ? () => onTabClick('header - tunnel') : undefined}
-          selected={pathname === '/tunnel/'}
+          selected={pathname === '/tunnel'}
         >
           <span className="flex h-full min-h-7 items-center justify-center">
             {t('title')}

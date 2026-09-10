@@ -1,7 +1,7 @@
 import { useDebounce } from '@hemilabs/react-hooks/useDebounce'
 import { type BtcChain } from 'btc-wallet/chains'
-import { useTranslations } from 'next-intl'
 import { useCallback, useState } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { useIsValidBtcAddress } from './useIsValidBtcAddress'
 

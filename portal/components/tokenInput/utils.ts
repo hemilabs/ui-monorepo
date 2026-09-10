@@ -1,5 +1,5 @@
-import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
+import { useTranslations } from 'use-intl'
 import { isNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 

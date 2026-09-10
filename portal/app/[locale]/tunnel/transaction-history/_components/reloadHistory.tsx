@@ -2,8 +2,8 @@ import { Button } from 'components/button'
 import { Spinner } from 'components/spinner'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
-import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
+import { useTranslations } from 'use-intl'
 
 const ReloadIcon = (props: ComponentProps<'svg'>) => (
   <svg

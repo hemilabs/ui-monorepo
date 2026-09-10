@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2023"],
+    "types": ["vite/client"]
+  },
+  "exclude": [],
+  "extends": "../tsconfig.json",
+  "include": [
+    "../reset.d.ts",
+    "../utils/securityHeaders.ts",
+    "index.ts",
+    "worker-configuration.d.ts"
+  ]
+}

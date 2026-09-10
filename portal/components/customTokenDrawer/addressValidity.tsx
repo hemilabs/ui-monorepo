@@ -1,6 +1,6 @@
 import { CheckCircleIcon } from 'components/icons/checkCircleIcon'
 import { ErrorIcon } from 'components/icons/errorIcon'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 export type AddressValidity =
   | 'this-address-is-valid'

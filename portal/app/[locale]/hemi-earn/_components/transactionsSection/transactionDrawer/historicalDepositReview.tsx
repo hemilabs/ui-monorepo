@@ -1,5 +1,3 @@
-'use client'
-
 import { Operation } from 'components/reviewOperation/operation'
 import {
   ProgressStatus,
@@ -10,9 +8,9 @@ import { TokenLogo } from 'components/tokenLogo'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
-import { useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
 import { type EvmToken } from 'types/token'
+import { useTranslations } from 'use-intl'
 import { type Hash } from 'viem'
 
 import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'

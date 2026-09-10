@@ -1,8 +1,8 @@
-import Image, { type StaticImageData } from 'next/image'
+import { Image } from 'components/image'
 
 type Props = {
   alt: string
-  src: StaticImageData
+  src: string
 }
 
 export const PartnerImage = ({ alt, src }: Props) => (

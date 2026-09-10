@@ -1,5 +1,3 @@
-'use client'
-
 import { queryOptions } from '@tanstack/react-query'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient } from 'utils/chainClients'

@@ -1,5 +1,3 @@
-'use client'
-
 import {
   SyncStatus,
   type HistoryActions,
@@ -54,6 +52,7 @@ const SyncHistoryWorker = function ({
       // load the Worker
       workerRef.current = new Worker(
         new URL('../workers/history.ts', import.meta.url),
+        { type: 'module' },
       ) as AppToWebWorker
 
       // listen for state updates and forward to our history reducer
@@ -88,7 +87,7 @@ const SyncHistoryWorker = function ({
       }
       setWorkerLoaded(true)
 
-      if (process.env.NEXT_PUBLIC_WORKERS_DEBUG_ENABLE === 'true') {
+      if (import.meta.env.VITE_WORKERS_DEBUG_ENABLE === 'true') {
         // See https://github.com/debug-js/debug/issues/916#issuecomment-1539231712
         const debugString = localStorage.getItem('debug') ?? '*'
         workerRef.current.postMessage({

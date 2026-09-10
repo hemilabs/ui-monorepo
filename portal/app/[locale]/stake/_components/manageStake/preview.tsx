@@ -2,9 +2,9 @@ import { CallToActionContainer } from 'components/reviewOperation/callToActionCo
 import { Tab, Tabs } from 'components/tabs'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
-import { useTranslations } from 'next-intl'
 import { ComponentType, ReactNode } from 'react'
 import { StakeOperations, StakeToken } from 'types/stake'
+import { useTranslations } from 'use-intl'
 
 import { DisclaimerEth } from './disclaimerEth'
 

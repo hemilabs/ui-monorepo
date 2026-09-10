@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Spinner } from 'components/spinner'
 
 // Backgrounds mirror where each variant is actually used in the app:

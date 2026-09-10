@@ -1,5 +1,3 @@
-'use client'
-
 import binanceWallet from '@binance/w3w-rainbow-connector-v2'
 import {
   connectorsForWallets,
@@ -33,7 +31,15 @@ const queryClient = new QueryClient()
 
 const appName = 'Hemi Portal'
 const projectId =
-  process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ?? 'YOUR_PROJECT_ID'
+  import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID || 'YOUR_PROJECT_ID'
+
+// Disable Coinbase telemetry.
+// Coinbase injects its telemetry client as an inline script, which is blocked
+// by the app's nonce-based Content Security Policy.
+coinbaseWallet.preference = {
+  options: 'all',
+  telemetry: false,
+}
 
 // All wallets to show in the UI
 const configuredWallets = [
@@ -73,7 +79,7 @@ const connectors = connectorsForWallets(
   },
 )
 
-export const allEvmNetworksWalletConfig = createConfig({
+const allEvmNetworksWalletConfig = createConfig({
   chains: allEvmNetworks,
   connectors: [
     ...(featureFlags.enableSafeWallet ? [safe()] : []),

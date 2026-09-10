@@ -1,5 +1,5 @@
-import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
+import { useTranslations } from 'use-intl'
 
 const Container = ({ children }: { children: React.ReactNode }) => (
   <div className="flex items-center gap-x-1.5">{children}</div>

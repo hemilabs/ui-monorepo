@@ -4,14 +4,16 @@ The Portal is a Web3 app that allows users to interact with Hemi, an L2 that int
 
 ## Structure
 
-The portal is a Next app that uses static building and the app router. As it is a static page, it does not rely with SSR features (Except on local development).
+The Portal is a Vite app. `main.tsx` is the entry, `app.tsx` at the root holds the react-router route table, and the build produces a static bundle served by the Cloudflare Worker.
 
 Some relevant folders are:
 
-- [/app](./app/) folder, which contains the Next's App router code
+- [/app](./app/) folder, which holds the pages and their co-located `_components`/`_hooks`/`_utils`. The `[locale]` folder name is historical and does not drive routing; `app.tsx` does.
 - [/components](./components/) folder, which contains reusable components to the entire app that are not tied to a specific page.
 - [/hooks](./hooks/) folder, which contains reusable hooks to the entire app that are not tied to a specific page.
 - [/messages/](./messages/) folder, which contain a file per locale with all the translated resources.
+- [/public](./public/) folder, which is served verbatim at the site root.
+- [worker/index.ts](./worker/index.ts), the Cloudflare Worker that serves the built assets and sets the security headers on every response.
 - [/test](./test/) folder, which contains some tests for different portal files. These tests are for plain Typescript functions, and not for components.
 - [/types](./types/) folder, which contains many reusable Typescript types across the entire app
 - [/utils](./utils/) folder, which contains most of the logic that is not tied to UI.
@@ -23,50 +25,65 @@ Follow the steps in the [main README](../README.md). No extra actions are needed
 ### Configuration and Environment variables
 
 The environment variables are defined in the `.env` file at the root of the project.
-The prefix `NEXT_PUBLIC_` is required for the variables to be available in the browser. A few variables can be set locally (in a `.env.local`), in addition to the ones already defined in the `.env`.
+The prefix `VITE_` is required: Vite only exposes variables carrying it to the browser, and inlines them at build time. A few variables can be set locally (in a `.env.local`), in addition to the ones already defined in the `.env`.
+
+> If you have a `.env.local` from before the Vite migration, rename its keys from `NEXT_PUBLIC_` to `VITE_`. It is gitignored, so the rename does not reach it on its own, and a stale key is read as `undefined` without any warning.
 
 This is the list of all variables that can be configured:
 
 ```sh
 # Use this variables to override RPC urls per chain. In order to join multiple RPC urls, join them with the "+" character.
-# For example NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA="https://rpc1.testnet.com/rpc+https://rpc2.testnet.com/rpc"
-NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET=<urls>
-NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA=<urls>
-NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET=<urls>
-NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA=<urls>
+# For example VITE_CUSTOM_RPC_URL_SEPOLIA="https://rpc1.testnet.com/rpc+https://rpc2.testnet.com/rpc"
+VITE_CUSTOM_RPC_URL_HEMI_MAINNET=<urls>
+VITE_CUSTOM_RPC_URL_HEMI_SEPOLIA=<urls>
+VITE_CUSTOM_RPC_URL_MAINNET=<urls>
+VITE_CUSTOM_RPC_URL_SEPOLIA=<urls>
 # enable logging on web workers
-NEXT_PUBLIC_WORKERS_DEBUG_ENABLE=<true|false>
+VITE_WORKERS_DEBUG_ENABLE=<true|false>
 # These env variables are required for Enabling Analytics
-NEXT_PUBLIC_ENABLE_ANALYTICS=<true|false> # Enable Analytics with Umami
-NEXT_PUBLIC_ANALYTICS_URL=<url> # Umami analytics URL
-NEXT_PUBLIC_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
+VITE_ENABLE_ANALYTICS=<true|false> # Enable Analytics with Umami
+VITE_ANALYTICS_URL=<url> # Umami analytics URL
+VITE_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
 # These env variables are required for enabling the following features
-NEXT_PUBLIC_ENABLE_HEMI_EARN_PAGE=<true|false> # Enable the Hemi Earn page
-NEXT_PUBLIC_ENABLE_SAFE_WALLET=<true|false> # Enable the Safe connector, needed to run the Portal as a Safe App
-NEXT_PUBLIC_ENABLE_STAKE_GOVERNANCE_TESTNET=<true|false> # Enable stake governance on Testnet, for local development
-NEXT_PUBLIC_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development
-NEXT_PUBLIC_ENABLE_CLAIM_REWARDS_TESTNET=<true|false> # Enable claim rewards on Testnet, for local development
+VITE_ENABLE_HEMI_EARN_PAGE=<true|false> # Enable the Hemi Earn page
+VITE_ENABLE_SAFE_WALLET=<true|false> # Enable the Safe connector, needed to run the Portal as a Safe App
+VITE_ENABLE_STAKE_GOVERNANCE_TESTNET=<true|false> # Enable stake governance on Testnet, for local development
+VITE_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development
+VITE_ENABLE_CLAIM_REWARDS_TESTNET=<true|false> # Enable claim rewards on Testnet, for local development
 # Bitcoin configuring
-NEXT_PUBLIC_BITCOIN_PAST_VAULTS_MAINNET=1,2 # Comma-separated list of past vault indexes. Do not include the active ones.
-NEXT_PUBLIC_BITCOIN_PAST_VAULTS_SEPOLIA=1,2,3 # Comma-separated list of past vault indexes. Do not include the active ones.
-NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET=3 # Vault index to use for bitcoin in hemi mainnet, when the deposit and withdrawal ones are not set. Defaults to 0
-NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA=4 # Vault index to use for bitcoin in hemi sepolia, when the deposit and withdrawal ones are not set. Defaults to 0
-NEXT_PUBLIC_DEFAULT_BITCOIN_DEPOSIT_VAULT_MAINNET=5 # Vault index to deposit bitcoin in hemi mainnet. Defaults to NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET
-NEXT_PUBLIC_DEFAULT_BITCOIN_DEPOSIT_VAULT_SEPOLIA=6 # Vault index to deposit bitcoin in hemi sepolia. Defaults to NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA
-NEXT_PUBLIC_DEFAULT_BITCOIN_WITHDRAWAL_VAULT_MAINNET=3 # Vault index to withdraw bitcoin from hemi mainnet. Defaults to NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET
-NEXT_PUBLIC_DEFAULT_BITCOIN_WITHDRAWAL_VAULT_SEPOLIA=4 # Vault index to withdraw bitcoin from hemi sepolia. Defaults to NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA
+VITE_BITCOIN_PAST_VAULTS_MAINNET=1,2 # Comma-separated list of past vault indexes. Do not include the active ones.
+VITE_BITCOIN_PAST_VAULTS_SEPOLIA=1,2,3 # Comma-separated list of past vault indexes. Do not include the active ones.
+VITE_DEFAULT_BITCOIN_VAULT_MAINNET=3 # Vault index to use for bitcoin in hemi mainnet, when the deposit and withdrawal ones are not set. Defaults to 0
+VITE_DEFAULT_BITCOIN_VAULT_SEPOLIA=4 # Vault index to use for bitcoin in hemi sepolia, when the deposit and withdrawal ones are not set. Defaults to 0
+VITE_DEFAULT_BITCOIN_DEPOSIT_VAULT_MAINNET=5 # Vault index to deposit bitcoin in hemi mainnet. Defaults to VITE_DEFAULT_BITCOIN_VAULT_MAINNET
+VITE_DEFAULT_BITCOIN_DEPOSIT_VAULT_SEPOLIA=6 # Vault index to deposit bitcoin in hemi sepolia. Defaults to VITE_DEFAULT_BITCOIN_VAULT_SEPOLIA
+VITE_DEFAULT_BITCOIN_WITHDRAWAL_VAULT_MAINNET=3 # Vault index to withdraw bitcoin from hemi mainnet. Defaults to VITE_DEFAULT_BITCOIN_VAULT_MAINNET
+VITE_DEFAULT_BITCOIN_WITHDRAWAL_VAULT_SEPOLIA=4 # Vault index to withdraw bitcoin from hemi sepolia. Defaults to VITE_DEFAULT_BITCOIN_VAULT_SEPOLIA
+VITE_BTC_INPUTS_SIZE=105 # Assumed size in vbytes of a single transaction input, used to estimate bitcoin fees
+VITE_BTC_OUTPUTS_SIZE=25 # Assumed size in vbytes of a single transaction output, used to estimate bitcoin fees
 # Backend API URL
-NEXT_PUBLIC_PORTAL_API_URL=<url> # To get the token prices, user points, TVL and more
-NEXT_PUBLIC_VETRO_API_URL=<url> # Vetro API URL; powers the Hemi Earn page (variable-stake APY and user rewards)
+VITE_PORTAL_API_URL=<url> # To get the token prices, user points, TVL and more
+VITE_VETRO_API_URL=<url> # Vetro API URL; powers the Hemi Earn page (variable-stake APY and user rewards)
 # The following variables could be used to customize the contracts addresses used by Hemi (for example, for testing with a forked blockchain):
-NEXT_PUBLIC_ADDRESS_MANAGER=<address>
-NEXT_PUBLIC_L2_BRIDGE=<address>
-NEXT_PUBLIC_L2_OUTPUT_ORACLE_PROXY=<address>
-NEXT_PUBLIC_OPTIMISM_PORTAL_PROXY=<address>
-NEXT_PUBLIC_PROXY_OVM_L1_CROSS_DOMAIN_MESSENGER=<address>
-NEXT_PUBLIC_PROXY_OVM_L1_STANDARD_BRIDGE=<address>
+VITE_ADDRESS_MANAGER=<address>
+VITE_L2_BRIDGE=<address>
+VITE_L2_OUTPUT_ORACLE_PROXY=<address>
+VITE_OPTIMISM_PORTAL_PROXY=<address>
+VITE_PROXY_OVM_L1_CROSS_DOMAIN_MESSENGER=<address>
+VITE_PROXY_OVM_L1_STANDARD_BRIDGE=<address>
 # Use it to enable wallet connect
-NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=<wallet-connect-id>
+VITE_WALLET_CONNECT_PROJECT_ID=<wallet-connect-id>
+# Sitemap
+PORTAL_SITE_URL=<url> # Base URL the sitemap is built from. Read at build time. Without it no sitemap.xml is emitted
+# Error reporting with Sentry. The unprefixed ones are read at build time and never reach the browser
+SENTRY_AUTH_TOKEN=<token> # Authorizes the source map upload
+SENTRY_ENVIRONMENT=<string> # Environment the release is deployed to. Together with VITE_SENTRY_RELEASE it is what names the release
+SENTRY_ORG=<string> # Sentry organization slug
+SENTRY_PROJECT=<string> # Sentry project slug
+VITE_SENTRY_DSN=<dsn> # Sentry DSN. Also what enables the build-time plugin
+VITE_SENTRY_FILTER_KEY_ID=<string> # Application key used to tell first-party frames from third-party ones. The filtering is skipped when it does not reach the build
+VITE_SENTRY_RELEASE=<string> # Release name, in the "portal@yyyymmdd_sequence" format. Envelopes not matching it are rewritten
+VITE_TRACES_SAMPLE_RATE=<number> # Ratio of transactions sampled for tracing. Ignored when not a number
 ```
 
 If not defined, the contracts addresses used will be the ones defined in [hemi-viem](https://github.com/hemilabs/hemi-viem).
@@ -101,4 +118,12 @@ Run the following command:
 pnpm build
 ```
 
-The .out folder's content should be deployed as a static page.
+This emits the static assets and, alongside them, the Worker that serves those assets and sets the security headers on every response. Both are deployed to Cloudflare through its Git integration.
+
+`pnpm dev` serves the same headers, minus `upgrade-insecure-requests`: it rewrites every request to https, which the dev server does not speak. To exercise the production set, build first and then:
+
+```sh
+pnpm exec wrangler dev
+```
+
+The build is what points wrangler at the directory holding the assets, so the commands that serve or deploy them need it. Without `dist/` they fail with a complaint about a missing `directory` property. `wrangler types` runs either way.

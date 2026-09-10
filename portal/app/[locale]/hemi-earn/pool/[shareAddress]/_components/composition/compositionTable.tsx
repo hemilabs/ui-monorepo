@@ -1,5 +1,3 @@
-'use client'
-
 import { Table } from 'components/table'
 import { ComponentProps } from 'react'
 import Skeleton from 'react-loading-skeleton'

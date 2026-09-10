@@ -1,9 +1,7 @@
-'use client'
-
 import { createContext, useContext, type ReactNode } from 'react'
 
-import { useStakingDashboardState } from '../_hooks/useStakingDashboardState'
 import {
+  useStakingDashboardState,
   type StakingDashboardStake,
   type TypedStakingDashboardState,
 } from '../_hooks/useStakingDashboardState'

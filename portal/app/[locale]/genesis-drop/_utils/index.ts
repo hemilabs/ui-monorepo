@@ -14,7 +14,7 @@ export const formatHemi = (amount: bigint, decimals: number) =>
 
 export const isClaimRewardsEnabledOnTestnet = (networkType: NetworkType) =>
   networkType !== 'testnet' ||
-  process.env.NEXT_PUBLIC_ENABLE_CLAIM_REWARDS_TESTNET === 'true'
+  import.meta.env.VITE_ENABLE_CLAIM_REWARDS_TESTNET === 'true'
 
 /**
  * Calculates the staked and unlocked amounts based on the total amount and lockup ratio

@@ -1,6 +1,6 @@
 import { ChainLogo } from 'components/chainLogo'
-import { useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
+import { useTranslations } from 'use-intl'
 import { type Chain } from 'viem'
 
 type Props = {

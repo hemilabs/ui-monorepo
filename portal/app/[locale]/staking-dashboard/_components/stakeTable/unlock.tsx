@@ -1,12 +1,12 @@
 import { Button } from 'components/button'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
 import {
   type StakingPosition,
   StakingPositionStatus,
   type UnlockingOperationRunning,
 } from 'types/stakingDashboard'
+import { useLocale, useTranslations } from 'use-intl'
 import { formatDate } from 'utils/format'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'

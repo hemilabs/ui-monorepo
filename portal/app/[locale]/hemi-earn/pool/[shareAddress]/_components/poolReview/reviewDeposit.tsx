@@ -1,5 +1,3 @@
-'use client'
-
 import { Operation } from 'components/reviewOperation/operation'
 import {
   ProgressStatus,
@@ -12,7 +10,7 @@ import { encodeRequestDeposit } from 'hemi-earn-actions/actions'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { type Hash, formatUnits } from 'viem'

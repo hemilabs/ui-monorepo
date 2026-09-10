@@ -1,10 +1,8 @@
-import type { Metadata } from 'next'
-import { PropsWithChildren } from 'react'
+import { useDocumentTitle } from 'hooks/useDocumentTitle'
+import { Outlet } from 'react-router'
 
-export const metadata: Metadata = {
-  title: 'Get Started | Hemi Portal',
-}
+export const GetStartedLayout = function () {
+  useDocumentTitle('Get Started | Hemi Portal')
 
-export default function GetStartedLayout({ children }: PropsWithChildren) {
-  return <>{children}</>
+  return <Outlet />
 }

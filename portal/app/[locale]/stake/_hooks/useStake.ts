@@ -6,13 +6,13 @@ import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
-import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import {
   StakeStatusEnum,
   type StakeStatusEnumType,
   type StakeToken,
 } from 'types/stake'
+import { useTranslations } from 'use-intl'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { isNativeToken } from 'utils/nativeToken'
 import { stake } from 'utils/stake'

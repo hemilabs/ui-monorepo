@@ -1,13 +1,12 @@
-'use client'
-
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { UmamiAnalyticsProvider } from 'components/umamiAnalyticsProvider'
-import dynamic from 'next/dynamic'
-import { useLocale } from 'next-intl'
-import { ComponentProps, Suspense } from 'react'
+import { ComponentProps, useCallback } from 'react'
+import { parsePath } from 'react-router'
+import { useLocale } from 'use-intl'
+import { unlocalizedPathname } from 'utils/url'
 
-const GlobalTracking = dynamic(
-  () => import('./globalTracking').then(mod => mod.GlobalTracking),
-  { ssr: false },
+const GlobalTracking = lazyWithFallback(() =>
+  import('./globalTracking').then(mod => ({ default: mod.GlobalTracking })),
 )
 
 export const Analytics = function ({
@@ -15,24 +14,25 @@ export const Analytics = function ({
 }: Pick<ComponentProps<typeof UmamiAnalyticsProvider>, 'children'>) {
   const locale = useLocale()
 
-  const removeLocaleAndTrailingSlash = (url: string) =>
-    (url.endsWith('/') ? url.slice(0, -1) : url).replace(`/${locale}`, '')
+  const processUrl = useCallback(
+    function stripLocale(url: string) {
+      const { pathname = '', search = '' } = parsePath(url)
+      return `${unlocalizedPathname(pathname, locale)}${search}`
+    },
+    [locale],
+  )
 
   return (
-    <>
-      <UmamiAnalyticsProvider
-        autoTrack={false}
-        processUrl={removeLocaleAndTrailingSlash}
-        {...(process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true' && {
-          src: process.env.NEXT_PUBLIC_ANALYTICS_URL,
-          websiteId: process.env.NEXT_PUBLIC_ANALYTICS_WEBSITE_ID,
-        })}
-      >
-        <Suspense>
-          <GlobalTracking />
-        </Suspense>
-        {children}
-      </UmamiAnalyticsProvider>
-    </>
+    <UmamiAnalyticsProvider
+      autoTrack={false}
+      processUrl={processUrl}
+      {...(import.meta.env.VITE_ENABLE_ANALYTICS === 'true' && {
+        src: import.meta.env.VITE_ANALYTICS_URL,
+        websiteId: import.meta.env.VITE_ANALYTICS_WEBSITE_ID,
+      })}
+    >
+      <GlobalTracking />
+      {children}
+    </UmamiAnalyticsProvider>
   )
 }

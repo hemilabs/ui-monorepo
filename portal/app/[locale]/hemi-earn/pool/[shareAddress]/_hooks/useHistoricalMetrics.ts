@@ -10,7 +10,7 @@ import {
   type MetricType,
 } from '../../../types'
 
-const apiUrl = process.env.NEXT_PUBLIC_VETRO_API_URL
+const apiUrl = import.meta.env.VITE_VETRO_API_URL
 const isVetroApiConfigured = apiUrl !== undefined && isValidUrl(apiUrl)
 
 type ApyHistory = { apy: number; timestamp: number }[]

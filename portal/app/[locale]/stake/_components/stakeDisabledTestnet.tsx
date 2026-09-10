@@ -1,5 +1,3 @@
-'use client'
-
 import { ChangeToMainnet } from './changeToMainnet'
 import { StakeGraph } from './icons/stakeGraph'
 import { StakeAndEarn } from './stakeAndEarn'

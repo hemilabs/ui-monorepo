@@ -1,5 +1,3 @@
-'use client'
-
 import { useDebounce } from '@hemilabs/react-hooks/useDebounce'
 import { useVisualViewportSize } from '@hemilabs/react-hooks/useVisualViewportSize'
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
@@ -11,10 +9,10 @@ import { Modal } from 'components/modal'
 import { useTopTokensToHighlight } from 'hooks/useTopTokensToHighlight'
 import { useUserTokenList } from 'hooks/useUserTokenList'
 import partition from 'lodash/partition'
-import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { screenBreakpoints } from 'styles'
 import { Token as TokenType } from 'types/token'
+import { useTranslations } from 'use-intl'
 import { isCustomToken } from 'utils/token'
 import { type Chain, isAddress, isAddressEqual } from 'viem'
 

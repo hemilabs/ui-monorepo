@@ -1,12 +1,10 @@
-'use client'
-
 import { useQueryClient } from '@tanstack/react-query'
 import { WithWorker } from 'components/withWorker'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { useSearchParams } from 'next/navigation'
+import { useOptimisticSearchParams } from 'nuqs/adapters/react-router/v8'
 import { useEffect } from 'react'
 import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { isPendingOperation } from 'utils/tunnel'
@@ -38,7 +36,7 @@ const WatchBtcDeposit = function ({
   const { updateDeposit } = useTunnelHistory()
   const { queryKey: btcBalanceQueryKey } = useBitcoinBalance()
   const queryClient = useQueryClient()
-  const searchParams = useSearchParams()
+  const searchParams = useOptimisticSearchParams()
   const txHash = searchParams.get('txHash')
 
   useEffect(
@@ -123,10 +121,15 @@ const missingInformation = (deposit: BtcDepositOperation) =>
   !deposit.timestamp ||
   !deposit.confirmationTransactionHash
 
-// See https://github.com/vercel/next.js/issues/31009#issuecomment-11463441611
-// and https://github.com/vercel/next.js/issues/31009#issuecomment-1338645354
+// Module scope with the URL spelled out inline: Vite only rewrites
+// `new URL(..., import.meta.url)` when it can read the literal statically.
 const getWorker = () =>
-  new Worker(new URL('../../workers/watchBitcoinDeposits.ts', import.meta.url))
+  new Worker(
+    new URL('../../workers/watchBitcoinDeposits.ts', import.meta.url),
+    {
+      type: 'module',
+    },
+  )
 
 export const BitcoinDepositsStatusUpdater = function () {
   // Deposits are checked against an hemi address

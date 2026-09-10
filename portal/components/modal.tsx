@@ -1,5 +1,3 @@
-'use client'
-
 import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { useOnKeyUp } from '@hemilabs/react-hooks/useOnKeyUp'
 import { ComponentType } from 'react'

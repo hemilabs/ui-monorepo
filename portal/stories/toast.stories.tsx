@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/nextjs'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Toast } from 'components/toast'
 import messages from 'messages/en.json'
-import { NextIntlClientProvider } from 'next-intl'
 import { NuqsTestingAdapter } from 'nuqs/adapters/testing'
+import { IntlProvider } from 'use-intl'
 
 const meta = {
   args: {
@@ -25,9 +25,9 @@ const meta = {
   component: Toast,
   decorators: [
     Story => (
-      <NextIntlClientProvider locale="en" messages={messages}>
+      <IntlProvider locale="en" messages={messages}>
         <Story />
-      </NextIntlClientProvider>
+      </IntlProvider>
     ),
   ],
   title: 'Components/Toast',

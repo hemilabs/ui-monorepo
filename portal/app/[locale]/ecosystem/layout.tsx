@@ -1,10 +1,8 @@
-import type { Metadata } from 'next'
-import { PropsWithChildren } from 'react'
+import { useDocumentTitle } from 'hooks/useDocumentTitle'
+import { Outlet } from 'react-router'
 
-export const metadata: Metadata = {
-  title: 'Ecosystem | Hemi Portal',
-}
+export const EcosystemLayout = function () {
+  useDocumentTitle('Ecosystem | Hemi Portal')
 
-export default function EcosystemLayout({ children }: PropsWithChildren) {
-  return <>{children}</>
+  return <Outlet />
 }

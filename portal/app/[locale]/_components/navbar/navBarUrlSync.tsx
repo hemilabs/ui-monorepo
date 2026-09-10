@@ -1,5 +1,5 @@
 import { useNetworkType } from 'hooks/useNetworkType'
-import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
+import { usePathname } from 'i18n/navigation'
 import { useEffect } from 'react'
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
 
 export const NavBarUrlSync = function ({ closeNavbar }: Props) {
   const [networkType] = useNetworkType()
-  const pathname = usePathnameWithoutLocale()
+  const pathname = usePathname()
 
   useEffect(
     function closeNavBarOnUrlChangeMobile() {

@@ -1,10 +1,8 @@
-'use client'
-
 import { Button } from 'components/button'
 import { Checkbox } from 'components/checkbox'
 import { Modal } from 'components/modal'
-import { useTranslations } from 'next-intl'
 import { type ReactNode, useEffect, useRef, useState } from 'react'
+import { useTranslations } from 'use-intl'
 
 import {
   highSlippageThreshold,

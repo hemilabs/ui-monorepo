@@ -1,7 +1,7 @@
 import { ButtonIcon } from 'components/button'
 import { WarningIcon } from 'components/icons/warningIcon'
-import { useTranslations } from 'next-intl'
 import { type Ref } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { GearIcon } from '../../../../_icons/gearIcon'
 import { type SlippageLevel } from '../../../../_utils/slippage'

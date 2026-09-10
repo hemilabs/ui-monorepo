@@ -1,10 +1,8 @@
-'use client'
-
 import { Table } from 'components/table'
 import { TableCard } from 'components/table/tableCard'
-import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import { screenBreakpoints } from 'styles'
+import { useTranslations } from 'use-intl'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 

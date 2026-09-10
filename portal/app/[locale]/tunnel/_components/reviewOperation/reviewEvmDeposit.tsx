@@ -1,5 +1,3 @@
-'use client'
-
 import { AddTokenToWallet } from 'components/addTokenToWallet'
 import { ChainIcon } from 'components/reviewOperation/chainIcon'
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
@@ -13,7 +11,6 @@ import { Spinner } from 'components/spinner'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useToken } from 'hooks/useToken'
-import { useTranslations } from 'next-intl'
 import { EvmToken } from 'types/token'
 import {
   type EvmDepositOperation,
@@ -21,6 +18,7 @@ import {
   type EvmDepositStatusType,
   ExpectedWaitTimeMinutesGetFundsHemi,
 } from 'types/tunnel'
+import { useTranslations } from 'use-intl'
 import { getL1StandardBridgeAddress } from 'utils/chain'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'

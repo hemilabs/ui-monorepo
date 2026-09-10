@@ -10,10 +10,10 @@ import {
   useNetworkType,
 } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
-import { useTranslations } from 'next-intl'
 import { useState, Suspense, useRef, ComponentProps } from 'react'
 import ReactDOM from 'react-dom'
 import { screenBreakpoints } from 'styles'
+import { useTranslations } from 'use-intl'
 
 import { IconContainer as DefaultIconContainer } from './iconContainer'
 import { ItemLink } from './itemLink'

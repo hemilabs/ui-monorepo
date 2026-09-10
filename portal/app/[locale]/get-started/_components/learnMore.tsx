@@ -2,9 +2,9 @@ import { AnalyticsEvent } from 'app/analyticsEvents'
 import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { ExternalLink } from 'components/externalLink'
+import { Image } from 'components/image'
 import { useUmami } from 'hooks/useUmami'
-import Image, { StaticImageData } from 'next/image'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import btcWallet from '../_assets/btcWallet.svg'
 import evmWallet from '../_assets/evmWallet.svg'
@@ -16,7 +16,7 @@ type TutorialCardProps = {
   event: AnalyticsEvent
   heading: string
   href: string
-  icon: StaticImageData
+  icon: string
   iconAlt: string
   subheading: string
 }

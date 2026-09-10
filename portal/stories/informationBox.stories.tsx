@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { EmptyIcon } from 'app/[locale]/staking-dashboard/_icons/emptyIcon'
 import { Button } from 'components/button'
 import { InformationBox } from 'components/informationBox'

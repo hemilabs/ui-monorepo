@@ -1,5 +1,3 @@
-'use client'
-
 import { useNetworks } from 'hooks/useNetworks'
 import Skeleton from 'react-loading-skeleton'
 import { isEvmNetwork } from 'utils/chain'

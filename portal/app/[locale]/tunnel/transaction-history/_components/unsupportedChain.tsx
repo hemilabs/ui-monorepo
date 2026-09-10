@@ -1,8 +1,8 @@
 import { Button } from 'components/button'
 import { InformationBox } from 'components/informationBox'
 import { useHemi } from 'hooks/useHemi'
-import { useTranslations } from 'next-intl'
 import { orange600 } from 'styles'
+import { useTranslations } from 'use-intl'
 import { useSwitchChain } from 'wagmi'
 
 const Icon = () => (

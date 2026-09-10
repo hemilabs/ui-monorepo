@@ -3,5 +3,5 @@ import { sepolia as sepoliaDefinition } from 'viem/chains'
 
 export const sepolia = updateRpcUrls(
   sepoliaDefinition,
-  process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA,
+  import.meta.env.VITE_CUSTOM_RPC_URL_SEPOLIA,
 )

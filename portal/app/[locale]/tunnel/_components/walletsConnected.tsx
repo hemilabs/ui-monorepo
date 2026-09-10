@@ -1,6 +1,6 @@
 import { ConnectionStatus } from 'btc-wallet/types'
 import { useAccounts } from 'hooks/useAccounts'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 const Wallet = function ({
   status,

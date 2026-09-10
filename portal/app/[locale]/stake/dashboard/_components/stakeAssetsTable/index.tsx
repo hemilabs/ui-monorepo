@@ -1,5 +1,3 @@
-'use client'
-
 import { ColumnDef } from '@tanstack/react-table'
 import { ButtonLink } from 'components/button'
 import { Table } from 'components/table'
@@ -7,13 +5,12 @@ import { Header } from 'components/table/_components/header'
 import { TableCard } from 'components/table/tableCard'
 import { TokenLogo } from 'components/tokenLogo'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { useUmami } from 'hooks/useUmami'
-import { useRouter } from 'i18n/navigation'
-import { useTranslations } from 'next-intl'
+import { usePathname, useRouter } from 'i18n/navigation'
 import { MouseEvent, useCallback, useMemo } from 'react'
 import { priorityStakeTokensToSort, StakeToken } from 'types/stake'
+import { useTranslations } from 'use-intl'
 import { sortTokens } from 'utils/sortTokens'
 import { queryStringObjectToString } from 'utils/url'
 
@@ -31,7 +28,7 @@ type ActionProps = {
 }
 
 const CallToAction = function ({ stake }: ActionProps) {
-  const pathname = usePathnameWithoutLocale()
+  const pathname = usePathname()
 
   const queryString = queryStringObjectToString({
     mode: 'manage',

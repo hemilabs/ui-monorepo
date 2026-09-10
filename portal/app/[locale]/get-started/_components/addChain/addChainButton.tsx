@@ -3,7 +3,7 @@ import { Button } from 'components/button'
 import { CheckMark } from 'components/icons/checkMark'
 import { PlusIcon } from 'components/icons/plusIcon'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 import { type Chain } from 'viem'
 import { useAccount } from 'wagmi'
 

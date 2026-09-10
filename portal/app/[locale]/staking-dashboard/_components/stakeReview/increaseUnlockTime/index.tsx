@@ -1,5 +1,3 @@
-'use client'
-
 import { DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import {
@@ -9,13 +7,13 @@ import {
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useTranslations } from 'next-intl'
 import { ReactNode, useState } from 'react'
 import {
   StakingDashboardStatus,
   type StakingDashboardStatusType,
   type StakingOperationRunning,
 } from 'types/stakingDashboard'
+import { useTranslations } from 'use-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { unixNowTimestamp } from 'utils/time'
 import { formatUnits } from 'viem'

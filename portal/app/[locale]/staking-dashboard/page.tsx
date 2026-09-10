@@ -1,12 +1,10 @@
-'use client'
-
 import { PageLayout } from 'components/pageLayout'
 import { PageTitle } from 'components/pageTitle'
 import { TestnetDisabled } from 'components/testnetDisabled'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { useTranslations } from 'next-intl'
 import { useMemo, useState } from 'react'
+import { useTranslations } from 'use-intl'
 
 import { StakeForm } from './_components/stakeForm'
 import { StakeTable } from './_components/stakeTable'
@@ -53,7 +51,7 @@ function StakingContent() {
   )
 }
 
-function Page() {
+export const StakingDashboardPage = function () {
   const t = useTranslations('staking-dashboard')
   const [networkType] = useNetworkType()
   const { symbol } = useHemiToken()
@@ -73,5 +71,3 @@ function Page() {
     </PageLayout>
   )
 }
-
-export default Page

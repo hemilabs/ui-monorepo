@@ -2,9 +2,9 @@ import { useIncreaseUnlockTime } from 'app/[locale]/staking-dashboard/_hooks/use
 import { Button } from 'components/button'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { type StakingOperationRunning } from 'types/stakingDashboard'
+import { useTranslations } from 'use-intl'
 
 import { useStakingDashboard } from './../../../_context/stakingDashboardContext'
 

@@ -1,8 +1,6 @@
-'use client'
-
 import { PageLayout } from 'components/pageLayout'
 import { PageTitle } from 'components/pageTitle'
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'use-intl'
 
 import { StakeAssetsTable } from './_components/stakeAssetsTable'
 import {
@@ -11,7 +9,7 @@ import {
   YourStake,
 } from './_components/stakePointsCards'
 
-const Page = function () {
+export const StakeDashboardPage = function () {
   const t = useTranslations('stake-page')
 
   return (
@@ -33,5 +31,3 @@ const Page = function () {
     </PageLayout>
   )
 }
-
-export default Page

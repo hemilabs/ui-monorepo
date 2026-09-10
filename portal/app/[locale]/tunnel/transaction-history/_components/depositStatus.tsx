@@ -1,4 +1,3 @@
-import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {
@@ -8,6 +7,7 @@ import {
   type EvmDepositStatusType,
   ExpectedWaitTimeMinutesGetFundsHemi,
 } from 'types/tunnel'
+import { useTranslations } from 'use-intl'
 import { isBtcDeposit } from 'utils/tunnel'
 
 import { TxStatus } from './txStatus'

@@ -1,5 +1,3 @@
-'use client'
-
 import { Drawer } from 'components/drawer'
 
 import { usePoolForm } from '../../_context/poolFormContext'

@@ -36,12 +36,11 @@ import {
 const SentryRoutes = Sentry.wrapReactRouterRouting(Routes)
 
 // The entry paths that do not simply gain a locale: `/stake` pointed at the
-// dashboard, and the governance staking page moved, having also shipped
-// misspelled. Everything else is handled by the fallback in the locale layout.
+// dashboard, and the governance staking page moved. Everything else is handled
+// by the fallback in the locale layout.
 const pathAliases = {
   '/stake': '/stake/dashboard',
   '/staking-dashboard': '/hemi-stake',
-  '/staking-dashbord': '/hemi-stake',
 }
 
 const ToPreferredLocale = function ({ path = '' }: { path?: string }) {

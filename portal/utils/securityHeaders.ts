@@ -151,6 +151,8 @@ const buildFetchDomains = function (
     'https://rpc.walletconnect.org',
     'wss://relay.walletconnect.com',
     'wss://relay.walletconnect.org',
+    'https://verify.walletconnect.com',
+    'https://verify.walletconnect.org',
     'https://cca-lite.coinbase.com',
     'https://chain-proxy.wallet.coinbase.com',
     'https://keys.coinbase.com',

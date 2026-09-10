@@ -1,14 +1,17 @@
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import Skeleton from 'react-loading-skeleton'
 import { type Token } from 'types/token'
-import { useTranslations } from 'use-intl'
-import { formatNumber } from 'utils/format'
+import { useLocale, useTranslations } from 'use-intl'
+import { formatTokenPrice } from 'utils/format'
 
 import { ErrorBoundary } from './errorBoundary'
 import { ExternalLink } from './externalLink'
 import { TokenLogo } from './tokenLogo'
 
-const Price = ({ price }: { price: string }) => <>{`$${formatNumber(price)}`}</>
+const Price = function ({ price }: { price: string }) {
+  const locale = useLocale()
+  return <>{formatTokenPrice(price, locale)}</>
+}
 
 type Props = {
   href: string

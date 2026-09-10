@@ -10,6 +10,7 @@ import {
   formatPastTime,
   formatPercentage,
   formatShortDate,
+  formatTokenPrice,
   formatTVL,
 } from 'utils/format'
 import { describe, expect, it } from 'vitest'
@@ -389,6 +390,26 @@ describe('utils/format', function () {
 
     it('should format percentage with high precision correctly', function () {
       expect(formatPercentage(99.999999)).toBe('100.00%')
+    })
+  })
+  describe('formatTokenPrice', function () {
+    it('should keep the digits of a sub-cent price', function () {
+      expect(formatTokenPrice(0.00723137, 'en')).toBe('$0.00723137')
+      expect(formatTokenPrice(0.0154, 'en')).toBe('$0.0154')
+    })
+
+    it('should read as money from a dollar up', function () {
+      expect(formatTokenPrice(3.5, 'en')).toBe('$3.50')
+      expect(formatTokenPrice(1234.5678, 'en')).toBe('$1,234.57')
+    })
+
+    it('should keep two decimals on zero', function () {
+      expect(formatTokenPrice(0, 'en')).toBe('$0.00')
+    })
+
+    it('should follow the locale separators', function () {
+      expect(formatTokenPrice(1234.5678, 'pt')).toBe('$1.234,57')
+      expect(formatTokenPrice(0.0154, 'es')).toBe('$0,0154')
     })
   })
 })

@@ -7,6 +7,7 @@ type SecurityHeadersConfig = {
   customRpcUrls: (string | undefined)[]
   isDev?: boolean
   portalApiUrl?: string
+  scriptNonce: string
   sentryDsn?: string
   vetroApiUrl?: string
 }
@@ -15,8 +16,6 @@ const parseUrl = (url?: string) => (url ? URL.parse(url) : null)
 
 const getOrigin = (url?: string) => parseUrl(url)?.origin
 
-const getDomain = (url?: string) => parseUrl(url)?.hostname
-
 const fontDomains = [
   'https://fonts.googleapis.com',
   'https://fonts.gstatic.com',
@@ -24,12 +23,80 @@ const fontDomains = [
 
 const imageSrcUrls = [
   website,
-  'https://*.walletconnect.com',
   'https://hemilabs.github.io',
-  'https://framerusercontent.com',
+  'https://framerusercontent.com', // TODO: remove, content should not be loaded from here.
+  // WalletConnect / Reown Appkit
+  // https://docs.reown.com/advanced/security/content-security-policy
+  'https://walletconnect.com',
+  'https://walletconnect.org',
+  'https://secure.walletconnect.com',
+  'https://secure.walletconnect.org',
+  'https://api.web3modal.com',
+  'https://api.web3modal.org',
 ]
 
-const frameSrcUrls = ['https://*.walletconnect.org']
+const frameSrcUrls = [
+  'https://challenges.cloudflare.com',
+  // WalletConnect / Reown Appkit + Coinbase
+  // https://docs.reown.com/advanced/security/content-security-policy
+  'https://secure.walletconnect.com',
+  'https://secure.walletconnect.org',
+  'https://verify.walletconnect.com',
+  'https://verify.walletconnect.org',
+  'https://keys.coinbase.com',
+]
+
+const permissionsPolicy = Object.entries({
+  'accelerometer': '',
+  'ambient-light-sensor': '',
+  'attribution-reporting': '',
+  'autoplay': 'self',
+  'battery': '',
+  'bluetooth': '',
+  'camera': '',
+  'ch-ua': '',
+  'ch-ua-arch': '',
+  'ch-ua-bitness': '',
+  'ch-ua-full-version': '',
+  'ch-ua-full-version-list': '',
+  'ch-ua-mobile': '',
+  'ch-ua-model': '',
+  'ch-ua-platform': '',
+  'ch-ua-platform-version': '',
+  'ch-ua-wow64': '',
+  'compute-pressure': '',
+  'cross-origin-isolated': '',
+  'direct-sockets': '',
+  'display-capture': '',
+  'encrypted-media': '',
+  'execution-while-not-rendered': '',
+  'execution-while-out-of-viewport': '',
+  'fullscreen': '',
+  'geolocation': '',
+  'gyroscope': '',
+  'hid': '',
+  'identity-credentials-get': '',
+  'idle-detection': '',
+  'keyboard-map': '',
+  'magnetometer': '',
+  'microphone': '',
+  'midi': '',
+  'navigation-override': '',
+  'payment': '',
+  'picture-in-picture': '',
+  'publickey-credentials-create': 'self "https://keys.coinbase.com"',
+  'publickey-credentials-get': 'self "https://keys.coinbase.com"',
+  'screen-wake-lock': '',
+  'serial': '',
+  'storage-access': '',
+  'sync-xhr': '',
+  'usb': '',
+  'web-share': '',
+  'window-management': '',
+  'xr-spatial-tracking': '',
+})
+  .map(([feature, allowlist]) => `${feature}=(${allowlist})`)
+  .join(', ')
 
 type ThirdPartyHosts = {
   analytics?: string
@@ -41,17 +108,13 @@ const getThirdPartyHosts = function ({
   analyticsUrl,
   sentryDsn,
 }: SecurityHeadersConfig) {
-  const analyticsDomain = getDomain(analyticsUrl)
-  const errorTrackingDomain = getDomain(sentryDsn)
+  const analyticsOrigin = getOrigin(analyticsUrl)
+  const errorTrackingOrigin = getOrigin(sentryDsn)
 
   return {
     analytics:
-      analyticsEnabled && !!analyticsDomain
-        ? `https://${analyticsDomain}`
-        : undefined,
-    errorTracking: errorTrackingDomain
-      ? `https://${errorTrackingDomain}`
-      : undefined,
+      analyticsEnabled && !!analyticsOrigin ? analyticsOrigin : undefined,
+    errorTracking: errorTrackingOrigin,
   }
 }
 
@@ -69,15 +132,33 @@ const buildFetchDomains = function (
     hemi.blockExplorers.default.url,
     hemiSepolia.blockExplorers.default.url,
     'https://api.studio.thegraph.com/',
+    // WalletConnect / Reown AppKit + Coinbase Wallet endpoints.
+    // https://docs.reown.com/advanced/security/content-security-policy
+    'https://api.web3modal.com',
     'https://api.web3modal.org',
-    'wss://*.walletconnect.com',
-    'https://*.walletconnect.com',
+    'https://echo.walletconnect.com',
+    'https://echo.walletconnect.org',
+    'https://keys.walletconnect.com',
+    'https://keys.walletconnect.org',
+    'https://notify.walletconnect.com',
+    'https://notify.walletconnect.org',
+    'https://pulse.walletconnect.com',
+    'https://pulse.walletconnect.org',
+    'https://push.walletconnect.com',
+    'https://push.walletconnect.org',
+    'https://relay.walletconnect.com',
+    'https://relay.walletconnect.org',
+    'https://rpc.walletconnect.com',
+    'https://rpc.walletconnect.org',
+    'wss://relay.walletconnect.com',
     'wss://relay.walletconnect.org',
-    'https://*.walletconnect.org',
+    'https://verify.walletconnect.com',
+    'https://verify.walletconnect.org',
     'https://cca-lite.coinbase.com',
     'https://chain-proxy.wallet.coinbase.com',
     'https://keys.coinbase.com',
-    'wss://www.walletlink.org/rpc',
+    'wss://www.walletlink.org',
+    // Binance
     'https://binance.nodereal.io',
     'https://bsc-dataseed2.ninicoin.io',
     'https://bscrpc.com',
@@ -85,7 +166,11 @@ const buildFetchDomains = function (
     'wss://nbstream.binance.click',
     'wss://nbstream.binance.com',
     'wss://nbstream.binance.info',
+    'wss://nbstream.yshyqxx.com',
+    // Merkle
     'https://api.merkl.xyz',
+    // Cloudflare Web Analytics
+    'https://cloudflareinsights.com',
   ])
 
   const apiOrigins = [getOrigin(portalApiUrl), getOrigin(vetroApiUrl)]
@@ -101,7 +186,6 @@ const buildFetchDomains = function (
 
   if (hosts.analytics) {
     domains.add(hosts.analytics)
-    domains.add('https://cloudflareinsights.com')
   }
   if (hosts.errorTracking) {
     domains.add(hosts.errorTracking)
@@ -111,16 +195,15 @@ const buildFetchDomains = function (
 }
 
 const buildScriptDomains = function (hosts: ThirdPartyHosts) {
-  const domains = new Set<string>()
+  const domains = new Set([
+    // Cloudflare bot management / Turnstile / challenge widget
+    'https://challenges.cloudflare.com',
+    // Cloudflare Web Analytics
+    'https://static.cloudflareinsights.com',
+  ])
 
   if (hosts.analytics) {
     domains.add(hosts.analytics)
-    domains.add('https://static.cloudflareinsights.com')
-    domains.add('https://challenges.cloudflare.com')
-    domains.add('https://ajax.cloudflare.com')
-  }
-  if (hosts.errorTracking) {
-    domains.add(hosts.errorTracking)
   }
 
   return domains
@@ -134,18 +217,27 @@ const buildContentSecurityPolicy = ({
   fonts,
   isDev,
   scriptDomains,
+  scriptNonce,
 }: {
   fetchDomains: string[]
   fonts: string[]
   isDev: boolean
   scriptDomains: string[]
+  scriptNonce: string
 }) =>
   [
     directive('default-src', ["'self'"]),
+    directive('base-uri', ["'none'"]),
+    directive('form-action', ["'none'"]),
+    directive('object-src', ["'none'"]),
     // No `worker-src` on purpose: it falls back to `script-src`, which allows
     // 'self', and the five under portal/workers are same-origin. Dropping
     // 'self' from `script-src` stops tunnel history from syncing.
-    directive('script-src', ["'self'", "'unsafe-inline'", ...scriptDomains]),
+    directive('script-src', [
+      "'self'",
+      ...scriptDomains,
+      isDev ? "'unsafe-inline'" : `'nonce-${scriptNonce}'`,
+    ]),
     directive('style-src', ["'self'", "'unsafe-inline'"]),
     directive('img-src', ["'self'", ...imageSrcUrls, 'blob:', 'data:']),
     directive('connect-src', ["'self'", ...fetchDomains]),
@@ -166,12 +258,15 @@ export const buildSecurityHeaders = function (config: SecurityHeadersConfig) {
       fonts: fontDomains,
       isDev: config.isDev ?? false,
       scriptDomains: Array.from(buildScriptDomains(hosts)),
+      scriptNonce: config.scriptNonce,
     }),
     'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
-    'Permissions-Policy': 'geolocation=(), microphone=()',
+    'Cross-Origin-Resource-Policy': 'same-origin',
+    'Origin-Agent-Cluster': '?1',
+    'Permissions-Policy': permissionsPolicy,
     'Referrer-Policy': 'strict-origin-when-cross-origin',
-    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
     'X-Content-Type-Options': 'nosniff',
+    'X-DNS-Prefetch-Control': 'off',
     'X-Download-Options': 'noopen',
     'X-Frame-Options': 'DENY',
   }

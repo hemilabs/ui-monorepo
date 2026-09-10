@@ -24,6 +24,7 @@ const canDepositErc20 = async function ({
   l1Chain,
   l1PublicClient,
   l2Chain,
+  to,
   tokenAddress,
 }: {
   account: Address
@@ -31,6 +32,7 @@ const canDepositErc20 = async function ({
   l1Chain: Chain
   l1PublicClient: PublicClient
   l2Chain: Chain
+  to: Address
   tokenAddress: Address
 }): Promise<{
   canDeposit: boolean
@@ -41,6 +43,7 @@ const canDepositErc20 = async function ({
     amount,
     l1Chain,
     l2Chain,
+    to,
   })
   if (reason) {
     return { canDeposit: false, reason }
@@ -68,6 +71,7 @@ const runDepositErc20 = ({
   l1WalletClient,
   l2Chain,
   l2TokenAddress,
+  to = account,
 }: {
   account: Address
   amount: bigint
@@ -78,6 +82,7 @@ const runDepositErc20 = ({
   l1WalletClient: WalletClient
   l2Chain: Chain
   l2TokenAddress: Address
+  to?: Address
 }) =>
   async function (emitter: EventEmitter<DepositErc20Events>) {
     try {
@@ -87,6 +92,7 @@ const runDepositErc20 = ({
         l1Chain,
         l1PublicClient,
         l2Chain,
+        to,
         tokenAddress: l1TokenAddress,
       }).catch(() => ({
         canDeposit: false,
@@ -147,10 +153,10 @@ const runDepositErc20 = ({
         abi: l1StandardBridgeAbi,
         account,
         address: l1StandardBridge,
-        // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/standard-bridge.ts#L295
-        args: [l1TokenAddress, l2TokenAddress, amount, 200_000, '0x'],
+        // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/standard-bridge.ts#L305
+        args: [l1TokenAddress, l2TokenAddress, to, amount, 200_000, '0x'],
         chain: l1Chain,
-        functionName: 'depositERC20',
+        functionName: 'depositERC20To',
       }).catch(function (error) {
         emitter.emit('user-signing-deposit-error', error)
       })
@@ -178,14 +184,16 @@ export const encodeDepositErc20 = ({
   amount = BigInt(0),
   l1TokenAddress,
   l2TokenAddress,
+  to,
 }: {
   amount: bigint | undefined
   l1TokenAddress: Address
   l2TokenAddress: Address
+  to: Address
 }) =>
   encodeFunctionData({
     abi: l1StandardBridgeAbi,
-    // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/standard-bridge.ts#L295
-    args: [l1TokenAddress, l2TokenAddress, amount, 200_000, '0x'],
-    functionName: 'depositERC20',
+    // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/standard-bridge.ts#L305
+    args: [l1TokenAddress, l2TokenAddress, to, amount, 200_000, '0x'],
+    functionName: 'depositERC20To',
   })

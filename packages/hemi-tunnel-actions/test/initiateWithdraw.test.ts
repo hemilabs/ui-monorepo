@@ -24,6 +24,8 @@ vi.mock('viem/actions', () => ({
   writeContract: vi.fn(),
 }))
 
+const receiver = '0x1111111111111111111111111111111111111111'
+
 const validParameters = {
   account: zeroAddress,
   amount: BigInt(100),
@@ -53,6 +55,25 @@ const runCommonTests = function (
 
     expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
       'account is not a valid address',
+    )
+    expect(onSettled).toHaveBeenCalledOnce()
+  })
+
+  it('should emit "withdraw-failed-validation" if the receiver is not a valid address', async function () {
+    const { emitter, promise } = initiateWithdraw({
+      ...validParameters,
+      to: 'invalid-address',
+    })
+
+    const failedValidation = vi.fn()
+    const onSettled = vi.fn()
+    emitter.on('withdraw-failed-validation', failedValidation)
+    emitter.on('withdraw-settled', onSettled)
+
+    await promise
+
+    expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
+      'to is not a valid address',
     )
     expect(onSettled).toHaveBeenCalledOnce()
   })
@@ -155,10 +176,37 @@ const runCommonTests = function (
       validParameters.l2WalletClient,
       expect.objectContaining({
         account: zeroAddress,
-        args: [validParameters.l2TokenAddress, amount, 0, '0x'],
+        args: [validParameters.l2TokenAddress, zeroAddress, amount, 0, '0x'],
       }),
     )
     expect(onSettled).toHaveBeenCalledOnce()
+  })
+
+  it('should withdraw to the receiver when "to" is provided', async function () {
+    const amount = BigInt(1)
+
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(getBalance).mockResolvedValue(BigInt(1000))
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue({
+      status: 'success',
+    })
+
+    const { promise } = initiateWithdraw({
+      ...validParameters,
+      amount,
+      to: receiver,
+    })
+
+    await promise
+
+    expect(writeContract).toHaveBeenCalledExactlyOnceWith(
+      validParameters.l2WalletClient,
+      expect.objectContaining({
+        account: zeroAddress,
+        args: [validParameters.l2TokenAddress, receiver, amount, 0, '0x'],
+      }),
+    )
   })
 
   it('should emit "user-signing-withdraw-error" when signing fails', async function () {

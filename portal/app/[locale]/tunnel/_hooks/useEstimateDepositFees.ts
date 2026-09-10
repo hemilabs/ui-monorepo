@@ -3,7 +3,7 @@ import { useEstimateFees } from 'hooks/useEstimateFees'
 import { EvmToken } from 'types/token'
 import { getL1StandardBridgeAddress } from 'utils/chain'
 import { isNativeToken } from 'utils/nativeToken'
-import { useEstimateGas } from 'wagmi'
+import { useAccount, useEstimateGas } from 'wagmi'
 
 export const useEstimateDepositFees = function ({
   amount,
@@ -16,19 +16,24 @@ export const useEstimateDepositFees = function ({
   fromToken: EvmToken
   toToken: EvmToken
 }) {
+  const { address } = useAccount()
+
   const isNative = isNativeToken(fromToken)
   const l1StandardBridge = getL1StandardBridgeAddress(fromToken.chainId)
   const { data: gasUnits, isError } = useEstimateGas({
-    data: isNative
-      ? encodeDepositEth()
-      : encodeDepositErc20({
-          amount,
-          // @ts-expect-error fromToken.address is Address
-          l1TokenAddress: fromToken.address,
-          // @ts-expect-error toToken.address is Address
-          l2TokenAddress: toToken.address,
-        }),
-    query: { enabled },
+    data: address
+      ? isNative
+        ? encodeDepositEth(address)
+        : encodeDepositErc20({
+            amount,
+            // @ts-expect-error fromToken.address is Address
+            l1TokenAddress: fromToken.address,
+            // @ts-expect-error toToken.address is Address
+            l2TokenAddress: toToken.address,
+            to: address,
+          })
+      : undefined,
+    query: { enabled: enabled && !!address },
     to: l1StandardBridge,
     value: isNative ? amount : undefined,
   })

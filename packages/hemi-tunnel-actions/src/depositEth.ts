@@ -23,12 +23,14 @@ const canDepositEth = async function ({
   l1Chain,
   l1PublicClient,
   l2Chain,
+  to,
 }: {
   account: Address
   amount: bigint
   l1Chain: Chain
   l1PublicClient: PublicClient
   l2Chain: Chain
+  to: Address
 }): Promise<{
   canDeposit: boolean
   reason?: string
@@ -38,6 +40,7 @@ const canDepositEth = async function ({
     amount,
     l1Chain,
     l2Chain,
+    to,
   })
   if (reason) {
     return { canDeposit: false, reason }
@@ -58,6 +61,7 @@ const runDepositEth = ({
   l1PublicClient,
   l1WalletClient,
   l2Chain,
+  to = account,
 }: {
   account: Address
   amount: bigint
@@ -65,6 +69,7 @@ const runDepositEth = ({
   l1PublicClient: PublicClient
   l1WalletClient: WalletClient
   l2Chain: Chain
+  to?: Address
 }) =>
   async function (emitter: EventEmitter<DepositEvents>) {
     try {
@@ -74,6 +79,7 @@ const runDepositEth = ({
         l1Chain,
         l1PublicClient,
         l2Chain,
+        to,
       }).catch(() => ({
         canDeposit: false,
         reason: 'failed to validate inputs',
@@ -93,10 +99,10 @@ const runDepositEth = ({
         abi: l1StandardBridgeAbi,
         account,
         address: l1StandardBridge,
-        // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/eth-bridge.ts#L144
-        args: [200_000, '0x'],
+        // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/eth-bridge.ts#L154
+        args: [to, 200_000, '0x'],
         chain: l1Chain,
-        functionName: 'depositETH',
+        functionName: 'depositETHTo',
         value: amount,
       }).catch(function (error) {
         emitter.emit('user-signing-deposit-error', error)
@@ -121,11 +127,11 @@ const runDepositEth = ({
 export const depositEth = (...args: Parameters<typeof runDepositEth>) =>
   toPromiseEvent<DepositEvents>(runDepositEth(...args))
 
-export const encodeDepositEth = () =>
+export const encodeDepositEth = (to: Address) =>
   // Depositing ETH does not depend on the amount sent, it costs always the same!
   encodeFunctionData({
     abi: l1StandardBridgeAbi,
-    // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/eth-bridge.ts#L144
-    args: [200_000, '0x'],
-    functionName: 'depositETH',
+    // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/eth-bridge.ts#L154
+    args: [to, 200_000, '0x'],
+    functionName: 'depositETHTo',
   })

@@ -6,6 +6,7 @@ import {
   getTransactionByTxId,
   getTxConfirmations,
   getVaultByIndex,
+  isAddressValid,
   isBitcoinWithdrawalChallenged,
   isBitcoinWithdrawalFulfilled,
 } from 'hemi-viem/actions'
@@ -18,6 +19,7 @@ import {
 import {
   getHemiStatusOfBtcDeposit,
   getHemiStatusOfBtcWithdrawal,
+  isValidBtcAddress,
 } from 'utils/hemi'
 import { zeroAddress } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
@@ -33,6 +35,7 @@ vi.mock('hemi-viem/actions', () => ({
   getTransactionByTxId: vi.fn(),
   getTxConfirmations: vi.fn(),
   getVaultByIndex: vi.fn(),
+  isAddressValid: vi.fn(),
   isBitcoinWithdrawalChallenged: vi.fn(),
   isBitcoinWithdrawalFulfilled: vi.fn(),
 }))
@@ -241,6 +244,38 @@ describe('utils/hemi', function () {
       })
 
       expect(status).toBe(BtcWithdrawStatus.READY_TO_CHALLENGE)
+    })
+  })
+
+  describe('isValidBtcAddress', function () {
+    const btcAddress = 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4'
+
+    it('should return what BitcoinKit answers', async function () {
+      vi.mocked(isAddressValid).mockResolvedValue(true)
+
+      await expect(isValidBtcAddress(hemiClient, btcAddress)).resolves.toBe(
+        true,
+      )
+    })
+
+    it('should return false if the contract reverts', async function () {
+      const err = new Error('reverted')
+      err.cause = { name: 'ContractFunctionRevertedError' }
+      vi.mocked(isAddressValid).mockRejectedValue(err)
+
+      await expect(isValidBtcAddress(hemiClient, btcAddress)).resolves.toBe(
+        false,
+      )
+    })
+
+    it('should rethrow any other failure', async function () {
+      const err = new Error('the RPC is down')
+      err.cause = { name: 'HttpRequestError' }
+      vi.mocked(isAddressValid).mockRejectedValue(err)
+
+      await expect(isValidBtcAddress(hemiClient, btcAddress)).rejects.toThrow(
+        'the RPC is down',
+      )
     })
   })
 })

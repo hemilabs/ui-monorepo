@@ -29,6 +29,7 @@ import { useBtcWithdrawalTunnelFees } from '../_hooks/useBtcTunnelFees'
 import { useEstimateBtcWithdrawFees } from '../_hooks/useEstimateBtcWithdrawFees'
 import { useEstimateWithdrawFees } from '../_hooks/useEstimateWithdrawFees'
 import { useMinWithdrawalSats } from '../_hooks/useMinWithdrawalSats'
+import { useReceivingBitcoinAddress } from '../_hooks/useReceivingBitcoinAddress'
 import {
   type EvmTunneling,
   type HemiToBitcoinTunneling,
@@ -37,9 +38,9 @@ import {
 } from '../_hooks/useTunnelState'
 import { useWithdraw } from '../_hooks/useWithdraw'
 
+import { BitcoinReceivingAddress } from './bitcoinReceivingAddress'
 import { FormContent, TunnelForm } from './form'
 import { HemiBtcFeesSummary } from './hemiBtcFeesSummary'
-import { ReceivingAddress } from './receivingAddress'
 import { SubmitEvmWithdrawal } from './submitEvmWithdrawal'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 import { TunnelProviderToggle } from './tunnelProviderToggle'
@@ -47,6 +48,18 @@ import { TunnelProviderToggle } from './tunnelProviderToggle'
 const WalletsConnected = lazyWithFallback(() =>
   import('./walletsConnected').then(mod => ({ default: mod.WalletsConnected })),
 )
+
+const areRequiredWalletsConnected = ({
+  btcWalletRequired,
+  btcWalletStatus,
+  evmWalletStatus,
+}: {
+  btcWalletRequired: boolean
+  btcWalletStatus: ReturnType<typeof useAccounts>['btcWalletStatus']
+  evmWalletStatus: ReturnType<typeof useAccounts>['evmWalletStatus']
+}) =>
+  walletIsConnected(evmWalletStatus) &&
+  (!btcWalletRequired || walletIsConnected(btcWalletStatus))
 
 type BtcWithdrawProps = {
   state: TypedTunnelState<HemiToBitcoinTunneling>
@@ -84,6 +97,32 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     withdrawError,
   } = useWithdrawBitcoin()
 
+  const amountValidation = validateSubmit({
+    amountInput: fromInput,
+    balance: bitcoinBalance,
+    minAmount: minWithdrawalFormattedSats,
+    operation: 'withdrawal',
+    t,
+    token: fromToken,
+  })
+  const { errorKey } = amountValidation
+
+  const {
+    addressError,
+    canSubmitAddress,
+    customAddress,
+    customAddressEnabled,
+    isCheckingAddress,
+    isCustomAddressValid,
+    receivingAddress,
+    reset: resetReceivingAddress,
+    setCustomAddress,
+    setCustomAddressEnabled,
+  } = useReceivingBitcoinAddress({
+    network: toNetworkId,
+    walletAddress: btcAddress,
+  })
+
   useEffect(
     function handleSuccess() {
       if (withdrawBitcoinReceipt?.status !== 'success' || !isWithdrawing) {
@@ -91,10 +130,12 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       }
       setIsWithdrawing(false)
       resetStateAfterOperation()
+      resetReceivingAddress()
       track?.('btc - withdraw success')
     },
     [
       isWithdrawing,
+      resetReceivingAddress,
       resetStateAfterOperation,
       setIsWithdrawing,
       track,
@@ -132,6 +173,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     clearWithdrawBitcoinState()
     withdrawBitcoin({
       amount,
+      btcAddress: receivingAddress!,
       l1ChainId: toNetworkId,
       l2ChainId: fromNetworkId,
     })
@@ -156,34 +198,31 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     )
   }
 
-  const {
-    canSubmit,
-    error: validationError,
-    errorKey,
-  } = validateSubmit({
-    amountInput: fromInput,
-    balance: bitcoinBalance,
-    minAmount: minWithdrawalFormattedSats,
-    operation: 'withdrawal',
-    t,
-    token: fromToken,
+  const btcWalletRequired = !customAddressEnabled
+  const requiredWalletsConnected = areRequiredWalletsConnected({
+    btcWalletRequired,
+    btcWalletStatus,
+    evmWalletStatus,
   })
 
-  const canWithdraw = !isLoadingMinWithdrawalSats && canSubmit
-  const feeEstimationEnabled = !!btcAddress && canWithdraw
+  const canWithdraw = [
+    !isLoadingMinWithdrawalSats,
+    amountValidation.canSubmit,
+    canSubmitAddress,
+  ].every(Boolean)
 
   const disableForm = !canWithdraw || isWithdrawing
 
   const { fees: estimatedFees, isError: isEstimateFeesError } =
     useEstimateBtcWithdrawFees({
       amount,
-      btcAddress,
-      enabled: feeEstimationEnabled,
+      btcAddress: receivingAddress,
+      enabled: canWithdraw,
     })
 
   const gas = {
     amount: formatUnits(estimatedFees, fromChain?.nativeCurrency.decimals),
-    isError: isEstimateFeesError || !feeEstimationEnabled,
+    isError: isEstimateFeesError || !canWithdraw,
     label: t('common.network-gas-fee', { network: fromChain?.name }),
     token: getNativeToken(fromChain.id),
   }
@@ -196,7 +235,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   }
 
   function renderFees() {
-    if (!feeEstimationEnabled) {
+    if (!canWithdraw) {
       return null
     }
 
@@ -219,8 +258,15 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     <TunnelForm
       belowForm={
         <div className="relative -translate-y-7">
-          <ReceivingAddress
+          <BitcoinReceivingAddress
             address={btcAddress ? formatBtcAddress(btcAddress) : undefined}
+            customAddress={customAddress}
+            customAddressEnabled={customAddressEnabled}
+            disabled={isWithdrawing}
+            isCheckingAddress={isCheckingAddress}
+            isCustomAddressValid={isCustomAddressValid}
+            onCustomAddressChange={setCustomAddress}
+            onCustomAddressEnabledChange={setCustomAddressEnabled}
             receivingText={t('tunnel-page.form.bitcoin-receiving-address')}
             tooltipText={t(
               'tunnel-page.form.bitcoin-receiving-address-description',
@@ -237,11 +283,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
         <FormContent
           calculateReceiveAmount={calculateReceiveAmount}
           errorKey={
-            walletIsConnected(btcWalletStatus) &&
-            walletIsConnected(evmWalletStatus) &&
-            balanceLoaded
-              ? errorKey
-              : undefined
+            requiredWalletsConnected && balanceLoaded ? errorKey : undefined
           }
           isRunningOperation={isWithdrawing}
           setMaxBalanceButton={
@@ -258,9 +300,10 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       onSubmit={disableForm ? undefined : handleWithdraw}
       submitButton={
         <SubmitWithTwoWallets
+          btcWalletRequired={btcWalletRequired}
           disabled={disableForm}
           text={getSubmitText()}
-          validationError={validationError}
+          validationError={amountValidation.error ?? addressError}
         />
       }
     />

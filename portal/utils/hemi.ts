@@ -6,6 +6,7 @@ import {
   calculateWithdrawalFee,
   getTransactionByTxId,
   getTxConfirmations,
+  isAddressValid,
   isBitcoinWithdrawalChallenged,
   isBitcoinWithdrawalFulfilled,
 } from 'hemi-viem/actions'
@@ -416,3 +417,18 @@ export const getBitcoinWithdrawalFee = ({
     .then(vaultStateAddress =>
       calculateBtcWithdrawalFee(hemiClient, { amount, vaultStateAddress }),
     )
+
+export const isValidBtcAddress = (
+  hemiClient: PublicClient,
+  btcAddress: string,
+) =>
+  getBitcoinKitAddress(hemiClient)
+    .then(bitcoinKitAddress =>
+      isAddressValid(hemiClient, { bitcoinKitAddress, btcAddress }),
+    )
+    .catch(function (err) {
+      if (err.cause?.name === 'ContractFunctionRevertedError') {
+        return false
+      }
+      throw err
+    })

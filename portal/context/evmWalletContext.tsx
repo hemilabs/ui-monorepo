@@ -15,11 +15,12 @@ import {
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { featureFlags } from 'app/featureFlags'
 import { allEvmNetworks } from 'networks'
 import { isMobile } from 'react-device-detect'
 import { buildTransports } from 'utils/transport'
 import { WagmiProvider, createConfig } from 'wagmi'
-import { walletConnect } from 'wagmi/connectors'
+import { safe, walletConnect } from 'wagmi/connectors'
 
 type Props = {
   children: React.ReactNode
@@ -31,6 +32,14 @@ const queryClient = new QueryClient()
 const appName = 'Hemi Portal'
 const projectId =
   import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID || 'YOUR_PROJECT_ID'
+
+// Disable Coinbase telemetry.
+// Coinbase injects its telemetry client as an inline script, which is blocked
+// by the app's nonce-based Content Security Policy.
+coinbaseWallet.preference = {
+  options: 'all',
+  telemetry: false,
+}
 
 // All wallets to show in the UI
 const configuredWallets = [
@@ -73,6 +82,7 @@ const connectors = connectorsForWallets(
 const allEvmNetworksWalletConfig = createConfig({
   chains: allEvmNetworks,
   connectors: [
+    ...(featureFlags.enableSafeWallet ? [safe()] : []),
     walletConnect({
       projectId,
       showQrModal: false,

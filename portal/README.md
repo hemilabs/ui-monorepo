@@ -4,11 +4,11 @@ The Portal is a Web3 app that allows users to interact with Hemi, an L2 that int
 
 ## Structure
 
-The portal is being migrated from Next to Vite (see [#2194](https://github.com/hemilabs/ui-monorepo/issues/2194)). The build runs on Vite and produces a static bundle, and routing is now react-router: `app.tsx` at the root holds the route table, and `main.tsx` is the entry. It has never relied on SSR. Every page is wired in `app.tsx`.
+The Portal is a Vite app. `main.tsx` is the entry, `app.tsx` at the root holds the react-router route table, and the build produces a static bundle served by the Cloudflare Worker.
 
 Some relevant folders are:
 
-- [/app](./app/) folder, which holds the pages and their co-located `_components`/`_hooks`/`_utils`. The `[locale]` folder name is a leftover from the Next app router and no longer drives routing, which `app.tsx` does.
+- [/app](./app/) folder, which holds the pages and their co-located `_components`/`_hooks`/`_utils`. The `[locale]` folder name is historical and does not drive routing; `app.tsx` does.
 - [/components](./components/) folder, which contains reusable components to the entire app that are not tied to a specific page.
 - [/hooks](./hooks/) folder, which contains reusable hooks to the entire app that are not tied to a specific page.
 - [/messages/](./messages/) folder, which contain a file per locale with all the translated resources.
@@ -47,6 +47,7 @@ VITE_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
 # These env variables are required for enabling the following features
 VITE_ENABLE_HEMI_EARN_PAGE=<true|false> # Enable the Hemi Earn page
 VITE_ENABLE_HEMI_STAKE_PAGE=<true|false> # Enable the Hemi Stake page
+VITE_ENABLE_SAFE_WALLET=<true|false> # Enable the Safe connector, needed to run the Portal as a Safe App
 VITE_ENABLE_STAKE_GOVERNANCE_TESTNET=<true|false> # Enable stake governance on Testnet, for local development
 VITE_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development
 VITE_ENABLE_CLAIM_REWARDS_TESTNET=<true|false> # Enable claim rewards on Testnet, for local development

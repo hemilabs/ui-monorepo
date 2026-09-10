@@ -8,6 +8,8 @@ import { ErrorBoundary } from './errorBoundary'
 import { ExternalLink } from './externalLink'
 import { TokenLogo } from './tokenLogo'
 
+const Price = ({ price }: { price: string }) => <>{`$${formatNumber(price)}`}</>
+
 type Props = {
   href: string
   isLoading: boolean
@@ -31,7 +33,9 @@ export const TokenPricePill = function ({
       href={href}
       onClick={onClick}
     >
-      <TokenLogo size="xSmall" token={token} />
+      <span aria-hidden>
+        <TokenLogo size="xSmall" token={token} />
+      </span>
       <span className="sr-only">
         {t('token-price', { symbol: token.symbol })}
       </span>
@@ -46,7 +50,7 @@ export const TokenPricePill = function ({
         <>
           <span className="body-text-medium text-neutral-950">
             <ErrorBoundary fallback="-">
-              {price === undefined ? '-' : `$${formatNumber(price)}`}
+              {price === undefined ? '-' : <Price price={price} />}
             </ErrorBoundary>
           </span>
           <ArrowDownLeftIcon

@@ -51,6 +51,17 @@ The data for each claim group must be located in individual files in the `src/cl
 
 Note that the route `GET /claims/:chain-id/:address` is kept for compatibility and will return just the first element of the array.
 
+#### `GET /hemi-stake`
+
+Returns the global veHEMI staking stats. It is Hemi mainnet only.
+
+```console
+$ curl http://localhost:3006/hemi-stake
+{"locksCount":15473,"rewards":[],"totalStaked":"1488392826436605230000147341","walletsStaking":13663}
+```
+
+`totalStaked` is the amount of HEMI locked, in its smallest unit. `locksCount` is the number of open positions and `walletsStaking` the number of wallets that hold at least one position, read from the [Hemi explorer](https://explorer.hemi.xyz). `rewards` is the list of all-time paid rewards (to be implemented).
+
 #### `GET /net-stats`
 
 Returns the Hemi network stats required by the [home page of the Marketing site](https://hemi.xyz).

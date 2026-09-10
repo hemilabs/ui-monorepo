@@ -13,6 +13,7 @@ import { UpstreamGraphQLError } from './src/subgraphs/errors.ts'
 import { createSubgraphsRouter } from './src/subgraphs/router.ts'
 import { toJsonMiddleware, toTextMiddleware } from './src/to-middleware.ts'
 import { createVeHemi } from './src/ve-hemi/index.ts'
+import { getHemiStake } from './src/ve-hemi/stake.ts'
 
 const { getTvl } = createDune(config.get<DuneOptions>('tvl.dune'))
 const { getAllUserClaimData } = createClaims()
@@ -50,6 +51,13 @@ app.get(
   toJsonMiddleware(getAllUserClaimData, {
     maxAge: 5 * 60 * 1000,
     resolver: (chainId, address) => `${chainId}:${address}`,
+  }),
+)
+
+app.get(
+  '/hemi-stake',
+  toJsonMiddleware(getHemiStake, {
+    revalidate: 5 * 60 * 1000,
   }),
 )
 

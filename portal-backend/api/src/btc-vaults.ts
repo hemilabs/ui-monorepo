@@ -1,5 +1,4 @@
 import { esploraClient } from 'esplora-client'
-import { hemi, hemiSepolia } from 'hemi-viem'
 import {
   getBitcoinChainLastHeader,
   getBitcoinCustodyAddress,
@@ -11,14 +10,9 @@ import {
   getVaultCounter,
   getVaultStatus,
 } from 'hemi-viem/actions'
-import { type Address, createPublicClient, http, type PublicClient } from 'viem'
+import type { Address, PublicClient } from 'viem'
 
-function getHemiClient(chainId: string) {
-  const chain = { [hemi.id]: hemi, [hemiSepolia.id]: hemiSepolia }[
-    Number(chainId)
-  ]
-  return createPublicClient({ chain, transport: http() }) as PublicClient
-}
+import { getHemiClient } from './hemiClient.ts'
 
 async function getBitcoinChainHeight(network: 'testnet' | 'mainnet') {
   const client = esploraClient({ network })
@@ -113,7 +107,7 @@ async function getAllVaultsData(client: PublicClient) {
 }
 
 async function getBtcVaultsData(chainId: string) {
-  const client = getHemiClient(chainId)
+  const client = getHemiClient(Number(chainId))
   const isTestnet = client.chain!.testnet
   const [bitcoinChainData, tunnelManagerData, vaultsData] = await Promise.all([
     getBitcoinChainData(client),

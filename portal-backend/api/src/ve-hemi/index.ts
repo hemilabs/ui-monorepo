@@ -1,6 +1,5 @@
 import { getTotalVeHemiSupplyAt } from 've-hemi-actions/actions'
 import { getRewardPeriod, getRewardTokens } from 've-hemi-rewards/actions'
-import { createPublicClient, http } from 'viem'
 import { hemi } from 'viem/chains'
 // This rule throws because the eslint-plugin-node version doesn't understand
 // the package.json#exports field which let's Typescript to resolve the correct file.
@@ -11,6 +10,7 @@ import {
   symbol as readSymbol,
 } from 'viem-erc20/actions'
 
+import { getHemiClient } from '../hemiClient.ts'
 import type { Cache } from '../redis.ts'
 
 const ONE_DAY = 24 * 60 * 60
@@ -32,10 +32,7 @@ function generateTimestamps(epochs: number, epoch: number) {
 }
 
 function createVeHemi({ cache }: { cache: Cache }) {
-  const client = createPublicClient({
-    chain: hemi,
-    transport: http(undefined, { batch: true }),
-  })
+  const client = getHemiClient(hemi.id)
 
   async function getTotalWeights(timestamps: number[]) {
     const totalWeights = await Promise.all(

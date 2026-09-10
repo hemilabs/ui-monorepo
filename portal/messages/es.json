@@ -47,6 +47,7 @@
     "start-using-mainnet": "Usar Mainnet",
     "success": "Exitoso",
     "switch-to-mainnet": "Cambiar a Mainnet",
+    "token-price": "Precio de {symbol}",
     "total": "Total",
     "total-amount": "Monto Total",
     "transaction-status": {

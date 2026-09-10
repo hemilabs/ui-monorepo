@@ -1,0 +1,11 @@
+{
+  "description": "The unified DeFi layer for Bitcoin that turns idle BTC into compliant yield with full ownership and secure in-custody execution.",
+  "icons": [
+    {
+      "sizes": "any",
+      "src": "/hemi.svg",
+      "type": "image/svg+xml"
+    }
+  ],
+  "name": "Hemi Portal"
+}

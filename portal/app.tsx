@@ -35,14 +35,6 @@ import {
 // named after the raw pathname instead of the pattern it matched.
 const SentryRoutes = Sentry.wrapReactRouterRouting(Routes)
 
-// The two entry paths that do not simply gain a locale: `/stake` pointed at the
-// dashboard, and the folder shipped misspelled. Everything else is handled by
-// the fallback in the locale layout.
-const pathAliases = {
-  '/stake': '/stake/dashboard',
-  '/staking-dashbord': '/staking-dashboard',
-}
-
 const ToPreferredLocale = function ({ path = '' }: { path?: string }) {
   const { hash, search } = useLocation()
 
@@ -105,13 +97,10 @@ export const App = () => (
             }
             path="/"
           />
-          {Object.entries(pathAliases).map(([from, to]) => (
-            <Route
-              element={<ToPreferredLocale path={to} />}
-              key={from}
-              path={from}
-            />
-          ))}
+          <Route
+            element={<ToPreferredLocale path="/stake/dashboard" />}
+            path="/stake"
+          />
           <Route element={<LocaleLayout />} path="/:locale">
             <Route element={<ToTunnel />} index />
             <Route element={<TunnelLayout />} path="tunnel">

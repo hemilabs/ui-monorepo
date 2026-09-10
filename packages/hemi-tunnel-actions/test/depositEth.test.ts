@@ -16,6 +16,8 @@ vi.mock('viem/actions', () => ({
   writeContract: vi.fn(),
 }))
 
+const receiver = '0x1111111111111111111111111111111111111111'
+
 const validParameters = {
   account: zeroAddress,
   amount: BigInt(100),
@@ -39,6 +41,22 @@ describe('depositEth', function () {
 
     expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
       'account is not a valid address',
+    )
+  })
+
+  it('should emit "deposit-failed-validation" if the receiver is not a valid address', async function () {
+    const { emitter, promise } = depositEth({
+      ...validParameters,
+      to: 'invalid-address',
+    })
+
+    const failedValidation = vi.fn()
+    emitter.on('deposit-failed-validation', failedValidation)
+
+    await promise
+
+    expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
+      'to is not a valid address',
     )
   })
 
@@ -159,7 +177,7 @@ describe('depositEth', function () {
       validParameters.l1WalletClient,
       expect.objectContaining({
         account: zeroAddress,
-        args: [expect.any(Number), '0x'],
+        args: [zeroAddress, expect.any(Number), '0x'],
         value: amount,
       }),
     )
@@ -244,5 +262,31 @@ describe('depositEth', function () {
       receipt,
     )
     expect(onSettled).toHaveBeenCalledOnce()
+  })
+
+  it('should deposit to the receiver when "to" is provided', async function () {
+    const amount = BigInt(1)
+
+    vi.mocked(getBalance).mockResolvedValue(BigInt(1000))
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue({
+      status: 'success',
+    })
+
+    const { promise } = depositEth({
+      ...validParameters,
+      amount,
+      to: receiver,
+    })
+
+    await promise
+
+    expect(writeContract).toHaveBeenCalledExactlyOnceWith(
+      validParameters.l1WalletClient,
+      expect.objectContaining({
+        account: zeroAddress,
+        args: [receiver, expect.any(Number), '0x'],
+      }),
+    )
   })
 })

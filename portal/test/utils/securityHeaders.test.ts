@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 const baseConfig = {
   analyticsEnabled: false,
   customRpcUrls: [],
+  scriptNonce: 'test-nonce',
 }
 
 const directive = function (headers: Record<string, string>, name: string) {
@@ -23,10 +24,12 @@ describe('buildSecurityHeaders', function () {
     expect(Object.keys(buildSecurityHeaders(baseConfig)).sort()).toStrictEqual([
       'Content-Security-Policy',
       'Cross-Origin-Opener-Policy',
+      'Cross-Origin-Resource-Policy',
+      'Origin-Agent-Cluster',
       'Permissions-Policy',
       'Referrer-Policy',
-      'Strict-Transport-Security',
       'X-Content-Type-Options',
+      'X-DNS-Prefetch-Control',
       'X-Download-Options',
       'X-Frame-Options',
     ])
@@ -48,13 +51,35 @@ describe('buildSecurityHeaders', function () {
     expect(directive(headers, 'connect-src')).toContain("'self'")
   })
 
-  it('lets the same-origin workers load', function () {
+  it('uses a nonce for scripts and lets the same-origin workers load', function () {
     const headers = buildSecurityHeaders(baseConfig)
 
     expect(directive(headers, 'script-src')).toBe(
-      "script-src 'self' 'unsafe-inline'",
+      "script-src 'self' https://challenges.cloudflare.com https://static.cloudflareinsights.com 'nonce-test-nonce'",
     )
+    expect(directive(headers, 'script-src')).not.toContain("'unsafe-inline'")
     expect(headers['Content-Security-Policy']).not.toContain('worker-src')
+  })
+
+  it('allows inline scripts only in development', function () {
+    const scriptSrc = directive(
+      buildSecurityHeaders({ ...baseConfig, isDev: true }),
+      'script-src',
+    )
+
+    expect(scriptSrc).toContain("'unsafe-inline'")
+    expect(scriptSrc).not.toContain("'nonce-test-nonce'")
+  })
+
+  it('allows Cloudflare challenges independently of analytics', function () {
+    const headers = buildSecurityHeaders(baseConfig)
+
+    expect(directive(headers, 'script-src')).toContain(
+      'https://challenges.cloudflare.com',
+    )
+    expect(directive(headers, 'frame-src')).toContain(
+      'https://challenges.cloudflare.com',
+    )
   })
 
   it('refuses to be framed', function () {
@@ -62,6 +87,14 @@ describe('buildSecurityHeaders', function () {
 
     expect(directive(headers, 'frame-ancestors')).toBe("frame-ancestors 'none'")
     expect(headers['X-Frame-Options']).toBe('DENY')
+  })
+
+  it('blocks document injection and native form submissions', function () {
+    const headers = buildSecurityHeaders(baseConfig)
+
+    expect(directive(headers, 'base-uri')).toBe("base-uri 'none'")
+    expect(directive(headers, 'form-action')).toBe("form-action 'none'")
+    expect(directive(headers, 'object-src')).toBe("object-src 'none'")
   })
 
   it('allows the origins the app fetches from', function () {
@@ -74,7 +107,24 @@ describe('buildSecurityHeaders', function () {
     expect(connectSrc).toContain('https://blockstream.info')
     expect(connectSrc).toContain('https://mempool.space')
     expect(connectSrc).toContain('https://*.hemi.network')
-    expect(connectSrc).toContain('https://*.walletconnect.com')
+  })
+
+  it('allows the services used by the wallet connectors', function () {
+    const headers = buildSecurityHeaders(baseConfig)
+
+    expect(directive(headers, 'connect-src')).toContain(
+      'https://api.web3modal.com',
+    )
+    expect(directive(headers, 'connect-src')).toContain(
+      'wss://relay.walletconnect.com',
+    )
+    expect(directive(headers, 'frame-src')).toContain(
+      'https://keys.coinbase.com',
+    )
+    expect(directive(headers, 'frame-src')).toContain(
+      'https://verify.walletconnect.com',
+    )
+    expect(directive(headers, 'img-src')).toContain('https://walletconnect.org')
   })
 
   it('allow-lists only the origin of a custom rpc url', function () {
@@ -112,6 +162,12 @@ describe('buildSecurityHeaders', function () {
 
     expect(directive(headers, 'script-src')).not.toContain('umami.example.com')
     expect(directive(headers, 'connect-src')).not.toContain('umami.example.com')
+    expect(directive(headers, 'script-src')).toContain(
+      'https://static.cloudflareinsights.com',
+    )
+    expect(directive(headers, 'connect-src')).toContain(
+      'https://cloudflareinsights.com',
+    )
   })
 
   it('lets analytics load and report once enabled', function () {
@@ -126,6 +182,21 @@ describe('buildSecurityHeaders', function () {
     )
     expect(directive(headers, 'connect-src')).toContain(
       'https://cloudflareinsights.com',
+    )
+  })
+
+  it('preserves a nonstandard analytics port', function () {
+    const headers = buildSecurityHeaders({
+      ...baseConfig,
+      analyticsEnabled: true,
+      analyticsUrl: 'https://analytics.example.com:8443/script.js',
+    })
+
+    expect(directive(headers, 'script-src')).toContain(
+      'https://analytics.example.com:8443',
+    )
+    expect(directive(headers, 'connect-src')).toContain(
+      'https://analytics.example.com:8443',
     )
   })
 
@@ -147,7 +218,7 @@ describe('buildSecurityHeaders', function () {
     expect(directive(headers, 'connect-src')).toContain(
       'https://o123.ingest.de.sentry.io',
     )
-    expect(directive(headers, 'script-src')).toContain(
+    expect(directive(headers, 'script-src')).not.toContain(
       'https://o123.ingest.de.sentry.io',
     )
   })

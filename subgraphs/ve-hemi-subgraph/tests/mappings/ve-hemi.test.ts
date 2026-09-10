@@ -149,6 +149,23 @@ describe('lock statistics', () => {
     clearStore()
   })
 
+  test('the deposit that precedes a new lock is ignored', () => {
+    handleDepositEvent(createDepositEvent(1, BigInt.fromI32(1000), unlockA))
+
+    assert.notInStore('LockedPosition', '1')
+    assert.notInStore('LockStats', 'singleton')
+
+    handleNewLock(createLockEvent(1, startA, requestedA))
+
+    assert.fieldEquals('LockStats', 'singleton', 'activeLocks', '1')
+    assert.fieldEquals(
+      'LockStats',
+      'singleton',
+      'totalLockDuration',
+      effectiveA.toString(),
+    )
+  })
+
   test('a new lock rounds the unlock time down to a SIX_DAYS boundary', () => {
     handleNewLock(createLockEvent(1, startA, requestedA))
 

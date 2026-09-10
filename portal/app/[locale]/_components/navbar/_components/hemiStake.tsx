@@ -1,3 +1,4 @@
+import { Badge } from 'components/badge'
 import { HemiStakeIcon } from 'components/icons/hemiStakeIcon'
 import { useTranslations } from 'use-intl'
 
@@ -10,12 +11,12 @@ export const HemiStake = function () {
     <ItemLink
       event="nav - hemi stake"
       href="/hemi-stake"
-      icon={<HemiStakeIcon />}
+      icon={<HemiStakeIcon className="w-7 md:w-3" />}
       rightSection={
         <div className="ml-auto hidden md:flex md:items-center">
-          <span className="body-text-caption flex items-center rounded-md bg-orange-600 px-1.5 py-px text-white">
+          <Badge size="small" variant="primaryB">
             {t('new')}
-          </span>
+          </Badge>
         </div>
       }
       text={t('hemi-stake')}

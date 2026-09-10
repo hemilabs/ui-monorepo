@@ -69,6 +69,10 @@ inputs:
   NEXT_PUBLIC_ENABLE_CLAIM_REWARDS_TESTNET:
     required: false
     description: Flag to enable or not claim rewards on testnet
+  # To be removed once https://github.com/hemilabs/ui-monorepo/issues/2237 is completed
+  NEXT_PUBLIC_ENABLE_SAFE_WALLET:
+    required: false
+    description: Flag to enable or not the Safe connector, needed to run the Portal as a Safe App
   NEXT_PUBLIC_ENABLE_STAKE_GOVERNANCE_TESTNET:
     required: false
     description: Flag to enable or not stake governance on testnet
@@ -130,6 +134,7 @@ runs:
         NEXT_PUBLIC_ENABLE_ANALYTICS: ${{ inputs.NEXT_PUBLIC_ENABLE_ANALYTICS }}
         NEXT_PUBLIC_ENABLE_HEMI_EARN_PAGE: ${{ inputs.NEXT_PUBLIC_ENABLE_HEMI_EARN_PAGE }}
         NEXT_PUBLIC_ENABLE_CLAIM_REWARDS_TESTNET: ${{ inputs.NEXT_PUBLIC_ENABLE_CLAIM_REWARDS_TESTNET }}
+        NEXT_PUBLIC_ENABLE_SAFE_WALLET: ${{ inputs.NEXT_PUBLIC_ENABLE_SAFE_WALLET }}
         NEXT_PUBLIC_ENABLE_STAKE_GOVERNANCE_TESTNET: ${{ inputs.NEXT_PUBLIC_ENABLE_STAKE_GOVERNANCE_TESTNET }}
         NEXT_PUBLIC_ENABLE_STAKE_TESTNET: ${{ inputs.NEXT_PUBLIC_ENABLE_STAKE_TESTNET }}
         NEXT_PUBLIC_PORTAL_API_URL: ${{ inputs.NEXT_PUBLIC_PORTAL_API_URL }}

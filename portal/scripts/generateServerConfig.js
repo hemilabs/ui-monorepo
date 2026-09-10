@@ -105,6 +105,9 @@ const imageSrcUrls = [
 // these are domains where frames are allowed
 const frameSrcUrls = ['https://*.walletconnect.org']
 
+const enableSafeWallet = process.env.NEXT_PUBLIC_ENABLE_SAFE_WALLET === 'true'
+const frameAncestors = enableSafeWallet ? 'https://app.safe.global' : "'none'"
+
 // Domains allowed to download scripts from
 const downloadScriptsDomains = new Set()
 
@@ -136,6 +139,10 @@ const fontsDomain = [
   'https://fonts.gstatic.com',
 ]
 
+// serve matches this glob against every request; the .htaccess sets these
+// headers globally, so anything scoped must use its own source
+const globalSource = '**/*.*'
+
 const serveJson = {
   headers: [
     {
@@ -148,10 +155,14 @@ const serveJson = {
           key: 'Strict-Transport-Security',
           value: 'max-age=31536000; includeSubDomains; preload',
         },
-        {
-          key: 'X-Frame-Options',
-          value: 'SAMEORIGIN',
-        },
+        ...(enableSafeWallet
+          ? []
+          : [
+              {
+                key: 'X-Frame-Options',
+                value: 'SAMEORIGIN',
+              },
+            ]),
         {
           key: 'X-Content-Type-Options',
           value: 'nosniff',
@@ -188,21 +199,42 @@ const serveJson = {
             ' ',
           )}; frame-src 'self' ${frameSrcUrls.join(
             ' ',
-          )}; frame-ancestors 'none'; block-all-mixed-content; upgrade-insecure-requests; font-src 'self' ${fontsDomain.join(
+          )}; frame-ancestors ${frameAncestors}; block-all-mixed-content; upgrade-insecure-requests; font-src 'self' ${fontsDomain.join(
             ' ',
           )}; style-src-elem 'self' 'unsafe-inline' ${fontsDomain.join(' ')};`,
         },
       ],
-      source: '**/*.*',
+      source: globalSource,
     },
+    ...(enableSafeWallet
+      ? [
+          {
+            headers: [
+              {
+                key: 'Access-Control-Allow-Origin',
+                value: 'https://app.safe.global',
+              },
+            ],
+            source: 'manifest.json',
+          },
+        ]
+      : []),
   ],
 }
+
+const toHeaderDirectives = headers =>
+  headers
+    .map(header => `Header always set ${header.key} "${header.value}"`)
+    .join('\n')
 
 const toHtAccess = config =>
   `<IfModule mod_headers.c>
     ${config.headers
-      .flatMap(({ headers }) => headers)
-      .map(header => `Header always set ${header.key} "${header.value}"`)
+      .map(({ headers, source }) =>
+        source === globalSource
+          ? toHeaderDirectives(headers)
+          : `<Files "${source}">\n${toHeaderDirectives(headers)}\n</Files>`,
+      )
       .join('\n')}
   </IfModule>
 

@@ -15,7 +15,7 @@ export const BuildInfo = function () {
     : version
 
   return (
-    <div className="mt-1 flex w-full cursor-default items-center gap-1.5 border-t border-neutral-100 px-3 pb-2 pt-3 font-mono text-[10px] leading-4 text-neutral-400">
+    <div className="mt-1 flex w-full cursor-default items-center gap-1.5 border-t border-neutral-100 px-4 pb-0 pt-3 font-mono text-[10px] leading-4 text-neutral-400 md:px-3 md:pb-2">
       <span className="min-w-0 truncate" title={branch}>
         {branch}
       </span>

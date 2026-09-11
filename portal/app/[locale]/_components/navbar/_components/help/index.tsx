@@ -215,7 +215,7 @@ export const Help = function () {
         helpPortalContainer &&
         ReactDOM.createPortal(
           <div
-            className="absolute bottom-0 left-0 z-30 flex h-fit w-full flex-col items-start rounded-t-2xl bg-white p-4 shadow-lg md:top-0 md:w-64 md:translate-x-58 md:translate-y-2 md:rounded-lg md:p-1 xl:translate-x-2"
+            className="absolute bottom-14 left-0 z-30 flex h-fit w-full flex-col items-start rounded-t-2xl bg-white p-4 pb-3 shadow-lg sm:bottom-0 md:top-0 md:w-64 md:translate-x-58 md:translate-y-2 md:rounded-lg md:p-1 xl:translate-x-2"
             onMouseDown={e => e.stopPropagation()}
             onTouchStart={e => e.stopPropagation()}
           >

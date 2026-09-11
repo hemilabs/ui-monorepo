@@ -526,10 +526,8 @@
       "you-delegated-this-position": "Usted delegó esta posición",
       "you-transferred-this-position": "Usted transfirió esta posición"
     },
-    "total-voting-power": "Poder de voto total",
     "unlock-successful": "Desbloqueo exitoso",
-    "voting-power": "Poder de Voto",
-    "your-positions": "Sus posiciones"
+    "voting-power": "Poder de Voto"
   },
   "metadata": {
     "title": "Portal de Hemi"

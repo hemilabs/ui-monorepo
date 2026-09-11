@@ -16,7 +16,7 @@ export const BuildInfo = function () {
 
   return (
     <div className="mt-1 flex w-full cursor-default items-center gap-1.5 border-t border-neutral-100 px-3 pb-2 pt-3 font-mono text-[10px] leading-4 text-neutral-400">
-      <span className="truncate" title={branch}>
+      <span className="min-w-0 truncate" title={branch}>
         {branch}
       </span>
       <span aria-hidden="true" className="shrink-0">

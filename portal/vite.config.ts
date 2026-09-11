@@ -95,10 +95,14 @@ export default defineConfig(function ({ mode }) {
     define: {
       'global': 'globalThis',
       'import.meta.env.VITE_BUILD_BRANCH': JSON.stringify(
-        env.VITE_BUILD_BRANCH || localBuildInfo.branch,
+        env.VITE_BUILD_BRANCH ||
+          process.env.WORKERS_CI_BRANCH ||
+          localBuildInfo.branch,
       ),
       'import.meta.env.VITE_BUILD_VERSION': JSON.stringify(
-        env.VITE_BUILD_VERSION || localBuildInfo.version,
+        env.VITE_BUILD_VERSION ||
+          process.env.WORKERS_CI_COMMIT_SHA ||
+          localBuildInfo.version,
       ),
     },
     plugins,

@@ -500,6 +500,13 @@
     "here-is-your-tx": "Here's your transaction:",
     "lockup-period": "Lockup period",
     "stake-successful": "Stake successful",
+    "stats": {
+      "average-lockup": "Average lockup",
+      "average-lockup-badge": "Across {count, plural, one {# lockup} other {# lockups}}",
+      "rewards-paid": "Rewards paid to date",
+      "total-staked": "Total staked",
+      "wallets-staking": "Wallets staking"
+    },
     "subheading": "Stake your ${symbol} to participate in governance and earn staking rewards.",
     "switch-to-start-staking": "You can switch networks to start staking your HEMI.",
     "table": {
@@ -526,10 +533,8 @@
       "you-delegated-this-position": "You delegated this position",
       "you-transferred-this-position": "You transferred this position"
     },
-    "total-voting-power": "Total voting power",
     "unlock-successful": "Unlock successful",
-    "voting-power": "Voting Power",
-    "your-positions": "Your positions"
+    "voting-power": "Voting Power"
   },
   "metadata": {
     "title": "Hemi Portal"

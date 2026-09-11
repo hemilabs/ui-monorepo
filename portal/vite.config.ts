@@ -31,9 +31,24 @@ const getLocalBuildInfo = function () {
   }
 }
 
+const getBuildInfo = function (env: Record<string, string>) {
+  const localBuildInfo = getLocalBuildInfo()
+
+  return {
+    branch:
+      env.VITE_BUILD_BRANCH ||
+      process.env.WORKERS_CI_BRANCH ||
+      localBuildInfo.branch,
+    version:
+      env.VITE_BUILD_VERSION ||
+      process.env.WORKERS_CI_COMMIT_SHA ||
+      localBuildInfo.version,
+  }
+}
+
 export default defineConfig(function ({ mode }) {
   const env = loadEnv(mode, process.cwd(), '')
-  const localBuildInfo = getLocalBuildInfo()
+  const buildInfo = getBuildInfo(env)
 
   const instrumentForSentry = !!env.VITE_SENTRY_DSN && !process.env.STORYBOOK
 
@@ -94,16 +109,8 @@ export default defineConfig(function ({ mode }) {
     // but not in worker ones.
     define: {
       'global': 'globalThis',
-      'import.meta.env.VITE_BUILD_BRANCH': JSON.stringify(
-        env.VITE_BUILD_BRANCH ||
-          process.env.WORKERS_CI_BRANCH ||
-          localBuildInfo.branch,
-      ),
-      'import.meta.env.VITE_BUILD_VERSION': JSON.stringify(
-        env.VITE_BUILD_VERSION ||
-          process.env.WORKERS_CI_COMMIT_SHA ||
-          localBuildInfo.version,
-      ),
+      'import.meta.env.VITE_BUILD_BRANCH': JSON.stringify(buildInfo.branch),
+      'import.meta.env.VITE_BUILD_VERSION': JSON.stringify(buildInfo.version),
     },
     plugins,
     resolve: {

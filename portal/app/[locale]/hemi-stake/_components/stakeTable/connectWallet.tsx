@@ -1,0 +1,32 @@
+import { Button } from 'components/button'
+import { WalletIcon } from 'components/icons/walletIcon'
+import { InformationBox } from 'components/informationBox'
+import { useDrawerContext } from 'hooks/useDrawerContext'
+import { useHemiToken } from 'hooks/useHemiToken'
+import { useUmami } from 'hooks/useUmami'
+import { useTranslations } from 'use-intl'
+
+export const ConnectWallet = function () {
+  const { openDrawer } = useDrawerContext()
+  const t = useTranslations()
+  const { track } = useUmami()
+  const { symbol } = useHemiToken()
+
+  const onClick = function () {
+    openDrawer?.()
+    track?.('evm connect')
+  }
+
+  return (
+    <InformationBox
+      actions={
+        <Button onClick={onClick} size="xSmall" type="button">
+          {t('common.connect-wallet')}
+        </Button>
+      }
+      icon={<WalletIcon />}
+      subtitle={t('hemi-stake.table.connect-to-stake', { symbol })}
+      title={t('common.your-wallet-not-connected')}
+    />
+  )
+}

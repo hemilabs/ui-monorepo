@@ -164,7 +164,7 @@
     "claimed": "Reclamado",
     "claiming-your-rewards": "Reclamando sus recompensas",
     "connect-demos-wallet": "Asegúrese de conectar su billetera verificada de Demos.",
-    "go-to-staking-dashboard": "Ir al panel de control de staking",
+    "go-to-hemi-stake": "Ir a Hemi Stake",
     "have-questions": "Asegúrese de estar conectado con su billetera verificada de Demos. Si tiene preguntas, abra un ticket en <discordLink>Discord</discordLink>, consulte <absintheLink>Absinthe</absintheLink> o pruebe con otra billetera.",
     "hemi-token-added": "{symbol} agregado a su billetera",
     "here-is-your-claim-tx": "Aquí está su transacción de reclamo:",
@@ -449,6 +449,87 @@
       "withdrawal": "Retiro"
     }
   },
+  "hemi-stake": {
+    "amount": "Cantidad",
+    "claim-rewards": {
+      "heading": "Reclamar recompensas",
+      "subheading": "Estamos procesando su solicitud de recompensas. Puede seguir el progreso a continuación."
+    },
+    "claim-rewards-successful": "Recompensas reclamadas con éxito",
+    "drawer": {
+      "approving": "Aprobando {symbol}",
+      "claim-rewards": "Reclamar recompensas en {network}",
+      "increase-amount": {
+        "heading": "Agregar ${symbol} a este bloqueo",
+        "subheading": "Depositar ${symbol} adicionales en su bloqueo existente para aumentar su cantidad de stake y poder de gobernanza."
+      },
+      "increase-unlock-time": {
+        "heading": "Extender la duración del bloqueo",
+        "subheading": "Agregue más tiempo a su bloqueo existente para aumentar su poder de gobernanza."
+      },
+      "stake": {
+        "heading": "Revisar Stake",
+        "subheading": "Revise y confirme su stake."
+      },
+      "stake-token": "Hacer stake de {symbol}",
+      "unlock": {
+        "heading": "Estamos desbloqueando sus tokens",
+        "subheading": "La red está procesando su desbloqueo. Podrá acceder a sus tokens una vez completada la transacción."
+      },
+      "unlock-token": "Desbloquear {symbol}"
+    },
+    "form": {
+      "approve-and-stake": "Aprobar y Hacer Stake",
+      "days": "{days, plural, one {{days} día} other {{days} días}}",
+      "expire-date": "Fecha de vencimiento:",
+      "lockup-extend-warning": "Puede extender su período de bloqueo hasta un total de 4 años.",
+      "lockup-increment-warning": "El tiempo de bloqueo se puede configurar en incrementos de 6 días.",
+      "max-days": "Máx. {days} {days, plural, one {día} other {días}}",
+      "min-days": "Mín. {days} {days, plural, one {día} other {días}}",
+      "or": "o",
+      "send": "Enviar",
+      "stake": "Stake",
+      "staking": "Haciendo stake...",
+      "title": "Stake",
+      "unlocking": "Desbloqueando...",
+      "use-or": "Utilice <min></min> o <max></max>",
+      "years": "{years, plural, one {{years} año} other {{years} años}}"
+    },
+    "heading": "Hemi Stake",
+    "here-is-your-tx": "Aquí está su transacción:",
+    "lockup-period": "Período de bloqueo",
+    "stake-successful": "Stake exitoso",
+    "subheading": "Haga staking de ${symbol} para participar en la gobernanza del protocolo y recibir recompensas.",
+    "switch-to-start-staking": "Puede cambiar de red para comenzar a hacer staking de su HEMI.",
+    "table": {
+      "action": "Acción",
+      "active": "Activo",
+      "add-liquidity-to-lockup": "Agregar ${symbol} a este bloqueo",
+      "add-time-to-lockup": "Agregar tiempo a este bloqueo",
+      "apr": "{percentage}% TNA",
+      "burned": "Quemado",
+      "connect-to-hemi": "Conéctese a {network} para ver sus posiciones de stake.",
+      "connect-to-stake": "Conecte su billetera para ver su ${symbol} en stake.",
+      "get-started": "Comience haciendo staking de sus ${symbol}",
+      "get-started-burned": "Sus posiciones quemadas aparecerán aquí una vez que hayan finalizado sus períodos de bloqueo.",
+      "locked-amount": "Cantidad bloqueada",
+      "lockup": "Bloqueo",
+      "no-hemi-burned": "Aún no hay posiciones quemadas.",
+      "no-hemi-staked": "No hay ${symbol} en stake",
+      "on": "En {date}",
+      "position-delegated-to-you": "Posición delegada hacia usted",
+      "rewards": "Recompensas",
+      "rewards-available": "{count, plural, one {# disponible} other {# disponibles}}",
+      "unlock": "Desbloquear",
+      "unlocks-on": "Desbloquea el {date}",
+      "you-delegated-this-position": "Usted delegó esta posición",
+      "you-transferred-this-position": "Usted transfirió esta posición"
+    },
+    "total-voting-power": "Poder de voto total",
+    "unlock-successful": "Desbloqueo exitoso",
+    "voting-power": "Poder de Voto",
+    "your-positions": "Sus posiciones"
+  },
   "metadata": {
     "title": "Portal de Hemi"
   },
@@ -468,14 +549,14 @@
     "follow-us": "Síganos",
     "genesis-drop": "Lanzamiento Génesis",
     "get-started": "Comenzar",
-    "governance-staking": "Stake de gobernanza",
     "help": {
       "language": "Idioma",
       "legal-and-privacy": "Privacidad y Legales"
     },
+    "hemi-stake": "Hemi Stake",
     "network": "Red",
     "network-status": "Estado de la red",
-    "stake": "Stake",
+    "new": "Nuevo",
     "swap": "Intercambiar",
     "tools": "Herramientas",
     "tunnel": "Túnel",
@@ -528,7 +609,7 @@
     },
     "start-staking-earn-points": "Empiece a hacer stake",
     "toast": {
-      "go-staking-dashboard": "Vea su panel de control de sus stakes",
+      "go-boost-staking": "Ir a Boost staking",
       "here-your-stake-tx": "Aquí está su transacción de {type}:",
       "staking": "stake",
       "staking-successful": "Stake exitoso",
@@ -536,89 +617,6 @@
       "unstaking-successful": "Retiro exitoso"
     },
     "wallet-balance": "Saldo de la billetera"
-  },
-  "staking-dashboard": {
-    "amount": "Cantidad",
-    "claim-rewards": {
-      "heading": "Reclamar recompensas",
-      "subheading": "Estamos procesando su solicitud de recompensas. Puede seguir el progreso a continuación."
-    },
-    "claim-rewards-successful": "Recompensas reclamadas con éxito",
-    "drawer": {
-      "approving": "Aprobando {symbol}",
-      "claim-rewards": "Reclamar recompensas en {network}",
-      "increase-amount": {
-        "heading": "Agregar ${symbol} a este bloqueo",
-        "subheading": "Depositar ${symbol} adicionales en su bloqueo existente para aumentar su cantidad de stake y poder de gobernanza."
-      },
-      "increase-unlock-time": {
-        "heading": "Extender la duración del bloqueo",
-        "subheading": "Agregue más tiempo a su bloqueo existente para aumentar su poder de gobernanza."
-      },
-      "stake": {
-        "heading": "Revisar Stake",
-        "subheading": "Revise y confirme su stake."
-      },
-      "stake-token": "Hacer stake de {symbol}",
-      "unlock": {
-        "heading": "Estamos desbloqueando sus tokens",
-        "subheading": "La red está procesando su desbloqueo. Podrá acceder a sus tokens una vez completada la transacción."
-      },
-      "unlock-token": "Desbloquear {symbol}"
-    },
-    "form": {
-      "approve-and-stake": "Aprobar y Hacer Stake",
-      "days": "{days, plural, one {{days} día} other {{days} días}}",
-      "expire-date": "Fecha de vencimiento:",
-      "lockup-extend-warning": "Puede extender su período de bloqueo hasta un total de 4 años.",
-      "lockup-increment-warning": "El tiempo de bloqueo se puede configurar en incrementos de 6 días.",
-      "max-days": "Máx. {days} {days, plural, one {día} other {días}}",
-      "min-days": "Mín. {days} {days, plural, one {día} other {días}}",
-      "or": "o",
-      "send": "Enviar",
-      "stake": "Stake",
-      "staking": "Haciendo stake...",
-      "title": "Stake",
-      "unlocking": "Desbloqueando...",
-      "use-or": "Utilice <min></min> o <max></max>",
-      "years": "{years, plural, one {{years} año} other {{years} años}}"
-    },
-    "heading": "Governance staking",
-    "here-is-your-tx": "Aquí está su transacción:",
-    "lockup-period": "Período de bloqueo",
-    "stake-successful": "Stake exitoso",
-    "subheading": "Haga staking de ${symbol} para participar en la gobernanza del protocolo y recibir recompensas.",
-    "switch-to-start-staking": "Puede cambiar de red para comenzar a hacer staking de su HEMI.",
-    "table": {
-      "action": "Acción",
-      "active": "Activo",
-      "add-liquidity-to-lockup": "Agregar ${symbol} a este bloqueo",
-      "add-time-to-lockup": "Agregar tiempo a este bloqueo",
-      "apr": "{percentage}% TNA",
-      "burned": "Quemado",
-      "connect-to-hemi": "Conéctese a {network} para ver sus posiciones de stake.",
-      "connect-to-stake": "Conecte su billetera para ver su ${symbol} en stake.",
-      "get-started": "Comience haciendo staking de sus ${symbol}",
-      "get-started-burned": "Sus posiciones quemadas aparecerán aquí una vez que hayan finalizado sus períodos de bloqueo.",
-      "locked-amount": "Cantidad bloqueada",
-      "lockup": "Bloqueo",
-      "no-hemi-burned": "Aún no hay posiciones quemadas.",
-      "no-hemi-staked": "No hay ${symbol} en stake",
-      "on": "En {date}",
-      "position-delegated-to-you": "Posición delegada hacia usted",
-      "rewards": "Recompensas",
-      "rewards-available": "{count, plural, one {# disponible} other {# disponibles}}",
-      "tx": "Tx",
-      "unlock": "Desbloquear",
-      "unlocked": "Desbloqueado",
-      "unlocks-on": "Desbloquea el {date}",
-      "you-delegated-this-position": "Usted delegó esta posición",
-      "you-transferred-this-position": "Usted transfirió esta posición"
-    },
-    "total-voting-power": "Poder de voto total",
-    "unlock-successful": "Desbloqueo exitoso",
-    "voting-power": "Poder de Voto",
-    "your-positions": "Sus posiciones"
   },
   "token-custom-drawer": {
     "add-contract-to-preview": "Añada una dirección de contrato para previsualizar el token...",

@@ -8,13 +8,13 @@ import { GetStartedPage } from 'app/[locale]/get-started/page'
 import { HemiEarnLayout } from 'app/[locale]/hemi-earn/layout'
 import { HemiEarnPage } from 'app/[locale]/hemi-earn/page'
 import { PoolPage } from 'app/[locale]/hemi-earn/pool/[shareAddress]/page'
+import { HemiStakeLayout } from 'app/[locale]/hemi-stake/layout'
+import { HemiStakePage } from 'app/[locale]/hemi-stake/page'
 import { LocaleLayout } from 'app/[locale]/layout'
 import { NotFound } from 'app/[locale]/not-found'
 import { StakeDashboardPage } from 'app/[locale]/stake/dashboard/page'
 import { StakeLayout } from 'app/[locale]/stake/layout'
 import { StakePage } from 'app/[locale]/stake/page'
-import { StakingDashboardLayout } from 'app/[locale]/staking-dashboard/layout'
-import { StakingDashboardPage } from 'app/[locale]/staking-dashboard/page'
 import { TunnelLayout } from 'app/[locale]/tunnel/layout'
 import { TunnelPage } from 'app/[locale]/tunnel/page'
 import { TransactionHistoryPage } from 'app/[locale]/tunnel/transaction-history/page'
@@ -53,6 +53,21 @@ const ToTunnel = function () {
     <Navigate
       replace
       to={{ hash, pathname: `${pathname.replace(/\/+$/, '')}/tunnel`, search }}
+    />
+  )
+}
+
+const ToHemiStake = function () {
+  const { hash, pathname, search } = useLocation()
+
+  return (
+    <Navigate
+      replace
+      to={{
+        hash,
+        pathname: pathname.replace(/\/staking-dashboard\/?$/, '/hemi-stake'),
+        search,
+      }}
     />
   )
 }
@@ -101,6 +116,10 @@ export const App = () => (
             element={<ToPreferredLocale path="/stake/dashboard" />}
             path="/stake"
           />
+          <Route
+            element={<ToPreferredLocale path="/hemi-stake" />}
+            path="/staking-dashboard"
+          />
           <Route element={<LocaleLayout />} path="/:locale">
             <Route element={<ToTunnel />} index />
             <Route element={<TunnelLayout />} path="tunnel">
@@ -128,12 +147,10 @@ export const App = () => (
               <Route element={<StakePage />} index />
               <Route element={<StakeDashboardPage />} path="dashboard" />
             </Route>
-            <Route
-              element={<StakingDashboardLayout />}
-              path="staking-dashboard"
-            >
-              <Route element={<StakingDashboardPage />} index />
+            <Route element={<HemiStakeLayout />} path="hemi-stake">
+              <Route element={<HemiStakePage />} index />
             </Route>
+            <Route element={<ToHemiStake />} path="staking-dashboard" />
             <Route element={<NotFound />} path="*" />
           </Route>
         </SentryRoutes>

@@ -27,5 +27,8 @@
     "staging": {
       "name": "hemi-portal-staging",
     },
+    "staging-safe": {
+      "name": "hemi-portal-staging-safe",
+    },
   },
 }

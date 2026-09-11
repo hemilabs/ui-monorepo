@@ -496,11 +496,10 @@
       "use-or": "Use <min></min> or <max></max>",
       "years": "{years, plural, one {{years} year} other {{years} years}}"
     },
-    "heading": "Hemi Stake",
     "here-is-your-tx": "Here's your transaction:",
     "lockup-period": "Lockup period",
     "stake-successful": "Stake successful",
-    "subheading": "Stake your ${symbol} to participate in governance and earn staking rewards.",
+    "subheading": "Lock ${symbol} from {minDays, plural, one {# day} other {# days}} to {maxYears, plural, one {# year} other {# years}}. Earn every payout in {symbol}, hemiBTC and USDC, and get a vote.",
     "switch-to-start-staking": "You can switch networks to start staking your HEMI.",
     "table": {
       "action": "Action",

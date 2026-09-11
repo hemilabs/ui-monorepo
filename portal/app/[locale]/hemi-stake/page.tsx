@@ -1,10 +1,10 @@
 import { PageLayout } from 'components/pageLayout'
-import { PageTitle } from 'components/pageTitle'
 import { TestnetDisabled } from 'components/testnetDisabled'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useMemo, useState } from 'react'
 import { useTranslations } from 'use-intl'
 
+import { HemiStakeHero } from './_components/hemiStakeHero'
 import { StakeForm } from './_components/stakeForm'
 import { StakeTable } from './_components/stakeTable'
 import {
@@ -59,7 +59,7 @@ export const HemiStakePage = function () {
   return (
     <PageLayout variant="superWide">
       <div className="flex flex-col">
-        <PageTitle title={t('heading')} />
+        <HemiStakeHero />
         {isEnabled ? (
           <StakingContent />
         ) : (

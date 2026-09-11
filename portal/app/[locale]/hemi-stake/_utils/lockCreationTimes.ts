@@ -10,6 +10,9 @@ export const daySeconds = 86_400
 
 export const minDays = Math.floor(MinLockDurationSeconds / daySeconds)
 export const maxDays = Math.floor(MaxLockDurationSeconds / daySeconds)
+export const maxYears = Math.round(
+  MaxLockDurationSeconds / (365.25 * daySeconds),
+)
 export const step = 6
 
 export const twoYears = 732

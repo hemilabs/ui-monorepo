@@ -18,12 +18,12 @@ export const NotFound = function () {
       <div className="z-10 m-auto flex flex-col items-center gap-4">
         <ExclamationMark />
         <div className="text-center">
-          <h1 className="text-4xl font-medium text-neutral-950">
+          <h1 className="text-mid-md font-semibold text-neutral-950">
             {t('not-found.title')}
           </h1>
-          <h3 className="mt-1 text-sm font-medium text-neutral-500">
+          <p className="mt-1 font-medium text-neutral-500">
             {t('not-found.description')}
-          </h3>
+          </p>
         </div>
         <Link
           className="button--base button-primary button-small button-regular"

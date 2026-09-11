@@ -18,6 +18,7 @@ const fiatRounder = smartRound(6, 2, 2)
 const fiatRounderTVL = smartRound(6, 0, 0)
 // Same config as fiatRounder, but I think it reads better to use a different rounder
 const percentageRounder = smartRound(6, 2, 2)
+const tokenPriceRounder = smartRound(6, 2, 8)
 
 export const formatEvmHash = (txHash: Hash) =>
   shorten(txHash, { length: 4, prefixes: ['0x'] })
@@ -130,6 +131,9 @@ export const formatCompactFiatParts = function (
     .join('')
   return { number, suffix }
 }
+
+export const formatTokenPrice = (price: number | string, locale: string) =>
+  `$${tokenPriceRounder(price, { locale, shouldFormat: true })}`
 
 export const formatDate = (date: Date, locale: string, timeZone?: string) =>
   new Intl.DateTimeFormat(locale, {

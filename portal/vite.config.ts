@@ -93,13 +93,13 @@ export default defineConfig(function ({ mode }) {
     // read the bare `global`. The polyfill plugin shims it in the main bundle
     // but not in worker ones.
     define: {
+      'global': 'globalThis',
       'import.meta.env.VITE_BUILD_BRANCH': JSON.stringify(
         env.VITE_BUILD_BRANCH || localBuildInfo.branch,
       ),
       'import.meta.env.VITE_BUILD_VERSION': JSON.stringify(
         env.VITE_BUILD_VERSION || localBuildInfo.version,
       ),
-      'global': 'globalThis',
     },
     plugins,
     resolve: {

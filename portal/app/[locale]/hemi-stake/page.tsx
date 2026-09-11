@@ -11,6 +11,7 @@ import {
   StakeTableFilter,
   type StakeTableFilterOptions,
 } from './_components/stakeTable/stakeTableFilter'
+import { StatsSection } from './_components/statsSection'
 import { StakingDashboardProvider } from './_context/stakingDashboardContext'
 import { useStakingPositions } from './_hooks/useStakingPositions'
 import { isStakingDashboardEnabledOnTestnet } from './_utils/isStakingDashboardEnabledOnTestnet'
@@ -31,6 +32,7 @@ function StakingContent() {
 
   return (
     <StakingDashboardProvider>
+      <StatsSection />
       <div className="mt-6 flex flex-col-reverse gap-6 lg:flex-row">
         <div className="w-full lg:w-1/2 xl:shrink xl:grow-2 xl:basis-0">
           <div className="mb-4 ml-1 flex flex-row md:w-fit">

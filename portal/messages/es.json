@@ -500,6 +500,14 @@
     "here-is-your-tx": "Aquí está su transacción:",
     "lockup-period": "Período de bloqueo",
     "stake-successful": "Stake exitoso",
+    "stats": {
+      "average-lockup": "Bloqueo promedio",
+      "average-lockup-badge": "En {count, plural, one {# bloqueo} other {# bloqueos}}",
+      "heading": "Estadísticas de staking de Hemi",
+      "rewards-paid": "Recompensas pagadas hasta la fecha",
+      "total-staked": "Total en stake",
+      "wallets-staking": "Billeteras en stake"
+    },
     "subheading": "Haga staking de ${symbol} para participar en la gobernanza del protocolo y recibir recompensas.",
     "switch-to-start-staking": "Puede cambiar de red para comenzar a hacer staking de su HEMI.",
     "table": {

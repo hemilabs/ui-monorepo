@@ -1,6 +1,7 @@
 import { cloudflare } from '@cloudflare/vite-plugin'
 import { sentryVitePlugin } from '@sentry/vite-plugin'
 import react from '@vitejs/plugin-react'
+import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv, type PluginOption } from 'vite'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
@@ -12,8 +13,27 @@ const polyfills = () => nodePolyfills({ include: ['http', 'https', 'util'] })
 const onlyClient = (environment: { name: string }) =>
   environment.name === 'client'
 
+const getLocalBuildInfo = function () {
+  try {
+    const branch = execFileSync('git', ['rev-parse', '--abbrev-ref', 'HEAD'], {
+      encoding: 'utf8',
+    }).trim()
+    const commit = execFileSync('git', ['rev-parse', 'HEAD'], {
+      encoding: 'utf8',
+    }).trim()
+    const dirty = execFileSync('git', ['status', '--porcelain'], {
+      encoding: 'utf8',
+    }).trim()
+
+    return { branch, version: `${commit}${dirty ? '-dirty' : ''}` }
+  } catch {
+    return { branch: 'dev', version: 'dev' }
+  }
+}
+
 export default defineConfig(function ({ mode }) {
   const env = loadEnv(mode, process.cwd(), '')
+  const localBuildInfo = getLocalBuildInfo()
 
   const instrumentForSentry = !!env.VITE_SENTRY_DSN && !process.env.STORYBOOK
 
@@ -72,7 +92,15 @@ export default defineConfig(function ({ mode }) {
     // stream-http and readable-stream, pulled in by the http/https polyfills,
     // read the bare `global`. The polyfill plugin shims it in the main bundle
     // but not in worker ones.
-    define: { global: 'globalThis' },
+    define: {
+      'import.meta.env.VITE_BUILD_BRANCH': JSON.stringify(
+        env.VITE_BUILD_BRANCH || localBuildInfo.branch,
+      ),
+      'import.meta.env.VITE_BUILD_VERSION': JSON.stringify(
+        env.VITE_BUILD_VERSION || localBuildInfo.version,
+      ),
+      'global': 'globalThis',
+    },
     plugins,
     resolve: {
       // The plugin injects its shims into whichever file touches `Buffer`,

@@ -32,6 +32,9 @@ The prefix `VITE_` is required: Vite only exposes variables carrying it to the b
 This is the list of all variables that can be configured:
 
 ```sh
+# Build metadata shown in the Help menu. Vite derives these from Git locally; set them in Cloudflare Worker Builds.
+VITE_BUILD_BRANCH=<branch-name>
+VITE_BUILD_VERSION=<commit-sha>
 # Use this variables to override RPC urls per chain. In order to join multiple RPC urls, join them with the "+" character.
 # For example VITE_CUSTOM_RPC_URL_SEPOLIA="https://rpc1.testnet.com/rpc+https://rpc2.testnet.com/rpc"
 VITE_CUSTOM_RPC_URL_HEMI_MAINNET=<urls>

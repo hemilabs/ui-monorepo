@@ -26,10 +26,8 @@ const Error500 = ({ description, reset, title, tryAgainLabel }: Props) => (
     <div className="m-auto flex flex-col items-center gap-4">
       <ExclamationMark />
       <div className="w-96 text-center max-md:max-w-[80%]">
-        <h1 className="text-4xl font-medium">{title}</h1>
-        <h3 className="mt-1 text-sm font-medium text-neutral-500">
-          {description}
-        </h3>
+        <h1 className="text-mid-md font-semibold">{title}</h1>
+        <p className="mt-1 font-medium text-neutral-500">{description}</p>
       </div>
       <button
         className="button--base button-primary button-small button-regular"

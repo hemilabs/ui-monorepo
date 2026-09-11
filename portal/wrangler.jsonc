@@ -30,6 +30,7 @@
     },
     "staging-safe": {
       "name": "hemi-portal-staging-safe",
+      "preview_urls": false,
       "workers_dev": true,
     },
   },

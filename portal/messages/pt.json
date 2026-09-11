@@ -19,7 +19,6 @@
     "close": "Fechar",
     "close-notification": "Fechar a notificação",
     "connect-to-network": "Conectar à {network}",
-    "connect-to-supported-network": "Conectar a uma rede suportada",
     "connect-wallet": "Conectar Carteira",
     "connect-wallets": "Conectar Carteiras",
     "copied": "Copiado",
@@ -654,7 +653,6 @@
     "ready-to-claim": "Pronto para reclamar",
     "ready-to-confirm": "Pronto para confirmar",
     "ready-to-prove": "Pronto para provar",
-    "unsupported-chain-subheading": "Conecte a uma rede suportada para ver o seu histórico de transações.",
     "waiting-confirmation": "A aguardar confirmação",
     "withdrawal-challenged": "Retirada desafiada"
   },

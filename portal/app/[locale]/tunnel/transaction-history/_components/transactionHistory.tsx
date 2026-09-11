@@ -1,7 +1,5 @@
 import { Table } from 'components/table'
 import { TableCard } from 'components/table/tableCard'
-import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
-import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useCallback, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
@@ -22,7 +20,6 @@ import { buildColumns } from './columns'
 import { ConnectWallet } from './connectWallet'
 import { NoTransactions } from './noTransactions'
 import { type FilterOptions } from './topBar'
-import { UnsupportedChain } from './unsupportedChain'
 
 const useTransactionsHistory = function (filter: FilterOptions) {
   const { deposits, syncStatus, withdrawals } = useTunnelHistory()
@@ -85,10 +82,6 @@ export const TransactionHistory = function ({
   const { data, isSettled, loading } = useTransactionsHistory(filterOption)
   const { updateTxHash } = useTunnelOperation()
 
-  // One is not the opposite of the other, as these consider if the user is connected to the wallet!
-  const connectedToSupportedChain = useConnectedToSupportedEvmChain()
-  const connectedToUnsupportedChain = useConnectedToUnsupportedEvmChain()
-
   const columns = useMemo(
     () => buildColumns({ filterOption, setFilterOption, t }),
     [filterOption, setFilterOption, t],
@@ -117,18 +110,6 @@ export const TransactionHistory = function ({
           />
         </TableCard>
       )
-    }
-
-    if (connectedToUnsupportedChain) {
-      return (
-        <TableCard>
-          <UnsupportedChain />
-        </TableCard>
-      )
-    }
-
-    if (!connectedToSupportedChain) {
-      return null
     }
 
     // Only show NoTransactions after syncing finishes and data remains empty.

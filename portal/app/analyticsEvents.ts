@@ -8,6 +8,7 @@ const analyticsEvents = [
   'ecosystem - DEMOS',
   'ecosystem - pure finance',
   // header
+  'header - hemi price',
   'header - tunnel',
   'header - txn history',
   // /genesis-drop

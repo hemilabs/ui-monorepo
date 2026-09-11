@@ -5,12 +5,12 @@ const version = import.meta.env.VITE_BUILD_VERSION || 'dev'
 
 const dirtyMarker = version.endsWith('-dirty') ? '-dirty' : ''
 const commitSha = version.replace(/-dirty$/, '')
-const commitUrl = /^[0-9a-f]{7,40}$/i.test(commitSha)
-  ? `https://github.com/hemilabs/ui-monorepo/commit/${commitSha}`
+const sourceUrl = /^[0-9a-f]{7,40}$/i.test(commitSha)
+  ? `https://github.com/hemilabs/ui-monorepo/tree/${commitSha}`
   : undefined
 
 export const BuildInfo = function () {
-  const displayedVersion = commitUrl
+  const displayedVersion = sourceUrl
     ? `${commitSha.slice(0, 7)}${dirtyMarker}`
     : version
 
@@ -22,10 +22,10 @@ export const BuildInfo = function () {
       <span aria-hidden="true" className="shrink-0">
         ·
       </span>
-      {commitUrl ? (
+      {sourceUrl ? (
         <ExternalLink
           className="shrink-0 transition-colors hover:text-neutral-600 hover:underline"
-          href={commitUrl}
+          href={sourceUrl}
           title={version}
         >
           {displayedVersion}

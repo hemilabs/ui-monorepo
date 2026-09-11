@@ -503,7 +503,6 @@
     "stats": {
       "average-lockup": "Average lockup",
       "average-lockup-badge": "Across {count, plural, one {# lockup} other {# lockups}}",
-      "heading": "Hemi staking stats",
       "rewards-paid": "Rewards paid to date",
       "total-staked": "Total staked",
       "wallets-staking": "Wallets staking"

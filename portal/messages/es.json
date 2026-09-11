@@ -503,7 +503,6 @@
     "stats": {
       "average-lockup": "Bloqueo promedio",
       "average-lockup-badge": "En {count, plural, one {# bloqueo} other {# bloqueos}}",
-      "heading": "Estadísticas de staking de Hemi",
       "rewards-paid": "Recompensas pagadas hasta la fecha",
       "total-staked": "Total en stake",
       "wallets-staking": "Billeteras en stake"

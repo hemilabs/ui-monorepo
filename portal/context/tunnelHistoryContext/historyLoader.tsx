@@ -149,10 +149,12 @@ const Loader = function ({
 
   useEffect(
     function resetState() {
-      setLoadedFromLocalStorage(false)
-      dispatch({ type: 'reset' })
+      if (!address || !loadedFromLocalStorage) {
+        setLoadedFromLocalStorage(false)
+        dispatch({ type: 'reset' })
+      }
     },
-    [dispatch, setLoadedFromLocalStorage],
+    [address, dispatch, loadedFromLocalStorage, setLoadedFromLocalStorage],
   )
 
   useEffect(

@@ -2,7 +2,7 @@ import { DisplayAmount } from 'components/displayAmount'
 import { LockupInput } from 'components/inputText'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useVeHemiToken } from 'hooks/useVeHemiToken'
-import { ReactNode, useEffect, useMemo, useState } from 'react'
+import { ReactNode, useEffect, useId, useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import type { Token } from 'types/token'
 import { useLocale, useTranslations } from 'use-intl'
@@ -13,6 +13,7 @@ import { formatUnits } from 'viem'
 
 import {
   daySeconds,
+  epochsPerYear,
   maxDays,
   minDays,
   predictVotingPower,
@@ -21,8 +22,12 @@ import {
 } from '../../_utils/lockCreationTimes'
 import { sanitizeLockup } from '../../_utils/sanitizeLockup'
 
+import { LockupPresets } from './lockupPresets'
 import { RangeSlider } from './rangeSlider'
 import { WarningMessage } from './warningMessage'
+
+const oneYear = epochsPerYear * step
+const sixMonths = Math.floor(epochsPerYear / 2) * step
 
 function addDays(date: Date, days: number) {
   const result = new Date(date)
@@ -204,6 +209,8 @@ export function Lockup({
 
   const [touched, setTouched] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
+  const [showSlider, setShowSlider] = useState(false)
+  const labelId = useId()
 
   const inputNumber = Number(inputDays)
   const valid = isValidLockup({ minLocked, value: inputNumber })
@@ -267,6 +274,27 @@ export function Lockup({
 
   const displayValue = getDisplayValue()
 
+  const presets = [
+    { days: sixMonths, label: t('form.months', { months: 6 }) },
+    { days: oneYear, label: t('form.years', { years: 1 }) },
+    { days: twoYears, label: t('form.years', { years: 2 }) },
+    { days: maxDays, label: t('form.years', { years: 4 }) },
+  ]
+
+  const matchesPreset = presets.some(({ days }) => days === lockupDays)
+  const showDaysInput = showSlider || !matchesPreset
+
+  const defaultPreset =
+    presets.find(({ days }) => days >= Math.max(twoYears, minLocked ?? 0))
+      ?.days ?? maxDays
+
+  function handleCustomClick() {
+    if (showSlider) {
+      handleStepClick(defaultPreset)
+    }
+    setShowSlider(!showSlider)
+  }
+
   useEffect(
     function updateInputDaysByMinLocked() {
       if (minLocked && Number(inputDays) < minLocked && !touched) {
@@ -280,63 +308,91 @@ export function Lockup({
   return (
     <>
       <div className="w-full space-y-4 rounded-lg border border-solid border-transparent bg-neutral-50 p-4 ring-1 ring-transparent hover:shadow-bs">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-neutral-500">
+        <div className="flex h-7 items-center justify-between">
+          <span className="text-sm font-medium text-neutral-500" id={labelId}>
             {t('lockup-period')}
           </span>
           <div className="flex items-center justify-center gap-x-3">
-            <TryValuesHint
-              inputText={inputDays}
-              isValid={valid}
-              maxValue={nearest?.maxValue}
-              minLocked={minLocked}
-              minValue={nearest?.minValue}
-              onSelectValue={value => handleInputChange(value.toString())}
-              touched={touched}
-            />
-            <div className="w-26">
-              <LockupInput
-                autoFocus={false}
-                isError={touched && !valid}
-                onBlur={() => setIsFocused(false)}
-                onChange={e => handleInputChange(e.target.value)}
-                onFocus={() => setIsFocused(true)}
-                value={displayValue}
-              />
-            </div>
+            {showDaysInput && (
+              <>
+                <TryValuesHint
+                  inputText={inputDays}
+                  isValid={valid}
+                  maxValue={nearest?.maxValue}
+                  minLocked={minLocked}
+                  minValue={nearest?.minValue}
+                  onSelectValue={value => handleInputChange(value.toString())}
+                  touched={touched}
+                />
+                <div className="w-26">
+                  <LockupInput
+                    autoFocus={false}
+                    isError={touched && !valid}
+                    onBlur={() => setIsFocused(false)}
+                    onChange={e => handleInputChange(e.target.value)}
+                    onFocus={() => setIsFocused(true)}
+                    value={displayValue}
+                  />
+                </div>
+              </>
+            )}
+            <button
+              aria-pressed={showSlider}
+              className={`text-sm font-medium transition-colors ${
+                showSlider
+                  ? 'text-orange-600'
+                  : 'text-neutral-500 hover:text-neutral-950'
+              }`}
+              onClick={handleCustomClick}
+              type="button"
+            >
+              {t('form.custom')}
+            </button>
           </div>
         </div>
-        <RangeSlider
-          max={maxDays}
-          min={minDays}
-          minLocked={minLocked}
-          onChange={handleSliderChange}
-          step={step}
-          value={lockupDays}
-        />
-        <div className="flex items-center justify-between text-xs font-medium text-neutral-500">
-          {[
-            { days: minDays, label: t('form.days', { days: minDays }) },
-            { days: twoYears, label: t('form.years', { years: 2 }) },
-            { days: maxDays, label: t('form.years', { years: 4 }) },
-          ].map(function ({ days, label }) {
-            const isDisabled = minLocked && days < minLocked
+        {showSlider ? (
+          <div className="flex h-14 flex-col justify-center gap-y-4">
+            <RangeSlider
+              max={maxDays}
+              min={minDays}
+              minLocked={minLocked}
+              onChange={handleSliderChange}
+              step={step}
+              value={lockupDays}
+            />
+            <div className="flex items-center justify-between text-xs font-medium text-neutral-500">
+              {[
+                { days: minDays, label: t('form.days', { days: minDays }) },
+                { days: twoYears, label: t('form.years', { years: 2 }) },
+                { days: maxDays, label: t('form.years', { years: 4 }) },
+              ].map(function ({ days, label }) {
+                const isDisabled = minLocked && days < minLocked
 
-            return (
-              <span
-                className={`${
-                  isDisabled
-                    ? 'cursor-default text-neutral-400'
-                    : 'cursor-pointer hover:text-neutral-950'
-                }`}
-                key={days}
-                onClick={() => handleStepClick(days)}
-              >
-                {label}
-              </span>
-            )
-          })}
-        </div>
+                return (
+                  <span
+                    className={`${
+                      isDisabled
+                        ? 'cursor-default text-neutral-400'
+                        : 'cursor-pointer hover:text-neutral-950'
+                    }`}
+                    key={days}
+                    onClick={() => handleStepClick(days)}
+                  >
+                    {label}
+                  </span>
+                )
+              })}
+            </div>
+          </div>
+        ) : (
+          <LockupPresets
+            labelledBy={labelId}
+            minLocked={minLocked}
+            onSelect={handleStepClick}
+            options={presets}
+            value={lockupDays}
+          />
+        )}
         <Divider />
         <InfoRow label={t('form.expire-date')} value={expireDate} />
         <Divider />

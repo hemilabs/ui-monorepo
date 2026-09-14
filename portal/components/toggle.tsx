@@ -1,6 +1,4 @@
 type Props = {
-  // The visible setting label lives outside this component, so the input has no
-  // text of its own to be named by.
   ariaLabel: string
   checked: boolean
   disabled?: boolean
@@ -8,33 +6,36 @@ type Props = {
   onCheckedChange: (checked: boolean) => void
 }
 
-export const Toggle = ({
+export const Toggle = function ({
   ariaLabel,
   checked,
   disabled,
   id,
   onCheckedChange,
-}: Props) => (
-  <div
-    className={`flex h-5 w-9 shrink-0 items-center rounded-full ${
-      checked ? 'bg-orange-600' : 'bg-neutral-100'
-    } ${disabled ? 'opacity-40' : ''}`}
-    style={{ boxShadow: '0px 0px 3px 0px rgba(0, 0, 0, 0.12) inset' }}
-  >
-    <input
-      aria-label={ariaLabel}
-      checked={checked}
-      className={`border-[0.6px] border-solid border-neutral-300/55 ${
-        checked ? 'ml-auto mr-0.5' : 'ml-0.5'
-      } ${
-        disabled ? 'cursor-not-allowed' : 'cursor-pointer'
-      } block size-4 appearance-none rounded-full bg-white`}
-      disabled={disabled}
-      id={id}
-      name={id}
-      onChange={e => onCheckedChange(e.target.checked)}
-      onKeyDown={e => (e.key === 'Enter' ? e.preventDefault() : undefined)}
-      type="checkbox"
-    />
-  </div>
-)
+}: Props) {
+  const trackStyles = checked
+    ? `bg-orange-600 ${disabled ? '' : 'hover:bg-orange-500'}`
+    : `bg-white shadow-bs ${disabled ? '' : 'hover:bg-neutral-50'}`
+
+  return (
+    <div
+      className={`flex h-5 w-10 shrink-0 items-center rounded-full transition-colors ${trackStyles} ${
+        disabled ? 'opacity-55' : ''
+      }`}
+    >
+      <input
+        aria-label={ariaLabel}
+        checked={checked}
+        className={`${checked ? 'ml-auto mr-1' : 'ml-1'} ${
+          disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+        } block h-3 w-5 appearance-none rounded-full bg-white shadow-sm`}
+        disabled={disabled}
+        id={id}
+        name={id}
+        onChange={e => onCheckedChange(e.target.checked)}
+        onKeyDown={e => (e.key === 'Enter' ? e.preventDefault() : undefined)}
+        type="checkbox"
+      />
+    </div>
+  )
+}

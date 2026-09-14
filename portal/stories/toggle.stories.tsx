@@ -27,8 +27,6 @@ export default meta
 
 type Story = StoryObj<StoryProps>
 
-// Writing back through useArgs keeps the `checked` control and the rendered state
-// in sync — local state would ignore the control after the first render.
 export const Default: Story = {
   render: function Render({ ariaLabel, checked, disabled, id }) {
     const [, updateArgs] = useArgs<StoryProps>()
@@ -46,11 +44,19 @@ export const Default: Story = {
 
 export const Disabled: Story = {
   args: { disabled: true },
+  argTypes: { disabled: { control: false } },
   render: Default.render,
 }
 
-// The visible text is always a sibling, which is why the component needs its own
-// accessible name rather than relying on a wrapping label.
+export const Hover: Story = {
+  parameters: {
+    pseudo: {
+      hover: true,
+    },
+  },
+  render: Default.render,
+}
+
 export const InSettingsRow: Story = {
   render: function Render({ ariaLabel, checked, disabled, id }) {
     const [, updateArgs] = useArgs<StoryProps>()

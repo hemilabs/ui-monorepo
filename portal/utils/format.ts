@@ -18,7 +18,7 @@ const fiatRounder = smartRound(6, 2, 2)
 const fiatRounderTVL = smartRound(6, 0, 0)
 // Same config as fiatRounder, but I think it reads better to use a different rounder
 const percentageRounder = smartRound(6, 2, 2)
-const tokenPriceRounder = smartRound(6, 2, 8)
+const tokenPriceRounder = smartRound(6, 2, 6)
 
 export const formatEvmHash = (txHash: Hash) =>
   shorten(txHash, { length: 4, prefixes: ['0x'] })

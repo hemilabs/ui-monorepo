@@ -393,8 +393,8 @@ describe('utils/format', function () {
     })
   })
   describe('formatTokenPrice', function () {
-    it('should keep the digits of a sub-cent price', function () {
-      expect(formatTokenPrice(0.00723137, 'en')).toBe('$0.00723137')
+    it('should keep sub-cent digits, capped at six decimals', function () {
+      expect(formatTokenPrice(0.00723137, 'en')).toBe('$0.007231')
       expect(formatTokenPrice(0.0154, 'en')).toBe('$0.0154')
     })
 

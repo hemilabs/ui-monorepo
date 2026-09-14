@@ -20,8 +20,12 @@ subgraphs/.env
 # information from docker-compose
 subgraphs/data
 # Graph CLI generated artifacts
+subgraphs/*/.env
+subgraphs/*/.envio/
 subgraphs/*/build
+subgraphs/*/envio-env.d.ts
 subgraphs/*/generated
+subgraphs/*/logs/
 subgraphs/*/tests/.bin/
 subgraphs/*/tests/.latest.json
 *.tsbuildinfo

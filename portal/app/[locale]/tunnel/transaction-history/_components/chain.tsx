@@ -7,7 +7,7 @@ type Props = {
   chainId: RemoteChain['id']
 }
 
-// The column is 100px wide and the logo and the gap take 26 of those. Shrinking
+// The column is 125px wide and the logo and the gap take 26 of those. Shrinking
 // is not an option: the tooltip wraps the content in a div of its own, whose
 // automatic minimum size is the full width of the name.
 export const Chain = function ({ chainId }: Props) {
@@ -22,7 +22,7 @@ export const Chain = function ({ chainId }: Props) {
     >
       <div className="flex items-center gap-x-1.5">
         <ChainLogo chainId={chainId} />
-        <span className="max-w-[74px] truncate capitalize text-neutral-950">
+        <span className="max-w-[99px] truncate capitalize text-neutral-950">
           {chain?.name ?? '-'}
         </span>
       </div>

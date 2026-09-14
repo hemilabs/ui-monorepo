@@ -30,7 +30,7 @@ type WalletConnectionPlacement = 'bottom-bar' | 'header'
 
 const placementClassName: Record<WalletConnectionPlacement, string> = {
   'bottom-bar': 'flex-1',
-  'header': 'ml-auto mr-3 hidden sm:block',
+  'header': 'mr-3 hidden sm:block',
 }
 
 export const WalletConnection = function ({

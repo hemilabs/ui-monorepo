@@ -8,14 +8,13 @@ import { TunnelTabs } from 'components/tunnelTabs'
 
 import { Badge } from '../badge'
 
+import { HemiPricePill } from './hemiPricePill'
 import { HomeLink } from './homeLink'
 
-const WalletConnection = lazyWithFallback(
-  () =>
-    import('components/connectWallets').then(mod => ({
-      default: mod.WalletConnection,
-    })),
-  <div className="ml-auto" />,
+const WalletConnection = lazyWithFallback(() =>
+  import('components/connectWallets').then(mod => ({
+    default: mod.WalletConnection,
+  })),
 )
 
 type Props = {
@@ -40,7 +39,10 @@ export const Header = ({ isMenuOpen, openNavbar, toggleMenu }: Props) => (
       <TunnelTabs />
       <GenesisDropTabs />
     </div>
-    <WalletConnection />
+    <div className="ml-auto flex items-center gap-x-2">
+      <HemiPricePill />
+      <WalletConnection />
+    </div>
     <div className="hidden sm:flex md:hidden">
       <ButtonIcon
         onClick={toggleMenu}

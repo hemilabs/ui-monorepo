@@ -46,10 +46,6 @@ export const RewardsPaid = function () {
   const t = useTranslations('hemi-stake.stats')
   const { data, fetchStatus, isPending, status } = useStakeStats(selectRewards)
 
-  const isUnavailable =
-    isDataUnavailable({ fetchStatus, status }) ||
-    (data !== undefined && data.length === 0)
-
   const paid = (data ?? []).flatMap(function ({ address, amount, chainId }) {
     const token = getTokenByAddress(address, chainId)
     if (!token) {
@@ -65,6 +61,10 @@ export const RewardsPaid = function () {
       },
     ]
   })
+
+  const isUnavailable =
+    isDataUnavailable({ fetchStatus, status }) ||
+    (data !== undefined && paid.length === 0)
 
   return (
     <StakeStatCard

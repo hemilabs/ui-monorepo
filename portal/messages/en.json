@@ -19,7 +19,6 @@
     "close": "Close",
     "close-notification": "Close notification",
     "connect-to-network": "Connect to {network}",
-    "connect-to-supported-network": "Connect to supported network",
     "connect-wallet": "Connect Wallet",
     "connect-wallets": "Connect Wallets",
     "copied": "Copied",
@@ -654,7 +653,6 @@
     "ready-to-claim": "Ready to claim",
     "ready-to-confirm": "Ready to confirm",
     "ready-to-prove": "Ready to prove",
-    "unsupported-chain-subheading": "Connect to a supported chain to view your transaction history.",
     "waiting-confirmation": "Waiting confirmation",
     "withdrawal-challenged": "Withdrawal challenged"
   },

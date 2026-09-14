@@ -39,7 +39,7 @@ export const Header = ({ isMenuOpen, openNavbar, toggleMenu }: Props) => (
       <TunnelTabs />
       <GenesisDropTabs />
     </div>
-    <div className="ml-auto hidden items-center gap-x-2 sm:flex">
+    <div className="ml-auto flex items-center gap-x-2">
       <HemiPricePill />
       <WalletConnection />
     </div>

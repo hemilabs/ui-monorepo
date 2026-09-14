@@ -57,10 +57,10 @@ Returns the global veHEMI staking stats. It is Hemi mainnet only.
 
 ```console
 $ curl http://localhost:3006/hemi-stake
-{"locksCount":15473,"rewards":[],"totalStaked":"1488392826436605230000147341","walletsStaking":13663}
+{"averageLock":63072000,"locksCount":15473,"rewards":[],"totalStaked":"1488392826436605230000147341","walletsStaking":13663}
 ```
 
-`totalStaked` is the amount of HEMI locked, in its smallest unit. `locksCount` is the number of open positions and `walletsStaking` the number of wallets that hold at least one position, read from the [Hemi explorer](https://explorer.hemi.xyz). `rewards` is the list of all-time paid rewards (to be implemented).
+`averageLock` is the average lock duration of the active positions, in seconds, read from the veHEMI subgraph. `totalStaked` is the amount of HEMI locked, in its smallest unit. `locksCount` is the number of open positions and `walletsStaking` the number of wallets that hold at least one position, read from the [Hemi explorer](https://explorer.hemi.xyz). `rewards` is the list of all-time paid rewards (to be implemented).
 
 #### `GET /net-stats`
 

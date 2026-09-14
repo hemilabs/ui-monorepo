@@ -38,6 +38,10 @@ RUN npm uninstall --global npm
 # Skip corepack's interactive download prompt so the `node` user can fetch
 # pnpm on first container start without a TTY to approve it.
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+# pnpm 11 checks deps before `pnpm run` and runs `pnpm install` when it can't
+# verify them. The `pnpm deploy` output can't be verified, and the install
+# fails as `node` can't write to /app.
+ENV pnpm_config_verify_deps_before_run=false
 
 WORKDIR /app
 

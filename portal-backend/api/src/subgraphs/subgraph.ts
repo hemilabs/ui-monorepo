@@ -706,6 +706,36 @@ export const getLockedPositions = function ({
   )
 }
 
+type GetLockStatsQueryResponse = GraphResponse<{
+  lockStats: {
+    activeLocks: number
+    totalLockDuration: string
+  } | null
+}>
+
+export const getLockStats = function () {
+  const subgraphUrl = getSubgraphUrl({
+    chainId: hemi.id,
+    subgraphIds: { [hemi.id]: subgraphConfig.veHemi.mainnet },
+  })
+
+  const schema = {
+    query: `{
+      lockStats(id: "singleton") {
+        activeLocks
+        totalLockDuration
+      }
+    }`,
+  }
+
+  return request<GetLockStatsQueryResponse>(subgraphUrl, schema).then(
+    function (response) {
+      checkGraphQLErrors(response)
+      return response.data.lockStats
+    },
+  )
+}
+
 // `failed` is an Agent-side flag the indexer clears on `RequestRetried` but not
 // on cancel, so it lingers through CANCELLED/RECOVERED. A terminal Router status
 // wins over it: only a still-PENDING request surfaces as FAILED, otherwise a

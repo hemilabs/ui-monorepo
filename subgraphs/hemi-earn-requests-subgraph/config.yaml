@@ -1,14 +1,11 @@
-# Multichain indexer for the Hemi Earn cross-chain request flow.
-#
-# The Router (on Hemi) mints a requestId and emits *Requested events; the Agent
-# (on Ethereum) processes the request and emits *Processed events. Both sides are
-# tied together by `requestId`, which is used as the Request entity id so each
-# event upserts the same entity regardless of which chain it arrives from.
+# Hemi indexer that indexes:
+# - Hemi Earn cross-chain request flow.
+# - Hemi supply snapshots across chains
 chains:
-  # ---- Hemi: the Router lives here ----
   - contracts:
+      # ---- Hemi: the Router lives here ----
       - address:
-          - '0x8a23DF259c6798F9eacC51Ae816461218c3acddc' # Router on Hemi.
+          - '0x8a23DF259c6798F9eacC51Ae816461218c3acddc'
         events:
           - event: 'DepositRequested(uint256 indexed requestId, address indexed asset, uint256 assets, uint256 amountOutMin, address indexed receiver, bool automatic)'
           - event: 'RedeemRequested(uint256 indexed requestId, address indexed asset, uint256 shares, uint256 amountOutMin, address indexed receiver, bool automatic)'
@@ -17,31 +14,39 @@ chains:
           - event: 'RequestClaimed(uint256 indexed requestId)'
           - event: 'RequestRecovered(uint256 indexed requestId)'
           - event: 'CancellationRequested(uint256 indexed requestId)'
-        handler: src/mappings/eventHandlers.ts
         name: Router
+        start_block: 4539427
       # Share OFTs on Hemi
       - address:
           - '0xfe875CC86cC6BC2E93ab330D6b2c408C3Cd79710' # sVUSD share OFT on Hemi.
           - '0xD8D63De3b64bd06d99F8F5AD8B78Ed2fE7525eC0' # svetBTC share OFT on Hemi.
         events:
           - event: 'Transfer(address indexed from, address indexed to, uint256 value)'
-        handler: src/mappings/eventHandlers.ts
         name: ShareToken
+        start_block: 4539427
+      # ---- HEMI supply ----
+      - address: '0x9Ab3660ceE733332785cEa09D1a4Ff222F31aE54'
+        name: MerkleBox
+      # Accounts whose Hemi balances are not circulating
+      - address:
+          - '0x000000000000000000000000000000000000dEaD'
+          - '0x297037125A587940aAC0f0AB007B572203f2c2c9'
+          - '0x46EdB3583677cc559968Ba48D12FD64d45A24d0b'
+          - '0xd985C45Fc88CBbceA0C0B273767f7180D1740296'
+          - '0xea03D0E996D2C9546Da7400D8bDA9B84eE965782'
+        name: OpAddresses
+      - address: '0x694fA0816999Da16E8783C0f5cDE68c13a33C4e6'
+        name: Safe
+      - address: '0x371d3718D5b7F75EAb050FAe6Da7DF3092031c89'
+        name: VeHemi
     id: 43111
-    # Hemi is NOT served by Envio HyperSync (43111.hypersync.xyz 404s), so the
-    # Router is indexed over RPC (`for: sync` makes RPC the data source for both
-    # historical and real-time). The public RPC below works but is rate-limited;
-    # for production point this at a dedicated/paid Hemi RPC — or set the url to
-    # an env-var interpolation like {HEMI_RPC_URL} prefixed with a dollar sign
-    # (requires that variable to be set at codegen/run time).
-    # Note: RPC sync is significantly slower than HyperSync.
     rpc:
       for: sync
       url: https://rpc.hemi.network/rpc
-    start_block: 4539427
+    start_block: 2726575 # 2025-09-23T00:00:11Z
 
-  # ---- Ethereum: the Agent lives here ----
   - contracts:
+      # ---- Ethereum: the Agent lives here ----
       # Index the PROXY — it is the event emitter. hemi-earn#115 upgraded its
       # implementation (to 0x46e6ade9b7b59e151c5bcc877c9b90d50021553a) so the
       # same proxy now emits the amount-carrying *Processed events.
@@ -56,10 +61,35 @@ chains:
           - event: 'RequestCancellationTriggered(uint256 indexed requestId)'
           - event: 'RequestFailed(uint256 indexed requestId, bytes reason)'
           - event: 'RequestRetried(uint256 indexed requestId)'
-        handler: src/mappings/eventHandlers.ts
         name: Agent
+        start_block: 25224437
+      # ---- HEMI supply ----
+      - address: '0x000000000000000000000000000000000000dEaD'
+        name: Dead
+      - address: '0x694fA0816999Da16E8783C0f5cDE68c13a33C4e6'
+        name: Safe
     id: 1
-    start_block: 25224437
+    start_block: 23422006 # 2025-09-23T00:00:11Z
+
+  # ---- BNB Chain: HEMI supply only ----
+  - contracts:
+      - address: '0x694fA0816999Da16E8783C0f5cDE68c13a33C4e6'
+        name: Safe
+    id: 56
+    start_block: 62115614 # 2025-09-23T00:00:00Z
+
+# ---- HEMI supply: accounts whose balance a snapshot reads, no events ----
+contracts:
+  - events: []
+    name: Dead
+  - events: []
+    name: MerkleBox
+  - events: []
+    name: OpAddresses
+  - events: []
+    name: Safe
+  - events: []
+    name: VeHemi
 
 field_selection:
   # `transaction.from` is the real initiator (msg.sender) — it is NOT in any event
@@ -67,5 +97,9 @@ field_selection:
   transaction_fields:
     - from
     - hash
+
+full_batch_size: 100
+
+handlers: src/mappings
 
 name: hemi-earn-requests

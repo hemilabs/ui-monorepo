@@ -45,6 +45,10 @@ contract / smart-account wallet it is that contract's address, not the logical u
 - **An Envio API token** — required for HyperSync (the Ethereum / Agent side).
   Get a free token at <https://envio.dev/app/api-tokens>, then `cp .env.example .env` and set `ENVIO_API_TOKEN` in `.env`.
 
+## HEMI supply
+
+This indexer also takes the HEMI supply snapshots that the portal-backend serves on `/circulating` and `/supply-history`.
+
 ## Commands
 
 Run these from this folder (`subgraphs/hemi-earn-requests-subgraph`):

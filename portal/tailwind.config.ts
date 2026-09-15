@@ -18,6 +18,7 @@ const config: Config = {
         '0 0 0 4px var(--Color-Grayscale-Neutral-200, #E5E5E5)',
       'input-focused':
         '0 0 0 1px rgba(0, 0, 0, 0.05), 0 0 0 4px var(--Color-Grayscale-Neutral-200, #E5E5E5), 0 1px 2px 0 rgba(0, 0, 0, 0.08), 0 7px 11px -6px rgba(0, 0, 0, 0.08)',
+      'toggle-primary-focused': '0 0 0 4px #FFEBD4',
       // Sorting by increasing size of shadow - these are the theme's default
       /* eslint-disable sort-keys */
       'none': '0 0 #0000',

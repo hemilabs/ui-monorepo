@@ -6,6 +6,7 @@ import { Outlet } from 'react-router'
 import { useTranslations } from 'use-intl'
 
 import { HemiStakeHero } from './_components/hemiStakeHero'
+import { HemiStakeTabs } from './_components/hemiStakeTabs'
 import StakingDashboardLayoutClient from './_components/stakingDashboardLayoutClient'
 import { isStakingDashboardEnabledOnTestnet } from './_utils/isStakingDashboardEnabledOnTestnet'
 
@@ -23,7 +24,10 @@ export const HemiStakeLayout = function () {
         <div className="flex flex-col">
           <HemiStakeHero />
           {isEnabled ? (
-            <Outlet />
+            <>
+              <HemiStakeTabs />
+              <Outlet />
+            </>
           ) : (
             <TestnetDisabled subtitle={t('switch-to-start-staking')} />
           )}

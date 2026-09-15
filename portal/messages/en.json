@@ -532,6 +532,10 @@
       "you-delegated-this-position": "You delegated this position",
       "you-transferred-this-position": "You transferred this position"
     },
+    "tabs": {
+      "analytics": "Analytics",
+      "stake": "Stake"
+    },
     "unlock-successful": "Unlock successful",
     "voting-power": "Voting Power"
   },

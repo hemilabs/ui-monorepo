@@ -86,12 +86,18 @@ export const endOfDay = (date: string) =>
 // Multicall3 lives at the same address on every chain
 const multicallAddress = '0xcA11bde05977b3631167028862bE2a173976CA11'
 
+const rpcUrls: Record<Chain['id'], string | undefined> = {
+  [bsc.id]: process.env.ENVIO_RPC_URL_BNB,
+  [hemi.id]: process.env.ENVIO_RPC_URL_HEMI,
+  [mainnet.id]: process.env.ENVIO_RPC_URL_ETH,
+}
+
 const clients = Object.fromEntries(
   [bsc, hemi, mainnet].map(chain => [
     chain.id,
     createPublicClient({
       chain,
-      transport: http(undefined, { batch: true, timeout: 30000 }),
+      transport: http(rpcUrls[chain.id], { batch: true, timeout: 30000 }),
     }),
   ]),
 ) as Record<Chain['id'], PublicClient>

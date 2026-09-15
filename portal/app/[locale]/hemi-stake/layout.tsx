@@ -7,7 +7,6 @@ import { useTranslations } from 'use-intl'
 
 import { HemiStakeHero } from './_components/hemiStakeHero'
 import { HemiStakeTabs } from './_components/hemiStakeTabs'
-import StakingDashboardLayoutClient from './_components/stakingDashboardLayoutClient'
 import { isStakingDashboardEnabledOnTestnet } from './_utils/isStakingDashboardEnabledOnTestnet'
 
 export const HemiStakeLayout = function () {
@@ -19,20 +18,18 @@ export const HemiStakeLayout = function () {
   const isEnabled = isStakingDashboardEnabledOnTestnet(networkType)
 
   return (
-    <StakingDashboardLayoutClient>
-      <PageLayout variant="superWide">
-        <div className="flex flex-col">
-          <HemiStakeHero />
-          {isEnabled ? (
-            <>
-              <HemiStakeTabs />
-              <Outlet />
-            </>
-          ) : (
-            <TestnetDisabled subtitle={t('switch-to-start-staking')} />
-          )}
-        </div>
-      </PageLayout>
-    </StakingDashboardLayoutClient>
+    <PageLayout variant="wide">
+      <div className="flex flex-col">
+        <HemiStakeHero />
+        {isEnabled ? (
+          <>
+            <HemiStakeTabs />
+            <Outlet />
+          </>
+        ) : (
+          <TestnetDisabled subtitle={t('switch-to-start-staking')} />
+        )}
+      </div>
+    </PageLayout>
   )
 }

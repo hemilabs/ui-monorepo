@@ -136,14 +136,6 @@ describe('getNearestPreset', function () {
     expect(getNearestPreset({ days: 1400, presets: [180, 366] })).toBe(366)
   })
 
-  it('should ignore presets below minLocked', function () {
-    expect(getNearestPreset({ days: 12, minLocked: 400, presets })).toBe(732)
-  })
-
-  it('should clamp to minLocked when no preset reaches it', function () {
-    expect(getNearestPreset({ days: 12, minLocked: 1500, presets })).toBe(1500)
-  })
-
   it('should prefer the shorter lock when two presets are equally close', function () {
     expect(getNearestPreset({ days: (180 + 366) / 2, presets })).toBe(180)
   })

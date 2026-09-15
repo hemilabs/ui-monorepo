@@ -46,10 +46,6 @@ export const Hover: Story = {
   parameters: { pseudo: { hover: true } },
 }
 
-export const ExtendingALock: Story = {
-  args: { minLocked: 400 },
-}
-
 export const WithApr: Story = {
   args: {
     options: [

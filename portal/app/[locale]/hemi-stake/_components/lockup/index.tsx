@@ -215,18 +215,14 @@ export function Lockup({
 
   const presetDays = presets.map(preset => preset.days)
 
-  const isSelectablePreset = (days: number) =>
-    presetDays.includes(days) && (!minLocked || days >= minLocked)
+  const canUsePresets = minLocked === undefined
 
-  const openingDays =
-    minLocked && lockupDays < minLocked
-      ? getNearestPreset({ days: minLocked, minLocked, presets: presetDays })
-      : lockupDays
+  const isSelectablePreset = (days: number) => presetDays.includes(days)
 
   const [touched, setTouched] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
   const [showSlider, setShowSlider] = useState(
-    () => !isSelectablePreset(openingDays),
+    () => !isSelectablePreset(lockupDays),
   )
   const labelId = useId()
 
@@ -279,7 +275,7 @@ export function Lockup({
   function handleCustomClick() {
     if (showSlider && !isSelectablePreset(lockupDays)) {
       handleStepClick(
-        getNearestPreset({ days: lockupDays, minLocked, presets: presetDays }),
+        getNearestPreset({ days: lockupDays, presets: presetDays }),
       )
     }
     setShowSlider(!showSlider)
@@ -304,18 +300,11 @@ export function Lockup({
   useEffect(
     function updateInputDaysByMinLocked() {
       if (minLocked && Number(inputDays) < minLocked && !touched) {
-        updateInputDays(String(openingDays))
-        updateLockupDays(openingDays)
+        updateInputDays(String(minLocked))
+        updateLockupDays(minLocked)
       }
     },
-    [
-      inputDays,
-      minLocked,
-      openingDays,
-      touched,
-      updateInputDays,
-      updateLockupDays,
-    ],
+    [inputDays, minLocked, touched, updateInputDays, updateLockupDays],
   )
 
   return (
@@ -349,22 +338,24 @@ export function Lockup({
                 </div>
               </>
             )}
-            <button
-              aria-pressed={showSlider}
-              className={`text-sm font-medium transition-colors ${
-                showSlider
-                  ? 'text-orange-600'
-                  : 'text-neutral-500 hover:text-neutral-950'
-              }`}
-              onClick={handleCustomClick}
-              type="button"
-            >
-              {t('form.custom')}
-            </button>
+            {canUsePresets && (
+              <button
+                aria-pressed={showSlider}
+                className={`text-sm font-medium transition-colors ${
+                  showSlider
+                    ? 'text-orange-600'
+                    : 'text-neutral-500 hover:text-neutral-950'
+                }`}
+                onClick={handleCustomClick}
+                type="button"
+              >
+                {t('form.custom')}
+              </button>
+            )}
           </div>
         </div>
         <div className="flex min-h-20 flex-col justify-center xs:min-h-14">
-          {showSlider ? (
+          {showSlider || !canUsePresets ? (
             <div className="flex flex-col gap-y-4">
               <RangeSlider
                 max={maxDays}
@@ -401,10 +392,9 @@ export function Lockup({
           ) : (
             <LockupPresets
               labelledBy={labelId}
-              minLocked={minLocked}
               onSelect={handleStepClick}
               options={presets}
-              value={openingDays}
+              value={lockupDays}
             />
           )}
         </div>

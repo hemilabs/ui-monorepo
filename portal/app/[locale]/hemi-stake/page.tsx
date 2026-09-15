@@ -1,10 +1,5 @@
-import { PageLayout } from 'components/pageLayout'
-import { TestnetDisabled } from 'components/testnetDisabled'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useMemo, useState } from 'react'
-import { useTranslations } from 'use-intl'
 
-import { HemiStakeHero } from './_components/hemiStakeHero'
 import { StakeForm } from './_components/stakeForm'
 import { StakeTable } from './_components/stakeTable'
 import {
@@ -14,9 +9,8 @@ import {
 import { StatsSection } from './_components/statsSection'
 import { StakingDashboardProvider } from './_context/stakingDashboardContext'
 import { useStakingPositions } from './_hooks/useStakingPositions'
-import { isStakingDashboardEnabledOnTestnet } from './_utils/isStakingDashboardEnabledOnTestnet'
 
-function StakingContent() {
+export const HemiStakePage = function () {
   const { data, isLoading } = useStakingPositions()
 
   const [filter, setFilter] = useState<StakeTableFilterOptions>('active')
@@ -45,25 +39,5 @@ function StakingContent() {
         </div>
       </div>
     </StakingDashboardProvider>
-  )
-}
-
-export const HemiStakePage = function () {
-  const t = useTranslations('hemi-stake')
-  const [networkType] = useNetworkType()
-
-  const isEnabled = isStakingDashboardEnabledOnTestnet(networkType)
-
-  return (
-    <PageLayout variant="superWide">
-      <div className="flex flex-col">
-        <HemiStakeHero />
-        {isEnabled ? (
-          <StakingContent />
-        ) : (
-          <TestnetDisabled subtitle={t('switch-to-start-staking')} />
-        )}
-      </div>
-    </PageLayout>
   )
 }

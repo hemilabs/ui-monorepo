@@ -1,10 +1,19 @@
-import { type EvmOnBlockHandlerArgs, createEffect, indexer, S } from 'envio'
+/* eslint-disable no-console */
+import {
+  type EvmOnBlockHandlerArgs,
+  type Logger,
+  type RateLimit,
+  createEffect,
+  indexer,
+  S,
+} from 'envio'
 import {
   type Address,
   type Chain,
   type PublicClient,
   createPublicClient,
   erc20Abi,
+  fallback,
   http,
   withRetry,
 } from 'viem'
@@ -86,25 +95,91 @@ export const endOfDay = (date: string) =>
 // Multicall3 lives at the same address on every chain
 const multicallAddress = '0xcA11bde05977b3631167028862bE2a173976CA11'
 
-const rpcUrls: Record<Chain['id'], string | undefined> = {
-  [bsc.id]: process.env.ENVIO_RPC_URL_BNB,
-  [hemi.id]: process.env.ENVIO_RPC_URL_HEMI,
-  [mainnet.id]: process.env.ENVIO_RPC_URL_ETH,
+const toRpcUrls = (value = '') =>
+  value.split('+').filter(url => URL.canParse(url))
+
+const rpcUrls: Record<Chain['id'], string[]> = {
+  [bsc.id]: toRpcUrls(process.env.ENVIO_RPC_URL_BNB),
+  [hemi.id]: toRpcUrls(process.env.ENVIO_RPC_URL_HEMI),
+  [mainnet.id]: toRpcUrls(process.env.ENVIO_RPC_URL_ETH),
 }
 
-const clients = Object.fromEntries(
-  [bsc, hemi, mainnet].map(chain => [
-    chain.id,
-    createPublicClient({
-      chain,
-      transport: http(rpcUrls[chain.id], { batch: true, timeout: 30000 }),
+const toTransport = function (chainId: Chain['id'], urls: string[]) {
+  const transports = urls.map((url, index) =>
+    http(url, {
+      batch: true,
+      onFetchRequest() {
+        if (index > 0) {
+          console.info(`Chain ${chainId} falls back to ${new URL(url).host}`)
+        }
+      },
+      onFetchResponse(response) {
+        if (!response.ok) {
+          console.warn(
+            `Chain ${chainId} RPC ${new URL(url).host} answered ${response.status} ${response.statusText}`,
+          )
+        }
+      },
+      retryCount: 0,
+      timeout: 30000,
     }),
-  ]),
-) as Record<Chain['id'], PublicClient>
+  )
+  return transports.length > 1
+    ? fallback(transports, { retryCount: 0 })
+    : transports[0]
+}
 
-// with backoff
-const retry = <T>(fn: () => Promise<T>) =>
-  withRetry(fn, { delay: ({ count }) => 2 ** count * 1000, retryCount: 3 })
+const clients: Partial<Record<Chain['id'], PublicClient>> = Object.fromEntries(
+  [bsc, hemi, mainnet]
+    .filter(chain => rpcUrls[chain.id].length > 0)
+    .map(chain => [
+      chain.id,
+      createPublicClient({
+        chain,
+        transport: toTransport(chain.id, rpcUrls[chain.id]),
+      }),
+    ]),
+)
+
+const getClient = function (chainId: Chain['id']) {
+  const client = clients[chainId]
+  if (!client) {
+    throw new Error(
+      `Chain ${chainId} has no valid URL in its ENVIO_RPC_URL_* variable`,
+    )
+  }
+  return client
+}
+
+const timed = async function <T>(
+  log: Logger,
+  label: string,
+  fn: () => Promise<T>,
+) {
+  const start = Date.now()
+  log.info(`${label} started`)
+  try {
+    const result = await fn()
+    log.info(`${label} finished`, { ms: Date.now() - start })
+    return result
+  } catch (error) {
+    log.info(`${label} failed`, {
+      error: (error as Error).message,
+      ms: Date.now() - start,
+    })
+    throw error
+  }
+}
+
+const retry = <T>(log: Logger, label: string, fn: () => Promise<T>) =>
+  withRetry(() => timed(log, label, fn), {
+    delay: 30000,
+    retryCount: 1,
+    shouldRetry({ count }) {
+      log.info(`${label} will retry`, { try: count + 1 })
+      return true
+    },
+  })
 
 const llamaChainByChain: Record<Chain['id'], string> = {
   [bsc.id]: 'bsc',
@@ -114,6 +189,13 @@ const llamaChainByChain: Record<Chain['id'], string> = {
 
 // Shared by the chains. The public RPCs reject faster reads.
 const rateLimit = { calls: 2, per: 'second' } as const
+
+// The public BNB Chain RPC answers 429 to faster day-end reads from Envio Cloud
+const dayEndRateLimit: Record<Chain['id'], RateLimit> = {
+  [bsc.id]: { calls: 1, per: 3000 },
+  [hemi.id]: rateLimit,
+  [mainnet.id]: rateLimit,
+}
 
 // About 5 minutes of blocks on each chain, for the snapshots at the head
 const realtimeStride: Record<Chain['id'], number> = {
@@ -170,21 +252,29 @@ const snapshotSchema = {
   totalSupply: S.optional(S.bigint),
 }
 
-const readBalances = async function (
-  chainId: Chain['id'],
-  blockNumber: number,
-) {
-  const client = clients[chainId]
-  const [block, snapshot] = await retry(() =>
-    Promise.all([
-      getBlock(client, { blockNumber: BigInt(blockNumber) }),
-      multicall(client, {
-        allowFailure: false,
-        blockNumber: BigInt(blockNumber),
-        contracts: contractsByChain[chainId],
-        multicallAddress,
-      }).then(values => toSnapshot(chainId, values as bigint[])),
-    ]),
+const readBalances = async function ({
+  blockNumber,
+  chainId,
+  log,
+}: {
+  blockNumber: number
+  chainId: Chain['id']
+  log: Logger
+}) {
+  const client = getClient(chainId)
+  const [block, snapshot] = await retry(
+    log,
+    `Chain ${chainId} balances at block ${blockNumber}`,
+    () =>
+      Promise.all([
+        getBlock(client, { blockNumber: BigInt(blockNumber) }),
+        multicall(client, {
+          allowFailure: false,
+          blockNumber: BigInt(blockNumber),
+          contracts: contractsByChain[chainId],
+          multicallAddress,
+        }).then(values => toSnapshot(chainId, values as bigint[])),
+      ]),
   )
   return {
     snapshot: { ...emptySnapshot, ...snapshot },
@@ -207,15 +297,22 @@ const findMidnightBlock = createEffect(
   async function ({ context, input }) {
     const { chainId, time } = input
     try {
-      const { height } = await retry(async function () {
-        const res = await fetch(
-          `https://coins.llama.fi/block/${llamaChainByChain[chainId]}/${time}`,
-        )
-        if (!res.ok) {
-          throw new Error(`DefiLlama answered ${res.status} ${res.statusText}`)
-        }
-        return (await res.json()) as { height: number }
-      })
+      const { height } = await retry(
+        context.log,
+        `Chain ${chainId} DefiLlama block at ${time}`,
+        async function () {
+          const res = await fetch(
+            `https://coins.llama.fi/block/${llamaChainByChain[chainId]}/${time}`,
+            { signal: AbortSignal.timeout(30000) },
+          )
+          if (!res.ok) {
+            throw new Error(
+              `DefiLlama answered ${res.status} ${res.statusText}`,
+            )
+          }
+          return (await res.json()) as { height: number }
+        },
+      )
       return height
     } catch (error) {
       context.cache = false
@@ -240,7 +337,7 @@ const readSnapshot = createEffect(
   async function ({ context, input }) {
     const { blockNumber, chainId } = input
     try {
-      return await readBalances(chainId, blockNumber)
+      return await readBalances({ blockNumber, chainId, log: context.log })
     } catch (error) {
       context.log.warn(
         `Failed to read the HEMI supply of chain ${chainId} at block ${blockNumber}`,
@@ -251,49 +348,67 @@ const readSnapshot = createEffect(
   },
 )
 
-const readDayEndSnapshot = createEffect(
-  {
-    input: { blockNumber: S.int32, chainId: S.int32 },
-    name: 'readDayEndSupplySnapshot',
-    output: S.nullable(
-      S.schema({
-        blockNumber: S.int32,
-        date: S.string,
-        snapshot: snapshotSchema,
-      }),
-    ),
-    rateLimit,
-  },
-  async function ({ context, input }) {
-    const { chainId } = input
-    try {
-      const trigger = await retry(() =>
-        getBlock(clients[chainId], { blockNumber: BigInt(input.blockNumber) }),
-      )
-      const date = toDate(Number(trigger.timestamp))
-      const time = endOfDay(date)
-      // Today has not closed yet. The realtime snapshots fill it.
-      if (time * 1000 > Date.now()) {
+const createDayEndSnapshotEffect = (chainId: Chain['id']) =>
+  createEffect(
+    {
+      input: { blockNumber: S.int32 },
+      name: `readDayEndSupplySnapshot${chainId}`,
+      output: S.nullable(
+        S.schema({
+          blockNumber: S.int32,
+          date: S.string,
+          snapshot: snapshotSchema,
+        }),
+      ),
+      rateLimit: dayEndRateLimit[chainId],
+    },
+    async function ({ context, input }) {
+      try {
+        const trigger = await retry(
+          context.log,
+          `Chain ${chainId} trigger block ${input.blockNumber}`,
+          () =>
+            getBlock(getClient(chainId), {
+              blockNumber: BigInt(input.blockNumber),
+            }),
+        )
+        const date = toDate(Number(trigger.timestamp))
+        const time = endOfDay(date)
+        // Today has not closed yet. The realtime snapshots fill it.
+        if (time * 1000 > Date.now()) {
+          return null
+        }
+        const blockNumber = await context.effect(findMidnightBlock, {
+          chainId,
+          time,
+        })
+        if (blockNumber === null) {
+          return null
+        }
+        const { snapshot } = await readBalances({
+          blockNumber,
+          chainId,
+          log: context.log,
+        })
+        return { blockNumber, date, snapshot }
+      } catch (error) {
+        context.log.warn(
+          `Failed to read the HEMI supply of chain ${chainId} at the end of the day of block ${input.blockNumber}`,
+          error as Error,
+        )
         return null
       }
-      const blockNumber = await context.effect(findMidnightBlock, {
-        chainId,
-        time,
-      })
-      if (blockNumber === null) {
-        return null
-      }
-      const { snapshot } = await readBalances(chainId, blockNumber)
-      return { blockNumber, date, snapshot }
-    } catch (error) {
-      context.log.warn(
-        `Failed to read the HEMI supply of chain ${chainId} at the end of the day of block ${input.blockNumber}`,
-        error as Error,
-      )
-      return null
-    }
-  },
-)
+    },
+  )
+
+const readDayEndSnapshotByChain: Record<
+  Chain['id'],
+  ReturnType<typeof createDayEndSnapshotEffect>
+> = {
+  [bsc.id]: createDayEndSnapshotEffect(bsc.id),
+  [hemi.id]: createDayEndSnapshotEffect(hemi.id),
+  [mainnet.id]: createDayEndSnapshotEffect(mainnet.id),
+}
 
 const saveSnapshot = async function ({
   blockNumber,
@@ -307,6 +422,9 @@ const saveSnapshot = async function ({
   snapshot: Snapshot
 }) {
   const chainId = context.chain.id
+  context.log.info(`Chain ${chainId} saves the snapshot of ${date}`, {
+    blockNumber,
+  })
   const daily = await context.DailySupplySnapshot.get(date)
   context.DailySupplySnapshot.set({
     ...emptySnapshot,
@@ -332,10 +450,13 @@ indexer.onBlock(
     if (context.chain.isRealtime) {
       return
     }
-    const read = await context.effect(readDayEndSnapshot, {
-      blockNumber: block.number,
-      chainId: context.chain.id,
-    })
+    context.log.info(
+      `Chain ${context.chain.id} historical handler at block ${block.number}`,
+    )
+    const read = await context.effect(
+      readDayEndSnapshotByChain[context.chain.id],
+      { blockNumber: block.number },
+    )
     if (read) {
       await saveSnapshot({ ...read, context })
     }
@@ -360,6 +481,9 @@ indexer.onBlock(
     if (!context.chain.isRealtime) {
       return
     }
+    context.log.info(
+      `Chain ${context.chain.id} realtime handler at block ${block.number}`,
+    )
     const read = await context.effect(readSnapshot, {
       blockNumber: block.number,
       chainId: context.chain.id,

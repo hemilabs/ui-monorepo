@@ -130,6 +130,12 @@ const historicalStride: Record<Chain['id'], number> = {
   [mainnet.id]: 7000,
 }
 
+const realtimeStartBlock: Record<Chain['id'], string | undefined> = {
+  [bsc.id]: process.env.ENVIO_SUPPLY_REALTIME_START_BLOCK_BNB,
+  [hemi.id]: process.env.ENVIO_SUPPLY_REALTIME_START_BLOCK_HEMI,
+  [mainnet.id]: process.env.ENVIO_SUPPLY_REALTIME_START_BLOCK_ETH,
+}
+
 const blockFieldByChain = {
   [bsc.id]: 'bnbBlock',
   [hemi.id]: 'hemiBlock',
@@ -340,7 +346,14 @@ indexer.onBlock(
   {
     name: 'supply-realtime',
     where: ({ chain }) => ({
-      block: { number: { _every: realtimeStride[chain.id] } },
+      block: {
+        number: {
+          _every: realtimeStride[chain.id],
+          ...(realtimeStartBlock[chain.id] && {
+            _gte: Number(realtimeStartBlock[chain.id]),
+          }),
+        },
+      },
     }),
   },
   async function ({ block, context }) {

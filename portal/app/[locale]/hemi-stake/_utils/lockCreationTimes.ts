@@ -33,7 +33,7 @@ export const getNearestPreset = function ({
   const selectable = presets.filter(preset => !minLocked || preset >= minLocked)
 
   return selectable.length === 0
-    ? maxDays
+    ? (minLocked ?? maxDays)
     : selectable.reduce((closest, preset) =>
         Math.abs(preset - days) < Math.abs(closest - days) ? preset : closest,
       )

@@ -1,7 +1,6 @@
 import {
   getNearestPreset,
   getUnlockInfo,
-  maxDays,
   predictVotingPower,
 } from 'app/[locale]/hemi-stake/_utils/lockCreationTimes'
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
@@ -141,10 +140,8 @@ describe('getNearestPreset', function () {
     expect(getNearestPreset({ days: 12, minLocked: 400, presets })).toBe(732)
   })
 
-  it('should fall back to the max lock when no preset reaches minLocked', function () {
-    expect(getNearestPreset({ days: 12, minLocked: 1500, presets })).toBe(
-      maxDays,
-    )
+  it('should clamp to minLocked when no preset reaches it', function () {
+    expect(getNearestPreset({ days: 12, minLocked: 1500, presets })).toBe(1500)
   })
 
   it('should prefer the shorter lock when two presets are equally close', function () {

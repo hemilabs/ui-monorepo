@@ -183,7 +183,7 @@ const readBalances = async function (
 // In order to process historical data and save many RPC calls
 // we can get what was the closest block to midnight UTC from defiLlama.
 // Note: BNB is so fast that has many blocks per second - any of them works.
-// This is is, after all, for chart visualization.
+// This is, after all, for chart visualization.
 const findMidnightBlock = createEffect(
   {
     cache: true,

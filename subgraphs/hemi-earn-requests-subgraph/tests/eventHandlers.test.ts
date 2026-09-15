@@ -7,12 +7,11 @@ import '../src/mappings/eventHandlers'
 
 const { mockAddresses } = TestHelpers.Addresses
 
-// Chain ids and start blocks mirror config.yaml. Simulated block.number must be
-// >= the chain's start_block.
 const HEMI = 43111
 const ETH = 1
 const HEMI_START = 4_539_427 // Router deploy block on Hemi
 const ETH_START = 25_224_437 // Agent deploy block on Ethereum
+const startBlock = { [ETH]: ETH_START, [HEMI]: HEMI_START }
 
 const ASSET = mockAddresses[0]
 const RECEIVER = mockAddresses[1]
@@ -37,7 +36,9 @@ type SimEvent = NonNullable<
 // `process({ chains: { [id]: { simulate } } })` nesting that otherwise repeats
 // in every test.
 const onChain = (chain: typeof HEMI | typeof ETH, simulate: SimEvent[]) =>
-  ti.process({ chains: { [chain]: { simulate } } })
+  ti.process({
+    chains: { [chain]: { simulate, startBlock: startBlock[chain] } },
+  })
 
 describe('Router request creation', () => {
   it('DepositRequested creates a PENDING deposit with lowercased addresses', async () => {
@@ -181,6 +182,7 @@ describe('cross-chain partial view', () => {
               transaction: { from: SENDER, hash: '0xproc' },
             },
           ],
+          startBlock: ETH_START,
         },
         [HEMI]: {
           simulate: [
@@ -199,6 +201,7 @@ describe('cross-chain partial view', () => {
               transaction: { from: SENDER, hash: '0xreq' },
             },
           ],
+          startBlock: HEMI_START,
         },
       },
     })
@@ -477,6 +480,7 @@ describe('Agent receives', () => {
               transaction: { from: SENDER, hash: '0xproc' },
             },
           ],
+          startBlock: ETH_START,
         },
         [HEMI]: {
           simulate: [
@@ -494,6 +498,7 @@ describe('Agent receives', () => {
               },
             },
           ],
+          startBlock: HEMI_START,
         },
       },
     })

@@ -117,7 +117,7 @@ const realtimeStride: Record<Chain['id'], number> = {
 }
 
 // Just under a day of blocks on each chain, so no past day is skipped. BNB
-// Chain's is sized for its 0.75s blocks before January 2026.
+// Chain's stride is sized for its 0.75s blocks before January 2026.
 const historicalStride: Record<Chain['id'], number> = {
   [bsc.id]: 110000,
   [hemi.id]: 7000,

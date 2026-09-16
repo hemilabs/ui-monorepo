@@ -19,6 +19,19 @@ export const twoYears = 732
 
 export const epochsPerYear = 61 // 61 epochs × 6 days = 366 days
 
+export const oneYear = epochsPerYear * step
+export const sixMonths = Math.floor(epochsPerYear / 2) * step
+
+type GetNearestPresetProps = {
+  days: number
+  presets: number[]
+}
+
+export const getNearestPreset = ({ days, presets }: GetNearestPresetProps) =>
+  presets.reduce((closest, preset) =>
+    Math.abs(preset - days) < Math.abs(closest - days) ? preset : closest,
+  )
+
 // To ensure the lock duration is at least the minimum, we clamp the value after calculation
 const clampMin = <T extends number | bigint>(value: T, min: T): T =>
   value < min ? min : value

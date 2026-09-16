@@ -1,4 +1,5 @@
 import {
+  getNearestPreset,
   getUnlockInfo,
   predictVotingPower,
 } from 'app/[locale]/hemi-stake/_utils/lockCreationTimes'
@@ -112,5 +113,30 @@ describe('predictVotingPower', function () {
     // 2 year lock = 50% of max, so voting power should be ~50% of amount
     const expectedVotingPower = (amount * twoYears) / maxTimeSeconds
     expect(result).toBe(expectedVotingPower)
+  })
+})
+
+describe('getNearestPreset', function () {
+  const presets = [180, 366, 732, 1461]
+
+  it('should return the preset closest to the given value', function () {
+    expect(getNearestPreset({ days: 12, presets })).toBe(180)
+    expect(getNearestPreset({ days: 400, presets })).toBe(366)
+    expect(getNearestPreset({ days: 900, presets })).toBe(732)
+    expect(getNearestPreset({ days: 1100, presets })).toBe(1461)
+  })
+
+  it('should return the preset itself when the value already is one', function () {
+    presets.forEach(preset =>
+      expect(getNearestPreset({ days: preset, presets })).toBe(preset),
+    )
+  })
+
+  it('should never return a value outside the given list', function () {
+    expect(getNearestPreset({ days: 1400, presets: [180, 366] })).toBe(366)
+  })
+
+  it('should prefer the shorter lock when two presets are equally close', function () {
+    expect(getNearestPreset({ days: (180 + 366) / 2, presets })).toBe(180)
   })
 })

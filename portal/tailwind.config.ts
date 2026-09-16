@@ -287,6 +287,9 @@ const config: Config = {
         '17': '17',
         '18': '18',
       },
+      ringWidth: {
+        '1.5': '1.5px',
+      },
       screens: {
         xs: '425px',
       },

@@ -28,8 +28,6 @@ const startOfDay = date => Date.parse(`${date}T00:00:00Z`)
 // A daily quote stamped at midnight closes the day before it.
 const closingDate = time => toDate(Math.round(time / dayMs) * dayMs - 1)
 
-// Kept in sync by hand with api/src/coin-market-cap.ts. Once this cron is
-// written in TypeScript, both can read it from a shared package.
 async function fetchPrices({ firstDate, lastDate, symbol }) {
   const days = (startOfDay(lastDate) - startOfDay(firstDate)) / dayMs + 1
   const params = new URLSearchParams([

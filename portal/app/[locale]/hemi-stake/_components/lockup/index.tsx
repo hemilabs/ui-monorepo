@@ -6,7 +6,7 @@ import { ReactNode, useEffect, useId, useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import type { Token } from 'types/token'
 import { useLocale, useTranslations } from 'use-intl'
-import { formatDate } from 'utils/format'
+import { formatDate, formatNumber } from 'utils/format'
 import { unixNowTimestamp } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
@@ -22,6 +22,7 @@ import {
   step,
   twoYears,
 } from '../../_utils/lockCreationTimes'
+import { lockupApy } from '../../_utils/lockupApy'
 import { sanitizeLockup } from '../../_utils/sanitizeLockup'
 
 import { LockupPresets } from './lockupPresets'
@@ -206,12 +207,19 @@ export function Lockup({
 
   const amount = parseTokenUnits(input, token)
 
+  const toSublabel = function (days: number) {
+    const percentage = formatNumber(lockupApy[days])
+    return days === maxDays
+      ? t('form.up-to', { percentage })
+      : `~${percentage}%`
+  }
+
   const presets = [
     { days: sixMonths, label: t('form.months', { months: 6 }) },
     { days: oneYear, label: t('form.years', { years: 1 }) },
     { days: twoYears, label: t('form.years', { years: 2 }) },
     { days: maxDays, label: t('form.years', { years: 4 }) },
-  ]
+  ].map(preset => ({ ...preset, sublabel: toSublabel(preset.days) }))
 
   const presetDays = presets.map(preset => preset.days)
 
@@ -354,7 +362,7 @@ export function Lockup({
             )}
           </div>
         </div>
-        <div className="flex min-h-20 flex-col justify-center xs:min-h-14">
+        <div className="flex min-h-26 flex-col justify-center xs:min-h-14">
           {showSlider || !canUsePresets ? (
             <div className="flex flex-col gap-y-4">
               <RangeSlider

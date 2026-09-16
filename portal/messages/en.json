@@ -507,6 +507,7 @@
       "staking": "Staking...",
       "title": "Stake",
       "unlocking": "Unlocking...",
+      "up-to": "up to {percentage}%",
       "use-or": "Use <min></min> or <max></max>",
       "years": "{years, plural, one {{years} year} other {{years} years}}"
     },

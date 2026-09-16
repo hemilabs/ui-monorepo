@@ -507,6 +507,7 @@
       "staking": "Fazendo stake...",
       "title": "Stake",
       "unlocking": "Desbloqueando...",
+      "up-to": "até {percentage}%",
       "use-or": "Use <min></min> ou <max></max>",
       "years": "{years, plural, one {{years} ano} other {{years} anos}}"
     },

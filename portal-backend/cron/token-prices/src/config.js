@@ -21,6 +21,7 @@ const config = {
     dsn: env('SENTRY_DSN', ''),
     loggingLevels: env('SENTRY_LOGGING_LEVELS', 'log,warn,error').split(','),
   },
+  version: env('npm_package_version', ''),
 }
 
 const get = path =>

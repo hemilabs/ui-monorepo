@@ -30,6 +30,8 @@ async function runHistory() {
   }
 }
 
+console.log(`Token prices cron v${config.get('version')} started`)
+
 const refreshPricesMin = config.get('refreshPricesMin')
 if (refreshPricesMin > 0) {
   const intervalMs = refreshPricesMin * 60 * 1000

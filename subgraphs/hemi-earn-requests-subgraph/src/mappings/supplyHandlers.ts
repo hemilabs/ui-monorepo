@@ -107,8 +107,10 @@ const rpcUrls: Record<Chain['id'], string[]> = {
 
 const toTransport = function (chainId: Chain['id'], urls: string[]) {
   if (urls.length === 0) {
-    return http(undefined, { batch: true, retryCount: 0, timeout: 30000 })
+    return http(undefined, { batch: true, timeout: 30000 })
   }
+  // disallow retry for urls with fallbacks
+  const retryCount = urls.length > 1 ? 0 : undefined
   const transports = urls.map((url, index) =>
     http(url, {
       batch: true,
@@ -124,7 +126,7 @@ const toTransport = function (chainId: Chain['id'], urls: string[]) {
           )
         }
       },
-      retryCount: 0,
+      retryCount,
       timeout: 30000,
     }),
   )

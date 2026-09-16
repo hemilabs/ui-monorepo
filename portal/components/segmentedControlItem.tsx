@@ -14,6 +14,7 @@ export const SegmentedControlItem = ({
   selected,
 }: Props) => (
   <button
+    aria-pressed={selected}
     className={`flex h-7 cursor-pointer items-center justify-center whitespace-nowrap rounded-md px-2.5 text-xs font-semibold leading-4 tracking-wide ${
       selected
         ? 'bg-white text-neutral-950 shadow-sm'

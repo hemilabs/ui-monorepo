@@ -9,7 +9,12 @@ import { type SupplyPeriod } from '../_utils/supplyHistory'
 
 import { ChangeIndicator } from './changeIndicator'
 
-export const HemiPriceCard = function ({ period }: { period: SupplyPeriod }) {
+type Props = {
+  period: SupplyPeriod
+  symbol: string
+}
+
+export const HemiPriceCard = function ({ period, symbol }: Props) {
   const locale = useLocale()
   const t = useTranslations('hemi-stake.analytics')
   const { data, fetchStatus, isPending, status } = useSupplyPrice({ period })
@@ -29,7 +34,7 @@ export const HemiPriceCard = function ({ period }: { period: SupplyPeriod }) {
       }
       isError={isUnavailable && data === undefined}
       isLoading={isPending && !isUnavailable}
-      label={t('hemi-price')}
+      label={t('hemi-price', { symbol })}
       value={data === undefined ? '-' : formatTokenPrice(data.value, locale)}
     />
   )

@@ -4,9 +4,10 @@ import {
   sliceByPeriod,
   toChartSeries,
 } from 'app/[locale]/hemi-stake/analytics/_utils/supplyHistory'
+import { parseUnits } from 'viem'
 import { describe, expect, it } from 'vitest'
 
-const wei = (amount: number) => (BigInt(amount) * BigInt(1e18)).toString()
+const wei = (amount: number) => parseUnits(String(amount), 18).toString()
 
 const rawFirst = {
   circulating: wei(1),
@@ -103,15 +104,15 @@ describe('toChartSeries', function () {
   it('should return token amounts for each slice', function () {
     const series = toChartSeries({ points, unit: 'hemi' })
 
-    expect(series.circulating.map(point => point.y)).toEqual([1, 3])
-    expect(series.staked.map(point => point.y)).toEqual([2, 4])
-    expect(series.nonCirculating.map(point => point.y)).toEqual([7, 3])
+    expect(series!.circulating.map(point => point.y)).toEqual([1, 3])
+    expect(series!.staked.map(point => point.y)).toEqual([2, 4])
+    expect(series!.nonCirculating.map(point => point.y)).toEqual([7, 3])
   })
 
   it("should price each day with that day's price, not the latest one", function () {
     const series = toChartSeries({ points, unit: 'usd' })
 
-    expect(series.circulating.map(point => point.y)).toEqual([2, 15])
+    expect(series!.circulating.map(point => point.y)).toEqual([2, 15])
   })
 
   it('should keep the slices adding up to the total supply', function () {
@@ -119,9 +120,9 @@ describe('toChartSeries', function () {
 
     points.forEach((_, index) =>
       expect(
-        series.circulating[index].y +
-          series.staked[index].y +
-          series.nonCirculating[index].y,
+        series!.circulating[index].y +
+          series!.staked[index].y +
+          series!.nonCirculating[index].y,
       ).toBe(10),
     )
   })
@@ -150,5 +151,49 @@ describe('getSupplySummary', function () {
 
   it('should return nothing without points', function () {
     expect(getSupplySummary({ points: [], unit: 'hemi' })).toBeUndefined()
+  })
+})
+
+describe('when the feed has no prices', function () {
+  const unpriced = parseSupplyPoints(
+    [rawFirst, rawLast].map(point => ({ ...point, priceUsd: null })),
+    18,
+  )
+
+  it('should still parse the token amounts', function () {
+    expect(unpriced[0].circulating).toBe(1)
+    expect(unpriced[0].priceUsd).toBeNull()
+  })
+
+  it('should leave the token chart untouched', function () {
+    expect(
+      toChartSeries({ points: unpriced, unit: 'hemi' })!.circulating.map(
+        point => point.y,
+      ),
+    ).toEqual([1, 3])
+  })
+
+  it('should return nothing for the usd chart', function () {
+    expect(toChartSeries({ points: unpriced, unit: 'usd' })).toBeUndefined()
+  })
+
+  it('should return nothing for the usd summary', function () {
+    expect(getSupplySummary({ points: unpriced, unit: 'usd' })).toBeUndefined()
+  })
+
+  it('should keep the token summary and drop only the price', function () {
+    const summary = getSupplySummary({ points: unpriced, unit: 'hemi' })
+
+    expect(summary!.circulating).toEqual({ change: 2, share: 0.3, value: 3 })
+    expect(summary!.price).toBeUndefined()
+  })
+
+  it('should treat a price missing from the payload as no price', function () {
+    const [point] = parseSupplyPoints(
+      [{ ...rawFirst, priceUsd: undefined }],
+      18,
+    )
+
+    expect(point.priceUsd).toBeNull()
   })
 })

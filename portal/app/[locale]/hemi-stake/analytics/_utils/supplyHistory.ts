@@ -4,7 +4,7 @@ export type SupplyPoint = {
   circulating: string
   date: string
   nonCirculating: string
-  priceUsd: string
+  priceUsd: string | null
   staked: string
   totalSupply: string
 }
@@ -16,7 +16,7 @@ export type SupplyUnit = 'hemi' | 'usd'
 export type SupplySlice = 'circulating' | 'nonCirculating' | 'staked'
 
 export type ParsedSupplyPoint = Record<SupplySlice, number> & {
-  priceUsd: number
+  priceUsd: number | null
   timestamp: number
   totalSupply: number
 }
@@ -70,20 +70,35 @@ const toFiniteNumber = function (value: string, field: string) {
   return parsed
 }
 
+const toPrice = function (value: string | null | undefined) {
+  const price = value ?? null
+  return price === null ? null : toFiniteNumber(price, 'price')
+}
+
 const toTokens = (wei: string, decimals: number) =>
   toFiniteNumber(formatUnits(BigInt(wei), decimals), 'amount')
 
 // Throws on malformed values on purpose: it runs where the query can turn it
 // into an error state, rather than during render.
+// Sorted here so the rest of the pipeline can read the ends of the range off
+// at(0)/at(-1): the endpoint does not promise an order.
 export const parseSupplyPoints = (points: SupplyPoint[], decimals: number) =>
-  points.map(point => ({
-    circulating: toTokens(point.circulating, decimals),
-    nonCirculating: toTokens(point.nonCirculating, decimals),
-    priceUsd: toFiniteNumber(point.priceUsd, 'price'),
-    staked: toTokens(point.staked, decimals),
-    timestamp: toTimestamp(point.date),
-    totalSupply: toTokens(point.totalSupply, decimals),
-  }))
+  points
+    .map(point => ({
+      circulating: toTokens(point.circulating, decimals),
+      nonCirculating: toTokens(point.nonCirculating, decimals),
+      priceUsd: toPrice(point.priceUsd),
+      staked: toTokens(point.staked, decimals),
+      timestamp: toTimestamp(point.date),
+      totalSupply: toTokens(point.totalSupply, decimals),
+    }))
+    .sort((a, b) => a.timestamp - b.timestamp)
+
+const hasPrices = (points: ParsedSupplyPoint[]) =>
+  points.every(point => point.priceUsd !== null)
+
+const canRender = (points: ParsedSupplyPoint[], unit: SupplyUnit) =>
+  unit === 'hemi' || hasPrices(points)
 
 const toValue = ({
   point,
@@ -93,7 +108,7 @@ const toValue = ({
   point: ParsedSupplyPoint
   slice: SupplySlice
   unit: SupplyUnit
-}) => (unit === 'usd' ? point[slice] * point.priceUsd : point[slice])
+}) => (unit === 'usd' ? point[slice] * (point.priceUsd ?? 0) : point[slice])
 
 export const sliceByPeriod = function (
   points: ParsedSupplyPoint[],
@@ -107,14 +122,18 @@ export const sliceByPeriod = function (
   return points.filter(point => point.timestamp >= from)
 }
 
-export const toChartSeries = ({
+export const toChartSeries = function ({
   points,
   unit,
 }: {
   points: ParsedSupplyPoint[]
   unit: SupplyUnit
-}) =>
-  Object.fromEntries(
+}) {
+  if (!canRender(points, unit)) {
+    return undefined
+  }
+
+  return Object.fromEntries(
     supplySlices.map(slice => [
       slice,
       points.map(point => ({
@@ -123,6 +142,7 @@ export const toChartSeries = ({
       })),
     ]),
   ) as Record<SupplySlice, ChartPoint[]>
+}
 
 type SliceSummary = {
   change: number
@@ -140,7 +160,7 @@ export const getSupplySummary = function ({
   const first = points.at(0)
   const last = points.at(-1)
 
-  if (first === undefined || last === undefined) {
+  if (first === undefined || last === undefined || !canRender(points, unit)) {
     return undefined
   }
 
@@ -159,12 +179,15 @@ export const getSupplySummary = function ({
 
   return {
     ...slices,
-    price: {
-      change:
-        first.priceUsd === 0
-          ? 0
-          : (last.priceUsd - first.priceUsd) / first.priceUsd,
-      value: last.priceUsd,
-    },
+    price:
+      first.priceUsd === null || last.priceUsd === null
+        ? undefined
+        : {
+            change:
+              first.priceUsd === 0
+                ? 0
+                : (last.priceUsd - first.priceUsd) / first.priceUsd,
+            value: last.priceUsd,
+          },
   }
 }

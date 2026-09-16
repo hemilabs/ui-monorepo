@@ -9,6 +9,9 @@ import {
   type ParsedSupplyPoint,
 } from '../_utils/supplyHistory'
 
+// `decimals` is read inside the queryFn but deliberately left out of the key:
+// it is a constant of the token, so keeping it out means callers elsewhere can
+// rebuild the key from the chain alone.
 const getHemiSupplyHistoryQueryKey = (chainId: Chain['id']) => [
   'hemi-stake',
   'supply-history',

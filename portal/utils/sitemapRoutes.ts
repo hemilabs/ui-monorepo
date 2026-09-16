@@ -3,6 +3,7 @@ const contentRoutes = [
   '/genesis-drop',
   '/get-started',
   '/hemi-stake',
+  '/hemi-stake/analytics',
   '/stake',
   '/stake/dashboard',
   '/tunnel',

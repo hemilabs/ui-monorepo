@@ -30,6 +30,7 @@ export const SupplyChartCard = function ({
     data: series,
     fetchStatus,
     isPending,
+    refetch,
     status,
   } = useSupplySeries({ period, unit })
 
@@ -58,7 +59,7 @@ export const SupplyChartCard = function ({
       <div className="w-full p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span className="body-text-medium text-neutral-500">
-            {t('title')}
+            {t('title', { symbol })}
           </span>
           <div className="flex items-center gap-3">
             <div className="hidden items-center gap-2 lg:flex">
@@ -83,8 +84,8 @@ export const SupplyChartCard = function ({
         </div>
         <div className="mt-6">
           <SupplyChart
-            isError={isUnavailable && series === undefined}
             isPending={isPending && !isUnavailable}
+            onRetry={() => refetch()}
             period={period}
             series={series}
             symbol={symbol}

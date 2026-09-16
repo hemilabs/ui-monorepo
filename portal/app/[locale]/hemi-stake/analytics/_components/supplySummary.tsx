@@ -24,6 +24,6 @@ export const SupplySummary = ({ period, symbol, unit }: Props) => (
         unit={unit}
       />
     ))}
-    <HemiPriceCard period={period} />
+    <HemiPriceCard period={period} symbol={symbol} />
   </section>
 )

@@ -189,6 +189,7 @@ const llamaChainByChain: Record<Chain['id'], string> = {
 // Shared by the chains. The public RPCs reject faster reads.
 const rateLimit = { calls: 2, per: 'second' } as const
 
+// The public BNB Chain RPC answers 429 to the faster day-end reads
 const dayEndRateLimit: Record<Chain['id'], RateLimit> = {
   [bsc.id]: { calls: 1, per: 3000 },
   [hemi.id]: rateLimit,

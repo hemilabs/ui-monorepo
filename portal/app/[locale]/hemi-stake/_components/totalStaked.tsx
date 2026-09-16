@@ -1,10 +1,8 @@
-import Big from 'big.js'
+import { RenderFiatBalance } from 'components/fiatBalance'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useTokenPrices } from 'hooks/useTokenPrices'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatCompactFiat, formatCompactFiatParts } from 'utils/format'
 import { isDataUnavailable } from 'utils/queryStatus'
-import { getTokenPrice } from 'utils/token'
 import { formatUnits } from 'viem'
 
 import { type StakeStats } from '../_fetchers/fetchStakeStats'
@@ -18,28 +16,34 @@ const selectTotalStaked = (stats: StakeStats) => stats.totalStaked
 export const TotalStaked = function () {
   const token = useHemiToken()
   const locale = useLocale()
-  const { data: prices } = useTokenPrices()
   const t = useTranslations('hemi-stake.stats')
   const { data, fetchStatus, isPending, status } =
     useStakeStats(selectTotalStaked)
 
   const isUnavailable = isDataUnavailable({ fetchStatus, status })
 
-  const staked = formatUnits(BigInt(data ?? 0), token.decimals)
-  const { number, suffix } = formatCompactFiatParts(Number(staked), locale)
+  const staked = BigInt(data ?? 0)
 
-  const quoted = getTokenPrice(token, prices)
-  const usd =
-    data === undefined || quoted === '0'
-      ? undefined
-      : Big(staked).times(quoted).toNumber()
+  const { number, suffix } = formatCompactFiatParts(
+    Number(formatUnits(staked, token.decimals)),
+    locale,
+  )
+
+  const formatBadge = (amount: string) =>
+    Number(amount) > 0 ? formatCompactFiat(Number(amount), locale, 2) : '-'
 
   return (
     <StakeStatCard
       badge={
-        usd === undefined ? undefined : (
-          <StatBadge>{formatCompactFiat(usd, locale, 2)}</StatBadge>
-        )
+        <StatBadge>
+          <RenderFiatBalance
+            balance={staked}
+            customFormatter={formatBadge}
+            fetchStatus={fetchStatus}
+            queryStatus={status}
+            token={token}
+          />
+        </StatBadge>
       }
       isError={isUnavailable && data === undefined}
       isLoading={isPending && !isUnavailable}

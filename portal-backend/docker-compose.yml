@@ -59,7 +59,6 @@ services:
       COIN_MARKET_CAP_SLUGS: ${COIN_MARKET_CAP_SLUGS}
       NODE_ENV: ${NODE_ENV:-production}
       REDIS_URL: redis://cache:6379
-      REFRESH_HISTORY_MIN: ${REFRESH_HISTORY_MIN}
       REFRESH_PRICES_MIN: ${REFRESH_PRICES_MIN}
     restart: always
   vaults-monitor-cron:

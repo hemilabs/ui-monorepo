@@ -32,14 +32,10 @@ async function runHistory() {
 
 const refreshPricesMin = config.get('refreshPricesMin')
 if (refreshPricesMin > 0) {
-  startInterval(run, refreshPricesMin * 60 * 1000)
+  const intervalMs = refreshPricesMin * 60 * 1000
+  startInterval(run, intervalMs)
+  startInterval(runHistory, intervalMs)
 } else {
   run()
-}
-
-const refreshHistoryMin = config.get('refreshHistoryMin')
-if (refreshHistoryMin > 0) {
-  startInterval(runHistory, refreshHistoryMin * 60 * 1000)
-} else {
   runHistory()
 }

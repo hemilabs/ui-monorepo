@@ -268,7 +268,6 @@ These environment variables control how the `cron` job behaves:
 | COIN_MARKET_CAP_IDS     | Comma separated `SYMBOL:id` pairs whose daily price history is kept.                | HEMI:38159               |
 | COIN_MARKET_CAP_SLUGS   | String of comma separated token slugs. I.e. "bitcoin,ethereum"                      | bitcoin                  |
 | REDIS_URL               | The URL of the Redis database.                                                      | `redis://localhost:6379` |
-| REFRESH_HISTORY_MIN     | How frequently the price history is completed. If 0, it runs once and exits.        | 5                        |
 | REFRESH_PRICES_MIN      | How frequently the cache will be refreshed. If set to 0, it will run once and exit. | 5                        |
 | SENTRY_DSN              | The Sentry DSN.                                                                     |                          |
 | SENTRY_LOGGING_LEVELS   | The logging levels to send to Sentry (props of console.log).                        | ["log", "warn", "error"] |

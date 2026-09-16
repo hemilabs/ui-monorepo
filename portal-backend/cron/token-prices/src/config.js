@@ -16,7 +16,6 @@ const config = {
   redis: {
     url: env('REDIS_URL', 'redis://localhost:6379'),
   },
-  refreshHistoryMin: Number(env('REFRESH_HISTORY_MIN', '5')),
   refreshPricesMin: Number(env('REFRESH_PRICES_MIN', '5')),
   sentry: {
     dsn: env('SENTRY_DSN', ''),

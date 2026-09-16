@@ -217,7 +217,7 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
         isRunningOperation={isRunningOperation}
         isValid={isValid}
         lockupDays={lockupDays!}
-        minLocked={nearest ? nearest.maxValue! : undefined}
+        minLocked={nearest?.maxValue ?? minDays}
         onSubmit={increaseUnlockTime}
         onUpdateInputDays={function (value) {
           updateStakingDashboardOperation({

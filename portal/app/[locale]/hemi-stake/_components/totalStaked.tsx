@@ -35,15 +35,17 @@ export const TotalStaked = function () {
   return (
     <StakeStatCard
       badge={
-        <StatBadge>
-          <RenderFiatBalance
-            balance={staked}
-            customFormatter={formatBadge}
-            fetchStatus={fetchStatus}
-            queryStatus={status}
-            token={token}
-          />
-        </StatBadge>
+        isUnavailable && data === undefined ? undefined : (
+          <StatBadge>
+            <RenderFiatBalance
+              balance={staked}
+              customFormatter={formatBadge}
+              fetchStatus={fetchStatus}
+              queryStatus={status}
+              token={token}
+            />
+          </StatBadge>
+        )
       }
       isError={isUnavailable && data === undefined}
       isLoading={isPending && !isUnavailable}

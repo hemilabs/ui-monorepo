@@ -110,8 +110,8 @@ const toTransport = function (
   if (urls.length === 0) {
     return http(undefined, { batch: true, timeout: 30000 })
   }
-  // disallow retry for urls with fallbacks
-  const retryCount = urls.length > 1 ? 0 : undefined
+  const hasFallbacks = urls.length > 1
+  const retryCount = hasFallbacks ? 0 : undefined
   const transports = urls.map((url, index) =>
     http(url, {
       batch: true,
@@ -131,9 +131,7 @@ const toTransport = function (
       timeout: 30000,
     }),
   )
-  return transports.length > 1
-    ? fallback(transports, { retryCount: 0 })
-    : transports[0]
+  return hasFallbacks ? fallback(transports, { retryCount: 0 }) : transports[0]
 }
 
 const chainById: Record<Chain['id'], Chain> = {

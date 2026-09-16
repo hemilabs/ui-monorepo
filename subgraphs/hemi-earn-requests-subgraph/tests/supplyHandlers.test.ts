@@ -2,7 +2,12 @@ import { indexer } from 'envio'
 import { bsc, hemi, mainnet } from 'viem/chains'
 import { describe, expect, it } from 'vitest'
 
-import { endOfDay, toDate, toSnapshot } from '../src/mappings/supplyHandlers.ts'
+import {
+  endOfDay,
+  toDate,
+  toRpcUrls,
+  toSnapshot,
+} from '../src/mappings/supplyHandlers.ts'
 
 const opAddresses = indexer.chains[hemi.id].OpAddresses.addresses
 
@@ -40,5 +45,21 @@ describe('toSnapshot', function () {
       merkle: 10n,
       opBalances: opValues.reduce((sum, value) => sum + value, 0n),
     })
+  })
+})
+
+describe('toRpcUrls', function () {
+  it('splits the URLs joined with "+"', function () {
+    expect(toRpcUrls('https://a.example+https://b.example')).toEqual([
+      'https://a.example',
+      'https://b.example',
+    ])
+  })
+
+  it('drops the values that are not URLs', function () {
+    expect(toRpcUrls('https://a.example+not-a-url')).toEqual([
+      'https://a.example',
+    ])
+    expect(toRpcUrls()).toEqual([])
   })
 })

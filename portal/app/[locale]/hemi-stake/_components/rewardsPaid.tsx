@@ -17,7 +17,7 @@ import { type StakeStats } from '../_fetchers/fetchStakeStats'
 import { useStakeStats } from '../_hooks/useStakeStats'
 
 import { StakeStatCard, StatValueSkeleton } from './stakeStatCard'
-import { StatBadge } from './statBadge'
+import { StatBadge, StatBadgeSkeleton } from './statBadge'
 
 const selectRewards = (stats: StakeStats) => stats.rewards
 
@@ -69,7 +69,9 @@ export const RewardsPaid = function () {
   return (
     <StakeStatCard
       badge={
-        paid.length > 0 ? (
+        isPending && !isUnavailable ? (
+          <StatBadgeSkeleton size="small" />
+        ) : paid.length > 0 ? (
           <Tooltip
             text={
               <div className="flex flex-col gap-y-1">

@@ -25,13 +25,7 @@ export const StakeStatCard = ({
       <p className="text-xl font-semibold text-neutral-950">
         {!isLoading && !isError ? value : isError ? '-' : <StatValueSkeleton />}
       </p>
-      <div className="flex min-h-4 items-center">
-        {isLoading && badge !== undefined ? (
-          <Skeleton className="h-4 w-24" />
-        ) : (
-          badge
-        )}
-      </div>
+      <div className="flex min-h-4 items-center">{badge}</div>
     </div>
   </Card>
 )

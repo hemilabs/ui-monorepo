@@ -6,7 +6,7 @@ import { useStakeStats } from '../_hooks/useStakeStats'
 import { formatAverageLockDuration } from '../_utils/averageLockDuration'
 
 import { StakeStatCard } from './stakeStatCard'
-import { StatBadge } from './statBadge'
+import { StatBadge, StatBadgeSkeleton } from './statBadge'
 
 const selectLockup = (stats: StakeStats) => ({
   averageLock: stats.averageLock,
@@ -25,7 +25,9 @@ export const AverageLockup = function () {
   return (
     <StakeStatCard
       badge={
-        data?.locksCount === undefined ? undefined : (
+        isPending && !isUnavailable ? (
+          <StatBadgeSkeleton size="medium" />
+        ) : data?.locksCount === undefined ? undefined : (
           <StatBadge>
             {t('average-lockup-badge', { count: data.locksCount })}
           </StatBadge>

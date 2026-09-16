@@ -3,7 +3,7 @@ import { formatPercentage, formatTokenPrice } from 'utils/format'
 import { isDataUnavailable } from 'utils/queryStatus'
 
 import { StakeStatCard } from '../../_components/stakeStatCard'
-import { StatBadge } from '../../_components/statBadge'
+import { StatBadge, StatBadgeSkeleton } from '../../_components/statBadge'
 import { useSupplyPrice } from '../_hooks/useSupplyStat'
 import { type SupplyPeriod } from '../_utils/supplyHistory'
 
@@ -24,7 +24,9 @@ export const HemiPriceCard = function ({ period, symbol }: Props) {
   return (
     <StakeStatCard
       badge={
-        data === undefined ? undefined : (
+        isPending && !isUnavailable ? (
+          <StatBadgeSkeleton size="xSmall" />
+        ) : data === undefined ? undefined : (
           <StatBadge>
             <ChangeIndicator isUp={data.change >= 0}>
               {formatPercentage(Math.abs(data.change) * 100)}

@@ -3,7 +3,7 @@ import { formatPercentage } from 'utils/format'
 import { isDataUnavailable } from 'utils/queryStatus'
 
 import { StakeStatCard } from '../../_components/stakeStatCard'
-import { StatBadge } from '../../_components/statBadge'
+import { StatBadge, StatBadgeSkeleton } from '../../_components/statBadge'
 import { useSupplySlice } from '../_hooks/useSupplyStat'
 import { formatSupplyValue } from '../_utils/formatSupplyValue'
 import { sliceColors } from '../_utils/sliceColors'
@@ -42,7 +42,9 @@ export const SupplySliceCard = function ({
   return (
     <StakeStatCard
       badge={
-        data === undefined ? undefined : (
+        isPending && !isUnavailable ? (
+          <StatBadgeSkeleton size="large" />
+        ) : data === undefined ? undefined : (
           <StatBadge>
             <span>
               {t('share-of-supply', {

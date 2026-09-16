@@ -11,9 +11,9 @@ export const HemiStakeHero = function () {
   return (
     <div className="flex flex-col gap-y-1 sm:max-w-3xl md:self-start lg:self-auto">
       <div className="flex items-center gap-x-2">
-        <h2 className="text-3xl">
+        <h1 className="text-3xl">
           hemi<span className="text-orange-600">Stake</span>
-        </h2>
+        </h1>
         <Badge variant="secondary">veHEMI</Badge>
       </div>
       <p className="body-text-normal text-left text-neutral-500">

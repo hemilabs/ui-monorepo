@@ -1,9 +1,6 @@
-import { createTestIndexer, TestHelpers } from 'envio'
+import { createTestIndexer, indexer, TestHelpers } from 'envio'
 import type { TestIndexerProcessConfig } from 'envio'
 import { beforeEach, describe, expect, it } from 'vitest'
-
-// side-effect: register the onEvent handlers
-import '../src/mappings/eventHandlers'
 
 const { mockAddresses } = TestHelpers.Addresses
 
@@ -17,6 +14,7 @@ const ASSET = mockAddresses[0]
 const RECEIVER = mockAddresses[1]
 const SENDER = mockAddresses[2]
 const SHARE = mockAddresses[3]
+const SHARE_OFT = indexer.chains[HEMI].ShareToken.addresses[0] as `0x${string}`
 const zeroAddress = '0x0000000000000000000000000000000000000000'
 const ROUTER = '0x8a23df259c6798f9eacc51ae816461218c3acddc'
 
@@ -522,7 +520,7 @@ describe('ShareToken transfers', () => {
     event: 'Transfer' as const,
     logIndex,
     params: { from, to, value: 1n },
-    srcAddress: SHARE,
+    srcAddress: SHARE_OFT,
     transaction: { from: SENDER, hash },
   })
 
@@ -534,7 +532,7 @@ describe('ShareToken transfers', () => {
         event: 'Transfer',
         logIndex: 5,
         params: { from: SENDER, to: RECEIVER, value: 1000n },
-        srcAddress: SHARE,
+        srcAddress: SHARE_OFT,
         transaction: { from: SENDER, hash: '0xtransfer' },
       },
     ])
@@ -543,7 +541,7 @@ describe('ShareToken transfers', () => {
     expect(transfer.from).toBe(SENDER.toLowerCase())
     expect(transfer.to).toBe(RECEIVER.toLowerCase())
     expect(transfer.value).toBe(1000n)
-    expect(transfer.share).toBe(SHARE.toLowerCase())
+    expect(transfer.share).toBe(SHARE_OFT.toLowerCase())
     expect(transfer.timestamp).toBe(1_700_000_000n)
   })
 
@@ -653,7 +651,7 @@ describe('rate snapshots', () => {
         transaction: { from: SENDER, hash: '0xp1' },
       },
       {
-        block: { number: ETH_START, timestamp: 1_700_000_300 },
+        block: { number: ETH_START + 1, timestamp: 1_700_000_300 },
         contract: 'Agent',
         event: 'DepositRequestProcessed',
         logIndex: 1,

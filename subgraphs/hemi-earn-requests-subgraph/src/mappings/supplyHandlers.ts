@@ -46,10 +46,7 @@ const accountsByChain: Record<
     { account: chains[hemi.id].Safe.addresses[0], name: 'hemiSafe' },
     { account: chains[hemi.id].VeHemi.addresses[0], name: 'locked' },
     { account: chains[hemi.id].MerkleBox.addresses[0], name: 'merkle' },
-    // There's a bug in envio that lists addresses twice
-    // Drop the set once we bump to https://github.com/enviodev/hyperindex/releases/tag/v3.9.0
-    // See https://github.com/hemilabs/ui-monorepo/issues/2285
-    ...[...new Set(chains[hemi.id].OpAddresses.addresses)].map(account => ({
+    ...chains[hemi.id].OpAddresses.addresses.map(account => ({
       account,
       name: 'opBalances' as const,
     })),

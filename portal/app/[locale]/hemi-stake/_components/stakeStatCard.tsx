@@ -6,7 +6,7 @@ type Props = {
   badge?: ReactNode
   isError: boolean
   isLoading: boolean
-  label: string
+  label: ReactNode
   value: ReactNode
 }
 

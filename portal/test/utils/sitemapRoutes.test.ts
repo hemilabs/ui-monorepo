@@ -7,7 +7,8 @@ import { describe, expect, it } from 'vitest'
 // with `!baseRoute.endsWith('demos')`, which is how `[shareAddress]` slipped in.
 const excluded: Record<string, string> = {
   '/hemi-earn/pool/[shareAddress]': 'dynamic, one URL per pool address',
-  '/hemi-stake/analytics': 'placeholder until the analytics charts land',
+  '/hemi-stake/analytics':
+    'serving a bundled snapshot until the supply endpoint ships',
 }
 
 const localeDir = path.join(import.meta.dirname, '../../app/[locale]')

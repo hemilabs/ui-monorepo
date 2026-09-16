@@ -452,6 +452,17 @@
   },
   "hemi-stake": {
     "amount": "Quantidade",
+    "analytics": {
+      "1-week": "1 semana",
+      "circulating": "Em circulação",
+      "hemi-price": "Preço do HEMI",
+      "month": "{count, plural, one {# mês} other {# meses}}",
+      "non-circulating": "Fora de circulação",
+      "share-of-supply": "{share} da oferta",
+      "staked": "Em stake",
+      "title": "Oferta de HEMI",
+      "total": "Total"
+    },
     "claim-rewards": {
       "heading": "Reclamar recompensas",
       "subheading": "Estamos processando sua solicitação de recompensas. Você pode acompanhar o progresso abaixo."

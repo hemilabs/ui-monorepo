@@ -452,6 +452,17 @@
   },
   "hemi-stake": {
     "amount": "Amount",
+    "analytics": {
+      "1-week": "1 week",
+      "circulating": "Circulating",
+      "hemi-price": "HEMI price",
+      "month": "{count, plural, one {# month} other {# months}}",
+      "non-circulating": "Non-circulating",
+      "share-of-supply": "{share} of supply",
+      "staked": "Staked",
+      "title": "HEMI supply",
+      "total": "Total"
+    },
     "claim-rewards": {
       "heading": "Claim rewards",
       "subheading": "We’re processing your reward claim. You can follow the progress below."

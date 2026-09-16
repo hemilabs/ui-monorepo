@@ -211,7 +211,7 @@ export function Lockup({
     const percentage = formatNumber(lockupApy[days])
     return days === maxDays
       ? t('form.up-to', { percentage })
-      : `~${percentage}%`
+      : t('form.approximate', { percentage })
   }
 
   const presets = [

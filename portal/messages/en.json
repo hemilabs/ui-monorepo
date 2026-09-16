@@ -493,6 +493,7 @@
     },
     "form": {
       "approve-and-stake": "Approve and Stake",
+      "approximate": "~{percentage}%",
       "custom": "Custom",
       "days": "{days, plural, one {{days} day} other {{days} days}}",
       "expire-date": "Expire date:",

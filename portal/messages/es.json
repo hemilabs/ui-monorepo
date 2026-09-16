@@ -493,6 +493,7 @@
     },
     "form": {
       "approve-and-stake": "Aprobar y Hacer Stake",
+      "approximate": "~{percentage}%",
       "custom": "Personalizado",
       "days": "{days, plural, one {{days} día} other {{days} días}}",
       "expire-date": "Fecha de vencimiento:",

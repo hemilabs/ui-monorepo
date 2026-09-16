@@ -154,6 +154,32 @@ describe('getSupplySummary', function () {
   })
 })
 
+describe('parseSupplyPoints dates', function () {
+  const withDate = (date: string) => [{ ...rawFirst, date }]
+
+  it('should reject a day past the end of its month', function () {
+    expect(() => parseSupplyPoints(withDate('2026-02-30'), 18)).toThrow()
+    expect(() => parseSupplyPoints(withDate('2026-04-31'), 18)).toThrow()
+  })
+
+  it('should reject a date it cannot read at all', function () {
+    expect(() => parseSupplyPoints(withDate('2026-13-01'), 18)).toThrow()
+    expect(() => parseSupplyPoints(withDate('not-a-date'), 18)).toThrow()
+  })
+
+  it('should take a leap day in a leap year', function () {
+    expect(parseSupplyPoints(withDate('2028-02-29'), 18)[0].timestamp).toBe(
+      Date.UTC(2028, 1, 29),
+    )
+  })
+
+  it('should read the date half of a full timestamp', function () {
+    expect(
+      parseSupplyPoints(withDate('2026-01-05T13:45:00Z'), 18)[0].timestamp,
+    ).toBe(Date.UTC(2026, 0, 5))
+  })
+})
+
 describe('when the feed has no prices', function () {
   const unpriced = parseSupplyPoints(
     [rawFirst, rawLast].map(point => ({ ...point, priceUsd: null })),

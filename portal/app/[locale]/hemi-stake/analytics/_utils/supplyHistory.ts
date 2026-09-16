@@ -55,11 +55,12 @@ export const getPeriodDurationMs = (period: SupplyPeriod) =>
 // The endpoint dates a point by the day it covers, but a full ISO timestamp
 // would parse just as well, so only the date half is read.
 const toTimestamp = function (date: string) {
-  const timestamp = new Date(`${date.slice(0, 10)}T00:00:00Z`).getTime()
-  if (Number.isNaN(timestamp)) {
+  const day = date.slice(0, 10)
+  const parsed = new Date(`${day}T00:00:00Z`)
+  if (Number.isNaN(parsed.getTime()) || !parsed.toISOString().startsWith(day)) {
     throw new Error(`Unexpected supply history date: ${date}`)
   }
-  return timestamp
+  return parsed.getTime()
 }
 
 const toFiniteNumber = function (value: string, field: string) {

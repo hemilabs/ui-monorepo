@@ -157,7 +157,7 @@ const timed = async function <T>(
     log.info(`${label} finished`, { ms: Date.now() - start })
     return result
   } catch (error) {
-    log.info(`${label} failed`, {
+    log.warn(`${label} failed`, {
       error: (error as Error).message,
       ms: Date.now() - start,
     })

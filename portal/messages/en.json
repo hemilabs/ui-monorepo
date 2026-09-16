@@ -455,7 +455,9 @@
     "analytics": {
       "1-week": "1 week",
       "circulating": "Circulating",
+      "decreased-by": "decreased by",
       "hemi-price": "HEMI price",
+      "increased-by": "increased by",
       "month": "{count, plural, one {# month} other {# months}}",
       "non-circulating": "Non-circulating",
       "share-of-supply": "{share} of supply",

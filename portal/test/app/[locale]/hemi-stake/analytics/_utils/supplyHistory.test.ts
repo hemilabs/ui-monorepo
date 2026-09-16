@@ -62,6 +62,15 @@ describe('parseSupplyPoints', function () {
     ).toThrow()
   })
 
+  it('should throw on a price that is not a finite number', function () {
+    expect(() =>
+      parseSupplyPoints([{ ...rawFirst, priceUsd: 'not-a-number' }], 18),
+    ).toThrow()
+    expect(() =>
+      parseSupplyPoints([{ ...rawFirst, priceUsd: 'Infinity' }], 18),
+    ).toThrow()
+  })
+
   it('should throw on an amount it cannot read', function () {
     expect(() =>
       parseSupplyPoints([{ ...rawFirst, circulating: '1.4e27' }], 18),

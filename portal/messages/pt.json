@@ -455,7 +455,9 @@
     "analytics": {
       "1-week": "1 semana",
       "circulating": "Em circulação",
+      "decreased-by": "diminuiu",
       "hemi-price": "Preço do HEMI",
+      "increased-by": "aumentou",
       "month": "{count, plural, one {# mês} other {# meses}}",
       "non-circulating": "Fora de circulação",
       "share-of-supply": "{share} da oferta",

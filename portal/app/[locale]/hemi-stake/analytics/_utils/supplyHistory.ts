@@ -62,8 +62,16 @@ const toTimestamp = function (date: string) {
   return timestamp
 }
 
+const toFiniteNumber = function (value: string, field: string) {
+  const parsed = Number(value)
+  if (!Number.isFinite(parsed)) {
+    throw new Error(`Unexpected supply history ${field}: ${value}`)
+  }
+  return parsed
+}
+
 const toTokens = (wei: string, decimals: number) =>
-  Number(formatUnits(BigInt(wei), decimals))
+  toFiniteNumber(formatUnits(BigInt(wei), decimals), 'amount')
 
 // Throws on malformed values on purpose: it runs where the query can turn it
 // into an error state, rather than during render.
@@ -71,7 +79,7 @@ export const parseSupplyPoints = (points: SupplyPoint[], decimals: number) =>
   points.map(point => ({
     circulating: toTokens(point.circulating, decimals),
     nonCirculating: toTokens(point.nonCirculating, decimals),
-    priceUsd: Number(point.priceUsd),
+    priceUsd: toFiniteNumber(point.priceUsd, 'price'),
     staked: toTokens(point.staked, decimals),
     timestamp: toTimestamp(point.date),
     totalSupply: toTokens(point.totalSupply, decimals),

@@ -1,4 +1,5 @@
 import { Card } from 'components/card'
+import { SegmentedControlItem } from 'components/segmentedControlItem'
 import { useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useTranslations } from 'use-intl'
@@ -9,7 +10,6 @@ import {
   type CompositionViewMode,
   useComposition,
 } from '../../_hooks/useComposition'
-import { SegmentedControlItem } from '../segmentedControlItem'
 
 import { CompositionChart } from './compositionChart'
 import { CompositionTable } from './compositionTable'

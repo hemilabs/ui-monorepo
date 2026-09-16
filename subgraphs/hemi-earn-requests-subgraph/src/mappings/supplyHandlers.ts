@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-// Disabling this rule to enable logging on Envio
 import {
   type EvmOnBlockHandlerArgs,
   type Logger,
@@ -11,7 +9,6 @@ import {
 import {
   type Address,
   type Chain,
-  type PublicClient,
   createPublicClient,
   erc20Abi,
   fallback,
@@ -105,7 +102,11 @@ const rpcUrls: Record<Chain['id'], string[]> = {
   [mainnet.id]: toRpcUrls(process.env.ENVIO_RPC_URL_ETH),
 }
 
-const toTransport = function (chainId: Chain['id'], urls: string[]) {
+const toTransport = function (
+  chainId: Chain['id'],
+  urls: string[],
+  log: Logger,
+) {
   if (urls.length === 0) {
     return http(undefined, { batch: true, timeout: 30000 })
   }
@@ -116,12 +117,12 @@ const toTransport = function (chainId: Chain['id'], urls: string[]) {
       batch: true,
       onFetchRequest() {
         if (index > 0) {
-          console.info(`Chain ${chainId} falls back to ${new URL(url).host}`)
+          log.info(`Chain ${chainId} falls back to ${new URL(url).host}`)
         }
       },
       onFetchResponse(response) {
         if (!response.ok) {
-          console.warn(
+          log.warn(
             `Chain ${chainId} RPC ${new URL(url).host} answered ${response.status} ${response.statusText}`,
           )
         }
@@ -135,15 +136,19 @@ const toTransport = function (chainId: Chain['id'], urls: string[]) {
     : transports[0]
 }
 
-const clients = Object.fromEntries(
-  [bsc, hemi, mainnet].map(chain => [
-    chain.id,
-    createPublicClient({
-      chain,
-      transport: toTransport(chain.id, rpcUrls[chain.id]),
-    }),
-  ]),
-) as Record<Chain['id'], PublicClient>
+const chainById: Record<Chain['id'], Chain> = {
+  [bsc.id]: bsc,
+  [hemi.id]: hemi,
+  [mainnet.id]: mainnet,
+}
+
+// The transports log through the context logger, so each read builds its
+// client. viem keys the batch scheduler by URL, so the calls still batch.
+const toClient = (chainId: Chain['id'], log: Logger) =>
+  createPublicClient({
+    chain: chainById[chainId],
+    transport: toTransport(chainId, rpcUrls[chainId], log),
+  })
 
 const timed = async function <T>(
   log: Logger,
@@ -254,7 +259,7 @@ const readBalances = async function ({
   chainId: Chain['id']
   log: Logger
 }) {
-  const client = clients[chainId]
+  const client = toClient(chainId, log)
   const [block, snapshot] = await retry(
     log,
     `Chain ${chainId} balances at block ${blockNumber}`,
@@ -357,7 +362,7 @@ const createDayEndSnapshotEffect = (chainId: Chain['id']) =>
     },
     async function ({ context, input }) {
       try {
-        const client = clients[chainId]
+        const client = toClient(chainId, context.log)
         const trigger = await retry(
           context.log,
           `Chain ${chainId} trigger block ${input.blockNumber}`,

@@ -1,9 +1,9 @@
+import { ArrowGrowingIcon } from 'components/icons/arrowGrowingIcon'
+import { TotalDepositsIcon } from 'components/icons/totalDepositsIcon'
 import { useTranslations } from 'use-intl'
 import { formatFiatNumber } from 'utils/format'
 
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
-import { ArrowGrowingIcon } from '../../../_icons/arrowGrowingIcon'
-import { TotalDepositsIcon } from '../../../_icons/totalDepositsIcon'
 import { formatApyDisplay } from '../../../_utils/formatApy'
 import { type EarnPool } from '../../../types'
 

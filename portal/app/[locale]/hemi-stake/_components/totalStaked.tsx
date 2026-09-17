@@ -9,7 +9,7 @@ import { type StakeStats } from '../_fetchers/fetchStakeStats'
 import { useStakeStats } from '../_hooks/useStakeStats'
 
 import { StakeStatCard } from './stakeStatCard'
-import { StatBadge } from './statBadge'
+import { StatBadge, StatBadgeSkeleton } from './statBadge'
 
 const selectTotalStaked = (stats: StakeStats) => stats.totalStaked
 
@@ -35,7 +35,9 @@ export const TotalStaked = function () {
   return (
     <StakeStatCard
       badge={
-        isUnavailable && data === undefined ? undefined : (
+        isPending && !isUnavailable ? (
+          <StatBadgeSkeleton size="xSmall" />
+        ) : isUnavailable && data === undefined ? undefined : (
           <StatBadge>
             <RenderFiatBalance
               balance={staked}

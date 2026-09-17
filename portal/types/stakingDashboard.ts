@@ -1,4 +1,4 @@
-import { Hash } from 'viem'
+import { Address, Hash } from 'viem'
 
 import { EvmToken } from './token'
 
@@ -60,6 +60,28 @@ export type StakingDashboardOperation = Partial<{
   status: StakingDashboardStatusType
 }>
 
+// Where a reward comes from. The Portal reads and claims one source today, but every
+// figure and every claim plan is built as a list so a second contract only adds an entry.
+export const RewardSource = {
+  EPOCH: 'epoch',
+} as const
+
+export type RewardSourceType = (typeof RewardSource)[keyof typeof RewardSource]
+
+export type ClaimableReward = {
+  amount: bigint
+  decimals: number
+  source: RewardSourceType
+  symbol: string
+  token: Address
+}
+
+export type ClaimTransaction = {
+  fromEpoch: number
+  source: RewardSourceType
+  toEpoch: number
+}
+
 // Prefer ordering these by value rather than by key
 /* eslint-disable sort-keys */
 export const CollectAllRewardsDashboardStatus = {
@@ -75,10 +97,17 @@ export const CollectAllRewardsDashboardStatus = {
 export type CollectAllRewardsDashboardStatusType =
   (typeof CollectAllRewardsDashboardStatus)[keyof typeof CollectAllRewardsDashboardStatus]
 
+export type CollectAllRewardsStep = ClaimTransaction & {
+  status?: CollectAllRewardsDashboardStatusType
+  transactionHash?: Hash
+}
+
 export type CollectAllRewardsDashboardOperation = {
   transactionHash?: Hash
+  rewards?: ClaimableReward[]
   stakingPosition?: Pick<StakingPosition, 'amount' | 'tokenId'>
   status?: CollectAllRewardsDashboardStatusType
+  steps?: CollectAllRewardsStep[]
 }
 
 // Prefer ordering these by value rather than by key
@@ -96,12 +125,28 @@ export const UnlockingDashboardStatus = {
 export type UnlockingDashboardStatusType =
   (typeof UnlockingDashboardStatus)[keyof typeof UnlockingDashboardStatus]
 
+/* eslint-disable sort-keys */
+export const CaptureDashboardStatus = {
+  // The user has confirmed the TX in their wallet, but it hasn't been included in a block
+  CAPTURE_TX_PENDING: 0,
+  // Capture tx reverted
+  CAPTURE_TX_FAILED: 1,
+  // Transaction capture confirmed
+  CAPTURE_TX_CONFIRMED: 2,
+} as const
+/* eslint-enable sort-keys */
+
+export type CaptureDashboardStatusType =
+  (typeof CaptureDashboardStatus)[keyof typeof CaptureDashboardStatus]
+
 export type UnlockingDashboardOperation = {
+  captureStatus?: CaptureDashboardStatusType
+  captureTransactionHash?: Hash
+  needsCapture?: boolean
   transactionHash?: Hash
   stakingPosition?: Pick<StakingPosition, 'amount' | 'tokenId'>
   status?: UnlockingDashboardStatusType
 }
-export type CollectAllRewardsOperationRunning = 'idle' | 'collecting' | 'failed'
 export type UnlockingOperationRunning = 'idle' | 'unlocking' | 'failed'
 export type StakingOperationRunning =
   | 'idle'

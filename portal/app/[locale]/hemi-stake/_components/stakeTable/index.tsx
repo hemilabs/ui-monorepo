@@ -16,6 +16,7 @@ import { Amount } from '../amount'
 import { RewardsDisplay } from '../rewardsDisplay'
 
 import { ActionCell } from './actionCell'
+import { ClaimCta } from './claimCta'
 import { HeroBanner } from './heroBanner'
 import { LockupTime } from './lockupTime'
 import { NoPositionStaked } from './noPositionStaked'
@@ -51,12 +52,12 @@ const stakingColumns = ({
   },
   {
     cell({ row }) {
-      const { lockTime, status, tokenId } = row.original
+      const { lockTime } = row.original
       return (
         <ErrorBoundary
           fallback={<span className="text-sm text-neutral-950">-</span>}
         >
-          <LockupTime lockupTime={lockTime} status={status} tokenId={tokenId} />
+          <LockupTime lockupTime={lockTime} />
         </ErrorBoundary>
       )
     },
@@ -86,6 +87,7 @@ const stakingColumns = ({
   {
     cell: ({ row }) => (
       <div className="flex w-full flex-row-reverse items-center justify-end gap-x-2 lg:flex-row">
+        <ClaimCta operation={row.original} />
         <UnlockCta operation={row.original} />
         <ActionCell
           openRowId={openRowId}

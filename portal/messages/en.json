@@ -472,6 +472,7 @@
     "drawer": {
       "approving": "Approving {symbol}",
       "claim-rewards": "Claim rewards on {network}",
+      "claim-rewards-step": "Claim rewards on {network}, epochs {fromEpoch}-{toEpoch} ({step} of {total})",
       "increase-amount": {
         "heading": "Add ${symbol} to this lockup",
         "subheading": "Deposit additional ${symbol} into your existing lockup to increase your staked amount and governance power."
@@ -480,6 +481,7 @@
         "heading": "Extend lockup duration",
         "subheading": "Add more time to your existing lockup to boost your governance power."
       },
+      "secure-rewards": "Secure your unclaimed rewards",
       "stake": {
         "heading": "Review Stake",
         "subheading": "Review and confirm your stake."
@@ -570,8 +572,9 @@
       "active": "Active",
       "add-liquidity-to-lockup": "Add ${symbol} to this lockup",
       "add-time-to-lockup": "Add time to this lockup",
-      "apr": "{percentage}% APR",
       "burned": "Burned",
+      "claim": "Claim",
+      "claiming-paused": "Rewards claiming is paused",
       "connect-to-hemi": "Connect to {network} to view your stake positions.",
       "get-started": "Get started by staking your ${symbol}",
       "get-started-burned": "Your burned positions will show up here once their lockup periods have ended.",

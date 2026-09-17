@@ -401,9 +401,9 @@ importers:
       ve-hemi-actions:
         specifier: workspace:*
         version: link:../packages/ve-hemi-actions
-      ve-hemi-rewards:
+      ve-hemi-epoch-rewards:
         specifier: workspace:*
-        version: link:../packages/ve-hemi-rewards
+        version: link:../packages/ve-hemi-epoch-rewards
       victory:
         specifier: 37.3.6
         version: 37.3.6(react@19.2.8)

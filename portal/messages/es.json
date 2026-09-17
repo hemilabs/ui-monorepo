@@ -472,6 +472,7 @@
     "drawer": {
       "approving": "Aprobando {symbol}",
       "claim-rewards": "Reclamar recompensas en {network}",
+      "claim-rewards-step": "Reclamar recompensas en {network}, épocas {fromEpoch}-{toEpoch} ({step} de {total})",
       "increase-amount": {
         "heading": "Agregar ${symbol} a este bloqueo",
         "subheading": "Depositar ${symbol} adicionales en su bloqueo existente para aumentar su cantidad de stake y poder de gobernanza."
@@ -480,6 +481,7 @@
         "heading": "Extender la duración del bloqueo",
         "subheading": "Agregue más tiempo a su bloqueo existente para aumentar su poder de gobernanza."
       },
+      "secure-rewards": "Proteja sus recompensas sin reclamar",
       "stake": {
         "heading": "Revisar Stake",
         "subheading": "Revise y confirme su stake."
@@ -570,8 +572,9 @@
       "active": "Activo",
       "add-liquidity-to-lockup": "Agregar ${symbol} a este bloqueo",
       "add-time-to-lockup": "Agregar tiempo a este bloqueo",
-      "apr": "{percentage}% TNA",
       "burned": "Quemado",
+      "claim": "Reclamar",
+      "claiming-paused": "El reclamo de recompensas está pausado",
       "connect-to-hemi": "Conéctese a {network} para ver sus posiciones de stake.",
       "get-started": "Comience haciendo staking de sus ${symbol}",
       "get-started-burned": "Sus posiciones quemadas aparecerán aquí una vez que hayan finalizado sus períodos de bloqueo.",

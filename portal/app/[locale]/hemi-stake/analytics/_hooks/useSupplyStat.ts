@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 
 import {
   getSupplySummary,
-  sliceByPeriod,
   toChartSeries,
   type ParsedSupplyPoint,
   type SupplyPeriod,
@@ -11,12 +10,6 @@ import {
 } from '../_utils/supplyHistory'
 
 import { useHemiSupplyHistory } from './useHemiSupplyHistory'
-
-const summaryOf = (
-  points: ParsedSupplyPoint[],
-  period: SupplyPeriod,
-  unit: SupplyUnit,
-) => getSupplySummary({ points: sliceByPeriod(points, period), unit })
 
 export const useSupplySlice = ({
   period,
@@ -27,20 +20,24 @@ export const useSupplySlice = ({
   slice: SupplySlice
   unit: SupplyUnit
 }) =>
-  useHemiSupplyHistory(
-    useCallback(
-      (points: ParsedSupplyPoint[]) => summaryOf(points, period, unit)?.[slice],
-      [period, slice, unit],
+  useHemiSupplyHistory({
+    period,
+    select: useCallback(
+      (points: ParsedSupplyPoint[]) =>
+        getSupplySummary({ points, unit })?.[slice],
+      [slice, unit],
     ),
-  )
+  })
 
 export const useSupplyPrice = ({ period }: { period: SupplyPeriod }) =>
-  useHemiSupplyHistory(
-    useCallback(
-      (points: ParsedSupplyPoint[]) => summaryOf(points, period, 'hemi')?.price,
-      [period],
+  useHemiSupplyHistory({
+    period,
+    select: useCallback(
+      (points: ParsedSupplyPoint[]) =>
+        getSupplySummary({ points, unit: 'hemi' })?.price,
+      [],
     ),
-  )
+  })
 
 export const useSupplySeries = ({
   period,
@@ -49,10 +46,10 @@ export const useSupplySeries = ({
   period: SupplyPeriod
   unit: SupplyUnit
 }) =>
-  useHemiSupplyHistory(
-    useCallback(
-      (points: ParsedSupplyPoint[]) =>
-        toChartSeries({ points: sliceByPeriod(points, period), unit }),
-      [period, unit],
+  useHemiSupplyHistory({
+    period,
+    select: useCallback(
+      (points: ParsedSupplyPoint[]) => toChartSeries({ points, unit }),
+      [unit],
     ),
-  )
+  })

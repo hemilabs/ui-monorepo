@@ -1,7 +1,6 @@
 import {
   getSupplySummary,
   parseSupplyPoints,
-  sliceByPeriod,
   toChartSeries,
 } from 'app/[locale]/hemi-stake/analytics/_utils/supplyHistory'
 import { parseUnits } from 'viem'
@@ -28,15 +27,6 @@ const rawLast = {
 }
 
 const points = parseSupplyPoints([rawFirst, rawLast], 18)
-
-const dayApart = (days: number) => ({
-  circulating: 1,
-  nonCirculating: 7,
-  priceUsd: 2,
-  staked: 2,
-  timestamp: Date.UTC(2026, 1, 1) + days * 24 * 60 * 60 * 1000,
-  totalSupply: 10,
-})
 
 describe('parseSupplyPoints', function () {
   it('should turn wei strings into token amounts', function () {
@@ -76,27 +66,6 @@ describe('parseSupplyPoints', function () {
     expect(() =>
       parseSupplyPoints([{ ...rawFirst, circulating: '1.4e27' }], 18),
     ).toThrow()
-  })
-})
-
-describe('sliceByPeriod', function () {
-  it('should window by date rather than by how many points there are', function () {
-    const twicePerDay = [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7].map(
-      dayApart,
-    )
-
-    // eight days of points, but only the last seven days belong to the window
-    expect(sliceByPeriod(twicePerDay, '1w')).toHaveLength(14)
-  })
-
-  it('should drop points older than the window', function () {
-    const sparse = [0, 20, 40, 60].map(dayApart)
-
-    expect(sliceByPeriod(sparse, '1m')).toHaveLength(2)
-  })
-
-  it('should return everything when the history is shorter than the period', function () {
-    expect(sliceByPeriod(points, '3m')).toHaveLength(2)
   })
 })
 

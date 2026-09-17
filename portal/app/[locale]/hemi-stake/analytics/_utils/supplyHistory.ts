@@ -111,18 +111,6 @@ const toValue = ({
   unit: SupplyUnit
 }) => (unit === 'usd' ? point[slice] * (point.priceUsd ?? 0) : point[slice])
 
-export const sliceByPeriod = function (
-  points: ParsedSupplyPoint[],
-  period: SupplyPeriod,
-) {
-  const last = points.at(-1)
-  if (last === undefined) {
-    return points
-  }
-  const from = last.timestamp - getPeriodDurationMs(period)
-  return points.filter(point => point.timestamp >= from)
-}
-
 export const toChartSeries = function ({
   points,
   unit,

@@ -9,7 +9,7 @@ type StepProps = {
 }
 
 const Step = ({ description, isLast = false, position, title }: StepProps) => (
-  <div className="flex gap-3 md:flex-col">
+  <li className="flex gap-3 md:flex-col">
     <div className="flex flex-col items-center gap-y-1 md:items-start">
       <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-orange-600 text-xxs font-semibold lining-nums tabular-nums text-white">
         {position}
@@ -24,7 +24,7 @@ const Step = ({ description, isLast = false, position, title }: StepProps) => (
       <h4 className="text-orange-600">{title}</h4>
       <p className="text-sm text-neutral-500">{description}</p>
     </div>
-  </div>
+  </li>
 )
 
 export const GetStartedSection = function () {
@@ -35,7 +35,7 @@ export const GetStartedSection = function () {
       <h3>{t('heading')}</h3>
       <div className="mt-4">
         <Card shadow="sm">
-          <div className="flex flex-col px-4 py-5 md:grid md:grid-cols-3 md:gap-4">
+          <ol className="flex flex-col px-4 py-5 md:grid md:grid-cols-3 md:gap-4">
             <Step
               description={t('steps.lock.description')}
               position={1}
@@ -52,7 +52,7 @@ export const GetStartedSection = function () {
               position={3}
               title={t('steps.access.title')}
             />
-          </div>
+          </ol>
         </Card>
       </div>
     </section>

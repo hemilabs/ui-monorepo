@@ -1,30 +1,41 @@
 import { useEstimateFees } from 'hooks/useEstimateFees'
-import { getVeHemiRewardsContractAddress } from 've-hemi-rewards'
-import { encodeCollectAllRewards } from 've-hemi-rewards/actions'
+import { getVeHemiEpochRewardsContractAddress } from 've-hemi-epoch-rewards'
+import { encodeClaimFrom } from 've-hemi-epoch-rewards/actions'
 import { useAccount, useEstimateGas } from 'wagmi'
 
 export const useEstimateCollectAllRewardsFees = function ({
   chainId,
   enabled = true,
+  fromEpoch,
+  toEpoch,
   tokenId,
 }: {
   chainId: number
   enabled?: boolean
+  fromEpoch: number | undefined
+  toEpoch: number | undefined
   tokenId: bigint
 }) {
-  const { isConnected } = useAccount()
-  const veHemiRewardsAddress = getVeHemiRewardsContractAddress(chainId)
+  const { address, isConnected } = useAccount()
 
-  const data = encodeCollectAllRewards({
-    addToPositionBPS: BigInt(0),
-    tokenId,
-  })
+  const canEstimate =
+    !!address && fromEpoch !== undefined && toEpoch !== undefined
+
+  const data = canEstimate
+    ? encodeClaimFrom({
+        account: address,
+        fromEpoch,
+        toEpoch,
+        tokenId,
+        tokenStart: BigInt(0),
+      })
+    : undefined
 
   const { data: gasUnits, isError } = useEstimateGas({
     chainId,
     data,
-    query: { enabled: isConnected && enabled },
-    to: veHemiRewardsAddress,
+    query: { enabled: isConnected && enabled && canEstimate },
+    to: canEstimate ? getVeHemiEpochRewardsContractAddress(chainId) : undefined,
   })
 
   return useEstimateFees({

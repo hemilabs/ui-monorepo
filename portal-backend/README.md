@@ -88,7 +88,7 @@ Returns the daily HEMI supply of the last `1w`, `1m`, `3m`, `6m` or `1y`, ending
 
 ```console
 $ curl http://localhost:3006/supply-history/1m
-[{"circulating":"1052500000000000000000000000","date":"2026-09-10","nonCirculating":"7459107944000000000000000000","priceUsd":"0.00683108945841876","staked":"1488392055000000000000000000","totalSupply":"10000000000000000000000000000"}]
+[{"circulating":"1052500000000000000000000000","date":"2026-09-10","nonCirculating":"7459107944000000000000000000","priceUsd":"0.00683108945841876","staked":"1488392056000000000000000000","totalSupply":"10000000000000000000000000000"}]
 ```
 
 `circulating`, `staked` and `nonCirculating` add up to `totalSupply`. The balances come from the same snapshots as [`GET /circulating`](#get-circulating), leaving out a day that not every chain has reached. `priceUsd` is the daily quote of HEMI from [CoinMarketCap](https://coinmarketcap.com/), or `null` for a day it has no quote for.

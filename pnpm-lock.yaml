@@ -211,6 +211,28 @@ importers:
         specifier: 4.1.6
         version: 4.1.6(@opentelemetry/api@1.9.1)(@types/node@24.10.2)(vite@8.0.13(@types/node@24.10.2)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.9.0))
 
+  packages/ve-hemi-epoch-rewards:
+    dependencies:
+      to-promise-event:
+        specifier: 1.0.0
+        version: 1.0.0
+    devDependencies:
+      '@tsconfig/node24':
+        specifier: 24.0.3
+        version: 24.0.3
+      '@types/node':
+        specifier: 24.10.2
+        version: 24.10.2
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      viem:
+        specifier: 2.28.4
+        version: 2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
+      vitest:
+        specifier: 4.1.6
+        version: 4.1.6(@opentelemetry/api@1.9.1)(@types/node@24.10.2)(vite@8.0.13(@types/node@24.10.2)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.9.0))
+
   packages/ve-hemi-rewards:
     dependencies:
       hemi-viem:
@@ -10321,7 +10343,7 @@ snapshots:
   '@commitlint/is-ignored@21.0.1':
     dependencies:
       '@commitlint/types': 21.0.1
-      semver: 7.7.4
+      semver: 7.8.5
 
   '@commitlint/lint@21.0.1':
     dependencies:

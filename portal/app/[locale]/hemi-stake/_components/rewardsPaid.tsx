@@ -1,4 +1,5 @@
 import Big from 'big.js'
+import { SparkleIcon } from 'components/icons/sparkleIcon'
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
 import { useTokenPrices } from 'hooks/useTokenPrices'
@@ -95,6 +96,7 @@ export const RewardsPaid = function () {
           </Tooltip>
         ) : undefined
       }
+      icon={<SparkleIcon className="text-orange-600" />}
       isError={isUnavailable}
       isLoading={isPending && !isUnavailable}
       label={t('rewards-paid')}

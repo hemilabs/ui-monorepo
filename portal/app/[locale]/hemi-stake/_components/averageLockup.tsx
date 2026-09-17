@@ -1,3 +1,4 @@
+import { CompositionIcon } from 'components/icons/compositionIcon'
 import { useLocale, useTranslations } from 'use-intl'
 import { isDataUnavailable } from 'utils/queryStatus'
 
@@ -33,6 +34,7 @@ export const AverageLockup = function () {
           </StatBadge>
         )
       }
+      icon={<CompositionIcon />}
       isError={isUnavailable}
       isLoading={isPending && !isUnavailable}
       label={t('average-lockup')}

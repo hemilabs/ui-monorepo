@@ -1,3 +1,4 @@
+import { TotalDepositsIcon } from 'components/icons/totalDepositsIcon'
 import { useTranslations } from 'use-intl'
 import { formatNumber } from 'utils/format'
 import { isDataUnavailable } from 'utils/queryStatus'
@@ -18,6 +19,7 @@ export const WalletsStaking = function () {
 
   return (
     <StakeStatCard
+      icon={<TotalDepositsIcon />}
       isError={isUnavailable && data === undefined}
       isLoading={isPending && !isUnavailable}
       label={t('wallets-staking')}

@@ -511,6 +511,23 @@
       "use-or": "Use <min></min> or <max></max>",
       "years": "{years, plural, one {{years} year} other {{years} years}}"
     },
+    "get-started": {
+      "heading": "Get started",
+      "steps": {
+        "access": {
+          "description": "Access to every project launching inside Hemi's economy.",
+          "title": "Access"
+        },
+        "earn": {
+          "description": "Earn a share of protocol fees in hemiBTC and HEMI, every epoch.",
+          "title": "Earn"
+        },
+        "lock": {
+          "description": "Lock $HEMI for 12 days to 4 years.",
+          "title": "Lock"
+        }
+      }
+    },
     "here-is-your-tx": "Here's your transaction:",
     "hero-banner": {
       "headline": "A whole economy.<break></break><highlight>One</highlight> key.",
@@ -522,6 +539,24 @@
       "live-on": "Live 19 September"
     },
     "lockup-period": "Lockup period",
+    "perks": {
+      "ecosystem-launches": {
+        "badge": "Next",
+        "description": "Early access to Hemi's ecosystem launches, Vetro and Odyssey included.",
+        "title": "Ecosystem launches"
+      },
+      "governance": {
+        "badge": "Coming soon",
+        "description": "Every locked position will vote, or delegate and keep its share.",
+        "title": "Governance"
+      },
+      "heading": "What a hemiStake position gets you",
+      "protocol-fees": {
+        "badge": "Live today",
+        "description": "Base chain fees paid to every position by weight, every epoch.",
+        "title": "Protocol fees"
+      }
+    },
     "stake-successful": "Stake successful",
     "stats": {
       "average-lockup": "Average lockup",

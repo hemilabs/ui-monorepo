@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
+import { GetStartedSection } from './_components/getStartedSection'
+import { PerksSection } from './_components/perksSection'
 import { StakeForm } from './_components/stakeForm'
 import { StakeTable } from './_components/stakeTable'
 import {
@@ -44,6 +46,8 @@ export const HemiStakePage = function () {
             </div>
           ) : null}
           <StakeTable data={filteredData} filter={filter} loading={isLoading} />
+          <PerksSection />
+          <GetStartedSection />
         </div>
         <div className="w-full shrink-0 lg:sticky lg:top-4 lg:w-1/2 lg:shrink lg:self-start xl:flex-1">
           <StakeForm />

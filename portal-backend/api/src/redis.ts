@@ -1,29 +1,10 @@
 import { createClient } from 'redis'
 
-function fromUnit(value: string) {
-  const str = value.padStart(19, '0')
-  return `${str.slice(0, -18)}.${str.slice(-18)}`
-}
-
 export type RedisOptions = { url: string }
 
 function createRedisCache({ url }: RedisOptions) {
   const client = createClient({ url })
   client.connect()
-
-  async function getCirculatingSupply() {
-    const prefix = 'supply:'
-    const keys = await client.keys(`${prefix}*`)
-    const values = await client.mGet(keys)
-    const data = Object.fromEntries(
-      keys.map((key, i) => [key.slice(prefix.length), values[i] || '0']),
-    ) as Record<string, string>
-    const { time: _time, total, ...rest } = data
-    const circulatingSupply =
-      BigInt(total) -
-      Object.values(rest).reduce((acc, value) => acc + BigInt(value), 0n)
-    return fromUnit(circulatingSupply.toString())
-  }
 
   async function getTokenPrices() {
     const data: { prices: Record<string, string | null>; time?: string } = {
@@ -47,8 +28,15 @@ function createRedisCache({ url }: RedisOptions) {
     return data
   }
 
+  async function getPriceHistory(symbol: string) {
+    const stored = await client.get(`daily-prices:${symbol}`)
+    return stored === null
+      ? null
+      : (JSON.parse(stored) as Record<string, string>)
+  }
+
   return {
-    getCirculatingSupply,
+    getPriceHistory,
     getTokenPrices,
   }
 }

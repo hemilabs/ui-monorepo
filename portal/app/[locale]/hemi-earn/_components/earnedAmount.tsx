@@ -1,10 +1,10 @@
+import { ArrowGrowingIcon } from 'components/icons/arrowGrowingIcon'
 import { useTranslations } from 'use-intl'
 import { formatFiatNumber } from 'utils/format'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
 import { useEarnedAmount } from '../_hooks/useEarnedAmount'
-import { ArrowGrowingIcon } from '../_icons/arrowGrowingIcon'
 
 import { EarnCard } from './earnCard'
 

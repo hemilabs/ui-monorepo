@@ -1,3 +1,4 @@
+import { SparkleIcon } from 'components/icons/sparkleIcon'
 import { Operation } from 'components/reviewOperation/operation'
 import {
   ProgressStatus,
@@ -29,7 +30,6 @@ import { applySlippage } from '../../../../_constants/slippage'
 import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
 import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperations'
 import { useRemoteFailedState } from '../../../../_hooks/useRemoteFailedState'
-import { SparkleIcon } from '../../../../_icons/sparkleIcon'
 import { getApprovalAmount } from '../../../../_utils/approval'
 import { hashesMatch } from '../../../../_utils/hashes'
 import {
@@ -319,7 +319,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         </div>
       ) : (
         <div className="flex items-center gap-x-2">
-          <SparkleIcon />
+          <SparkleIcon className="text-orange-600" />
           <span>{t('get-share-tokens')}</span>
         </div>
       ),

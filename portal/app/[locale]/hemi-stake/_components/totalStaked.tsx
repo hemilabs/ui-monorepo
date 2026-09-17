@@ -1,4 +1,5 @@
 import { RenderFiatBalance } from 'components/fiatBalance'
+import { ArrowGrowingIcon } from 'components/icons/arrowGrowingIcon'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatCompactFiat, formatCompactFiatParts } from 'utils/format'
@@ -49,6 +50,7 @@ export const TotalStaked = function () {
           </StatBadge>
         )
       }
+      icon={<ArrowGrowingIcon />}
       isError={isUnavailable && data === undefined}
       isLoading={isPending && !isUnavailable}
       label={t('total-staked')}

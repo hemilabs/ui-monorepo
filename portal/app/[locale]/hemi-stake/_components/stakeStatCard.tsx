@@ -4,16 +4,18 @@ import Skeleton from 'react-loading-skeleton'
 
 type Props = {
   badge?: ReactNode
+  icon?: ReactNode
   isError: boolean
   isLoading: boolean
   label: ReactNode
   value: ReactNode
 }
 
-export const StatValueSkeleton = () => <Skeleton className="h-6 w-20" />
+const StatValueSkeleton = () => <Skeleton className="h-6 w-20" />
 
 export const StakeStatCard = ({
   badge,
+  icon,
   isError,
   isLoading,
   label,
@@ -21,7 +23,10 @@ export const StakeStatCard = ({
 }: Props) => (
   <Card aria-busy={isLoading} shadow="sm">
     <div className="flex w-full flex-col gap-y-2 p-4">
-      <span className="body-text-medium text-neutral-500">{label}</span>
+      <div className="flex items-center justify-between">
+        <span className="body-text-medium text-neutral-500">{label}</span>
+        {icon}
+      </div>
       <p className="text-xl font-semibold text-neutral-950">
         {!isLoading && !isError ? value : isError ? '-' : <StatValueSkeleton />}
       </p>

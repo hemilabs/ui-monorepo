@@ -1,6 +1,7 @@
 import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { Row } from '@tanstack/react-table'
+import { SparkleIcon } from 'components/icons/sparkleIcon'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -16,7 +17,6 @@ import { useCollectRewards } from '../../_hooks/useCollectAllRewards'
 import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
 import { useHasRewards } from '../../_hooks/useHasRewards'
 import { PlusIcon } from '../../_icons/plusIcon'
-import { StarsIcon } from '../../_icons/starsIcon'
 import { getUnlockInfo, minDays } from '../../_utils/lockCreationTimes'
 
 import { ActionButton } from './actionButton'
@@ -212,7 +212,7 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
             />
             <ActionItem
               enabled={operationRunning !== 'collecting' && hasRewards}
-              icon={<StarsIcon />}
+              icon={<SparkleIcon className="text-neutral-950" />}
               label={t('claim-rewards.heading')}
               onClick={handleClaimRewards}
             />

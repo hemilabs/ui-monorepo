@@ -1,4 +1,5 @@
 import { GenesisDropTabs } from 'app/[locale]/genesis-drop/_components/genesisDropTabs'
+import { HemiStakeTabs } from 'app/[locale]/hemi-stake/_components/hemiStakeTabs'
 import { ButtonIcon } from 'components/button'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { HamburgerIcon } from 'components/icons/hamburgerIcon'
@@ -38,6 +39,7 @@ export const Header = ({ isMenuOpen, openNavbar, toggleMenu }: Props) => (
       <StakeTabs />
       <TunnelTabs />
       <GenesisDropTabs />
+      <HemiStakeTabs />
     </div>
     <div className="ml-auto flex items-center gap-x-2">
       <HemiPricePill />

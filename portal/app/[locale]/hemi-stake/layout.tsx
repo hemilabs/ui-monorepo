@@ -23,7 +23,9 @@ export const HemiStakeLayout = function () {
         <HemiStakeHero />
         {isEnabled ? (
           <>
-            <HemiStakeTabs />
+            <div className="mt-6 md:hidden">
+              <HemiStakeTabs />
+            </div>
             <Outlet />
           </>
         ) : (

@@ -512,6 +512,11 @@
       "years": "{years, plural, one {{years} year} other {{years} years}}"
     },
     "here-is-your-tx": "Here's your transaction:",
+    "hero-banner": {
+      "headline": "A whole economy.<break></break><highlight>One</highlight> key.",
+      "live-on": "live 19 September",
+      "subtitle": "Stake Hemi for a share of every payout and access to what launches next."
+    },
     "launch-card": {
       "is-live": "<name></name> is live",
       "live-on": "Live 19 September"
@@ -535,7 +540,6 @@
       "apr": "{percentage}% APR",
       "burned": "Burned",
       "connect-to-hemi": "Connect to {network} to view your stake positions.",
-      "connect-to-stake": "Connect your wallet to view your ${symbol} staked.",
       "get-started": "Get started by staking your ${symbol}",
       "get-started-burned": "Your burned positions will show up here once their lockup periods have ended.",
       "locked-amount": "Locked Amount",

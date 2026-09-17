@@ -512,6 +512,11 @@
       "years": "{years, plural, one {{years} ano} other {{years} anos}}"
     },
     "here-is-your-tx": "Aqui está a sua transação:",
+    "hero-banner": {
+      "headline": "Uma economia inteira.<break></break><highlight>Uma</highlight> chave.",
+      "live-on": "disponível em 19 de setembro",
+      "subtitle": "Faça stake de Hemi para receber parte de cada pagamento e acessar o que for lançado a seguir."
+    },
     "launch-card": {
       "is-live": "<name></name> já está no ar",
       "live-on": "Disponível em 19 de setembro"
@@ -535,7 +540,6 @@
       "apr": "{percentage}% TNA",
       "burned": "Queimado",
       "connect-to-hemi": "Conecte à {network} para ver as suas posições de stake.",
-      "connect-to-stake": "Conecte a sua carteira para ver o seu ${symbol} em stake.",
       "get-started": "Comece a fazer stake com seu ${symbol}",
       "get-started-burned": "As suas posições queimadas aparecerão aqui assim que os seus períodos de bloqueio terminarem.",
       "locked-amount": "Quantidade Bloqueada",

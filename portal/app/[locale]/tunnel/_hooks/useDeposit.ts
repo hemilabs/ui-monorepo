@@ -21,6 +21,7 @@ import {
   MessageDirection,
 } from 'types/tunnel'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
+import { getApprovalAmount } from 'utils/approval'
 import { findChainById, getL1StandardBridgeAddress } from 'utils/chain'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { isNativeAddress } from 'utils/nativeToken'
@@ -29,8 +30,6 @@ import { type Chain, zeroAddress } from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
 
 import { useTunnelOperation } from './useTunnelOperation'
-
-const ExtraApprovalTimesAmount = 10
 
 type UseDeposit = {
   extendedErc20Approval?: boolean | undefined
@@ -107,9 +106,7 @@ export const useDeposit = function ({
         : depositErc20({
             account: address,
             amount,
-            approvalAmount: extendedErc20Approval
-              ? amount * BigInt(ExtraApprovalTimesAmount)
-              : amount,
+            approvalAmount: getApprovalAmount(amount, !!extendedErc20Approval),
             l1Chain: findChainById(fromToken.chainId) as Chain,
             l1PublicClient: getEvmL1PublicClient(fromToken.chainId),
             // @ts-expect-error string is Address

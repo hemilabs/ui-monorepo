@@ -26,9 +26,13 @@
     "deposit": "Depositar",
     "depositing": "Depositando...",
     "enter-an-amount": "Ingrese un monto",
-    "erc20-approve-10x-deposits": "Aprobar 10x el monto de este depósito",
-    "erc20-approve-10x-detailed-description": "Al activar la aprobación 10x, automáticamente agregamos 10 veces el monto de esta transacción como monto autorizado para otras futuras, lo que le permite ahorrar dinero en tarifas de gas y tiempo.",
-    "erc20-extra-approval": "Aprobar 10x este depósito",
+    "extra-approval": {
+      "description": "Al activar la aprobación 10x, automáticamente agregamos 10 veces el monto de esta transacción como monto autorizado para otras futuras, lo que le permite ahorrar dinero en tarifas de gas y tiempo.",
+      "label-deposit": "Aprobar 10x el depósito",
+      "label-withdraw": "Aprobar 10x el retiro",
+      "title-deposit": "Aprobar 10x el monto de este depósito",
+      "title-withdraw": "Aprobar 10x el monto de este retiro"
+    },
     "failed": "Falló",
     "hours": "{hours} horas",
     "insufficient-balance": "{symbol} insuficiente",
@@ -300,8 +304,6 @@
       "settings": {
         "accept-risk": "Entiendo y acepto el riesgo",
         "advanced-settings": "Configuración avanzada",
-        "approve-extra-deposit": "Aprobar {multiplier}x el depósito",
-        "approve-extra-withdrawal": "Aprobar {multiplier}x el retiro",
         "auto": "Auto",
         "continue-anyway": "Continuar de todos modos",
         "high-slippage": "Slippage alto",

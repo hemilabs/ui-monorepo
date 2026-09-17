@@ -6,7 +6,6 @@ import {
   useState,
 } from 'react'
 
-import { extraApprovalMultiplier } from '../../../../_utils/approval'
 import {
   getSlippageLevel,
   needsRiskConfirmation,
@@ -143,7 +142,6 @@ export const AdvancedSettings = function ({
             defaultSlippage={defaultSlippage}
             draft={draft}
             level={draftLevel}
-            multiplier={extraApprovalMultiplier}
             onApproveExtraAmountChange={updateApproveExtraAmount}
             onAutoClick={() => setDraft('')}
             onDraftChange={handleDraftChange}

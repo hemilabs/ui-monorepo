@@ -1,6 +1,7 @@
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { CustomTunnelsThroughPartners } from 'components/customTunnelsThroughPartners'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
+import { ExtraApproval } from 'components/extraApproval'
 import { FeesContainer } from 'components/feesContainer'
 import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { useTokenBalance } from 'hooks/useBalance'
@@ -23,7 +24,6 @@ import { useDeposit } from '../_hooks/useDeposit'
 import { useEstimateDepositFees } from '../_hooks/useEstimateDepositFees'
 import { EvmTunneling, TypedTunnelState } from '../_hooks/useTunnelState'
 
-import { Erc20TokenApproval } from './erc20TokenApproval'
 import { FormContent, TunnelForm } from './form'
 import { SubmitEvmDeposit } from './submitEvmDeposit'
 import { TunnelProviderToggle } from './tunnelProviderToggle'
@@ -232,12 +232,12 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
             }
             tokenApproval={
               operatesNativeToken ? null : (
-                <Erc20TokenApproval
+                <ExtraApproval
                   checked={extendedErc20Approval}
-                  disabled={!needsApproval || isRunningOperation}
-                  onCheckedChange={() =>
-                    setExtendedErc20Approval(prev => !prev)
-                  }
+                  disabled={isRunningOperation}
+                  id="erc20-approval-toggle"
+                  onCheckedChange={setExtendedErc20Approval}
+                  operation="deposit"
                 />
               )
             }

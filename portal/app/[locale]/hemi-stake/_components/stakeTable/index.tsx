@@ -16,7 +16,7 @@ import { Amount } from '../amount'
 import { RewardsDisplay } from '../rewardsDisplay'
 
 import { ActionCell } from './actionCell'
-import { ConnectWallet } from './connectWallet'
+import { HeroBanner } from './heroBanner'
 import { LockupTime } from './lockupTime'
 import { NoPositionStaked } from './noPositionStaked'
 import { type StakeTableFilterOptions } from './stakeTableFilter'
@@ -129,7 +129,7 @@ export function StakeTable({ data, filter = 'active', loading }: Props) {
     if (!walletIsConnected(status)) {
       return (
         <TableCard>
-          <ConnectWallet />
+          <HeroBanner />
         </TableCard>
       )
     }

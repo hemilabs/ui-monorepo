@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react'
+import { walletIsConnected } from 'utils/wallet'
+import { useAccount } from 'wagmi'
 
 import { StakeForm } from './_components/stakeForm'
 import { StakeTable } from './_components/stakeTable'
@@ -12,6 +14,7 @@ import { useStakingPositions } from './_hooks/useStakingPositions'
 
 export const HemiStakePage = function () {
   const { data, isLoading } = useStakingPositions()
+  const { status } = useAccount()
 
   const [filter, setFilter] = useState<StakeTableFilterOptions>('active')
 
@@ -24,14 +27,22 @@ export const HemiStakePage = function () {
     [data, filter],
   )
 
+  const isConnected = walletIsConnected(status)
+
   return (
     <StakingDashboardProvider>
       <StatsSection />
-      <div className="mt-6 flex flex-col-reverse gap-6 lg:flex-row">
+      <div
+        className={`mt-6 flex gap-6 lg:flex-row ${
+          isConnected ? 'flex-col-reverse' : 'flex-col'
+        }`}
+      >
         <div className="w-full lg:w-1/2 xl:shrink xl:grow-2 xl:basis-0">
-          <div className="mb-4 ml-1 flex flex-row md:w-fit">
-            <StakeTableFilter filter={filter} onFilter={handleFilter} />
-          </div>
+          {isConnected ? (
+            <div className="mb-4 ml-1 flex flex-row md:w-fit">
+              <StakeTableFilter filter={filter} onFilter={handleFilter} />
+            </div>
+          ) : null}
           <StakeTable data={filteredData} filter={filter} loading={isLoading} />
         </div>
         <div className="w-full shrink-0 lg:sticky lg:top-4 lg:w-1/2 lg:shrink lg:self-start xl:flex-1">

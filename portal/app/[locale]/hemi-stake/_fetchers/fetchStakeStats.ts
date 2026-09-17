@@ -2,7 +2,7 @@ import fetchPlusPlus from 'fetch-plus-plus'
 import { type Address, type Chain } from 'viem'
 
 // TODO(#2244): the endpoint does not compute the average lockup yet, and it
-// answers with an empty reward list until rewards paid to date is implemented.
+// answers with an empty reward list, so nothing consumes `rewards` yet.
 export type StakeStats = {
   averageLock?: number
   locksCount: number

@@ -1,14 +1,8 @@
 import { getAssetData } from 'hemi-earn-actions/actions'
-import {
-  type Address,
-  type PublicClient,
-  createPublicClient,
-  formatUnits,
-  http,
-  zeroAddress,
-} from 'viem'
+import { type Address, type PublicClient, formatUnits, zeroAddress } from 'viem'
 import { hemi } from 'viem/chains'
 
+import { getHemiClient } from '../hemiClient.ts'
 import {
   type GraphResponse,
   checkGraphQLErrors,
@@ -27,10 +21,7 @@ import {
 let hemiEarnRpcClient: PublicClient | undefined
 const getHemiEarnRpcClient = function () {
   if (!hemiEarnRpcClient) {
-    hemiEarnRpcClient = createPublicClient({
-      chain: hemi,
-      transport: http(undefined, { batch: true }),
-    })
+    hemiEarnRpcClient = getHemiClient(hemi.id)
   }
   return hemiEarnRpcClient
 }

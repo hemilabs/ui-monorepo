@@ -24,6 +24,8 @@ $ curl http://localhost:3006/circulating
 "555000000.000000000000000000"
 ```
 
+The balances come from the HEMI supply snapshots of the [hemi-earn-requests-subgraph](../subgraphs/hemi-earn-requests-subgraph), from the newest day every chain has reached.
+
 #### `GET /claims/:chain-id/:address/all`
 
 Returns an array with the data needed for a user to claim their HEMI tokens.
@@ -51,6 +53,17 @@ The data for each claim group must be located in individual files in the `src/cl
 
 Note that the route `GET /claims/:chain-id/:address` is kept for compatibility and will return just the first element of the array.
 
+#### `GET /hemi-stake`
+
+Returns the global veHEMI staking stats. It is Hemi mainnet only.
+
+```console
+$ curl http://localhost:3006/hemi-stake
+{"averageLock":63072000,"locksCount":15473,"rewards":[],"totalStaked":"1488392826436605230000147341","walletsStaking":13663}
+```
+
+`averageLock` is the average lock duration of the active positions, in seconds, read from the veHEMI subgraph. `totalStaked` is the amount of HEMI locked, in its smallest unit. `locksCount` is the number of open positions and `walletsStaking` the number of wallets that hold at least one position, read from the [Hemi explorer](https://explorer.hemi.xyz). `rewards` is the list of all-time paid rewards (to be implemented).
+
 #### `GET /net-stats`
 
 Returns the Hemi network stats required by the [home page of the Marketing site](https://hemi.xyz).
@@ -68,6 +81,17 @@ Retrieves token prices (in USD) stored in a key/value store.
 $ curl http://localhost:3006/prices
 {"prices":{"BTC":"94514.79193898945","M-BTC":"95894.52612269788","PUMPBTC":"95990.74415080296","WBTC":"95797.80677773379"},"time":"2025-02-17T23:12:35.803Z"}
 ```
+
+#### `GET /supply-history/:period`
+
+Returns the daily HEMI supply of the last `1w`, `1m`, `3m`, `6m` or `1y`, ending yesterday. Any other period returns `400 Bad Request`.
+
+```console
+$ curl http://localhost:3006/supply-history/1m
+[{"circulating":"1052500000000000000000000000","date":"2026-09-10","nonCirculating":"7459107944000000000000000000","priceUsd":"0.00683108945841876","staked":"1488392056000000000000000000","totalSupply":"10000000000000000000000000000"}]
+```
+
+`circulating`, `staked` and `nonCirculating` add up to `totalSupply`. The balances come from the same snapshots as [`GET /circulating`](#get-circulating), leaving out a day that not every chain has reached. `priceUsd` is the daily quote of HEMI from [CoinMarketCap](https://coinmarketcap.com/), or `null` for a day it has no quote for.
 
 #### `GET /tvl`
 
@@ -187,7 +211,7 @@ $ curl http://localhost:3006/subgraphs/43111/earn-cost-basis/0x00000000000000000
 {"costBasis":{"0x0000000000000000000000000000000000000002":"1010000000000000000"}}
 ```
 
-Both Hemi Earn endpoints require the following env vars to be set on the backend:
+Both Hemi Earn endpoints, and `/circulating` and `/supply-history`, which read the HEMI supply snapshots from the same indexer, require the following env vars to be set on the backend:
 
 - `SUBGRAPH_HEMI_EARN_REQUESTS_API_URL` — the full GraphQL URL of the Envio `hemi-earn-requests` indexer.
 - `SUBGRAPH_HEMI_EARN_REQUESTS_API_KEY` — Bearer token for the Envio indexer (only sent when set; can be left empty against an unauthenticated local Envio).
@@ -244,7 +268,7 @@ In addition, a `supply:time` key is also stored every time the cache is refreshe
 
 ## Token price cron
 
-Periodically retrieves token prices from [CoinMarketCap](https://coinmarketcap.com/) and updates the key/value store (Redis).
+Periodically retrieves token prices from [CoinMarketCap](https://coinmarketcap.com/) and updates the key/value store (Redis). It also keeps the daily price history of the tokens in `COIN_MARKET_CAP_IDS`, which [`GET /supply-history/:period`](#get-supply-historyperiod) serves for HEMI.
 
 ### Configuration
 
@@ -254,6 +278,7 @@ These environment variables control how the `cron` job behaves:
 | ----------------------- | ----------------------------------------------------------------------------------- | ------------------------ |
 | CACHE_EXPIRATION_MIN    | How long the prices will be kept in the cache.                                      | 3600                     |
 | COIN_MARKET_CAP_API_KEY | The CoinMarketCap API key.                                                          |                          |
+| COIN_MARKET_CAP_IDS     | Comma separated `SYMBOL:id` pairs whose daily price history is kept.                | HEMI:38159               |
 | COIN_MARKET_CAP_SLUGS   | String of comma separated token slugs. I.e. "bitcoin,ethereum"                      | bitcoin                  |
 | REDIS_URL               | The URL of the Redis database.                                                      | `redis://localhost:6379` |
 | REFRESH_PRICES_MIN      | How frequently the cache will be refreshed. If set to 0, it will run once and exit. | 5                        |
@@ -264,6 +289,8 @@ These environment variables control how the `cron` job behaves:
 
 Price values in the `cache` are stored with keys prefixed with `price:`.
 In addition, a `time` key is also stored every time the cache is refreshed.
+
+The daily prices are stored in one key per token, as `daily-prices:<SYMBOL>`. The value is a map of day to price, `{ "<YYYY-MM-DD>": "<price>" }`, and days older than a year are dropped.
 
 ## Vaults monitor cron
 

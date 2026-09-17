@@ -7,11 +7,11 @@ import {
   Transfer as TransferEvent,
   Withdraw as WithdrawEvent,
 } from '../../generated/VeHemi/VeHemi'
+import { loadLockStats } from '../schema/lockStats'
 import { LockedPosition } from '../schema/lockedPosition'
+import { getLockDuration, getUnlockTime } from '../utils/lockTime'
 
-// This function is called when a staking position is created or updated.
-// As the DepositEvent fires both in creation and update, if the lockedPosition can't be loaded
-// it means the position is being created - we must ignore it
+// Deposit is called both on new locks and updates. Skip new ones, handle updates.
 export function handleDepositEvent(event: DepositEvent): void {
   const lockedPosition = LockedPosition.load(event.params.tokenId.toString())
   if (lockedPosition === null) {
@@ -22,8 +22,7 @@ export function handleDepositEvent(event: DepositEvent): void {
     return
   }
 
-  // if the amount was updated, the increased amount is set, if not, zero is send
-  // So we can just add it up
+  // if the amount was updated, the increased amount is set, if not, zero is sent.
   lockedPosition.amount = lockedPosition.amount.plus(event.params.amount)
 
   // Normalize lockTime: the Deposit event gives us the absolute unlock timestamp,
@@ -32,6 +31,15 @@ export function handleDepositEvent(event: DepositEvent): void {
   const end = event.params.lockTime
   const start = lockedPosition.timestamp
   lockedPosition.lockTime = end.minus(start)
+
+  const previousDuration = getLockDuration(lockedPosition)
+  lockedPosition.unlockTime = end
+
+  const stats = loadLockStats()
+  stats.totalLockDuration = stats.totalLockDuration
+    .plus(getLockDuration(lockedPosition))
+    .minus(previousDuration)
+  stats.save()
 
   log.info('Updating locked position: {}', [lockedPosition.id])
   lockedPosition.save()
@@ -58,6 +66,17 @@ export function handleNewLock(event: LockEvent): void {
   lockedPosition.tokenId = event.params.tokenId
   lockedPosition.transferable = event.params.transferable
   lockedPosition.transactionHash = event.transaction.hash
+  lockedPosition.unlockTime = getUnlockTime(
+    event.params.start,
+    event.params.lockTime,
+  )
+
+  const stats = loadLockStats()
+  stats.activeLocks += 1
+  stats.totalLockDuration = stats.totalLockDuration.plus(
+    getLockDuration(lockedPosition),
+  )
+  stats.save()
 
   log.info('Creating locked position: {}', [lockedPosition.id])
   lockedPosition.save()
@@ -76,6 +95,13 @@ export function handleWithdraw(event: WithdrawEvent): void {
     ])
     return
   }
+
+  const stats = loadLockStats()
+  stats.activeLocks -= 1
+  stats.totalLockDuration = stats.totalLockDuration.minus(
+    getLockDuration(lockedPosition),
+  )
+  stats.save()
 
   lockedPosition.status = 'withdrawn'
   log.info('Withdraw locked position: {}', [lockedPosition.id])

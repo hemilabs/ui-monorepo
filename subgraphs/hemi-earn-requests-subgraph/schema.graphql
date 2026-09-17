@@ -67,3 +67,20 @@ type RateSnapshot {
   rateNumerator: BigInt!
   timestamp: BigInt!
 }
+
+# HEMI supply
+type DailySupplySnapshot {
+  bnbBlock: Int
+  bnbSafe: BigInt
+  burned: BigInt
+  date: String! @index
+  ethBlock: Int
+  ethSafe: BigInt
+  hemiBlock: Int
+  hemiSafe: BigInt
+  id: ID!
+  locked: BigInt
+  merkle: BigInt
+  opBalances: BigInt
+  totalSupply: BigInt
+}

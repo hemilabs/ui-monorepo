@@ -2,7 +2,6 @@ import { useQueryClient } from '@tanstack/react-query'
 import { WithWorker } from 'components/withWorker'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useBtcWithdrawals } from 'hooks/useBtcWithdrawals'
-import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useOptimisticSearchParams } from 'nuqs/adapters/react-router/v8'
 import { useEffect } from 'react'
@@ -123,9 +122,7 @@ export function BitcoinWithdrawalsStatusUpdater() {
   // Withdrawals  are checked against an hemi address
   const { isConnected } = useEvmAccount()
 
-  const unsupportedChain = useConnectedToUnsupportedEvmChain()
-
-  if (!isConnected || unsupportedChain) {
+  if (!isConnected) {
     return null
   }
 

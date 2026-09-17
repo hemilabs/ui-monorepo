@@ -6,13 +6,20 @@ import express, { type ErrorRequestHandler, type RequestHandler } from 'express'
 import { getBtcVaultsData } from './src/btc-vaults.ts'
 import { createClaims } from './src/claims.ts'
 import { createDune, type DuneOptions } from './src/dune.ts'
+import { BadRequestError } from './src/errors.ts'
 import { globToRegExp } from './src/glob-to-regexp.ts'
 import { createNetStats, type NetStatsOptions } from './src/net-stats.ts'
 import { createRedisCache, type RedisOptions } from './src/redis.ts'
 import { UpstreamGraphQLError } from './src/subgraphs/errors.ts'
 import { createSubgraphsRouter } from './src/subgraphs/router.ts'
+import {
+  createSupplyIndexer,
+  isSupplyPeriod,
+  type SupplyIndexerOptions,
+} from './src/supply-indexer.ts'
 import { toJsonMiddleware, toTextMiddleware } from './src/to-middleware.ts'
 import { createVeHemi } from './src/ve-hemi/index.ts'
+import { getHemiStake } from './src/ve-hemi/stake.ts'
 
 const { getTvl } = createDune(config.get<DuneOptions>('tvl.dune'))
 const { getAllUserClaimData } = createClaims()
@@ -20,6 +27,13 @@ const { getNetStats } = createNetStats(config.get<NetStatsOptions>('rpcUrl'))
 const cache = createRedisCache(config.get<RedisOptions>('redis'))
 
 const { getVeHemiRewards } = createVeHemi({ cache })
+
+const { getCirculatingSupply, getSupplyHistory } = createSupplyIndexer({
+  ...config.get<Pick<SupplyIndexerOptions, 'correction' | 'merkleLocked'>>(
+    'supply',
+  ),
+  cache,
+})
 
 const app = express()
 
@@ -40,7 +54,7 @@ app.get(
 
 app.get(
   '/circulating',
-  toTextMiddleware(cache.getCirculatingSupply, {
+  toTextMiddleware(getCirculatingSupply, {
     revalidate: 5 * 60 * 1000,
   }),
 )
@@ -50,6 +64,13 @@ app.get(
   toJsonMiddleware(getAllUserClaimData, {
     maxAge: 5 * 60 * 1000,
     resolver: (chainId, address) => `${chainId}:${address}`,
+  }),
+)
+
+app.get(
+  '/hemi-stake',
+  toJsonMiddleware(getHemiStake, {
+    revalidate: 5 * 60 * 1000,
   }),
 )
 
@@ -64,6 +85,23 @@ app.get(
   '/prices',
   toJsonMiddleware(cache.getTokenPrices, {
     revalidate: 60 * 1000,
+  }),
+)
+
+const checkSupplyPeriod: RequestHandler = function (req, res, next) {
+  const { period } = req.params
+  if (typeof period !== 'string' || !isSupplyPeriod(period)) {
+    res.status(400).send({ error: 'Bad Request' })
+    return
+  }
+  next()
+}
+
+app.get(
+  '/supply-history/:period',
+  checkSupplyPeriod,
+  toJsonMiddleware(getSupplyHistory, {
+    revalidate: 60 * 60 * 1000,
   }),
 )
 
@@ -91,6 +129,10 @@ app.use(notFoundHandler)
 setupExpressErrorHandler(app)
 
 const errorHandler: ErrorRequestHandler = function (error, _req, res, _next) {
+  if (error instanceof BadRequestError) {
+    res.status(400).send({ error: 'Bad Request' })
+    return
+  }
   if (error instanceof UpstreamGraphQLError) {
     // Intentionally not filtered from Sentry — upstream issues are still
     // tracked there

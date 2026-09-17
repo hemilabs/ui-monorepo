@@ -1,4 +1,5 @@
 import { Card } from 'components/card'
+import { SegmentedControlItem } from 'components/segmentedControlItem'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type EvmToken } from 'types/token'
@@ -8,7 +9,6 @@ import { type Address } from 'viem'
 import { HistoricalMetricsIcon } from '../../../../_icons/historicalMetricsIcon'
 import { type MetricPeriod, type MetricType } from '../../../../types'
 import { useHistoricalMetrics } from '../../_hooks/useHistoricalMetrics'
-import { SegmentedControlItem } from '../segmentedControlItem'
 
 import { HeadlineValue } from './headlineValue'
 import { HistoricalMetricsChart } from './historicalMetricsChart'

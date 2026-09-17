@@ -512,6 +512,10 @@
       "years": "{years, plural, one {{years} year} other {{years} years}}"
     },
     "here-is-your-tx": "Here's your transaction:",
+    "launch-card": {
+      "is-live": "<name></name> is live",
+      "live-on": "Live 19 September"
+    },
     "lockup-period": "Lockup period",
     "stake-successful": "Stake successful",
     "stats": {

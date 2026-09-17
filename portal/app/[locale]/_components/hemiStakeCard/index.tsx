@@ -72,7 +72,7 @@ export const HemiStakeCard = function () {
           </div>
         </Link>
         <button
-          className="group/close absolute right-3.5 top-3 z-10 flex size-5 items-center justify-center md:opacity-0 md:transition-opacity md:duration-300 md:group-hover/card:opacity-100"
+          className="group/close absolute right-3.5 top-3 z-10 flex size-5 items-center justify-center md:opacity-0 md:transition-opacity md:duration-300 md:focus-visible:opacity-100 md:group-hover/card:opacity-100"
           onClick={close}
           type="button"
         >

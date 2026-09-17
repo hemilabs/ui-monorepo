@@ -623,6 +623,42 @@ export const getMerkleClaim = function ({
   )
 }
 
+/**
+ * Paginator for graph-node subgraphs.
+ *
+ * graph-node defaults `first` to 100 and caps it at 1000, so asking for everything in
+ * one request silently returns the first page - no error, just a short list. This walks
+ * pages until a short one ends the loop.
+ *
+ * The caller owns the query, `orderBy` and `where` included; this only drives
+ * `first`/`skip` and aggregates. `skip` is capped at 5000, so at most `5000 + pageSize`
+ * rows are read - beyond that the query itself has to be narrowed, though a wallet with
+ * six thousand veHEMI positions is not a shape that occurs.
+ *
+ * @param fetchPage Runs one request given the page window, returning that page's rows.
+ * @param pageSize Rows to request per page. Defaults to graph-node's maximum.
+ */
+const paginateSubgraph = async function <TRow>({
+  fetchPage,
+  pageSize = 1000,
+}: {
+  fetchPage: (window: { first: number; skip: number }) => Promise<TRow[]>
+  pageSize?: number
+}) {
+  const skipCap = 5000
+  const rows: TRow[] = []
+  let skip = 0
+  let page: TRow[]
+
+  do {
+    page = await fetchPage({ first: pageSize, skip })
+    rows.push(...page)
+    skip += pageSize
+  } while (page.length === pageSize && skip <= skipCap)
+
+  return rows
+}
+
 type GetLockedPositionsQueryResponse = GraphResponse<{
   lockedPositions: {
     amount: string
@@ -661,10 +697,12 @@ export const getLockedPositions = function ({
     subgraphIds,
   })
 
-  const schema = {
+  const buildSchema = ({ first, skip }: { first: number; skip: number }) => ({
     query: `
-      query GetLockedPositions($address: Bytes!) {
+      query GetLockedPositions($address: Bytes!, $first: Int!, $skip: Int!) {
         lockedPositions(
+          first: $first
+          skip: $skip
           where: {
             or: [
               { owner: $address },
@@ -690,19 +728,25 @@ export const getLockedPositions = function ({
         }
       }
     `,
-    variables: { address: address.toLowerCase() },
-  }
+    variables: { address: address.toLowerCase(), first, skip },
+  })
 
-  return request<GetLockedPositionsQueryResponse>(subgraphUrl, schema).then(
-    function (response) {
-      checkGraphQLErrors(response)
-      return response.data.lockedPositions.map(position => ({
-        ...position,
-        // Convert addresses to checksum format
-        owner: toChecksum(position.owner),
-        pastOwners: position.pastOwners.map(addr => toChecksum(addr)),
-      }))
-    },
+  return paginateSubgraph({
+    fetchPage: window =>
+      request<GetLockedPositionsQueryResponse>(
+        subgraphUrl,
+        buildSchema(window),
+      ).then(function (response) {
+        checkGraphQLErrors(response)
+        return response.data.lockedPositions
+      }),
+  }).then(positions =>
+    positions.map(position => ({
+      ...position,
+      // Convert addresses to checksum format
+      owner: toChecksum(position.owner),
+      pastOwners: position.pastOwners.map(addr => toChecksum(addr)),
+    })),
   )
 }
 

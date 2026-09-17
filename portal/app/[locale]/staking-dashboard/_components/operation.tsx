@@ -6,6 +6,9 @@ import { SlidingSwitcher } from 'components/slidingSwitcher'
 import { ComponentProps, ReactNode } from 'react'
 
 type Props = {
+  // Replaces the single "Total amount" figure where one number can't describe the
+  // operation - a claim settles several assets at once, and the staked HEMI isn't one.
+  amountSlot?: ReactNode
   bottomSection?: ReactNode
   callToAction?: ReactNode
   isOperating?: boolean
@@ -14,11 +17,14 @@ type Props = {
   subheading: string
 } & ComponentProps<typeof DrawerTopSection> &
   Omit<ComponentProps<typeof Amount>, 'value'> & {
-    amount: ComponentProps<typeof Amount>['value']
+    // Optional because `amountSlot` replaces it. A claim over several positions has no
+    // single staked figure, and a zero invented to satisfy this would surface later.
+    amount?: ComponentProps<typeof Amount>['value']
   }
 
 export const Operation = ({
   amount,
+  amountSlot,
   bottomSection,
   callToAction,
   heading,
@@ -39,7 +45,7 @@ export const Operation = ({
       hideFirst={isOperating}
       second={
         <ReviewOperation
-          amount={<Amount token={token} value={amount} />}
+          amount={amountSlot ?? <Amount token={token} value={amount!} />}
           bottomSection={bottomSection}
           callToAction={callToAction}
           steps={steps}

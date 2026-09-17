@@ -20,7 +20,11 @@ import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
 import { useRewardTokens } from './useRewardTokens'
 
 type UseCollectRewards = {
+  // Carried on every update, or these writes merge into whichever position owns the
+  // drawer slot and one claim's status lands under another position's amount.
+  amount: bigint
   on?: (emitter: EventEmitter<CollectAllRewardsEvents>) => void
+  owner: string
   tokenId: bigint
   updateCollectRewardsDashboardOperation: (
     payload?: CollectAllRewardsDashboardOperation,
@@ -28,10 +32,13 @@ type UseCollectRewards = {
 }
 
 export const useCollectRewards = function ({
+  amount,
   on,
+  owner,
   tokenId,
   updateCollectRewardsDashboardOperation,
 }: UseCollectRewards) {
+  const stakingPosition = { amount, owner, tokenId }
   const { setDrawerQueryString } = useDrawerStakingQueryString()
   const { track } = useUmami()
   const { address } = useAccount()
@@ -66,6 +73,7 @@ export const useCollectRewards = function ({
       emitter.on('user-signed-collect-all-rewards', function (transactionHash) {
         track?.('staking dashboard - signed collect rewards')
         updateCollectRewardsDashboardOperation({
+          stakingPosition,
           status: CollectAllRewardsDashboardStatus.COLLECT_TX_PENDING,
           transactionHash,
         })
@@ -76,6 +84,7 @@ export const useCollectRewards = function ({
         track?.('staking dashboard - signing collect rewards error')
 
         updateCollectRewardsDashboardOperation({
+          stakingPosition,
           status: CollectAllRewardsDashboardStatus.COLLECT_TX_FAILED,
         })
       })
@@ -88,17 +97,13 @@ export const useCollectRewards = function ({
           // Update native balance for gas fees
           updateNativeBalanceAfterFees(receipt)
 
-          // Update rewards to zero
-          rewardTokens.forEach(function ({ address: rewardsAddress }) {
-            const queryKey = getCalculateRewardsQueryKey({
-              chainId: hemi.id,
-              rewardToken: rewardsAddress,
-              tokenId,
-            })
-            queryClient.setQueryData(queryKey, () => BigInt(0))
-          })
+          // No optimistic zero here. A confirmed transaction is not evidence the
+          // holder was paid: a claim can resolve epochs it owed nothing for and emit
+          // `Claimed` with an amount of zero. Writing zero would state as fact
+          // something only the chain knows - `onSettled` re-reads it instead.
 
           updateCollectRewardsDashboardOperation({
+            stakingPosition,
             status: CollectAllRewardsDashboardStatus.COLLECT_TX_CONFIRMED,
           })
         },
@@ -113,10 +118,25 @@ export const useCollectRewards = function ({
           updateNativeBalanceAfterFees(receipt)
 
           updateCollectRewardsDashboardOperation({
+            stakingPosition,
             status: CollectAllRewardsDashboardStatus.COLLECT_TX_FAILED,
           })
         },
       )
+
+      // The receipt wait can fail, and the action can refuse before signing. Without
+      // these the drawer keeps its pending step spinning for the life of the page on a
+      // flow that has already stopped.
+      const collectFailed = function () {
+        updateCollectRewardsDashboardOperation({
+          stakingPosition,
+          status: CollectAllRewardsDashboardStatus.COLLECT_TX_FAILED,
+        })
+        setDrawerQueryString('claimingRewards')
+      }
+      emitter.on('collect-all-rewards-failed', collectFailed)
+      emitter.on('collect-all-rewards-failed-validation', collectFailed)
+      emitter.on('unexpected-error', collectFailed)
 
       on?.(emitter)
 

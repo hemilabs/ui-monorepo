@@ -248,7 +248,11 @@ type StakingPositionApiResult = Omit<
  * @param params Parameters of the call.
  * @param params.address The address of the position owner.
  * @param params.chainId Hemi chain Id.
- * @returns List of staking positions, or an empty list on failure.
+ * @returns List of staking positions.
+ *
+ * Deliberately not caught into an empty list: that makes a failed fetch and a wallet
+ * with no positions the same value, and the dashboard renders the second - telling
+ * someone they have no positions when the request simply failed.
  */
 export const getLockedPositions = function ({
   address,
@@ -261,22 +265,20 @@ export const getLockedPositions = function ({
 
   return request<{ positions: StakingPositionApiResult[] }>(
     `${url}/locks/${address}`,
+  ).then(({ positions }) =>
+    positions.map(
+      position =>
+        ({
+          ...position,
+          amount: BigInt(position.amount),
+          blockNumber: BigInt(position.blockNumber),
+          blockTimestamp: BigInt(position.blockTimestamp),
+          lockTime: BigInt(position.lockTime),
+          timestamp: BigInt(position.timestamp),
+          tokenId: BigInt(position.tokenId),
+        }) as StakingPosition,
+    ),
   )
-    .then(({ positions }) =>
-      positions.map(
-        position =>
-          ({
-            ...position,
-            amount: BigInt(position.amount),
-            blockNumber: BigInt(position.blockNumber),
-            blockTimestamp: BigInt(position.blockTimestamp),
-            lockTime: BigInt(position.lockTime),
-            timestamp: BigInt(position.timestamp),
-            tokenId: BigInt(position.tokenId),
-          }) as StakingPosition,
-      ),
-    )
-    .catch(() => [] as StakingPosition[])
 }
 
 /**

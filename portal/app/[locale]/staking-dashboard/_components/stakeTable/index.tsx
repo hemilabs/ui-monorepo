@@ -19,6 +19,7 @@ import { ActionCell } from './actionCell'
 import { ConnectWallet } from './connectWallet'
 import { LockupTime } from './lockupTime'
 import { NoPositionStaked } from './noPositionStaked'
+import { PositionsUnavailable } from './positionsUnavailable'
 import { type StakeTableFilterOptions } from './stakeTableFilter'
 import { UnlockCta } from './unlockCta'
 import { UnsupportedChain } from './unsupportedChain'
@@ -102,11 +103,18 @@ const stakingColumns = ({
 
 type Props = {
   data: StakingPosition[] | undefined
+  // Kept apart from an empty list, which is a claim about the wallet, not the request.
+  hasError?: boolean
   loading: boolean
   filter?: StakeTableFilterOptions
 }
 
-export function StakeTable({ data, filter = 'active', loading }: Props) {
+export function StakeTable({
+  data,
+  filter = 'active',
+  hasError = false,
+  loading,
+}: Props) {
   const t = useTranslations('staking-dashboard')
   const [openRowId, setOpenRowId] = useState<string | null>(null)
   const { status } = useAccount()
@@ -149,6 +157,17 @@ export function StakeTable({ data, filter = 'active', loading }: Props) {
       return (
         <TableCard>
           <UnsupportedChain />
+        </TableCard>
+      )
+    }
+
+    // Only when there is nothing else to show: a background refetch can fail while the
+    // previous positions are still on screen, and blanking a populated table would be
+    // worse than the problem this branch was added for.
+    if (hasError && (data?.length ?? 0) === 0) {
+      return (
+        <TableCard>
+          <PositionsUnavailable />
         </TableCard>
       )
     }

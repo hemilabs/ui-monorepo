@@ -4,17 +4,22 @@ import { Dispatch, SetStateAction } from 'react'
 import { MoreItemsIcon } from '../../_icons/moreItemsIcon'
 
 type Props = {
+  // Named per row, or the table announces a column of identical unlabelled buttons.
+  label: string
   isOpen: boolean
   setIsOpen?: Dispatch<SetStateAction<boolean>>
 }
 
-export const ActionButton = ({ isOpen, setIsOpen }: Props) => (
+export const ActionButton = ({ isOpen, label, setIsOpen }: Props) => (
   <div
     className={`group/icon ${
       isOpen ? '[&>button>svg]:opacity-100 [&>button]:before:opacity-100' : ''
     }`}
   >
     <ButtonIcon
+      aria-expanded={isOpen}
+      aria-haspopup="menu"
+      aria-label={label}
       onClick={() => setIsOpen?.(!isOpen)}
       size="xSmall"
       type="button"

@@ -3,6 +3,7 @@ import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { unixNowTimestamp } from 'utils/time'
+import { isAprSupported } from 'utils/veHemiEpochRewards'
 import { getBalanceOfNFTAt, getLockedBalance } from 've-hemi-actions/actions'
 
 import {
@@ -23,6 +24,9 @@ export const getCalculateAprQueryKey = ({
 /**
  * Calculates APR for a veHEMI position
  *
+ * Only on the original rewards contract - see `isAprSupported` for why the same
+ * arithmetic does not describe the epoch one.
+ *
  * Process:
  * 1. Fetches rewards per veHEMI from API (61 epochs)
  * 2. Gets position data from contract (weight, lock end, locked amount)
@@ -42,6 +46,7 @@ export const useCalculateApr = function ({
 }) {
   const { hemiWalletClient } = useHemiWalletClient()
   const { id } = useHemi()
+  const showApr = isAprSupported(id)
   const { data: rewardsPerVeHEMI, error: isRewardsPerVeHEMIError } =
     useRewardsPerVeHEMI()
   const hemiToken = useHemiToken()
@@ -54,6 +59,7 @@ export const useCalculateApr = function ({
   return useQuery({
     enabled:
       enabled &&
+      showApr &&
       !!hemiWalletClient &&
       !isRewardsPerVeHEMIError &&
       !!rewardsPerVeHEMI &&

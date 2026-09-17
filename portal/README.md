@@ -67,6 +67,26 @@ VITE_BTC_OUTPUTS_SIZE=25 # Assumed size in vbytes of a single transaction output
 # Backend API URL
 VITE_PORTAL_API_URL=<url> # To get the token prices, user points, TVL and more
 VITE_VETRO_API_URL=<url> # Vetro API URL; powers the Hemi Earn page (variable-stake APY and user rewards)
+# Point the Portal at a veHEMI rewards scenario devnet. Take both addresses from the
+# console's Integrate pane (or the kit's EPOCH_REWARDS and EPOCH_LENS components).
+# Set BOTH or NEITHER. Every epoch read goes through the Lens, so the epoch UI only
+# switches on when both resolve - a chain claiming the epoch generation without a Lens
+# could not read anything.
+# Setting only VITE_VE_HEMI_EPOCH_REWARDS is NOT inert, though: the capture-before-
+# withdraw guard keys off the rewards address alone, on purpose, because burning a
+# position is destructive whether or not a Lens is configured for reading. So a half
+# configuration leaves the dashboard on the original contract while unlocking starts
+# calling capturePositionClass against the address you set.
+# Unset means the chain is on the original continuous-accrual rewards contract, which
+# is what production is. A declared-but-empty value counts as unset.
+# Ignored on Hemi mainnet: the override exists for devnets, and letting one through
+# there would price real positions against a mock.
+VITE_VE_HEMI_EPOCH_REWARDS=<address>
+VITE_VE_HEMI_EPOCH_REWARDS_LENS=<address>
+# Optional. Where to start reading Claimed logs for the "claimed to date" figures. Left
+# unset, the deploy block is found by bisecting getCode, which needs an endpoint that
+# serves historical getCode - set this where yours does not, or to skip the lookup.
+VITE_VE_HEMI_EPOCH_REWARDS_FROM_BLOCK=<block number>
 # The following variables could be used to customize the contracts addresses used by Hemi (for example, for testing with a forked blockchain):
 VITE_ADDRESS_MANAGER=<address>
 VITE_L2_BRIDGE=<address>

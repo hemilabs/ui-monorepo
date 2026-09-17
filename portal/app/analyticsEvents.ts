@@ -107,6 +107,9 @@ const analyticsEvents = [
   'stake - unstake success',
   // /staking-dashboard
   'staking dashboard - approve failed',
+  'staking dashboard - capture position class',
+  'staking dashboard - capture position class failed',
+  'staking dashboard - capture position class reverted',
   'staking dashboard - approve increase amount reverted',
   'staking dashboard - approve reverted',
   'staking dashboard - collect rewards transaction reverted',
@@ -122,6 +125,7 @@ const analyticsEvents = [
   'staking dashboard - lock creation reverted',
   'staking dashboard - lock creation success',
   'staking dashboard - signed collect rewards',
+  'staking dashboard - signing capture position class error',
   'staking dashboard - signed increase amount',
   'staking dashboard - signed increase unlock time',
   'staking dashboard - signed lock creation',
@@ -133,6 +137,8 @@ const analyticsEvents = [
   'staking dashboard - signing lock creation error',
   'staking dashboard - signing withdraw error',
   'staking dashboard - unexpected error',
+  'staking dashboard - withdraw failed',
+  'staking dashboard - withdraw failed validation',
   'staking dashboard - withdraw success',
   'staking dashboard - withdraw transaction reverted',
   // /transaction-history

@@ -49,6 +49,15 @@ export type IncreaseUnlockTimeEvents = CommonEvents & {
 }
 
 export type WithdrawEvents = CommonEvents & {
+  // veHEMI deletes a position's class bits when it burns, so withdrawing one whose class
+  // was never captured makes its unclaimed epochs unpayable. `withdraw` captures first;
+  // these report that step.
+  'capture-position-class-failed': [Error]
+  'capture-position-class-transaction-reverted': [TransactionReceipt]
+  'capture-position-class-transaction-succeeded': [TransactionReceipt]
+  'pre-capture-position-class': []
+  'user-signed-capture-position-class': [Hash]
+  'user-signing-capture-position-class-error': [Error]
   'withdraw-failed': [Error]
   'withdraw-failed-validation': [string]
   'withdraw-settled': []

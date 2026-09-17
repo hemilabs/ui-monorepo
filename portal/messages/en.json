@@ -539,13 +539,50 @@
   },
   "staking-dashboard": {
     "amount": "Amount",
+    "claim-all": {
+      "button": "Claim all rewards",
+      "claimed": "Claimed to date",
+      "heading": "Claimable rewards",
+      "positions": "{count, plural, one {Across # position} other {Across # positions}}"
+    },
     "claim-rewards": {
+      "asset-blocked": "Cannot be claimed right now",
+      "asset-claim-failed": "Claim failed. Please try again.",
+      "claim-asset": "Claim",
+      "claim-individually-explainer": "Rewards are normally claimed together, and one asset that cannot be transferred stops all of them. Claim the remaining assets one at a time below.",
+      "claim-individually-heading": "Or claim each asset on its own",
+      "declined": "You declined the request in your wallet. Nothing was claimed.",
       "heading": "Claim rewards",
-      "subheading": "We’re processing your reward claim. You can follow the progress below."
+      "ineligible": {
+        "not-connected": "Connect your wallet to claim",
+        "not-holder": "Only the current owner can claim these rewards",
+        "nothing-claimable": "No rewards to claim yet",
+        "paused": "Claiming is paused. Your rewards are safe and still shown.",
+        "registry-too-large": "Too many reward assets to claim in one go",
+        "rewards-loading": "Checking your rewards…",
+        "rewards-unavailable": "We couldn’t read your rewards. Please try again shortly.",
+        "wrong-chain": "Switch to Hemi to claim"
+      },
+      "nothing-owed": "Resolved. Nothing was owed for this position.",
+      "subheading": "We’re processing your reward claim. You can follow the progress below.",
+      "walk": {
+        "done": "Your rewards have been claimed.",
+        "epochs": "Epochs {from}–{to}",
+        "heading": "Claim all rewards",
+        "nothing-owed": "Position #{tokenId} · Nothing owed",
+        "position-claim": "Position #{tokenId} · Claim rewards",
+        "position-transaction": "Position #{tokenId} · Transaction {chunk} of {chunks}",
+        "preparing": "Position #{tokenId} · Preparing your claim…",
+        "queued": "Position #{tokenId} · Waiting its turn",
+        "stopped": "Position #{tokenId} · Not claimed",
+        "subheading": "We’re claiming each position in turn. Each one asks for its own signature in your wallet."
+      },
+      "you-receive": "You receive"
     },
     "claim-rewards-successful": "Claim rewards successful",
     "drawer": {
       "approving": "Approving {symbol}",
+      "capture-position-class": "Record the position class",
       "claim-rewards": "Claim rewards on {network}",
       "increase-amount": {
         "heading": "Add ${symbol} to this lockup",
@@ -591,6 +628,7 @@
     "switch-to-start-staking": "You can switch networks to start staking your HEMI.",
     "table": {
       "action": "Action",
+      "actions-for-position": "Actions for position {tokenId}",
       "active": "Active",
       "add-liquidity-to-lockup": "Add ${symbol} to this lockup",
       "add-time-to-lockup": "Add time to this lockup",
@@ -604,10 +642,14 @@
       "lockup": "Lockup",
       "no-hemi-burned": "No burned positions yet",
       "no-hemi-staked": "No ${symbol} staked",
+      "not-position-owner": "You no longer hold this position",
       "on": "On {date}",
       "position-delegated-to-you": "Position delegated to you",
+      "positions-unavailable": "We couldn’t load your positions",
+      "positions-unavailable-subtitle": "Something went wrong reading them. Please refresh the page to try again.",
       "rewards": "Rewards",
       "rewards-available": "{count} Available",
+      "rewards-claimed": "Already claimed",
       "tx": "Tx",
       "unlock": "Unlock",
       "unlocked": "Unlocked",

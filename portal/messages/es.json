@@ -539,13 +539,50 @@
   },
   "staking-dashboard": {
     "amount": "Cantidad",
+    "claim-all": {
+      "button": "Reclamar todas las recompensas",
+      "claimed": "Reclamado hasta la fecha",
+      "heading": "Recompensas disponibles",
+      "positions": "{count, plural, one {En # posición} other {En # posiciones}}"
+    },
     "claim-rewards": {
+      "asset-blocked": "No se puede reclamar en este momento",
+      "asset-claim-failed": "El reclamo falló. Inténtelo de nuevo.",
+      "claim-asset": "Reclamar",
+      "claim-individually-explainer": "Las recompensas suelen reclamarse en conjunto, y un activo que no se puede transferir detiene a todos los demás. Reclame los activos restantes uno por uno a continuación.",
+      "claim-individually-heading": "O reclame cada activo por separado",
+      "declined": "Usted rechazó la solicitud en su billetera. No se reclamó nada.",
       "heading": "Reclamar recompensas",
-      "subheading": "Estamos procesando su solicitud de recompensas. Puede seguir el progreso a continuación."
+      "ineligible": {
+        "not-connected": "Conecte su billetera para reclamar",
+        "not-holder": "Solo el propietario actual puede reclamar estas recompensas",
+        "nothing-claimable": "Aún no hay recompensas para reclamar",
+        "paused": "Los reclamos están en pausa. Sus recompensas están seguras y se siguen mostrando.",
+        "registry-too-large": "Demasiados activos de recompensa para reclamar de una vez",
+        "rewards-loading": "Comprobando sus recompensas…",
+        "rewards-unavailable": "No pudimos leer sus recompensas. Inténtelo de nuevo en unos instantes.",
+        "wrong-chain": "Cambie a Hemi para reclamar"
+      },
+      "nothing-owed": "Resuelto. No había nada pendiente para esta posición.",
+      "subheading": "Estamos procesando su solicitud de recompensas. Puede seguir el progreso a continuación.",
+      "walk": {
+        "done": "Sus recompensas han sido reclamadas.",
+        "epochs": "Épocas {from}–{to}",
+        "heading": "Reclamar todas las recompensas",
+        "nothing-owed": "Posición #{tokenId} · Nada pendiente",
+        "position-claim": "Posición #{tokenId} · Reclamar recompensas",
+        "position-transaction": "Posición #{tokenId} · Transacción {chunk} de {chunks}",
+        "preparing": "Posición #{tokenId} · Preparando su reclamo…",
+        "queued": "Posición #{tokenId} · En espera de su turno",
+        "stopped": "Posición #{tokenId} · No reclamada",
+        "subheading": "Reclamaremos cada posición por turno. Cada una solicita su propia firma en su billetera."
+      },
+      "you-receive": "Usted recibe"
     },
     "claim-rewards-successful": "Recompensas reclamadas con éxito",
     "drawer": {
       "approving": "Aprobando {symbol}",
+      "capture-position-class": "Registrar la clase de la posición",
       "claim-rewards": "Reclamar recompensas en {network}",
       "increase-amount": {
         "heading": "Agregar ${symbol} a este bloqueo",
@@ -591,6 +628,7 @@
     "switch-to-start-staking": "Puede cambiar de red para comenzar a hacer staking de su HEMI.",
     "table": {
       "action": "Acción",
+      "actions-for-position": "Acciones para la posición {tokenId}",
       "active": "Activo",
       "add-liquidity-to-lockup": "Agregar ${symbol} a este bloqueo",
       "add-time-to-lockup": "Agregar tiempo a este bloqueo",
@@ -604,10 +642,14 @@
       "lockup": "Bloqueo",
       "no-hemi-burned": "Aún no hay posiciones quemadas.",
       "no-hemi-staked": "No hay ${symbol} en stake",
+      "not-position-owner": "Ya no posee esta posición",
       "on": "En {date}",
       "position-delegated-to-you": "Posición delegada hacia usted",
+      "positions-unavailable": "No pudimos cargar sus posiciones",
+      "positions-unavailable-subtitle": "Ocurrió un error al leerlas. Actualice la página para intentarlo de nuevo.",
       "rewards": "Recompensas",
       "rewards-available": "{count, plural, one {# disponible} other {# disponibles}}",
+      "rewards-claimed": "Ya reclamado",
       "tx": "Tx",
       "unlock": "Desbloquear",
       "unlocked": "Desbloqueado",

@@ -26,13 +26,22 @@ export const RetryUnlock = function () {
   const { mutate: runUnlock } = useUnlock({
     amount,
     on(emitter) {
-      emitter.on('withdraw-transaction-reverted', () =>
-        setOperationRunning('failed'),
+      // Every way the flow can stop. Missing one latches the control disabled for the
+      // life of the page - the capture step fails on its own, and the two
+      // `withdraw-failed*` events stop the burn with nothing ever signed.
+      const failures = [
+        'capture-position-class-failed',
+        'capture-position-class-transaction-reverted',
+        'unexpected-error',
+        'user-signing-capture-position-class-error',
+        'user-signing-withdraw-error',
+        'withdraw-failed',
+        'withdraw-failed-validation',
+        'withdraw-transaction-reverted',
+      ] as const
+      failures.forEach(event =>
+        emitter.on(event, () => setOperationRunning('failed')),
       )
-      emitter.on('user-signing-withdraw-error', () =>
-        setOperationRunning('failed'),
-      )
-      emitter.on('unexpected-error', () => setOperationRunning('failed'))
       emitter.on('withdraw-transaction-succeeded', function () {
         setOperationRunning('idle')
       })
@@ -47,7 +56,9 @@ export const RetryUnlock = function () {
   const handleRetry = function (e: FormEvent) {
     e.preventDefault()
     setOperationRunning('unlocking')
-    runUnlock()
+    // `onError` as well as the emitter: the mutation can reject before the action even
+    // exists (a declined chain switch, no account), leaving the control latched.
+    runUnlock(undefined, { onError: () => setOperationRunning('failed') })
   }
 
   return (

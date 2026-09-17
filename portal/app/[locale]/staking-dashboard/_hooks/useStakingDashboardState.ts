@@ -61,13 +61,24 @@ const actionHandlers: ActionHandlers = {
     lockupDays: twoYears,
   }),
 
-  updateCollectRewardsDashboardOperation: (state, payload) => ({
-    ...state,
-    collectRewardsDashboardOperation: {
-      ...(state.collectRewardsDashboardOperation ?? {}),
-      ...payload,
-    },
-  }),
+  updateCollectRewardsDashboardOperation(state, payload) {
+    const previous = state.collectRewardsDashboardOperation
+    // A payload naming a different position starts a fresh operation. Merging carried
+    // the previous position's hash and status into a claim that had produced neither,
+    // so the drawer showed one position's progress under another's amount.
+    const isSamePosition =
+      previous?.stakingPosition === undefined ||
+      payload?.stakingPosition === undefined ||
+      previous.stakingPosition.tokenId === payload.stakingPosition.tokenId
+
+    return {
+      ...state,
+      collectRewardsDashboardOperation: {
+        ...(isSamePosition ? (previous ?? {}) : {}),
+        ...payload,
+      },
+    }
+  },
 
   updateInput: (state, payload) => ({
     ...state,
@@ -92,13 +103,22 @@ const actionHandlers: ActionHandlers = {
     },
   }),
 
-  updateUnlockingDashboardOperation: (state, payload) => ({
-    ...state,
-    unlockingDashboardOperation: {
-      ...(state.unlockingDashboardOperation ?? {}),
-      ...payload,
-    },
-  }),
+  updateUnlockingDashboardOperation(state, payload) {
+    const previous = state.unlockingDashboardOperation
+    // Same rule as the collect operation above.
+    const isSamePosition =
+      previous?.stakingPosition === undefined ||
+      payload?.stakingPosition === undefined ||
+      previous.stakingPosition.tokenId === payload.stakingPosition.tokenId
+
+    return {
+      ...state,
+      unlockingDashboardOperation: {
+        ...(isSamePosition ? (previous ?? {}) : {}),
+        ...payload,
+      },
+    }
+  },
 }
 
 function reducer(

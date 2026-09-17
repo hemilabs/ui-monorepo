@@ -12,6 +12,7 @@ import { createRedisCache, type RedisOptions } from './src/redis.ts'
 import { UpstreamGraphQLError } from './src/subgraphs/errors.ts'
 import { createSubgraphsRouter } from './src/subgraphs/router.ts'
 import { toJsonMiddleware, toTextMiddleware } from './src/to-middleware.ts'
+import { UnsupportedChainError } from './src/ve-hemi/errors.ts'
 import { createVeHemi } from './src/ve-hemi/index.ts'
 import { getHemiStake } from './src/ve-hemi/stake.ts'
 
@@ -104,6 +105,13 @@ const errorHandler: ErrorRequestHandler = function (error, _req, res, _next) {
     // tracked there
     console.warn('Upstream GraphQL error:', error)
     res.status(502).send({ error: 'Bad Gateway' })
+    return
+  }
+  if (error instanceof UnsupportedChainError) {
+    // A property of the deployment, not a fault: the route is advertised for every
+    // Hemi chain, but not every veHEMI can report the supply the series needs.
+    console.warn('Unsupported chain:', error)
+    res.status(404).send({ error: 'Not Found' })
     return
   }
   console.error('Internal Server Error:', error)

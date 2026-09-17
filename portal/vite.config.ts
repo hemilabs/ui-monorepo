@@ -6,9 +6,20 @@ import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv, type PluginOption } from 'vite'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
+import { devnetPositions } from './plugins/devnetPositions'
 import { sitemap } from './plugins/sitemap'
 
 const polyfills = () => nodePolyfills({ include: ['http', 'https', 'util'] })
+
+// `run_worker_first` puts workerd in front of the dev proxy, and it stamps its
+// own Cloudflare metadata on the request. Forwarded upstream, the real edge
+// rejects them as spoofed cf-* headers with a 403, so they are dropped.
+const workerdHeaders = [
+  'cf-connecting-ip',
+  'mf-cf-blob',
+  'mf-custom-node-service',
+  'x-forwarded-host',
+]
 
 const onlyClient = (environment: { name: string }) =>
   environment.name === 'client'
@@ -52,7 +63,14 @@ export default defineConfig(function ({ mode }) {
 
   const instrumentForSentry = !!env.VITE_SENTRY_DSN && !process.env.STORYBOOK
 
-  const plugins: PluginOption[] = [react(), cloudflare(), polyfills()]
+  const plugins: PluginOption[] = [
+    react(),
+    cloudflare(),
+    polyfills(),
+    // Dev only, and inert unless a scenario devnet is configured. See the plugin for
+    // why the positions cannot come from the subgraph in that mode.
+    devnetPositions(env),
+  ]
 
   if (env.PORTAL_SITE_URL) {
     plugins.push(
@@ -125,6 +143,23 @@ export default defineConfig(function ({ mode }) {
         ),
       })),
       tsconfigPaths: true,
+    },
+    // portal-api only sends CORS headers to the deployed origins, so a browser request
+    // from a dev origin is blocked. Proxying keeps it same-origin and moves the hop to
+    // the API server-side, where CORS does not apply. Dev only - the built worker talks
+    // to the API directly.
+    server: {
+      proxy: {
+        '/portal-api': {
+          changeOrigin: true,
+          configure: proxy =>
+            proxy.on('proxyReq', proxyReq =>
+              workerdHeaders.forEach(header => proxyReq.removeHeader(header)),
+            ),
+          rewrite: path => path.replace(/^\/portal-api/, ''),
+          target: 'https://portal-api.hemi.xyz',
+        },
+      },
     },
     worker: {
       // Worker bundles get their own plugin pipeline, the top-level `plugins`

@@ -45,6 +45,10 @@
     "./actions": {
       "compiled": "./dist/actions/index.js",
       "default": "./actions/index.ts"
+    },
+    "./epochRewardsFragments": {
+      "compiled": "./dist/epochRewardsFragments.js",
+      "default": "./epochRewardsFragments.ts"
     }
   }
 }

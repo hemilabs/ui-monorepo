@@ -33,11 +33,17 @@ const SideDrawer = function () {
     NonNullable<typeof drawerMode>,
     boolean
   > = {
-    claimingRewards: !!collectRewardsDashboardOperation,
+    // A walk over several positions names no single one, so the review reads the walk
+    // instead. Either is enough to render.
+    claimingRewards:
+      !!collectRewardsDashboardOperation?.stakingPosition ||
+      !!collectRewardsDashboardOperation?.walk?.length,
     increasingAmount: !!stakingDashboardOperation,
     increasingUnlockTime: !!stakingDashboardOperation,
     staking: true,
-    unlocking: !!unlockingDashboardOperation,
+    // The position, not just the operation: every review reads `stakingPosition`, so an
+    // operation without one mounts a component that dereferences undefined.
+    unlocking: !!unlockingDashboardOperation?.stakingPosition,
   }
 
   if (!drawerMode || !hasRequiredOperation[drawerMode]) {

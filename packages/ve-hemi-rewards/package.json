@@ -44,6 +44,10 @@
     "./actions": {
       "compiled": "./dist/actions/index.js",
       "default": "./actions/index.ts"
+    },
+    "./epochRewardsAbi": {
+      "compiled": "./dist/epochRewardsAbi.js",
+      "default": "./epochRewardsAbi.ts"
     }
   }
 }

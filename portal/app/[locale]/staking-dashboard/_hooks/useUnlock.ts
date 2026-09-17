@@ -13,6 +13,7 @@ import {
   UnlockingDashboardOperation,
   UnlockingDashboardStatus,
 } from 'types/stakingDashboard'
+import { getEpochRewardsAddress } from 'utils/veHemiEpochRewards'
 import { WithdrawEvents } from 've-hemi-actions'
 import { withdraw } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
@@ -75,9 +76,73 @@ export const useUnlock = function ({
 
       const { emitter, promise } = withdraw({
         account: address,
+        // `undefined` means the continuous-accrual contract, where burning destroys
+        // nothing. An address means the class has to be recorded before the burn.
+        epochRewardsAddress: getEpochRewardsAddress(token.chainId),
         tokenId,
         walletClient: hemiWalletClient!,
       })
+
+      // Where the epoch contract is deployed the withdraw action records the class
+      // first. Surfaced as its own step rather than an unexplained second prompt.
+      emitter.on('pre-capture-position-class', function () {
+        updateUnlockingDashboardOperation({
+          requiresClassCapture: true,
+          stakingPosition: { amount, tokenId },
+          status: UnlockingDashboardStatus.CAPTURE_TX_PENDING,
+        })
+        setDrawerQueryString('unlocking')
+
+        track?.('staking dashboard - capture position class')
+      })
+      emitter.on(
+        'user-signed-capture-position-class',
+        function (transactionHash) {
+          updateUnlockingDashboardOperation({
+            requiresClassCapture: true,
+            stakingPosition: { amount, tokenId },
+            status: UnlockingDashboardStatus.CAPTURE_TX_PENDING,
+            transactionHash,
+          })
+        },
+      )
+      // Each of these carries the position and opens the drawer itself. The review
+      // renders from `stakingPosition`, and `capture-position-class-failed` can fire
+      // before `pre-capture-position-class` (the guard's reads run first), when nothing
+      // has opened the drawer yet.
+      const captureFailed = function () {
+        updateUnlockingDashboardOperation({
+          requiresClassCapture: true,
+          stakingPosition: { amount, tokenId },
+          status: UnlockingDashboardStatus.CAPTURE_TX_FAILED,
+        })
+        setDrawerQueryString('unlocking')
+      }
+
+      emitter.on('user-signing-capture-position-class-error', function () {
+        captureFailed()
+        track?.('staking dashboard - signing capture position class error')
+      })
+      emitter.on('capture-position-class-failed', function () {
+        captureFailed()
+        track?.('staking dashboard - capture position class failed')
+      })
+      emitter.on(
+        'capture-position-class-transaction-reverted',
+        function (receipt) {
+          updateUnlockingDashboardOperation({
+            requiresClassCapture: true,
+            stakingPosition: { amount, tokenId },
+            status: UnlockingDashboardStatus.CAPTURE_TX_FAILED,
+          })
+          setDrawerQueryString('unlocking')
+
+          // Reverted, but the gas was still paid.
+          updateNativeBalanceAfterFees(receipt)
+
+          track?.('staking dashboard - capture position class reverted')
+        },
+      )
 
       emitter.on('user-signed-withdraw', function (transactionHash) {
         updateUnlockingDashboardOperation({
@@ -89,10 +154,24 @@ export const useUnlock = function ({
 
         track?.('staking dashboard - signed withdraw')
       })
-      emitter.on('user-signing-withdraw-error', function () {
+      // The burn can be refused before anything is signed - the capture guard
+      // declining, or a validation failure - leaving the drawer stuck on pending.
+      const withdrawFailed = function () {
         updateUnlockingDashboardOperation({
+          stakingPosition: { amount, tokenId },
           status: UnlockingDashboardStatus.UNLOCK_TX_FAILED,
+          // Cleared: the capture step did send a transaction, and carrying its hash
+          // over puts a confirmed explorer link under the step that failed.
+          transactionHash: undefined,
         })
+        setDrawerQueryString('unlocking')
+      }
+      emitter.on('user-signing-withdraw-error', function () {
+        // Carries the position and opens the drawer, like every other failure handler.
+        // Without the position this made a truthy operation with no `stakingPosition`,
+        // which passed the drawer's guard and then crashed `ReviewUnlock` - taking the
+        // dashboard to the route error page on a plain wallet rejection.
+        withdrawFailed()
 
         track?.('staking dashboard - signing withdraw error')
       })
@@ -130,6 +209,14 @@ export const useUnlock = function ({
         updateNativeBalanceAfterFees(receipt)
 
         track?.('staking dashboard - withdraw transaction reverted')
+      })
+      emitter.on('withdraw-failed', function () {
+        withdrawFailed()
+        track?.('staking dashboard - withdraw failed')
+      })
+      emitter.on('withdraw-failed-validation', function () {
+        withdrawFailed()
+        track?.('staking dashboard - withdraw failed validation')
       })
 
       on?.(emitter)

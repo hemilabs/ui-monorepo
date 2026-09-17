@@ -14,7 +14,14 @@ export const step = 6
 
 export const twoYears = 732
 
-export const epochsPerYear = 61 // 61 epochs × 6 days = 366 days
+// NOTE: this 61 and the 6-day arithmetic behind it don't match the contract. veHEMI
+// defines SIX_DAYS = YEAR / 60 with YEAR = 365.25 days - 525,960s, and exactly 60 epochs
+// a year, which is what `SixDaysSeconds` in `ve-hemi-actions` holds. So the APR dot
+// product pairs a decay sampled every 525,960s against a backend series bucketed every
+// 518,400s, drifting ~5.25 days by the end of the year. Pre-existing and left alone:
+// changing it moves a figure every mainnet holder sees, and which side is authoritative
+// is a protocol question, not a UI one.
+export const epochsPerYear = 61
 
 // To ensure the lock duration is at least the minimum, we clamp the value after calculation
 const clampMin = <T extends number | bigint>(value: T, min: T): T =>

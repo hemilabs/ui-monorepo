@@ -511,6 +511,23 @@
       "use-or": "Utilice <min></min> o <max></max>",
       "years": "{years, plural, one {{years} año} other {{years} años}}"
     },
+    "get-started": {
+      "heading": "Comenzar",
+      "steps": {
+        "access": {
+          "description": "Acceso a todos los proyectos que se lancen dentro de la economía de Hemi.",
+          "title": "Acceder"
+        },
+        "earn": {
+          "description": "Gane una parte de las tarifas del protocolo en hemiBTC y HEMI, en cada época.",
+          "title": "Ganar"
+        },
+        "lock": {
+          "description": "Bloquee $HEMI desde 12 días hasta 4 años.",
+          "title": "Bloquear"
+        }
+      }
+    },
     "here-is-your-tx": "Aquí está su transacción:",
     "hero-banner": {
       "headline": "Toda una economía.<break></break><highlight>Una</highlight> llave.",
@@ -522,6 +539,24 @@
       "live-on": "Disponible el 19 de septiembre"
     },
     "lockup-period": "Período de bloqueo",
+    "perks": {
+      "ecosystem-launches": {
+        "badge": "Siguiente",
+        "description": "Acceso anticipado a los lanzamientos del ecosistema de Hemi, incluidos Vetro y Odyssey.",
+        "title": "Lanzamientos del ecosistema"
+      },
+      "governance": {
+        "badge": "Próximamente",
+        "description": "Cada posición bloqueada podrá votar, o delegar y conservar su parte.",
+        "title": "Gobernanza"
+      },
+      "heading": "Lo que obtiene con una posición en hemiStake",
+      "protocol-fees": {
+        "badge": "Disponible hoy",
+        "description": "Tarifas de la cadena base pagadas a cada posición según su peso, en cada época.",
+        "title": "Tarifas del protocolo"
+      }
+    },
     "stake-successful": "Stake exitoso",
     "stats": {
       "average-lockup": "Bloqueo promedio",

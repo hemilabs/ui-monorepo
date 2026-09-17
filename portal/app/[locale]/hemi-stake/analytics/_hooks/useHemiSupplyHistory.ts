@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useHemiToken } from 'hooks/useHemiToken'
+import { isValidUrl } from 'utils/url'
 
 import { fetchHemiSupplyHistory } from '../_fetchers/fetchHemiSupplyHistory'
 import {
@@ -7,6 +8,8 @@ import {
   type ParsedSupplyPoint,
   type SupplyPeriod,
 } from '../_utils/supplyHistory'
+
+const portalApiUrl = import.meta.env.VITE_PORTAL_API_URL
 
 // `decimals` is read inside the queryFn but deliberately left out of the key:
 // it is a constant of the token, so keeping it out means callers elsewhere can
@@ -27,6 +30,7 @@ export const useHemiSupplyHistory = function <TData = ParsedSupplyPoint[]>({
   const { decimals } = useHemiToken()
 
   return useQuery({
+    enabled: portalApiUrl !== undefined && isValidUrl(portalApiUrl),
     queryFn: async () =>
       parseSupplyPoints(await fetchHemiSupplyHistory(period), decimals),
     queryKey: getHemiSupplyHistoryQueryKey(period),

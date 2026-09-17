@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": false,
+    "declaration": false,
+    "noEmit": false,
+    "outDir": "./dist",
+    "rewriteRelativeImportExtensions": true
+  },
+  "exclude": ["dist", "node_modules", "test", "vitest.config.ts"],
+  "extends": "./tsconfig.json"
+}

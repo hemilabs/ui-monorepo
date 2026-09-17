@@ -1,0 +1,49 @@
+{
+  "name": "ve-hemi-epoch-rewards",
+  "version": "1.0.0",
+  "description": "veHEMI Epoch Rewards Lens",
+  "keywords": [
+    "epoch",
+    "hemi",
+    "hemilabs",
+    "rewards",
+    "staking",
+    "veHEMI",
+    "viem"
+  ],
+  "license": "MIT",
+  "author": {
+    "email": "gonzalo@hemi.xyz",
+    "name": "Gonzalo D'Elia"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "tsc:check": "tsc"
+  },
+  "dependencies": {
+    "to-promise-event": "1.0.0"
+  },
+  "devDependencies": {
+    "@tsconfig/node24": "24.0.3",
+    "@types/node": "24.10.2",
+    "typescript": "5.8.3",
+    "viem": "2.28.4",
+    "vitest": "4.1.6"
+  },
+  "peerDependencies": {
+    "viem": "^2.x"
+  },
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "compiled": "./dist/index.js",
+      "default": "./index.ts"
+    },
+    "./actions": {
+      "compiled": "./dist/actions/index.js",
+      "default": "./actions/index.ts"
+    }
+  }
+}

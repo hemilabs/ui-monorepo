@@ -19,7 +19,6 @@
     "close": "Close",
     "close-notification": "Close notification",
     "connect-to-network": "Connect to {network}",
-    "connect-to-supported-network": "Connect to supported network",
     "connect-wallet": "Connect Wallet",
     "connect-wallets": "Connect Wallets",
     "copied": "Copied",
@@ -47,6 +46,7 @@
     "start-using-mainnet": "Start using Mainnet",
     "success": "Success",
     "switch-to-mainnet": "Switch to Mainnet",
+    "token-price": "{symbol} price",
     "total": "Total",
     "total-amount": "Total Amount",
     "transaction-status": {
@@ -59,7 +59,6 @@
     "tunnel-fees": "Tunnel fees",
     "unexpected-error": "An unexpected error has occurred. Please try again.",
     "unstake": "Unstake",
-    "unsupported-chain-heading": "You're not connected to a supported chain",
     "wait-hours": "Wait ~<hours></hours>",
     "wait-minutes": "Wait ~{minutes, plural, =1 {# minute} other {# minutes}}",
     "waiting-completed": "Waiting completed",
@@ -164,7 +163,7 @@
     "claimed": "Claimed",
     "claiming-your-rewards": "Claiming your rewards",
     "connect-demos-wallet": "Make sure to connect your Demos verified wallet.",
-    "go-to-staking-dashboard": "Go to staking dashboard",
+    "go-to-hemi-stake": "Go to Hemi Stake",
     "have-questions": "Make sure you're connected to your Demos-verified wallet. If you have questions, open a ticket on <discordLink>Discord</discordLink>, check <absintheLink>Absinthe</absintheLink> or try another wallet.",
     "hemi-token-added": "{symbol} added to your wallet",
     "here-is-your-claim-tx": "Here's your claim transaction:",
@@ -449,6 +448,154 @@
       "withdrawal": "Withdrawal"
     }
   },
+  "hemi-stake": {
+    "amount": "Amount",
+    "analytics": {
+      "1-week": "1 week",
+      "circulating": "Circulating",
+      "decreased-by": "decreased by",
+      "hemi-price": "{symbol} price",
+      "increased-by": "increased by",
+      "month": "{count, plural, one {# month} other {# months}}",
+      "non-circulating": "Non-circulating",
+      "share-of-supply": "{share} of supply",
+      "staked": "Staked",
+      "title": "{symbol} supply",
+      "total": "Total"
+    },
+    "apy-estimate": "APY figures are estimates. The actual return changes with the global amount staked.",
+    "claim-rewards": {
+      "heading": "Claim rewards",
+      "subheading": "We’re processing your reward claim. You can follow the progress below."
+    },
+    "claim-rewards-successful": "Claim rewards successful",
+    "drawer": {
+      "approving": "Approving {symbol}",
+      "claim-rewards": "Claim rewards on {network}",
+      "increase-amount": {
+        "heading": "Add ${symbol} to this lockup",
+        "subheading": "Deposit additional ${symbol} into your existing lockup to increase your staked amount and governance power."
+      },
+      "increase-unlock-time": {
+        "heading": "Extend lockup duration",
+        "subheading": "Add more time to your existing lockup to boost your governance power."
+      },
+      "stake": {
+        "heading": "Review Stake",
+        "subheading": "Review and confirm your stake."
+      },
+      "stake-token": "Stake {symbol}",
+      "unlock": {
+        "heading": "We’re unlocking your tokens",
+        "subheading": "The network is processing your unlock. You’ll be able to access your tokens once the transaction is complete."
+      },
+      "unlock-token": "Unlock {symbol}"
+    },
+    "form": {
+      "approve-and-stake": "Approve and Stake",
+      "approximate": "~{percentage}%",
+      "custom": "Custom",
+      "days": "{days, plural, one {{days} day} other {{days} days}}",
+      "expire-date": "Expire date:",
+      "lockup-extend-warning": "You can extend your lock-up up to 4 years total.",
+      "lockup-increment-warning": "Lock-up time can be set in 6-day increments.",
+      "max-days": "Max. {days} {days, plural, one {day} other {days}}",
+      "min-days": "Min. {days} {days, plural, one {day} other {days}}",
+      "months": "{months, plural, one {{months} month} other {{months} months}}",
+      "or": "or",
+      "send": "Send",
+      "stake": "Stake",
+      "staking": "Staking...",
+      "title": "Stake",
+      "unlocking": "Unlocking...",
+      "up-to": "up to {percentage}%",
+      "use-or": "Use <min></min> or <max></max>",
+      "years": "{years, plural, one {{years} year} other {{years} years}}"
+    },
+    "get-started": {
+      "heading": "Get started",
+      "steps": {
+        "access": {
+          "description": "Access to every project launching inside Hemi's economy.",
+          "title": "Access"
+        },
+        "earn": {
+          "description": "Earn a share of protocol fees in hemiBTC and HEMI, every epoch.",
+          "title": "Earn"
+        },
+        "lock": {
+          "description": "Lock $HEMI for 12 days to 4 years.",
+          "title": "Lock"
+        }
+      }
+    },
+    "here-is-your-tx": "Here's your transaction:",
+    "hero-banner": {
+      "headline": "A whole economy.<break></break><highlight>One</highlight> key.",
+      "live-on": "live 19 September",
+      "subtitle": "Stake Hemi for a share of every payout and access to what launches next."
+    },
+    "launch-card": {
+      "is-live": "<name></name> is live",
+      "live-on": "Live 19 September"
+    },
+    "lockup-period": "Lockup period",
+    "perks": {
+      "ecosystem-launches": {
+        "badge": "Next",
+        "description": "Each project launching on Hemi sets aside supply for locked positions.",
+        "title": "Ecosystem launches"
+      },
+      "governance": {
+        "badge": "Live today",
+        "description": "Every locked position votes, or delegates and keeps its share.",
+        "title": "Governance"
+      },
+      "heading": "What a hemiStake position gets you",
+      "protocol-fees": {
+        "badge": "Live today",
+        "description": "Base chain fees paid by weight, every epoch. A share is burned.",
+        "title": "Protocol fees"
+      }
+    },
+    "stake-successful": "Stake successful",
+    "stats": {
+      "average-lockup": "Average lockup",
+      "average-lockup-badge": "Across {count, plural, one {# lockup} other {# lockups}}",
+      "total-staked": "Total staked",
+      "wallets-staking": "Wallets staking"
+    },
+    "subheading": "Lock ${symbol} from {minDays, plural, one {# day} other {# days}} to {maxYears, plural, one {# year} other {# years}}. Earn every payout in {symbol}, hemiBTC and USDC, and get a vote.",
+    "switch-to-start-staking": "You can switch networks to start staking your HEMI.",
+    "table": {
+      "action": "Action",
+      "active": "Active",
+      "add-liquidity-to-lockup": "Add ${symbol} to this lockup",
+      "add-time-to-lockup": "Add time to this lockup",
+      "apr": "{percentage}% APR",
+      "burned": "Burned",
+      "get-started": "Get started by staking your ${symbol}",
+      "get-started-burned": "Your burned positions will show up here once their lockup periods have ended.",
+      "locked-amount": "Locked Amount",
+      "lockup": "Lockup",
+      "no-hemi-burned": "No burned positions yet",
+      "no-hemi-staked": "No ${symbol} staked",
+      "on": "On {date}",
+      "position-delegated-to-you": "Position delegated to you",
+      "rewards": "Rewards",
+      "rewards-available": "{count} Available",
+      "unlock": "Unlock",
+      "unlocks-on": "Unlocks on {date}",
+      "you-delegated-this-position": "You delegated this position",
+      "you-transferred-this-position": "You transferred this position"
+    },
+    "tabs": {
+      "analytics": "Analytics",
+      "stake": "Stake"
+    },
+    "unlock-successful": "Unlock successful",
+    "voting-power": "Voting Power"
+  },
   "metadata": {
     "title": "Hemi Portal"
   },
@@ -468,14 +615,14 @@
     "follow-us": "Follow us",
     "genesis-drop": "Genesis Drop",
     "get-started": "Get started",
-    "governance-staking": "Governance staking",
     "help": {
       "language": "Language",
       "legal-and-privacy": "Legal and Privacy"
     },
+    "hemi-stake": "Hemi Stake",
     "network": "Network",
     "network-status": "Network status",
-    "stake": "Stake",
+    "new": "New",
     "swap": "Swap",
     "tools": "Tools",
     "tunnel": "Tunnel",
@@ -528,7 +675,7 @@
     },
     "start-staking-earn-points": "Start staking",
     "toast": {
-      "go-staking-dashboard": "View your staking dashboard",
+      "go-boost-staking": "Go to Boost staking",
       "here-your-stake-tx": "Here’s your {type} transaction:",
       "staking": "staking",
       "staking-successful": "Staking successful",
@@ -536,89 +683,6 @@
       "unstaking-successful": "Unstaking successful"
     },
     "wallet-balance": "Wallet balance"
-  },
-  "staking-dashboard": {
-    "amount": "Amount",
-    "claim-rewards": {
-      "heading": "Claim rewards",
-      "subheading": "We’re processing your reward claim. You can follow the progress below."
-    },
-    "claim-rewards-successful": "Claim rewards successful",
-    "drawer": {
-      "approving": "Approving {symbol}",
-      "claim-rewards": "Claim rewards on {network}",
-      "increase-amount": {
-        "heading": "Add ${symbol} to this lockup",
-        "subheading": "Deposit additional ${symbol} into your existing lockup to increase your staked amount and governance power."
-      },
-      "increase-unlock-time": {
-        "heading": "Extend lockup duration",
-        "subheading": "Add more time to your existing lockup to boost your governance power."
-      },
-      "stake": {
-        "heading": "Review Stake",
-        "subheading": "Review and confirm your stake."
-      },
-      "stake-token": "Stake {symbol}",
-      "unlock": {
-        "heading": "We’re unlocking your tokens",
-        "subheading": "The network is processing your unlock. You’ll be able to access your tokens once the transaction is complete."
-      },
-      "unlock-token": "Unlock {symbol}"
-    },
-    "form": {
-      "approve-and-stake": "Approve and Stake",
-      "days": "{days, plural, one {{days} day} other {{days} days}}",
-      "expire-date": "Expire date:",
-      "lockup-extend-warning": "You can extend your lock-up up to 4 years total.",
-      "lockup-increment-warning": "Lock-up time can be set in 6-day increments.",
-      "max-days": "Max. {days} {days, plural, one {day} other {days}}",
-      "min-days": "Min. {days} {days, plural, one {day} other {days}}",
-      "or": "or",
-      "send": "Send",
-      "stake": "Stake",
-      "staking": "Staking...",
-      "title": "Stake",
-      "unlocking": "Unlocking...",
-      "use-or": "Use <min></min> or <max></max>",
-      "years": "{years, plural, one {{years} year} other {{years} years}}"
-    },
-    "heading": "Governance staking",
-    "here-is-your-tx": "Here's your transaction:",
-    "lockup-period": "Lockup period",
-    "stake-successful": "Stake successful",
-    "subheading": "Stake your ${symbol} to participate in governance and earn staking rewards.",
-    "switch-to-start-staking": "You can switch networks to start staking your HEMI.",
-    "table": {
-      "action": "Action",
-      "active": "Active",
-      "add-liquidity-to-lockup": "Add ${symbol} to this lockup",
-      "add-time-to-lockup": "Add time to this lockup",
-      "apr": "{percentage}% APR",
-      "burned": "Burned",
-      "connect-to-hemi": "Connect to {network} to view your stake positions.",
-      "connect-to-stake": "Connect your wallet to view your ${symbol} staked.",
-      "get-started": "Get started by staking your ${symbol}",
-      "get-started-burned": "Your burned positions will show up here once their lockup periods have ended.",
-      "locked-amount": "Locked Amount",
-      "lockup": "Lockup",
-      "no-hemi-burned": "No burned positions yet",
-      "no-hemi-staked": "No ${symbol} staked",
-      "on": "On {date}",
-      "position-delegated-to-you": "Position delegated to you",
-      "rewards": "Rewards",
-      "rewards-available": "{count} Available",
-      "tx": "Tx",
-      "unlock": "Unlock",
-      "unlocked": "Unlocked",
-      "unlocks-on": "Unlocks on {date}",
-      "you-delegated-this-position": "You delegated this position",
-      "you-transferred-this-position": "You transferred this position"
-    },
-    "total-voting-power": "Total voting power",
-    "unlock-successful": "Unlock successful",
-    "voting-power": "Voting Power",
-    "your-positions": "Your positions"
   },
   "token-custom-drawer": {
     "add-contract-to-preview": "Add a contract address to preview the token...",
@@ -654,7 +718,6 @@
     "ready-to-claim": "Ready to claim",
     "ready-to-confirm": "Ready to confirm",
     "ready-to-prove": "Ready to prove",
-    "unsupported-chain-subheading": "Connect to a supported chain to view your transaction history.",
     "waiting-confirmation": "Waiting confirmation",
     "withdrawal-challenged": "Withdrawal challenged"
   },

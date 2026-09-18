@@ -6,6 +6,11 @@ const config = {
   cacheExpirationMin: Number(env('CACHE_EXPIRATION_MIN', '60')),
   coinMarketCap: {
     apiKey: env('COIN_MARKET_CAP_API_KEY', ''),
+    ids: Object.fromEntries(
+      env('COIN_MARKET_CAP_IDS', 'HEMI:38159')
+        .split(',')
+        .map(pair => pair.split(':')),
+    ),
     slugs: env('COIN_MARKET_CAP_SLUGS', 'bitcoin'),
   },
   redis: {
@@ -16,6 +21,7 @@ const config = {
     dsn: env('SENTRY_DSN', ''),
     loggingLevels: env('SENTRY_LOGGING_LEVELS', 'log,warn,error').split(','),
   },
+  version: env('npm_package_version', ''),
 }
 
 const get = path =>

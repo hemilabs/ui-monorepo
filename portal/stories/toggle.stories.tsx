@@ -44,8 +44,48 @@ export const Default: Story = {
   },
 }
 
+export const Checked: Story = {
+  args: { checked: true },
+  argTypes: { checked: { control: false } },
+  render: Default.render,
+}
+
+export const CheckedHover: Story = {
+  args: { checked: true },
+  argTypes: { checked: { control: false } },
+  parameters: {
+    pseudo: {
+      hover: true,
+    },
+  },
+  render: Default.render,
+}
+
 export const Disabled: Story = {
   args: { disabled: true },
+  argTypes: { disabled: { control: false } },
+  render: Default.render,
+}
+
+export const Focus: Story = {
+  args: { checked: false },
+  argTypes: { checked: { control: false } },
+  parameters: {
+    pseudo: {
+      focusVisible: true,
+    },
+  },
+  render: Default.render,
+}
+
+export const Hover: Story = {
+  args: { checked: false },
+  argTypes: { checked: { control: false } },
+  parameters: {
+    pseudo: {
+      hover: true,
+    },
+  },
   render: Default.render,
 }
 

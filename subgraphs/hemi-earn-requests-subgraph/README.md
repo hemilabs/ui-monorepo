@@ -45,6 +45,15 @@ contract / smart-account wallet it is that contract's address, not the logical u
 - **An Envio API token** — required for HyperSync (the Ethereum / Agent side).
   Get a free token at <https://envio.dev/app/api-tokens>, then `cp .env.example .env` and set `ENVIO_API_TOKEN` in `.env`.
 
+## HEMI supply
+
+This indexer also takes the HEMI supply snapshots that the portal-backend serves on `/circulating` and `/supply-history`.
+
+These optional env variables configure the snapshots:
+
+- `ENVIO_RPC_URL_BNB`, `ENVIO_RPC_URL_ETH`, `ENVIO_RPC_URL_HEMI` — the RPC URLs used to read the balances on each chain. Join several URLs with `+` (for example `https://a.example+https://b.example`) to use them as viem fallbacks. The public RPCs can reject the historical reads, so set an archive URL on each chain.
+- `ENVIO_SUPPLY_REALTIME_START_BLOCK_BNB`, `ENVIO_SUPPLY_REALTIME_START_BLOCK_ETH`, `ENVIO_SUPPLY_REALTIME_START_BLOCK_HEMI` — the first block of the realtime snapshots (every ~5 minutes) on each chain. Set each one to a recent block before the chain head, so the historical sync does not go through the realtime stride. When unset, the realtime handler starts at the start block of the chain. The past days use the daily snapshots in both cases.
+
 ## Commands
 
 Run these from this folder (`subgraphs/hemi-earn-requests-subgraph`):

@@ -109,11 +109,11 @@ The native tunnel is not the only route in and out of Hemi. For EVM ↔ EVM tran
 
 ## Staking
 
-The "Stake" entry of the nav covers two unrelated products, sharing a word and nothing else — different contracts, different tokens, different purpose. Only the first is described here; **boost staking**, where allowlisted tokens are parked in a staking contract, is not documented yet.
+The nav lists two unrelated staking products, sharing a word and nothing else: different contracts, different tokens, different purpose. Only the first is described here; **boost staking**, where allowlisted tokens are parked in a staking contract, is not documented yet.
 
-### Governance staking (veHEMI)
+### Hemi Stake (veHEMI)
 
-Governance staking lives on `/staking-dashboard`. The user locks HEMI in the [`VeHemi`](https://github.com/hemilabs/veHEMI/blob/main/src/VeHemi.sol) contract on Hemi and receives an ERC-721 (symbol `veHemi`) representing that lock. The design is a voting-escrow one, in the veCRV tradition: the longer the lock, the more weight it carries. It is a mainnet feature; testnet is gated behind `VITE_ENABLE_STAKE_GOVERNANCE_TESTNET` and uses a testnet token.
+Hemi Stake lives on `/hemi-stake`, and `/staking-dashboard` redirects there. The user locks HEMI in the [`VeHemi`](https://github.com/hemilabs/veHEMI/blob/main/src/VeHemi.sol) contract on Hemi and receives an ERC-721 (symbol `veHemi`) representing that lock. The design is a voting-escrow one, in the veCRV tradition: the longer the lock, the more weight it carries. It is a mainnet feature; testnet is gated behind `VITE_ENABLE_STAKE_GOVERNANCE_TESTNET` and uses a testnet token.
 
 Lock parameters, all enforced by the contract:
 

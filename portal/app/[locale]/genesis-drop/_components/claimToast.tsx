@@ -16,8 +16,8 @@ export const ClaimToast = function ({ transactionHash }: Props) {
       autoCloseMs={10000}
       description={t('here-is-your-claim-tx')}
       goTo={{
-        href: '/staking-dashboard',
-        label: t('go-to-staking-dashboard'),
+        href: '/hemi-stake',
+        label: t('go-to-hemi-stake'),
       }}
       title={t('claim-and-stake-successful')}
       tx={{

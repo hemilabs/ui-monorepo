@@ -1,10 +1,10 @@
+import { TotalDepositsIcon } from 'components/icons/totalDepositsIcon'
 import { useTranslations } from 'use-intl'
 import { formatFiatNumber } from 'utils/format'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
 import { useTotalDeposits } from '../_hooks/useTotalDeposits'
-import { TotalDepositsIcon } from '../_icons/totalDepositsIcon'
 
 import { EarnCard } from './earnCard'
 import { FromPoolsBadge } from './fromPoolsBadge'

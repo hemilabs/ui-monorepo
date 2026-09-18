@@ -1,0 +1,68 @@
+import { Button } from 'components/button'
+import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { useHemi } from 'hooks/useHemi'
+import { useHemiToken } from 'hooks/useHemiToken'
+import { type FormEvent, useState } from 'react'
+import { type UnlockingOperationRunning } from 'types/stakingDashboard'
+import { useTranslations } from 'use-intl'
+
+import { useStakingDashboard } from '../../_context/stakingDashboardContext'
+import { useUnlock } from '../../_hooks/useUnlock'
+
+export const RetryUnlock = function () {
+  const [operationRunning, setOperationRunning] =
+    useState<UnlockingOperationRunning>('idle')
+
+  const { unlockingDashboardOperation, updateUnlockingDashboardOperation } =
+    useStakingDashboard()
+
+  const token = useHemiToken()
+
+  const hemi = useHemi()
+  const t = useTranslations()
+
+  // unlockingDashboardOperation is defined because this component is only rendered in that case
+  const { amount, tokenId } = unlockingDashboardOperation!.stakingPosition!
+
+  // this component tries to initiate a new withdraw, based on the failed one
+  const { mutate: runUnlock } = useUnlock({
+    amount,
+    on(emitter) {
+      emitter.on('withdraw-transaction-reverted', () =>
+        setOperationRunning('failed'),
+      )
+      emitter.on('user-signing-withdraw-error', () =>
+        setOperationRunning('failed'),
+      )
+      emitter.on('unexpected-error', () => setOperationRunning('failed'))
+      emitter.on('withdraw-transaction-succeeded', function () {
+        setOperationRunning('idle')
+      })
+    },
+    token,
+    tokenId,
+    updateUnlockingDashboardOperation,
+  })
+
+  const isUnlocking = operationRunning === 'unlocking'
+
+  const handleRetry = function (e: FormEvent) {
+    e.preventDefault()
+    setOperationRunning('unlocking')
+    runUnlock()
+  }
+
+  return (
+    <form className="flex w-full [&>button]:w-full" onSubmit={handleRetry}>
+      <SubmitWhenConnectedToChain
+        chainId={hemi.id}
+        submitButton={
+          <Button disabled={isUnlocking} size="small">
+            {t(isUnlocking ? 'hemi-stake.form.unlocking' : 'common.try-again')}
+          </Button>
+        }
+        submitButtonSize="small"
+      />
+    </form>
+  )
+}

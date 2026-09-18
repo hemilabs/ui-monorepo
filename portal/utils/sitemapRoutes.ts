@@ -2,9 +2,10 @@ const contentRoutes = [
   '/ecosystem',
   '/genesis-drop',
   '/get-started',
+  '/hemi-stake',
+  '/hemi-stake/analytics',
   '/stake',
   '/stake/dashboard',
-  '/staking-dashboard',
   '/tunnel',
   '/tunnel/transaction-history',
 ] as const

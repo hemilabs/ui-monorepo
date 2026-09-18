@@ -280,7 +280,7 @@ export const buildColumns = ({
     ),
     header: () => <Header text={t('column-headers.from')} />,
     id: 'from',
-    meta: { className: 'justify-start flex-grow-0', width: 100 },
+    meta: { className: 'justify-start flex-grow-0', width: 125 },
   },
   {
     cell: ({ row }) => (
@@ -294,7 +294,7 @@ export const buildColumns = ({
     ),
     header: () => <Header text={t('column-headers.to')} />,
     id: 'to',
-    meta: { className: 'justify-start flex-grow-0', width: 100 },
+    meta: { className: 'justify-start flex-grow-0', width: 125 },
   },
   {
     accessorKey: 'transactionHash',
@@ -319,7 +319,7 @@ export const buildColumns = ({
       ),
     header: () => <Header text={t('column-headers.status')} />,
     id: 'status',
-    meta: { className: 'justify-start', width: 185 },
+    meta: { className: 'justify-start', width: 170 },
   },
   {
     cell: ({ row }) => (

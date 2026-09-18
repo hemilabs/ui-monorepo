@@ -8,6 +8,7 @@ import { hemi } from 'viem/chains'
 import { totalSupply } from 'viem-erc20/actions'
 
 import { getHemiClient } from '../hemiClient.ts'
+import { getLockStats } from '../subgraphs/subgraph.ts'
 
 const client = getHemiClient(hemi.id)
 
@@ -22,15 +23,26 @@ async function getWalletsStaking() {
   return Number(tokenHoldersCount)
 }
 
+async function getAverageLock() {
+  const lockStats = await getLockStats()
+  if (!lockStats?.activeLocks) {
+    return 0
+  }
+  return Math.round(Number(lockStats.totalLockDuration) / lockStats.activeLocks)
+}
+
 export const getHemiStake = async function () {
-  const [locksCount, totalLocked, walletsStaking] = await Promise.all([
-    totalSupply(client, { address: veHemiAddress }),
-    getTotalLocked(client),
-    getWalletsStaking(),
-  ])
-  // TODO implement rewards and average lock
+  const [averageLock, locksCount, totalLocked, walletsStaking] =
+    await Promise.all([
+      getAverageLock(),
+      totalSupply(client, { address: veHemiAddress }),
+      getTotalLocked(client),
+      getWalletsStaking(),
+    ])
+  // TODO implement rewards
   // See https://github.com/hemilabs/ui-monorepo/issues/2244
   return {
+    averageLock,
     locksCount: Number(locksCount),
     rewards: [],
     totalStaked: totalLocked.toString(),

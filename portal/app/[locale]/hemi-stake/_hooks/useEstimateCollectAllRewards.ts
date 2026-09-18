@@ -21,6 +21,7 @@ export const useEstimateCollectAllRewardsFees = function ({
   })
 
   const { data: gasUnits, isError } = useEstimateGas({
+    chainId,
     data,
     query: { enabled: isConnected && enabled },
     to: veHemiRewardsAddress,

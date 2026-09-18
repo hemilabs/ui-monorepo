@@ -16,6 +16,7 @@ export type ClaimFromEvents = CommonEvents & {
 }
 
 export type CaptureAndWithdrawEvents = CommonEvents & {
+  'capture-failed': [Error]
   'capture-not-needed': []
   'capture-transaction-reverted': [TransactionReceipt]
   'capture-transaction-succeeded': [TransactionReceipt]

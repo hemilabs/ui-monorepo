@@ -165,7 +165,10 @@ const runCaptureAndWithdraw = ({
         tokenId,
         veHemiAddress,
         walletClient,
-      }).catch(() => 'failed to capture the position class')
+      }).catch(function (error) {
+        emitter.emit('capture-failed', error)
+        return 'failed to capture the position class'
+      })
 
       if (refusal) {
         emitter.emit('withdraw-failed-validation', refusal)

@@ -369,4 +369,27 @@ describe('captureAndWithdraw', function () {
     )
     expect(writeContract).toHaveBeenCalledOnce()
   })
+  it('should emit "capture-failed" with the error and refuse the burn when the capture cannot be confirmed', async function () {
+    const error = new Error('receipt timeout')
+    mockBoundVeHemi(validParameters.veHemiAddress)
+    mockPositionClass([false])
+    vi.mocked(simulateContract).mockResolvedValue({ result: true })
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockRejectedValue(error)
+
+    const { emitter, promise } = captureAndWithdraw(validParameters)
+
+    const captureFailed = vi.fn()
+    const failedValidation = vi.fn()
+    emitter.on('capture-failed', captureFailed)
+    emitter.on('withdraw-failed-validation', failedValidation)
+
+    await promise
+
+    expect(captureFailed).toHaveBeenCalledExactlyOnceWith(error)
+    expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
+      'failed to capture the position class',
+    )
+    expect(writeContract).toHaveBeenCalledOnce()
+  })
 })

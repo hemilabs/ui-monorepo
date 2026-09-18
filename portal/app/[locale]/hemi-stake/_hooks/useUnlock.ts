@@ -111,6 +111,11 @@ export const useUnlock = function ({
           captureStatus: CaptureDashboardStatus.CAPTURE_TX_FAILED,
         })
       })
+      emitter.on('capture-failed', function () {
+        updateUnlockingDashboardOperation({
+          captureStatus: CaptureDashboardStatus.CAPTURE_TX_FAILED,
+        })
+      })
       emitter.on('capture-transaction-succeeded', function (receipt) {
         updateUnlockingDashboardOperation({
           captureStatus: CaptureDashboardStatus.CAPTURE_TX_CONFIRMED,

@@ -97,7 +97,13 @@ export const useUnlock = function ({
         walletClient: hemiWalletClient!,
       })
 
+      // Whether the capture reached an end of its own. The catch-all listener below
+      // needs it: failing a capture that already succeeded would be a lie, and leaving
+      // one that never finished on its spinner is the dead end it exists to prevent.
+      let captureResolved = false
+
       emitter.on('capture-not-needed', function () {
+        captureResolved = true
         updateUnlockingDashboardOperation({ needsCapture: false })
       })
       emitter.on('user-signed-capture', function (transactionHash) {
@@ -111,20 +117,29 @@ export const useUnlock = function ({
         track?.('hemi stake - signed capture position class')
       })
       emitter.on('user-signing-capture-error', function () {
+        captureResolved = true
         updateUnlockingDashboardOperation({
           captureStatus: CaptureDashboardStatus.CAPTURE_TX_FAILED,
         })
       })
+      // Speeding up from the wallet mines a different hash at the same nonce, so the one
+      // recorded at signing time no longer exists. Re-anchoring on the receipt keeps the
+      // explorer link on the transaction that settled; where nothing was replaced it is
+      // the same hash.
       emitter.on('capture-transaction-succeeded', function (receipt) {
+        captureResolved = true
         updateUnlockingDashboardOperation({
           captureStatus: CaptureDashboardStatus.CAPTURE_TX_CONFIRMED,
+          captureTransactionHash: receipt.transactionHash,
         })
 
         updateNativeBalanceIfCached(receipt)
       })
       emitter.on('capture-transaction-reverted', function (receipt) {
+        captureResolved = true
         updateUnlockingDashboardOperation({
           captureStatus: CaptureDashboardStatus.CAPTURE_TX_FAILED,
+          captureTransactionHash: receipt.transactionHash,
         })
 
         updateNativeBalanceIfCached(receipt)
@@ -176,6 +191,7 @@ export const useUnlock = function ({
       emitter.on('withdraw-transaction-succeeded', function (receipt) {
         updateUnlockingDashboardOperation({
           status: UnlockingDashboardStatus.UNLOCK_TX_CONFIRMED,
+          transactionHash: receipt.transactionHash,
         })
 
         queryClient.setQueryData(
@@ -190,7 +206,8 @@ export const useUnlock = function ({
 
         // fees
         updateNativeBalanceIfCached(receipt)
-        // HEMI balance
+        // HEMI balance. An absent entry has nothing to add to, and `undefined + amount`
+        // throws rather than seeding it; `onSettled` invalidates the key either way.
         queryClient.setQueryData(
           hemiBalanceQueryKey,
           (old: bigint | undefined) =>
@@ -202,12 +219,27 @@ export const useUnlock = function ({
       emitter.on('withdraw-transaction-reverted', function (receipt) {
         updateUnlockingDashboardOperation({
           status: UnlockingDashboardStatus.UNLOCK_TX_FAILED,
+          transactionHash: receipt.transactionHash,
         })
 
         // Although the transaction was reverted, the gas was paid.
         updateNativeBalanceIfCached(receipt)
 
         track?.('hemi stake - withdraw transaction reverted')
+      })
+      // Every failure the action anticipates has its own event; this catches the ones it
+      // does not. Without it an unforeseen throw leaves whichever step was in flight on
+      // its spinner, with no way out of the drawer but a reload.
+      emitter.on('unexpected-error', function () {
+        updateUnlockingDashboardOperation({
+          ...(captureStarted && !captureResolved
+            ? { captureStatus: CaptureDashboardStatus.CAPTURE_TX_FAILED }
+            : {}),
+          status: UnlockingDashboardStatus.UNLOCK_TX_FAILED,
+        })
+        setDrawerQueryString('unlocking')
+
+        track?.('hemi stake - unexpected error')
       })
 
       on?.(emitter)

@@ -6,16 +6,14 @@ import {
   type WalletClient,
   encodeFunctionData,
 } from 'viem'
-import {
-  simulateContract,
-  waitForTransactionReceipt,
-  writeContract,
-} from 'viem/actions'
+import { simulateContract, writeContract } from 'viem/actions'
 
 import { getVeHemiEpochRewardsContractAddress } from '../../constants.ts'
 import { veHemiEpochRewardsAbi } from '../../rewardsAbi.ts'
 import type { ClaimFromEvents } from '../../types.ts'
 import { validateClaimFromInputs } from '../../utils.ts'
+
+import { waitForSettlement } from './waitForSettlement.ts'
 
 type ClaimFromParameters = {
   account: Address
@@ -135,15 +133,37 @@ const runClaimFrom = ({
 
       emitter.emit('user-signed-claim-from', claimHash)
 
-      const claimReceipt = await waitForTransactionReceipt(walletClient, {
-        hash: claimHash,
-      }).catch(function (error) {
-        emitter.emit('claim-from-failed', error)
-      })
+      const settlement = await waitForSettlement(walletClient, claimHash).catch(
+        function (error) {
+          emitter.emit('claim-from-failed', error as Error)
+        },
+      )
 
-      if (!claimReceipt) {
+      if (!settlement) {
         return
       }
+
+      // Cancelling is the holder's decision, the same one as rejecting the prompt.
+      // Replacing the transaction with a different one is a failure. Neither settled
+      // any epoch, so neither may be reported as a claim.
+      if (settlement.outcome !== 'settled') {
+        if (settlement.outcome === 'cancelled') {
+          emitter.emit(
+            'user-signing-claim-from-error',
+            new Error('the claim transaction was cancelled from the wallet'),
+          )
+        } else {
+          emitter.emit(
+            'claim-from-failed',
+            new Error(
+              'the claim transaction was replaced from the wallet and settled no epochs',
+            ),
+          )
+        }
+        return
+      }
+
+      const claimReceipt = settlement.receipt
 
       const claimEventMap: Record<
         TransactionReceipt['status'],

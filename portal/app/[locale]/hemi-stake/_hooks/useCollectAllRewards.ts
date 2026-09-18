@@ -143,12 +143,20 @@ export const useCollectRewards = function ({
           })
         })
 
+        // Speeding up from the wallet mines a different hash at the same nonce, so the
+        // one this step was given when it was signed no longer exists. Re-anchoring on
+        // the receipt keeps the explorer link on the claim that settled; where nothing
+        // was replaced it is the same hash.
         emitter.on('claim-from-transaction-succeeded', function (receipt) {
           track?.('hemi stake - collect rewards transaction succeeded')
-          updateNativeBalanceIfCached(receipt)
           updateStep(index, {
             status: CollectAllRewardsDashboardStatus.COLLECT_TX_CONFIRMED,
+            transactionHash: receipt.transactionHash,
           })
+          updateCollectRewardsDashboardOperation({
+            transactionHash: receipt.transactionHash,
+          })
+          updateNativeBalanceIfCached(receipt)
         })
 
         emitter.on('claim-from-transaction-reverted', function (receipt) {
@@ -158,6 +166,7 @@ export const useCollectRewards = function ({
           failed = true
           updateStep(index, {
             status: CollectAllRewardsDashboardStatus.COLLECT_TX_FAILED,
+            transactionHash: receipt.transactionHash,
           })
         })
 

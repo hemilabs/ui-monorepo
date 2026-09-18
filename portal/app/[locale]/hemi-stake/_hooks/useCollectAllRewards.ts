@@ -16,6 +16,8 @@ import type { ClaimFromEvents } from 've-hemi-epoch-rewards'
 import { claimFrom } from 've-hemi-epoch-rewards/actions'
 import { useAccount } from 'wagmi'
 
+import { onlyIfCached } from '../_utils/onlyIfCached'
+
 import { useClaimableRewards } from './useClaimableRewards'
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
 import { getEpochClaimableRewardsQueryKeyPrefix } from './useEpochClaimableRewards'
@@ -57,6 +59,12 @@ export const useCollectRewards = function ({
   )
 
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(hemi.id)
+
+  const updateNativeBalanceIfCached = onlyIfCached(
+    queryClient,
+    nativeTokenBalanceQueryKey,
+    updateNativeBalanceAfterFees,
+  )
 
   const { hemiWalletClient } = useHemiWalletClient()
 
@@ -137,7 +145,7 @@ export const useCollectRewards = function ({
 
         emitter.on('claim-from-transaction-succeeded', function (receipt) {
           track?.('hemi stake - collect rewards transaction succeeded')
-          updateNativeBalanceAfterFees(receipt)
+          updateNativeBalanceIfCached(receipt)
           updateStep(index, {
             status: CollectAllRewardsDashboardStatus.COLLECT_TX_CONFIRMED,
           })
@@ -146,7 +154,7 @@ export const useCollectRewards = function ({
         emitter.on('claim-from-transaction-reverted', function (receipt) {
           track?.('hemi stake - collect rewards transaction reverted')
           // Although the transaction was reverted, the gas was paid
-          updateNativeBalanceAfterFees(receipt)
+          updateNativeBalanceIfCached(receipt)
           failed = true
           updateStep(index, {
             status: CollectAllRewardsDashboardStatus.COLLECT_TX_FAILED,

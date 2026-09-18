@@ -19,6 +19,8 @@ import type { CaptureAndWithdrawEvents } from 've-hemi-epoch-rewards'
 import { captureAndWithdraw } from 've-hemi-epoch-rewards/actions'
 import { useAccount } from 'wagmi'
 
+import { onlyIfCached } from '../_utils/onlyIfCached'
+
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
 import { useNeedsClassCapture } from './useNeedsClassCapture'
 import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
@@ -67,6 +69,12 @@ export const useUnlock = function ({
     token.chainId,
   )
 
+  const updateNativeBalanceIfCached = onlyIfCached(
+    queryClient,
+    nativeTokenBalanceQueryKey,
+    updateNativeBalanceAfterFees,
+  )
+
   const { hemiWalletClient } = useHemiWalletClient()
 
   return useMutation({
@@ -112,14 +120,14 @@ export const useUnlock = function ({
           captureStatus: CaptureDashboardStatus.CAPTURE_TX_CONFIRMED,
         })
 
-        updateNativeBalanceAfterFees(receipt)
+        updateNativeBalanceIfCached(receipt)
       })
       emitter.on('capture-transaction-reverted', function (receipt) {
         updateUnlockingDashboardOperation({
           captureStatus: CaptureDashboardStatus.CAPTURE_TX_FAILED,
         })
 
-        updateNativeBalanceAfterFees(receipt)
+        updateNativeBalanceIfCached(receipt)
 
         track?.('hemi stake - capture position class reverted')
       })
@@ -181,11 +189,12 @@ export const useUnlock = function ({
         )
 
         // fees
-        updateNativeBalanceAfterFees(receipt)
+        updateNativeBalanceIfCached(receipt)
         // HEMI balance
         queryClient.setQueryData(
           hemiBalanceQueryKey,
-          (old: bigint) => old + amount,
+          (old: bigint | undefined) =>
+            old === undefined ? undefined : old + amount,
         )
 
         track?.('hemi stake - withdraw success')
@@ -196,7 +205,7 @@ export const useUnlock = function ({
         })
 
         // Although the transaction was reverted, the gas was paid.
-        updateNativeBalanceAfterFees(receipt)
+        updateNativeBalanceIfCached(receipt)
 
         track?.('hemi stake - withdraw transaction reverted')
       })

@@ -210,7 +210,11 @@ export function Lockup({
   const amount = parseTokenUnits(input, token)
 
   const toSublabel = function (days: number) {
-    const percentage = formatNumber(lockupApy[days])
+    const apy = lockupApy[days]
+    if (apy === undefined) {
+      return undefined
+    }
+    const percentage = formatNumber(apy)
     return days === maxDays
       ? t('form.up-to', { percentage })
       : t('form.approximate', { percentage })
@@ -234,6 +238,7 @@ export function Lockup({
   const [showSlider, setShowSlider] = useState(
     () => !isSelectablePreset(lockupDays),
   )
+  const showPresets = canUsePresets && !showSlider
   const labelId = useId()
 
   const inputNumber = Number(inputDays)
@@ -325,16 +330,18 @@ export function Lockup({
             <span className="text-sm font-medium text-neutral-500" id={labelId}>
               {t('lockup-period')}
             </span>
-            <Tooltip
-              borderRadius="12px"
-              id="lockup-apy-estimate"
-              text={t('apy-estimate')}
-              variant="info"
-            >
-              <div className="group/icon flex items-center">
-                <InfoIcon className="[&>g>path]:transition-colors [&>g>path]:duration-200 group-hover/icon:[&>g>path]:fill-neutral-950" />
-              </div>
-            </Tooltip>
+            {showPresets && (
+              <Tooltip
+                borderRadius="12px"
+                id="lockup-apy-estimate"
+                text={t('apy-estimate')}
+                variant="info"
+              >
+                <div className="group/icon flex items-center">
+                  <InfoIcon className="[&>g>path]:transition-colors [&>g>path]:duration-200 group-hover/icon:[&>g>path]:fill-neutral-950" />
+                </div>
+              </Tooltip>
+            )}
           </div>
           <div className="flex items-center justify-center gap-x-3">
             {showSlider && (
@@ -377,7 +384,7 @@ export function Lockup({
           </div>
         </div>
         <div className="flex min-h-26 flex-col justify-center xs:min-h-14">
-          {showSlider || !canUsePresets ? (
+          {!showPresets ? (
             <div className="flex flex-col gap-y-4">
               <RangeSlider
                 max={maxDays}

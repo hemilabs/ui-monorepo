@@ -541,18 +541,18 @@
     "perks": {
       "ecosystem-launches": {
         "badge": "A seguir",
-        "description": "Acesso antecipado aos lançamentos do ecossistema da Hemi, incluindo Vetro e Odyssey.",
+        "description": "Cada projeto lançado na Hemi reserva oferta para as posições bloqueadas.",
         "title": "Lançamentos do ecossistema"
       },
       "governance": {
-        "badge": "Em breve",
-        "description": "Toda posição bloqueada poderá votar, ou delegar e manter sua parte.",
+        "badge": "Disponível hoje",
+        "description": "Toda posição bloqueada vota, ou delega e mantém sua parte.",
         "title": "Governança"
       },
       "heading": "O que você ganha com uma posição no hemiStake",
       "protocol-fees": {
         "badge": "Disponível hoje",
-        "description": "Taxas da cadeia base pagas a cada posição por peso, a cada época.",
+        "description": "Taxas da cadeia base pagas por peso, a cada época. Uma parte é queimada.",
         "title": "Taxas do protocolo"
       }
     },

@@ -140,6 +140,10 @@ export const useCollectRewards = function ({
           updateNativeBalanceAfterFees(receipt)
           updateStep(index, {
             status: CollectAllRewardsDashboardStatus.COLLECT_TX_CONFIRMED,
+            transactionHash: receipt.transactionHash,
+          })
+          updateCollectRewardsDashboardOperation({
+            transactionHash: receipt.transactionHash,
           })
         })
 
@@ -150,6 +154,7 @@ export const useCollectRewards = function ({
           failed = true
           updateStep(index, {
             status: CollectAllRewardsDashboardStatus.COLLECT_TX_FAILED,
+            transactionHash: receipt.transactionHash,
           })
         })
 

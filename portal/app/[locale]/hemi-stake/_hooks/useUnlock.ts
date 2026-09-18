@@ -110,6 +110,7 @@ export const useUnlock = function ({
       emitter.on('capture-transaction-succeeded', function (receipt) {
         updateUnlockingDashboardOperation({
           captureStatus: CaptureDashboardStatus.CAPTURE_TX_CONFIRMED,
+          captureTransactionHash: receipt.transactionHash,
         })
 
         updateNativeBalanceAfterFees(receipt)
@@ -117,6 +118,7 @@ export const useUnlock = function ({
       emitter.on('capture-transaction-reverted', function (receipt) {
         updateUnlockingDashboardOperation({
           captureStatus: CaptureDashboardStatus.CAPTURE_TX_FAILED,
+          captureTransactionHash: receipt.transactionHash,
         })
 
         updateNativeBalanceAfterFees(receipt)
@@ -168,6 +170,7 @@ export const useUnlock = function ({
       emitter.on('withdraw-transaction-succeeded', function (receipt) {
         updateUnlockingDashboardOperation({
           status: UnlockingDashboardStatus.UNLOCK_TX_CONFIRMED,
+          transactionHash: receipt.transactionHash,
         })
 
         queryClient.setQueryData(
@@ -193,6 +196,7 @@ export const useUnlock = function ({
       emitter.on('withdraw-transaction-reverted', function (receipt) {
         updateUnlockingDashboardOperation({
           status: UnlockingDashboardStatus.UNLOCK_TX_FAILED,
+          transactionHash: receipt.transactionHash,
         })
 
         // Although the transaction was reverted, the gas was paid.

@@ -17,6 +17,20 @@ vi.mock('viem/actions', () => ({
   writeContract: vi.fn(),
 }))
 
+// viem resolves a replaced transaction with the replacement's receipt, after reporting
+// why it was replaced. A cancel is a zero-value send to self, so that receipt succeeds.
+const mockReplacement = (
+  reason: string,
+  receipt: object = { status: 'success' },
+) =>
+  vi.mocked(waitForTransactionReceipt).mockImplementation(async function (
+    _,
+    { onReplaced },
+  ) {
+    onReplaced?.({ reason })
+    return receipt
+  })
+
 const mockRewardsAddress = '0x1234567890123456789012345678901234567890'
 
 const validParameters = {
@@ -288,5 +302,71 @@ describe('captureAndWithdraw', function () {
     expect(failed).toHaveBeenCalledExactlyOnceWith(error)
     expect(preWithdraw).not.toHaveBeenCalled()
     expect(writeContract).not.toHaveBeenCalled()
+  })
+  // Nothing was burned, so the position must not be reported as withdrawn.
+  it('should report a withdraw cancelled in the wallet as a refused signature, not a burn', async function () {
+    mockBoundVeHemi(validParameters.veHemiAddress)
+    mockPositionClass([true])
+    vi.mocked(simulateContract).mockResolvedValue({ result: undefined })
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    mockReplacement('cancelled')
+
+    const { emitter, promise } = captureAndWithdraw(validParameters)
+
+    const signingError = vi.fn()
+    const succeeded = vi.fn()
+    emitter.on('user-signing-withdraw-error', signingError)
+    emitter.on('withdraw-transaction-succeeded', succeeded)
+
+    await promise
+
+    expect(signingError).toHaveBeenCalledOnce()
+    expect(succeeded).not.toHaveBeenCalled()
+  })
+
+  it('should emit "withdraw-failed" when another transaction replaced the withdraw', async function () {
+    mockBoundVeHemi(validParameters.veHemiAddress)
+    mockPositionClass([true])
+    vi.mocked(simulateContract).mockResolvedValue({ result: undefined })
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    mockReplacement('replaced')
+
+    const { emitter, promise } = captureAndWithdraw(validParameters)
+
+    const failed = vi.fn()
+    const succeeded = vi.fn()
+    emitter.on('withdraw-failed', failed)
+    emitter.on('withdraw-transaction-succeeded', succeeded)
+
+    await promise
+
+    expect(failed).toHaveBeenCalledOnce()
+    expect(succeeded).not.toHaveBeenCalled()
+  })
+
+  it('should end the capture step and refuse the burn when the capture is cancelled', async function () {
+    mockBoundVeHemi(validParameters.veHemiAddress)
+    mockPositionClass([false])
+    vi.mocked(simulateContract).mockResolvedValue({ result: true })
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    mockReplacement('cancelled')
+
+    const { emitter, promise } = captureAndWithdraw(validParameters)
+
+    const captureError = vi.fn()
+    const captureSucceeded = vi.fn()
+    const failedValidation = vi.fn()
+    emitter.on('user-signing-capture-error', captureError)
+    emitter.on('capture-transaction-succeeded', captureSucceeded)
+    emitter.on('withdraw-failed-validation', failedValidation)
+
+    await promise
+
+    expect(captureError).toHaveBeenCalledOnce()
+    expect(captureSucceeded).not.toHaveBeenCalled()
+    expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
+      'the position class capture was cancelled in the wallet',
+    )
+    expect(writeContract).toHaveBeenCalledOnce()
   })
 })

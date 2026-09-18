@@ -1,16 +1,14 @@
 import { EventEmitter } from 'events'
 import { toPromiseEvent } from 'to-promise-event'
 import { type Address, type TransactionReceipt, type WalletClient } from 'viem'
-import {
-  simulateContract,
-  waitForTransactionReceipt,
-  writeContract,
-} from 'viem/actions'
+import { simulateContract, writeContract } from 'viem/actions'
 
 import { getVeHemiEpochRewardsContractAddress } from '../../constants.ts'
 import { veHemiEpochRewardsAbi } from '../../rewardsAbi.ts'
 import type { ClaimTokenEvents } from '../../types.ts'
 import { validateClaimTokenInputs } from '../../utils.ts'
+
+import { waitForSettlement } from './waitForSettlement.ts'
 
 type ClaimTokenParameters = {
   account: Address
@@ -91,15 +89,34 @@ const runClaimToken = ({
 
       emitter.emit('user-signed-claim-token', claimHash)
 
-      const claimReceipt = await waitForTransactionReceipt(walletClient, {
-        hash: claimHash,
-      }).catch(function (error) {
-        emitter.emit('claim-token-failed', error)
-      })
+      const settlement = await waitForSettlement(walletClient, claimHash).catch(
+        function (error) {
+          emitter.emit('claim-token-failed', error)
+        },
+      )
 
-      if (!claimReceipt) {
+      if (!settlement) {
         return
       }
+
+      if (settlement.outcome === 'cancelled') {
+        emitter.emit(
+          'user-signing-claim-token-error',
+          new Error('the claim was cancelled in the wallet'),
+        )
+        return
+      }
+      if (settlement.outcome === 'replaced') {
+        emitter.emit(
+          'claim-token-failed',
+          new Error(
+            'the claim was replaced in the wallet by another transaction',
+          ),
+        )
+        return
+      }
+
+      const claimReceipt = settlement.receipt
 
       const claimEventMap: Record<
         TransactionReceipt['status'],

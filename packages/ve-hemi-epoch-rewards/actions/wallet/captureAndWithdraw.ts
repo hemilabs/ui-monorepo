@@ -7,17 +7,14 @@ import {
   type TransactionReceipt,
   type WalletClient,
 } from 'viem'
-import {
-  readContract,
-  simulateContract,
-  waitForTransactionReceipt,
-  writeContract,
-} from 'viem/actions'
+import { readContract, simulateContract, writeContract } from 'viem/actions'
 
 import { getVeHemiEpochRewardsContractAddress } from '../../constants.ts'
 import { veHemiEpochRewardsAbi } from '../../rewardsAbi.ts'
 import type { CaptureAndWithdrawEvents } from '../../types.ts'
 import { veHemiFragments } from '../../veHemiFragments.ts'
+
+import { waitForSettlement } from './waitForSettlement.ts'
 
 type CaptureAndWithdrawParameters = {
   account: Address
@@ -96,7 +93,15 @@ const capturePositionClass = async function ({
 
   emitter.emit('user-signed-capture', hash)
 
-  const receipt = await waitForTransactionReceipt(walletClient, { hash })
+  const settlement = await waitForSettlement(walletClient, hash)
+
+  if (settlement.outcome !== 'settled') {
+    const reason = `the position class capture was ${settlement.outcome} in the wallet`
+    emitter.emit('user-signing-capture-error', new Error(reason))
+    return reason
+  }
+
+  const { receipt } = settlement
 
   if (receipt.status !== 'success') {
     emitter.emit('capture-transaction-reverted', receipt)
@@ -112,6 +117,23 @@ const capturePositionClass = async function ({
   })
 
   return capturedNow ? undefined : 'the position class was not captured'
+}
+
+const reportUnsettledWithdraw = function (
+  emitter: EventEmitter<CaptureAndWithdrawEvents>,
+  outcome: 'cancelled' | 'replaced',
+) {
+  if (outcome === 'cancelled') {
+    emitter.emit(
+      'user-signing-withdraw-error',
+      new Error('the withdraw was cancelled in the wallet'),
+    )
+    return
+  }
+  emitter.emit(
+    'withdraw-failed',
+    new Error('the withdraw was replaced in the wallet by another transaction'),
+  )
 }
 
 const runCaptureAndWithdraw = ({
@@ -186,15 +208,23 @@ const runCaptureAndWithdraw = ({
 
       emitter.emit('user-signed-withdraw', withdrawHash)
 
-      const withdrawReceipt = await waitForTransactionReceipt(walletClient, {
-        hash: withdrawHash,
-      }).catch(function (error) {
+      const withdrawSettlement = await waitForSettlement(
+        walletClient,
+        withdrawHash,
+      ).catch(function (error) {
         emitter.emit('withdraw-failed', error)
       })
 
-      if (!withdrawReceipt) {
+      if (!withdrawSettlement) {
         return
       }
+
+      if (withdrawSettlement.outcome !== 'settled') {
+        reportUnsettledWithdraw(emitter, withdrawSettlement.outcome)
+        return
+      }
+
+      const withdrawReceipt = withdrawSettlement.receipt
 
       const withdrawEventMap: Record<
         TransactionReceipt['status'],

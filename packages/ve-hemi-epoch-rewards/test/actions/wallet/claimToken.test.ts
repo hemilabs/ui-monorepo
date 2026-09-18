@@ -16,6 +16,20 @@ vi.mock('viem/actions', () => ({
   writeContract: vi.fn(),
 }))
 
+// viem resolves a replaced transaction with the replacement's receipt, after reporting
+// why it was replaced. A cancel is a zero-value send to self, so that receipt succeeds.
+const mockReplacement = (
+  reason: string,
+  receipt: object = { status: 'success' },
+) =>
+  vi.mocked(waitForTransactionReceipt).mockImplementation(async function (
+    _,
+    { onReplaced },
+  ) {
+    onReplaced?.({ reason })
+    return receipt
+  })
+
 const mockRewardsAddress = '0x1234567890123456789012345678901234567890'
 const chain = { id: 743111 }
 
@@ -175,5 +189,56 @@ describe('claimToken', function () {
     await promise
 
     expect(reverted).toHaveBeenCalledExactlyOnceWith(receipt)
+  })
+  it('should report a claim cancelled in the wallet as a refused signature, not a claim', async function () {
+    vi.mocked(simulateContract).mockResolvedValue({ result: BigInt(0) })
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    mockReplacement('cancelled')
+
+    const { emitter, promise } = claimToken(validParameters)
+
+    const signingError = vi.fn()
+    const succeeded = vi.fn()
+    emitter.on('user-signing-claim-token-error', signingError)
+    emitter.on('claim-token-transaction-succeeded', succeeded)
+
+    await promise
+
+    expect(signingError).toHaveBeenCalledOnce()
+    expect(succeeded).not.toHaveBeenCalled()
+  })
+
+  it('should emit "claim-token-failed" when another transaction replaced the claim', async function () {
+    vi.mocked(simulateContract).mockResolvedValue({ result: BigInt(0) })
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    mockReplacement('replaced')
+
+    const { emitter, promise } = claimToken(validParameters)
+
+    const failed = vi.fn()
+    const succeeded = vi.fn()
+    emitter.on('claim-token-failed', failed)
+    emitter.on('claim-token-transaction-succeeded', succeeded)
+
+    await promise
+
+    expect(failed).toHaveBeenCalledOnce()
+    expect(succeeded).not.toHaveBeenCalled()
+  })
+
+  it('should report a repriced claim as settled, with the receipt that was mined', async function () {
+    const receipt = { status: 'success', transactionHash: '0x01' }
+    vi.mocked(simulateContract).mockResolvedValue({ result: BigInt(0) })
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    mockReplacement('repriced', receipt)
+
+    const { emitter, promise } = claimToken(validParameters)
+
+    const succeeded = vi.fn()
+    emitter.on('claim-token-transaction-succeeded', succeeded)
+
+    await promise
+
+    expect(succeeded).toHaveBeenCalledExactlyOnceWith(receipt)
   })
 })

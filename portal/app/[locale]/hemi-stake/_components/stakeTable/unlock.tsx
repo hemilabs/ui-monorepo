@@ -78,8 +78,6 @@ export function Unlock({ operation, unlockDate }: Props) {
 
   const handleUnlock = function () {
     setOperationRunning('unlocking')
-    // The mutation can reject before it emits anything, for example when the
-    // user declines the network switch, so reset here too.
     runUnlock(undefined, { onError: () => setOperationRunning('failed') })
   }
 

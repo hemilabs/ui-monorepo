@@ -1,5 +1,5 @@
 import { useQueries } from '@tanstack/react-query'
-import { useHemiWalletClient } from 'hooks/useHemiClient'
+import { useHemiClient } from 'hooks/useHemiClient'
 import { useHemiToken } from 'hooks/useHemiToken'
 
 import { getCalculateRewardsQueryOptions } from './useCalculateRewards'
@@ -7,7 +7,7 @@ import { useRewardTokens } from './useRewardTokens'
 
 export function useHasRewards(tokenId: bigint) {
   const token = useHemiToken()
-  const { hemiWalletClient } = useHemiWalletClient()
+  const hemiClient = useHemiClient()
   const { tokens: rewardTokens } = useRewardTokens()
 
   return useQueries({
@@ -17,7 +17,7 @@ export function useHasRewards(tokenId: bigint) {
     queries: rewardTokens.map(({ address }) =>
       getCalculateRewardsQueryOptions({
         chainId: token.chainId,
-        hemiWalletClient,
+        hemiClient,
         rewardToken: address,
         tokenId,
       }),

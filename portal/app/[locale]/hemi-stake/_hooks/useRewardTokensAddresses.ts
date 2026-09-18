@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
-import { useHemiWalletClient } from 'hooks/useHemiClient'
+import { useHemiClient } from 'hooks/useHemiClient'
 import { getRewardTokens } from 've-hemi-rewards/actions'
 import { Chain } from 'viem'
 
@@ -14,7 +14,7 @@ export const useRewardTokensAddresses = function ({
 }: {
   enabled?: boolean
 } = {}) {
-  const { hemiWalletClient } = useHemiWalletClient()
+  const hemiClient = useHemiClient()
   const { id } = useHemi()
 
   const queryKey = getRewardTokensQueryKey({
@@ -22,8 +22,8 @@ export const useRewardTokensAddresses = function ({
   })
 
   return useQuery({
-    enabled: enabled && !!hemiWalletClient,
-    queryFn: () => getRewardTokens(hemiWalletClient!),
+    enabled: enabled && !!hemiClient,
+    queryFn: () => getRewardTokens(hemiClient),
     queryKey,
     staleTime: 1000 * 60 * 5, // 5 minutes
   })

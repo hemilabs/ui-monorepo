@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
-import { useHemiWalletClient } from 'hooks/useHemiClient'
+import { useHemiClient } from 'hooks/useHemiClient'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { unixNowTimestamp } from 'utils/time'
 import { getBalanceOfNFTAt, getLockedBalance } from 've-hemi-actions/actions'
@@ -40,7 +40,7 @@ export const useCalculateApr = function ({
   enabled?: boolean
   tokenId: bigint
 }) {
-  const { hemiWalletClient } = useHemiWalletClient()
+  const hemiClient = useHemiClient()
   const { id } = useHemi()
   const { data: rewardsPerVeHEMI, error: isRewardsPerVeHEMIError } =
     useRewardsPerVeHEMI()
@@ -54,7 +54,7 @@ export const useCalculateApr = function ({
   return useQuery({
     enabled:
       enabled &&
-      !!hemiWalletClient &&
+      !!hemiClient &&
       !isRewardsPerVeHEMIError &&
       !!rewardsPerVeHEMI &&
       tokenId > BigInt(0),
@@ -63,8 +63,8 @@ export const useCalculateApr = function ({
       const currentTimestamp = unixNowTimestamp()
 
       const [currentBalance, lockedBalance] = await Promise.all([
-        getBalanceOfNFTAt(hemiWalletClient!, tokenId, currentTimestamp),
-        getLockedBalance(hemiWalletClient!, tokenId),
+        getBalanceOfNFTAt(hemiClient, tokenId, currentTimestamp),
+        getLockedBalance(hemiClient, tokenId),
       ])
 
       // If no locked amount, APR is 0

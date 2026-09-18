@@ -463,6 +463,7 @@
       "title": "Oferta de {symbol}",
       "total": "Total"
     },
+    "apy-estimate": "Las cifras de TEA son estimaciones. El retorno real cambia según la cantidad global en stake.",
     "claim-rewards": {
       "heading": "Reclamar recompensas",
       "subheading": "Estamos procesando su solicitud de recompensas. Puede seguir el progreso a continuación."
@@ -492,6 +493,7 @@
     },
     "form": {
       "approve-and-stake": "Aprobar y Hacer Stake",
+      "approximate": "~{percentage}%",
       "custom": "Personalizado",
       "days": "{days, plural, one {{days} día} other {{days} días}}",
       "expire-date": "Fecha de vencimiento:",
@@ -506,6 +508,7 @@
       "staking": "Haciendo stake...",
       "title": "Stake",
       "unlocking": "Desbloqueando...",
+      "up-to": "hasta {percentage}%",
       "use-or": "Utilice <min></min> o <max></max>",
       "years": "{years, plural, one {{years} año} other {{years} años}}"
     },

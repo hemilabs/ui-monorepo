@@ -1,12 +1,14 @@
 import { DisplayAmount } from 'components/displayAmount'
+import { InfoIcon } from 'components/icons/infoIcon'
 import { LockupInput } from 'components/inputText'
+import { Tooltip } from 'components/tooltip'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useVeHemiToken } from 'hooks/useVeHemiToken'
 import { ReactNode, useEffect, useId, useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import type { Token } from 'types/token'
 import { useLocale, useTranslations } from 'use-intl'
-import { formatDate } from 'utils/format'
+import { formatDate, formatNumber } from 'utils/format'
 import { unixNowTimestamp } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
@@ -22,6 +24,7 @@ import {
   step,
   twoYears,
 } from '../../_utils/lockCreationTimes'
+import { lockupApy } from '../../_utils/lockupApy'
 import { sanitizeLockup } from '../../_utils/sanitizeLockup'
 
 import { LockupPresets } from './lockupPresets'
@@ -206,12 +209,23 @@ export function Lockup({
 
   const amount = parseTokenUnits(input, token)
 
+  const toSublabel = function (days: number) {
+    const apy = lockupApy[days]
+    if (apy === undefined) {
+      return undefined
+    }
+    const percentage = formatNumber(apy)
+    return days === maxDays
+      ? t('form.up-to', { percentage })
+      : t('form.approximate', { percentage })
+  }
+
   const presets = [
     { days: sixMonths, label: t('form.months', { months: 6 }) },
     { days: oneYear, label: t('form.years', { years: 1 }) },
     { days: twoYears, label: t('form.years', { years: 2 }) },
     { days: maxDays, label: t('form.years', { years: 4 }) },
-  ]
+  ].map(preset => ({ ...preset, sublabel: toSublabel(preset.days) }))
 
   const presetDays = presets.map(preset => preset.days)
 
@@ -224,6 +238,7 @@ export function Lockup({
   const [showSlider, setShowSlider] = useState(
     () => !isSelectablePreset(lockupDays),
   )
+  const showPresets = canUsePresets && !showSlider
   const labelId = useId()
 
   const inputNumber = Number(inputDays)
@@ -311,9 +326,23 @@ export function Lockup({
     <>
       <div className="w-full space-y-4 rounded-lg border border-solid border-transparent bg-neutral-50 p-4 ring-1 ring-transparent hover:shadow-bs">
         <div className="flex h-7 items-center justify-between">
-          <span className="text-sm font-medium text-neutral-500" id={labelId}>
-            {t('lockup-period')}
-          </span>
+          <div className="flex items-center gap-x-1">
+            <span className="text-sm font-medium text-neutral-500" id={labelId}>
+              {t('lockup-period')}
+            </span>
+            {showPresets && (
+              <Tooltip
+                borderRadius="12px"
+                id="lockup-apy-estimate"
+                text={t('apy-estimate')}
+                variant="info"
+              >
+                <div className="group/icon flex items-center">
+                  <InfoIcon className="[&>g>path]:transition-colors [&>g>path]:duration-200 group-hover/icon:[&>g>path]:fill-neutral-950" />
+                </div>
+              </Tooltip>
+            )}
+          </div>
           <div className="flex items-center justify-center gap-x-3">
             {showSlider && (
               <>
@@ -354,8 +383,8 @@ export function Lockup({
             )}
           </div>
         </div>
-        <div className="flex min-h-20 flex-col justify-center xs:min-h-14">
-          {showSlider || !canUsePresets ? (
+        <div className="flex min-h-26 flex-col justify-center xs:min-h-14">
+          {!showPresets ? (
             <div className="flex flex-col gap-y-4">
               <RangeSlider
                 max={maxDays}

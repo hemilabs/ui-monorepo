@@ -99,13 +99,13 @@ export type CollectAllRewardsDashboardStatusType =
 
 export type CollectAllRewardsStep = ClaimTransaction & {
   status?: CollectAllRewardsDashboardStatusType
+  tokenId: bigint
   transactionHash?: Hash
 }
 
 export type CollectAllRewardsDashboardOperation = {
   transactionHash?: Hash
   rewards?: ClaimableReward[]
-  stakingPosition?: Pick<StakingPosition, 'amount' | 'tokenId'>
   status?: CollectAllRewardsDashboardStatusType
   steps?: CollectAllRewardsStep[]
 }

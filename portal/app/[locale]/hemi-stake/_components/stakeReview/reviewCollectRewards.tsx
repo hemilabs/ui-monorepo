@@ -80,12 +80,7 @@ export const ReviewCollectRewards = function ({ onClose }: Props) {
   const token = useHemiToken()
 
   // collectRewardsDashboardOperation is defined because this component is only rendered in that case
-  const {
-    rewards = [],
-    stakingPosition,
-    status,
-    steps = [],
-  } = collectRewardsDashboardOperation!
+  const { rewards = [], status, steps = [] } = collectRewardsDashboardOperation!
 
   const t = useTranslations('hemi-stake')
   const hemi = useHemi()
@@ -100,12 +95,34 @@ export const ReviewCollectRewards = function ({ onClose }: Props) {
       chainId: hemi.id,
       fromEpoch: nextStep?.fromEpoch,
       toEpoch: nextStep?.toEpoch,
-      tokenId: BigInt(stakingPosition!.tokenId),
+      tokenId: nextStep?.tokenId,
     })
+
+  const positionCount = new Set(steps.map(({ tokenId }) => tokenId)).size
+
+  const getStepLabel = function (step: CollectAllRewardsStep) {
+    const positionSteps = steps.filter(
+      ({ tokenId }) => tokenId === step.tokenId,
+    )
+    const values = {
+      fromEpoch: step.fromEpoch.toString(),
+      step: positionSteps.indexOf(step) + 1,
+      toEpoch: step.toEpoch.toString(),
+      tokenId: step.tokenId.toString(),
+      total: positionSteps.length,
+    }
+    if (positionCount > 1) {
+      return positionSteps.length > 1
+        ? t('drawer.claim-position-rewards-step', values)
+        : t('drawer.claim-position-rewards', values)
+    }
+    return positionSteps.length > 1
+      ? t('drawer.claim-rewards-step', values)
+      : t('drawer.claim-rewards', values)
+  }
 
   const addCollectRewardsStep = function (
     step: CollectAllRewardsStep,
-    index: number,
   ): StepPropsWithoutPosition {
     const stepStatus = step.status
     const isNext = step === nextStep
@@ -120,17 +137,7 @@ export const ReviewCollectRewards = function ({ onClose }: Props) {
             stepStatus === CollectAllRewardsDashboardStatus.COLLECT_TX_PENDING
           }
           chainId={hemi.id}
-          label={
-            steps.length > 1
-              ? t('drawer.claim-rewards-step', {
-                  fromEpoch: step.fromEpoch.toString(),
-                  network: hemi.name,
-                  step: index + 1,
-                  toEpoch: step.toEpoch.toString(),
-                  total: steps.length,
-                })
-              : t('drawer.claim-rewards', { network: hemi.name })
-          }
+          label={getStepLabel(step)}
         />
       ),
       explorerChainId: token.chainId,

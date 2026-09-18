@@ -16,20 +16,22 @@ import type { ClaimFromEvents } from 've-hemi-epoch-rewards'
 import { claimFrom } from 've-hemi-epoch-rewards/actions'
 import { useAccount } from 'wagmi'
 
-import { useClaimableRewards } from './useClaimableRewards'
+import { useClaimablePositions } from './useClaimablePositions'
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
 import { getEpochClaimableRewardsQueryKeyPrefix } from './useEpochClaimableRewards'
 
 type UseCollectRewards = {
+  completedSteps?: CollectAllRewardsStep[]
   on?: (emitter: EventEmitter<ClaimFromEvents>) => void
-  tokenId: bigint
+  tokenIds: bigint[]
   updateCollectRewardsDashboardOperation: (
     payload?: CollectAllRewardsDashboardOperation,
   ) => void
 }
 
 /**
- * Claims everything one position is owed, in as many transactions as it takes.
+ * Claims everything the positions are owed, one position after the other, in as many
+ * transactions as it takes.
  *
  * A claim is bounded by epoch x reward token pairs, so a position with a long history
  * cannot be settled in one call. The plan is known before the first signature - it comes
@@ -40,8 +42,9 @@ type UseCollectRewards = {
  * earlier windows paid is already theirs, and a retry re-plans over what is left.
  */
 export const useCollectRewards = function ({
+  completedSteps = [],
   on,
-  tokenId,
+  tokenIds,
   updateCollectRewardsDashboardOperation,
 }: UseCollectRewards) {
   const { setDrawerQueryString } = useDrawerStakingQueryString()
@@ -50,7 +53,7 @@ export const useCollectRewards = function ({
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
   const hemi = useHemi()
-  const { rewards, transactions } = useClaimableRewards(tokenId)
+  const { positions, rewards } = useClaimablePositions(tokenIds)
 
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     hemi.id,
@@ -68,16 +71,34 @@ export const useCollectRewards = function ({
 
       await ensureConnectedTo(hemi.id)
 
-      let steps: CollectAllRewardsStep[] = transactions.map(transaction => ({
-        ...transaction,
-      }))
+      const transactions = [...positions]
+        .sort((a, b) => (a.tokenId < b.tokenId ? -1 : 1))
+        .flatMap(position =>
+          position.transactions.map(transaction => ({
+            ...transaction,
+            tokenId: position.tokenId,
+          })),
+        )
+        .filter(
+          transaction =>
+            !completedSteps.some(
+              step =>
+                step.tokenId === transaction.tokenId &&
+                step.fromEpoch === transaction.fromEpoch &&
+                step.toEpoch === transaction.toEpoch,
+            ),
+        )
+
+      let steps: CollectAllRewardsStep[] = [...completedSteps, ...transactions]
 
       const updateStep = function (
         index: number,
         step: Partial<CollectAllRewardsStep>,
       ) {
         steps = steps.map((current, position) =>
-          position === index ? { ...current, ...step } : current,
+          position === completedSteps.length + index
+            ? { ...current, ...step }
+            : current,
         )
         updateCollectRewardsDashboardOperation({ steps })
       }
@@ -98,7 +119,7 @@ export const useCollectRewards = function ({
           account: address,
           fromEpoch: transaction.fromEpoch,
           toEpoch: transaction.toEpoch,
-          tokenId,
+          tokenId: transaction.tokenId,
           // The window is narrow enough for one call to settle every reward token, and
           // `claimFrom` refuses to sign when the simulation disagrees.
           tokenStart: BigInt(0),
@@ -189,12 +210,14 @@ export const useCollectRewards = function ({
     onSettled() {
       // Invalidate in the background. Returning these would hold the mutation open and
       // leave the UI out of sync until every balance is re-read.
-      queryClient.invalidateQueries({
-        queryKey: getEpochClaimableRewardsQueryKeyPrefix({
-          chainId: hemi.id,
-          tokenId,
+      tokenIds.forEach(tokenId =>
+        queryClient.invalidateQueries({
+          queryKey: getEpochClaimableRewardsQueryKeyPrefix({
+            chainId: hemi.id,
+            tokenId,
+          }),
         }),
-      })
+      )
 
       // The wallet ERC-20 balance of every collected reward token, so the balances shown
       // in the UI reflect the just-claimed amounts.

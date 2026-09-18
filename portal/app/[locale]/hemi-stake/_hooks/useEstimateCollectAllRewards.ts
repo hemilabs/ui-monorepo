@@ -14,12 +14,15 @@ export const useEstimateCollectAllRewardsFees = function ({
   enabled?: boolean
   fromEpoch: number | undefined
   toEpoch: number | undefined
-  tokenId: bigint
+  tokenId: bigint | undefined
 }) {
   const { address, isConnected } = useAccount()
 
   const canEstimate =
-    !!address && fromEpoch !== undefined && toEpoch !== undefined
+    !!address &&
+    fromEpoch !== undefined &&
+    toEpoch !== undefined &&
+    tokenId !== undefined
 
   const data = canEstimate
     ? encodeClaimFrom({

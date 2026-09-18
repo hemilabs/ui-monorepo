@@ -38,7 +38,9 @@ const Fees = ({
   token,
 }: NonNullable<Props['fees']>) => (
   <>
-    <FeesIcon />
+    <div className="shrink-0">
+      <FeesIcon />
+    </div>
     <div className="ml-1 text-neutral-500">
       {isError ? (
         <span>-</span>

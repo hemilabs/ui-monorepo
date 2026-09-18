@@ -1,32 +1,42 @@
 import { Button } from 'components/button'
 import { InfoIcon } from 'components/icons/infoIcon'
 import { Tooltip } from 'components/tooltip'
+import { useMemo } from 'react'
 import { type StakingPosition } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
+import { useClaimablePositions } from '../../_hooks/useClaimablePositions'
 import { useCollectRewards } from '../../_hooks/useCollectAllRewards'
-import { useHasRewards } from '../../_hooks/useHasRewards'
 import { useRewardsPaused } from '../../_hooks/useRewardsPaused'
 
 type Props = {
-  operation: Pick<StakingPosition, 'tokenId'>
+  positions: StakingPosition[] | undefined
 }
 
-export function ClaimCta({ operation }: Props) {
+export function ClaimAllRewards({ positions }: Props) {
   const t = useTranslations('hemi-stake.table')
-  const { tokenId } = operation
-  const { hasRewards } = useHasRewards(tokenId)
   const isPaused = useRewardsPaused()
   const { updateCollectRewardsDashboardOperation } = useStakingDashboard()
 
+  const tokenIds = useMemo(
+    () => positions?.map(({ tokenId }) => tokenId) ?? [],
+    [positions],
+  )
+
+  const { positions: claimablePositions } = useClaimablePositions(tokenIds)
+
   const { isPending: isCollecting, mutate: runCollectRewards } =
     useCollectRewards({
-      tokenIds: [tokenId],
+      tokenIds,
       updateCollectRewardsDashboardOperation,
     })
 
-  if (!hasRewards) {
+  const positionsWithRewards = claimablePositions.filter(
+    ({ transactions }) => transactions.length > 0,
+  )
+
+  if (positionsWithRewards.length < 2) {
     return null
   }
 
@@ -35,11 +45,10 @@ export function ClaimCta({ operation }: Props) {
       <Button
         disabled={isCollecting || isPaused}
         onClick={() => runCollectRewards()}
-        size="xxSmall"
-        variant="secondary"
+        size="xSmall"
       >
         <span className="flex items-center gap-x-1">
-          {t('claim')}
+          {t('claim-all-rewards')}
           {isPaused ? <InfoIcon /> : null}
         </span>
       </Button>

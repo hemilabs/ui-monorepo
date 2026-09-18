@@ -23,7 +23,7 @@ export const getEpochClaimableRewardsQueryKeyPrefix = ({
   tokenId: bigint
 }) => ['epochClaimableRewards', chainId, tokenId.toString()]
 
-const getEpochClaimableRewardsQueryOptions = ({
+export const getEpochClaimableRewardsQueryOptions = ({
   chainId,
   hemiClient,
   holder,

@@ -471,8 +471,10 @@
     "claim-rewards-successful": "Claim rewards successful",
     "drawer": {
       "approving": "Approving {symbol}",
-      "claim-rewards": "Claim rewards on {network}",
-      "claim-rewards-step": "Claim rewards on {network}, epochs {fromEpoch}-{toEpoch} ({step} of {total})",
+      "claim-position-rewards": "Claim rewards from position #{tokenId}",
+      "claim-position-rewards-step": "Claim rewards from position #{tokenId}, epochs {fromEpoch}-{toEpoch} ({step} of {total})",
+      "claim-rewards": "Claim rewards",
+      "claim-rewards-step": "Claim rewards, epochs {fromEpoch}-{toEpoch} ({step} of {total})",
       "increase-amount": {
         "heading": "Add ${symbol} to this lockup",
         "subheading": "Deposit additional ${symbol} into your existing lockup to increase your staked amount and governance power."
@@ -576,6 +578,7 @@
       "add-time-to-lockup": "Add time to this lockup",
       "burned": "Burned",
       "claim": "Claim",
+      "claim-all-rewards": "Claim all rewards",
       "claiming-paused": "Rewards claiming is paused",
       "get-started": "Get started by staking your ${symbol}",
       "get-started-burned": "Your burned positions will show up here once their lockup periods have ended.",

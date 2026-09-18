@@ -2,6 +2,7 @@ import { Button } from 'components/button'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
 import { type FormEvent } from 'react'
+import { CollectAllRewardsDashboardStatus } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
@@ -18,13 +19,20 @@ export const RetryCollectRewards = function () {
   const t = useTranslations()
 
   // collectRewardsDashboardOperation is defined because this component is only rendered in that case
-  const { stakingPosition } = collectRewardsDashboardOperation!
+  const { steps = [] } = collectRewardsDashboardOperation!
+
+  const tokenIds = [...new Set(steps.map(({ tokenId }) => tokenId))]
+  const completedSteps = steps.filter(
+    step =>
+      step.status === CollectAllRewardsDashboardStatus.COLLECT_TX_CONFIRMED,
+  )
 
   const isPaused = useRewardsPaused()
 
   const { isPending: isCollecting, mutate: runCollectRewards } =
     useCollectRewards({
-      tokenId: stakingPosition!.tokenId,
+      completedSteps,
+      tokenIds,
       updateCollectRewardsDashboardOperation,
     })
 

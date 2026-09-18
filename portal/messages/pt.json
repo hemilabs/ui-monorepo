@@ -471,8 +471,10 @@
     "claim-rewards-successful": "Recompensas reclamadas com sucesso",
     "drawer": {
       "approving": "A aprovar {symbol}",
-      "claim-rewards": "Reclamar recompensas em {network}",
-      "claim-rewards-step": "Reclamar recompensas em {network}, épocas {fromEpoch}-{toEpoch} ({step} de {total})",
+      "claim-position-rewards": "Reclamar recompensas da posição #{tokenId}",
+      "claim-position-rewards-step": "Reclamar recompensas da posição #{tokenId}, épocas {fromEpoch}-{toEpoch} ({step} de {total})",
+      "claim-rewards": "Reclamar recompensas",
+      "claim-rewards-step": "Reclamar recompensas, épocas {fromEpoch}-{toEpoch} ({step} de {total})",
       "increase-amount": {
         "heading": "Adicionar ${symbol} a este bloqueio",
         "subheading": "Deposite ${symbol} adicionais em seu bloqueio existente para aumentar sua quantidade de stake e poder de governança."
@@ -576,6 +578,7 @@
       "add-time-to-lockup": "Adicionar tempo a este bloqueio",
       "burned": "Queimado",
       "claim": "Reclamar",
+      "claim-all-rewards": "Reclamar todas as recompensas",
       "claiming-paused": "A reivindicação de recompensas está pausada",
       "get-started": "Comece a fazer stake com seu ${symbol}",
       "get-started-burned": "As suas posições queimadas aparecerão aqui assim que os seus períodos de bloqueio terminarem.",

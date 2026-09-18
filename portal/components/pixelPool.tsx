@@ -7,9 +7,12 @@ const spreadRate = 8
 const drainRate = 0.55
 const pourRate = 1.6
 const surfaceRate = 4
+const wobbleCells = 2
+const wobbleSpeed = 0.35
 
 const trailLifeSeconds = 4
-const trailRadiusCells = 4.4
+const trailRadiusRatio = 0.35
+const trailPeak = 0.7
 const trailSampleLimit = 24
 
 const ground = '#ffffff'
@@ -22,11 +25,10 @@ const tones = [
 ]
 const trailTone = [255, 237, 230]
 
-const defaultColumns = 30
+const defaultCellSize = 11.9
 const defaultFloorHeight = 0.2
 const defaultEdgeHeight = 0.82
 
-// Box the pool never floods, so a wordmark can sit on top of it.
 const defaultQuietZone = { centerY: 0.5, height: 0.3, padding: 1.6, width: 0.5 }
 
 type QuietZone = {
@@ -37,16 +39,15 @@ type QuietZone = {
 }
 
 type PixelPoolProps = {
+  cellSize?: number
   className?: string
-  columns?: number
   edgeHeight?: number
   floorHeight?: number
-  // Null when nothing sits on top of the pool and the floor alone clears it.
   quietZone?: QuietZone | null
 }
 
 const permutation = (function buildPermutation() {
-  const table = new Uint8Array(512)
+  const table = new Uint8Array(256)
   const source = Array.from({ length: 256 }, (_, i) => i)
   let seed = 1337
   for (let i = 255; i > 0; i--) {
@@ -54,13 +55,13 @@ const permutation = (function buildPermutation() {
     const j = seed % (i + 1)
     ;[source[i], source[j]] = [source[j], source[i]]
   }
-  for (let i = 0; i < 512; i++) {
-    table[i] = source[i & 255]
+  for (let i = 0; i < 256; i++) {
+    table[i] = source[i]
   }
   return table
 })()
 
-const fade = (t: number) => t * t * (3 - 2 * t)
+const smoothstep = (t: number) => t * t * (3 - 2 * t)
 
 const hash = (x: number, y: number) =>
   permutation[(permutation[x & 255] + (y & 255)) & 255] / 255
@@ -68,8 +69,8 @@ const hash = (x: number, y: number) =>
 function noise(x: number, y: number) {
   const xi = Math.floor(x)
   const yi = Math.floor(y)
-  const u = fade(x - xi)
-  const v = fade(y - yi)
+  const u = smoothstep(x - xi)
+  const v = smoothstep(y - yi)
   const a = hash(xi, yi)
   const b = hash(xi + 1, yi)
   const c = hash(xi, yi + 1)
@@ -80,17 +81,11 @@ function noise(x: number, y: number) {
 const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value))
 
-const smoothstep = (t: number) => t * t * (3 - 2 * t)
-
-// Height of the valley floor at the horizontal position u, a parabola that sits
-// low in the middle and climbs towards both edges.
 function poolFloor(u: number, floor: number, edge: number) {
   const v = Math.abs(u - 0.5) * 2
   return floor + (edge - floor) * v * v
 }
 
-// Every tone the cells can take, resolved once: mixing on the fly would build a
-// string per cell per frame.
 const toneSteps = 8
 const palette = tones.map(tone =>
   Array.from({ length: toneSteps + 1 }, function mixTowardsTrail(_, step) {
@@ -103,8 +98,8 @@ const palette = tones.map(tone =>
 )
 
 export const PixelPool = function ({
+  cellSize = defaultCellSize,
   className = 'relative size-full',
-  columns = defaultColumns,
   edgeHeight = defaultEdgeHeight,
   floorHeight = defaultFloorHeight,
   quietZone = defaultQuietZone,
@@ -144,6 +139,9 @@ export const PixelPool = function ({
       let onScreen = true
 
       function resize() {
+        if (panel!.clientWidth === 0 || panel!.clientHeight === 0) {
+          return
+        }
         const dpr = Math.min(window.devicePixelRatio || 1, 2)
         width = panel!.clientWidth
         height = panel!.clientHeight
@@ -151,7 +149,7 @@ export const PixelPool = function ({
         canvas!.height = Math.round(height * dpr)
         ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-        cols = Math.max(4, columns)
+        cols = Math.max(4, Math.round(width / cellSize))
         cell = width / cols
         rows = Math.ceil(height / Math.max(cell, 1)) + 1
 
@@ -172,6 +170,9 @@ export const PixelPool = function ({
 
         level = new Float32Array(cols).fill(1)
         surface = new Float32Array(cols)
+        for (let c = 0; c < cols; c++) {
+          surface[c] = poolFloor((c + 0.5) / cols, floorHeight, edgeHeight)
+        }
         trailStrength = new Float32Array(cols * rows)
         trail.length = 0
       }
@@ -187,7 +188,7 @@ export const PixelPool = function ({
             const du = ((c + 0.5) / cols - pointer.x / width) / 0.1
             level[c] += pour * Math.exp(-du * du)
           }
-          pointer.speed *= 0.9
+          pointer.speed *= Math.exp(-dt * 6)
         }
         const next = level.slice()
         for (let c = 0; c < cols; c++) {
@@ -220,11 +221,11 @@ export const PixelPool = function ({
         }
       }
 
-      // Writes each sample's influence into the cell grid, so the drawing pass
-      // reads a single value per cell instead of walking the whole trail.
       function paintTrailStrength() {
         trailStrength.fill(0)
-        const reach = Math.ceil(trailRadiusCells)
+        const radiusCells = clamp((height * trailRadiusRatio) / cell, 1, rows)
+        const reach = Math.ceil(radiusCells)
+        const radiusSq = radiusCells * radiusCells
         for (const sample of trail) {
           const life = 1 - sample.age / trailLifeSeconds
           for (let dc = -reach; dc <= reach; dc++) {
@@ -234,11 +235,12 @@ export const PixelPool = function ({
               if (c < 0 || c >= cols || r < 0 || r >= rows) {
                 continue
               }
-              const distance = Math.hypot(dc, dr) / trailRadiusCells
-              if (distance >= 1) {
+              const offsetSq = dc * dc + dr * dr
+              if (offsetSq >= radiusSq) {
                 continue
               }
-              const strength = (1 - distance) * (1 - distance) * life
+              const falloff = 1 - Math.sqrt(offsetSq / radiusSq)
+              const strength = falloff * falloff * life
               const index = r * cols + c
               if (strength > trailStrength[index]) {
                 trailStrength[index] = strength
@@ -251,7 +253,12 @@ export const PixelPool = function ({
       function columnHeight(c: number, seconds: number, fill: number) {
         const u = (c + 0.5) / cols
         let h = poolFloor(u, floorHeight, edgeHeight) * fill
-        h += (noise(u * 3 + seconds * 0.2, seconds * 0.25) - 0.5) * 0.03 * fill
+        const wobbleAmount = (wobbleCells * cell) / height
+        h +=
+          (noise(u * 3 + seconds * wobbleSpeed, seconds * wobbleSpeed * 1.25) -
+            0.5) *
+          wobbleAmount *
+          fill
 
         const d = (u - smoothed.x) / 0.26
         const bulge = Math.exp(-d * d) * smoothed.strength
@@ -269,15 +276,13 @@ export const PixelPool = function ({
         return h
       }
 
-      // Distance in cells from the quiet zone, zero when the cell is inside it.
-      function distanceFromQuietZone(cx: number, cy: number) {
+      function hidesForQuietZone(cx: number, cy: number, c: number, r: number) {
+        if (!quietZone) {
+          return false
+        }
         const dx = Math.max(keep.x0 - cx, cx - keep.x1, 0)
         const dy = Math.max(keep.y0 - cy, cy - keep.y1, 0)
-        return Math.hypot(dx, dy) / cell
-      }
-
-      function hidesForQuietZone(cx: number, cy: number, c: number, r: number) {
-        const distance = distanceFromQuietZone(cx, cy)
+        const distance = Math.hypot(dx, dy) / cell
         if (distance === 0) {
           return true
         }
@@ -287,7 +292,6 @@ export const PixelPool = function ({
         )
       }
 
-      // Above the waterline only a thinning scatter of pixels survives.
       function hidesForDepth(
         depth: number,
         fill: number,
@@ -352,7 +356,7 @@ export const PixelPool = function ({
           for (let r = 0; r < rows; r++) {
             const y = height - (r + 1) * cell + gap / 2
             if (y + size < surfacePx - cell * 5) {
-              continue
+              break
             }
             const depth = (y - surfacePx) / cell
             const cy = y + size / 2
@@ -370,7 +374,9 @@ export const PixelPool = function ({
             )
             const strength = trailStrength[r * cols + c]
             ctx!.fillStyle =
-              palette[band][Math.round(Math.min(1, strength) * toneSteps)]
+              palette[band][
+                Math.round(Math.min(trailPeak, strength) * toneSteps)
+              ]
 
             ctx!.beginPath()
             ctx!.roundRect(c * cell + gap / 2, y, size, size, radius)
@@ -390,7 +396,6 @@ export const PixelPool = function ({
         if (reduce || raf || !running()) {
           return
         }
-        // Resumes from now instead of carrying the paused span into dt.
         previous = performance.now()
         raf = window.requestAnimationFrame(loop)
       }
@@ -434,7 +439,14 @@ export const PixelPool = function ({
       panel.addEventListener('pointerleave', releasePointer, passive)
       panel.addEventListener('pointercancel', releasePointer, passive)
 
-      const resizeObserver = new ResizeObserver(resize)
+      function handleResize() {
+        resize()
+        if (!raf) {
+          draw(performance.now())
+        }
+      }
+
+      const resizeObserver = new ResizeObserver(handleResize)
       resizeObserver.observe(panel)
 
       const viewportObserver = new IntersectionObserver(
@@ -465,12 +477,16 @@ export const PixelPool = function ({
         panel.removeEventListener('pointercancel', releasePointer)
       }
     },
-    [columns, edgeHeight, floorHeight, quietZone],
+    [cellSize, edgeHeight, floorHeight, quietZone],
   )
 
   return (
     <div className={`overflow-hidden bg-white ${className}`} ref={panelRef}>
-      <canvas className="absolute inset-0 block size-full" ref={canvasRef} />
+      <canvas
+        aria-hidden
+        className="absolute inset-0 block size-full"
+        ref={canvasRef}
+      />
     </div>
   )
 }

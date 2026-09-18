@@ -12,9 +12,7 @@ import { isSamePathOrUnder } from 'utils/url'
 
 const hemiStakeHref = '/hemi-stake'
 
-// Matches the grid the design uses here: denser and shallower than the hero
-// banner, so the crop below shows only the slopes and leaves the middle clear.
-const cardColumns = 60
+const cardCellSize = 6.11
 const cardFloorHeight = 0.1
 const cardEdgeHeight = 0.86
 
@@ -55,13 +53,13 @@ export const HemiStakeCard = function () {
           <div className="relative flex flex-col gap-y-3 rounded-xl border border-solid border-neutral-200 bg-white px-2 pb-3 pt-2 shadow-md hover:shadow-lg">
             <div className="relative h-20 w-[244px] overflow-hidden rounded border border-solid border-black/10 bg-white">
               <PixelPool
+                cellSize={cardCellSize}
                 className="absolute bottom-[-32.84px] left-1/2 h-[170.51px] w-[366px] -translate-x-1/2"
-                columns={cardColumns}
                 edgeHeight={cardEdgeHeight}
                 floorHeight={cardFloorHeight}
                 quietZone={null}
               />
-              <p className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-inter-display text-[21.5px] font-bold leading-[1.1] tracking-[-0.43px] text-neutral-950">
+              <p className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-inter-display text-[21.5px] font-bold leading-[1.1] tracking-[-0.43px] text-neutral-950">
                 {t.rich('is-live', {
                   name: () => (
                     <>

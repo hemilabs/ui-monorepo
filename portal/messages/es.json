@@ -30,6 +30,7 @@
       "description": "Al activar la aprobación 10x, automáticamente agregamos 10 veces el monto de esta transacción como monto autorizado para otras futuras, lo que le permite ahorrar dinero en tarifas de gas y tiempo.",
       "label-deposit": "Aprobar 10x el depósito",
       "label-withdraw": "Aprobar 10x el retiro",
+      "more-info": "Más información sobre la aprobación 10x",
       "title-deposit": "Aprobar 10x el monto de este depósito",
       "title-withdraw": "Aprobar 10x el monto de este retiro"
     },

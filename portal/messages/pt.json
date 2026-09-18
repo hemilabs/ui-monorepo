@@ -30,6 +30,7 @@
       "description": "Ao ativar a aprovação de 10x, adicionamos automaticamente 10 vezes a quantia desta transação como margem para transações futuras, poupando custos com taxas de gás e tempo.",
       "label-deposit": "Aprovar 10x o depósito",
       "label-withdraw": "Aprovar 10x o saque",
+      "more-info": "Mais informações sobre a aprovação de 10x",
       "title-deposit": "Aprovar 10x a quantia deste depósito",
       "title-withdraw": "Aprovar 10x a quantia deste saque"
     },

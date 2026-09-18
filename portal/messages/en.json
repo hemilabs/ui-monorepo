@@ -30,6 +30,7 @@
       "description": "By activating 10x approval we automatically add 10x the amount of this transaction as allowance for future ones, saving you money on gas fees and time.",
       "label-deposit": "Approve 10x deposit",
       "label-withdraw": "Approve 10x withdrawal",
+      "more-info": "More information about the 10x approval",
       "title-deposit": "Approve 10x the amount of this deposit",
       "title-withdraw": "Approve 10x the amount of this withdrawal"
     },

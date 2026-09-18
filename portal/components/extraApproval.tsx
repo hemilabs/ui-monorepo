@@ -44,7 +44,13 @@ export const ExtraApproval = function ({
           title={t(titleKeys[operation])}
           variant="rich"
         >
-          <InfoIcon />
+          <button
+            aria-label={t('more-info')}
+            className="flex rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400"
+            type="button"
+          >
+            <InfoIcon aria-hidden />
+          </button>
         </Tooltip>
       </div>
       <Toggle

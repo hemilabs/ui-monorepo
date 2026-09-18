@@ -1,5 +1,6 @@
 import { Button } from 'components/button'
-import { SubmitWhenConnected } from 'components/submitWhenConnected'
+import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { type FormEvent, useState } from 'react'
 import { type StakingOperationRunning } from 'types/stakingDashboard'
@@ -24,6 +25,7 @@ export const RetryIncreaseAmount = function () {
 
   const token = useHemiToken()
 
+  const hemi = useHemi()
   const t = useTranslations()
 
   // this component tries to initiate a new operation, based on the failed one
@@ -54,7 +56,8 @@ export const RetryIncreaseAmount = function () {
 
   return (
     <form className="flex w-full [&>button]:w-full" onSubmit={handleRetry}>
-      <SubmitWhenConnected
+      <SubmitWhenConnectedToChain
+        chainId={hemi.id}
         submitButton={
           <Button disabled={isStaking} size="small">
             {t(isStaking ? 'hemi-stake.form.staking' : 'common.try-again')}

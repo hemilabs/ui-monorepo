@@ -1,5 +1,6 @@
 import { Button } from 'components/button'
-import { SubmitWhenConnected } from 'components/submitWhenConnected'
+import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { type FormEvent, useState } from 'react'
 import { type UnlockingOperationRunning } from 'types/stakingDashboard'
@@ -17,6 +18,7 @@ export const RetryUnlock = function () {
 
   const token = useHemiToken()
 
+  const hemi = useHemi()
   const t = useTranslations()
 
   // unlockingDashboardOperation is defined because this component is only rendered in that case
@@ -52,7 +54,8 @@ export const RetryUnlock = function () {
 
   return (
     <form className="flex w-full [&>button]:w-full" onSubmit={handleRetry}>
-      <SubmitWhenConnected
+      <SubmitWhenConnectedToChain
+        chainId={hemi.id}
         submitButton={
           <Button disabled={isUnlocking} size="small">
             {t(isUnlocking ? 'hemi-stake.form.unlocking' : 'common.try-again')}

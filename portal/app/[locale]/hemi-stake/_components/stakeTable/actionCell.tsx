@@ -181,8 +181,12 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
         tokenId,
       },
     })
-    runCollectRewards()
     setOperationRunning('collecting')
+    // The mutation can reject before it emits anything, for example when the
+    // user declines the network switch, so reset here too.
+    runCollectRewards(undefined, {
+      onError: () => setOperationRunning('idle'),
+    })
   }
 
   return (

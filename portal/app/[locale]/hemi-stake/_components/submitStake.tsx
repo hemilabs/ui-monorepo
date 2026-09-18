@@ -1,6 +1,7 @@
 import { Button, ButtonSize } from 'components/button'
 import { Spinner } from 'components/spinner'
-import { SubmitWhenConnected } from 'components/submitWhenConnected'
+import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { useHemi } from 'hooks/useHemi'
 import {
   type StakingDashboardToken,
   type StakingOperationRunning,
@@ -28,6 +29,7 @@ export const SubmitStake = function ({
   operationRunning,
   validationError,
 }: Props) {
+  const hemi = useHemi()
   const t = useTranslations()
 
   const getOperationButtonText = function () {
@@ -61,7 +63,8 @@ export const SubmitStake = function ({
   }
 
   return (
-    <SubmitWhenConnected
+    <SubmitWhenConnectedToChain
+      chainId={hemi.id}
       submitButton={
         <Button
           disabled={!canStake || isRunningOperation || isAllowanceLoading}

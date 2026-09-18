@@ -41,7 +41,9 @@ export const LockupTime = function ({ lockupTime, status, tokenId }: Props) {
       <span className="text-neutral-950">
         <DurationTime seconds={seconds} />
       </span>
-      {renderApr()}
+      {/* Hidden on purpose, not leftover markup. The APR is staying out
+          of the table for now, and is kept here to be brought back. */}
+      <div className="hidden">{renderApr()}</div>
     </div>
   )
 }

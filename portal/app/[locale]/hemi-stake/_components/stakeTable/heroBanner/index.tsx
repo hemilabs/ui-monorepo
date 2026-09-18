@@ -1,8 +1,32 @@
 import { Image } from 'components/image'
+import { PixelPool } from 'components/pixelPool'
 import { useTranslations } from 'use-intl'
 
 import pixelBanner from './pixelBanner.svg'
 import pixelBannerMobile from './pixelBannerMobile.svg'
+import wordmark from './wordmark.svg'
+
+// Temporary switch so the animated and the static art can be compared side by
+// side. Collapse to one before opening the PR.
+const art: 'animated' | 'static' = 'animated'
+
+const StaticArt = () => (
+  <picture className="min-h-0 flex-1">
+    <source media="(min-width: 768px)" srcSet={pixelBanner} />
+    <Image alt="" className="size-full object-cover" src={pixelBannerMobile} />
+  </picture>
+)
+
+const AnimatedArt = () => (
+  <div className="relative min-h-0 flex-1">
+    <PixelPool />
+    <Image
+      alt=""
+      className="pointer-events-none absolute left-1/2 top-1/2 w-1/5 -translate-x-1/2 -translate-y-1/2"
+      src={wordmark}
+    />
+  </div>
+)
 
 export const HeroBanner = function () {
   const t = useTranslations('hemi-stake.hero-banner')
@@ -29,14 +53,7 @@ export const HeroBanner = function () {
           </p>
         </div>
       </div>
-      <picture className="min-h-0 flex-1">
-        <source media="(min-width: 768px)" srcSet={pixelBanner} />
-        <Image
-          alt=""
-          className="size-full object-cover"
-          src={pixelBannerMobile}
-        />
-      </picture>
+      {art === 'animated' ? <AnimatedArt /> : <StaticArt />}
     </div>
   )
 }

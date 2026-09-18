@@ -1,7 +1,7 @@
 import { ErrorBoundary } from 'components/errorBoundary'
 import { CloseIcon } from 'components/icons/closeIcon'
-import { Image } from 'components/image'
 import { Link } from 'components/link'
+import { PixelPool } from 'components/pixelPool'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import { usePathname } from 'i18n/navigation'
@@ -10,9 +10,13 @@ import { useTranslations } from 'use-intl'
 import useLocalStorageState from 'use-local-storage-state'
 import { isSamePathOrUnder } from 'utils/url'
 
-import pixelBanner from './pixelBanner.svg'
-
 const hemiStakeHref = '/hemi-stake'
+
+// Matches the grid the design uses here: denser and shallower than the hero
+// banner, so the crop below shows only the slopes and leaves the middle clear.
+const cardColumns = 60
+const cardFloorHeight = 0.1
+const cardEdgeHeight = 0.86
 
 export const HemiStakeCard = function () {
   const [hideCard, setHideCard] = useLocalStorageState(
@@ -50,12 +54,12 @@ export const HemiStakeCard = function () {
         >
           <div className="relative flex flex-col gap-y-3 rounded-xl border border-solid border-neutral-200 bg-white px-2 pb-3 pt-2 shadow-md hover:shadow-lg">
             <div className="relative h-20 w-[244px] overflow-hidden rounded border border-solid border-black/10 bg-white">
-              <Image
-                alt=""
-                className="absolute bottom-[-32.84px] left-1/2 max-w-none -translate-x-1/2"
-                height={170.51}
-                src={pixelBanner}
-                width={366}
+              <PixelPool
+                className="absolute bottom-[-32.84px] left-1/2 h-[170.51px] w-[366px] -translate-x-1/2"
+                columns={cardColumns}
+                edgeHeight={cardEdgeHeight}
+                floorHeight={cardFloorHeight}
+                quietZone={null}
               />
               <p className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-inter-display text-[21.5px] font-bold leading-[1.1] tracking-[-0.43px] text-neutral-950">
                 {t.rich('is-live', {

@@ -1,5 +1,5 @@
+import { ExtraApproval } from 'components/extraApproval'
 import { WarningIcon } from 'components/icons/warningIcon'
-import { Toggle } from 'components/toggle'
 import { type KeyboardEvent } from 'react'
 import { useTranslations } from 'use-intl'
 
@@ -11,7 +11,6 @@ type Props = {
   defaultSlippage: number
   draft: string
   level: SlippageLevel
-  multiplier: number
   onApproveExtraAmountChange: (checked: boolean) => void
   onAutoClick: VoidFunction
   onDraftChange: (value: string) => void
@@ -40,7 +39,6 @@ export const SettingsPanel = function ({
   defaultSlippage,
   draft,
   level,
-  multiplier,
   onApproveExtraAmountChange,
   onAutoClick,
   onDraftChange,
@@ -59,13 +57,6 @@ export const SettingsPanel = function ({
 
   const isAuto = draft === ''
   const valueStyle = isAuto ? 'text-neutral-500' : levelStyles[level]
-  // Doubles as the toggle's accessible name, since the text sits outside it.
-  const approvalLabel = t(
-    operation === 'deposit'
-      ? 'approve-extra-deposit'
-      : 'approve-extra-withdrawal',
-    { multiplier },
-  )
 
   return (
     <div className="flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-y-1 rounded-lg bg-white p-1 shadow-xl">
@@ -115,15 +106,12 @@ export const SettingsPanel = function ({
           <span className="body-text-medium">{t(warningKeys[level])}</span>
         </div>
       )}
-      <div className="flex items-center justify-between gap-x-2 px-3 py-1">
-        <span className="body-text-medium text-neutral-900">
-          {approvalLabel}
-        </span>
-        <Toggle
-          ariaLabel={approvalLabel}
+      <div className="px-3 py-1">
+        <ExtraApproval
           checked={approveExtraAmount}
           id="earn-extra-approval-toggle"
           onCheckedChange={onApproveExtraAmountChange}
+          operation={operation}
         />
       </div>
     </div>

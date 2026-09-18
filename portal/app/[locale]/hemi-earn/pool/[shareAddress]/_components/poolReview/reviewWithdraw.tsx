@@ -13,6 +13,7 @@ import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
+import { getApprovalAmount } from 'utils/approval'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { type Address, type Hash, formatUnits } from 'viem'
@@ -37,7 +38,6 @@ import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactions
 import { useIsCooldownEligible } from '../../../../_hooks/useIsCooldownEligible'
 import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperations'
 import { useRemoteFailedState } from '../../../../_hooks/useRemoteFailedState'
-import { getApprovalAmount } from '../../../../_utils/approval'
 import { hashesMatch } from '../../../../_utils/hashes'
 import {
   claimRecoverSettlement,

@@ -5,6 +5,7 @@ import { ReactNode } from 'react'
 import { Badge } from '../badge'
 
 import { BitcoinKitLink } from './_components/bitcoinKitLink'
+import { BoostStaking } from './_components/boostStaking'
 import { Dex } from './_components/dex'
 import { DocsLink } from './_components/docsLink'
 import { EcosystemLink } from './_components/ecosystemLink'
@@ -13,11 +14,11 @@ import { GetStarted } from './_components/getStarted'
 import { HelpButton } from './_components/help/helpButton'
 import { HemiEarn } from './_components/hemiEarn'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
+import { HemiStake } from './_components/hemiStake'
 import { HemiStatusLink } from './_components/hemiStatusLink'
 import { HomeLink } from './_components/homeLink'
 import { NetworkSwitch } from './_components/networkSwitch'
 import { SocialLinks } from './_components/socialLinks'
-import { StakeDesktop } from './_components/stake'
 import { TunnelLink } from './_components/tunnelLink'
 import { Tvl } from './_components/tvl'
 import { VideoAsset } from './_components/videoAsset'
@@ -47,6 +48,9 @@ export const NavbarDesktop = () => (
       <Help />
     </div>
     <ul className="z-10 flex h-full flex-col gap-y-0.5 overflow-y-auto overflow-x-hidden [&>li:not(.no-padding)]:px-3">
+      <PaddedListItem>
+        <HemiStake />
+      </PaddedListItem>
       {featureFlags.enableHemiEarnPage && (
         <PaddedListItem>
           <HemiEarn />
@@ -61,7 +65,9 @@ export const NavbarDesktop = () => (
       <PaddedListItem>
         <GenesisDrop />
       </PaddedListItem>
-      <StakeDesktop />
+      <PaddedListItem>
+        <BoostStaking />
+      </PaddedListItem>
       <PaddedListItem>
         <Separator />
       </PaddedListItem>

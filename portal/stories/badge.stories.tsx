@@ -8,9 +8,17 @@ const meta = {
   },
   argTypes: {
     children: { control: 'text' },
+    size: { control: 'inline-radio', options: ['xSmall', 'small'] },
     variant: {
       control: 'inline-radio',
-      options: ['primary', 'secondary', 'positive', 'negative', 'negativeB'],
+      options: [
+        'primary',
+        'primaryB',
+        'secondary',
+        'positive',
+        'negative',
+        'negativeB',
+      ],
     },
   },
   component: Badge,
@@ -33,6 +41,9 @@ export const Variants: Story = {
   render: () => (
     <div className="flex flex-col items-center gap-y-6">
       <Badge>Badge Label</Badge>
+      <Badge size="small" variant="primaryB">
+        Badge Label
+      </Badge>
       <Badge variant="secondary">Badge Label</Badge>
       <Badge variant="positive">Badge Label</Badge>
       <Badge variant="negative">Badge Label</Badge>

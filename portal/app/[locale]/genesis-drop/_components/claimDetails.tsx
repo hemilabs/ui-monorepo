@@ -267,7 +267,7 @@ export const ClaimDetails = function ({ eligibility }: Props) {
               symbol: hemiToken.symbol,
             })}
           </Button>
-          <ButtonLink href="/staking-dashboard" variant="primary">
+          <ButtonLink href="/hemi-stake" variant="primary">
             {t('stake-hemi', { symbol: hemiToken.symbol })}
           </ButtonLink>
         </div>

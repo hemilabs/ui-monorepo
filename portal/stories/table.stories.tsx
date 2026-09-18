@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { type ColumnDef } from '@tanstack/react-table'
-import { EmptyIcon } from 'app/[locale]/staking-dashboard/_icons/emptyIcon'
-import { MoreItemsIcon } from 'app/[locale]/staking-dashboard/_icons/moreItemsIcon'
+import { EmptyIcon } from 'app/[locale]/hemi-stake/_icons/emptyIcon'
+import { MoreItemsIcon } from 'app/[locale]/hemi-stake/_icons/moreItemsIcon'
 import { Badge } from 'components/badge'
 import { Button, ButtonIcon } from 'components/button'
 import { InformationBox } from 'components/informationBox'
@@ -201,11 +201,11 @@ const meta = {
     placeholder: { control: false },
   },
   component: Table,
-  // Replicates the StakeTable shell: the dashboard's `PageLayout` padding
-  // (`superWide`) and the height the table occupies there.
+  // Replicates the StakeTable shell: the page's `PageLayout` padding (`wide`)
+  // and the height the table occupies there.
   decorators: [
     Story => (
-      <div className="w-full px-2 text-sm font-medium md:px-4 xl:px-6">
+      <div className="w-full px-4 text-sm font-medium lg:px-12">
         <div className="h-[56dvh] md:min-h-136">
           <Story />
         </div>

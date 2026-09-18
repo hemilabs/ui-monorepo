@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { EmptyIcon } from 'app/[locale]/staking-dashboard/_icons/emptyIcon'
+import { EmptyIcon } from 'app/[locale]/hemi-stake/_icons/emptyIcon'
 import { Button } from 'components/button'
 import { InformationBox } from 'components/informationBox'
 import { ComponentProps } from 'react'

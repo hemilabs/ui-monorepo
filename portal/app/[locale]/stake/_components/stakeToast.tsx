@@ -31,7 +31,7 @@ export const StakeToast = function ({ chainId, txHash, type }: Props) {
         })}
         goTo={{
           href: '/stake/dashboard',
-          label: t('go-staking-dashboard'),
+          label: t('go-boost-staking'),
         }}
         title={t('staking-successful')}
         tx={tx}

@@ -19,6 +19,8 @@ type TabProps = {
 const tabIsLink = (value: Button | Anchor): value is Anchor =>
   (value as Anchor).href !== undefined
 
+const ariaCurrent = (selected: boolean) => (selected ? 'page' : undefined)
+
 export const Tab = function ({
   children,
   disabled = false,
@@ -49,6 +51,7 @@ export const Tab = function ({
       )}
       {isLink && props.href && (
         <ButtonLink
+          aria-current={ariaCurrent(selected)}
           href={props.href}
           onClick={selected ? undefined : props.onClick}
           size={size}

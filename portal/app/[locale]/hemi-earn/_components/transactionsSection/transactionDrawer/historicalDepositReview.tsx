@@ -1,3 +1,4 @@
+import { SparkleIcon } from 'components/icons/sparkleIcon'
 import { Operation } from 'components/reviewOperation/operation'
 import {
   ProgressStatus,
@@ -14,7 +15,6 @@ import { useTranslations } from 'use-intl'
 import { type Hash } from 'viem'
 
 import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
-import { SparkleIcon } from '../../../_icons/sparkleIcon'
 import {
   getTerminalDeliveryTxHash,
   remoteFailedStepStatus,
@@ -172,7 +172,7 @@ function buildTerminalStep({
   return {
     description: (
       <div className="flex items-center gap-x-2">
-        <SparkleIcon />
+        <SparkleIcon className="text-orange-600" />
         <span>{t('step.get-share-tokens')}</span>
       </div>
     ),

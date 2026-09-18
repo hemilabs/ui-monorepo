@@ -4,6 +4,7 @@ import { ComponentProps } from 'react'
 import { useTranslations } from 'use-intl'
 
 import { BitcoinKitLink } from './_components/bitcoinKitLink'
+import { BoostStaking } from './_components/boostStaking'
 import { Dex } from './_components/dex'
 import { DocsLink } from './_components/docsLink'
 import { EcosystemLink } from './_components/ecosystemLink'
@@ -12,12 +13,12 @@ import { GetStarted } from './_components/getStarted'
 import { HelpButton } from './_components/help/helpButton'
 import { HemiEarn } from './_components/hemiEarn'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
+import { HemiStake } from './_components/hemiStake'
 import { HemiStatusLink } from './_components/hemiStatusLink'
 import { IconContainer as BaseIconContainer } from './_components/iconContainer'
 import { ItemContainer, ItemText } from './_components/navItem'
 import { NetworkSwitch } from './_components/networkSwitch'
 import { SocialLinks } from './_components/socialLinks'
-import { StakeMobile } from './_components/stake'
 import { TunnelLink } from './_components/tunnelLink'
 import { Tvl } from './_components/tvl'
 
@@ -59,6 +60,9 @@ export const NavbarMobile = function () {
     <div className="flex h-90dvh flex-col bg-white pb-14 sm:pb-0">
       <div className="flex-1 overflow-y-auto px-5 py-6">
         <ul className="flex h-fit flex-wrap justify-start gap-2">
+          <SmallBox>
+            <HemiStake />
+          </SmallBox>
           {featureFlags.enableHemiEarnPage && (
             <SmallBox>
               <HemiEarn />
@@ -74,7 +78,7 @@ export const NavbarMobile = function () {
             <GenesisDrop />
           </SmallBox>
           <SmallBox>
-            <StakeMobile />
+            <BoostStaking />
           </SmallBox>
           <SmallBox>
             <EcosystemLink />

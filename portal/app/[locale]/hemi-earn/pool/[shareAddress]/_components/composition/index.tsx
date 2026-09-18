@@ -1,15 +1,15 @@
 import { Card } from 'components/card'
+import { CompositionIcon } from 'components/icons/compositionIcon'
+import { SegmentedControlItem } from 'components/segmentedControlItem'
 import { useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useTranslations } from 'use-intl'
 import { type Address, type Chain } from 'viem'
 
-import { CompositionIcon } from '../../../../_icons/compositionIcon'
 import {
   type CompositionViewMode,
   useComposition,
 } from '../../_hooks/useComposition'
-import { SegmentedControlItem } from '../segmentedControlItem'
 
 import { CompositionChart } from './compositionChart'
 import { CompositionTable } from './compositionTable'

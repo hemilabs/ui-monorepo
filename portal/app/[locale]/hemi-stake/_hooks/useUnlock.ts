@@ -78,8 +78,12 @@ export const useUnlock = function ({
       await ensureConnectedTo(token.chainId)
 
       updateUnlockingDashboardOperation({
+        captureStatus: undefined,
+        captureTransactionHash: undefined,
         needsCapture,
         stakingPosition: { amount, tokenId },
+        status: undefined,
+        transactionHash: undefined,
       })
 
       const { emitter, promise } = captureAndWithdraw({

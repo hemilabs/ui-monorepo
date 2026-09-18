@@ -22,7 +22,7 @@ export const useRewardTokensAddresses = function ({
   })
 
   return useQuery({
-    enabled: enabled && !!hemiClient,
+    enabled,
     queryFn: () => getRewardTokens(hemiClient),
     queryKey,
     staleTime: 1000 * 60 * 5, // 5 minutes

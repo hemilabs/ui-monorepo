@@ -78,7 +78,7 @@ export function Unlock({ operation, unlockDate }: Props) {
 
   const handleUnlock = function () {
     setOperationRunning('unlocking')
-    runUnlock(undefined, { onError: () => setOperationRunning('failed') })
+    runUnlock(undefined, { onError: () => setOperationRunning('idle') })
   }
 
   return (

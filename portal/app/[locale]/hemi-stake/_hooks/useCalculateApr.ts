@@ -54,7 +54,6 @@ export const useCalculateApr = function ({
   return useQuery({
     enabled:
       enabled &&
-      !!hemiClient &&
       !isRewardsPerVeHEMIError &&
       !!rewardsPerVeHEMI &&
       tokenId > BigInt(0),

@@ -32,7 +32,7 @@ export const getCalculateRewardsQueryOptions = ({
   tokenId: bigint
 }) =>
   queryOptions({
-    enabled: enabled && !!hemiClient && !!rewardToken && tokenId > BigInt(0),
+    enabled: enabled && !!rewardToken && tokenId > BigInt(0),
     queryFn: () =>
       calculateRewards(hemiClient, tokenId, rewardToken as Address),
     queryKey: getCalculateRewardsQueryKey({ chainId, rewardToken, tokenId }),

@@ -181,8 +181,10 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
         tokenId,
       },
     })
-    runCollectRewards()
     setOperationRunning('collecting')
+    runCollectRewards(undefined, {
+      onError: () => setOperationRunning('idle'),
+    })
   }
 
   return (

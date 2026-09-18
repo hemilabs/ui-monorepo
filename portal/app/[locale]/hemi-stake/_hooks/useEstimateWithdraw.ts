@@ -21,6 +21,7 @@ export const useEstimateWithdrawFees = function ({
   })
 
   const { data: gasUnits, isError } = useEstimateGas({
+    chainId: token.chainId,
     data,
     query: { enabled: isConnected && enabled },
     to: veHemiAddress,

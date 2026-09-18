@@ -1,12 +1,10 @@
 import { queryOptions, useQuery } from '@tanstack/react-query'
-import { useHemiWalletClient } from 'hooks/useHemiClient'
+import { useHemiClient } from 'hooks/useHemiClient'
 import { EvmToken } from 'types/token'
 import { calculateRewards } from 've-hemi-rewards/actions'
 import type { Address } from 'viem'
 
-type HemiWalletClient = ReturnType<
-  typeof useHemiWalletClient
->['hemiWalletClient']
+type HemiClient = ReturnType<typeof useHemiClient>
 
 export const getCalculateRewardsQueryKey = ({
   chainId,
@@ -23,21 +21,20 @@ export const getCalculateRewardsQueryKey = ({
 export const getCalculateRewardsQueryOptions = ({
   chainId,
   enabled = true,
-  hemiWalletClient,
+  hemiClient,
   rewardToken,
   tokenId,
 }: {
   chainId: number
   enabled?: boolean
-  hemiWalletClient: HemiWalletClient
+  hemiClient: HemiClient
   rewardToken: string
   tokenId: bigint
 }) =>
   queryOptions({
-    enabled:
-      enabled && !!hemiWalletClient && !!rewardToken && tokenId > BigInt(0),
+    enabled: enabled && !!rewardToken && tokenId > BigInt(0),
     queryFn: () =>
-      calculateRewards(hemiWalletClient!, tokenId, rewardToken as Address),
+      calculateRewards(hemiClient, tokenId, rewardToken as Address),
     queryKey: getCalculateRewardsQueryKey({ chainId, rewardToken, tokenId }),
     refetchInterval: 24000, // 24 seconds
   })
@@ -53,13 +50,13 @@ export const useCalculateRewards = function ({
   token: EvmToken
   tokenId: bigint
 }) {
-  const { hemiWalletClient } = useHemiWalletClient()
+  const hemiClient = useHemiClient()
 
   return useQuery(
     getCalculateRewardsQueryOptions({
       chainId: token.chainId,
       enabled,
-      hemiWalletClient,
+      hemiClient,
       rewardToken,
       tokenId,
     }),

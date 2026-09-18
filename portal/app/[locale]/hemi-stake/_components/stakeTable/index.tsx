@@ -3,8 +3,6 @@ import { ErrorBoundary } from 'components/errorBoundary'
 import { Table } from 'components/table'
 import { Header } from 'components/table/_components/header'
 import { TableCard } from 'components/table/tableCard'
-import { useHemi } from 'hooks/useHemi'
-import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type StakingPosition } from 'types/stakingDashboard'
@@ -21,7 +19,6 @@ import { LockupTime } from './lockupTime'
 import { NoPositionStaked } from './noPositionStaked'
 import { type StakeTableFilterOptions } from './stakeTableFilter'
 import { UnlockCta } from './unlockCta'
-import { UnsupportedChain } from './unsupportedChain'
 import { VotingPower } from './votingPower'
 
 type StakingColumnsProps = {
@@ -110,8 +107,6 @@ export function StakeTable({ data, filter = 'active', loading }: Props) {
   const t = useTranslations('hemi-stake')
   const [openRowId, setOpenRowId] = useState<string | null>(null)
   const { status } = useAccount()
-  const hemi = useHemi()
-  const connectedToHemi = useIsConnectedToExpectedNetwork(hemi.id)
 
   const isEmpty = (data?.length ?? 0) === 0 && !loading
 
@@ -141,14 +136,6 @@ export function StakeTable({ data, filter = 'active', loading }: Props) {
             className="block size-full rounded-lg"
             containerClassName="block h-full"
           />
-        </TableCard>
-      )
-    }
-
-    if (!connectedToHemi) {
-      return (
-        <TableCard>
-          <UnsupportedChain />
         </TableCard>
       )
     }

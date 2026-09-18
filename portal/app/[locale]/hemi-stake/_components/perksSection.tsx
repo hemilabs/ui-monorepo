@@ -48,7 +48,7 @@ export const PerksSection = function () {
           badge={t('governance.badge')}
           description={t('governance.description')}
           title={t('governance.title')}
-          variant="secondary"
+          variant="positive"
         />
         <PerkCard
           badge={t('ecosystem-launches.badge')}

@@ -541,18 +541,18 @@
     "perks": {
       "ecosystem-launches": {
         "badge": "Next",
-        "description": "Early access to Hemi's ecosystem launches, Vetro and Odyssey included.",
+        "description": "Each project launching on Hemi sets aside supply for locked positions.",
         "title": "Ecosystem launches"
       },
       "governance": {
-        "badge": "Coming soon",
-        "description": "Every locked position will vote, or delegate and keep its share.",
+        "badge": "Live today",
+        "description": "Every locked position votes, or delegates and keeps its share.",
         "title": "Governance"
       },
       "heading": "What a hemiStake position gets you",
       "protocol-fees": {
         "badge": "Live today",
-        "description": "Base chain fees paid to every position by weight, every epoch.",
+        "description": "Base chain fees paid by weight, every epoch. A share is burned.",
         "title": "Protocol fees"
       }
     },

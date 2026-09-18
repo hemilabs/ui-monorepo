@@ -5,7 +5,6 @@ import { type StakingPosition } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
-import { useClaimableRewards } from '../../_hooks/useClaimableRewards'
 import { useCollectRewards } from '../../_hooks/useCollectAllRewards'
 import { useHasRewards } from '../../_hooks/useHasRewards'
 import { useRewardsPaused } from '../../_hooks/useRewardsPaused'
@@ -18,7 +17,6 @@ export function ClaimCta({ operation }: Props) {
   const t = useTranslations('hemi-stake.table')
   const { amount, tokenId } = operation
   const { hasRewards } = useHasRewards(tokenId)
-  const { rewards } = useClaimableRewards(tokenId)
   const isPaused = useRewardsPaused()
   const { updateCollectRewardsDashboardOperation } = useStakingDashboard()
 
@@ -34,7 +32,6 @@ export function ClaimCta({ operation }: Props) {
 
   const handleClaim = function () {
     updateCollectRewardsDashboardOperation({
-      rewards,
       stakingPosition: { amount, tokenId },
     })
     runCollectRewards()

@@ -82,7 +82,11 @@ export const useCollectRewards = function ({
         updateCollectRewardsDashboardOperation({ steps })
       }
 
-      updateCollectRewardsDashboardOperation({ status: undefined, steps })
+      updateCollectRewardsDashboardOperation({
+        rewards,
+        status: undefined,
+        steps,
+      })
       setDrawerQueryString('claimingRewards')
 
       // Sequential on purpose: every window is a signature, and a wallet asked for

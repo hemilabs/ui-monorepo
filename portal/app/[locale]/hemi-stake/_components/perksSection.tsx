@@ -13,7 +13,7 @@ type PerkCardProps = {
 
 const PerkCard = ({ badge, description, title, variant }: PerkCardProps) => (
   <Card shadow="sm">
-    <div className="flex h-full flex-col justify-between gap-y-3 p-4 md:min-h-56">
+    <div className="flex flex-col gap-y-6 p-4">
       <div className="flex items-start justify-between gap-x-2">
         <div className="shrink-0">
           <Badge variant={variant}>{badge}</Badge>

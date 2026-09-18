@@ -464,6 +464,7 @@
       "title": "Oferta de {symbol}",
       "total": "Total"
     },
+    "apy-estimate": "Las cifras de TEA son estimaciones. El retorno real cambia según el total en stake.",
     "claim-rewards": {
       "heading": "Reclamar recompensas",
       "subheading": "Estamos procesando su solicitud de recompensas. Puede seguir el progreso a continuación."

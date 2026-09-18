@@ -1,5 +1,7 @@
 import { DisplayAmount } from 'components/displayAmount'
+import { InfoIcon } from 'components/icons/infoIcon'
 import { LockupInput } from 'components/inputText'
+import { Tooltip } from 'components/tooltip'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useVeHemiToken } from 'hooks/useVeHemiToken'
 import { ReactNode, useEffect, useId, useMemo, useState } from 'react'
@@ -319,9 +321,21 @@ export function Lockup({
     <>
       <div className="w-full space-y-4 rounded-lg border border-solid border-transparent bg-neutral-50 p-4 ring-1 ring-transparent hover:shadow-bs">
         <div className="flex h-7 items-center justify-between">
-          <span className="text-sm font-medium text-neutral-500" id={labelId}>
-            {t('lockup-period')}
-          </span>
+          <div className="flex items-center gap-x-1">
+            <span className="text-sm font-medium text-neutral-500" id={labelId}>
+              {t('lockup-period')}
+            </span>
+            <Tooltip
+              borderRadius="12px"
+              id="lockup-apy-estimate"
+              text={t('apy-estimate')}
+              variant="info"
+            >
+              <div className="group/icon flex items-center">
+                <InfoIcon className="[&>g>path]:transition-colors [&>g>path]:duration-200 group-hover/icon:[&>g>path]:fill-neutral-950" />
+              </div>
+            </Tooltip>
+          </div>
           <div className="flex items-center justify-center gap-x-3">
             {showSlider && (
               <>

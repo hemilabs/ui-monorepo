@@ -464,6 +464,7 @@
       "title": "{symbol} supply",
       "total": "Total"
     },
+    "apy-estimate": "APY figures are estimates. The actual return changes with the total amount staked.",
     "claim-rewards": {
       "heading": "Claim rewards",
       "subheading": "We’re processing your reward claim. You can follow the progress below."

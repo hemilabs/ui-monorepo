@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient } from 'hooks/useHemiClient'
-import { getMaxClaimPairs, getSystemState } from 've-hemi-epoch-rewards/actions'
+import { getSystemState } from 've-hemi-epoch-rewards/actions'
+
+import { getMaxClaimPairsQueryOptions } from './maxClaimPairs'
 
 const getEpochSystemStateQueryKey = (chainId: number) => [
   'epochSystemState',
@@ -13,10 +15,12 @@ export const useEpochSystemState = function () {
   const hemiClient = useHemiClient()
 
   return useQuery({
-    async queryFn() {
+    async queryFn({ client }) {
       const [systemState, maxClaimPairs] = await Promise.all([
         getSystemState(hemiClient),
-        getMaxClaimPairs(hemiClient),
+        client.ensureQueryData(
+          getMaxClaimPairsQueryOptions({ chainId, hemiClient }),
+        ),
       ])
 
       return { ...systemState, maxClaimPairs }

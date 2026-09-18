@@ -43,7 +43,7 @@ export const HeroBanner = function () {
         />
         <Image
           alt=""
-          className="pointer-events-none absolute left-1/2 top-1/2 w-1/5 -translate-x-1/2 -translate-y-1/2"
+          className="pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 md:w-1/5"
           src={wordmark}
         />
       </div>

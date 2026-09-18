@@ -138,6 +138,14 @@ export const PixelPool = function ({
       let raf = 0
       let onScreen = true
 
+      function introProgress() {
+        if (reduce) {
+          return 1
+        }
+        const elapsed = (performance.now() - startedAt) / 1000
+        return smoothstep(clamp(elapsed / introSeconds, 0, 1))
+      }
+
       function resize() {
         if (panel!.clientWidth === 0 || panel!.clientHeight === 0) {
           return
@@ -168,10 +176,13 @@ export const PixelPool = function ({
           keep = { x0: -Infinity, x1: -Infinity, y0: -Infinity, y1: -Infinity }
         }
 
-        level = new Float32Array(cols).fill(1)
+        const introFill = introProgress()
+        const filled = smoothstep(introFill)
+        level = new Float32Array(cols).fill(introFill)
         surface = new Float32Array(cols)
         for (let c = 0; c < cols; c++) {
-          surface[c] = poolFloor((c + 0.5) / cols, floorHeight, edgeHeight)
+          surface[c] =
+            poolFloor((c + 0.5) / cols, floorHeight, edgeHeight) * filled
         }
         trailStrength = new Float32Array(cols * rows)
         trail.length = 0
@@ -324,9 +335,7 @@ export const PixelPool = function ({
         const dt = Math.min(0.05, (now - previous) / 1000)
         previous = now
         const seconds = (now - startedAt) / 1000
-        const introFill = reduce
-          ? 1
-          : smoothstep(clamp(seconds / introSeconds, 0, 1))
+        const introFill = introProgress()
         const ease = 1 - Math.exp(-dt * surfaceRate)
 
         smoothed.x += (pointer.x / Math.max(width, 1) - smoothed.x) * ease

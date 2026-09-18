@@ -42,7 +42,7 @@ export const ReviewUnlock = function ({ onClose }: Props) {
   const { captureStatus, needsCapture, stakingPosition, status } =
     unlockingDashboardOperation!
 
-  const unlockStatus = status ?? UnlockingDashboardStatus.UNLOCK_TX_CONFIRMED
+  const unlockStatus = status
 
   const t = useTranslations('hemi-stake.drawer')
   const hemi = useHemi()
@@ -112,7 +112,10 @@ export const ReviewUnlock = function ({ onClose }: Props) {
         isError: isWithdrawGasFeesError,
         show: showFees,
       }),
-      status: statusMap[unlockStatus] ?? ProgressStatus.NOT_READY,
+      status:
+        unlockStatus === undefined
+          ? ProgressStatus.NOT_READY
+          : statusMap[unlockStatus],
       txHash: unlockingDashboardOperation?.transactionHash,
     }
   }
@@ -130,7 +133,9 @@ export const ReviewUnlock = function ({ onClose }: Props) {
   return (
     <Operation
       amount={stakingPosition!.amount.toString()}
-      callToAction={getCallToAction(unlockStatus)}
+      callToAction={
+        unlockStatus === undefined ? undefined : getCallToAction(unlockStatus)
+      }
       heading={t('unlock.heading')}
       onClose={onClose}
       steps={getSteps()}

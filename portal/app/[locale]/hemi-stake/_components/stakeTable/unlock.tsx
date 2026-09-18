@@ -46,6 +46,10 @@ export function Unlock({ operation, unlockDate }: Props) {
       emitter.on('user-signing-withdraw-error', () =>
         setOperationRunning('failed'),
       )
+      emitter.on('withdraw-failed', () => setOperationRunning('failed'))
+      emitter.on('withdraw-failed-validation', () =>
+        setOperationRunning('failed'),
+      )
       emitter.on('unexpected-error', () => setOperationRunning('failed'))
       emitter.on('withdraw-transaction-succeeded', function () {
         setOperationRunning('idle')

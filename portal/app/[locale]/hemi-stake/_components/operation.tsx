@@ -6,6 +6,8 @@ import { SlidingSwitcher } from 'components/slidingSwitcher'
 import { ComponentProps, ReactNode } from 'react'
 
 type Props = {
+  amount?: ComponentProps<typeof Amount>['value']
+  amountSection?: ReactNode
   bottomSection?: ReactNode
   callToAction?: ReactNode
   isOperating?: boolean
@@ -13,12 +15,11 @@ type Props = {
   steps: StepPropsWithoutPosition[]
   subheading: string
 } & ComponentProps<typeof DrawerTopSection> &
-  Omit<ComponentProps<typeof Amount>, 'value'> & {
-    amount: ComponentProps<typeof Amount>['value']
-  }
+  Omit<ComponentProps<typeof Amount>, 'value'>
 
 export const Operation = ({
   amount,
+  amountSection,
   bottomSection,
   callToAction,
   heading,
@@ -39,7 +40,12 @@ export const Operation = ({
       hideFirst={isOperating}
       second={
         <ReviewOperation
-          amount={<Amount token={token} value={amount} />}
+          amount={
+            amountSection ??
+            (amount === undefined ? undefined : (
+              <Amount token={token} value={amount} />
+            ))
+          }
           bottomSection={bottomSection}
           callToAction={callToAction}
           steps={steps}

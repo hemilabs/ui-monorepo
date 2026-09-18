@@ -6,6 +6,7 @@ import { GetStartedSection } from './_components/getStartedSection'
 import { PerksSection } from './_components/perksSection'
 import { StakeForm } from './_components/stakeForm'
 import { StakeTable } from './_components/stakeTable'
+import { ClaimAllRewards } from './_components/stakeTable/claimAllRewards'
 import {
   StakeTableFilter,
   type StakeTableFilterOptions,
@@ -41,8 +42,11 @@ export const HemiStakePage = function () {
       >
         <div className="w-full lg:w-1/2 xl:shrink xl:grow-2 xl:basis-0">
           {isConnected ? (
-            <div className="mb-4 ml-1 flex flex-row md:w-fit">
-              <StakeTableFilter filter={filter} onFilter={handleFilter} />
+            <div className="mb-4 ml-1 flex flex-row items-center justify-between gap-x-2">
+              <div className="flex flex-1 md:w-fit md:flex-none">
+                <StakeTableFilter filter={filter} onFilter={handleFilter} />
+              </div>
+              <ClaimAllRewards positions={data} />
             </div>
           ) : null}
           <StakeTable data={filteredData} filter={filter} loading={isLoading} />

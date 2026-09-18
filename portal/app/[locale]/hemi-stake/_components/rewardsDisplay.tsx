@@ -1,64 +1,68 @@
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
 import Skeleton from 'react-loading-skeleton'
-import { EvmToken } from 'types/token'
+import { type ClaimableReward } from 'types/stakingDashboard'
+import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { formatNumber } from 'utils/format'
-import { formatUnits } from 'viem'
+import { formatUnits, isAddress, isAddressEqual } from 'viem'
 
-import { useCalculateRewards } from '../_hooks/useCalculateRewards'
+import { useClaimableRewards } from '../_hooks/useClaimableRewards'
 import { useRewardTokens } from '../_hooks/useRewardTokens'
 
 type Props = {
   tokenId: bigint
 }
 
-function RewardAmount({
-  token,
-  tokenId,
-}: {
-  token: EvmToken
-  tokenId: bigint
-}) {
-  const { data, isLoading } = useCalculateRewards({
-    rewardToken: token.address,
-    token,
-    tokenId,
-  })
-
-  const formattedAmount =
-    isLoading || data === undefined ? '0' : formatUnits(data, token.decimals)
-
-  return (
-    <div className="flex items-center gap-x-1 text-sm font-medium text-white">
-      <TokenLogo size="xSmall" token={token} />
-      <span>{`${formatNumber(formattedAmount)} ${token.symbol}`}</span>
-    </div>
-  )
+type RewardAmountProps = {
+  reward: ClaimableReward
+  token: EvmToken | undefined
 }
+
+const RewardAmount = ({ reward, token }: RewardAmountProps) => (
+  <div className="flex items-center gap-x-1 text-sm font-medium text-white">
+    {token ? <TokenLogo size="xSmall" token={token} /> : null}
+    <span>{`${formatNumber(formatUnits(reward.amount, reward.decimals))} ${
+      reward.symbol
+    }`}</span>
+  </div>
+)
 
 export function RewardsDisplay({ tokenId }: Props) {
   const t = useTranslations('hemi-stake.table')
-  const { hasError, isPending, tokens: rewardTokens } = useRewardTokens()
+  const { hasError, isPending: areTokensPending, tokens } = useRewardTokens()
+  const { isError, isPending, rewards } = useClaimableRewards(tokenId)
 
-  if (hasError) {
+  const claimable = rewards.filter(({ amount }) => amount > BigInt(0))
+
+  if (hasError || isError) {
     return <span className="text-sm text-neutral-950">-</span>
   }
 
-  if (isPending) {
+  if (isPending || areTokensPending) {
     return <Skeleton className="h-10 w-20" />
   }
 
-  if (rewardTokens.length === 0) {
-    return <span className="text-sm text-neutral-950">-</span>
+  if (claimable.length === 0) {
+    return null
   }
+
+  const getToken = (reward: ClaimableReward) =>
+    tokens.find(
+      token =>
+        isAddress(token.address) && isAddressEqual(token.address, reward.token),
+    )
 
   return (
     <Tooltip
       text={
         <div className="flex flex-col gap-y-1">
-          {rewardTokens.map(token => (
-            <RewardAmount key={token.address} token={token} tokenId={tokenId} />
+          {claimable.map(reward => (
+            <RewardAmount
+              key={reward.token}
+              reward={reward}
+              token={getToken(reward)}
+            />
           ))}
         </div>
       }
@@ -66,14 +70,20 @@ export function RewardsDisplay({ tokenId }: Props) {
     >
       <div className="flex flex-col items-start gap-y-0.5">
         <div className="flex -space-x-1">
-          {rewardTokens.map(token => (
-            <div className="rounded-full ring-2 ring-white" key={token.address}>
-              <TokenLogo size="xSmall" token={token} />
-            </div>
-          ))}
+          {claimable.map(function (reward) {
+            const token = getToken(reward)
+            return token ? (
+              <div
+                className="rounded-full ring-2 ring-white"
+                key={token.address}
+              >
+                <TokenLogo size="xSmall" token={token} />
+              </div>
+            ) : null
+          })}
         </div>
         <span className="body-text-caption text-neutral-500">
-          {t('rewards-available', { count: rewardTokens.length })}
+          {t('rewards-available', { count: claimable.length })}
         </span>
       </div>
     </Tooltip>

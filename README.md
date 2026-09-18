@@ -12,8 +12,8 @@ This monorepo uses pnpm workspaces, and contains the following projects:
   - **packages/hemi-earn-actions**: Package that contains viem actions for Hemi Earn ERC-4626 vaults.
   - **packages/hemi-tunnel-actions**: Package that contains viem actions to use the Hemi tunnel.
   - **packages/hemi-viem-stake-actions**: Package that contains viem actions to use the Hemi Stake.
-  - **packages/to-promise-event**: Package that provides an utility to allow async functions to export a promise and an event emitter.
   - **packages/ve-hemi-actions**: Package that contains functions needed to interact with the staking contract veHEMI.
+  - **packages/ve-hemi-epoch-rewards**: Package that contains viem actions to read and claim veHEMI rewards from the epoch rewards contract.
   - **packages/ve-hemi-rewards**: Package that contains functions needed to interact with the veHEMI rewards system.
 - **portal**: Portal webapp living at [https://app.hemi.xyz](https://app.hemi.xyz).
 - **portal-backend**: Various APIs and cron jobs the Portal uses.

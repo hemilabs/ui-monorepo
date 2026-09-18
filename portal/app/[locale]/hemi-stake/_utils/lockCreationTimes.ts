@@ -17,7 +17,7 @@ export const step = 6
 
 export const twoYears = 732
 
-export const epochsPerYear = 61 // 61 epochs × 6 days = 366 days
+const epochsPerYear = 61 // 61 epochs × 6 days = 366 days
 
 export const oneYear = epochsPerYear * step
 export const sixMonths = Math.floor(epochsPerYear / 2) * step

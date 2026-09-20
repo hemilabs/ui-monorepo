@@ -1,17 +1,15 @@
 import { Button } from 'components/button'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
-import { type FormEvent, useState } from 'react'
-import { CollectAllRewardsOperationRunning } from 'types/stakingDashboard'
+import { type FormEvent } from 'react'
+import { CollectAllRewardsDashboardStatus } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useCollectRewards } from '../../_hooks/useCollectAllRewards'
+import { useRewardsPaused } from '../../_hooks/useRewardsPaused'
 
 export const RetryCollectRewards = function () {
-  const [operationRunning, setOperationRunning] =
-    useState<CollectAllRewardsOperationRunning>('idle')
-
   const {
     collectRewardsDashboardOperation,
     updateCollectRewardsDashboardOperation,
@@ -21,31 +19,25 @@ export const RetryCollectRewards = function () {
   const t = useTranslations()
 
   // collectRewardsDashboardOperation is defined because this component is only rendered in that case
-  const { stakingPosition } = collectRewardsDashboardOperation!
+  const { steps = [] } = collectRewardsDashboardOperation!
 
-  // this component tries to initiate a new collect rewards, based on the failed one
-  const { mutate: runCollectRewards } = useCollectRewards({
-    on(emitter) {
-      emitter.on('user-signing-collect-all-rewards-error', function () {
-        setOperationRunning('failed')
-      })
-      emitter.on('collect-all-rewards-transaction-succeeded', function () {
-        setOperationRunning('idle')
-      })
-      emitter.on('collect-all-rewards-transaction-reverted', function () {
-        setOperationRunning('failed')
-      })
-      emitter.on('unexpected-error', () => setOperationRunning('failed'))
-    },
-    tokenId: stakingPosition!.tokenId,
-    updateCollectRewardsDashboardOperation,
-  })
+  const tokenIds = [...new Set(steps.map(({ tokenId }) => tokenId))]
+  const completedSteps = steps.filter(
+    step =>
+      step.status === CollectAllRewardsDashboardStatus.COLLECT_TX_CONFIRMED,
+  )
 
-  const isCollecting = operationRunning === 'collecting'
+  const isPaused = useRewardsPaused()
+
+  const { isPending: isCollecting, mutate: runCollectRewards } =
+    useCollectRewards({
+      completedSteps,
+      tokenIds,
+      updateCollectRewardsDashboardOperation,
+    })
 
   const handleRetry = function (e: FormEvent) {
     e.preventDefault()
-    setOperationRunning('collecting')
     runCollectRewards()
   }
 
@@ -54,7 +46,7 @@ export const RetryCollectRewards = function () {
       <SubmitWhenConnectedToChain
         chainId={hemi.id}
         submitButton={
-          <Button disabled={isCollecting} size="small">
+          <Button disabled={isCollecting || isPaused} size="small">
             {t(
               isCollecting
                 ? 'hemi-stake.claim-rewards.heading'

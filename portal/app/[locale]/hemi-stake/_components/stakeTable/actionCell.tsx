@@ -1,21 +1,15 @@
 import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { Row } from '@tanstack/react-table'
-import { SparkleIcon } from 'components/icons/sparkleIcon'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import {
-  type CollectAllRewardsOperationRunning,
-  type StakingPosition,
-} from 'types/stakingDashboard'
+import { type StakingPosition } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
 import { formatUnits } from 'viem'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
-import { useCollectRewards } from '../../_hooks/useCollectAllRewards'
 import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
-import { useHasRewards } from '../../_hooks/useHasRewards'
 import { PlusIcon } from '../../_icons/plusIcon'
 import { getUnlockInfo, minDays } from '../../_utils/lockCreationTimes'
 
@@ -60,19 +54,13 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
   const menuRef = useOnClickOutside<HTMLDivElement>(() => setOpenRowId(null))
   const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 })
   const { height: viewportHeight, width: viewportWidth } = useWindowSize()
-  const {
-    updateCollectRewardsDashboardOperation,
-    updateStakingDashboardOperation,
-  } = useStakingDashboard()
+  const { updateStakingDashboardOperation } = useStakingDashboard()
   const { setDrawerQueryString } = useDrawerStakingQueryString()
-  const [operationRunning, setOperationRunning] =
-    useState<CollectAllRewardsOperationRunning>('idle')
 
   const { amount, id, lockTime, timestamp, tokenId } = row.original
-  const { hasRewards } = useHasRewards(tokenId)
 
   const MENU_WIDTH = 275
-  const MENU_HEIGHT = 88
+  const MENU_HEIGHT = 60
   const MENU_OFFSET = 4
 
   useEffect(
@@ -128,19 +116,6 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
     [openRowId, id, setOpenRowId],
   )
 
-  const { mutate: runCollectRewards } = useCollectRewards({
-    on(emitter) {
-      emitter.on('user-signed-collect-all-rewards', function () {
-        setOpenRowId(null)
-      })
-      emitter.on('collect-all-rewards-settled', function () {
-        setOperationRunning('idle')
-      })
-    },
-    tokenId,
-    updateCollectRewardsDashboardOperation,
-  })
-
   const { timeRemainingSeconds } = getUnlockInfo({
     lockTime,
     timestamp,
@@ -174,19 +149,6 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
     setOpenRowId(null)
   }
 
-  function handleClaimRewards() {
-    updateCollectRewardsDashboardOperation({
-      stakingPosition: {
-        amount,
-        tokenId,
-      },
-    })
-    setOperationRunning('collecting')
-    runCollectRewards(undefined, {
-      onError: () => setOperationRunning('idle'),
-    })
-  }
-
   return (
     <div className="relative" ref={buttonRef}>
       <ActionButton
@@ -211,12 +173,6 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
               icon={<PlusIcon />}
               label={t('table.add-time-to-lockup')}
               onClick={handleIncreaseUnlockTime}
-            />
-            <ActionItem
-              enabled={operationRunning !== 'collecting' && hasRewards}
-              icon={<SparkleIcon className="text-neutral-950" />}
-              label={t('claim-rewards.heading')}
-              onClick={handleClaimRewards}
             />
           </div>,
           document.body,

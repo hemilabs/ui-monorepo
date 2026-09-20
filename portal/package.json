@@ -63,7 +63,7 @@
     "use-intl": "4.11.0",
     "use-local-storage-state": "19.5.0",
     "ve-hemi-actions": "workspace:*",
-    "ve-hemi-rewards": "workspace:*",
+    "ve-hemi-epoch-rewards": "workspace:*",
     "victory": "37.3.6",
     "viem": "2.28.4",
     "viem-erc20": "2.0.0",

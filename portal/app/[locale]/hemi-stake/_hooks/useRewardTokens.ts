@@ -8,12 +8,12 @@ import type { Address } from 'viem'
 
 import { getRewardTokensStatus } from '../_utils/rewardTokensStatus'
 
-import { useRewardTokensAddresses as useRewardTokensQuery } from './useRewardTokensAddresses'
+import { useEpochSystemState } from './useEpochSystemState'
 
 export const useRewardTokens = function () {
   const { id } = useHemi()
-  const { data: rewardTokenAddresses = [], status: addressesStatus } =
-    useRewardTokensQuery()
+  const { data: systemState, status: addressesStatus } = useEpochSystemState()
+  const rewardTokenAddresses = systemState?.tokens ?? []
 
   const tokenQueries = useQueries({
     queries: rewardTokenAddresses.map((address: Address) => ({

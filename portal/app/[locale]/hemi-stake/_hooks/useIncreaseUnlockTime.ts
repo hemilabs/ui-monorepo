@@ -18,7 +18,6 @@ import { useAccount } from 'wagmi'
 
 import { daysToSeconds } from '../_utils/lockCreationTimes'
 
-import { getCalculateAprQueryKey } from './useCalculateApr'
 import { getPositionDelegationDetailsQueryKey } from './usePositionDelegationDetails'
 import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
 import { getStakingPositionsQueryKey } from './useStakingPositions'
@@ -128,14 +127,6 @@ export const useIncreaseUnlockTime = function ({
 
           // fees
           updateNativeBalanceAfterFees(receipt)
-
-          // APR
-          queryClient.invalidateQueries({
-            queryKey: getCalculateAprQueryKey({
-              chainId: token.chainId,
-              tokenId,
-            }),
-          })
 
           // Voting power (guard: address can be undefined if wallet disconnected before callback)
           if (address) {

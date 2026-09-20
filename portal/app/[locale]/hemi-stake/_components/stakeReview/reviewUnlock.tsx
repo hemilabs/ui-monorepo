@@ -8,7 +8,9 @@ import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { ReactNode } from 'react'
 import {
+  CaptureDashboardStatus,
   UnlockingDashboardStatus,
+  type CaptureDashboardStatusType,
   type UnlockingDashboardStatusType,
 } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
@@ -25,14 +27,22 @@ type Props = {
   onClose: VoidFunction
 }
 
+const captureStatusMap: Record<CaptureDashboardStatusType, ProgressStatusType> =
+  {
+    [CaptureDashboardStatus.CAPTURE_TX_PENDING]: ProgressStatus.PROGRESS,
+    [CaptureDashboardStatus.CAPTURE_TX_FAILED]: ProgressStatus.FAILED,
+    [CaptureDashboardStatus.CAPTURE_TX_CONFIRMED]: ProgressStatus.COMPLETED,
+  }
+
 export const ReviewUnlock = function ({ onClose }: Props) {
   const { unlockingDashboardOperation } = useStakingDashboard()
   const token = useHemiToken()
 
   // unlockingDashboardOperation is defined because this component is only rendered in that case
-  const { stakingPosition, status } = unlockingDashboardOperation!
+  const { captureStatus, needsCapture, stakingPosition, status } =
+    unlockingDashboardOperation!
 
-  const unlockStatus = status ?? UnlockingDashboardStatus.UNLOCK_TX_CONFIRMED
+  const unlockStatus = status
 
   const t = useTranslations('hemi-stake.drawer')
   const hemi = useHemi()
@@ -60,6 +70,22 @@ export const ReviewUnlock = function ({ onClose }: Props) {
         }
       : undefined
 
+  const addCaptureStep = (): StepPropsWithoutPosition => ({
+    description: (
+      <ChainLabel
+        active={captureStatus === CaptureDashboardStatus.CAPTURE_TX_PENDING}
+        chainId={hemi.id}
+        label={t('secure-rewards')}
+      />
+    ),
+    explorerChainId: token.chainId,
+    status:
+      captureStatus === undefined
+        ? ProgressStatus.NOT_READY
+        : captureStatusMap[captureStatus],
+    txHash: unlockingDashboardOperation?.captureTransactionHash,
+  })
+
   const addUnlockingStep = function (): StepPropsWithoutPosition {
     const statusMap: Record<UnlockingDashboardStatusType, ProgressStatusType> =
       {
@@ -86,12 +112,16 @@ export const ReviewUnlock = function ({ onClose }: Props) {
         isError: isWithdrawGasFeesError,
         show: showFees,
       }),
-      status: statusMap[unlockStatus] ?? ProgressStatus.NOT_READY,
+      status:
+        unlockStatus === undefined
+          ? ProgressStatus.NOT_READY
+          : statusMap[unlockStatus],
       txHash: unlockingDashboardOperation?.transactionHash,
     }
   }
 
-  const getSteps = () => [addUnlockingStep()]
+  const getSteps = () =>
+    needsCapture ? [addCaptureStep(), addUnlockingStep()] : [addUnlockingStep()]
 
   const getCallToAction = function (callStatus: UnlockingDashboardStatusType) {
     const map: Partial<Record<UnlockingDashboardStatusType, ReactNode>> = {
@@ -103,7 +133,9 @@ export const ReviewUnlock = function ({ onClose }: Props) {
   return (
     <Operation
       amount={stakingPosition!.amount.toString()}
-      callToAction={getCallToAction(unlockStatus)}
+      callToAction={
+        unlockStatus === undefined ? undefined : getCallToAction(unlockStatus)
+      }
       heading={t('unlock.heading')}
       onClose={onClose}
       steps={getSteps()}

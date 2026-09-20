@@ -5,756 +5,6 @@ export const veHemiEpochRewardsAbi = [
     type: 'constructor',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'target',
-        type: 'address',
-      },
-    ],
-    name: 'AddressEmptyCode',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'AlreadyPaused',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'AlreadySwept',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'BadEpoch',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'BadRange',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint32',
-        name: 'epoch',
-        type: 'uint32',
-      },
-      {
-        internalType: 'uint8',
-        name: 'class_',
-        type: 'uint8',
-      },
-    ],
-    name: 'ClassHasNoWeight',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'ContractPaused',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'implementation',
-        type: 'address',
-      },
-    ],
-    name: 'ERC1967InvalidImplementation',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'ERC1967NonPayable',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'EpochAlreadySettled',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'EpochNotSettled',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'FailedCall',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'FundingMismatch',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'GuardianPauseBudgetSpent',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'InvalidInitialization',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'LengthMismatch',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'NoProposal',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'NotGuardianOrOwner',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'NotHolder',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'NotInitializing',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'NotUpgrader',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'NothingFunded',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-    ],
-    name: 'OwnableInvalidOwner',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-    ],
-    name: 'OwnableUnauthorizedAccount',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'ProposalExpired',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'ProposalNotReady',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'RangeTooWide',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'ReentrancyGuardReentrantCall',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'RenounceDisabled',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'RescueExceedsFree',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'token',
-        type: 'address',
-      },
-    ],
-    name: 'RewardTokenForbidden',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'token',
-        type: 'address',
-      },
-    ],
-    name: 'RewardTokenNotRegistered',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint8',
-        name: 'bits',
-        type: 'uint8',
-      },
-      {
-        internalType: 'uint256',
-        name: 'value',
-        type: 'uint256',
-      },
-    ],
-    name: 'SafeCastOverflowedUintDowncast',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'token',
-        type: 'address',
-      },
-    ],
-    name: 'SafeERC20FailedOperation',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'StreamIsClosed',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'SweepTooEarly',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'TooManyRewardTokens',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'UUPSUnauthorizedCallContext',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'slot',
-        type: 'bytes32',
-      },
-    ],
-    name: 'UUPSUnsupportedProxiableUUID',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'UnknownStream',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'WithdrawalDisabled',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'ZeroAddress',
-    type: 'error',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'holder',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'token',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint32',
-        name: 'fromEpoch',
-        type: 'uint32',
-      },
-      {
-        indexed: false,
-        internalType: 'uint32',
-        name: 'toEpoch',
-        type: 'uint32',
-      },
-    ],
-    name: 'Claimed',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'uint32',
-        name: 'epoch',
-        type: 'uint32',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'dT',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'dL',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'dF',
-        type: 'uint256',
-      },
-    ],
-    name: 'ClassDenominatorsCached',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'uint64',
-        name: 'streamId',
-        type: 'uint64',
-      },
-      {
-        indexed: true,
-        internalType: 'uint32',
-        name: 'epoch',
-        type: 'uint32',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'token',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint8',
-        name: 'class_',
-        type: 'uint8',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-    ],
-    name: 'EpochFunded',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'uint64',
-        name: 'streamId',
-        type: 'uint64',
-      },
-      {
-        indexed: true,
-        internalType: 'uint32',
-        name: 'epoch',
-        type: 'uint32',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-    ],
-    name: 'EpochFundingCancelled',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'uint32',
-        name: 'epoch',
-        type: 'uint32',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'token',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint8',
-        name: 'class_',
-        type: 'uint8',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-    ],
-    name: 'EpochRemainderSwept',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'guardian',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'sweepBlockedUntil',
-        type: 'uint256',
-      },
-    ],
-    name: 'GuardianUpdated',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'uint64',
-        name: 'version',
-        type: 'uint64',
-      },
-    ],
-    name: 'Initialized',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'previousOwner',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
-      },
-    ],
-    name: 'OwnershipTransferStarted',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'previousOwner',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
-      },
-    ],
-    name: 'OwnershipTransferred',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'by',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'pausedSeconds',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'graceAccrued',
-        type: 'uint256',
-      },
-    ],
-    name: 'PauseCleared',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'by',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'at',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'until_',
-        type: 'uint256',
-      },
-    ],
-    name: 'PauseStarted',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint64',
-        name: 'transferableAfter',
-        type: 'uint64',
-      },
-      {
-        indexed: false,
-        internalType: 'bool',
-        name: 'forfeitable',
-        type: 'bool',
-      },
-    ],
-    name: 'PositionClassCaptured',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'token',
-        type: 'address',
-      },
-    ],
-    name: 'RewardTokenRegistered',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [],
-    name: 'RewardWithdrawalPermanentlyDisabled',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'uint64',
-        name: 'streamId',
-        type: 'uint64',
-      },
-    ],
-    name: 'StreamClosed',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'uint64',
-        name: 'streamId',
-        type: 'uint64',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'token',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'bytes32',
-        name: 'label',
-        type: 'bytes32',
-      },
-    ],
-    name: 'StreamCreated',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'delay',
-        type: 'uint256',
-      },
-    ],
-    name: 'SweepDelayUpdated',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'token',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-    ],
-    name: 'TokensRescued',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'implementation',
-        type: 'address',
-      },
-    ],
-    name: 'Upgraded',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'who',
-        type: 'address',
-      },
-    ],
-    name: 'UpgraderAccepted',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [],
-    name: 'UpgraderProposalCancelled',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'who',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'at',
-        type: 'uint256',
-      },
-    ],
-    name: 'UpgraderProposed',
-    type: 'event',
-  },
-  {
     inputs: [],
     name: 'EPOCH',
     outputs: [
@@ -1802,6 +1052,11 @@ export const veHemiEpochRewardsAbi = [
         name: 'firstFundableEpoch_',
         type: 'uint32',
       },
+      {
+        internalType: 'uint256',
+        name: 'sweepDelay_',
+        type: 'uint256',
+      },
     ],
     name: 'initialize',
     outputs: [],
@@ -2434,6 +1689,19 @@ export const veHemiEpochRewardsAbi = [
   {
     inputs: [
       {
+        internalType: 'uint256',
+        name: 'tokenId',
+        type: 'uint256',
+      },
+    ],
+    name: 'updateRewards',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
         internalType: 'address',
         name: 'newImplementation',
         type: 'address',
@@ -2487,5 +1755,755 @@ export const veHemiEpochRewardsAbi = [
     ],
     stateMutability: 'view',
     type: 'function',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'tokenId',
+        type: 'uint256',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'holder',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint32',
+        name: 'fromEpoch',
+        type: 'uint32',
+      },
+      {
+        indexed: false,
+        internalType: 'uint32',
+        name: 'toEpoch',
+        type: 'uint32',
+      },
+    ],
+    name: 'Claimed',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint32',
+        name: 'epoch',
+        type: 'uint32',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'dT',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'dL',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'dF',
+        type: 'uint256',
+      },
+    ],
+    name: 'ClassDenominatorsCached',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint64',
+        name: 'streamId',
+        type: 'uint64',
+      },
+      {
+        indexed: true,
+        internalType: 'uint32',
+        name: 'epoch',
+        type: 'uint32',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint8',
+        name: 'class_',
+        type: 'uint8',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'EpochFunded',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint64',
+        name: 'streamId',
+        type: 'uint64',
+      },
+      {
+        indexed: true,
+        internalType: 'uint32',
+        name: 'epoch',
+        type: 'uint32',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'to',
+        type: 'address',
+      },
+    ],
+    name: 'EpochFundingCancelled',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint32',
+        name: 'epoch',
+        type: 'uint32',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint8',
+        name: 'class_',
+        type: 'uint8',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'to',
+        type: 'address',
+      },
+    ],
+    name: 'EpochRemainderSwept',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'guardian',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'sweepBlockedUntil',
+        type: 'uint256',
+      },
+    ],
+    name: 'GuardianUpdated',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint64',
+        name: 'version',
+        type: 'uint64',
+      },
+    ],
+    name: 'Initialized',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'previousOwner',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address',
+      },
+    ],
+    name: 'OwnershipTransferStarted',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'previousOwner',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address',
+      },
+    ],
+    name: 'OwnershipTransferred',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'by',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'pausedSeconds',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'graceAccrued',
+        type: 'uint256',
+      },
+    ],
+    name: 'PauseCleared',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'by',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'at',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'until_',
+        type: 'uint256',
+      },
+    ],
+    name: 'PauseStarted',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'tokenId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint64',
+        name: 'transferableAfter',
+        type: 'uint64',
+      },
+      {
+        indexed: false,
+        internalType: 'bool',
+        name: 'forfeitable',
+        type: 'bool',
+      },
+    ],
+    name: 'PositionClassCaptured',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
+      },
+    ],
+    name: 'RewardTokenRegistered',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [],
+    name: 'RewardWithdrawalPermanentlyDisabled',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint64',
+        name: 'streamId',
+        type: 'uint64',
+      },
+    ],
+    name: 'StreamClosed',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint64',
+        name: 'streamId',
+        type: 'uint64',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'bytes32',
+        name: 'label',
+        type: 'bytes32',
+      },
+    ],
+    name: 'StreamCreated',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'delay',
+        type: 'uint256',
+      },
+    ],
+    name: 'SweepDelayUpdated',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'to',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'TokensRescued',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'implementation',
+        type: 'address',
+      },
+    ],
+    name: 'Upgraded',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'who',
+        type: 'address',
+      },
+    ],
+    name: 'UpgraderAccepted',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [],
+    name: 'UpgraderProposalCancelled',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'who',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'at',
+        type: 'uint256',
+      },
+    ],
+    name: 'UpgraderProposed',
+    type: 'event',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'target',
+        type: 'address',
+      },
+    ],
+    name: 'AddressEmptyCode',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'AlreadyPaused',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'AlreadySwept',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'BadEpoch',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'BadRange',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint32',
+        name: 'epoch',
+        type: 'uint32',
+      },
+      {
+        internalType: 'uint8',
+        name: 'class_',
+        type: 'uint8',
+      },
+    ],
+    name: 'ClassHasNoWeight',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'ContractPaused',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'implementation',
+        type: 'address',
+      },
+    ],
+    name: 'ERC1967InvalidImplementation',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'ERC1967NonPayable',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'EpochAlreadySettled',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'EpochNotSettled',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'FailedCall',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'FundingMismatch',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'GuardianPauseBudgetSpent',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'InvalidInitialization',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'LengthMismatch',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'NoProposal',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'NotGuardianOrOwner',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'NotHolder',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'NotInitializing',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'NotUpgrader',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'NothingFunded',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'owner',
+        type: 'address',
+      },
+    ],
+    name: 'OwnableInvalidOwner',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+    ],
+    name: 'OwnableUnauthorizedAccount',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'ProposalExpired',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'ProposalNotReady',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'RangeTooWide',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'ReentrancyGuardReentrantCall',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'RenounceDisabled',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'RescueExceedsFree',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
+      },
+    ],
+    name: 'RewardTokenForbidden',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
+      },
+    ],
+    name: 'RewardTokenNotRegistered',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint8',
+        name: 'bits',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint256',
+        name: 'value',
+        type: 'uint256',
+      },
+    ],
+    name: 'SafeCastOverflowedUintDowncast',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
+      },
+    ],
+    name: 'SafeERC20FailedOperation',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'StreamIsClosed',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'SweepTooEarly',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'TooManyRewardTokens',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'UUPSUnauthorizedCallContext',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'slot',
+        type: 'bytes32',
+      },
+    ],
+    name: 'UUPSUnsupportedProxiableUUID',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'UnknownStream',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'WithdrawalDisabled',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'ZeroAddress',
+    type: 'error',
   },
 ] as const

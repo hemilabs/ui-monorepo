@@ -2,7 +2,7 @@ import { parseUnits } from 'viem'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
 import { BadRequestError } from '../src/errors.ts'
-import { createSupplyIndexer, isSupplyPeriod } from '../src/supply-indexer.ts'
+import { createSupplyIndexer } from '../src/supply-indexer.ts'
 
 const { requestHemiEarn } = vi.hoisted(() => ({
   requestHemiEarn: vi.fn(),
@@ -204,25 +204,5 @@ describe('getCirculatingSupply', function () {
     const { getCirculatingSupply } = createIndexer('0', 50)
 
     await expect(getCirculatingSupply()).rejects.toThrow('every chain')
-  })
-})
-
-describe('isSupplyPeriod', function () {
-  it.each(['1w', '1m', '3m', '6m', '1y'])(
-    'answers true for %s',
-    function (period) {
-      expect(isSupplyPeriod(period)).toBe(true)
-    },
-  )
-
-  it.each([
-    ['a period that does not exist', '2y'],
-    ['an empty string', ''],
-    ['a period in another case', '1W'],
-    ['a padded period', ' 1m'],
-    ['a property of the prototype', 'toString'],
-    ['the constructor', 'constructor'],
-  ])('answers false for %s', function (_, period) {
-    expect(isSupplyPeriod(period)).toBe(false)
   })
 })

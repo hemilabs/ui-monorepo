@@ -1,5 +1,5 @@
-import { dayMs, startOfDay, toDate } from './dates.ts'
 import { BadRequestError } from './errors.ts'
+import { getPeriodDates, isPeriod } from './periods.ts'
 import { type Cache } from './redis.ts'
 import { UpstreamGraphQLError } from './subgraphs/errors.ts'
 import {
@@ -28,19 +28,6 @@ type SupplyRow = {
   opBalances: string | null
   totalSupply: string | null
 }
-
-/* eslint-disable sort-keys */
-const periodDays: Record<string, number> = {
-  '1w': 7,
-  '1m': 30,
-  '3m': 90,
-  '6m': 180,
-  '1y': 365,
-}
-/* eslint-enable sort-keys */
-
-export const isSupplyPeriod = (period: string) =>
-  Object.hasOwn(periodDays, period)
 
 const fields = `
   bnbBlock
@@ -125,12 +112,10 @@ function createSupplyIndexer({
   }
 
   async function getSupplyHistory(period: string) {
-    if (!isSupplyPeriod(period)) {
+    if (!isPeriod(period)) {
       throw new BadRequestError(`${period} is not a supply history period`)
     }
-    const days = periodDays[period]
-    const lastDate = toDate(Date.now() - dayMs)
-    const firstDate = toDate(startOfDay(lastDate) - (days - 1) * dayMs)
+    const { firstDate, lastDate } = getPeriodDates(period)
     const [data, prices] = await Promise.all([
       query<{ DailySupplySnapshot: SupplyRow[] }>(
         `query GetDailySupplySnapshots($firstDate: String!, $lastDate: String!) {

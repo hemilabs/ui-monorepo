@@ -1,10 +1,9 @@
-import { describe, expect, it } from 'vitest'
-
 import {
   extraApprovalMultiplier,
   getApprovalAmount,
   getExtraApprovalAmount,
-} from '../../../../../app/[locale]/hemi-earn/_utils/approval'
+} from 'utils/approval'
+import { describe, expect, it } from 'vitest'
 
 describe('getExtraApprovalAmount', function () {
   it('returns undefined when the setting is off, so the action approves what it pulls', function () {
@@ -17,9 +16,9 @@ describe('getExtraApprovalAmount', function () {
     )
   })
 
-  // The panel copy interpolates the same constant, so the label can't drift from
-  // the allowance actually requested.
-  it('exposes a multiplier the copy can interpolate', function () {
+  // The copy spells the multiple out instead of interpolating it, so nothing but
+  // this assertion keeps the label and the allowance requested in agreement.
+  it('requests ten times the amount, which is what the copy says', function () {
     expect(extraApprovalMultiplier).toBe(10)
   })
 

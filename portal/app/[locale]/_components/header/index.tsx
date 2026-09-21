@@ -8,9 +8,9 @@ import { StakeTabs } from 'components/stakeTabs'
 import { TunnelTabs } from 'components/tunnelTabs'
 
 import { Badge } from '../badge'
+import { HomeLink } from '../homeLink'
 
 import { HemiPricePill } from './hemiPricePill'
-import { HomeLink } from './homeLink'
 
 const WalletConnection = lazyWithFallback(() =>
   import('components/connectWallets').then(mod => ({
@@ -27,7 +27,7 @@ type Props = {
 export const Header = ({ isMenuOpen, openNavbar, toggleMenu }: Props) => (
   <header className="flex h-14 items-center border-b border-solid border-neutral-300/55 bg-white px-3 py-3 md:h-13 md:bg-transparent md:px-0 md:py-4.5">
     <div className="flex items-center gap-x-2 md:hidden">
-      <HomeLink />
+      <HomeLink variant="symbol" />
       <Badge />
     </div>
     <div className="hidden size-13 items-center justify-center border-r border-neutral-300/55 md:flex xl:hidden">

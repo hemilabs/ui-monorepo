@@ -19,7 +19,6 @@ import { StakePage } from 'app/[locale]/stake/page'
 import { TunnelLayout } from 'app/[locale]/tunnel/layout'
 import { TunnelPage } from 'app/[locale]/tunnel/page'
 import { TransactionHistoryPage } from 'app/[locale]/tunnel/transaction-history/page'
-import { featureFlags } from 'app/featureFlags'
 import { UntranslatedError500 } from 'components/error500'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { preferredLocale } from 'i18n/routing'
@@ -31,12 +30,13 @@ import {
   Routes,
   useLocation,
 } from 'react-router'
+import { landingPage } from 'utils/landingPage'
 
 // Without this the route tree never reaches Sentry, and every transaction is
 // named after the raw pathname instead of the pattern it matched.
 const SentryRoutes = Sentry.wrapReactRouterRouting(Routes)
 
-const ToPreferredLocale = function ({ path = '' }: { path?: string }) {
+const ToPreferredLocale = function ({ path }: { path: string }) {
   const { hash, search } = useLocation()
 
   return (
@@ -47,13 +47,17 @@ const ToPreferredLocale = function ({ path = '' }: { path?: string }) {
   )
 }
 
-const ToTunnel = function () {
+const ToLandingPage = function () {
   const { hash, pathname, search } = useLocation()
 
   return (
     <Navigate
       replace
-      to={{ hash, pathname: `${pathname.replace(/\/+$/, '')}/tunnel`, search }}
+      to={{
+        hash,
+        pathname: `${pathname.replace(/\/+$/, '')}${landingPage}`,
+        search,
+      }}
     />
   )
 }
@@ -105,14 +109,7 @@ export const App = () => (
     <BrowserRouter>
       <NuqsAdapter>
         <SentryRoutes>
-          <Route
-            element={
-              <ToPreferredLocale
-                path={featureFlags.enableHemiEarnPage ? '/hemi-earn' : ''}
-              />
-            }
-            path="/"
-          />
+          <Route element={<ToPreferredLocale path={landingPage} />} path="/" />
           <Route
             element={<ToPreferredLocale path="/stake/dashboard" />}
             path="/stake"
@@ -122,7 +119,7 @@ export const App = () => (
             path="/staking-dashboard"
           />
           <Route element={<LocaleLayout />} path="/:locale">
-            <Route element={<ToTunnel />} index />
+            <Route element={<ToLandingPage />} index />
             <Route element={<TunnelLayout />} path="tunnel">
               <Route element={<TunnelPage />} index />
               <Route

@@ -3,6 +3,7 @@ import { lazyWithFallback } from 'components/lazyWithFallback'
 import { ReactNode } from 'react'
 
 import { Badge } from '../badge'
+import { HomeLink } from '../homeLink'
 
 import { BitcoinKitLink } from './_components/bitcoinKitLink'
 import { BoostStaking } from './_components/boostStaking'
@@ -16,7 +17,6 @@ import { HemiEarn } from './_components/hemiEarn'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
 import { HemiStake } from './_components/hemiStake'
 import { HemiStatusLink } from './_components/hemiStatusLink'
-import { HomeLink } from './_components/homeLink'
 import { NetworkSwitch } from './_components/networkSwitch'
 import { SocialLinks } from './_components/socialLinks'
 import { TunnelLink } from './_components/tunnelLink'
@@ -42,7 +42,7 @@ export const NavbarDesktop = () => (
   <div className="relative flex h-full w-54 flex-col justify-between overflow-x-hidden bg-white pt-3">
     <div className="mb-6 flex items-center justify-between px-3">
       <div className="ml-2 flex items-center justify-start gap-x-2">
-        <HomeLink />
+        <HomeLink variant="full" />
         <Badge />
       </div>
       <Help />

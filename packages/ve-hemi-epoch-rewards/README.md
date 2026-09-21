@@ -11,8 +11,6 @@ Rewards are funded per epoch (about six days) and per reward token, and every ve
 | Hemi Sepolia | `0x3858B1F737cc1cA34c97Db5a7cEe1F2B1bE012C8` | `0x5C77b15F0E60D437B1137Ce646D0419Be1315442` |
 | Hemi         | `0xC7818357DF04B8FDed091b40AE8D4a0F19295Aa8` | `0xcf8bce2c4e666df2e527a31ba53c1dde0ec58ad6` |
 
-The Hemi mainnet entries are the zero address until the contracts are deployed there, so every call on mainnet targets the zero address. Only use this package on Hemi Sepolia until those entries hold real addresses.
-
 The address getters throw on any other chain. Every action reads the chain from its client, so the client must have `chain` set.
 
 ## Exports

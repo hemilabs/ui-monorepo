@@ -1,17 +1,15 @@
 // Load polyfill for Intl.DurationFormat - Note this will load even when not needed.
 import '@formatjs/intl-durationformat/polyfill'
-import { useLocale } from 'use-intl'
-
-type DurationTimeProps = {
-  seconds: number
-}
 
 // While this function could be on its own file, and not be a component,
 // I prefer to keep it here encapsulated because it uses Intl.DurationFormat,
 // which needs to be polyfilled.
 // Having the function separated could cause scenarios where it is called
 // without the polyfill when needed.
-const formatDuration = function (durationSeconds: number, locale: string) {
+export const formatDuration = function (
+  durationSeconds: number,
+  locale: string,
+) {
   // Thresholds in descending order - we want the biggest unit available
   const thresholds = [
     { seconds: 28944000, unit: 'years' as const }, // 11 months, assuming 365 days - 30 days
@@ -41,12 +39,4 @@ const formatDuration = function (durationSeconds: number, locale: string) {
   return new Intl.DurationFormat(locale, {
     style: 'long',
   }).format({ seconds: 0 })
-}
-
-export const DurationTime = function ({ seconds }: DurationTimeProps) {
-  const locale = useLocale()
-
-  const formattedDuration = formatDuration(seconds, locale)
-
-  return formattedDuration
 }

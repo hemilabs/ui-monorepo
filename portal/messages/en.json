@@ -587,6 +587,7 @@
       "get-started-burned": "Your burned positions will show up here once their lockup periods have ended.",
       "locked-amount": "Locked Amount",
       "lockup": "Lockup",
+      "lockup-tooltip": "{duration} lock, unlocks on {date}",
       "no-hemi-burned": "No burned positions yet",
       "no-hemi-staked": "No ${symbol} staked",
       "on": "On {date}",

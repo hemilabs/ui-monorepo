@@ -79,7 +79,7 @@ Then typecheck and test each changed workspace:
 
   ```bash
   pnpm --fail-if-no-match --filter <name> run build
-  pnpm --filter <name> run --if-present test
+  pnpm --fail-if-no-match --filter <name> run --if-present test
   ```
 
 - **`subgraphs/utils`** — not a workspace. Build and test the subgraphs that

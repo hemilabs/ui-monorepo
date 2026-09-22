@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "pnpm typecheck",
+    "build": "pnpm run typecheck",
     "typecheck": "tsc"
   },
   "dependencies": {

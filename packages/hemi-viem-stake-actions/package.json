@@ -16,7 +16,7 @@
     "name": "Artur Dolzan Neto"
   },
   "scripts": {
-    "build": "pnpm typecheck",
+    "build": "pnpm run typecheck",
     "typecheck": "tsc"
   },
   "dependencies": {

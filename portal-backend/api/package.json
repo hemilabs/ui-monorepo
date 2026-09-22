@@ -2,7 +2,7 @@
   "name": "portal-backend",
   "version": "2.9.1",
   "scripts": {
-    "build": "pnpm typecheck",
+    "build": "pnpm run typecheck",
     "start": "node --import=./src/instrument.ts server.ts",
     "test": "vitest run",
     "typecheck": "tsc"

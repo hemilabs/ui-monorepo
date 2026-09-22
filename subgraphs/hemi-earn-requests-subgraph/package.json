@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "prebuild": "pnpm run codegen",
-    "build": "pnpm typecheck",
+    "build": "pnpm run typecheck",
     "codegen": "envio codegen",
     "dev": "envio dev",
     "prepare": "pnpm run codegen",

@@ -16,7 +16,7 @@
     "name": "Gonzalo D'Elia"
   },
   "scripts": {
-    "build": "pnpm typecheck",
+    "build": "pnpm run typecheck",
     "test": "vitest run",
     "typecheck": "tsc"
   },

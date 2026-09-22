@@ -2,6 +2,7 @@
   "name": "hemi-tunnel-deposits-subgraph",
   "version": "1.0.0",
   "scripts": {
+    "prebuild": "pnpm run codegen",
     "build": "graph build",
     "build:mainnet": "pnpm run build -- --network mainnet",
     "build:sepolia": "pnpm run build -- --network sepolia",

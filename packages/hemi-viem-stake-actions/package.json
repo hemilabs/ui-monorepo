@@ -16,7 +16,8 @@
     "name": "Artur Dolzan Neto"
   },
   "scripts": {
-    "tsc:check": "tsc"
+    "build": "pnpm typecheck",
+    "typecheck": "tsc"
   },
   "dependencies": {
     "hemi-viem": "2.9.0"

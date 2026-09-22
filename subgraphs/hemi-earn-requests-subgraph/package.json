@@ -2,6 +2,7 @@
   "name": "hemi-earn-requests-subgraph",
   "version": "1.0.0",
   "scripts": {
+    "prebuild": "pnpm run codegen",
     "build": "tsc --noEmit",
     "codegen": "envio codegen",
     "dev": "envio dev",

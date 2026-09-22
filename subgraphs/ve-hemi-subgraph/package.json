@@ -2,6 +2,7 @@
   "name": "ve-hemi-subgraph",
   "version": "1.3.0",
   "scripts": {
+    "prebuild": "pnpm run codegen",
     "build": "graph build",
     "build:hemi": "pnpm run build -- --network hemi",
     "build:hemi-sepolia": "pnpm run build -- --network hemi-sepolia",

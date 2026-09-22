@@ -19,7 +19,7 @@ type RewardAmountProps = {
   token: EvmToken | undefined
 }
 
-const RewardAmount = ({ reward, token }: RewardAmountProps) => (
+export const RewardAmount = ({ reward, token }: RewardAmountProps) => (
   <div className="flex items-center gap-x-1 text-sm font-medium text-white">
     {token ? <TokenLogo size="xSmall" token={token} /> : null}
     <span>{`${formatNumber(formatUnits(reward.amount, reward.decimals))} ${

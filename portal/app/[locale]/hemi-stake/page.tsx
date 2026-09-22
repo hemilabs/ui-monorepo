@@ -12,6 +12,7 @@ import {
   StakeTableFilter,
   type StakeTableFilterOptions,
 } from './_components/stakeTable/stakeTableFilter'
+import { WalletStatsSection } from './_components/walletStatsSection'
 import { StakingDashboardProvider } from './_context/stakingDashboardContext'
 import { useStakingPositions } from './_hooks/useStakingPositions'
 
@@ -39,6 +40,7 @@ export const HemiStakePage = function () {
 
   return (
     <StakingDashboardProvider>
+      {isConnected ? <WalletStatsSection /> : null}
       <div
         className={`mt-6 flex gap-6 lg:flex-row ${
           isConnected ? 'flex-col-reverse' : 'flex-col'

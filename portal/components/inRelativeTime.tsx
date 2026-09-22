@@ -1,32 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocale } from 'use-intl'
 import { formatFutureTime, formatPastTime } from 'utils/format'
-
-const second = 1
-const minute = second * 60
-const hour = minute * 60
-
-const toMs = (seconds: number) => seconds * 1000
-const toSeconds = (minutes: number) => minutes * 60
-const toMinutes = (hours: number) => hours * 60
-
-const getTimeoutInterval = function (targetTimestamp: number, now: number) {
-  const difference = Math.abs(now - targetTimestamp)
-  // render every second if less than 60 seconds
-  if (difference <= toMs(second * 60)) {
-    return toMs(second)
-  }
-  // render every 30 seconds if less than 10 minutes
-  if (difference <= toMs(toSeconds(10))) {
-    return toMs(30 * second)
-  }
-  // render every minute if less than one hour
-  if (difference <= toMs(toSeconds(toMinutes(hour)))) {
-    return toMs(toSeconds(minute))
-  }
-  // render once an hour for the rest
-  return toMs(toSeconds(toMinutes(hour)))
-}
+import { getTimeoutInterval } from 'utils/relativeTimeRefresh'
 
 const useRerender = function (targetTimestamp: number) {
   const [now, setNow] = useState(new Date().getTime())
@@ -34,7 +9,7 @@ const useRerender = function (targetTimestamp: number) {
     function forceDateUpdate() {
       const timeoutId = setTimeout(
         () => setNow(new Date().getTime()),
-        getTimeoutInterval(targetTimestamp, now),
+        getTimeoutInterval(targetTimestamp, new Date().getTime()),
       )
       return () => clearTimeout(timeoutId)
     },

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { StakingPositionStatus } from 'types/stakingDashboard'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
@@ -26,7 +27,12 @@ export const HemiStakePage = function () {
   }
 
   const filteredData = useMemo(
-    () => data?.filter(position => position.status === filter),
+    function () {
+      const positions = data?.filter(position => position.status === filter)
+      return filter === StakingPositionStatus.WITHDRAWN
+        ? positions?.reverse()
+        : positions
+    },
     [data, filter],
   )
 

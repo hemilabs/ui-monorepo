@@ -197,7 +197,7 @@ $ curl http://localhost:3006/subgraphs/43111/claim/0x000000000000000000000000000
 
 ##### `GET /subgraphs/:chain-id/locks/:address`
 
-Returns the veHEMI locked positions owned (or previously owned) by the given address.
+Returns the veHEMI locked positions owned (or previously owned) by the given address, sorted by unlock time, soonest first.
 
 ```console
 $ curl http://localhost:3006/subgraphs/43111/locks/0x0000000000000000000000000000000000000001

@@ -671,8 +671,8 @@ export const getLockedPositions = function ({
               { pastOwners_contains: [$address] }
             ]
           }
-          orderBy: timestamp
-          orderDirection: desc
+          orderBy: unlockTime
+          orderDirection: asc
         ) {
           amount
           blockNumber

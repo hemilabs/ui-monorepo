@@ -1,17 +1,22 @@
-import { formatDuration } from 'components/durationTime'
 import { InRelativeTime } from 'components/inRelativeTime'
 import { Tooltip } from 'components/tooltip'
+import {
+  StakingPositionStatus,
+  type StakingPosition,
+} from 'types/stakingDashboard'
 import { useLocale, useTranslations } from 'use-intl'
+import { formatDuration } from 'utils/duration'
 import { formatDate } from 'utils/format'
 
 import { getUnlockInfo } from '../../_utils/lockCreationTimes'
 
 type Props = {
   lockTime: bigint
+  status: StakingPosition['status']
   timestamp: bigint
 }
 
-export const LockupTime = function ({ lockTime, timestamp }: Props) {
+export const LockupTime = function ({ lockTime, status, timestamp }: Props) {
   const locale = useLocale()
   const t = useTranslations('hemi-stake.table')
   const { unlockDate, unlockTime } = getUnlockInfo({ lockTime, timestamp })
@@ -28,9 +33,11 @@ export const LockupTime = function ({ lockTime, timestamp }: Props) {
         <span className="text-neutral-950">
           {formatDate(unlockDate, locale)}
         </span>
-        <span className="body-text-caption whitespace-nowrap text-neutral-500 first-letter:uppercase">
-          <InRelativeTime timestamp={unlockTime} />
-        </span>
+        {status === StakingPositionStatus.ACTIVE && (
+          <span className="body-text-caption whitespace-nowrap text-neutral-500 first-letter:uppercase">
+            <InRelativeTime timestamp={unlockTime} />
+          </span>
+        )}
       </div>
     </Tooltip>
   )

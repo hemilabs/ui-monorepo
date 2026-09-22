@@ -49,12 +49,16 @@ const stakingColumns = ({
   },
   {
     cell({ row }) {
-      const { lockTime, timestamp } = row.original
+      const { lockTime, status, timestamp } = row.original
       return (
         <ErrorBoundary
           fallback={<span className="text-sm text-neutral-950">-</span>}
         >
-          <LockupTime lockTime={lockTime} timestamp={timestamp} />
+          <LockupTime
+            lockTime={lockTime}
+            status={status}
+            timestamp={timestamp}
+          />
         </ErrorBoundary>
       )
     },

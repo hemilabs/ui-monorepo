@@ -19,7 +19,7 @@ git diff --name-only main...HEAD
 
 Group the files by workspace. Then pick the scope:
 
-- **Only docs (`*.md`)**: run prettier on them. Nothing else.
+- **Only docs (`*.md`)**: format and lint them (see §2). Nothing else.
 - **Root config, lockfile or a dependency bump in many workspaces** (for
   example `pnpm-workspace.yaml`, `pnpm-lock.yaml`, `patches/`, eslint,
   prettier or knip config): go to [§3](#3-big-change-run-the-ci-matrix).
@@ -27,12 +27,12 @@ Group the files by workspace. Then pick the scope:
 
 ## 2. Scoped checks
 
-Format the changed files, and lint the changed `.js`, `.ts` and `.tsx` files.
-This is what the pre-commit hook runs:
+Format the changed files, and lint the changed `.js`, `.md`, `.ts` and `.tsx`
+files. This is what the pre-commit hook runs:
 
 ```bash
 pnpm prettier --write <files>
-pnpm eslint --cache --max-warnings 0 <js/ts files>
+pnpm eslint --cache --max-warnings 0 <js/md/ts/tsx files>
 ```
 
 Do not lint `subgraphs/**/*.ts` (except `hemi-earn-requests-subgraph`).

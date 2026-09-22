@@ -3,14 +3,15 @@
   "version": "1.0.0",
   "scripts": {
     "prebuild": "pnpm run codegen",
-    "build": "tsc --noEmit",
+    "build": "pnpm typecheck",
     "codegen": "envio codegen",
     "dev": "envio dev",
     "prepare": "pnpm run codegen",
     "start": "envio start",
     "stop": "envio stop",
     "pretest": "pnpm run codegen",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "envio": "3.11.0",

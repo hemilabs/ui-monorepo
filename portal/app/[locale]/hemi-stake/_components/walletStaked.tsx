@@ -4,6 +4,7 @@ import { useHemiToken } from 'hooks/useHemiToken'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatCompactFiat, formatCompactFiatParts } from 'utils/format'
 import { formatUnits } from 'viem'
+import { useAccount } from 'wagmi'
 
 import { useStakingPositions } from '../_hooks/useStakingPositions'
 import { sumActiveStake } from '../_utils/walletStakedTotal'
@@ -15,9 +16,10 @@ export const WalletStaked = function () {
   const locale = useLocale()
   const t = useTranslations('hemi-stake.stats')
   const token = useHemiToken()
+  const { address } = useAccount()
   const { data, fetchStatus, status } = useStakingPositions()
 
-  const staked = sumActiveStake(data ?? [])
+  const staked = sumActiveStake(data ?? [], address)
   const isLoading = status === 'pending'
   const isError = status === 'error'
 

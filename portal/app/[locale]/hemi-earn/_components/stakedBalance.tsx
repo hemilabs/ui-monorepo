@@ -1,4 +1,5 @@
 import { TotalDepositsIcon } from 'components/icons/totalDepositsIcon'
+import { StatCard } from 'components/statCard'
 import { useTranslations } from 'use-intl'
 import { formatFiatNumber } from 'utils/format'
 import { walletIsConnected } from 'utils/wallet'
@@ -6,7 +7,6 @@ import { useAccount } from 'wagmi'
 
 import { useTotalDeposits } from '../_hooks/useTotalDeposits'
 
-import { EarnCard } from './earnCard'
 import { FromPoolsBadge } from './fromPoolsBadge'
 
 export const StakedBalance = function () {
@@ -14,12 +14,13 @@ export const StakedBalance = function () {
   const { status } = useAccount()
   const t = useTranslations('hemi-earn')
   const isDisconnected = !walletIsConnected(status)
+  const hasError = isError || isDisconnected
 
   return (
-    <EarnCard
-      badge={<FromPoolsBadge />}
+    <StatCard
+      badge={hasError || isPending ? undefined : <FromPoolsBadge />}
       icon={<TotalDepositsIcon />}
-      isError={isError || isDisconnected}
+      isError={hasError}
       isLoading={isPending}
       label={t('info.staked-balance')}
       value={<>${formatFiatNumber(data?.totalUsd ?? 0)}</>}

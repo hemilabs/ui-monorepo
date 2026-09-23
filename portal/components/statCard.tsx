@@ -28,7 +28,7 @@ export const StatCard = ({
         {icon}
       </div>
       <div className="flex flex-wrap items-end justify-between gap-2">
-        <p className="text-2xl font-semibold text-neutral-950">
+        <p className="text-2xl font-semibold leading-none text-neutral-950">
           {!isLoading && !isError ? (
             value
           ) : isError ? (

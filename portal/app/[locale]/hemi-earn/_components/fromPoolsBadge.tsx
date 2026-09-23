@@ -1,4 +1,5 @@
 import { useQueries } from '@tanstack/react-query'
+import { Badge } from 'components/badge'
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
 import { type EvmToken } from 'types/token'
@@ -85,9 +86,9 @@ export const FromPoolsBadge = function () {
       }
       variant="simple"
     >
-      <span className="flex h-4 w-fit items-center justify-center rounded-md border border-solid border-neutral-200 bg-neutral-100 px-1.5 text-xxs font-medium text-neutral-600">
+      <Badge size="small" variant="secondary">
         {t('from-pools', { count })}
-      </span>
+      </Badge>
     </Tooltip>
   )
 }

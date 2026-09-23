@@ -1,5 +1,7 @@
+import { Badge } from 'components/badge'
 import { RenderFiatBalance } from 'components/fiatBalance'
 import { ArrowGrowingIcon } from 'components/icons/arrowGrowingIcon'
+import { StatBadgeSkeleton } from 'components/statBadgeSkeleton'
 import { StatCard } from 'components/statCard'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useLocale, useTranslations } from 'use-intl'
@@ -9,8 +11,6 @@ import { formatUnits } from 'viem'
 
 import { type StakeStats } from '../_fetchers/fetchStakeStats'
 import { useStakeStats } from '../_hooks/useStakeStats'
-
-import { StatBadge, StatBadgeSkeleton } from './statBadge'
 
 const selectTotalStaked = (stats: StakeStats) => stats.totalStaked
 
@@ -39,7 +39,7 @@ export const TotalStaked = function () {
         isPending && !isUnavailable ? (
           <StatBadgeSkeleton size="xSmall" />
         ) : isUnavailable && data === undefined ? undefined : (
-          <StatBadge>
+          <Badge size="small" variant="secondary">
             <RenderFiatBalance
               balance={staked}
               customFormatter={formatBadge}
@@ -47,7 +47,7 @@ export const TotalStaked = function () {
               queryStatus={status}
               token={token}
             />
-          </StatBadge>
+          </Badge>
         )
       }
       icon={<ArrowGrowingIcon />}

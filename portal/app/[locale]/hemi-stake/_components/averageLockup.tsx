@@ -1,4 +1,6 @@
+import { Badge } from 'components/badge'
 import { CompositionIcon } from 'components/icons/compositionIcon'
+import { StatBadgeSkeleton } from 'components/statBadgeSkeleton'
 import { StatCard } from 'components/statCard'
 import { useLocale, useTranslations } from 'use-intl'
 import { isDataUnavailable } from 'utils/queryStatus'
@@ -6,8 +8,6 @@ import { isDataUnavailable } from 'utils/queryStatus'
 import { type StakeStats } from '../_fetchers/fetchStakeStats'
 import { useStakeStats } from '../_hooks/useStakeStats'
 import { formatAverageLockDuration } from '../_utils/averageLockDuration'
-
-import { StatBadge, StatBadgeSkeleton } from './statBadge'
 
 const selectLockup = (stats: StakeStats) => ({
   averageLock: stats.averageLock,
@@ -29,9 +29,9 @@ export const AverageLockup = function () {
         isPending && !isUnavailable ? (
           <StatBadgeSkeleton size="medium" />
         ) : data?.locksCount === undefined ? undefined : (
-          <StatBadge>
+          <Badge size="small" variant="secondary">
             {t('average-lockup-badge', { count: data.locksCount })}
-          </StatBadge>
+          </Badge>
         )
       }
       icon={<CompositionIcon />}

@@ -1,5 +1,7 @@
+import { Badge } from 'components/badge'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { SparkleIcon } from 'components/icons/sparkleIcon'
+import { StatBadgeSkeleton } from 'components/statBadgeSkeleton'
 import { StatCard } from 'components/statCard'
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
@@ -17,7 +19,6 @@ import { useStakingPositions } from '../_hooks/useStakingPositions'
 import { findRewardToken } from '../_utils/rewardToken'
 
 import { RewardAmount } from './rewardsDisplay'
-import { StatBadge, StatBadgeSkeleton } from './statBadge'
 
 const ClaimableFiat = function ({
   prices,
@@ -100,11 +101,11 @@ export const WalletClaimable = function () {
         }
         variant="rich"
       >
-        <StatBadge>
+        <Badge size="small" variant="secondary">
           <span className="flex -space-x-1">
             {withBalance.map(token => (
               <span
-                className="flex rounded-full ring-2 ring-neutral-100"
+                className="flex rounded-full ring-2 ring-neutral-50"
                 key={token.address}
               >
                 <TokenLogo size="xSmall" token={token} />
@@ -112,7 +113,7 @@ export const WalletClaimable = function () {
             ))}
           </span>
           {t('claimable-tokens', { count: withBalance.length })}
-        </StatBadge>
+        </Badge>
       </Tooltip>
     )
   }

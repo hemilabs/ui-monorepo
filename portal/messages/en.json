@@ -26,9 +26,14 @@
     "deposit": "Deposit",
     "depositing": "Depositing...",
     "enter-an-amount": "Enter an amount",
-    "erc20-approve-10x-deposits": "Approve 10x the amount of this deposit",
-    "erc20-approve-10x-detailed-description": "By activating 10x approval we automatically add 10x the amount of this transaction as allowance for future ones, saving you money on gas fees and time.",
-    "erc20-extra-approval": "Approve 10x deposits",
+    "extra-approval": {
+      "description": "By activating 10x approval we automatically add 10x the amount of this transaction as allowance for future ones, saving you money on gas fees and time.",
+      "label-deposit": "Approve 10x deposit",
+      "label-withdraw": "Approve 10x withdrawal",
+      "more-info": "More information about the 10x approval",
+      "title-deposit": "Approve 10x the amount of this deposit",
+      "title-withdraw": "Approve 10x the amount of this withdrawal"
+    },
     "failed": "Failed",
     "hours": "{hours} hours",
     "insufficient-balance": "Insufficient {symbol}",
@@ -299,8 +304,6 @@
       "settings": {
         "accept-risk": "I understand and accept the risk",
         "advanced-settings": "Advanced settings",
-        "approve-extra-deposit": "Approve {multiplier}x deposit",
-        "approve-extra-withdrawal": "Approve {multiplier}x withdrawal",
         "auto": "Auto",
         "continue-anyway": "Continue anyway",
         "high-slippage": "High slippage",
@@ -566,8 +569,11 @@
     "stats": {
       "average-lockup": "Average lockup",
       "average-lockup-badge": "Across {count, plural, one {# lockup} other {# lockups}}",
+      "claimable-tokens": "{count, plural, one {# token} other {# tokens}}",
       "total-staked": "Total staked",
-      "wallets-staking": "Wallets staking"
+      "wallets-staking": "Wallets staking",
+      "your-claimable": "Available to claim",
+      "your-staked": "Your stake"
     },
     "subheading": "Lock ${symbol} from {minDays, plural, one {# day} other {# days}} to {maxYears, plural, one {# year} other {# years}}. Earn every payout in {symbol}, hemiBTC and USDC, and get a vote.",
     "switch-to-start-staking": "You can switch networks to start staking your HEMI.",
@@ -584,6 +590,7 @@
       "get-started-burned": "Your burned positions will show up here once their lockup periods have ended.",
       "locked-amount": "Locked Amount",
       "lockup": "Lockup",
+      "lockup-tooltip": "Locked for {duration}, unlocks on {date}",
       "no-hemi-burned": "No burned positions yet",
       "no-hemi-staked": "No ${symbol} staked",
       "on": "On {date}",

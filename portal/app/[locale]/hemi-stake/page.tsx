@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { StakingPositionStatus } from 'types/stakingDashboard'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
@@ -11,7 +12,7 @@ import {
   StakeTableFilter,
   type StakeTableFilterOptions,
 } from './_components/stakeTable/stakeTableFilter'
-import { StatsSection } from './_components/statsSection'
+import { WalletStatsSection } from './_components/walletStatsSection'
 import { StakingDashboardProvider } from './_context/stakingDashboardContext'
 import { useStakingPositions } from './_hooks/useStakingPositions'
 
@@ -26,7 +27,12 @@ export const HemiStakePage = function () {
   }
 
   const filteredData = useMemo(
-    () => data?.filter(position => position.status === filter),
+    function () {
+      const positions = data?.filter(position => position.status === filter)
+      return filter === StakingPositionStatus.WITHDRAWN
+        ? positions?.reverse()
+        : positions
+    },
     [data, filter],
   )
 
@@ -34,7 +40,7 @@ export const HemiStakePage = function () {
 
   return (
     <StakingDashboardProvider>
-      <StatsSection />
+      {isConnected ? <WalletStatsSection /> : null}
       <div
         className={`mt-6 flex gap-6 lg:flex-row ${
           isConnected ? 'flex-col-reverse' : 'flex-col'

@@ -2,7 +2,7 @@
   "name": "portal",
   "version": "1.0.0",
   "scripts": {
-    "build": "pnpm types:check && pnpm typecheck && vite build",
+    "build": "pnpm run types:check && pnpm run typecheck && vite build",
     "deploy": "pnpm run build",
     "dev": "vite",
     "dev:wifi": "vite --host",

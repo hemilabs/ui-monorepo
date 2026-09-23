@@ -19,7 +19,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "test": "vitest run",
-    "tsc:check": "tsc"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "to-promise-event": "1.0.0"

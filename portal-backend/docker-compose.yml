@@ -30,6 +30,7 @@ services:
       - cache
     environment:
       BTC_VAULTS_CACHE_MIN: ${BTC_VAULTS_CACHE_MIN}
+      COIN_MARKET_CAP_IDS: ${COIN_MARKET_CAP_IDS}
       NODE_ENV: ${NODE_ENV:-production}
       ORIGINS: ${ORIGINS}
       PORT: ${PORT}

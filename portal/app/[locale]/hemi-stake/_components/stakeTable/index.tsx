@@ -49,18 +49,22 @@ const stakingColumns = ({
   },
   {
     cell({ row }) {
-      const { lockTime } = row.original
+      const { lockTime, status, timestamp } = row.original
       return (
         <ErrorBoundary
           fallback={<span className="text-sm text-neutral-950">-</span>}
         >
-          <LockupTime lockupTime={lockTime} />
+          <LockupTime
+            lockTime={lockTime}
+            status={status}
+            timestamp={timestamp}
+          />
         </ErrorBoundary>
       )
     },
     header: () => <Header text={t('table.lockup')} />,
     id: 'lockup',
-    meta: { width: 80 },
+    meta: { width: 125 },
   },
   {
     cell({ row }) {

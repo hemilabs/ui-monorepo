@@ -9,12 +9,16 @@ import { createDune, type DuneOptions } from './src/dune.ts'
 import { BadRequestError } from './src/errors.ts'
 import { globToRegExp } from './src/glob-to-regexp.ts'
 import { createNetStats, type NetStatsOptions } from './src/net-stats.ts'
+import { isPeriod } from './src/periods.ts'
+import {
+  createCheckPriceSymbol,
+  createPriceHistory,
+} from './src/price-history.ts'
 import { createRedisCache, type RedisOptions } from './src/redis.ts'
 import { UpstreamGraphQLError } from './src/subgraphs/errors.ts'
 import { createSubgraphsRouter } from './src/subgraphs/router.ts'
 import {
   createSupplyIndexer,
-  isSupplyPeriod,
   type SupplyIndexerOptions,
 } from './src/supply-indexer.ts'
 import { toJsonMiddleware, toTextMiddleware } from './src/to-middleware.ts'
@@ -27,6 +31,12 @@ const { getNetStats } = createNetStats(config.get<NetStatsOptions>('rpcUrl'))
 const cache = createRedisCache(config.get<RedisOptions>('redis'))
 
 const { getVeHemiRewards } = createVeHemi({ cache })
+
+const { getPriceHistory } = createPriceHistory({ cache })
+
+const checkPriceSymbol = createCheckPriceSymbol(
+  config.get<string>('coinMarketCapIds'),
+)
 
 const { getCirculatingSupply, getSupplyHistory } = createSupplyIndexer({
   ...config.get<Pick<SupplyIndexerOptions, 'correction' | 'merkleLocked'>>(
@@ -88,9 +98,9 @@ app.get(
   }),
 )
 
-const checkSupplyPeriod: RequestHandler = function (req, res, next) {
+const checkPeriod: RequestHandler = function (req, res, next) {
   const { period } = req.params
-  if (typeof period !== 'string' || !isSupplyPeriod(period)) {
+  if (typeof period !== 'string' || !isPeriod(period)) {
     res.status(400).send({ error: 'Bad Request' })
     return
   }
@@ -98,8 +108,18 @@ const checkSupplyPeriod: RequestHandler = function (req, res, next) {
 }
 
 app.get(
+  '/price-history/:symbol/:period',
+  checkPriceSymbol,
+  checkPeriod,
+  toJsonMiddleware(getPriceHistory, {
+    resolver: (symbol, period) => `${symbol}:${period}`,
+    revalidate: 5 * 60 * 1000,
+  }),
+)
+
+app.get(
   '/supply-history/:period',
-  checkSupplyPeriod,
+  checkPeriod,
   toJsonMiddleware(getSupplyHistory, {
     revalidate: 60 * 60 * 1000,
   }),

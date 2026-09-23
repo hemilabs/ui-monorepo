@@ -5,6 +5,7 @@
       "__name": "BTC_VAULTS_CACHE_MIN"
     }
   },
+  "coinMarketCapIds": "COIN_MARKET_CAP_IDS",
   "origins": "ORIGINS",
   "port": {
     "__format": "json",

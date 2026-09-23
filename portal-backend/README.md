@@ -82,6 +82,17 @@ $ curl http://localhost:3006/prices
 {"prices":{"BTC":"94514.79193898945","M-BTC":"95894.52612269788","PUMPBTC":"95990.74415080296","WBTC":"95797.80677773379"},"time":"2025-02-17T23:12:35.803Z"}
 ```
 
+#### `GET /price-history/:symbol/:period`
+
+Returns the daily USD price of the given token for the last `1w`, `1m`, `3m`, `6m` or `1y`, ending yesterday. A symbol that is not in `COIN_MARKET_CAP_IDS`, or any other period, returns `400 Bad Request`.
+
+```console
+$ curl http://localhost:3006/price-history/HEMI/1w
+[{"date":"2026-09-04","priceUsd":"0.00683108945841876"},{"date":"2026-09-05","priceUsd":"0.00691240312857104"}]
+```
+
+The prices come from the daily price history that the [token price cron](#token-price-cron) keeps. Set `COIN_MARKET_CAP_IDS` to the same value in the API and in the cron. A day with no quote is not in the list.
+
 #### `GET /supply-history/:period`
 
 Returns the daily HEMI supply of the last `1w`, `1m`, `3m`, `6m` or `1y`, ending yesterday. Any other period returns `400 Bad Request`.
@@ -186,7 +197,7 @@ $ curl http://localhost:3006/subgraphs/43111/claim/0x000000000000000000000000000
 
 ##### `GET /subgraphs/:chain-id/locks/:address`
 
-Returns the veHEMI locked positions owned (or previously owned) by the given address.
+Returns the veHEMI locked positions owned (or previously owned) by the given address, sorted by unlock time, soonest first.
 
 ```console
 $ curl http://localhost:3006/subgraphs/43111/locks/0x0000000000000000000000000000000000000001
@@ -223,6 +234,7 @@ These environment variables control how the cache works:
 | Variable                 | Description                                                       | Default                            |
 | ------------------------ | ----------------------------------------------------------------- | ---------------------------------- |
 | BTC_VAULTS_CACHE_MIN     | The time to cache the BTC vaults data in minutes.                 | 1                                  |
+| COIN_MARKET_CAP_IDS      | Comma separated `SYMBOL:id` pairs with a daily price history.     | HEMI:38159                         |
 | ORIGINS                  | Comma-separated list of allowed origins. Globs are supported (1). | `http://localhost:3000`            |
 | PORT                     | The HTTP port the server listens for requests.                    | 3006                               |
 | REDIS_URL                | The URL of the Redis database.                                    | `redis://localhost:6379`           |
@@ -268,7 +280,7 @@ In addition, a `supply:time` key is also stored every time the cache is refreshe
 
 ## Token price cron
 
-Periodically retrieves token prices from [CoinMarketCap](https://coinmarketcap.com/) and updates the key/value store (Redis). It also keeps the daily price history of the tokens in `COIN_MARKET_CAP_IDS`, which [`GET /supply-history/:period`](#get-supply-historyperiod) serves for HEMI.
+Periodically retrieves token prices from [CoinMarketCap](https://coinmarketcap.com/) and updates the key/value store (Redis). It also keeps the daily price history of the tokens in `COIN_MARKET_CAP_IDS`, which [`GET /price-history/:symbol/:period`](#get-price-historysymbolperiod) serves, and [`GET /supply-history/:period`](#get-supply-historyperiod) serves for HEMI.
 
 ### Configuration
 

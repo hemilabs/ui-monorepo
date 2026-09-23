@@ -1,4 +1,3 @@
-import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { bitcoinMainnet, bitcoinTestnet } from 'btc-wallet/chains'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { useSwitchChain as useSwitchBtcChain } from 'btc-wallet/hooks/useSwitchChain'
@@ -6,12 +5,8 @@ import { type Account } from 'btc-wallet/unisat'
 import { BtcWalletLogo } from 'components/connectWallets/btcWalletLogo'
 import { EvmWalletLogo } from 'components/connectWallets/evmWalletLogo'
 import { ProfileIcon } from 'components/connectWallets/icons/profile'
-import { Chevron } from 'components/icons/chevron'
 import { Tooltip } from 'components/tooltip'
-import {
-  useConnectedToUnsupportedBtcChain,
-  useConnectedToUnsupportedEvmChain,
-} from 'hooks/useConnectedToUnsupportedChain'
+import { useConnectedToUnsupportedBtcChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import { ReactNode, useState } from 'react'
@@ -22,56 +17,31 @@ import { useAccount } from 'wagmi'
 
 import { BtcLogo } from '../icons/btcLogo'
 
-import { EvmChainsMenu } from './evmChainsMenu'
-import { EvmLogo } from './evmLogo'
-import { WrongEvmNetwork, WrongNetwork } from './wrongNetwork'
+import { WrongNetwork } from './wrongNetwork'
 
 const ConnectedChain = function ({
-  closeMenu,
   icon,
-  menu,
-  menuOpen = false,
   name,
-  openMenu,
 }: {
-  closeMenu?: VoidFunction
   icon: ReactNode
-  menu?: ReactNode
-  menuOpen?: boolean
   name: string
-  openMenu?: VoidFunction
 }) {
-  const ref = useOnClickOutside<HTMLDivElement>(closeMenu)
   const [networkType] = useNetworkType()
   const isMainnet = networkType === 'mainnet'
-
-  const chevronCss =
-    '[&>path]:fill-neutral-500 [&>path]:group-hover/connected-account:fill-neutral-950 [&>path]:transition-colors [&>path]:duration-200'
 
   return (
     <div className="flex items-center gap-3 px-2">
       <div
         className={`${
           isMainnet ? 'w-32' : 'w-37'
-        } relative flex h-7 items-center gap-x-2 rounded-md px-2 py-1.5 shadow-sm transition-colors duration-200 hover:bg-neutral-50 ${
-          openMenu ? 'group/connected-account cursor-pointer' : ''
-        }`}
-        onClick={openMenu}
-        ref={ref}
+        } relative flex h-7 items-center gap-x-2 rounded-md px-2 py-1.5 shadow-sm transition-colors duration-200 hover:bg-neutral-50`}
       >
         <div className="flex w-full cursor-pointer items-center justify-between gap-x-2 rounded-md">
           <div className="flex items-center gap-x-1">
             {icon}
             <span className="text-sm font-medium text-neutral-950">{name}</span>
           </div>
-          {menu !== undefined &&
-            (menuOpen ? (
-              <Chevron.Up className={chevronCss} />
-            ) : (
-              <Chevron.Bottom className={chevronCss} />
-            ))}
         </div>
-        {menuOpen && menu}
       </div>
     </div>
   )
@@ -135,32 +105,6 @@ const ConnectedWallet = function ({
         </Tooltip>
       </div>
     </div>
-  )
-}
-
-export const ConnectedEvmChain = function () {
-  const { chain, isConnected } = useAccount()
-  const isChainUnsupported = useConnectedToUnsupportedEvmChain()
-  const [menuOpen, setMenuOpen] = useState(false)
-
-  if (!isConnected) {
-    return null
-  }
-
-  const closeMenu = () => setMenuOpen(false)
-
-  if (isChainUnsupported || !chain) {
-    return <WrongEvmNetwork />
-  }
-  return (
-    <ConnectedChain
-      closeMenu={closeMenu}
-      icon={<EvmLogo chainId={chain.id} />}
-      menu={<EvmChainsMenu onSwitchChain={closeMenu} />}
-      menuOpen={menuOpen}
-      name={chain.name}
-      openMenu={() => setMenuOpen(prev => !prev)}
-    />
   )
 }
 

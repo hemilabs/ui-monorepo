@@ -26,9 +26,14 @@
     "deposit": "Depositar",
     "depositing": "Depositando...",
     "enter-an-amount": "Ingrese un monto",
-    "erc20-approve-10x-deposits": "Aprobar 10x el monto de este depósito",
-    "erc20-approve-10x-detailed-description": "Al activar la aprobación 10x, automáticamente agregamos 10 veces el monto de esta transacción como monto autorizado para otras futuras, lo que le permite ahorrar dinero en tarifas de gas y tiempo.",
-    "erc20-extra-approval": "Aprobar 10x este depósito",
+    "extra-approval": {
+      "description": "Al activar la aprobación 10x, automáticamente agregamos 10 veces el monto de esta transacción como monto autorizado para otras futuras, lo que le permite ahorrar dinero en tarifas de gas y tiempo.",
+      "label-deposit": "Aprobar 10x el depósito",
+      "label-withdraw": "Aprobar 10x el retiro",
+      "more-info": "Más información sobre la aprobación 10x",
+      "title-deposit": "Aprobar 10x el monto de este depósito",
+      "title-withdraw": "Aprobar 10x el monto de este retiro"
+    },
     "failed": "Falló",
     "hours": "{hours} horas",
     "insufficient-balance": "{symbol} insuficiente",
@@ -299,8 +304,6 @@
       "settings": {
         "accept-risk": "Entiendo y acepto el riesgo",
         "advanced-settings": "Configuración avanzada",
-        "approve-extra-deposit": "Aprobar {multiplier}x el depósito",
-        "approve-extra-withdrawal": "Aprobar {multiplier}x el retiro",
         "auto": "Auto",
         "continue-anyway": "Continuar de todos modos",
         "high-slippage": "Slippage alto",
@@ -566,8 +569,11 @@
     "stats": {
       "average-lockup": "Bloqueo promedio",
       "average-lockup-badge": "En {count, plural, one {# bloqueo} other {# bloqueos}}",
+      "claimable-tokens": "{count, plural, one {# token} other {# tokens}}",
       "total-staked": "Total en stake",
-      "wallets-staking": "Billeteras en stake"
+      "wallets-staking": "Billeteras en stake",
+      "your-claimable": "Disponible para reclamar",
+      "your-staked": "Su stake"
     },
     "subheading": "Bloquee ${symbol} desde {minDays, plural, one {# día} other {# días}} hasta {maxYears, plural, one {# año} other {# años}}. Reciba cada pago en {symbol}, hemiBTC y USDC, y obtenga poder de voto.",
     "switch-to-start-staking": "Puede cambiar de red para comenzar a hacer staking de su HEMI.",
@@ -584,6 +590,7 @@
       "get-started-burned": "Sus posiciones quemadas aparecerán aquí una vez que hayan finalizado sus períodos de bloqueo.",
       "locked-amount": "Cantidad bloqueada",
       "lockup": "Bloqueo",
+      "lockup-tooltip": "Bloqueo de {duration}, se desbloquea el {date}",
       "no-hemi-burned": "Aún no hay posiciones quemadas.",
       "no-hemi-staked": "No hay ${symbol} en stake",
       "on": "En {date}",

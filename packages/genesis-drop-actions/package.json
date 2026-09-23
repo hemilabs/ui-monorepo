@@ -16,8 +16,9 @@
     "name": "Gonzalo D'Elia"
   },
   "scripts": {
+    "build": "pnpm run typecheck",
     "test": "vitest run",
-    "tsc:check": "tsc"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "hemi-viem": "2.9.0",

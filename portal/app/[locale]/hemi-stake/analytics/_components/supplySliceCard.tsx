@@ -1,8 +1,8 @@
+import { StatCard } from 'components/statCard'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatPercentage } from 'utils/format'
 import { isDataUnavailable } from 'utils/queryStatus'
 
-import { StakeStatCard } from '../../_components/stakeStatCard'
 import { StatBadge, StatBadgeSkeleton } from '../../_components/statBadge'
 import { useSupplySlice } from '../_hooks/useSupplyStat'
 import { formatSupplyValue } from '../_utils/formatSupplyValue'
@@ -40,7 +40,7 @@ export const SupplySliceCard = function ({
   const isUnavailable = isDataUnavailable({ fetchStatus, status })
 
   return (
-    <StakeStatCard
+    <StatCard
       badge={
         isPending && !isUnavailable ? (
           <StatBadgeSkeleton size="large" />

@@ -1,4 +1,5 @@
 import { CompositionIcon } from 'components/icons/compositionIcon'
+import { StatCard } from 'components/statCard'
 import { useLocale, useTranslations } from 'use-intl'
 import { isDataUnavailable } from 'utils/queryStatus'
 
@@ -6,7 +7,6 @@ import { type StakeStats } from '../_fetchers/fetchStakeStats'
 import { useStakeStats } from '../_hooks/useStakeStats'
 import { formatAverageLockDuration } from '../_utils/averageLockDuration'
 
-import { StakeStatCard } from './stakeStatCard'
 import { StatBadge, StatBadgeSkeleton } from './statBadge'
 
 const selectLockup = (stats: StakeStats) => ({
@@ -24,7 +24,7 @@ export const AverageLockup = function () {
     (data !== undefined && data.averageLock === undefined)
 
   return (
-    <StakeStatCard
+    <StatCard
       badge={
         isPending && !isUnavailable ? (
           <StatBadgeSkeleton size="medium" />

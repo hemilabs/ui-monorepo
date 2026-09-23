@@ -1,5 +1,6 @@
 import { RenderFiatBalance } from 'components/fiatBalance'
 import { ArrowGrowingIcon } from 'components/icons/arrowGrowingIcon'
+import { StatCard } from 'components/statCard'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatCompactFiat, formatCompactFiatParts } from 'utils/format'
@@ -9,7 +10,6 @@ import { formatUnits } from 'viem'
 import { type StakeStats } from '../_fetchers/fetchStakeStats'
 import { useStakeStats } from '../_hooks/useStakeStats'
 
-import { StakeStatCard } from './stakeStatCard'
 import { StatBadge, StatBadgeSkeleton } from './statBadge'
 
 const selectTotalStaked = (stats: StakeStats) => stats.totalStaked
@@ -34,7 +34,7 @@ export const TotalStaked = function () {
     Number(amount) > 0 ? formatCompactFiat(Number(amount), locale, 2) : '-'
 
   return (
-    <StakeStatCard
+    <StatCard
       badge={
         isPending && !isUnavailable ? (
           <StatBadgeSkeleton size="xSmall" />

@@ -1,5 +1,6 @@
 import { ErrorBoundary } from 'components/errorBoundary'
 import { SparkleIcon } from 'components/icons/sparkleIcon'
+import { StatCard } from 'components/statCard'
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
 import { useTokenPrices } from 'hooks/useTokenPrices'
@@ -16,7 +17,6 @@ import { useStakingPositions } from '../_hooks/useStakingPositions'
 import { findRewardToken } from '../_utils/rewardToken'
 
 import { RewardAmount } from './rewardsDisplay'
-import { StakeStatCard } from './stakeStatCard'
 import { StatBadge, StatBadgeSkeleton } from './statBadge'
 
 const ClaimableFiat = function ({
@@ -118,7 +118,7 @@ export const WalletClaimable = function () {
   }
 
   return (
-    <StakeStatCard
+    <StatCard
       badge={renderBadge()}
       icon={<SparkleIcon className="text-orange-600" />}
       isError={isError}

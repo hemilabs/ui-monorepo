@@ -13,7 +13,7 @@ type Props = {
 
 const StatValueSkeleton = () => <Skeleton className="h-6 w-20" />
 
-export const StakeStatCard = ({
+export const StatCard = ({
   badge,
   icon,
   isError,

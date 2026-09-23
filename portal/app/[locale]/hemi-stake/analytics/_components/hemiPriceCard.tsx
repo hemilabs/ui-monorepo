@@ -1,8 +1,8 @@
+import { StatCard } from 'components/statCard'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatPercentage, formatTokenPrice } from 'utils/format'
 import { isDataUnavailable } from 'utils/queryStatus'
 
-import { StakeStatCard } from '../../_components/stakeStatCard'
 import { StatBadge, StatBadgeSkeleton } from '../../_components/statBadge'
 import { useSupplyPrice } from '../_hooks/useSupplyStat'
 import { type SupplyPeriod } from '../_utils/supplyHistory'
@@ -22,7 +22,7 @@ export const HemiPriceCard = function ({ period, symbol }: Props) {
   const isUnavailable = isDataUnavailable({ fetchStatus, status })
 
   return (
-    <StakeStatCard
+    <StatCard
       badge={
         isPending && !isUnavailable ? (
           <StatBadgeSkeleton size="xSmall" />

@@ -587,6 +587,7 @@
       "get-started-burned": "Sus posiciones quemadas aparecerán aquí una vez que hayan finalizado sus períodos de bloqueo.",
       "locked-amount": "Cantidad bloqueada",
       "lockup": "Bloqueo",
+      "lockup-tooltip": "Bloqueo de {duration}, se desbloquea el {date}",
       "no-hemi-burned": "Aún no hay posiciones quemadas.",
       "no-hemi-staked": "No hay ${symbol} en stake",
       "on": "En {date}",

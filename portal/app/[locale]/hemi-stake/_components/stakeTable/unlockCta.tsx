@@ -1,6 +1,4 @@
-import { Badge } from 'components/badge'
 import { Button } from 'components/button'
-import { InRelativeTime } from 'components/inRelativeTime'
 import { Tooltip } from 'components/tooltip'
 import { StakingPosition } from 'types/stakingDashboard'
 import { useLocale, useTranslations } from 'use-intl'
@@ -20,13 +18,11 @@ export function UnlockCta({ operation }: Props) {
 
   const { amount, lockTime, status, timestamp, tokenId } = operation
 
-  const { timeRemainingSeconds, unlockDate, unlockTime } = getUnlockInfo({
+  const { timeRemainingSeconds, unlockDate } = getUnlockInfo({
     lockTime,
     timestamp,
   })
 
-  // While the position is still locked, show a disabled Unlock CTA with a badge
-  // holding the time remaining until it can be withdrawn.
   if (timeRemainingSeconds > 0) {
     return (
       <Tooltip
@@ -34,14 +30,7 @@ export function UnlockCta({ operation }: Props) {
         variant="simple"
       >
         <Button disabled size="xxSmall">
-          <span className="flex items-center gap-x-1.5">
-            {t('unlock')}
-            <Badge>
-              <span className="first-letter:uppercase">
-                <InRelativeTime timestamp={unlockTime} />
-              </span>
-            </Badge>
-          </span>
+          {t('unlock')}
         </Button>
       </Tooltip>
     )

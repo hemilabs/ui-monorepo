@@ -11,8 +11,6 @@ type Props = {
   value: ReactNode
 }
 
-const StatValueSkeleton = () => <Skeleton className="h-6 w-20" />
-
 export const StatCard = ({
   badge,
   icon,
@@ -23,14 +21,24 @@ export const StatCard = ({
 }: Props) => (
   <Card aria-busy={isLoading} shadow="sm">
     <div className="flex w-full flex-col gap-y-2 p-4">
-      <div className="flex items-center justify-between">
-        <span className="body-text-medium text-neutral-500">{label}</span>
+      <div className="flex items-center gap-x-1.5">
+        <span className="body-text-medium flex-1 text-neutral-500">
+          {label}
+        </span>
         {icon}
       </div>
-      <p className="text-xl font-semibold text-neutral-950">
-        {!isLoading && !isError ? value : isError ? '-' : <StatValueSkeleton />}
-      </p>
-      <div className="flex min-h-4 items-center">{badge}</div>
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        <p className="text-2xl font-semibold text-neutral-950">
+          {!isLoading && !isError ? (
+            value
+          ) : isError ? (
+            '-'
+          ) : (
+            <Skeleton className="h-7 w-20" />
+          )}
+        </p>
+        {badge}
+      </div>
     </div>
   </Card>
 )

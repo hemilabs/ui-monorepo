@@ -82,8 +82,6 @@ VITE_SENTRY_RELEASE=<string> # Release name, in the "portal@yyyymmdd_sequence" f
 VITE_TRACES_SAMPLE_RATE=<number> # Ratio of transactions sampled for tracing. Ignored when not a number
 ```
 
-If not defined, the contracts addresses used will be the ones defined in [hemi-viem](https://github.com/hemilabs/hemi-viem).
-
 See [Environment Variables](./Environment%20Variables.md) to ensure changes to the list above are done properly.
 
 ## Running locally

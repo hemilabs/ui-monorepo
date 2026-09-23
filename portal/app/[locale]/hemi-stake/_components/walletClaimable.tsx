@@ -4,7 +4,7 @@ import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { useMemo } from 'react'
-import { type EvmToken } from 'types/token'
+import { type EvmToken, type TokenWithBalance } from 'types/token'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatCompactFiat } from 'utils/format'
 import { calculateUsdValue } from 'utils/prices'
@@ -19,8 +19,22 @@ import { RewardAmount } from './rewardsDisplay'
 import { StakeStatCard } from './stakeStatCard'
 import { StatBadge, StatBadgeSkeleton } from './statBadge'
 
-export const WalletClaimable = function () {
+const ClaimableFiat = function ({
+  prices,
+  tokens,
+}: {
+  prices: Record<string, string>
+  tokens: TokenWithBalance[]
+}) {
   const locale = useLocale()
+  return (
+    <>
+      {formatCompactFiat(Number(calculateUsdValue(tokens, prices)), locale, 2)}
+    </>
+  )
+}
+
+export const WalletClaimable = function () {
   const t = useTranslations('hemi-stake.stats')
 
   const positionsQuery = useStakingPositions()
@@ -47,6 +61,8 @@ export const WalletClaimable = function () {
     balance: reward.amount,
   }))
 
+  const needsPrices = withBalance.length > 0
+
   const pricesUnavailable = isDataUnavailable({
     fetchStatus: pricesQuery.fetchStatus,
     status: pricesQuery.status,
@@ -54,14 +70,14 @@ export const WalletClaimable = function () {
 
   const isError = [
     positionsQuery.isError,
-    pricesUnavailable,
+    needsPrices && pricesUnavailable,
     rewardsQuery.isError,
     hasError,
   ].some(Boolean)
 
   const isLoading = [
     positionsQuery.status === 'pending' && !positionsQuery.isError,
-    pricesQuery.isPending && !pricesUnavailable,
+    needsPrices && pricesQuery.isPending && !pricesUnavailable,
     rewardsQuery.isPending,
     areTokensPending,
   ].some(Boolean)
@@ -110,11 +126,7 @@ export const WalletClaimable = function () {
       label={t('your-claimable')}
       value={
         <ErrorBoundary fallback="-">
-          {formatCompactFiat(
-            Number(calculateUsdValue(withBalance, pricesQuery.data ?? {})),
-            locale,
-            2,
-          )}
+          <ClaimableFiat prices={pricesQuery.data ?? {}} tokens={withBalance} />
         </ErrorBoundary>
       }
     />

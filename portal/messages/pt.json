@@ -572,7 +572,7 @@
       "claimable-tokens": "{count, plural, one {# token} other {# tokens}}",
       "total-staked": "Total em stake",
       "wallets-staking": "Carteiras em stake",
-      "your-claimable": "Disponível para resgatar",
+      "your-claimable": "Disponível para reclamar",
       "your-staked": "Seu stake"
     },
     "subheading": "Bloqueie ${symbol} de {minDays, plural, one {# dia} other {# dias}} a {maxYears, plural, one {# ano} other {# anos}}. Receba cada pagamento em {symbol}, hemiBTC e USDC, e ganhe poder de voto.",

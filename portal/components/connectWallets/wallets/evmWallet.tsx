@@ -1,7 +1,4 @@
-import {
-  ConnectedEvmAccount,
-  ConnectedEvmChain,
-} from 'components/connectedWallet/connectedAccount'
+import { ConnectedEvmAccount } from 'components/connectedWallet/connectedAccount'
 import { FiatBalance } from 'components/fiatBalance'
 import { useAllWallets } from 'hooks/useAllWallets'
 import { useChainIsSupported } from 'hooks/useChainIsSupported'
@@ -98,10 +95,7 @@ export const EvmWallet = function () {
         topContent={
           <>
             <ConnectedEvmAccount />
-            <div className="flex items-center gap-1">
-              <ConnectedEvmChain />
-              <DisconnectWallet disconnect={disconnectWallet} />
-            </div>
+            <DisconnectWallet disconnect={disconnectWallet} />
           </>
         }
       >

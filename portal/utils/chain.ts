@@ -2,7 +2,7 @@ import { allNetworks } from 'networks'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { type RemoteChain } from 'types/chain'
-import { type Address, type Chain, type ChainContract } from 'viem'
+import { type Chain, type ChainContract } from 'viem'
 
 export const findChainById = (chainId: RemoteChain['id']) =>
   allNetworks.find(n => n.id === chainId)
@@ -29,11 +29,11 @@ export const getL1StandardBridgeAddress = (l1ChainId: Chain['id']) =>
     getHemiForL1(l1ChainId).contracts?.l1StandardBridge as {
       [sourceId: number]: ChainContract
     }
-  )?.[l1ChainId].address as Address
+  )[l1ChainId].address
 
 export const getL2BridgeAddress = (l1ChainId: Chain['id']) =>
   (
     getHemiForL1(l1ChainId).contracts?.l2Bridge as {
       [sourceId: number]: ChainContract
     }
-  )?.[l1ChainId].address as Address
+  )[l1ChainId].address

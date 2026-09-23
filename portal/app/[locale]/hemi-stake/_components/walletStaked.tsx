@@ -48,7 +48,7 @@ export const WalletStaked = function () {
           </Badge>
         )
       }
-      icon={<WalletIcon />}
+      icon={<WalletIcon height={14} width={17} />}
       isError={isError}
       isLoading={isLoading}
       label={t('your-staked')}

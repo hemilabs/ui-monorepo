@@ -2,14 +2,16 @@
   "name": "hemi-earn-requests-subgraph",
   "version": "1.0.0",
   "scripts": {
-    "build": "tsc --noEmit",
+    "prebuild": "pnpm run codegen",
+    "build": "pnpm run typecheck",
     "codegen": "envio codegen",
     "dev": "envio dev",
     "prepare": "pnpm run codegen",
     "start": "envio start",
     "stop": "envio stop",
     "pretest": "pnpm run codegen",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "envio": "3.11.0",

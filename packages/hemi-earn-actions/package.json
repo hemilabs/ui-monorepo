@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "test": "vitest run",
-    "tsc:check": "tsc"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@vetro-protocol/earn": "1.0.0",

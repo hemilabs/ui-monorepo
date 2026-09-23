@@ -2,6 +2,7 @@
   "name": "hemi-tunnel-btc-deposits-subgraph",
   "version": "1.0.0",
   "scripts": {
+    "prebuild": "pnpm run codegen",
     "build": "graph build",
     "build:hemi": "pnpm run build -- --network hemi",
     "build:hemi-sepolia": "pnpm run build -- --network hemi-sepolia",

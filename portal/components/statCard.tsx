@@ -37,7 +37,7 @@ export const StatCard = ({
             <Skeleton className="h-6 w-20" />
           )}
         </p>
-        {!isError && badge}
+        {!isError && <span className="flex items-end [&>*]:flex">{badge}</span>}
       </div>
     </div>
   </Card>

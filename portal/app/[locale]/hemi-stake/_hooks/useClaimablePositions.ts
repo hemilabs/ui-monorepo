@@ -1,6 +1,7 @@
 import { useQueries } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient } from 'hooks/useHemiClient'
+import { isDataUnavailable } from 'utils/queryStatus'
 import { useAccount } from 'wagmi'
 
 import {
@@ -44,6 +45,11 @@ export const useClaimablePositions = function (tokenIds: bigint[]) {
   })
 
   return {
+    isError: results.some(({ isError }) => isError),
+    isPending: results.some(
+      ({ fetchStatus, isPending, status }) =>
+        isPending && !isDataUnavailable({ fetchStatus, status }),
+    ),
     positions,
     rewards: mergeClaimableRewards(positions.map(({ rewards }) => rewards)),
   }

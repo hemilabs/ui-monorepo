@@ -34,7 +34,7 @@ export const WalletStaked = function () {
   return (
     <StatCard
       badge={
-        isError ? undefined : isLoading ? (
+        isLoading ? (
           <StatBadgeSkeleton size="xSmall" />
         ) : (
           <Badge size="small" variant="secondary">

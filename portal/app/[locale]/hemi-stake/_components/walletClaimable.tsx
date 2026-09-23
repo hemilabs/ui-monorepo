@@ -84,7 +84,7 @@ export const WalletClaimable = function () {
   ].some(Boolean)
 
   const renderBadge = function () {
-    if (isError || withBalance.length === 0) {
+    if (withBalance.length === 0) {
       return undefined
     }
     if (isLoading) {

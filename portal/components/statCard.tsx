@@ -34,10 +34,10 @@ export const StatCard = ({
           ) : isError ? (
             '-'
           ) : (
-            <Skeleton className="h-7 w-20" />
+            <Skeleton className="h-6 w-20" />
           )}
         </p>
-        {badge}
+        {!isError && badge}
       </div>
     </div>
   </Card>

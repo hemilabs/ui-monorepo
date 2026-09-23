@@ -38,7 +38,7 @@ export const TotalStaked = function () {
       badge={
         isPending && !isUnavailable ? (
           <StatBadgeSkeleton size="xSmall" />
-        ) : isUnavailable && data === undefined ? undefined : (
+        ) : (
           <Badge size="small" variant="secondary">
             <RenderFiatBalance
               balance={staked}

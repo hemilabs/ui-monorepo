@@ -1,7 +1,5 @@
-'use strict'
-
-const fetchJson = require('tiny-fetch-json')
-const postMessageToSlack = require('post-message-to-slack')
+import postMessageToSlack from 'post-message-to-slack'
+import fetchJson from 'tiny-fetch-json'
 
 // These values match the Status enum used in the BitcoinTunnelManager and
 // BitcoinVault contracts.
@@ -16,13 +14,36 @@ const VaultStatus = {
 }
 /* eslint-enable sort-keys */
 
-const toBtc = sats => (sats / 100000000).toFixed(8)
+type VaultData = {
+  balanceSats: number
+  bitcoinCustodyAddress: string
+  pendingWithdrawalAmountSat: number
+  pendingWithdrawalCount: number
+  status: number
+  vaultAddress: string
+}
+
+type VaultsState = {
+  bitcoinChainData: {
+    bitcoin: { height: number }
+    bitcoinKit: { height: number }
+  }
+  tunnelManagerData: { withdrawalsPaused: boolean }
+  vaultsData: VaultData[]
+}
+
+type Slack = {
+  mention: string
+  webhookUrl: string
+}
+
+const toBtc = (sats: number) => (sats / 100000000).toFixed(8)
 
 function analyzeVaultsData(
-  { bitcoinChainData, tunnelManagerData, vaultsData },
-  { maxBlocksBehind },
+  { bitcoinChainData, tunnelManagerData, vaultsData }: VaultsState,
+  { maxBlocksBehind }: { maxBlocksBehind: number },
 ) {
-  const alerts = []
+  const alerts: string[] = []
   const blocksBehind =
     bitcoinChainData.bitcoin.height - bitcoinChainData.bitcoinKit.height
   if (blocksBehind > maxBlocksBehind) {
@@ -69,24 +90,32 @@ function analyzeVaultsData(
   return alerts
 }
 
-async function sendAlertsToSlack({ alerts, mention, webhookUrl }) {
+async function sendAlertsToSlack({
+  alerts,
+  mention,
+  webhookUrl,
+}: Slack & { alerts: string[] }) {
   const intro = 'Problems found when analyzing the bitcoin vaults:'
   const message = `${intro}\n\n${alerts.map(alert => `- ${alert}`).join('\n')}`
   const text = `${mention ? `<${mention}> ` : ''}${message}.`
   await postMessageToSlack(webhookUrl, { text })
 }
 
-async function checkVaults({ apiUrl, maxBlocksBehind, slack }) {
+export async function checkVaults({
+  apiUrl,
+  maxBlocksBehind,
+  slack,
+}: {
+  apiUrl: string
+  maxBlocksBehind: number
+  slack: Slack
+}) {
   console.log('Checking vaults...', apiUrl)
-  const state = await fetchJson(`${apiUrl}/btc-vaults/43111`) // Hemi mainnet
+  const state: VaultsState = await fetchJson(`${apiUrl}/btc-vaults/43111`) // Hemi mainnet
   const alerts = analyzeVaultsData(state, { maxBlocksBehind })
   if (alerts.length && slack.webhookUrl) {
     await sendAlertsToSlack({ alerts, ...slack })
   } else if (alerts.length) {
     console.error(`Alerts: ${alerts.join(', ')}`)
   }
-}
-
-module.exports = {
-  checkVaults,
 }

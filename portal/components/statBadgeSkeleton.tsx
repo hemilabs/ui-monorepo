@@ -11,4 +11,4 @@ export const StatBadgeSkeleton = ({
   size = 'medium',
 }: {
   size?: keyof typeof skeletonWidths
-}) => <Skeleton className={`h-4 ${skeletonWidths[size]}`} />
+}) => <Skeleton className={`h-4.5 ${skeletonWidths[size]}`} />

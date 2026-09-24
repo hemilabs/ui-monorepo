@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { SettingsTrigger } from 'app/[locale]/hemi-earn/pool/[shareAddress]/_components/advancedSettings/trigger'
 import { RenderCryptoBalance } from 'components/cryptoBalance'
 import { MaxButton } from 'components/setMaxBalance'
 import { TokenInput } from 'components/tokenInput'
@@ -99,3 +100,19 @@ export default meta
 type Story = StoryObj<typeof TokenInput>
 
 export const Default: Story = {}
+
+export const WithHeaderAction: Story = {
+  render: args =>
+    meta.render({
+      ...args,
+      headerAction: (
+        <SettingsTrigger
+          disabled={args.disabled}
+          isOpen={false}
+          level="normal"
+          onClick={() => undefined}
+          slippage={undefined}
+        />
+      ),
+    }),
+}

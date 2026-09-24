@@ -4,7 +4,6 @@ import {
   type SupplyUnit,
 } from '../_utils/supplyHistory'
 
-import { HemiPriceCard } from './hemiPriceCard'
 import { SupplySliceCard } from './supplySliceCard'
 
 type Props = {
@@ -14,7 +13,7 @@ type Props = {
 }
 
 export const SupplySummary = ({ period, symbol, unit }: Props) => (
-  <section className="mt-8 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-4 [&>.card-container]:min-w-0">
+  <section className="mt-8 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3 sm:[&>.card-container:first-child]:col-span-2 lg:[&>.card-container:first-child]:col-span-1 [&>.card-container]:min-w-0">
     {supplySlices.map(slice => (
       <SupplySliceCard
         key={slice}
@@ -24,6 +23,5 @@ export const SupplySummary = ({ period, symbol, unit }: Props) => (
         unit={unit}
       />
     ))}
-    <HemiPriceCard period={period} symbol={symbol} />
   </section>
 )

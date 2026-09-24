@@ -457,7 +457,6 @@
       "1-week": "1 semana",
       "circulating": "En circulación",
       "decreased-by": "disminuyó",
-      "hemi-price": "Precio de {symbol}",
       "increased-by": "aumentó",
       "month": "{count, plural, one {# mes} other {# meses}}",
       "non-circulating": "Fuera de circulación",

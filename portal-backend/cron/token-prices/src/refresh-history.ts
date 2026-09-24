@@ -3,7 +3,9 @@ import fetchJson from 'tiny-fetch-json'
 
 import { config } from './config.ts'
 
-type Quote = { quote?: { USD?: { price?: number } }; timestamp: string }
+type Quote = { USD?: { price?: number } }
+
+type HistoricalQuote = { quote?: Quote; timestamp: string }
 
 type History = Record<string, string>
 
@@ -21,7 +23,8 @@ const keyPrefix = 'daily-prices:'
 const priceUrl =
   'https://pro-api.coinmarketcap.com/v3/cryptocurrency/quotes/historical'
 
-const hasPrice = ({ quote }: Quote) => typeof quote?.USD?.price === 'number'
+const hasPrice = ({ quote }: HistoricalQuote) =>
+  typeof quote?.USD?.price === 'number'
 
 const toDate = (time: number) => new Date(time).toISOString().slice(0, 10)
 
@@ -57,7 +60,7 @@ async function fetchPrices({
   })
 
   // The historical quotes are keyed by coin id, as the latest ones are.
-  const [coin] = Object.values<{ quotes?: Quote[] }>(data ?? {})
+  const [coin] = Object.values<{ quotes?: HistoricalQuote[] }>(data ?? {})
   if (!coin?.quotes) {
     throw new Error(
       `Failed to fetch ${symbol} prices: the response has no quotes`,

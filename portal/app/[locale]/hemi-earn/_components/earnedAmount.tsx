@@ -1,12 +1,11 @@
 import { ArrowGrowingIcon } from 'components/icons/arrowGrowingIcon'
+import { StatCard } from 'components/statCard'
 import { useTranslations } from 'use-intl'
 import { formatFiatNumber } from 'utils/format'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
 import { useEarnedAmount } from '../_hooks/useEarnedAmount'
-
-import { EarnCard } from './earnCard'
 
 export const EarnedAmount = function () {
   const { data, isError, isPending } = useEarnedAmount()
@@ -15,7 +14,7 @@ export const EarnedAmount = function () {
   const isDisconnected = !walletIsConnected(status)
 
   return (
-    <EarnCard
+    <StatCard
       icon={<ArrowGrowingIcon />}
       isError={isError || isDisconnected}
       isLoading={isPending}

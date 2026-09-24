@@ -1,7 +1,7 @@
 import type { ConsoleLevel } from '@sentry/core'
 import { consoleLoggingIntegration, init } from '@sentry/node'
 
-import config from './config.ts'
+import { config } from './config.ts'
 
 const { dsn, loggingLevels } = config.get('sentry')
 

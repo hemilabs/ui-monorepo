@@ -1,7 +1,7 @@
 const env = (variable: string, defaultValue: string) =>
   process.env[variable] || defaultValue
 
-const config = {
+const settings = {
   apiUrl: env('API_URL', 'http://localhost:3006'),
   maxBlocksBehind: Number.parseInt(env('MAX_BLOCKS_BEHIND', '4')),
   sentry: {
@@ -15,8 +15,8 @@ const config = {
   vaultsMonitoringMin: Number.parseInt(env('VAULTS_MONITORING_MIN', '5')),
 }
 
-type Config = typeof config
+type Config = typeof settings
 
-const get = <K extends keyof Config>(key: K) => config[key]
+const get = <K extends keyof Config>(key: K) => settings[key]
 
-export default { get }
+export const config = { get }

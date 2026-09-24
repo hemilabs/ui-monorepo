@@ -2,7 +2,7 @@ import safeAsyncFn from 'safe-async-fn'
 import startInterval from 'startinterval2'
 
 import { checkVaults } from './src/check-vaults.ts'
-import config from './src/config.ts'
+import { config } from './src/config.ts'
 
 const safeCheckVaults = safeAsyncFn(checkVaults)
 

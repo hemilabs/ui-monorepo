@@ -112,12 +112,6 @@ describe('getSupplySummary', function () {
     expect(summary!.circulating.change).toBe(13)
   })
 
-  it('should report the price change as a ratio', function () {
-    const summary = getSupplySummary({ points, unit: 'hemi' })
-
-    expect(summary!.price).toEqual({ change: 1.5, value: 5 })
-  })
-
   it('should return nothing without points', function () {
     expect(getSupplySummary({ points: [], unit: 'hemi' })).toBeUndefined()
   })
@@ -176,11 +170,10 @@ describe('when the feed has no prices', function () {
     expect(getSupplySummary({ points: unpriced, unit: 'usd' })).toBeUndefined()
   })
 
-  it('should keep the token summary and drop only the price', function () {
+  it('should keep the token summary', function () {
     const summary = getSupplySummary({ points: unpriced, unit: 'hemi' })
 
     expect(summary!.circulating).toEqual({ change: 2, share: 0.3, value: 3 })
-    expect(summary!.price).toBeUndefined()
   })
 
   it('should treat a price missing from the payload as no price', function () {

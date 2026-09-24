@@ -29,16 +29,6 @@ export const useSupplySlice = ({
     ),
   })
 
-export const useSupplyPrice = ({ period }: { period: SupplyPeriod }) =>
-  useHemiSupplyHistory({
-    period,
-    select: useCallback(
-      (points: ParsedSupplyPoint[]) =>
-        getSupplySummary({ points, unit: 'hemi' })?.price,
-      [],
-    ),
-  })
-
 export const useSupplySeries = ({
   period,
   unit,

@@ -153,7 +153,7 @@ export const getSupplySummary = function ({
     return undefined
   }
 
-  const slices = Object.fromEntries(
+  return Object.fromEntries(
     supplySlices.map(slice => [
       slice,
       {
@@ -165,18 +165,4 @@ export const getSupplySummary = function ({
       },
     ]),
   ) as Record<SupplySlice, SliceSummary>
-
-  return {
-    ...slices,
-    price:
-      first.priceUsd === null || last.priceUsd === null
-        ? undefined
-        : {
-            change:
-              first.priceUsd === 0
-                ? 0
-                : (last.priceUsd - first.priceUsd) / first.priceUsd,
-            value: last.priceUsd,
-          },
-  }
 }

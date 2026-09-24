@@ -1,13 +1,13 @@
-'use strict'
+import { createClient } from 'redis'
+import fetchJson from 'tiny-fetch-json'
 
-const fetchJson = require('tiny-fetch-json')
-const redis = require('redis')
+import config from './config.ts'
 
-const config = require('./config')
+type Token = { quote?: { USD?: { price?: number } }; symbol: string }
 
 const coinMarketCap = config.get('coinMarketCap')
 
-const hasPrice = ({ quote }) => typeof quote?.USD?.price === 'number'
+const hasPrice = ({ quote }: Token) => typeof quote?.USD?.price === 'number'
 
 async function fetchPrices() {
   const url =
@@ -19,7 +19,7 @@ async function fetchPrices() {
   }
   const fullUrl = `${url}?${new URLSearchParams(params).toString()}`
   const res = await fetchJson(fullUrl, { headers })
-  const tokens = Object.values(res.data)
+  const tokens = Object.values<Token>(res.data)
   const unpriced = tokens.filter(token => !hasPrice(token))
   if (unpriced.length > 0) {
     console.warn(
@@ -29,15 +29,15 @@ async function fetchPrices() {
   return Object.fromEntries(
     tokens
       .filter(hasPrice)
-      .map(({ quote, symbol }) => [symbol.toUpperCase(), quote.USD.price]),
+      .map(({ quote, symbol }) => [symbol.toUpperCase(), quote!.USD!.price!]),
   )
 }
 
-const client = redis.createClient(config.get('redis'))
+const client = createClient(config.get('redis'))
 
 const expiration = config.get('cacheExpirationMin') * 60
 
-async function storePrices(prices) {
+async function storePrices(prices: Record<string, number>) {
   try {
     client.connect()
     await Promise.all(
@@ -52,11 +52,7 @@ async function storePrices(prices) {
   }
 }
 
-async function refreshPrices() {
+export async function refreshPrices() {
   const prices = await fetchPrices()
   await storePrices(prices)
-}
-
-module.exports = {
-  refreshPrices,
 }

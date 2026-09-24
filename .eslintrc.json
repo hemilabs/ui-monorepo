@@ -59,7 +59,10 @@
     },
     {
       "extends": ["bloq/node", "bloq/typescript", "prettier"],
-      "files": ["portal-backend/api/**/*.ts"],
+      "files": [
+        "portal-backend/api/**/*.ts",
+        "portal-backend/cron/token-prices/**/*.ts"
+      ],
       "rules": {
         "@typescript-eslint/no-unused-vars": [
           "error",

@@ -1,6 +1,11 @@
 {
   "name": "token-prices-cron",
   "version": "1.1.0",
+  "scripts": {
+    "build": "pnpm run typecheck",
+    "start": "node --import=./src/instrument.ts server.ts",
+    "typecheck": "tsc"
+  },
   "dependencies": {
     "@sentry/node": "10.53.1",
     "redis": "4.7.1",
@@ -8,8 +13,14 @@
     "startinterval2": "1.0.1",
     "tiny-fetch-json": "1.0.0"
   },
+  "devDependencies": {
+    "@sentry/core": "10.53.1",
+    "@tsconfig/node24": "24.0.3",
+    "typescript": "5.8.3"
+  },
   "engines": {
     "node": ">=24"
   },
-  "packageManager": "pnpm@11.24.0"
+  "packageManager": "pnpm@11.24.0",
+  "type": "module"
 }

@@ -1,9 +1,11 @@
-'use strict'
+import { createClient } from 'redis'
+import fetchJson from 'tiny-fetch-json'
 
-const fetchJson = require('tiny-fetch-json')
-const redis = require('redis')
+import config from './config.ts'
 
-const config = require('./config')
+type Quote = { quote?: { USD?: { price?: number } }; timestamp: string }
+
+type History = Record<string, string>
 
 const coinMarketCap = config.get('coinMarketCap')
 
@@ -19,16 +21,25 @@ const keyPrefix = 'daily-prices:'
 const priceUrl =
   'https://pro-api.coinmarketcap.com/v3/cryptocurrency/quotes/historical'
 
-const hasPrice = ({ quote }) => typeof quote?.USD?.price === 'number'
+const hasPrice = ({ quote }: Quote) => typeof quote?.USD?.price === 'number'
 
-const toDate = time => new Date(time).toISOString().slice(0, 10)
+const toDate = (time: number) => new Date(time).toISOString().slice(0, 10)
 
-const startOfDay = date => Date.parse(`${date}T00:00:00Z`)
+const startOfDay = (date: string) => Date.parse(`${date}T00:00:00Z`)
 
 // A daily quote stamped at midnight closes the day before it.
-const closingDate = time => toDate(Math.round(time / dayMs) * dayMs - 1)
+const closingDate = (time: number) =>
+  toDate(Math.round(time / dayMs) * dayMs - 1)
 
-async function fetchPrices({ firstDate, lastDate, symbol }) {
+async function fetchPrices({
+  firstDate,
+  lastDate,
+  symbol,
+}: {
+  firstDate: string
+  lastDate: string
+  symbol: string
+}) {
   const days = (startOfDay(lastDate) - startOfDay(firstDate)) / dayMs + 1
   const params = new URLSearchParams([
     ['convert', 'USD'],
@@ -46,7 +57,7 @@ async function fetchPrices({ firstDate, lastDate, symbol }) {
   })
 
   // The historical quotes are keyed by coin id, as the latest ones are.
-  const [coin] = Object.values(data ?? {})
+  const [coin] = Object.values<{ quotes?: Quote[] }>(data ?? {})
   if (!coin?.quotes) {
     throw new Error(
       `Failed to fetch ${symbol} prices: the response has no quotes`,
@@ -57,20 +68,20 @@ async function fetchPrices({ firstDate, lastDate, symbol }) {
       .filter(hasPrice)
       .map(({ quote, timestamp }) => [
         closingDate(Date.parse(timestamp)),
-        String(quote.USD.price),
+        String(quote!.USD!.price),
       ]),
   )
 }
 
-const client = redis.createClient(config.get('redis'))
+const client = createClient(config.get('redis'))
 
 // The newest day CoinMarketCap answered a price for.
-const newestDate = prices => Object.keys(prices).sort().at(-1)
+const newestDate = (prices: History) => Object.keys(prices).sort().at(-1)
 
-async function refreshSymbol(symbol) {
+async function refreshSymbol(symbol: string) {
   const key = `${keyPrefix}${symbol}`
   const stored = await client.get(key)
-  const history = stored ? JSON.parse(stored) : {}
+  const history: History = stored ? JSON.parse(stored) : {}
   const lastDate = toDate(Date.now() - dayMs)
   const newest = newestDate(history)
   if (newest === lastDate) {
@@ -78,7 +89,9 @@ async function refreshSymbol(symbol) {
   }
   const windowStart = toDate(startOfDay(lastDate) - (historyDays - 1) * dayMs)
   const firstDate =
-    newest > windowStart ? toDate(startOfDay(newest) + dayMs) : windowStart
+    newest && newest > windowStart
+      ? toDate(startOfDay(newest) + dayMs)
+      : windowStart
   if (firstDate > lastDate) {
     return 0
   }
@@ -95,12 +108,12 @@ async function refreshSymbol(symbol) {
   return Object.keys(prices).filter(date => !(date in history)).length
 }
 
-async function refreshHistory() {
+export async function refreshHistory() {
   try {
     client.connect()
     const saved = await Promise.all(
       Object.keys(coinMarketCap.ids).map(symbol =>
-        refreshSymbol(symbol).catch(function (error) {
+        refreshSymbol(symbol).catch(function (error: unknown) {
           console.warn(
             `Failed to refresh the ${symbol} price history: ${error}`,
           )
@@ -112,8 +125,4 @@ async function refreshHistory() {
   } finally {
     client.quit()
   }
-}
-
-module.exports = {
-  refreshHistory,
 }

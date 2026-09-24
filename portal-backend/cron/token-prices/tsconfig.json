@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "noEmit": true,
+    "strict": true
+  },
+  "extends": "@tsconfig/node24/tsconfig.json",
+  "include": ["declarations.d.ts", "server.ts", "src/**/*.ts"]
+}

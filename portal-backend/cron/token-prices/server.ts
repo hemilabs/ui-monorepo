@@ -21,7 +21,7 @@ async function runHistory() {
   const [err, saved] = await safeRefreshHistory()
   if (err) {
     console.warn(`Failed to refresh the price history: ${err}`)
-  } else if (saved && saved > 0) {
+  } else if (saved) {
     console.log(`Price history refreshed with ${saved} days`)
   }
 }

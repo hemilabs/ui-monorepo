@@ -18,7 +18,7 @@ export const StakedBalance = function () {
 
   return (
     <StatCard
-      badge={hasError || isPending ? undefined : <FromPoolsBadge />}
+      badge={isPending ? undefined : <FromPoolsBadge />}
       icon={<TotalDepositsIcon />}
       isError={hasError}
       isLoading={isPending}

@@ -38,7 +38,7 @@ export const StatCard = ({
           )}
         </p>
         {!isError && (
-          <span className="flex items-end [&>*]:flex [&>*]:items-end">
+          <span className="flex items-end empty:hidden [&>*]:flex [&>*]:items-end">
             {badge}
           </span>
         )}

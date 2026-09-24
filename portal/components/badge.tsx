@@ -25,7 +25,7 @@ export const Badge = ({
   ...props
 }: Props) => (
   <span
-    className={`body-text-caption inline-flex items-center justify-center overflow-hidden rounded-md px-1.5 ${sizes[size]} ${variants[variant]}`}
+    className={`body-text-caption inline-flex items-center justify-center gap-x-1 overflow-hidden rounded-md px-1.5 ${sizes[size]} ${variants[variant]}`}
     {...props}
   />
 )

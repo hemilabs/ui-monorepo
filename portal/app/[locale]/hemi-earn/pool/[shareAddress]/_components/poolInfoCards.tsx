@@ -1,13 +1,12 @@
 import { ArrowGrowingIcon } from 'components/icons/arrowGrowingIcon'
 import { TotalDepositsIcon } from 'components/icons/totalDepositsIcon'
+import { StatCard } from 'components/statCard'
 import { useTranslations } from 'use-intl'
 import { formatFiatNumber } from 'utils/format'
 
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
 import { formatApyDisplay } from '../../../_utils/formatApy'
 import { type EarnPool } from '../../../types'
-
-import { PoolCard } from './poolCard'
 
 type Props = {
   pool: EarnPool
@@ -19,7 +18,7 @@ export const PoolInfoCards = function ({ pool }: Props) {
   return (
     <div className="flex w-full flex-col items-stretch gap-4 sm:flex-row md:gap-5">
       <div className="flex-1">
-        <PoolCard
+        <StatCard
           icon={<TotalDepositsIcon />}
           isError={false}
           isLoading={false}
@@ -35,7 +34,7 @@ export const PoolInfoCards = function ({ pool }: Props) {
         />
       </div>
       <div className="flex-1">
-        <PoolCard
+        <StatCard
           icon={<ArrowGrowingIcon />}
           isError={pool.apy === null}
           isLoading={pool.apy === undefined}

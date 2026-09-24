@@ -1,5 +1,8 @@
+import { Badge } from 'components/badge'
 import { RenderFiatBalance } from 'components/fiatBalance'
 import { WalletIcon } from 'components/icons/walletIcon'
+import { StatBadgeSkeleton } from 'components/statBadgeSkeleton'
+import { StatCard } from 'components/statCard'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatCompactFiat, formatCompactFiatParts } from 'utils/format'
@@ -8,9 +11,6 @@ import { useAccount } from 'wagmi'
 
 import { useStakingPositions } from '../_hooks/useStakingPositions'
 import { sumActiveStake } from '../_utils/walletStakedTotal'
-
-import { StakeStatCard } from './stakeStatCard'
-import { StatBadge, StatBadgeSkeleton } from './statBadge'
 
 export const WalletStaked = function () {
   const locale = useLocale()
@@ -32,12 +32,12 @@ export const WalletStaked = function () {
     Number(amount) > 0 ? formatCompactFiat(Number(amount), locale, 2) : '-'
 
   return (
-    <StakeStatCard
+    <StatCard
       badge={
-        isError ? undefined : isLoading ? (
+        isLoading ? (
           <StatBadgeSkeleton size="xSmall" />
         ) : (
-          <StatBadge>
+          <Badge size="small" variant="secondary">
             <RenderFiatBalance
               balance={staked}
               customFormatter={formatBadge}
@@ -45,10 +45,10 @@ export const WalletStaked = function () {
               queryStatus={status}
               token={token}
             />
-          </StatBadge>
+          </Badge>
         )
       }
-      icon={<WalletIcon />}
+      icon={<WalletIcon height={14} width={17} />}
       isError={isError}
       isLoading={isLoading}
       label={t('your-staked')}

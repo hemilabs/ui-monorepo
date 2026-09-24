@@ -67,13 +67,6 @@ VITE_BTC_OUTPUTS_SIZE=25 # Assumed size in vbytes of a single transaction output
 # Backend API URL
 VITE_PORTAL_API_URL=<url> # To get the token prices, user points, TVL and more
 VITE_VETRO_API_URL=<url> # Vetro API URL; powers the Hemi Earn page (variable-stake APY and user rewards)
-# The following variables could be used to customize the contracts addresses used by Hemi (for example, for testing with a forked blockchain):
-VITE_ADDRESS_MANAGER=<address>
-VITE_L2_BRIDGE=<address>
-VITE_L2_OUTPUT_ORACLE_PROXY=<address>
-VITE_OPTIMISM_PORTAL_PROXY=<address>
-VITE_PROXY_OVM_L1_CROSS_DOMAIN_MESSENGER=<address>
-VITE_PROXY_OVM_L1_STANDARD_BRIDGE=<address>
 # Use it to enable wallet connect
 VITE_WALLET_CONNECT_PROJECT_ID=<wallet-connect-id>
 # Sitemap
@@ -88,8 +81,6 @@ VITE_SENTRY_FILTER_KEY_ID=<string> # Application key used to tell first-party fr
 VITE_SENTRY_RELEASE=<string> # Release name, in the "portal@yyyymmdd_sequence" format. Envelopes not matching it are rewritten
 VITE_TRACES_SAMPLE_RATE=<number> # Ratio of transactions sampled for tracing. Ignored when not a number
 ```
-
-If not defined, the contracts addresses used will be the ones defined in [hemi-viem](https://github.com/hemilabs/hemi-viem).
 
 See [Environment Variables](./Environment%20Variables.md) to ensure changes to the list above are done properly.
 

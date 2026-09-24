@@ -1,7 +1,7 @@
 const env = (variable: string, defaultValue: string) =>
   process.env[variable] || defaultValue
 
-const config = {
+const settings = {
   cacheExpirationMin: Number(env('CACHE_EXPIRATION_MIN', '60')),
   coinMarketCap: {
     apiKey: env('COIN_MARKET_CAP_API_KEY', ''),
@@ -23,8 +23,8 @@ const config = {
   version: env('npm_package_version', ''),
 }
 
-type Config = typeof config
+type Config = typeof settings
 
-const get = <K extends keyof Config>(key: K) => config[key]
+const get = <K extends keyof Config>(key: K) => settings[key]
 
-export default { get }
+export const config = { get }

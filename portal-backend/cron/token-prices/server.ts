@@ -1,7 +1,7 @@
 import safeAsyncFn from 'safe-async-fn'
 import startInterval from 'startinterval2'
 
-import config from './src/config.ts'
+import { config } from './src/config.ts'
 import { refreshHistory } from './src/refresh-history.ts'
 import { refreshPrices } from './src/refresh-prices.ts'
 

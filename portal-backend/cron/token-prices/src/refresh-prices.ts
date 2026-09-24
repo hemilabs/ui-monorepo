@@ -1,7 +1,7 @@
 import { createClient } from 'redis'
 import fetchJson from 'tiny-fetch-json'
 
-import config from './config.ts'
+import { config } from './config.ts'
 
 type Token = { quote?: { USD?: { price?: number } }; symbol: string }
 

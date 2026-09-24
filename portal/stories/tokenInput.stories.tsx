@@ -99,7 +99,3 @@ export default meta
 type Story = StoryObj<typeof TokenInput>
 
 export const Default: Story = {}
-
-export const Hover: Story = {
-  parameters: { pseudo: { hover: true } },
-}

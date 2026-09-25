@@ -247,10 +247,7 @@ const buildContentSecurityPolicy = ({
     directive('img-src', ["'self'", ...imageSrcUrls, 'blob:', 'data:']),
     directive('connect-src', ["'self'", ...fetchDomains]),
     directive('frame-src', ["'self'", ...frameSrcUrls]),
-    directive(
-      'frame-ancestors',
-      enableSafeApp ? ["'self'", safeAppOrigin] : ["'none'"],
-    ),
+    directive('frame-ancestors', enableSafeApp ? [safeAppOrigin] : ["'none'"]),
     'block-all-mixed-content',
     ...(isDev ? [] : ['upgrade-insecure-requests']),
     directive('font-src', ["'self'", ...fonts]),

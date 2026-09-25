@@ -94,7 +94,7 @@ describe('buildSecurityHeaders', function () {
     const headers = buildSecurityHeaders({ ...baseConfig, enableSafeApp: true })
 
     expect(directive(headers, 'frame-ancestors')).toBe(
-      "frame-ancestors 'self' https://app.safe.global",
+      'frame-ancestors https://app.safe.global',
     )
     expect(headers).not.toHaveProperty('X-Frame-Options')
     expect(headers['Cross-Origin-Resource-Policy']).toBe('same-origin')

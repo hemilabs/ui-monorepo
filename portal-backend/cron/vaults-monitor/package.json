@@ -12,7 +12,7 @@
     "post-message-to-slack": "1.0.0",
     "safe-async-fn": "1.0.0",
     "startinterval2": "1.0.1",
-    "tiny-fetch-json": "1.0.0"
+    "tiny-fetch-json": "2.0.1"
   },
   "devDependencies": {
     "@sentry/core": "10.53.1",

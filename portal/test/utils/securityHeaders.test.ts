@@ -87,6 +87,17 @@ describe('buildSecurityHeaders', function () {
 
     expect(directive(headers, 'frame-ancestors')).toBe("frame-ancestors 'none'")
     expect(headers['X-Frame-Options']).toBe('DENY')
+    expect(headers['Cross-Origin-Resource-Policy']).toBe('same-origin')
+  })
+
+  it('lets Safe frame the app when it runs as a Safe App', function () {
+    const headers = buildSecurityHeaders({ ...baseConfig, enableSafeApp: true })
+
+    expect(directive(headers, 'frame-ancestors')).toBe(
+      'frame-ancestors https://app.safe.global',
+    )
+    expect(headers).not.toHaveProperty('X-Frame-Options')
+    expect(headers['Cross-Origin-Resource-Policy']).toBe('same-origin')
   })
 
   it('blocks document injection and native form submissions', function () {

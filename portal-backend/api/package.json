@@ -19,7 +19,7 @@
     "promise-swr": "1.0.2",
     "redis": "4.7.1",
     "safe-async-fn": "1.0.0",
-    "tiny-fetch-json": "1.0.0",
+    "tiny-fetch-json": "2.0.1",
     "ve-hemi-actions": "workspace:*",
     "ve-hemi-rewards": "workspace:*",
     "viem": "2.28.4",

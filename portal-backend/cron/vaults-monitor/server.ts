@@ -1,12 +1,8 @@
-'use strict'
+import safeAsyncFn from 'safe-async-fn'
+import startInterval from 'startinterval2'
 
-const startInterval = require('startinterval2')
-const safeAsyncFn = require('safe-async-fn')
-
-require('./src/instrument.js')
-
-const { checkVaults } = require('./src/check-vaults')
-const config = require('./src/config')
+import { checkVaults } from './src/check-vaults.ts'
+import { config } from './src/config.ts'
 
 const safeCheckVaults = safeAsyncFn(checkVaults)
 

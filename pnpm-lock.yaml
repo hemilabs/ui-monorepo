@@ -638,6 +638,16 @@ importers:
       tiny-fetch-json:
         specifier: 1.0.0
         version: 1.0.0
+    devDependencies:
+      '@sentry/core':
+        specifier: 10.53.1
+        version: 10.53.1
+      '@tsconfig/node24':
+        specifier: 24.0.3
+        version: 24.0.3
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
 
   subgraphs/hemi-earn-requests-subgraph:
     dependencies:

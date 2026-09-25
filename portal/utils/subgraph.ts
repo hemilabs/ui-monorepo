@@ -248,7 +248,7 @@ type StakingPositionApiResult = Omit<
  * @param params Parameters of the call.
  * @param params.address The address of the position owner.
  * @param params.chainId Hemi chain Id.
- * @returns List of staking positions, or an empty list on failure.
+ * @returns List of staking positions.
  */
 export const getLockedPositions = function ({
   address,
@@ -261,22 +261,20 @@ export const getLockedPositions = function ({
 
   return request<{ positions: StakingPositionApiResult[] }>(
     `${url}/locks/${address}`,
+  ).then(({ positions }) =>
+    positions.map(
+      position =>
+        ({
+          ...position,
+          amount: BigInt(position.amount),
+          blockNumber: BigInt(position.blockNumber),
+          blockTimestamp: BigInt(position.blockTimestamp),
+          lockTime: BigInt(position.lockTime),
+          timestamp: BigInt(position.timestamp),
+          tokenId: BigInt(position.tokenId),
+        }) as StakingPosition,
+    ),
   )
-    .then(({ positions }) =>
-      positions.map(
-        position =>
-          ({
-            ...position,
-            amount: BigInt(position.amount),
-            blockNumber: BigInt(position.blockNumber),
-            blockTimestamp: BigInt(position.blockTimestamp),
-            lockTime: BigInt(position.lockTime),
-            timestamp: BigInt(position.timestamp),
-            tokenId: BigInt(position.tokenId),
-          }) as StakingPosition,
-      ),
-    )
-    .catch(() => [] as StakingPosition[])
 }
 
 /**

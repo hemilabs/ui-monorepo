@@ -1,9 +1,10 @@
+import { Badge } from 'components/badge'
+import { StatBadgeSkeleton } from 'components/statBadgeSkeleton'
+import { StatCard } from 'components/statCard'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatPercentage } from 'utils/format'
 import { isDataUnavailable } from 'utils/queryStatus'
 
-import { StakeStatCard } from '../../_components/stakeStatCard'
-import { StatBadge, StatBadgeSkeleton } from '../../_components/statBadge'
 import { useSupplySlice } from '../_hooks/useSupplyStat'
 import { formatSupplyValue } from '../_utils/formatSupplyValue'
 import { sliceColors } from '../_utils/sliceColors'
@@ -40,12 +41,12 @@ export const SupplySliceCard = function ({
   const isUnavailable = isDataUnavailable({ fetchStatus, status })
 
   return (
-    <StakeStatCard
+    <StatCard
       badge={
         isPending && !isUnavailable ? (
           <StatBadgeSkeleton size="large" />
         ) : data === undefined ? undefined : (
-          <StatBadge>
+          <Badge size="small" variant="secondary">
             <span>
               {t('share-of-supply', {
                 share: formatPercentage(data.share * 100),
@@ -60,7 +61,7 @@ export const SupplySliceCard = function ({
                 value: Math.abs(data.change),
               })}
             </ChangeIndicator>
-          </StatBadge>
+          </Badge>
         )
       }
       isError={isUnavailable && data === undefined}

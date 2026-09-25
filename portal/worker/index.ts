@@ -1,4 +1,4 @@
-import { buildSecurityHeaders } from 'utils/securityHeaders'
+import { buildSecurityHeaders, safeAppOrigin } from 'utils/securityHeaders'
 
 const securityHeadersConfig = {
   analyticsEnabled: import.meta.env.VITE_ENABLE_ANALYTICS === 'true',
@@ -9,6 +9,7 @@ const securityHeadersConfig = {
     import.meta.env.VITE_CUSTOM_RPC_URL_MAINNET,
     import.meta.env.VITE_CUSTOM_RPC_URL_SEPOLIA,
   ],
+  enableSafeApp: import.meta.env.VITE_ENABLE_SAFE_WALLET === 'true',
   isDev: import.meta.env.DEV,
   portalApiUrl: import.meta.env.VITE_PORTAL_API_URL,
   sentryDsn: import.meta.env.VITE_SENTRY_DSN,
@@ -36,6 +37,16 @@ export default {
     Object.entries(securityHeaders).forEach(([name, value]) =>
       withSecurityHeaders.headers.set(name, value),
     )
+
+    if (
+      securityHeadersConfig.enableSafeApp &&
+      new URL(request.url).pathname === '/manifest.json'
+    ) {
+      withSecurityHeaders.headers.set(
+        'Access-Control-Allow-Origin',
+        safeAppOrigin,
+      )
+    }
 
     return withSecurityHeaders
   },

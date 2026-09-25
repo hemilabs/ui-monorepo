@@ -108,7 +108,6 @@ type Props = {
   data: StakingPosition[] | undefined
   filter?: StakeTableFilterOptions
   isError: boolean
-  isRetrying: boolean
   loading: boolean
   onRetry: VoidFunction
 }
@@ -117,15 +116,12 @@ export function StakeTable({
   data,
   filter = 'active',
   isError,
-  isRetrying,
   loading,
   onRetry,
 }: Props) {
   const t = useTranslations('hemi-stake')
   const [openRowId, setOpenRowId] = useState<string | null>(null)
   const { status } = useAccount()
-
-  const isEmpty = (data?.length ?? 0) === 0 && !loading
 
   const cols = useMemo(
     () =>
@@ -135,6 +131,17 @@ export function StakeTable({
         t,
       }),
     [openRowId, setOpenRowId, t],
+  )
+
+  const table = (
+    <Table
+      columns={cols}
+      containerClassName="flex h-full flex-col"
+      data={data}
+      fitContainer
+      loading={loading}
+      priorityColumnIdsOnSmall={['action']}
+    />
   )
 
   const getContent = function () {
@@ -157,31 +164,26 @@ export function StakeTable({
       )
     }
 
+    if (data?.length) {
+      return table
+    }
+
     if (isError) {
       return (
         <TableCard>
-          <PositionsUnavailable isRetrying={isRetrying} onRetry={onRetry} />
+          <PositionsUnavailable onRetry={onRetry} />
         </TableCard>
       )
     }
 
-    if (isEmpty) {
-      return (
-        <TableCard>
-          <NoPositionStaked filter={filter} />
-        </TableCard>
-      )
+    if (loading) {
+      return table
     }
 
     return (
-      <Table
-        columns={cols}
-        containerClassName="flex h-full flex-col"
-        data={data}
-        fitContainer
-        loading={loading}
-        priorityColumnIdsOnSmall={['action']}
-      />
+      <TableCard>
+        <NoPositionStaked filter={filter} />
+      </TableCard>
     )
   }
 

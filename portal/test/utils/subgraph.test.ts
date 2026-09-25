@@ -29,9 +29,14 @@ describe('utils/subgraph', function () {
         chainId: hemiSepolia.id,
       })
 
-      expect(position.amount).toBe(BigInt(1000))
-      expect(position.blockNumber).toBe(BigInt(2))
-      expect(position.tokenId).toBe(BigInt(6))
+      expect(position).toEqual({
+        amount: BigInt(1000),
+        blockNumber: BigInt(2),
+        blockTimestamp: BigInt(3),
+        lockTime: BigInt(4),
+        timestamp: BigInt(5),
+        tokenId: BigInt(6),
+      })
 
       expect(vi.mocked(fetchPlusPlus)).toHaveBeenCalledWith(
         expect.stringContaining(

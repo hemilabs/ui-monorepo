@@ -17,8 +17,7 @@ import { StakingDashboardProvider } from './_context/stakingDashboardContext'
 import { useStakingPositions } from './_hooks/useStakingPositions'
 
 export const HemiStakePage = function () {
-  const { data, isFetching, isLoading, isLoadingError, refetch } =
-    useStakingPositions()
+  const { data, isLoading, isLoadingError, refetch } = useStakingPositions()
   const { status } = useAccount()
 
   const [filter, setFilter] = useState<StakeTableFilterOptions>('active')
@@ -60,7 +59,6 @@ export const HemiStakePage = function () {
             data={filteredData}
             filter={filter}
             isError={isLoadingError}
-            isRetrying={isFetching}
             loading={isLoading}
             onRetry={() => refetch()}
           />

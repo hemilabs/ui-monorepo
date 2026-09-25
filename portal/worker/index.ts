@@ -16,6 +16,11 @@ const securityHeadersConfig = {
   vetroApiUrl: import.meta.env.VITE_VETRO_API_URL,
 }
 
+const safeAppHeadersByPath: Record<string, Record<string, string>> = {
+  '/hemi.svg': { 'Cross-Origin-Resource-Policy': 'cross-origin' },
+  '/manifest.json': { 'Access-Control-Allow-Origin': safeAppOrigin },
+}
+
 const generateNonce = function () {
   const bytes = new Uint8Array(16)
   crypto.getRandomValues(bytes)
@@ -38,14 +43,10 @@ export default {
       withSecurityHeaders.headers.set(name, value),
     )
 
-    if (
-      securityHeadersConfig.enableSafeApp &&
-      new URL(request.url).pathname === '/manifest.json'
-    ) {
-      withSecurityHeaders.headers.set(
-        'Access-Control-Allow-Origin',
-        safeAppOrigin,
-      )
+    if (securityHeadersConfig.enableSafeApp) {
+      Object.entries(
+        safeAppHeadersByPath[new URL(request.url).pathname] ?? {},
+      ).forEach(([name, value]) => withSecurityHeaders.headers.set(name, value))
     }
 
     return withSecurityHeaders

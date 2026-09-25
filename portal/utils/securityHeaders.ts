@@ -271,9 +271,7 @@ export const buildSecurityHeaders = function (config: SecurityHeadersConfig) {
       scriptNonce: config.scriptNonce,
     }),
     'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
-    'Cross-Origin-Resource-Policy': enableSafeApp
-      ? 'cross-origin'
-      : 'same-origin',
+    'Cross-Origin-Resource-Policy': 'same-origin',
     'Origin-Agent-Cluster': '?1',
     'Permissions-Policy': permissionsPolicy,
     'Referrer-Policy': 'strict-origin-when-cross-origin',

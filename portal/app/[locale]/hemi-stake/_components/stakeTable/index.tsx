@@ -18,6 +18,7 @@ import { ClaimCta } from './claimCta'
 import { HeroBanner } from './heroBanner'
 import { LockupTime } from './lockupTime'
 import { NoPositionStaked } from './noPositionStaked'
+import { PositionsUnavailable } from './positionsUnavailable'
 import { type StakeTableFilterOptions } from './stakeTableFilter'
 import { UnlockCta } from './unlockCta'
 import { VotingPower } from './votingPower'
@@ -105,11 +106,21 @@ const stakingColumns = ({
 
 type Props = {
   data: StakingPosition[] | undefined
-  loading: boolean
   filter?: StakeTableFilterOptions
+  isError: boolean
+  isRetrying: boolean
+  loading: boolean
+  onRetry: VoidFunction
 }
 
-export function StakeTable({ data, filter = 'active', loading }: Props) {
+export function StakeTable({
+  data,
+  filter = 'active',
+  isError,
+  isRetrying,
+  loading,
+  onRetry,
+}: Props) {
   const t = useTranslations('hemi-stake')
   const [openRowId, setOpenRowId] = useState<string | null>(null)
   const { status } = useAccount()
@@ -142,6 +153,14 @@ export function StakeTable({ data, filter = 'active', loading }: Props) {
             className="block size-full rounded-lg"
             containerClassName="block h-full"
           />
+        </TableCard>
+      )
+    }
+
+    if (isError) {
+      return (
+        <TableCard>
+          <PositionsUnavailable isRetrying={isRetrying} onRetry={onRetry} />
         </TableCard>
       )
     }

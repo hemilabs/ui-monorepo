@@ -18,6 +18,7 @@ import { ClaimCta } from './claimCta'
 import { HeroBanner } from './heroBanner'
 import { LockupTime } from './lockupTime'
 import { NoPositionStaked } from './noPositionStaked'
+import { PositionsUnavailable } from './positionsUnavailable'
 import { type StakeTableFilterOptions } from './stakeTableFilter'
 import { UnlockCta } from './unlockCta'
 import { VotingPower } from './votingPower'
@@ -105,16 +106,22 @@ const stakingColumns = ({
 
 type Props = {
   data: StakingPosition[] | undefined
-  loading: boolean
   filter?: StakeTableFilterOptions
+  isError: boolean
+  loading: boolean
+  onRetry: VoidFunction
 }
 
-export function StakeTable({ data, filter = 'active', loading }: Props) {
+export function StakeTable({
+  data,
+  filter = 'active',
+  isError,
+  loading,
+  onRetry,
+}: Props) {
   const t = useTranslations('hemi-stake')
   const [openRowId, setOpenRowId] = useState<string | null>(null)
   const { status } = useAccount()
-
-  const isEmpty = (data?.length ?? 0) === 0 && !loading
 
   const cols = useMemo(
     () =>
@@ -124,6 +131,17 @@ export function StakeTable({ data, filter = 'active', loading }: Props) {
         t,
       }),
     [openRowId, setOpenRowId, t],
+  )
+
+  const table = (
+    <Table
+      columns={cols}
+      containerClassName="flex h-full flex-col"
+      data={data}
+      fitContainer
+      loading={loading}
+      priorityColumnIdsOnSmall={['action']}
+    />
   )
 
   const getContent = function () {
@@ -146,23 +164,26 @@ export function StakeTable({ data, filter = 'active', loading }: Props) {
       )
     }
 
-    if (isEmpty) {
+    if (data?.length) {
+      return table
+    }
+
+    if (isError) {
       return (
         <TableCard>
-          <NoPositionStaked filter={filter} />
+          <PositionsUnavailable onRetry={onRetry} />
         </TableCard>
       )
     }
 
+    if (loading) {
+      return table
+    }
+
     return (
-      <Table
-        columns={cols}
-        containerClassName="flex h-full flex-col"
-        data={data}
-        fitContainer
-        loading={loading}
-        priorityColumnIdsOnSmall={['action']}
-      />
+      <TableCard>
+        <NoPositionStaked filter={filter} />
+      </TableCard>
     )
   }
 

@@ -314,7 +314,7 @@ These environment variables control how the `cron` job behaves:
 
 | Variable              | Description                                                                                 | Default                  |
 | --------------------- | ------------------------------------------------------------------------------------------- | ------------------------ |
-| API_URL               | The URL of the API service.                                                                 | `http://localhost:3004`  |
+| API_URL               | The URL of the API service.                                                                 | `http://localhost:3006`  |
 | MAX_BLOCKS_BEHIND     | The maximum difference between Bitcoin kit last header and the actual Bitcoin chain height. | 4                        |
 | SENTRY_DSN            | The Sentry DSN.                                                                             |                          |
 | SENTRY_LOGGING_LEVELS | The logging levels to send to Sentry (props of console.log).                                | ["log", "warn", "error"] |

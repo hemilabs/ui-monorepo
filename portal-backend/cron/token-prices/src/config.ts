@@ -1,8 +1,7 @@
-'use strict'
+const env = (variable: string, defaultValue: string) =>
+  process.env[variable] || defaultValue
 
-const env = (variable, defaultValue) => process.env[variable] || defaultValue
-
-const config = {
+const settings = {
   cacheExpirationMin: Number(env('CACHE_EXPIRATION_MIN', '60')),
   coinMarketCap: {
     apiKey: env('COIN_MARKET_CAP_API_KEY', ''),
@@ -10,7 +9,7 @@ const config = {
       env('COIN_MARKET_CAP_IDS', 'HEMI:38159')
         .split(',')
         .map(pair => pair.split(':')),
-    ),
+    ) as Record<string, string>,
     slugs: env('COIN_MARKET_CAP_SLUGS', 'bitcoin'),
   },
   redis: {
@@ -24,9 +23,8 @@ const config = {
   version: env('npm_package_version', ''),
 }
 
-const get = path =>
-  path.split('.').reduce((partial, prop) => partial && partial[prop], config)
+type Config = typeof settings
 
-const api = { get }
+const get = <K extends keyof Config>(key: K) => settings[key]
 
-module.exports = api
+export const config = { get }

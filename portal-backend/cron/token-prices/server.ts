@@ -1,13 +1,9 @@
-'use strict'
+import safeAsyncFn from 'safe-async-fn'
+import startInterval from 'startinterval2'
 
-const safeAsyncFn = require('safe-async-fn')
-const startInterval = require('startinterval2')
-
-require('./src/instrument.js')
-
-const { refreshHistory } = require('./src/refresh-history')
-const { refreshPrices } = require('./src/refresh-prices')
-const config = require('./src/config')
+import { config } from './src/config.ts'
+import { refreshHistory } from './src/refresh-history.ts'
+import { refreshPrices } from './src/refresh-prices.ts'
 
 const safeRefreshHistory = safeAsyncFn(refreshHistory)
 const safeRefreshPrices = safeAsyncFn(refreshPrices)
@@ -25,7 +21,7 @@ async function runHistory() {
   const [err, saved] = await safeRefreshHistory()
   if (err) {
     console.warn(`Failed to refresh the price history: ${err}`)
-  } else if (saved > 0) {
+  } else if (saved) {
     console.log(`Price history refreshed with ${saved} days`)
   }
 }

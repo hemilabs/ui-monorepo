@@ -89,7 +89,6 @@ const ConnectedWallet = function ({
         </div>
 
         <Tooltip
-          borderRadius="6px"
           id="copy-address"
           text={copied ? t('copied') : t('copy')}
           trigger={copied ? [] : ['hover']}

@@ -4,10 +4,6 @@ import { type ReactNode } from 'react'
 
 import 'rc-tooltip/assets/bootstrap_white.css'
 
-type CommonTooltipProps = {
-  borderRadius?: '4px' | '6px' | '12px'
-}
-
 type SimpleInfoVariant = Omit<TooltipProps, 'overlay'> & {
   children?: TooltipProps['children']
   text: ReactNode
@@ -21,8 +17,9 @@ type RichVariant = Omit<TooltipProps, 'overlay'> & {
   variant: 'rich'
 }
 
-export type BaseTooltipProps = CommonTooltipProps &
-  ((SimpleInfoVariant & { title?: never }) | RichVariant)
+export type BaseTooltipProps =
+  | (SimpleInfoVariant & { title?: never })
+  | RichVariant
 
 function getOverlay(props: BaseTooltipProps) {
   const commonCss = 'bg-neutral-950 border border-solid border-black/85'
@@ -60,7 +57,6 @@ export const BaseTooltip = function (
   props: BaseTooltipProps & { visible?: boolean },
 ) {
   const {
-    borderRadius = '4px',
     children,
     id,
     placement = 'top',
@@ -82,12 +78,8 @@ export const BaseTooltip = function (
       placement={placement}
       showArrow={false}
       styles={{
-        body: {
-          borderRadius,
-        },
         root: {
           background: 'transparent',
-          borderRadius,
           opacity: 1,
           padding: 0,
         },

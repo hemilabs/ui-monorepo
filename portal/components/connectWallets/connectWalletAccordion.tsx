@@ -141,7 +141,6 @@ export function ConnectWalletAccordion<T extends WalletItem>({
                     {showCheck && (
                       <div className="absolute right-2 top-2">
                         <Tooltip
-                          borderRadius="6px"
                           id="wallet-installed"
                           text={t('installed')}
                           variant="simple"

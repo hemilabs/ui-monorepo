@@ -332,7 +332,6 @@ export function Lockup({
             </span>
             {showPresets && (
               <Tooltip
-                borderRadius="12px"
                 id="lockup-apy-estimate"
                 text={t('apy-estimate')}
                 variant="info"

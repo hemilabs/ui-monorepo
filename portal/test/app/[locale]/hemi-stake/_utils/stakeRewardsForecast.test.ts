@@ -16,9 +16,9 @@ const epochAlignedNow = SixDaysSeconds * 3232
 const hemi = (amount: number) => BigInt(amount) * BigInt(1e18)
 const days = (count: number) => count * 86_400
 
-// A four-year lock of 240 HEMI from a boundary is worth 239 HEMI at the close of the
-// epoch in progress, because the longest lock spans exactly 240 epochs. Against a class
-// of 761 HEMI the denominator lands on 1000, so a pot of 1000 pays exactly 239.
+// A four-year lock of 240 HEMI from a boundary is worth about 239 HEMI at the close of
+// the epoch in progress, because the longest lock spans exactly 240 epochs. Against a
+// class of 761 HEMI the denominator lands on 1000, so a pot of 1000 pays about 239.
 const golden = {
   amount: hemi(240),
   lockDurationInSeconds: MaxLockDurationSeconds,
@@ -160,7 +160,11 @@ describe('getRewardsForecast', function () {
   })
 
   it('shares the pot by weight against the class the stake joins', function () {
-    expect(forecast().nextPayout).toBe(hemi(239))
+    // It lands just under the round 239 because the truncated slope loses under a wei
+    // per second of lock, which caps the shortfall at MaxLockDurationSeconds wei.
+    const { nextPayout } = forecast()
+    expect(nextPayout).toBeLessThan(hemi(239))
+    expect(hemi(239) - nextPayout).toBeLessThan(BigInt(MaxLockDurationSeconds))
   })
 
   it('reports the first epoch as the next payout', function () {

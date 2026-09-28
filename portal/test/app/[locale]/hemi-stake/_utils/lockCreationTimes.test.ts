@@ -48,6 +48,9 @@ describe('predictVotingPower', function () {
   const mockNow = BigInt(SixDaysSeconds * 3232)
   const maxTimeSeconds = BigInt(MaxLockDurationSeconds)
   const amount = BigInt(1000e18)
+  // The contract truncates amount / MAX_TIME once and multiplies after, so no lock is
+  // ever worth the full amount.
+  const slope = amount / maxTimeSeconds
 
   it('discards the epoch a lock cannot complete', function () {
     const lockTime = BigInt(SixDaysSeconds * 60)
@@ -61,7 +64,7 @@ describe('predictVotingPower', function () {
     })
 
     // Starting 100 seconds early costs the lock its sixtieth epoch entirely.
-    expect(result).toBe((amount * BigInt(SixDaysSeconds * 59)) / maxTimeSeconds)
+    expect(result).toBe(slope * BigInt(SixDaysSeconds * 59))
   })
 
   it('is worth nothing for an expired position', function () {
@@ -86,7 +89,7 @@ describe('predictVotingPower', function () {
     expect(result).toBe(BigInt(0))
   })
 
-  it('is worth the whole amount for a 4 year lock at start', function () {
+  it('is worth all but the truncated remainder for a 4 year lock', function () {
     const result = predictVotingPower({
       amount,
       lockTime: maxTimeSeconds,
@@ -94,7 +97,7 @@ describe('predictVotingPower', function () {
       timestamp: mockNow,
     })
 
-    expect(result).toBe(amount)
+    expect(result).toBe(slope * maxTimeSeconds)
   })
 
   it('is worth half the amount for a 2 year lock at start', function () {
@@ -107,7 +110,7 @@ describe('predictVotingPower', function () {
       timestamp: mockNow,
     })
 
-    expect(result).toBe((amount * twoYears) / maxTimeSeconds)
+    expect(result).toBe(slope * twoYears)
   })
 
   it('gives up the part of the final epoch the contract rounds away', function () {
@@ -145,7 +148,7 @@ describe('predictVotingPower', function () {
 
     vi.useRealTimers()
 
-    expect(result).toBe(amount)
+    expect(result).toBe(slope * maxTimeSeconds)
   })
 })
 

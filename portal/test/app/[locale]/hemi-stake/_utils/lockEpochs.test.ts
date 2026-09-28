@@ -72,24 +72,44 @@ describe('getEpochEnd', function () {
 })
 
 describe('getWeightAt', function () {
-  it('is worth the whole amount when the longest lock starts', function () {
+  // The contract truncates the slope before multiplying, so even the longest lock
+  // falls short of the amount by whatever the division dropped.
+  it('is worth the amount less what the truncated slope drops', function () {
     expect(
       getWeightAt({
         amount: hemi(240),
         at: epochAlignedNow,
         lockEnd: epochs(240),
       }),
-    ).toBe(hemi(240))
+    ).toBe(hemi(240) - (hemi(240) % BigInt(MaxLockDurationSeconds)))
   })
 
   it('decays in a straight line, halving at the midpoint', function () {
+    const atStart = getWeightAt({
+      amount: hemi(240),
+      at: epochAlignedNow,
+      lockEnd: epochs(240),
+    })
+
     expect(
       getWeightAt({
         amount: hemi(240),
         at: epochs(120),
         lockEnd: epochs(240),
       }),
-    ).toBe(hemi(120))
+    ).toBe(atStart / BigInt(2))
+  })
+
+  // Position 29702 on Hemi mainnet, read with balanceOfNFTAt at that instant. This is
+  // the case that catches the operation order drifting from the contract's.
+  it('matches what the contract reports for a live position', function () {
+    expect(
+      getWeightAt({
+        amount: BigInt('14505242825800000000000000'),
+        at: 1790614080,
+        lockEnd: 1792471680,
+      }),
+    ).toBe(BigInt('213458398873853523580800'))
   })
 
   it('is worth nothing at the unlock instant itself', function () {

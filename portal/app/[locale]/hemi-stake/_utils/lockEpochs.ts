@@ -23,6 +23,8 @@ export const getEpochEnd = ({
   now: number
 }) => snapToEpoch(now) + (epochsAhead + 1) * SixDaysSeconds
 
+// The contract truncates the slope once and multiplies after, so dividing last would
+// round less than the chain does and overstate the weight.
 export const getWeightAt = ({
   amount,
   at,
@@ -32,4 +34,4 @@ export const getWeightAt = ({
   at: number
   lockEnd: number
 }) =>
-  at < lockEnd ? (amount * BigInt(lockEnd - at)) / maxLockSeconds : BigInt(0)
+  at < lockEnd ? (amount / maxLockSeconds) * BigInt(lockEnd - at) : BigInt(0)

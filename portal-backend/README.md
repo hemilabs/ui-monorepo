@@ -235,6 +235,7 @@ These environment variables control how the cache works:
 | ------------------------ | ----------------------------------------------------------------- | ---------------------------------- |
 | BTC_VAULTS_CACHE_MIN     | The time to cache the BTC vaults data in minutes.                 | 1                                  |
 | COIN_MARKET_CAP_IDS      | Comma separated `SYMBOL:id` pairs with a daily price history.     | HEMI:38159                         |
+| NODE_ENV                 | Sentry environment. `production` in the Docker images.            | `development`                      |
 | ORIGINS                  | Comma-separated list of allowed origins. Globs are supported (1). | `http://localhost:3000`            |
 | PORT                     | The HTTP port the server listens for requests.                    | 3006                               |
 | REDIS_URL                | The URL of the Redis database.                                    | `redis://localhost:6379`           |
@@ -262,6 +263,7 @@ These environment variables control how the `cron` job behaves:
 
 | Variable              | Description                                                                          | Default                        |
 | --------------------- | ------------------------------------------------------------------------------------ | ------------------------------ |
+| NODE_ENV              | Sentry environment. `production` in the Docker images.                               | `development`                  |
 | REDIS_URL             | The URL of the Redis database.                                                       | `redis://localhost:6379`       |
 | REFRESH_SUPPLY_MIN    | How frequently the cache will be refreshed. If set to 0, it will run once and exit.  | 5                              |
 | RPC_URL_BNB           | URL of the BNB Chain RPC node.                                                       | `https://56.rpc.thirdweb.com`  |
@@ -292,6 +294,7 @@ These environment variables control how the `cron` job behaves:
 | COIN_MARKET_CAP_API_KEY | The CoinMarketCap API key.                                                          |                          |
 | COIN_MARKET_CAP_IDS     | Comma separated `SYMBOL:id` pairs whose daily price history is kept.                | HEMI:38159               |
 | COIN_MARKET_CAP_SLUGS   | String of comma separated token slugs. I.e. "bitcoin,ethereum"                      | bitcoin                  |
+| NODE_ENV                | Sentry environment. `production` in the Docker images.                              | `development`            |
 | REDIS_URL               | The URL of the Redis database.                                                      | `redis://localhost:6379` |
 | REFRESH_PRICES_MIN      | How frequently the cache will be refreshed. If set to 0, it will run once and exit. | 5                        |
 | SENTRY_DSN              | The Sentry DSN.                                                                     |                          |
@@ -316,10 +319,12 @@ These environment variables control how the `cron` job behaves:
 | --------------------- | ------------------------------------------------------------------------------------------- | ------------------------ |
 | API_URL               | The URL of the API service.                                                                 | `http://localhost:3006`  |
 | MAX_BLOCKS_BEHIND     | The maximum difference between Bitcoin kit last header and the actual Bitcoin chain height. | 4                        |
+| NODE_ENV              | Sentry environment. `production` in the Docker images.                                      | `development`            |
 | SENTRY_DSN            | The Sentry DSN.                                                                             |                          |
 | SENTRY_LOGGING_LEVELS | The logging levels to send to Sentry (props of console.log).                                | ["log", "warn", "error"] |
 | SLACK_MENTION         | The user to tag when sending alerts                                                         |                          |
 | SLACK_WEBHOOK_URL     | The full URL of the webhook to send the alerts to.                                          |                          |
+| SLEEP                 | Seconds to wait before starting.                                                            | 0                        |
 | VAULTS_MONITORING_MIN | How frequently the cache will be refreshed. If set to 0, it will run once and exit.         | 5                        |
 
 ## Local development and testing

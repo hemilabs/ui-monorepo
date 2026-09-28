@@ -4,6 +4,8 @@ import { getVeHemiContractAddress } from 've-hemi-actions'
 import { encodeCreateLock } from 've-hemi-actions/actions'
 import { useAccount, useEstimateGas } from 'wagmi'
 
+import { createErc20AllowanceStateOverride } from '../_utils/erc20StateOverride'
+
 export const useEstimateCreateLockFees = function ({
   amount,
   enabled = true,
@@ -15,7 +17,7 @@ export const useEstimateCreateLockFees = function ({
   lockDurationInSeconds: bigint
   token: StakingDashboardToken
 }) {
-  const { isConnected } = useAccount()
+  const { address, isConnected } = useAccount()
   const veHemiAddress = getVeHemiContractAddress(token.chainId)
 
   const data = encodeCreateLock({
@@ -27,6 +29,11 @@ export const useEstimateCreateLockFees = function ({
     chainId: token.chainId,
     data,
     query: { enabled: isConnected && enabled },
+    stateOverride: createErc20AllowanceStateOverride({
+      owner: address,
+      spender: veHemiAddress,
+      token,
+    }),
     to: veHemiAddress,
     value: undefined,
   })

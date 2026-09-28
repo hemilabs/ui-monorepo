@@ -5,7 +5,6 @@ const maxLockSeconds = BigInt(MaxLockDurationSeconds)
 const snapToEpoch = (timestamp: number) =>
   Math.floor(timestamp / SixDaysSeconds) * SixDaysSeconds
 
-// The contract stores every lock end on an epoch boundary, rounding the rest away.
 export const getLockEnd = ({
   lockTime,
   timestamp,
@@ -23,8 +22,6 @@ export const getEpochEnd = ({
   now: number
 }) => snapToEpoch(now) + (epochsAhead + 1) * SixDaysSeconds
 
-// The contract truncates the slope once and multiplies after, so dividing last would
-// round less than the chain does and overstate the weight.
 export const getWeightAt = ({
   amount,
   at,

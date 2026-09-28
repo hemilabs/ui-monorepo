@@ -9,8 +9,6 @@ import { getEpochEnd, getLockEnd, getWeightAt } from './lockEpochs'
 
 const epochsPerYear = MaxLockDurationSeconds / (4 * SixDaysSeconds)
 
-// Dividing as doubles, not as scaled integers: a ratio keeps its significant digits at
-// any magnitude, while scaling floors the smallest allowed stake against the class.
 const toFraction = function (numerator: bigint, denominator: bigint) {
   if (denominator === BigInt(0)) {
     return 0
@@ -24,8 +22,6 @@ const clampToLockLimits = (lockDurationInSeconds: number) =>
     MaxLockDurationSeconds,
   )
 
-// Both operands belong to the transferable class. Total veHEMI supply is ~42x it, so
-// passing that instead understates every payout by the same factor.
 export const getEpochPayout = function ({
   transferableClassPot,
   transferableClassWeight,

@@ -2,8 +2,13 @@ import {
   getNearestPreset,
   getUnlockInfo,
   predictVotingPower,
+  wholeDaysToSeconds,
 } from 'app/[locale]/hemi-stake/_utils/lockCreationTimes'
-import { MaxLockDurationSeconds, SixDaysSeconds } from 've-hemi-actions'
+import {
+  MaxLockDurationSeconds,
+  MinLockDurationSeconds,
+  SixDaysSeconds,
+} from 've-hemi-actions'
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 
 describe('getUnlockInfo', function () {
@@ -174,5 +179,23 @@ describe('getNearestPreset', function () {
 
   it('prefers the shorter lock when two presets are equally close', function () {
     expect(getNearestPreset({ days: (180 + 366) / 2, presets })).toBe(180)
+  })
+})
+
+describe('wholeDaysToSeconds', function () {
+  it('converts a whole number of days', function () {
+    expect(wholeDaysToSeconds(366)).toBe(BigInt(366 * 86_400))
+  })
+
+  it('drops the fraction of a day the input carries', function () {
+    expect(wholeDaysToSeconds(366.75)).toBe(wholeDaysToSeconds(366))
+  })
+
+  it('takes a pasted decimal without throwing', function () {
+    expect(() => wholeDaysToSeconds(12.5)).not.toThrow()
+  })
+
+  it('clamps to the shortest lock the contract takes', function () {
+    expect(wholeDaysToSeconds(1)).toBe(BigInt(MinLockDurationSeconds))
   })
 })

@@ -45,6 +45,9 @@ export function daysToSeconds(days: number | bigint): number | bigint {
   return clampMin(days * secondsPerDay, MinLockDurationSeconds)
 }
 
+export const wholeDaysToSeconds = (days: number) =>
+  daysToSeconds(BigInt(Math.trunc(days)))
+
 type GetUnlockInfoProps = {
   timestamp: number | bigint
   lockTime: number | bigint

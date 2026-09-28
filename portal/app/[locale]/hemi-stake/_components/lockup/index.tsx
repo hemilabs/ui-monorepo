@@ -14,7 +14,6 @@ import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
 
 import {
-  daysToSeconds,
   getNearestPreset,
   getUnlockInfo,
   maxDays,
@@ -24,6 +23,7 @@ import {
   sixMonths,
   step,
   twoYears,
+  wholeDaysToSeconds,
 } from '../../_utils/lockCreationTimes'
 import { lockupApy } from '../../_utils/lockupApy'
 import { sanitizeLockup } from '../../_utils/sanitizeLockup'
@@ -239,9 +239,10 @@ export function Lockup({
   const inputNumber = Number(inputDays)
   const valid = isValidLockup({ minLocked, value: inputNumber })
   const nearest = getNearestValidValues({ minLocked, value: inputNumber })
+  const lockupSeconds = wholeDaysToSeconds(lockupDays)
   const expireDate = formatDate(
     getUnlockInfo({
-      lockTime: daysToSeconds(lockupDays),
+      lockTime: lockupSeconds,
       timestamp: Number(unixNowTimestamp()),
     }).unlockDate,
     locale,
@@ -253,18 +254,16 @@ export function Lockup({
         return '0'
       }
 
-      const lockTime = daysToSeconds(BigInt(lockupDays))
-
       const votingPower = predictVotingPower({
         amount,
-        lockTime,
+        lockTime: lockupSeconds,
         timestamp: unixNowTimestamp(),
       })
 
       const formattedPower = formatUnits(votingPower, token.decimals)
       return formattedPower.toString()
     },
-    [amount, lockupDays, token.decimals],
+    [amount, lockupSeconds, token.decimals],
   )
 
   function handleSliderChange(val: number) {

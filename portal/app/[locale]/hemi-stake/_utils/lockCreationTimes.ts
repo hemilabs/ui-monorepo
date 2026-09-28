@@ -1,26 +1,23 @@
 import { StakingPosition } from 'types/stakingDashboard'
-import { unixNowTimestamp } from 'utils/time'
-import {
-  MaxLockDurationSeconds,
-  MinLockDurationSeconds,
-  SixDaysSeconds,
-} from 've-hemi-actions'
+import { secondsPerDay, unixNowTimestamp } from 'utils/time'
+import { MaxLockDurationSeconds, MinLockDurationSeconds } from 've-hemi-actions'
 
-export const daySeconds = 86_400
+import { getLockEnd, getWeightAt } from './lockEpochs'
 
-export const minDays = Math.floor(MinLockDurationSeconds / daySeconds)
-export const maxDays = Math.floor(MaxLockDurationSeconds / daySeconds)
+export const minDays = Math.floor(MinLockDurationSeconds / secondsPerDay)
+export const maxDays = Math.floor(MaxLockDurationSeconds / secondsPerDay)
 export const maxYears = Math.round(
-  MaxLockDurationSeconds / (365.25 * daySeconds),
+  MaxLockDurationSeconds / (365.25 * secondsPerDay),
 )
 export const step = 6
 
 export const twoYears = 732
 
-const epochsPerYear = 61 // 61 epochs × 6 days = 366 days
+// Slider steps, not reward epochs: 61 × 6 days = 366 days. A reward epoch is 6.0875 days.
+const sixDayStepsPerYear = 61
 
-export const oneYear = epochsPerYear * step
-export const sixMonths = Math.floor(epochsPerYear / 2) * step
+export const oneYear = sixDayStepsPerYear * step
+export const sixMonths = Math.floor(sixDayStepsPerYear / 2) * step
 
 type GetNearestPresetProps = {
   days: number
@@ -40,9 +37,12 @@ export function daysToSeconds(days: number): number
 export function daysToSeconds(days: bigint): bigint
 export function daysToSeconds(days: number | bigint): number | bigint {
   if (typeof days === 'bigint') {
-    return clampMin(days * BigInt(daySeconds), BigInt(MinLockDurationSeconds))
+    return clampMin(
+      days * BigInt(secondsPerDay),
+      BigInt(MinLockDurationSeconds),
+    )
   }
-  return clampMin(days * daySeconds, MinLockDurationSeconds)
+  return clampMin(days * secondsPerDay, MinLockDurationSeconds)
 }
 
 type GetUnlockInfoProps = {
@@ -57,8 +57,10 @@ export function getUnlockInfo({ lockTime, timestamp }: GetUnlockInfoProps) {
   const timestampNum = Number(timestamp)
   const lockTimeNum = Number(lockTime)
 
-  const unlockTime =
-    Math.floor((timestampNum + lockTimeNum) / SixDaysSeconds) * SixDaysSeconds
+  const unlockTime = getLockEnd({
+    lockTime: lockTimeNum,
+    timestamp: timestampNum,
+  })
   const timeRemainingSeconds = unlockTime - currentTimeInSeconds
 
   // Calculate unlock date in UTC
@@ -75,20 +77,20 @@ export function getUnlockInfo({ lockTime, timestamp }: GetUnlockInfoProps) {
 
 type PredictVotingPowerProps = Pick<
   StakingPosition,
-  'amount' | 'timestamp' | 'lockTime'
->
+  'amount' | 'lockTime' | 'timestamp'
+> & { now?: number }
 
-export function predictVotingPower({
+export const predictVotingPower = ({
   amount,
   lockTime,
+  now = Number(unixNowTimestamp()),
   timestamp,
-}: PredictVotingPowerProps) {
-  const maxTimeSeconds = BigInt(maxDays * daySeconds)
-  const now = unixNowTimestamp()
-
-  const end = timestamp + lockTime
-  const timeRemaining = end > now ? end - now : BigInt(0)
-
-  // Calculate voting power (decays linearly)
-  return (amount * timeRemaining) / maxTimeSeconds
-}
+}: PredictVotingPowerProps) =>
+  getWeightAt({
+    amount,
+    at: now,
+    lockEnd: getLockEnd({
+      lockTime: Number(lockTime),
+      timestamp: Number(timestamp),
+    }),
+  })

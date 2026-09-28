@@ -14,8 +14,9 @@ import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
 
 import {
-  daySeconds,
+  daysToSeconds,
   getNearestPreset,
+  getUnlockInfo,
   maxDays,
   minDays,
   oneYear,
@@ -30,12 +31,6 @@ import { sanitizeLockup } from '../../_utils/sanitizeLockup'
 import { LockupPresets } from './lockupPresets'
 import { RangeSlider } from './rangeSlider'
 import { WarningMessage } from './warningMessage'
-
-function addDays(date: Date, days: number) {
-  const result = new Date(date)
-  result.setDate(result.getDate() + days)
-  return result
-}
 
 type ValidLockupProps = {
   minLocked?: number
@@ -244,7 +239,13 @@ export function Lockup({
   const inputNumber = Number(inputDays)
   const valid = isValidLockup({ minLocked, value: inputNumber })
   const nearest = getNearestValidValues({ minLocked, value: inputNumber })
-  const expireDate = formatDate(addDays(new Date(), lockupDays), locale)
+  const expireDate = formatDate(
+    getUnlockInfo({
+      lockTime: daysToSeconds(lockupDays),
+      timestamp: Number(unixNowTimestamp()),
+    }).unlockDate,
+    locale,
+  )
 
   const votingPowerRatio = useMemo(
     function calcVotingPower() {
@@ -252,7 +253,7 @@ export function Lockup({
         return '0'
       }
 
-      const lockTime = BigInt(lockupDays * daySeconds)
+      const lockTime = daysToSeconds(BigInt(lockupDays))
 
       const votingPower = predictVotingPower({
         amount,

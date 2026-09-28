@@ -1,6 +1,6 @@
 # Build context is the repo root (see docker-compose.yml / the CI workflows)
-# because portal-backend/api depends on workspace packages (ve-hemi-actions,
-# ve-hemi-rewards) that live outside this folder.
+# because portal-backend/api depends on workspace packages that live outside
+# this folder.
 #
 # This is a multi-stage build on purpose: the `build` stage needs the whole repo
 # + devDependencies (typescript, etc.) to install and compile, which is heavy.
@@ -15,10 +15,8 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 WORKDIR /repo
 COPY . .
 RUN pnpm install --frozen-lockfile --filter portal-backend...
-# Node can't type-strip .ts under node_modules, so compile the workspace packages
-# the api consumes to JS. Their package.json "compiled" export condition
-# points at this dist; the runtime activates it via NODE_OPTIONS below.
-RUN pnpm --filter ve-hemi-actions --filter ve-hemi-rewards --filter hemi-earn-actions run build
+# Node can't strip types under node_modules, so compile all workspace deps of the api to dist.
+RUN pnpm --filter "portal-backend^..." run build
 # Self-contained app dir: prod deps + api files, workspace packages copied in.
 # --legacy: this workspace doesn't set inject-workspace-packages, which pnpm v10's
 # default deploy now requires.

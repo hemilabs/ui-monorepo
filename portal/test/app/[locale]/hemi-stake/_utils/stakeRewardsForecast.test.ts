@@ -8,6 +8,7 @@ import {
 import {
   MaxLockDurationSeconds,
   minLockAmount,
+  MinLockDurationSeconds,
   SixDaysSeconds,
 } from 've-hemi-actions'
 import { describe, expect, it } from 'vitest'
@@ -204,13 +205,6 @@ describe('getRewardsForecast', function () {
     expect(payouts.filter(({ payout }) => payout > BigInt(0))).toHaveLength(1)
   })
 
-  it('pays nothing at all when the lock misses the next boundary', function () {
-    const { yearOneTotal } = forecast({
-      lockDurationInSeconds: SixDaysSeconds - 1,
-    })
-    expect(yearOneTotal).toBe(BigInt(0))
-  })
-
   it('turns the minimum amount down one wei short of it', function () {
     expect(
       forecast({ amount: minLockAmount - BigInt(1) }).meetsMinimumAmount,
@@ -236,7 +230,19 @@ describe('getRewardsForecast', function () {
   })
 
   it('has no yield rather than an infinite one without an amount', function () {
-    expect(forecast({ amount: BigInt(0) }).yearOneApy).toBe(0)
+    expect(forecast({ amount: BigInt(0) }).yearOneReturnRatio).toBe(0)
+  })
+
+  it('prices a duration under the floor as the shortest lock allowed', function () {
+    expect(forecast({ lockDurationInSeconds: 12 * 86_400 }).yearOneTotal).toBe(
+      forecast({ lockDurationInSeconds: MinLockDurationSeconds }).yearOneTotal,
+    )
+  })
+
+  it('still pays for a duration the caller left under the floor', function () {
+    expect(
+      forecast({ lockDurationInSeconds: 12 * 86_400 }).yearOneTotal,
+    ).toBeGreaterThan(BigInt(0))
   })
 
   it('prices a duration past the cap as the longest lock allowed', function () {
@@ -296,7 +302,7 @@ describe('getRewardsForecastByLockDurations', function () {
   // epoch 3402's pot. Every other test here only proves internal consistency; this one
   // is the only guard against the whole model drifting.
   it('reproduces the ladder the deployed simulator published', function () {
-    const apys = getRewardsForecastByLockDurations({
+    const ratios = getRewardsForecastByLockDurations({
       amount: hemi(10_000),
       lockDurationsInSeconds: [
         days(365),
@@ -307,11 +313,11 @@ describe('getRewardsForecastByLockDurations', function () {
       now: SixDaysSeconds * 3402 + 43_200,
       transferableClassPot: BigInt('4166666660000000000000000'),
       transferableClassWeight: hemi(10_056_994),
-    }).map(({ yearOneApy }) => yearOneApy)
+    }).map(({ yearOneReturnRatio }) => yearOneReturnRatio)
 
-    expect(apys[0]).toBeCloseTo(3.055, 2)
-    expect(apys[1]).toBeCloseTo(9.266, 2)
-    expect(apys[2]).toBeCloseTo(15.475, 2)
-    expect(apys[3]).toBeCloseTo(21.68, 2)
+    expect(ratios[0]).toBeCloseTo(3.055, 2)
+    expect(ratios[1]).toBeCloseTo(9.266, 2)
+    expect(ratios[2]).toBeCloseTo(15.475, 2)
+    expect(ratios[3]).toBeCloseTo(21.68, 2)
   })
 })

@@ -1,6 +1,7 @@
 import {
   MaxLockDurationSeconds,
   minLockAmount,
+  MinLockDurationSeconds,
   SixDaysSeconds,
 } from 've-hemi-actions'
 
@@ -16,6 +17,12 @@ const toFraction = function (numerator: bigint, denominator: bigint) {
   }
   return Number(numerator) / Number(denominator)
 }
+
+const clampToLockLimits = (lockDurationInSeconds: number) =>
+  Math.min(
+    Math.max(lockDurationInSeconds, MinLockDurationSeconds),
+    MaxLockDurationSeconds,
+  )
 
 // Both operands belong to the transferable class. Total veHEMI supply is ~42x it, so
 // passing that instead understates every payout by the same factor.
@@ -65,7 +72,7 @@ export const getRewardsForecast = function ({
   transferableClassWeight: bigint
 }) {
   const lockEnd = getLockEnd({
-    lockTime: Math.min(lockDurationInSeconds, MaxLockDurationSeconds),
+    lockTime: clampToLockLimits(lockDurationInSeconds),
     timestamp: now,
   })
 
@@ -97,7 +104,7 @@ export const getRewardsForecast = function ({
     meetsMinimumAmount: amount >= minLockAmount,
     nextPayout: payouts[0].payout,
     payouts,
-    yearOneApy: toFraction(yearOneTotal, amount),
+    yearOneReturnRatio: toFraction(yearOneTotal, amount),
     yearOneTotal,
   }
 }

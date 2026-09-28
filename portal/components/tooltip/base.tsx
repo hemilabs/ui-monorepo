@@ -70,7 +70,7 @@ export const BaseTooltip = function (
         overflow: { adjustX: true, adjustY: true, shiftX: true },
       }}
       classNames={{
-        root: 'pointer-events-none max-w-[100vw] xs:max-w-102 [&_.rc-tooltip-inner>*]:pointer-events-auto [&_.rc-tooltip-inner]:min-h-0 [&_.rc-tooltip-inner]:border-none [&_.rc-tooltip-inner]:bg-transparent [&_.rc-tooltip-inner]:p-0 [&_.rc-tooltip-inner]:px-4',
+        root: 'pointer-events-none max-w-[100vw] xs:max-w-102 [&_.rc-tooltip-inner>*]:pointer-events-auto [&_.rc-tooltip-inner]:min-h-0 [&_.rc-tooltip-inner]:border-none [&_.rc-tooltip-inner]:bg-transparent [&_.rc-tooltip-inner]:px-4 [&_.rc-tooltip-inner]:py-0',
       }}
       destroyTooltipOnHide
       id={id}

@@ -585,6 +585,7 @@
       "claim": "Reclamar",
       "claim-all-rewards": "Reclamar todas las recompensas",
       "claiming-paused": "El reclamo de recompensas está pausado",
+      "could-not-load-positions": "No pudimos cargar sus posiciones",
       "get-started": "Comience haciendo staking de sus ${symbol}",
       "get-started-burned": "Sus posiciones quemadas aparecerán aquí una vez que hayan finalizado sus períodos de bloqueo.",
       "locked-amount": "Cantidad bloqueada",

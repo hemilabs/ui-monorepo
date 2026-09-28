@@ -4,6 +4,7 @@ import { EmptyIcon } from 'app/[locale]/hemi-stake/_icons/emptyIcon'
 import { MoreItemsIcon } from 'app/[locale]/hemi-stake/_icons/moreItemsIcon'
 import { Badge } from 'components/badge'
 import { Button, ButtonIcon } from 'components/button'
+import { WarningIcon } from 'components/icons/warningIcon'
 import { InformationBox } from 'components/informationBox'
 import { Table, type TableProps } from 'components/table'
 import { Header } from 'components/table/_components/header'
@@ -249,6 +250,27 @@ export const Empty: Story = {
         icon={<EmptyIcon />}
         subtitle="Get started by staking your $HEMI"
         title="No $HEMI staked"
+      />
+    </TableCard>
+  ),
+}
+
+export const LoadFailed: Story = {
+  name: 'Error',
+  parameters: {
+    controls: { disable: true },
+  },
+  render: () => (
+    <TableCard>
+      <InformationBox
+        actions={
+          <Button size="xSmall" type="button">
+            Try again
+          </Button>
+        }
+        icon={<WarningIcon className="text-orange-600" />}
+        subtitle="An unexpected error has occurred. Please try again."
+        title="We couldn't load your positions"
       />
     </TableCard>
   ),

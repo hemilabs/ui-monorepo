@@ -33,10 +33,10 @@ export const TokenQuickSelect = function ({
   }
 
   return (
-    <div className="flex gap-x-3">
+    <div className="grid grid-cols-3 gap-x-3">
       {tokens.map(token => (
         <div
-          className="group relative flex-1 rounded-lg bg-white shadow-sm"
+          className="group relative rounded-lg bg-white shadow-sm"
           key={token.address}
         >
           {/* Inner hover background */}

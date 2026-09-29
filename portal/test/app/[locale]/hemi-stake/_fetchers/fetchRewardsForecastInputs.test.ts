@@ -30,6 +30,17 @@ const baseline = (transferable: bigint) => [
   },
 ]
 
+const lockedOnlyBaseline = [
+  {
+    fundedByClass: {
+      forfeitable: BigInt(0),
+      locked: BigInt('1370000000000000000000000'),
+      transferable: BigInt(0),
+    },
+    label: stringToHex('baseline', { size: 32 }),
+  },
+]
+
 const fees = [
   {
     fundedByClass: {
@@ -165,7 +176,7 @@ describe('fetchRewardsForecastInputs', function () {
   it('takes a baseline that funded only the locked class as no pot', async function () {
     const queryClient = createTestQueryClient()
     seed(queryClient, {
-      [currentEpoch]: baseline(BigInt(0)),
+      [currentEpoch]: lockedOnlyBaseline,
       [currentEpoch - 1]: baseline(pot),
     })
 

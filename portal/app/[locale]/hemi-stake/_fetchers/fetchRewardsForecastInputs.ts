@@ -25,29 +25,38 @@ export const fetchRewardsForecastInputs = async function (
     token: Address
   },
 ) {
-  const weight = queryClient.fetchQuery(
-    getClassDenominatorsQueryOptions({
-      chainId,
-      epoch: currentEpoch,
-      hemiClient,
-    }),
-  )
-
-  const oldestEpoch = Math.max(currentEpoch - maxEpochsBack, firstFundableEpoch)
-  let funded: { epoch: number; pot: bigint } | undefined
-
-  for (let epoch = currentEpoch; epoch >= oldestEpoch && !funded; epoch--) {
-    const streams = await queryClient.fetchQuery(
-      getEpochStreamsQueryOptions({ chainId, epoch, hemiClient, token }),
+  const findFunded = async function () {
+    const oldestEpoch = Math.max(
+      currentEpoch - maxEpochsBack,
+      firstFundableEpoch,
     )
-    const pot = getBaselinePot(streams)
 
-    if (pot > BigInt(0)) {
-      funded = { epoch, pot }
+    for (let epoch = currentEpoch; epoch >= oldestEpoch; epoch--) {
+      const streams = await queryClient.fetchQuery(
+        getEpochStreamsQueryOptions({ chainId, epoch, hemiClient, token }),
+      )
+      const pot = getBaselinePot(streams)
+
+      if (pot > BigInt(0)) {
+        return { epoch, pot }
+      }
     }
+
+    return undefined
   }
 
-  const { transferable: transferableClassWeight } = await weight
+  const [{ transferable: transferableClassWeight }, funded] = await Promise.all(
+    [
+      queryClient.fetchQuery(
+        getClassDenominatorsQueryOptions({
+          chainId,
+          epoch: currentEpoch,
+          hemiClient,
+        }),
+      ),
+      findFunded(),
+    ],
+  )
 
   if (!funded) {
     return { transferableClassWeight }

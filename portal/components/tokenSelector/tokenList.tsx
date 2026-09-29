@@ -50,7 +50,7 @@ export const TokenList = function ({
   const defaultPriorityTokensByAddress = [
     // HEMI Hemi
     '0x99e3dE3817F6081B2568208337ef83295b7f591D',
-    // HEMI Mainnet
+    // HEMI Ethereum
     '0xEb964A1A6fAB73b8c72A0D15c7337fA4804F484d',
     // hemiBTC Hemi
     '0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28',

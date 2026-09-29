@@ -4,7 +4,7 @@ import { getVeHemiContractAddress } from 've-hemi-actions'
 import { encodeIncreaseUnlockTime } from 've-hemi-actions/actions'
 import { useAccount, useEstimateGas } from 'wagmi'
 
-import { daysToSeconds } from '../_utils/lockCreationTimes'
+import { wholeDaysToSeconds } from '../_utils/lockCreationTimes'
 
 export const useEstimateIncreaseUnlockTimeFees = function ({
   enabled = true,
@@ -21,7 +21,7 @@ export const useEstimateIncreaseUnlockTimeFees = function ({
   const veHemiAddress = getVeHemiContractAddress(token.chainId)
 
   const data = encodeIncreaseUnlockTime({
-    lockDurationInSeconds: daysToSeconds(BigInt(lockupDays)),
+    lockDurationInSeconds: wholeDaysToSeconds(lockupDays),
     tokenId,
   })
 

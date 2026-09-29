@@ -47,6 +47,11 @@ const registry = [
   },
 ]
 
+const named = function ({ fundedByClass, ...stream }) {
+  const [transferable, locked, forfeitable] = fundedByClass
+  return { ...stream, fundedByClass: { forfeitable, locked, transferable } }
+}
+
 describe('getEpochStreams', function () {
   const mockLensAddress = '0x1234567890123456789012345678901234567890'
   const options = { epoch: 3403, token: hemiToken }
@@ -63,7 +68,7 @@ describe('getEpochStreams', function () {
 
     const result = await getEpochStreams(mockClient, options)
 
-    expect(result).toEqual([registry[0], registry[2]])
+    expect(result).toEqual([named(registry[0]), named(registry[2])])
     expect(
       constants.getVeHemiEpochRewardsLensContractAddress,
     ).toHaveBeenCalledWith(uniqueChainId)
@@ -72,6 +77,24 @@ describe('getEpochStreams', function () {
       address: mockLensAddress,
       args: [options.epoch, options.token],
       functionName: 'streamsForEpoch',
+    })
+  })
+
+  it('should name the class each funded amount belongs to', async function () {
+    const mockClient = { chain: { id: 9001 } }
+
+    vi.spyOn(
+      constants,
+      'getVeHemiEpochRewardsLensContractAddress',
+    ).mockReturnValue(mockLensAddress)
+    vi.mocked(readContract).mockResolvedValueOnce([registry[0]])
+
+    const [stream] = await getEpochStreams(mockClient, options)
+
+    expect(stream.fundedByClass).toEqual({
+      forfeitable: registry[0].fundedByClass[2],
+      locked: registry[0].fundedByClass[1],
+      transferable: registry[0].fundedByClass[0],
     })
   })
 
@@ -122,7 +145,7 @@ describe('getEpochStreams', function () {
 
     const result = await getEpochStreams(mockClient, options)
 
-    expect(result).toEqual([registry[0]])
+    expect(result).toEqual([named(registry[0])])
   })
 
   it('should come back empty for an epoch nothing funded', async function () {

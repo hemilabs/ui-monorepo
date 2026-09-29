@@ -28,7 +28,7 @@ From `ve-hemi-epoch-rewards/actions`:
 
 - `getSystemState(client)`: the epoch grid, the reward token registry and the pause state, in one read.
 - `getClassDenominators(client, { epoch })`: the total weight of each class at the end of the epoch, named, as the contract shares its pots by them.
-- `getEpochStreams(client, { epoch, token })`: the streams that funded the epoch in that token, with the split across the classes. Labels come as `bytes32`, so read them with `hexToString(label, { size: 32 })`.
+- `getEpochStreams(client, { epoch, token })`: the streams that funded the epoch in that token, with `fundedByClass` naming the split the same way `getClassDenominators` does. Labels come as `bytes32`, so read them with `hexToString(label, { size: 32 })`.
 - `getMaxClaimPairs(client)`: the maximum number of epoch and token pairs one claim may settle.
 - `getClaimableByToken(client, { fromEpoch, holder, toEpoch, tokenId })`: what the holder can claim for a position, per reward token, over an epoch range.
 - `getPositionClass(client, { tokenId })`: the class recorded for a position, and whether it was recorded at all.

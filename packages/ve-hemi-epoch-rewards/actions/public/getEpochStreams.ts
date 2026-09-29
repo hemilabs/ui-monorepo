@@ -34,7 +34,13 @@ export const getEpochStreams = async function (
     functionName: 'streamsForEpoch',
   })
 
-  return streams.filter(
-    stream => isAddressEqual(stream.token, token) && stream.funded > BigInt(0),
-  )
+  return streams
+    .filter(
+      stream =>
+        isAddressEqual(stream.token, token) && stream.funded > BigInt(0),
+    )
+    .map(function ({ fundedByClass, ...stream }) {
+      const [transferable, locked, forfeitable] = fundedByClass
+      return { ...stream, fundedByClass: { forfeitable, locked, transferable } }
+    })
 }

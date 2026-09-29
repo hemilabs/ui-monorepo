@@ -20,6 +20,7 @@ import { List } from './list'
 import { NoTokensMatch } from './noTokensMatch'
 import { TokenListSkeleton } from './tokenListSkeleton'
 import { TokenQuickSelect } from './tokenQuickSelect'
+import { getQuickSelectionTokens } from './utils'
 
 type Props = {
   chainId: Chain['id']
@@ -45,8 +46,16 @@ export const TokenList = function ({
   const { height: viewportHeight } = useVisualViewportSize()
 
   // Define a list of default priority tokens by their addresses
-  // These tokens will be prioritized in the quick selection section
+  // These tokens fill the quick selection section when the user has fewer than 3 top tokens
   const defaultPriorityTokensByAddress = [
+    // HEMI Hemi
+    '0x99e3dE3817F6081B2568208337ef83295b7f591D',
+    // HEMI Mainnet
+    '0xEb964A1A6fAB73b8c72A0D15c7337fA4804F484d',
+    // hemiBTC Hemi
+    '0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28',
+    // tBTC Hemi Sepolia
+    '0x36Ab5Dba83d5d470F670BC4c06d7Da685d9afAe7',
     'ETH',
     // USDC Sepolia
     '0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8',
@@ -83,15 +92,19 @@ export const TokenList = function ({
     isCustomToken(userTokenList, token),
   )
 
-  const quickSelectionTokens = tokens.filter(token =>
-    defaultPriorityTokensByAddress.some(address => token.address === address),
-  )
-
   const {
     isLoading: isLoadingTopTokens,
     sortedTokens: fetchedSortedTopTokens,
   } = useTopTokensToHighlight({
     tokens: supportedTokens,
+  })
+
+  const isLoading = isLoadingTopTokens || searchText !== debouncedSearchText
+
+  const quickSelectionTokens = getQuickSelectionTokens({
+    priorityAddresses: defaultPriorityTokensByAddress,
+    tokens,
+    topTokens: fetchedSortedTopTokens,
   })
 
   const restOfTokens = supportedTokens
@@ -161,6 +174,7 @@ export const TokenList = function ({
       {!searchText ? (
         <div className="mb-4">
           <TokenQuickSelect
+            isLoading={isLoading}
             onSelect={token => handleSelectToken(token)}
             tokens={quickSelectionTokens}
           />
@@ -173,7 +187,7 @@ export const TokenList = function ({
           </div>
         </div>
       )}
-      {isLoadingTopTokens || searchText !== debouncedSearchText ? (
+      {isLoading ? (
         <div className="mt-2">
           <TokenListSkeleton />
         </div>

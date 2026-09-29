@@ -33,14 +33,14 @@ type Props = {
 export function useTopTokensToHighlight({ tokens }: Props) {
   const { address: account, isConnected } = useAccount()
   const hemiClient = useHemiClient()
-  const { data: prices } = useTokenPrices()
+  const { data: prices, isLoading: isLoadingPrices } = useTokenPrices()
 
   return useQueries({
     combine(results) {
       if (!isConnected || !account || !prices) {
         return {
           isError: false,
-          isLoading: false,
+          isLoading: isConnected && !!account && isLoadingPrices,
           sortedTokens: [],
         }
       }

@@ -22,7 +22,6 @@ const MoreInfo = function () {
   const t = useTranslations('genesis-drop.claim-options')
   return (
     <Tooltip
-      borderRadius="12px"
       id="more-info-hemi"
       text={t('more-info-description')}
       variant="info"

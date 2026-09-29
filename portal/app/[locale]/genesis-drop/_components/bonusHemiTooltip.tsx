@@ -11,7 +11,6 @@ export const BonusHemiTooltip = function ({ bonus }: Props) {
   const t = useTranslations('genesis-drop.claim-options')
   return (
     <Tooltip
-      borderRadius="12px"
       id="bonus-hemi"
       text={t.rich('this-option-includes-bonus', { bonus: () => bonus })}
       variant="info"

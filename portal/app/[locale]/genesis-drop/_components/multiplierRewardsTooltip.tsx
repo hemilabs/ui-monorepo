@@ -12,7 +12,6 @@ export const MultiplierRewardsTooltip = function ({ multiplier }: Props) {
   const { symbol } = useHemiToken()
   return (
     <Tooltip
-      borderRadius="12px"
       disabled={multiplier === undefined}
       id="staked-hemi"
       text={

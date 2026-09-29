@@ -12,12 +12,7 @@ export const ReceivingAddressLabel = ({
 }: LabelProps) => (
   <div className="flex items-center gap-x-2">
     <span className="text-neutral-600">{receivingText}</span>
-    <Tooltip
-      borderRadius="12px"
-      id="target-address"
-      text={tooltipText}
-      variant="info"
-    >
+    <Tooltip id="target-address" text={tooltipText} variant="info">
       <InfoIcon className="[&>path]:fill-neutral-600" />
     </Tooltip>
   </div>

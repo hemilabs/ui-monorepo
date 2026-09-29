@@ -119,15 +119,6 @@ This endpoint only reads Dune's latest cached result; it never triggers a new qu
 
 On failure, a message will be posted to Slack using `SLACK_WEBHOOK_URL` and `SLACK_MENTION` as the deploy notifications do.
 
-#### `GET /ve-hemi-rewards/:chain-id`
-
-Returns the veHemi rewards per unit of veHemi weight (voting power) for the next year (60 epochs of 6 days).
-
-```console
-$ curl http://localhost:3006/ve-hemi-rewards/43111
-[0,0,0,0,0,0.001623267574410933,0.0013566087424163847,...other 50 elements,0,0,0]
-```
-
 #### Subgraph routes
 
 The routes under the `/subgraphs` prefix proxy the subgraphs that index the data needed by the Tunnel and the Staking Campaign. Each route validates the `:chain-id` for its operation and returns `404 Not Found` on a mismatch. Most deposit/withdrawal queries run on the Ethereum chains (`1`, `11155111`) and the Hemi chains (`43111`, `743111`) respectively, but note two exceptions: BTC deposits (`/deposits/:hash/btc`) are queried on Hemi, and hashed-withdrawal proofs (`/hashedWithdrawals/:hash`) are queried on Ethereum. Addresses must match `0x[0-9a-fA-F]{40}`.

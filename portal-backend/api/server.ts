@@ -22,15 +22,12 @@ import {
   type SupplyIndexerOptions,
 } from './src/supply-indexer.ts'
 import { toJsonMiddleware, toTextMiddleware } from './src/to-middleware.ts'
-import { createVeHemi } from './src/ve-hemi/index.ts'
 import { getHemiStake } from './src/ve-hemi/stake.ts'
 
 const { getTvl } = createDune(config.get<DuneOptions>('tvl.dune'))
 const { getAllUserClaimData } = createClaims()
 const { getNetStats } = createNetStats(config.get<NetStatsOptions>('rpcUrl'))
 const cache = createRedisCache(config.get<RedisOptions>('redis'))
-
-const { getVeHemiRewards } = createVeHemi({ cache })
 
 const { getPriceHistory } = createPriceHistory({ cache })
 
@@ -129,13 +126,6 @@ app.get(
   '/tvl',
   toJsonMiddleware(async () => ({ tvl: await getTvl() }), {
     revalidate: config.get<number>('tvl.revalidateMin') * 60 * 1000,
-  }),
-)
-
-app.get(
-  /\/ve-hemi-rewards\/(7?43111)/,
-  toJsonMiddleware(getVeHemiRewards, {
-    revalidate: 4 * 60 * 60 * 1000, // 4 hours
   }),
 )
 

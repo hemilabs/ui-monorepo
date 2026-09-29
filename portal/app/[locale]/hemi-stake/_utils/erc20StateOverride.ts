@@ -7,6 +7,7 @@ import {
   toHex,
 } from 'viem'
 
+// HEMI keeps allowances in slot 1 (OpenZeppelin ERC20 layout), measured on Hemi mainnet and Sepolia
 const allowancesSlot = BigInt(1)
 
 export const createErc20AllowanceStateOverride = function ({

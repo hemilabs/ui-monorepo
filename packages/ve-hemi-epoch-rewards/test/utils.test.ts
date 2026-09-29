@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { getClaimSpan } from '../utils'
+import { getClaimSpan, isEpoch } from '../utils'
 
 describe('getClaimSpan', function () {
   const bounds = { maxClaimEpochs: 64, maxClaimPairs: 96 }
@@ -30,5 +30,25 @@ describe('getClaimSpan', function () {
     expect(
       getClaimSpan({ maxClaimEpochs: 64, maxClaimPairs: 192, tokenCount: 2 }),
     ).toBe(64)
+  })
+})
+
+describe('isEpoch', function () {
+  it('should accept a whole epoch, zero included', function () {
+    expect(isEpoch(0)).toBe(true)
+    expect(isEpoch(3404)).toBe(true)
+  })
+
+  it('should reject an epoch before the first one', function () {
+    expect(isEpoch(-1)).toBe(false)
+  })
+
+  it('should reject an epoch that is not a whole number', function () {
+    expect(isEpoch(3404.5)).toBe(false)
+  })
+
+  it('should reject what is not a number at all', function () {
+    expect(isEpoch(NaN)).toBe(false)
+    expect(isEpoch(Infinity)).toBe(false)
   })
 })

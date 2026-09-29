@@ -1,6 +1,7 @@
 import { isAddress, isAddressEqual, zeroAddress, type Address } from 'viem'
 
-const isEpoch = (epoch: number) => Number.isSafeInteger(epoch) && epoch >= 0
+export const isEpoch = (epoch: number) =>
+  Number.isSafeInteger(epoch) && epoch >= 0
 
 export const validateClaimFromInputs = function ({
   account,

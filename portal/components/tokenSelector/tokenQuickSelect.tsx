@@ -1,7 +1,6 @@
 import { TokenLogo } from 'components/tokenLogo'
 import { Token } from 'types/token'
 
-import { useLogosLoaded } from './hooks/useLogosLoaded'
 import { TokenQuickSelectSkeleton } from './tokenQuickSelectSkeleton'
 import { TokenSymbol } from './tokenSymbol'
 
@@ -29,9 +28,7 @@ export const TokenQuickSelect = function ({
   onSelect,
   tokens,
 }: Props) {
-  const areLogosLoaded = useLogosLoaded(tokens)
-
-  if (isLoading || !areLogosLoaded) {
+  if (isLoading) {
     return <TokenQuickSelectSkeleton />
   }
 

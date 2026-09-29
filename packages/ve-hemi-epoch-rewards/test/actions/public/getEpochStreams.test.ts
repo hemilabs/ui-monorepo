@@ -91,7 +91,7 @@ describe('getEpochStreams', function () {
     expect(fees[0].streamId).toBe(BigInt(3))
   })
 
-  it('should come back empty for a token that funded nothing', async function () {
+  it('should come back empty for a token absent from the registry', async function () {
     const mockClient = { chain: { id: 9001 } }
 
     vi.spyOn(
@@ -104,6 +104,39 @@ describe('getEpochStreams', function () {
       ...options,
       token: '0x0000000000000000000000000000000000000001',
     })
+
+    expect(result).toEqual([])
+  })
+
+  it('should leave out a stream of the token that funded nothing', async function () {
+    const mockClient = { chain: { id: 9001 } }
+
+    vi.spyOn(
+      constants,
+      'getVeHemiEpochRewardsLensContractAddress',
+    ).mockReturnValue(mockLensAddress)
+    vi.mocked(readContract).mockResolvedValueOnce([
+      registry[0],
+      { ...registry[2], funded: BigInt(0) },
+    ])
+
+    const result = await getEpochStreams(mockClient, options)
+
+    expect(result).toEqual([registry[0]])
+  })
+
+  it('should come back empty for an epoch nothing funded', async function () {
+    const mockClient = { chain: { id: 9001 } }
+
+    vi.spyOn(
+      constants,
+      'getVeHemiEpochRewardsLensContractAddress',
+    ).mockReturnValue(mockLensAddress)
+    vi.mocked(readContract).mockResolvedValueOnce(
+      registry.map(stream => ({ ...stream, funded: BigInt(0) })),
+    )
+
+    const result = await getEpochStreams(mockClient, options)
 
     expect(result).toEqual([])
   })

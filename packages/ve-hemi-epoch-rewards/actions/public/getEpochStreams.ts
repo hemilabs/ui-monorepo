@@ -34,5 +34,7 @@ export const getEpochStreams = async function (
     functionName: 'streamsForEpoch',
   })
 
-  return streams.filter(stream => isAddressEqual(stream.token, token))
+  return streams.filter(
+    stream => isAddressEqual(stream.token, token) && stream.funded > BigInt(0),
+  )
 }

@@ -57,22 +57,6 @@ export const TokenList = function ({
     // tBTC Hemi Sepolia
     '0x36Ab5Dba83d5d470F670BC4c06d7Da685d9afAe7',
     'ETH',
-    // USDC Sepolia
-    '0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8',
-    // USDT Sepolia
-    '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0',
-    // USDC.e Sepolia
-    '0xD47971C7F5B1067d25cd45d30b2c9eb60de96443',
-    // USDT.e Sepolia
-    '0x3Adf21A6cbc9ce6D5a3ea401E7Bae9499d391298',
-    // USDC Mainnet
-    '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    // USDT Mainnet
-    '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-    // USDC Hemi
-    '0xad11a8BEb98bbf61dbb1aa0F6d6F2ECD87b35afA',
-    // USDT Hemi
-    '0xbB0D083fb1be0A9f6157ec484b6C79E0A4e31C2e',
   ]
 
   const userTypedAddress = isAddress(debouncedSearchText)

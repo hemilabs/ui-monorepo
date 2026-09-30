@@ -23,6 +23,7 @@ import { createLock } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 
 import { daysToSeconds } from '../_utils/lockCreationTimes'
+import { prependPosition } from '../_utils/positionsCache'
 
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
 import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
@@ -201,7 +202,7 @@ export const useStake = function ({
 
         queryClient.setQueryData(
           stakingPositionQueryKey,
-          (old: StakingPosition[] | undefined = []) => [newPosition, ...old],
+          prependPosition(newPosition),
         )
 
         // fees

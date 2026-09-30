@@ -43,7 +43,6 @@ const analyticsEvents = [
   'tut - setup btc',
   'tut - setup evm',
   'tut - setup safe',
-  'tut - swap tokens',
   'tut - tunnel assets',
   'tut - tunnel eth',
   'tut - wallet setup',
@@ -74,7 +73,6 @@ const analyticsEvents = [
   'hemi earn - withdraw success',
   // nav bar
   'nav - hemi earn',
-  'nav - dex',
   'nav - docs',
   'nav - ecosystem',
   'nav - explorer',

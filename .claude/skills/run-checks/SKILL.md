@@ -96,7 +96,7 @@ pnpm exits 0 and runs nothing. Filter on the `name` in the workspace's
 
 CI also builds the Docker images
 ([`docker-checks.yml`](../../../.github/workflows/docker-checks.yml)) when
-`portal-backend/`, `packages/ve-hemi-actions`, `packages/ve-hemi-rewards` or
+`portal-backend/`, `packages/ve-hemi-actions` or
 `pnpm-lock.yaml` change. If you changed a `Dockerfile` or dependencies, build
 the affected image: `docker build -f <path>/Dockerfile .` (the build context is
 the repo root).

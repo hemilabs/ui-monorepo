@@ -139,7 +139,7 @@ A position can only grow:
 
 Nothing shrinks a position: there is no partial withdrawal and no way to shorten a lock. The principal comes back through `withdraw`, which is only callable once the lock has expired and which burns the NFT. A user may hold as many positions as they want; each is independent.
 
-Owning a position may also accrue **rewards** distributed by the protocol through the veHEMI rewards contract, in one or more reward tokens. Rewards are allocated per position by the same decaying weight — the Portal's APR estimate reads it back with `balanceOfNFTAt(tokenId, now)`. Claiming is per position and takes everything at once, across every reward token, and is paid out to the position's owner: the row's menu offers the action only while that position has something to claim, and claiming leaves the lock untouched, so the position keeps running afterwards. The APR shown next to it is an estimate: the Portal projects the position's weight over the next 61 six-day epochs and dots it against the rewards-per-veHEMI series served by `portal-backend/api` under `/ve-hemi-rewards/{chainId}`.
+Owning a position may also accrue **rewards** distributed by the protocol through the veHEMI rewards contract, in one or more reward tokens. Rewards are allocated per position by the same decaying weight. Claiming is per position and takes everything at once, across every reward token, and is paid out to the position's owner: the row's menu offers the action only while that position has something to claim, and claiming leaves the lock untouched, so the position keeps running afterwards.
 
 Positions are ERC-721s. The Portal only ever creates them through `createLock`, which mints transferable, non-forfeitable positions, and it exposes no transfer action of its own — so transfers happen outside of it. It does show their consequences: the positions query matches the connected address as current owner _or_ as a past owner, and rows are tagged as received, transferred away or delegated away.
 
@@ -149,7 +149,7 @@ The dashboard lists positions under two tabs, **Active** and **Burned**. Burned 
 
 Statuses follow the same shape as the tunnel ones but per operation: `StakingDashboardStatus` covers the approval and the lock transaction (`APPROVAL_TX_PENDING` → `APPROVAL_TX_COMPLETED` → `STAKE_TX_PENDING` → `STAKE_TX_CONFIRMED`, with `*_FAILED` branches) and is reused for the increase-amount and extend flows, while `UnlockingDashboardStatus` and `CollectAllRewardsDashboardStatus` cover unlocking and claiming.
 
-The list of positions comes from the veHEMI subgraph through `portal-backend/api` (`/subgraphs/{chainId}/locks/{address}`). Voting power and claimable rewards are read live from the chain. The APR mixes both sources: the position's weight comes from the chain, while the rewards-per-veHEMI series comes from `portal-backend/api`. The countdown to unlock is derived in the browser from the `timestamp` and `lockTime` the subgraph returns.
+The list of positions comes from the veHEMI subgraph through `portal-backend/api` (`/subgraphs/{chainId}/locks/{address}`). Voting power and claimable rewards are read live from the chain. The countdown to unlock is derived in the browser from the `timestamp` and `lockTime` the subgraph returns.
 
 ## Subgraphs
 

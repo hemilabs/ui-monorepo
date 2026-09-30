@@ -2,7 +2,7 @@
 
 viem actions to read and claim veHEMI rewards from the `VeHemiEpochRewards` contract.
 
-Rewards are funded per epoch (about six days) and per reward token, and every veHEMI position earns its share of each epoch it held weight in. All reads go through the contract's Lens, `VeHemiEpochRewardsLens`, which aggregates the figures the rewards contract itself pays.
+Rewards are funded per epoch (about six days) and per reward token, and every veHEMI position earns its share of each epoch it held weight in. Most reads go through the contract's Lens, `VeHemiEpochRewardsLens`, which aggregates the figures the rewards contract itself pays. `classDenominators`, `MAX_CLAIM_PAIRS` and `positionClass` read `VeHemiEpochRewards` straight: the Lens quotes the same figures, but only behind a `tokenId` or an epoch range the caller may not have.
 
 ## Supported chains
 
@@ -27,6 +27,8 @@ From `ve-hemi-epoch-rewards/actions`:
 ### Public actions
 
 - `getSystemState(client)`: the epoch grid, the reward token registry and the pause state, in one read.
+- `getClassDenominators(client, { epoch })`: the total weight of each class at the end of the epoch, named, as the contract shares its pots by them.
+- `getEpochStreams(client, { epoch, token })`: the streams that funded the epoch in that token, with `fundedByClass` naming the split the same way `getClassDenominators` does. Labels come as `bytes32`, so read them with `hexToString(label, { size: 32 })`.
 - `getMaxClaimPairs(client)`: the maximum number of epoch and token pairs one claim may settle.
 - `getClaimableByToken(client, { fromEpoch, holder, toEpoch, tokenId })`: what the holder can claim for a position, per reward token, over an epoch range.
 - `getPositionClass(client, { tokenId })`: the class recorded for a position, and whether it was recorded at all.
@@ -44,4 +46,6 @@ Each wallet action returns `{ emitter, promise }`: the emitter reports every ste
 - **Only the holder can claim.** An epoch is credited to whoever owned the position when the epoch ended, and only that address may claim it. A position that was sold still pays its seller for the epochs before the sale.
 - **A claim has a size limit.** The contract bounds each claim by epoch and token pairs, so a position with a long history needs several claims. Use `getClaimSpan` with `getMaxClaimPairs` and the token count from `getSystemState` to split the range.
 - **Record the class before a burn.** A position that is burned before its class is recorded pays nothing for any epoch it earned, and this cannot be repaired. Use `captureAndWithdraw` to unlock, not a plain veHEMI `withdraw`.
+- **The class denominators are readable ahead of time, as a projection.** `getClassDenominators` answers for an epoch that has not started, because the positions that exist today decay on a known schedule. It is not a forecast: every new lock moves it, and it falls to zero past the longest lock still running, which reads the same as a real answer. The pot is worse still, since nothing says what a future epoch will be funded with until someone funds it.
+- **The Lens answers with the whole stream registry.** `streamsForEpoch` takes a token but does not filter by it: it returns every stream, zeroing the rows another token funded. Two rows can therefore share a label. It also leaves a registered stream at zero when the epoch is not funded yet, which is the usual state of the epoch in progress. `getEpochStreams` drops both, so an empty list means that token funded nothing rather than a list of zeros meaning the same.
 - **A pause stops claims, not reads.** While the contract is paused, every claim reverts, but the Lens still quotes what each position is owed.

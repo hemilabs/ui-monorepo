@@ -59,6 +59,12 @@ export const TokenList = function ({
     'ETH',
     // USDC Ethereum
     '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    // USDC Sepolia
+    '0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8',
+    // USDT Sepolia
+    '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0',
+    // USDC.e Hemi Sepolia
+    '0xD47971C7F5B1067d25cd45d30b2c9eb60de96443',
   ]
 
   const userTypedAddress = isAddress(debouncedSearchText)

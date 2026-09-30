@@ -52,7 +52,6 @@ VITE_ENABLE_HEMI_EARN_PAGE=<true|false> # Enable the Hemi Earn page
 VITE_ENABLE_SAFE_WALLET=<true|false> # Enable the Safe connector, needed to run the Portal as a Safe App
 VITE_ENABLE_STAKE_GOVERNANCE_TESTNET=<true|false> # Enable stake governance on Testnet, for local development
 VITE_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development
-VITE_ENABLE_CLAIM_REWARDS_TESTNET=<true|false> # Enable claim rewards on Testnet, for local development
 # Bitcoin configuring
 VITE_BITCOIN_PAST_VAULTS_MAINNET=1,2 # Comma-separated list of past vault indexes. Do not include the active ones.
 VITE_BITCOIN_PAST_VAULTS_SEPOLIA=1,2,3 # Comma-separated list of past vault indexes. Do not include the active ones.

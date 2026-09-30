@@ -17,6 +17,7 @@ import { HemiEarn } from './_components/hemiEarn'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
 import { HemiStake } from './_components/hemiStake'
 import { HemiStatusLink } from './_components/hemiStatusLink'
+import { MainnetOnly } from './_components/mainnetOnly'
 import { NetworkSwitch } from './_components/networkSwitch'
 import { SocialLinks } from './_components/socialLinks'
 import { TunnelLink } from './_components/tunnelLink'
@@ -59,9 +60,11 @@ export const NavbarDesktop = () => (
       <PaddedListItem>
         <TunnelLink />
       </PaddedListItem>
-      <PaddedListItem>
-        <Dex />
-      </PaddedListItem>
+      <MainnetOnly>
+        <PaddedListItem>
+          <Dex />
+        </PaddedListItem>
+      </MainnetOnly>
       <PaddedListItem>
         <GenesisDrop />
       </PaddedListItem>

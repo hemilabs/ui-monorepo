@@ -27,7 +27,7 @@ export const useWalletBalances = function () {
           client: hemiClient,
           token,
         }),
-      queryKey: ['wallet-token-balance', token.chainId, token.address],
+      queryKey: ['wallet-token-balance', account, token.chainId, token.address],
       // refetch every 5 minutes
       refetchInterval: 5 * 60 * 1000,
       select: (balance: bigint) => ({ ...token, balance }) satisfies StakeToken,

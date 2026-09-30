@@ -8,8 +8,8 @@ type Props = {
 }
 
 // Truncation is done by the CSS, so the symbol adapts to the width available.
-// Both the selector and the read-only row bound it to the same width, so they
-// truncate alike.
+// The selector, the read-only row and the quick select bound it to the same
+// width, so they truncate alike.
 export const TokenSymbol = ({ className = '', symbol }: Props) => (
   <Tooltip
     disabled={!isSymbolTooLong(symbol)}

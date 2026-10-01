@@ -192,15 +192,11 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
     value: currentLockupDays ?? minDays,
   })
 
-  const isValid = isValidLockup({
-    minLocked: currentLockupDays,
-    value: lockupDays!,
-  })
+  const minLocked = nearest?.maxValue ?? minDays
 
-  const lockupError = getLockupErrorMessage({
-    minLocked: currentLockupDays,
-    value: lockupDays!,
-  })
+  const isValid = isValidLockup({ minLocked, value: lockupDays! })
+
+  const lockupError = getLockupErrorMessage({ minLocked, value: lockupDays! })
 
   return (
     <>
@@ -223,7 +219,7 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
         isRunningOperation={isRunningOperation}
         isValid={isValid}
         lockupDays={lockupDays!}
-        minLocked={nearest?.maxValue ?? minDays}
+        minLocked={minLocked}
         onSubmit={increaseUnlockTime}
         onUpdateInputDays={function (value) {
           updateStakingDashboardOperation({

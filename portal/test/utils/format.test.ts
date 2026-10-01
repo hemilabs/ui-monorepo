@@ -10,6 +10,7 @@ import {
   formatPastTime,
   formatPercentage,
   formatShortDate,
+  formatShortDateWithYear,
   formatTokenPrice,
   formatTVL,
 } from 'utils/format'
@@ -334,6 +335,38 @@ describe('utils/format', function () {
       expect(formatShortDate(utcMidnight, 'en', 'America/New_York')).toBe(
         'Jun 24',
       )
+    })
+  })
+
+  describe('formatShortDateWithYear', function () {
+    const march15 = new Date(2026, 2, 15)
+
+    it('should format a date in en locale', function () {
+      expect(formatShortDateWithYear(march15, 'en')).toBe('Mar 15, 2026')
+    })
+
+    it('should format a date in es locale', function () {
+      expect(formatShortDateWithYear(march15, 'es')).toBe('15 mar 2026')
+    })
+
+    it('should format a date in pt locale', function () {
+      expect(formatShortDateWithYear(march15, 'pt')).toBe('15 de mar. de 2026')
+    })
+
+    it('should zero-pad single-digit days', function () {
+      expect(formatShortDateWithYear(new Date(2026, 11, 5), 'en')).toBe(
+        'Dec 05, 2026',
+      )
+    })
+
+    it('should carry the year across a time zone boundary', function () {
+      const newYearUtc = new Date('2027-01-01T00:00:00Z')
+      expect(formatShortDateWithYear(newYearUtc, 'en', 'UTC')).toBe(
+        'Jan 01, 2027',
+      )
+      expect(
+        formatShortDateWithYear(newYearUtc, 'en', 'America/New_York'),
+      ).toBe('Dec 31, 2026')
     })
   })
 

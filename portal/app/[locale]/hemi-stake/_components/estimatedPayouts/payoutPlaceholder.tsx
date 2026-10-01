@@ -8,17 +8,17 @@ import { formatUnits } from 'viem'
 
 type Props = {
   hasError: boolean
-  hasBaseline: boolean
   isPending: boolean
   lockEnd: number
+  meetsMinimumAmount: boolean
   onRetry: VoidFunction
 }
 
 export const PayoutPlaceholder = function ({
-  hasBaseline,
   hasError,
   isPending,
   lockEnd,
+  meetsMinimumAmount,
   onRetry,
 }: Props) {
   const locale = useLocale()
@@ -27,6 +27,16 @@ export const PayoutPlaceholder = function ({
   const token = useHemiToken()
 
   const renderMessage = function () {
+    if (!meetsMinimumAmount) {
+      return (
+        <span className="text-xs text-neutral-400">
+          {t('enter-minimum-amount', {
+            amount: formatNumber(formatUnits(minLockAmount, token.decimals)),
+            symbol: token.symbol,
+          })}
+        </span>
+      )
+    }
     if (hasError) {
       return (
         <div className="flex flex-col items-start gap-y-2">
@@ -45,16 +55,7 @@ export const PayoutPlaceholder = function ({
     if (isPending) {
       return <Skeleton className="h-6 w-40" />
     }
-    return (
-      <span className="text-xs text-neutral-400">
-        {hasBaseline
-          ? t('enter-minimum-amount', {
-              amount: formatNumber(formatUnits(minLockAmount, token.decimals)),
-              symbol: token.symbol,
-            })
-          : t('not-funded')}
-      </span>
-    )
+    return <span className="text-xs text-neutral-400">{t('not-funded')}</span>
   }
 
   return (
@@ -62,11 +63,7 @@ export const PayoutPlaceholder = function ({
       {renderMessage()}
       <span className="text-xxs text-neutral-400">
         {t('unlocks-on', {
-          date: formatShortDateWithYear(
-            new Date(lockEnd * 1000),
-            locale,
-            'UTC',
-          ),
+          date: formatShortDateWithYear(new Date(lockEnd * 1000), locale),
         })}
       </span>
     </div>

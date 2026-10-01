@@ -3,7 +3,7 @@ import { useTokenPrices } from 'hooks/useTokenPrices'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatShortDate } from 'utils/format'
 import { unixNowTimestamp } from 'utils/time'
-import { parseTokenUnits } from 'utils/token'
+import { getTokenPrice, parseTokenUnits } from 'utils/token'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useEpochSystemState } from '../../_hooks/useEpochSystemState'
@@ -16,6 +16,7 @@ import {
   toPayoutSeries,
 } from '../../_utils/payoutsChartData'
 import { getRewardsForecast } from '../../_utils/stakeRewardsForecast'
+import { isValidLockup } from '../lockup'
 
 import { PayoutHeadline } from './payoutHeadline'
 import { PayoutPlaceholder } from './payoutPlaceholder'
@@ -35,18 +36,18 @@ const buildForecast = function ({
   amount,
   baseline,
   decimals,
-  lockDurationInSeconds,
+  lockupDays,
   weight,
 }: {
   amount: bigint
-  decimals: number
-  lockDurationInSeconds: number
   baseline: bigint
+  decimals: number
+  lockupDays: number
   weight: bigint
 }) {
   const forecast = getRewardsForecast({
     amount,
-    lockDurationInSeconds,
+    lockDurationInSeconds: Number(wholeDaysToSeconds(lockupDays)),
     now: Number(unixNowTimestamp()),
     transferableClassBaseline: baseline,
     transferableClassWeight: weight,
@@ -56,7 +57,10 @@ const buildForecast = function ({
     lockEnd: forecast.lockEnd,
     payouts: forecast.payouts,
   })
-  const hasForecast = baseline > BigInt(0) && forecast.meetsMinimumAmount
+  const hasForecast =
+    baseline > BigInt(0) &&
+    forecast.meetsMinimumAmount &&
+    isValidLockup({ value: lockupDays })
 
   return {
     chartSeries: hasForecast
@@ -88,17 +92,16 @@ export const EstimatedPayouts = function () {
   const amount = parseTokenUnits(input, token)
   const baseline = forecastInputs?.transferableClassBaseline ?? BigInt(0)
   const weight = forecastInputs?.transferableClassWeight ?? BigInt(0)
-  const hasBaseline = baseline > BigInt(0)
 
   const hasError = isSystemStateError || isForecastError
   const retry = isSystemStateError ? refetchSystemState : refetchForecast
-  const price = toPrice(prices?.[token.symbol])
+  const price = toPrice(getTokenPrice(token, prices))
 
   const { chartSeries, forecast, hasForecast } = buildForecast({
     amount,
     baseline,
     decimals: token.decimals,
-    lockDurationInSeconds: Number(wholeDaysToSeconds(lockupDays)),
+    lockupDays,
     weight,
   })
 
@@ -107,7 +110,7 @@ export const EstimatedPayouts = function () {
       {/* TODO #2368 bring back the advanced estimator button on this row, with
           its `advanced-estimator` label, once that page exists */}
       <span className={sectionLabelClassName}>{t('title')}</span>
-      <div className="min-h-20">
+      <div className="min-h-24.5">
         {hasForecast && systemState !== undefined ? (
           <PayoutHeadline
             carriedFrom={forecastInputs?.carriedFrom}
@@ -115,16 +118,14 @@ export const EstimatedPayouts = function () {
             input={input}
             lockEnd={forecast.lockEnd}
             lockupDays={lockupDays}
-            nextPayout={chartSeries[0]}
-            price={price}
-            symbol={token.symbol}
+            nextPayout={forecast.payouts[0]}
           />
         ) : (
           <PayoutPlaceholder
-            hasBaseline={hasBaseline}
             hasError={hasError}
             isPending={isPending}
             lockEnd={forecast.lockEnd}
+            meetsMinimumAmount={forecast.meetsMinimumAmount}
             onRetry={retry}
           />
         )}
@@ -136,22 +137,11 @@ export const EstimatedPayouts = function () {
             : t('starting-from-epoch', { epoch: systemState.currentEpoch })}
         </span>
         <PayoutsChart
-          formatTick={value =>
-            formatPayoutValue({ locale, price, symbol: token.symbol, value })
+          formatDate={value => formatShortDate(new Date(value), locale)}
+          formatValue={value =>
+            formatPayoutValue({ price, symbol: token.symbol, value })
           }
-          formatTickDate={value =>
-            formatShortDate(new Date(value), locale, 'UTC')
-          }
-          formatTooltipValue={value =>
-            formatPayoutValue({
-              locale,
-              precision: 'full',
-              price,
-              symbol: token.symbol,
-              value,
-            })
-          }
-          isPending={isPending && !hasError}
+          isPending={isPending && !hasError && forecast.meetsMinimumAmount}
           series={chartSeries}
           ticks={getPayoutAxisTicks(chartSeries)}
           unlockX={getUnlockMarkerX(chartSeries)}

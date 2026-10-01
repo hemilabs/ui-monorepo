@@ -9,7 +9,6 @@ import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useState } from 'react'
 import { StakingOperationRunning } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
-import { getTotal } from 'utils/getTotal'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
@@ -100,13 +99,6 @@ export const Stake = function () {
     token: getNativeToken(hemi.id),
   })
 
-  const getTotalStake = () =>
-    getTotal({
-      fees: createLockGasFees,
-      fromInput: input,
-      fromToken: token,
-    })
-
   const { isPending: isRunningOperation, mutate: stake } = useStake({
     input,
     lockupDays,
@@ -136,11 +128,7 @@ export const Stake = function () {
     if (!canStake) return null
     return (
       <FeesContainer>
-        <EvmFeesSummary
-          gas={getGas()}
-          operationToken={token}
-          total={getTotalStake()}
-        />
+        <EvmFeesSummary gas={getGas()} operationToken={token} />
       </FeesContainer>
     )
   }

@@ -506,7 +506,8 @@
       "settles-on": "epoch {epoch} · settles {date}",
       "staked-summary": "{amount} {symbol} locked for {days, plural, one {# day} other {# days}} · <unlock>unlocks {date}</unlock>",
       "starting-from-epoch": "Payouts per epoch · starting from epoch {epoch}",
-      "title": "Estimated payouts"
+      "title": "Estimated payouts",
+      "unlocks-on": "Unlocks {date}"
     },
     "form": {
       "approve-and-stake": "Approve and Stake",

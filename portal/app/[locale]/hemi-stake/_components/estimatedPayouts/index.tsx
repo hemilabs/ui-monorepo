@@ -1,13 +1,9 @@
-import { Button } from 'components/button'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTokenPrices } from 'hooks/useTokenPrices'
-import Skeleton from 'react-loading-skeleton'
 import { useLocale, useTranslations } from 'use-intl'
-import { formatNumber, formatShortDate } from 'utils/format'
+import { formatShortDate } from 'utils/format'
 import { unixNowTimestamp } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
-import { minLockAmount } from 've-hemi-actions'
-import { formatUnits } from 'viem'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useEpochSystemState } from '../../_hooks/useEpochSystemState'
@@ -22,6 +18,7 @@ import {
 import { getRewardsForecast } from '../../_utils/stakeRewardsForecast'
 
 import { PayoutHeadline } from './payoutHeadline'
+import { PayoutPlaceholder } from './payoutPlaceholder'
 import { PayoutsChart } from './payoutsChart'
 
 const sectionLabelClassName =
@@ -34,18 +31,57 @@ const toPrice = function (value: string | undefined) {
     : undefined
 }
 
+const buildForecast = function ({
+  amount,
+  decimals,
+  lockDurationInSeconds,
+  pot,
+  weight,
+}: {
+  amount: bigint
+  decimals: number
+  lockDurationInSeconds: number
+  pot: bigint
+  weight: bigint
+}) {
+  const forecast = getRewardsForecast({
+    amount,
+    lockDurationInSeconds,
+    now: Number(unixNowTimestamp()),
+    transferableClassPot: pot,
+    transferableClassWeight: weight,
+  })
+  const series = toPayoutSeries({
+    decimals,
+    lockEnd: forecast.lockEnd,
+    payouts: forecast.payouts,
+  })
+  const hasForecast = pot > BigInt(0) && forecast.meetsMinimumAmount
+
+  return {
+    chartSeries: hasForecast
+      ? series
+      : series.map(point => ({ ...point, afterUnlock: false, y: 0 })),
+    forecast,
+    hasForecast,
+  }
+}
+
 export const EstimatedPayouts = function () {
   const locale = useLocale()
   const t = useTranslations('hemi-stake.estimated-payouts')
-  const tCommon = useTranslations('common')
   const token = useHemiToken()
   const { input, lockupDays } = useStakingDashboard()
-  const { data: systemState } = useEpochSystemState()
+  const {
+    data: systemState,
+    isError: isSystemStateError,
+    refetch: refetchSystemState,
+  } = useEpochSystemState()
   const {
     data: forecastInputs,
-    isError,
+    isError: isForecastError,
     isPending,
-    refetch,
+    refetch: refetchForecast,
   } = useRewardsForecastInputs()
   const { data: prices } = useTokenPrices()
 
@@ -53,82 +89,50 @@ export const EstimatedPayouts = function () {
   const pot = forecastInputs?.transferableClassPot ?? BigInt(0)
   const weight = forecastInputs?.transferableClassWeight ?? BigInt(0)
   const hasPot = pot > BigInt(0)
+
+  const hasError = isSystemStateError || isForecastError
+  const retry = isSystemStateError ? refetchSystemState : refetchForecast
   const price = toPrice(prices?.[token.symbol])
 
-  const forecast = getRewardsForecast({
+  const { chartSeries, forecast, hasForecast } = buildForecast({
     amount,
-    lockDurationInSeconds: Number(wholeDaysToSeconds(lockupDays)),
-    now: Number(unixNowTimestamp()),
-    transferableClassPot: pot,
-    transferableClassWeight: weight,
-  })
-
-  const series = toPayoutSeries({
     decimals: token.decimals,
-    lockEnd: forecast.lockEnd,
-    payouts: forecast.payouts,
+    lockDurationInSeconds: Number(wholeDaysToSeconds(lockupDays)),
+    pot,
+    weight,
   })
-
-  const hasForecast = hasPot && forecast.meetsMinimumAmount
-
-  const chartSeries = hasForecast
-    ? series
-    : series.map(point => ({ ...point, afterUnlock: false, y: 0 }))
-
-  const renderSummary = function () {
-    if (hasForecast && systemState !== undefined) {
-      return (
-        <PayoutHeadline
-          currentEpoch={systemState.currentEpoch}
-          input={input}
-          lockEnd={forecast.lockEnd}
-          lockupDays={lockupDays}
-          nextPayout={chartSeries[0]}
-          price={price}
-          symbol={token.symbol}
-        />
-      )
-    }
-    if (isError) {
-      return (
-        <div className="flex flex-col items-start gap-y-2">
-          <span className="text-xs text-neutral-400">{t('load-failed')}</span>
-          <Button
-            onClick={() => refetch()}
-            size="xSmall"
-            type="button"
-            variant="secondary"
-          >
-            {tCommon('try-again')}
-          </Button>
-        </div>
-      )
-    }
-    if (isPending) {
-      return <Skeleton className="h-6 w-40" />
-    }
-    return (
-      <span className="text-xs text-neutral-400">
-        {hasPot
-          ? t('enter-minimum-amount', {
-              amount: formatNumber(formatUnits(minLockAmount, token.decimals)),
-              symbol: token.symbol,
-            })
-          : t('not-funded')}
-      </span>
-    )
-  }
 
   return (
     <div className="flex w-full flex-col gap-y-4 rounded-lg border border-solid border-transparent bg-neutral-50 p-4 ring-1 ring-transparent hover:shadow-bs">
       {/* TODO #2368 bring back the advanced estimator button on this row, with
           its `advanced-estimator` label, once that page exists */}
       <span className={sectionLabelClassName}>{t('title')}</span>
-      <div className="min-h-20">{renderSummary()}</div>
+      <div className="min-h-20">
+        {hasForecast && systemState !== undefined ? (
+          <PayoutHeadline
+            currentEpoch={systemState.currentEpoch}
+            input={input}
+            lockEnd={forecast.lockEnd}
+            lockupDays={lockupDays}
+            nextPayout={chartSeries[0]}
+            price={price}
+            symbol={token.symbol}
+          />
+        ) : (
+          <PayoutPlaceholder
+            hasError={hasError}
+            hasPot={hasPot}
+            isPending={isPending}
+            lockEnd={forecast.lockEnd}
+            onRetry={retry}
+          />
+        )}
+      </div>
       <div className="flex w-full flex-col gap-y-1.5">
         <span className={sectionLabelClassName}>
-          {systemState !== undefined &&
-            t('starting-from-epoch', { epoch: systemState.currentEpoch })}
+          {systemState === undefined
+            ? '\u00a0'
+            : t('starting-from-epoch', { epoch: systemState.currentEpoch })}
         </span>
         <PayoutsChart
           formatTick={value =>
@@ -146,7 +150,7 @@ export const EstimatedPayouts = function () {
               value,
             })
           }
-          isPending={isPending}
+          isPending={isPending && !hasError}
           series={chartSeries}
           ticks={getPayoutAxisTicks(chartSeries)}
           unlockX={getUnlockMarkerX(chartSeries)}

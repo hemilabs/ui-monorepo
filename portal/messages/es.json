@@ -506,7 +506,8 @@
       "settles-on": "época {epoch} · se liquida el {date}",
       "staked-summary": "{amount} {symbol} bloqueados por {days, plural, one {# día} other {# días}} · <unlock>se desbloquea el {date}</unlock>",
       "starting-from-epoch": "Pagos por época · a partir de la época {epoch}",
-      "title": "Pagos estimados"
+      "title": "Pagos estimados",
+      "unlocks-on": "Se desbloquea el {date}"
     },
     "form": {
       "approve-and-stake": "Aprobar y Hacer Stake",

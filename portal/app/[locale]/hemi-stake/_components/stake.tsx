@@ -21,6 +21,7 @@ import { useStakingDashboard } from '../_context/stakingDashboardContext'
 import { useEstimateCreateLockFees } from '../_hooks/useEstimateCreateLockFees'
 import { useStake } from '../_hooks/useStake'
 import { daysToSeconds } from '../_utils/lockCreationTimes'
+import { getLockupErrorMessage } from '../_utils/lockupError'
 
 import { FormContent, StakingForm } from './form'
 import { isValidLockup } from './lockup'
@@ -73,6 +74,8 @@ export const Stake = function () {
   })
 
   const canStake = validInput && isValidLockup({ value: lockupDays })
+
+  const lockupError = getLockupErrorMessage({ value: lockupDays })
 
   const { fees: approvalTokenGasFees, isError: isApprovalTokenGasFeesError } =
     useEstimateApproveErc20Fees({
@@ -142,7 +145,10 @@ export const Stake = function () {
       needsApproval={needsApproval}
       operationRunning={operationRunning}
       token={token}
-      validationError={validationError}
+      validationError={
+        validationError ??
+        (lockupError && t(lockupError.key, lockupError.values))
+      }
     />
   )
 

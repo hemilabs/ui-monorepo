@@ -22,6 +22,7 @@ import { useStakingDashboard } from '../../../_context/stakingDashboardContext'
 import { useEstimateIncreaseUnlockTimeFees } from '../../../_hooks/useEstimateIncreaseUnlockTimeFees'
 import { useIncreaseUnlockTime } from '../../../_hooks/useIncreaseUnlockTime'
 import { minDays } from '../../../_utils/lockCreationTimes'
+import { getLockupErrorMessage } from '../../../_utils/lockupError'
 import { getNearestValidValues, isValidLockup } from '../../lockup'
 
 import { Preview } from './preview'
@@ -196,6 +197,11 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
     value: lockupDays!,
   })
 
+  const lockupError = getLockupErrorMessage({
+    minLocked: currentLockupDays,
+    value: lockupDays!,
+  })
+
   return (
     <>
       <div className="mb-3 flex min-h-21 flex-col gap-y-3">
@@ -231,6 +237,7 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
         }}
         operationRunning={operationRunning}
         steps={getSteps()}
+        validationError={lockupError && t(lockupError.key, lockupError.values)}
       />
     </>
   )

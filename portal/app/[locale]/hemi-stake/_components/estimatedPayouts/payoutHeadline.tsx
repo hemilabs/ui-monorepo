@@ -34,8 +34,8 @@ export const PayoutHeadline = function ({
 
   return (
     <div className="flex flex-col gap-y-1">
-      <div className="flex items-baseline gap-x-2">
-        <span className="text-2.33xl font-semibold text-neutral-950">
+      <div className="flex flex-wrap items-baseline gap-x-2">
+        <span className="text-xl font-semibold text-neutral-950 sm:text-2xl">
           {formatPayoutValue({
             locale,
             precision: 'full',
@@ -68,21 +68,25 @@ export const PayoutHeadline = function ({
           })}
         </span>
       </div>
-      <span className="text-xxs text-neutral-400">
-        {t.rich('staked-summary', {
-          amount: formatNumber(input),
-          date: formatShortDateWithYear(
-            new Date(lockEnd * 1000),
-            locale,
-            'UTC',
-          ),
-          days: lockupDays,
-          symbol,
-          unlock: chunks => (
-            <span className="font-semibold text-neutral-600">{chunks}</span>
-          ),
-        })}
-      </span>
+      <div className="flex flex-col text-xxs text-neutral-400 sm:flex-row sm:gap-x-1">
+        <span>
+          {t('locked-summary', {
+            amount: formatNumber(input),
+            days: lockupDays,
+            symbol,
+          })}
+        </span>
+        <span className="hidden sm:inline">·</span>
+        <span className="whitespace-nowrap font-semibold text-neutral-600">
+          {t('unlocks-on', {
+            date: formatShortDateWithYear(
+              new Date(lockEnd * 1000),
+              locale,
+              'UTC',
+            ),
+          })}
+        </span>
+      </div>
     </div>
   )
 }

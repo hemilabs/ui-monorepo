@@ -21,7 +21,7 @@ const chartColors = {
 }
 
 const chartHeight = 132
-const chartPadding = { bottom: 24, left: 52, right: 20, top: 8 }
+const chartPadding = { bottom: 24, left: 64, right: 20, top: 8 }
 const fallbackChartWidth = 320
 
 const widthByBreakpoint: ReadonlyArray<[number, number]> = [
@@ -81,9 +81,8 @@ function PayoutTooltipLabel({
 }
 
 type Props = {
-  formatTick: (value: number) => string
-  formatTickDate: (value: number) => string
-  formatTooltipValue: (value: number) => string
+  formatDate: (value: number) => string
+  formatValue: (value: number) => string
   isPending: boolean
   series: PayoutPoint[]
   ticks: number[]
@@ -91,9 +90,8 @@ type Props = {
 }
 
 export const PayoutsChart = function ({
-  formatTick,
-  formatTickDate,
-  formatTooltipValue,
+  formatDate,
+  formatValue,
   isPending,
   series,
   ticks,
@@ -117,7 +115,7 @@ export const PayoutsChart = function ({
     <VictoryAxis
       key="x"
       style={xAxisStyle}
-      tickFormat={formatTickDate}
+      tickFormat={formatDate}
       tickValues={ticks.length > 0 ? ticks : undefined}
     />,
     <VictoryAxis
@@ -125,7 +123,7 @@ export const PayoutsChart = function ({
       key="y"
       style={yAxisStyle}
       tickCount={3}
-      tickFormat={hasPayouts ? formatTick : () => ''}
+      tickFormat={hasPayouts ? formatValue : () => ''}
     />,
   ]
 
@@ -142,15 +140,15 @@ export const PayoutsChart = function ({
                 flyoutStyle={{ fill: 'white', stroke: chartColors.neutral200 }}
                 labelComponent={
                   <PayoutTooltipLabel
-                    formatDate={formatTickDate}
-                    formatValue={formatTooltipValue}
+                    formatDate={formatDate}
+                    formatValue={formatValue}
                   />
                 }
                 pointerLength={0}
               />
             }
             labels={({ datum }: { datum: PayoutPoint }) =>
-              `${formatTickDate(datum.x)}  ${formatTooltipValue(datum.y)}`
+              `${formatDate(datum.x)}  ${formatValue(datum.y)}`
             }
             voronoiDimension="x"
           />

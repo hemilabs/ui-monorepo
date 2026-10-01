@@ -1,33 +1,15 @@
-import {
-  formatCompactFiatParts,
-  formatFiatNumber,
-  formatNumber,
-} from 'utils/format'
+import { defaultLocale } from 'i18n/routing'
+import { formatNumber, formatTokenPrice } from 'utils/format'
 
-type PayoutPrecision = 'compact' | 'full'
-
-export const formatPayoutValue = function ({
-  locale,
-  precision = 'compact',
+export const formatPayoutValue = ({
   price,
   symbol,
   value,
 }: {
-  locale: string
-  precision?: PayoutPrecision
-  price?: number
+  price: number | undefined
   symbol: string
   value: number
-}) {
-  const inFiat = price !== undefined
-  const amount = inFiat ? value * price : value
-
-  if (precision === 'full') {
-    return inFiat
-      ? `$${formatFiatNumber(amount)}`
-      : `${formatNumber(amount)} ${symbol}`
-  }
-
-  const { number, suffix } = formatCompactFiatParts(amount, locale)
-  return inFiat ? `$${number}${suffix}` : `${number}${suffix} ${symbol}`
-}
+}) =>
+  price === undefined
+    ? `${formatNumber(value)} ${symbol}`
+    : formatTokenPrice(value * price, defaultLocale)

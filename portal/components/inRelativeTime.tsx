@@ -7,7 +7,6 @@ const useRerender = function (targetTimestamp: number) {
   const [now, setNow] = useState(new Date().getTime())
   useEffect(
     function forceDateUpdate() {
-      if (!Number.isFinite(targetTimestamp)) return undefined
       const timeoutId = setTimeout(
         () => setNow(new Date().getTime()),
         getTimeoutInterval(targetTimestamp, new Date().getTime()),
@@ -18,31 +17,33 @@ const useRerender = function (targetTimestamp: number) {
   )
 }
 
-type Props = {
-  timestamp: number
-}
-
-export const InRelativeTime = function ({ timestamp }: Props) {
+const RelativeTime = function ({ milliseconds }: { milliseconds: number }) {
   const locale = useLocale()
-  const milliseconds = timestamp * 1000
   const now = new Date().getTime()
 
   // force rerender depending on how close the target timestamp is
   useRerender(milliseconds)
 
-  if (Number.isFinite(milliseconds)) {
-    const difference = Math.floor(Math.abs(now - milliseconds) / 1000)
-    const isPast = milliseconds <= now
+  const difference = Math.floor(Math.abs(now - milliseconds) / 1000)
+  const isPast = milliseconds <= now
 
-    // if time difference equals 0, Intl.RelativeTimeFormat returns "now"
-    return (
-      <>
-        {isPast
-          ? formatPastTime(difference, locale)
-          : formatFutureTime(difference, locale)}
-      </>
-    )
+  // if time difference equals 0, Intl.RelativeTimeFormat returns "now"
+  return (
+    <>
+      {isPast
+        ? formatPastTime(difference, locale)
+        : formatFutureTime(difference, locale)}
+    </>
+  )
+}
+
+type Props = {
+  timestamp: number
+}
+
+export const InRelativeTime = function ({ timestamp }: Props) {
+  if (!Number.isFinite(timestamp)) {
+    return <>-</>
   }
-
-  return <>-</>
+  return <RelativeTime milliseconds={timestamp * 1000} />
 }

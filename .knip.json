@@ -16,9 +16,6 @@
         ]
       }
     },
-    "portal-backend/api": {
-      "entry": ["scripts/*.cjs"]
-    },
     "subgraphs/*": {
       "entry": ["src/mappings/*.ts"]
     },

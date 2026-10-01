@@ -7,8 +7,8 @@ const ethCall = require('./eth-call')
 const promiseAllProps = require('./promise-all-props')
 
 const { dead } = config.get('accounts')
-const { hemi, merkleBox, safe, veHemi } = config.get('contracts')
-const { correction, merkleLocked, opAddresses } = config.get('supply')
+const { hemi, safe, veHemi } = config.get('contracts')
+const { correction, opAddresses } = config.get('supply')
 const rpcUrls = config.get('rpcUrls')
 
 async function getTotalSupply() {
@@ -27,11 +27,6 @@ async function getBalanceOf(rpcUrl, tokenAddress, account) {
     `0x70a08231${account.slice(2).padStart(64, '0')}`, // balanceOf(account)
   )
   return BigInt(balance)
-}
-
-async function getDistributedButLocked() {
-  const merkleBalance = await getBalanceOf(rpcUrls.hemi, hemi.hemi, merkleBox)
-  return (merkleBalance * merkleLocked) / 100n
 }
 
 const getAddressBalances = addresses =>
@@ -53,7 +48,6 @@ function fetchSupply() {
     'hemi-safe': getBalanceOf(rpcUrls.hemi, hemi.hemi, safe),
     'bnb-safe': getBalanceOf(rpcUrls.bnb, hemi.bnb, safe),
     'locked': getBalanceOf(rpcUrls.hemi, hemi.hemi, veHemi),
-    'merkle': getDistributedButLocked(),
     'burned': getBalanceOf(rpcUrls.eth, hemi.eth, dead),
     // getTokensSlashed(), // Method TBD
     ...getAddressBalances(opAddresses),

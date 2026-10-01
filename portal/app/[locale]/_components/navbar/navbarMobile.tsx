@@ -8,7 +8,6 @@ import { BoostStaking } from './_components/boostStaking'
 import { Dex } from './_components/dex'
 import { DocsLink } from './_components/docsLink'
 import { EcosystemLink } from './_components/ecosystemLink'
-import { GenesisDrop } from './_components/genesisDrop'
 import { GetStarted } from './_components/getStarted'
 import { HelpButton } from './_components/help/helpButton'
 import { HemiEarn } from './_components/hemiEarn'
@@ -77,9 +76,6 @@ export const NavbarMobile = function () {
               <Dex />
             </SmallBox>
           </MainnetOnly>
-          <SmallBox>
-            <GenesisDrop />
-          </SmallBox>
           <SmallBox>
             <BoostStaking />
           </SmallBox>

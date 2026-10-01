@@ -12,7 +12,6 @@ const config = {
       eth: '0xEb964A1A6fAB73b8c72A0D15c7337fA4804F484d',
       hemi: '0x99e3dE3817F6081B2568208337ef83295b7f591D',
     },
-    merkleBox: '0x9Ab3660ceE733332785cEa09D1a4Ff222F31aE54',
     safe: '0x694fA0816999Da16E8783C0f5cDE68c13a33C4e6',
     veHemi: '0x371d3718D5b7F75EAb050FAe6Da7DF3092031c89',
   },
@@ -31,7 +30,6 @@ const config = {
   },
   supply: {
     correction: BigInt(env('SUPPLY_CORRECTION', '0')),
-    merkleLocked: BigInt(env('SUPPLY_MERKLE_LOCKED', '50')),
     opAddresses: env('SUPPLY_OP_ADDRESSES', '').split(','),
   },
 }

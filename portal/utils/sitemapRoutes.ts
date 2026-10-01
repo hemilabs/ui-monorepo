@@ -1,6 +1,5 @@
 const contentRoutes = [
   '/ecosystem',
-  '/genesis-drop',
   '/get-started',
   '/hemi-stake',
   '/hemi-stake/analytics',

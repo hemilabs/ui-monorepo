@@ -44,18 +44,12 @@ const config: Config = {
           'linear-gradient(252deg, rgba(255, 255, 255, 0.20) -10.15%, rgba(255, 255, 255, 0.00) 103.3%), linear-gradient(0deg, #FF600A, #FF600A)',
         'connect-wallet-hovered':
           'linear-gradient(0deg, rgba(250, 250, 250, 0.70) 0%, rgba(250, 250, 250, 0.70) 100%)',
-        'recommended-claim':
-          'linear-gradient(0deg, rgba(0, 156, 245, 0.03) 0%, rgba(0, 156, 245, 0.03) 100%), linear-gradient(0deg, rgba(250, 250, 250, 0.64) 0%, rgba(250, 250, 250, 0.64) 100%)',
-      },
-      blur: {
-        '1.5xl': '32px',
       },
       borderRadius: {
         '2.5xl': '1.25rem',
         'xs': '0.3125rem',
       },
       borderWidth: {
-        '1.5': '1.5px',
         '3': '3px',
       },
       boxShadow: {
@@ -83,12 +77,6 @@ const config: Config = {
           800: '#A1260B',
           900: '#82220C',
           950: '#460E04',
-        },
-        'sky': {
-          450: '#009CF5',
-          550: '#0EA5E9',
-          850: '#004E7B',
-          950: '#738ABC',
         },
         'token-selector-hover': {
           eth: 'rgba(98, 126, 234, 0.08)',
@@ -321,7 +309,6 @@ const config: Config = {
         '37': '9.2rem',
         '39': '9.75rem',
         '42': '10.5rem',
-        '47': '11.75rem',
         '50': '12.5rem',
         '54': '13.5rem',
         '58': '14.5rem',

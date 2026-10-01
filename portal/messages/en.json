@@ -1,6 +1,5 @@
 {
   "common": {
-    "accept": "Accept",
     "actions": "Actions",
     "add": "Add",
     "add-token-to-wallet-error": "Failed to add the token to your wallet",

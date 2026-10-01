@@ -14,4 +14,3 @@
 **/.env*
 .git
 .github
-portal-backend/api/scripts

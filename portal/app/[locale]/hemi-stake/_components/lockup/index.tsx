@@ -425,9 +425,9 @@ export function Lockup({
           <>
             <Divider />
             <InfoRow label={t('form.expire-date')} value={expireDate} />
+            <Divider />
           </>
         )}
-        <Divider />
         <InfoRow
           label={`${t('voting-power')}:`}
           value={

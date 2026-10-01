@@ -52,7 +52,7 @@ const fees = [
   },
 ]
 
-const pot = BigInt('4166666660000000000000000')
+const baselineAmount = BigInt('4166666660000000000000000')
 
 const seed = function (queryClient, streamsByEpoch) {
   queryClient.setQueryData(
@@ -86,13 +86,13 @@ const fetchInputs = queryClient =>
   })
 
 describe('fetchRewardsForecastInputs', function () {
-  it('takes the pot of the epoch in progress when it is funded', async function () {
+  it('takes the baseline of the epoch in progress when it is funded', async function () {
     const queryClient = createTestQueryClient()
-    seed(queryClient, { [currentEpoch]: baseline(pot) })
+    seed(queryClient, { [currentEpoch]: baseline(baselineAmount) })
 
     const result = await fetchInputs(queryClient)
 
-    expect(result.transferableClassPot).toBe(pot)
+    expect(result.transferableClassBaseline).toBe(baselineAmount)
     expect(result.carriedFrom).toBeUndefined()
   })
 
@@ -100,12 +100,12 @@ describe('fetchRewardsForecastInputs', function () {
     const queryClient = createTestQueryClient()
     seed(queryClient, {
       [currentEpoch]: [],
-      [currentEpoch - 1]: baseline(pot),
+      [currentEpoch - 1]: baseline(baselineAmount),
     })
 
     const result = await fetchInputs(queryClient)
 
-    expect(result.transferableClassPot).toBe(pot)
+    expect(result.transferableClassBaseline).toBe(baselineAmount)
     expect(result.carriedFrom).toBe(currentEpoch - 1)
   })
 
@@ -113,7 +113,7 @@ describe('fetchRewardsForecastInputs', function () {
     const queryClient = createTestQueryClient()
     seed(queryClient, {
       [currentEpoch]: fees,
-      [currentEpoch - 1]: baseline(pot),
+      [currentEpoch - 1]: baseline(baselineAmount),
     })
 
     const result = await fetchInputs(queryClient)
@@ -126,7 +126,7 @@ describe('fetchRewardsForecastInputs', function () {
     // Only these two are cached. Walking further would have to call the action.
     seed(queryClient, {
       [currentEpoch]: [],
-      [currentEpoch - 1]: baseline(pot),
+      [currentEpoch - 1]: baseline(baselineAmount),
     })
 
     await fetchInputs(queryClient)
@@ -134,7 +134,7 @@ describe('fetchRewardsForecastInputs', function () {
     expect(getEpochStreams).not.toHaveBeenCalled()
   })
 
-  it('gives up past the lookback and offers no pot at all', async function () {
+  it('gives up past the lookback and offers no baseline at all', async function () {
     const queryClient = createTestQueryClient()
     const empty = {}
     for (
@@ -148,7 +148,7 @@ describe('fetchRewardsForecastInputs', function () {
 
     const result = await fetchInputs(queryClient)
 
-    expect(result.transferableClassPot).toBeUndefined()
+    expect(result.transferableClassBaseline).toBeUndefined()
     expect(result.carriedFrom).toBeUndefined()
   })
 
@@ -169,28 +169,28 @@ describe('fetchRewardsForecastInputs', function () {
       token,
     })
 
-    expect(result.transferableClassPot).toBeUndefined()
+    expect(result.transferableClassBaseline).toBeUndefined()
     expect(getEpochStreams).not.toHaveBeenCalled()
   })
 
-  it('takes a baseline that funded only the locked class as no pot', async function () {
+  it('takes a baseline that funded only the locked class as no baseline', async function () {
     const queryClient = createTestQueryClient()
     seed(queryClient, {
       [currentEpoch]: lockedOnlyBaseline,
-      [currentEpoch - 1]: baseline(pot),
+      [currentEpoch - 1]: baseline(baselineAmount),
     })
 
     const result = await fetchInputs(queryClient)
 
     expect(result.carriedFrom).toBe(currentEpoch - 1)
-    expect(result.transferableClassPot).toBe(pot)
+    expect(result.transferableClassBaseline).toBe(baselineAmount)
   })
 
-  it('reads the weight from the epoch in progress even when the pot was carried', async function () {
+  it('reads the weight from the epoch in progress even when the baseline was carried', async function () {
     const queryClient = createTestQueryClient()
     seed(queryClient, {
       [currentEpoch]: [],
-      [currentEpoch - 1]: baseline(pot),
+      [currentEpoch - 1]: baseline(baselineAmount),
     })
 
     const result = await fetchInputs(queryClient)

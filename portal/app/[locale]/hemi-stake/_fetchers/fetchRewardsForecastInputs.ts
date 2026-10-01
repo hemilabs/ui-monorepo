@@ -3,7 +3,7 @@ import { type Address, type Chain, type Client } from 'viem'
 
 import { getClassDenominatorsQueryOptions } from '../_hooks/classDenominators'
 import { getEpochStreamsQueryOptions } from '../_hooks/epochStreams'
-import { getBaselinePot } from '../_utils/epochPot'
+import { getBaseline } from '../_utils/epochBaseline'
 
 // Past this, roughly seven weeks, the last baseline
 // says too little about the current epoch to stand in for it.
@@ -35,10 +35,10 @@ export const fetchRewardsForecastInputs = async function (
       const streams = await queryClient.fetchQuery(
         getEpochStreamsQueryOptions({ chainId, epoch, hemiClient, token }),
       )
-      const pot = getBaselinePot(streams)
+      const baseline = getBaseline(streams)
 
-      if (pot > BigInt(0)) {
-        return { epoch, pot }
+      if (baseline > BigInt(0)) {
+        return { baseline, epoch }
       }
     }
 
@@ -64,7 +64,7 @@ export const fetchRewardsForecastInputs = async function (
 
   return {
     carriedFrom: funded.epoch === currentEpoch ? undefined : funded.epoch,
-    transferableClassPot: funded.pot,
+    transferableClassBaseline: funded.baseline,
     transferableClassWeight,
   }
 }

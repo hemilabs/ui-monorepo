@@ -23,11 +23,11 @@ const clampToLockLimits = (lockDurationInSeconds: number) =>
   )
 
 export const getEpochPayout = function ({
-  transferableClassPot,
+  transferableClassBaseline,
   transferableClassWeight,
   weight,
 }: {
-  transferableClassPot: bigint
+  transferableClassBaseline: bigint
   transferableClassWeight: bigint
   weight: bigint
 }) {
@@ -35,7 +35,7 @@ export const getEpochPayout = function ({
   if (denominator === BigInt(0)) {
     return BigInt(0)
   }
-  return (transferableClassPot * weight) / denominator
+  return (transferableClassBaseline * weight) / denominator
 }
 
 export const getWeightShare = ({
@@ -58,13 +58,13 @@ export const getRewardsForecast = function ({
   amount,
   lockDurationInSeconds,
   now,
-  transferableClassPot,
+  transferableClassBaseline,
   transferableClassWeight,
 }: {
   amount: bigint
   lockDurationInSeconds: number
   now: number
-  transferableClassPot: bigint
+  transferableClassBaseline: bigint
   transferableClassWeight: bigint
 }) {
   const lockEnd = getLockEnd({
@@ -80,7 +80,7 @@ export const getRewardsForecast = function ({
       return {
         epochsAhead,
         payout: getEpochPayout({
-          transferableClassPot,
+          transferableClassBaseline,
           transferableClassWeight,
           weight,
         }),
@@ -109,13 +109,13 @@ export const getRewardsForecastByLockDurations = ({
   amount,
   lockDurationsInSeconds,
   now,
-  transferableClassPot,
+  transferableClassBaseline,
   transferableClassWeight,
 }: {
   amount: bigint
   lockDurationsInSeconds: number[]
   now: number
-  transferableClassPot: bigint
+  transferableClassBaseline: bigint
   transferableClassWeight: bigint
 }) =>
   lockDurationsInSeconds.map(lockDurationInSeconds => ({
@@ -123,7 +123,7 @@ export const getRewardsForecastByLockDurations = ({
       amount,
       lockDurationInSeconds,
       now,
-      transferableClassPot,
+      transferableClassBaseline,
       transferableClassWeight,
     }),
     lockDurationInSeconds,

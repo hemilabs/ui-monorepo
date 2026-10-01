@@ -33,22 +33,22 @@ const toPrice = function (value: string | undefined) {
 
 const buildForecast = function ({
   amount,
+  baseline,
   decimals,
   lockDurationInSeconds,
-  pot,
   weight,
 }: {
   amount: bigint
   decimals: number
   lockDurationInSeconds: number
-  pot: bigint
+  baseline: bigint
   weight: bigint
 }) {
   const forecast = getRewardsForecast({
     amount,
     lockDurationInSeconds,
     now: Number(unixNowTimestamp()),
-    transferableClassPot: pot,
+    transferableClassBaseline: baseline,
     transferableClassWeight: weight,
   })
   const series = toPayoutSeries({
@@ -56,7 +56,7 @@ const buildForecast = function ({
     lockEnd: forecast.lockEnd,
     payouts: forecast.payouts,
   })
-  const hasForecast = pot > BigInt(0) && forecast.meetsMinimumAmount
+  const hasForecast = baseline > BigInt(0) && forecast.meetsMinimumAmount
 
   return {
     chartSeries: hasForecast
@@ -86,9 +86,9 @@ export const EstimatedPayouts = function () {
   const { data: prices } = useTokenPrices()
 
   const amount = parseTokenUnits(input, token)
-  const pot = forecastInputs?.transferableClassPot ?? BigInt(0)
+  const baseline = forecastInputs?.transferableClassBaseline ?? BigInt(0)
   const weight = forecastInputs?.transferableClassWeight ?? BigInt(0)
-  const hasPot = pot > BigInt(0)
+  const hasBaseline = baseline > BigInt(0)
 
   const hasError = isSystemStateError || isForecastError
   const retry = isSystemStateError ? refetchSystemState : refetchForecast
@@ -96,9 +96,9 @@ export const EstimatedPayouts = function () {
 
   const { chartSeries, forecast, hasForecast } = buildForecast({
     amount,
+    baseline,
     decimals: token.decimals,
     lockDurationInSeconds: Number(wholeDaysToSeconds(lockupDays)),
-    pot,
     weight,
   })
 
@@ -120,8 +120,8 @@ export const EstimatedPayouts = function () {
           />
         ) : (
           <PayoutPlaceholder
+            hasBaseline={hasBaseline}
             hasError={hasError}
-            hasPot={hasPot}
             isPending={isPending}
             lockEnd={forecast.lockEnd}
             onRetry={retry}

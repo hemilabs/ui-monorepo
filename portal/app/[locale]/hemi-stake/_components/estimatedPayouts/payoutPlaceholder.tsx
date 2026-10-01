@@ -8,15 +8,15 @@ import { formatUnits } from 'viem'
 
 type Props = {
   hasError: boolean
-  hasPot: boolean
+  hasBaseline: boolean
   isPending: boolean
   lockEnd: number
   onRetry: VoidFunction
 }
 
 export const PayoutPlaceholder = function ({
+  hasBaseline,
   hasError,
-  hasPot,
   isPending,
   lockEnd,
   onRetry,
@@ -47,7 +47,7 @@ export const PayoutPlaceholder = function ({
     }
     return (
       <span className="text-xs text-neutral-400">
-        {hasPot
+        {hasBaseline
           ? t('enter-minimum-amount', {
               amount: formatNumber(formatUnits(minLockAmount, token.decimals)),
               symbol: token.symbol,

@@ -110,6 +110,7 @@ export const EstimatedPayouts = function () {
       <div className="min-h-20">
         {hasForecast && systemState !== undefined ? (
           <PayoutHeadline
+            carriedFrom={forecastInputs?.carriedFrom}
             currentEpoch={systemState.currentEpoch}
             input={input}
             lockEnd={forecast.lockEnd}

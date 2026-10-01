@@ -11,6 +11,7 @@ import { formatPayoutValue } from '../../_utils/formatPayoutValue'
 import { type PayoutPoint } from '../../_utils/payoutsChartData'
 
 type Props = {
+  carriedFrom: number | undefined
   currentEpoch: number
   input: string
   lockEnd: number
@@ -21,6 +22,7 @@ type Props = {
 }
 
 export const PayoutHeadline = function ({
+  carriedFrom,
   currentEpoch,
   input,
   lockEnd,
@@ -47,7 +49,14 @@ export const PayoutHeadline = function ({
         <span className="text-sm text-neutral-500">{t('next-payout')}</span>
         <Tooltip
           id="estimated-payouts-note"
-          text={t('forecast-note')}
+          text={
+            <div className="flex flex-col gap-y-2">
+              <span>{t('forecast-note')}</span>
+              {carriedFrom !== undefined && (
+                <span>{t('carried-from', { epoch: carriedFrom })}</span>
+              )}
+            </div>
+          }
           variant="info"
         >
           <div className="group/icon flex items-center">

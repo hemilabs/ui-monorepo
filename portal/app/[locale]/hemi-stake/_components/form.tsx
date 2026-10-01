@@ -7,6 +7,7 @@ import { useTranslations } from 'use-intl'
 
 import { useStakingDashboard } from '../_context/stakingDashboardContext'
 
+import { EstimatedPayouts } from './estimatedPayouts'
 import { Lockup } from './lockup'
 
 type FormContentProps = {
@@ -57,6 +58,7 @@ export const FormContent = function ({
         updateInputDays={updateInputDays}
         updateLockupDays={updateLockupDays}
       />
+      <EstimatedPayouts />
     </>
   )
 }
@@ -86,7 +88,7 @@ export const StakingForm = ({
         }}
       >
         <div className="flex flex-col gap-y-3">{formContent}</div>
-        <div className="mt-12 w-full [&>*]:w-full">{submitButton}</div>
+        <div className="mt-6 w-full [&>*]:w-full">{submitButton}</div>
         {bottomSection}
       </form>
     </Card>

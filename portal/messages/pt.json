@@ -497,6 +497,17 @@
       },
       "unlock-token": "Desbloquear {symbol}"
     },
+    "estimated-payouts": {
+      "enter-minimum-amount": "Insira pelo menos {amount} {symbol} para ver seu próximo pagamento.",
+      "forecast-note": "Cada época paga a sua parte do baseline, então os pagamentos caem conforme o seu bloqueio decai. Aqui o restante do veHEMI transferível é mantido no nível atual, e a atividade real de staking vai mexer nesses números.",
+      "load-failed": "Não foi possível carregar os dados de recompensas.",
+      "next-payout": "próximo pagamento",
+      "not-funded": "As recompensas desta época ainda não foram financiadas.",
+      "settles-on": "época {epoch} · liquida em {date}",
+      "staked-summary": "{amount} {symbol} bloqueados por {days, plural, one {# dia} other {# dias}} · <unlock>desbloqueia em {date}</unlock>",
+      "starting-from-epoch": "Pagamentos por época · a partir da época {epoch}",
+      "title": "Pagamentos estimados"
+    },
     "form": {
       "approve-and-stake": "Aprovar e Fazer Stake",
       "approximate": "~{percentage}%",

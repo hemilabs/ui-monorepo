@@ -497,6 +497,17 @@
       },
       "unlock-token": "Unlock {symbol}"
     },
+    "estimated-payouts": {
+      "enter-minimum-amount": "Enter at least {amount} {symbol} to see your next payout.",
+      "forecast-note": "Each epoch pays your share of the baseline, so payouts fall as your lock decays. The other transferable veHEMI is held here at the level it has today, and real staking activity will move these numbers.",
+      "load-failed": "Could not load the reward data.",
+      "next-payout": "next payout",
+      "not-funded": "Rewards for this epoch have not been funded yet.",
+      "settles-on": "epoch {epoch} · settles {date}",
+      "staked-summary": "{amount} {symbol} locked for {days, plural, one {# day} other {# days}} · <unlock>unlocks {date}</unlock>",
+      "starting-from-epoch": "Payouts per epoch · starting from epoch {epoch}",
+      "title": "Estimated payouts"
+    },
     "form": {
       "approve-and-stake": "Approve and Stake",
       "approximate": "~{percentage}%",

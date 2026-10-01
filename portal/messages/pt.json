@@ -498,9 +498,9 @@
       "unlock-token": "Desbloquear {symbol}"
     },
     "estimated-payouts": {
-      "carried-from": "A época atual ainda não foi financiada, então estes números usam a baseline da época {epoch}.",
+      "carried-from": "Com base na época {epoch}, a última financiada.",
       "enter-minimum-amount": "Insira pelo menos {amount} {symbol} para ver seu próximo pagamento.",
-      "forecast-note": "Cada época paga a sua parte do baseline, então os pagamentos caem conforme o seu bloqueio decai. Aqui o restante do veHEMI transferível é mantido no nível atual, e a atividade real de staking vai mexer nesses números.",
+      "forecast-note": "Os pagamentos caem conforme o seu bloqueio decai, e mudam conforme os outros fazem staking.",
       "load-failed": "Não foi possível carregar os dados de recompensas.",
       "locked-summary": "{amount} {symbol} bloqueados por {days, plural, one {# dia} other {# dias}}",
       "next-payout": "próximo pagamento",

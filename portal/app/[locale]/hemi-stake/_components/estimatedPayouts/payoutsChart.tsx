@@ -210,7 +210,7 @@ export const PayoutsChart = function ({
 
   return (
     <div className="relative">
-      <div className="invisible">{emptyChart}</div>
+      <div className="invisible flex">{emptyChart}</div>
       <div className="absolute inset-0">
         <Skeleton height="100%" />
       </div>

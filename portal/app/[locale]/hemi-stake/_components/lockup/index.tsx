@@ -113,7 +113,7 @@ const VotingPowerEquivalence = function ({
       <DisplayAmount amount={amount} token={token} />
       <span>=</span>
       {isLoadingVeHemiToken || !veHemiToken ? (
-        <Skeleton className="h-4 w-16" />
+        <Skeleton className="w-16" />
       ) : (
         <DisplayAmount amount={votingPower} token={veHemiToken} />
       )}

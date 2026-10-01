@@ -200,10 +200,19 @@ export const useStake = function ({
           transferable: true,
         }
 
-        queryClient.setQueryData(
-          stakingPositionQueryKey,
-          prependPosition(newPosition),
-        )
+        const addNewPosition = () =>
+          queryClient.setQueryData(
+            stakingPositionQueryKey,
+            prependPosition(newPosition),
+          )
+        if (queryClient.getQueryData(stakingPositionQueryKey)) {
+          addNewPosition()
+        } else {
+          queryClient
+            .invalidateQueries({ queryKey: stakingPositionQueryKey })
+            .then(addNewPosition)
+            .catch(() => undefined)
+        }
 
         // fees
         updateNativeBalanceAfterFees(receipt)

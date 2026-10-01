@@ -2,7 +2,9 @@ import { type StakingPosition } from 'types/stakingDashboard'
 
 export const prependPosition =
   (newPosition: StakingPosition) => (old: StakingPosition[] | undefined) =>
-    old && [newPosition, ...old]
+    old?.some(({ tokenId }) => tokenId === newPosition.tokenId)
+      ? old
+      : old && [newPosition, ...old]
 
 export const updatePosition =
   ({

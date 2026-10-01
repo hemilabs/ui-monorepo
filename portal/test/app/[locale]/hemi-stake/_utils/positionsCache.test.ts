@@ -23,6 +23,11 @@ describe('prependPosition', function () {
     ])
   })
 
+  it('keeps the list when the position is already in it', function () {
+    const positions = [position(1), position(3)]
+    expect(prependPosition(position(3))(positions)).toBe(positions)
+  })
+
   it('returns undefined when there is no cached list', function () {
     expect(prependPosition(position(3))(undefined)).toBeUndefined()
   })

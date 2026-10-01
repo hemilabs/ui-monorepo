@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { toChecksumAddress } from 'utils/address'
 import { type Address, type Chain } from 'viem'
 
 import { fetchRewardsForecastInputs } from '../_fetchers/fetchRewardsForecastInputs'
@@ -22,7 +21,7 @@ const getRewardsForecastInputsQueryKey = ({
 export const useRewardsForecastInputs = function () {
   const { id: chainId } = useHemi()
   const hemiClient = useHemiClient()
-  const token = toChecksumAddress(useHemiToken().address)
+  const token = useHemiToken().address as Address
   const { data: systemState } = useEpochSystemState()
 
   return useQuery({

@@ -153,3 +153,15 @@ export const formatShortDate = (
     month: 'short',
     timeZone,
   }).format(date)
+
+export const formatShortDateWithYear = (
+  date: Date,
+  locale: string,
+  timeZone?: string,
+) =>
+  new Intl.DateTimeFormat(locale, {
+    day: '2-digit',
+    month: 'short',
+    timeZone,
+    year: 'numeric',
+  }).format(date)

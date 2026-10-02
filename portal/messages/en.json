@@ -440,6 +440,19 @@
       },
       "unlock-token": "Unlock {symbol}"
     },
+    "estimated-payouts": {
+      "carried-from": "Based on epoch {epoch}, the last one funded.",
+      "enter-minimum-amount": "Enter at least {amount} {symbol} to see your next payout.",
+      "forecast-note": "Payouts shrink as your lock decays, and shift as others stake.",
+      "load-failed": "Could not load the reward data.",
+      "locked-summary": "{amount} {symbol} locked for {days, plural, one {# day} other {# days}}",
+      "next-payout": "next payout",
+      "not-funded": "Rewards for this epoch have not been funded yet.",
+      "settles-on": "epoch {epoch} · settles {date}",
+      "starting-from-epoch": "Payouts per epoch · starting from epoch {epoch}",
+      "title": "Estimated payouts",
+      "unlocks-on": "Unlocks {date}"
+    },
     "form": {
       "approve-and-stake": "Approve and Stake",
       "approximate": "~{percentage}%",

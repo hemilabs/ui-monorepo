@@ -440,6 +440,19 @@
       },
       "unlock-token": "Desbloquear {symbol}"
     },
+    "estimated-payouts": {
+      "carried-from": "Con base en la época {epoch}, la última financiada.",
+      "enter-minimum-amount": "Ingrese al menos {amount} {symbol} para ver su próximo pago.",
+      "forecast-note": "Los pagos bajan a medida que su bloqueo decae, y cambian según cuánto hagan staking los demás.",
+      "load-failed": "No se pudieron cargar los datos de recompensas.",
+      "locked-summary": "{amount} {symbol} bloqueados por {days, plural, one {# día} other {# días}}",
+      "next-payout": "próximo pago",
+      "not-funded": "Las recompensas de esta época aún no han sido financiadas.",
+      "settles-on": "época {epoch} · se liquida el {date}",
+      "starting-from-epoch": "Pagos por época · a partir de la época {epoch}",
+      "title": "Pagos estimados",
+      "unlocks-on": "Se desbloquea el {date}"
+    },
     "form": {
       "approve-and-stake": "Aprobar y Hacer Stake",
       "approximate": "~{percentage}%",

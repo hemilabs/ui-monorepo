@@ -19,8 +19,6 @@ const edgeGap = 8
 // aligning the boxes would leave the item text off by the difference.
 const menuTextInset = 4
 
-const enabledItemSelector = 'button:not(:disabled)'
-
 type Props<TOption extends string> = {
   align?: 'left' | 'right'
   getLabel: (option: TOption) => string
@@ -112,7 +110,7 @@ export const FilterHeader = function <TOption extends string>({
       // The menu is appended to the body, so Tab from the trigger would skip it.
       // preventScroll matters: any scroll closes the menu.
       menuRef.current
-        ?.querySelector<HTMLButtonElement>(enabledItemSelector)
+        ?.querySelector<HTMLButtonElement>('button')
         ?.focus({ preventScroll: true })
     },
     [isOpen],
@@ -134,12 +132,10 @@ export const FilterHeader = function <TOption extends string>({
     if (event.key !== 'Tab') {
       return
     }
-    const enabledItems = Array.from(
-      menuRef.current?.querySelectorAll<HTMLButtonElement>(
-        enabledItemSelector,
-      ) ?? [],
+    const buttons = Array.from(
+      menuRef.current?.querySelectorAll<HTMLButtonElement>('button') ?? [],
     )
-    const edgeItem = event.shiftKey ? enabledItems[0] : enabledItems.at(-1)
+    const edgeItem = event.shiftKey ? buttons[0] : buttons.at(-1)
     if (event.target !== edgeItem) {
       return
     }
@@ -164,25 +160,30 @@ export const FilterHeader = function <TOption extends string>({
     setIsOpen(false)
   }
 
-  const items = options.map(option => ({
-    content: (
-      <button
-        className="-mx-1 flex items-center gap-x-2 rounded px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500"
-        disabled={selected === option}
-        onClick={function () {
-          closeAndFocusTrigger()
-          onSelect(option)
-        }}
-        type="button"
-      >
-        <span className="whitespace-nowrap">{getLabel(option)}</span>
-        <div className={selected === option ? 'block' : 'invisible'}>
-          <CheckMark />
-        </div>
-      </button>
-    ),
-    id: option,
-  }))
+  const items = options.map(function (option) {
+    const isSelected = option === selected
+    return {
+      content: (
+        <button
+          aria-pressed={isSelected}
+          className="-mx-1 flex items-center gap-x-2 rounded px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500"
+          onClick={function () {
+            closeAndFocusTrigger()
+            if (!isSelected) {
+              onSelect(option)
+            }
+          }}
+          type="button"
+        >
+          <span className="whitespace-nowrap">{getLabel(option)}</span>
+          <div className={isSelected ? 'block' : 'invisible'}>
+            <CheckMark />
+          </div>
+        </button>
+      ),
+      id: option,
+    }
+  })
 
   return (
     <span className="flex flex-col" onBlur={onBlur} onKeyDown={onKeyDown}>

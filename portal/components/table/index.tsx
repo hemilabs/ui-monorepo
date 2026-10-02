@@ -53,10 +53,6 @@ const TableHeader = <TData,>({
       hasVerticalBodyScrollbar && width >= smallBreakpoint ? 'pr-2.5' : ''
     }`}
   >
-    {/* Tabbing to an off-screen header button scrolls this container, so the
-    body follows it on focus. Safari scrolls after the focus event, hence the
-    explicit scroll, skipped for mouse focus so a click doesn't scroll away a
-    menu it opens. Syncing on scroll would fight the body's own scrolling. */}
     <div
       className="overflow-x-hidden"
       onFocus={function (e) {

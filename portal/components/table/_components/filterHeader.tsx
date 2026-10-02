@@ -14,9 +14,6 @@ import { createPortal } from 'react-dom'
 import { HeaderButton } from './headerButton'
 
 const edgeGap = 8
-
-// `Menu` insets its items (p-1 + px-2) and the trigger insets its text (px-2):
-// aligning the boxes would leave the item text off by the difference.
 const menuTextInset = 4
 
 type Props<TOption extends string> = {
@@ -28,8 +25,6 @@ type Props<TOption extends string> = {
   text: string
 }
 
-// Portaled to the body: the header lives inside an `overflow-x-hidden` container,
-// which would clip the menu, and the body card paints over it.
 export const FilterHeader = function <TOption extends string>({
   align = 'left',
   getLabel,
@@ -48,8 +43,6 @@ export const FilterHeader = function <TOption extends string>({
       if (!isOpen) {
         return undefined
       }
-      // The trigger has to be excluded too: closing on its mousedown would let
-      // its own onClick reopen the menu right away.
       const onMouseDown = function (event: MouseEvent) {
         const target = event.target as Node
         if (
@@ -79,8 +72,6 @@ export const FilterHeader = function <TOption extends string>({
             ? rect.right - width + menuTextInset
             : rect.left - menuTextInset
         setPosition({
-          // Keeps the menu inside the viewport when the trigger sits near
-          // either edge.
           left: Math.min(
             Math.max(edgeGap, preferred),
             window.innerWidth - width - edgeGap,
@@ -89,8 +80,6 @@ export const FilterHeader = function <TOption extends string>({
         })
       }
       place()
-      // The menu is portaled and fixed, so it can't follow the header on its
-      // own: close it rather than leave it at stale coordinates.
       const close = () => setIsOpen(false)
       window.addEventListener('scroll', close, true)
       window.addEventListener('resize', close)
@@ -107,8 +96,6 @@ export const FilterHeader = function <TOption extends string>({
       if (!isOpen) {
         return
       }
-      // The menu is appended to the body, so Tab from the trigger would skip it.
-      // preventScroll matters: any scroll closes the menu.
       menuRef.current
         ?.querySelector<HTMLButtonElement>('button')
         ?.focus({ preventScroll: true })
@@ -139,16 +126,12 @@ export const FilterHeader = function <TOption extends string>({
     if (event.target !== edgeItem) {
       return
     }
-    // The menu is appended to the body, so tabbing past its edges would leave
-    // the page. From the trigger, Tab carries on to the next focusable element.
     if (event.shiftKey) {
       event.preventDefault()
     }
     closeAndFocusTrigger()
   }
 
-  // A null relatedTarget is a click on a non-focusable spot (or Safari, which
-  // doesn't focus buttons on click): the outside-click handler covers that.
   const onBlur = function ({ relatedTarget }: FocusEvent) {
     if (
       relatedTarget === null ||

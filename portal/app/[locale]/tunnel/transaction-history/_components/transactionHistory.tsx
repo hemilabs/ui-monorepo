@@ -115,8 +115,6 @@ export const TransactionHistory = function ({
       )
     }
 
-    // Only show NoTransactions after syncing finishes and the unfiltered history
-    // remains empty. Prevents flicker during initial load.
     if (isSettled && !hasHistory) {
       return (
         <TableCard>

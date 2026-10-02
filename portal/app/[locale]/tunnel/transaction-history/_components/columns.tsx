@@ -23,9 +23,6 @@ type Translate = ReturnType<
   typeof useTranslations<'tunnel-page.transaction-history'>
 >
 
-// Module-level components read the filters from context: an inline header
-// function would be a new component on every filter change, and the remount
-// drops the keyboard focus.
 const TimeHeader = function () {
   const { filterOption, setFilterOption } = useFilterOptions()
   const t = useTranslations('tunnel-page.transaction-history')

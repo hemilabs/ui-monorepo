@@ -208,10 +208,9 @@ export const useStake = function ({
         if (queryClient.getQueryData(stakingPositionQueryKey)) {
           addNewPosition()
         } else {
-          queryClient
+          void queryClient
             .invalidateQueries({ queryKey: stakingPositionQueryKey })
             .then(addNewPosition)
-            .catch(() => undefined)
         }
 
         // fees

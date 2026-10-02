@@ -538,21 +538,6 @@ importers:
         specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@24.10.2)(vite@8.0.13(@types/node@24.10.2)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.9.0))
 
-  portal-backend/cron/hemi-supply:
-    dependencies:
-      '@sentry/node':
-        specifier: 10.53.1
-        version: 10.53.1(supports-color@10.2.2)
-      redis:
-        specifier: 4.7.1
-        version: 4.7.1
-      safe-async-fn:
-        specifier: 1.0.0
-        version: 1.0.0
-      startinterval2:
-        specifier: 1.0.1
-        version: 1.0.1
-
   portal-backend/cron/token-prices:
     dependencies:
       '@sentry/node':

@@ -1,5 +1,6 @@
 export { getClaimableByToken } from './public/getClaimableByToken.ts'
 export { getClassDenominators } from './public/getClassDenominators.ts'
+export { getEpochFunding } from './public/getEpochFunding.ts'
 export { getEpochStreams } from './public/getEpochStreams.ts'
 export { getMaxClaimPairs } from './public/getMaxClaimPairs.ts'
 export { getPositionClass } from './public/getPositionClass.ts'

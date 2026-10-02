@@ -205,12 +205,16 @@ export const useStake = function ({
             stakingPositionQueryKey,
             prependPosition(newPosition),
           )
+        const refetchAndAddNewPosition = async function () {
+          await queryClient.invalidateQueries({
+            queryKey: stakingPositionQueryKey,
+          })
+          addNewPosition()
+        }
         if (queryClient.getQueryData(stakingPositionQueryKey)) {
           addNewPosition()
         } else {
-          void queryClient
-            .invalidateQueries({ queryKey: stakingPositionQueryKey })
-            .then(addNewPosition)
+          refetchAndAddNewPosition()
         }
 
         // fees

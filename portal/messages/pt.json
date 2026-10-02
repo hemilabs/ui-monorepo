@@ -782,6 +782,8 @@
           "withdrawals": "Retiradas"
         }
       },
+      "no-matching-transactions": "Nenhuma transação correspondente",
+      "no-matching-transactions-hint": "Tente alterar os filtros.",
       "no-transactions": "Nenhuma transação efetuada",
       "no-transactions-get-started": "Comece por tunelar ativos de e para o Hemi",
       "subtitle": "Consulte o status e as informações detalhadas das suas transações na Hemi.",

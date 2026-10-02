@@ -782,6 +782,8 @@
           "withdrawals": "Retiros"
         }
       },
+      "no-matching-transactions": "No hay transacciones coincidentes",
+      "no-matching-transactions-hint": "Intente cambiar los filtros.",
       "no-transactions": "No se han realizado transacciones",
       "no-transactions-get-started": "Comience tunelizando activos desde y hacia hemi.",
       "subtitle": "Consulte el estado y la información detallada de sus transacciones en Hemi.",

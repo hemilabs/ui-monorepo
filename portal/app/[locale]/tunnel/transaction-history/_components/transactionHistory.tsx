@@ -15,9 +15,11 @@ import {
 import { useAccount } from 'wagmi'
 
 import { useTunnelOperation } from '../../_hooks/useTunnelOperation'
+import { FilterOptionsContext } from '../_context/filterOptionsContext'
 
 import { buildColumns } from './columns'
 import { ConnectWallet } from './connectWallet'
+import { NoMatchingTransactions } from './noMatchingTransactions'
 import { NoTransactions } from './noTransactions'
 import { type FilterOptions } from './topBar'
 
@@ -65,6 +67,7 @@ const useTransactionsHistory = function (filter: FilterOptions) {
 
   return {
     data,
+    hasHistory: deposits.length > 0 || withdrawals.length > 0,
     isSettled: syncStatus === 'finished' || syncStatus === 'error',
     loading: syncStatus === 'syncing',
   }
@@ -79,12 +82,13 @@ export const TransactionHistory = function ({
 }) {
   const { status } = useAccount()
   const t = useTranslations('tunnel-page.transaction-history')
-  const { data, isSettled, loading } = useTransactionsHistory(filterOption)
+  const { data, hasHistory, isSettled, loading } =
+    useTransactionsHistory(filterOption)
   const { updateTxHash } = useTunnelOperation()
 
   const columns = useMemo(
-    () => buildColumns({ filterOption, setFilterOption, t }),
-    [filterOption, setFilterOption, t],
+    () => buildColumns({ t, timeDesc: filterOption.timeDesc }),
+    [filterOption.timeDesc, t],
   )
 
   const handleRowClick = useCallback(
@@ -112,9 +116,7 @@ export const TransactionHistory = function ({
       )
     }
 
-    // Only show NoTransactions after syncing finishes and data remains empty.
-    // Prevents flicker during initial load.
-    if (isSettled && data.length === 0) {
+    if (isSettled && !hasHistory) {
       return (
         <TableCard>
           <NoTransactions />
@@ -123,15 +125,20 @@ export const TransactionHistory = function ({
     }
 
     return (
-      <Table
-        columns={columns}
-        containerClassName="flex h-full flex-col"
-        data={data}
-        fitContainer
-        loading={loading}
-        onRowClick={handleRowClick}
-        priorityColumnIdsOnSmall={['action', 'status', 'type', 'amount']}
-      />
+      <FilterOptionsContext.Provider value={{ filterOption, setFilterOption }}>
+        <Table
+          columns={columns}
+          containerClassName="flex h-full flex-col"
+          data={data}
+          fitContainer
+          loading={loading}
+          onRowClick={handleRowClick}
+          placeholder={
+            isSettled && data.length === 0 && <NoMatchingTransactions />
+          }
+          priorityColumnIdsOnSmall={['action', 'status', 'type', 'amount']}
+        />
+      </FilterOptionsContext.Provider>
     )
   }
 

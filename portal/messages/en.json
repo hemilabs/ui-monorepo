@@ -782,6 +782,8 @@
           "withdrawals": "Withdrawals"
         }
       },
+      "no-matching-transactions": "No matching transactions",
+      "no-matching-transactions-hint": "Try changing the filters.",
       "no-transactions": "No transactions made",
       "no-transactions-get-started": "Get started by tunneling assets from and to hemi",
       "subtitle": "Track the status and details of your Hemi transactions.",

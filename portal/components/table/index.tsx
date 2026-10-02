@@ -28,6 +28,7 @@ import { useTableData } from './_hooks/useTableData'
 import { useTableVirtualizer } from './_hooks/useTableVirtualizer'
 
 type TableHeaderProps<TData> = {
+  bodyScrollRef: RefObject<HTMLDivElement | null>
   fitContainer: boolean
   hasVerticalBodyScrollbar: boolean
   headerScrollRef: RefObject<HTMLDivElement | null>
@@ -38,6 +39,7 @@ type TableHeaderProps<TData> = {
 }
 
 const TableHeader = <TData,>({
+  bodyScrollRef,
   fitContainer,
   hasVerticalBodyScrollbar,
   headerScrollRef,
@@ -51,7 +53,21 @@ const TableHeader = <TData,>({
       hasVerticalBodyScrollbar && width >= smallBreakpoint ? 'pr-2.5' : ''
     }`}
   >
-    <div className="overflow-x-hidden" ref={headerScrollRef}>
+    <div
+      className="overflow-x-hidden"
+      onFocus={function (e) {
+        if (!e.target.closest('th')) {
+          return
+        }
+        if (e.target.matches(':focus-visible')) {
+          e.target.scrollIntoView({ block: 'nearest' })
+        }
+        if (bodyScrollRef.current) {
+          bodyScrollRef.current.scrollLeft = e.currentTarget.scrollLeft
+        }
+      }}
+      ref={headerScrollRef}
+    >
       <table
         className="w-full border-separate border-spacing-0 whitespace-nowrap"
         style={{ minWidth: `${tableMinWidth}px` }}
@@ -61,6 +77,7 @@ const TableHeader = <TData,>({
             <tr className="flex w-full items-center" key={headerGroup.id}>
               {headerGroup.headers.map(header => (
                 <ColumnHeader
+                  aria-sort={header.column.columnDef.meta?.ariaSort}
                   className={
                     header.column.columnDef.meta?.className ?? 'justify-start'
                   }
@@ -198,6 +215,7 @@ type StaticTableBodyProps<TData> = {
   onRowHover?: (index: number | null) => void
   placeholder?: ReactNode
   rowClassName?: string
+  scrollRef: RefObject<HTMLDivElement | null>
   skeletonRows: number
   table: ReturnType<typeof useReactTable<TData>>
   tableMinWidth: number
@@ -212,6 +230,7 @@ function StaticTableBody<TData>({
   onRowHover,
   placeholder,
   rowClassName,
+  scrollRef,
   skeletonRows,
   table,
   tableMinWidth,
@@ -234,6 +253,7 @@ function StaticTableBody<TData>({
       <div
         className="overflow-x-auto"
         onScroll={handleScroll}
+        ref={scrollRef}
         style={{
           scrollbarColor: '#d4d4d4 transparent',
           scrollbarWidth: 'thin',
@@ -314,6 +334,7 @@ export function Table<TData>({
 }: TableProps<TData>) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const headerScrollRef = useRef<HTMLDivElement>(null)
+  const staticScrollRef = useRef<HTMLDivElement>(null)
   const { height, width } = useWindowSize()
 
   const hasVerticalBodyScrollbar = useScrollbarDetection({
@@ -371,6 +392,7 @@ export function Table<TData>({
   return (
     <div className={rootClassName}>
       <TableHeader
+        bodyScrollRef={isVirtual ? scrollContainerRef : staticScrollRef}
         fitContainer={fitToContainer}
         hasVerticalBodyScrollbar={hasVerticalBodyScrollbar}
         headerScrollRef={headerScrollRef}
@@ -409,6 +431,7 @@ export function Table<TData>({
           onRowHover={onRowHover}
           placeholder={placeholder}
           rowClassName={rowClassName}
+          scrollRef={staticScrollRef}
           skeletonRows={skeletonRows}
           table={table}
           tableMinWidth={tableMinWidth}

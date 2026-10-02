@@ -1,6 +1,5 @@
 {
   "common": {
-    "accept": "Accept",
     "actions": "Actions",
     "add": "Add",
     "add-token-to-wallet-error": "Failed to add the token to your wallet",
@@ -125,67 +124,6 @@
       "description": "An unexpected error has occurred. Please try again or <link>contact us</link> if the problem persists.",
       "title": "Something Went Wrong"
     }
-  },
-  "genesis-drop": {
-    "add-hemi-to-your-wallet": "Add {symbol} to your wallet",
-    "apy-in-hemi-up-to": "Up to {percentage}%",
-    "apy-in-staked-hemi": "APY in ${symbol}",
-    "claim-and-stake-successful": "Claim and Stake successful",
-    "claim-details": "Claim details",
-    "claim-groups": {
-      "genesis-drop": "Hemi Genesis Drop",
-      "other-drop": "Other Drop",
-      "spectra-and-dodo": "Spectra + Dodo"
-    },
-    "claim-name": "Claim name:",
-    "claim-options": {
-      "and-other-partners": "...and many other partners!",
-      "bonus-hemi": "{percentage}% Bonus HEMI",
-      "bonus-staked-for-months": "<amount></amount> $<symbol></symbol> tokens staked for <months></months> months",
-      "bonus-tokens": "Bonus tokens",
-      "claim": "Claim",
-      "claim-title-24": "Genesis Guardian",
-      "claim-title-48": "Genesis Legend",
-      "claim-title-6": "Genesis Voyager",
-      "claiming": "Claiming...",
-      "future-incentives-from": "Future incentives from",
-      "liquid-hemi": "Liquid ${symbol}",
-      "lockup-period-months": "{months} months",
-      "more-info-description": "Of your total earned tokens, a portion will be claimable immediately (\"available now\") while the rest will be staked automatically for a set lock-up period.",
-      "more-rewards": "+<bonus></bonus>% more ${symbol}",
-      "plus-staked-tokens": "Plus <amount></amount> $<symbol></symbol> tokens staked<break></break>for <period></period>.",
-      "potential-staked-rewards": "Potential rewards for your staked ${symbol}",
-      "recommended": "Recommended",
-      "staked-hemi": "Staked ${symbol}",
-      "staked-tokens-may-qualify": "Staked ${symbol} tokens may qualify for up to a {multiplier}x multiplier",
-      "submit-text": "Claim & Stake",
-      "this-option-includes-bonus": "This claim option already includes a <bonus></bonus>% bonus on your earned tokens.",
-      "tokens-available-now": "${symbol} tokens available now!",
-      "tokens-available-now-amount": "<amount></amount> ${symbol} tokens available now!",
-      "up-to-multiplier-rewards": "Up to {multiplier}x multiplier on staked rewards"
-    },
-    "claim-rewards": "Claim rewards",
-    "claimed": "Claimed",
-    "claiming-your-rewards": "Claiming your rewards",
-    "connect-demos-wallet": "Make sure to connect your Demos verified wallet.",
-    "go-to-hemi-stake": "Go to Hemi Stake",
-    "have-questions": "Make sure you're connected to your Demos-verified wallet. If you have questions, open a ticket on <discordLink>Discord</discordLink>, check <absintheLink>Absinthe</absintheLink> or try another wallet.",
-    "hemi-token-added": "{symbol} added to your wallet",
-    "here-is-your-claim-tx": "Here's your claim transaction:",
-    "not-eligible": "Not eligible",
-    "rewards-multiplier": "Rewards multiplier",
-    "share-x-text": "I am eligible for {amount} ${symbol} in the TGE Genesis drop of Hemi! 🎉 Check if you are eligible:",
-    "stake-hemi": "Stake {symbol}",
-    "staked-for-months": "{amount} for {months} months",
-    "switch-to-start-claiming": "You can switch networks to start claiming your HEMI.",
-    "terms-and-conditions": {
-      "title": "Hemi Genesis Drop Terms and Conditions"
-    },
-    "title": "Rewards Program",
-    "up-to-multiplier": "Up to {multiplier}x",
-    "view-tx-on-explorer": "View TX on explorer",
-    "your-earned-tokens": "Your earned ${symbol} tokens.",
-    "your-rewards-are-on-their-way": "Your rewards are on their way!"
   },
   "get-started": {
     "action": "Action",
@@ -585,6 +523,7 @@
       "claim": "Claim",
       "claim-all-rewards": "Claim all rewards",
       "claiming-paused": "Rewards claiming is paused",
+      "could-not-load-positions": "We couldn't load your positions",
       "get-started": "Get started by staking your ${symbol}",
       "get-started-burned": "Your burned positions will show up here once their lockup periods have ended.",
       "locked-amount": "Locked Amount",
@@ -625,7 +564,6 @@
     "ecosystem": "Demos",
     "explorer": "Explorer",
     "follow-us": "Follow us",
-    "genesis-drop": "Genesis Drop",
     "get-started": "Get started",
     "help": {
       "language": "Language",
@@ -635,7 +573,6 @@
     "network": "Network",
     "network-status": "Network status",
     "new": "New",
-    "swap": "Swap",
     "tools": "Tools",
     "tunnel": "Tunnel",
     "tvl": "TVL on Hemi"

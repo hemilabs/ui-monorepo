@@ -1,4 +1,4 @@
-import { buildSecurityHeaders } from 'utils/securityHeaders'
+import { buildSecurityHeaders, safeAppOrigin } from 'utils/securityHeaders'
 
 const securityHeadersConfig = {
   analyticsEnabled: import.meta.env.VITE_ENABLE_ANALYTICS === 'true',
@@ -9,10 +9,16 @@ const securityHeadersConfig = {
     import.meta.env.VITE_CUSTOM_RPC_URL_MAINNET,
     import.meta.env.VITE_CUSTOM_RPC_URL_SEPOLIA,
   ],
+  enableSafeApp: import.meta.env.VITE_ENABLE_SAFE_WALLET === 'true',
   isDev: import.meta.env.DEV,
   portalApiUrl: import.meta.env.VITE_PORTAL_API_URL,
   sentryDsn: import.meta.env.VITE_SENTRY_DSN,
   vetroApiUrl: import.meta.env.VITE_VETRO_API_URL,
+}
+
+const safeAppHeadersByPath: Record<string, Record<string, string>> = {
+  '/hemi.svg': { 'Cross-Origin-Resource-Policy': 'cross-origin' },
+  '/manifest.json': { 'Access-Control-Allow-Origin': safeAppOrigin },
 }
 
 const generateNonce = function () {
@@ -36,6 +42,12 @@ export default {
     Object.entries(securityHeaders).forEach(([name, value]) =>
       withSecurityHeaders.headers.set(name, value),
     )
+
+    if (securityHeadersConfig.enableSafeApp) {
+      Object.entries(
+        safeAppHeadersByPath[new URL(request.url).pathname] ?? {},
+      ).forEach(([name, value]) => withSecurityHeaders.headers.set(name, value))
+    }
 
     return withSecurityHeaders
   },

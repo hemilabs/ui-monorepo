@@ -3,8 +3,7 @@ import { readContract } from 'viem/actions'
 
 import { getVeHemiEpochRewardsLensContractAddress } from '../../constants.ts'
 import { veHemiEpochRewardsLensAbi } from '../../lensAbi.ts'
-
-const isEpoch = (epoch: number) => Number.isSafeInteger(epoch) && epoch >= 0
+import { isEpoch } from '../../utils.ts'
 
 export const getClaimableByToken = async function (
   client: Client,

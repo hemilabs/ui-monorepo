@@ -1,6 +1,5 @@
 {
   "common": {
-    "accept": "Aceptar",
     "actions": "Acciones",
     "add": "Agregar",
     "add-token-to-wallet-error": "No se pudo agregar el token a su billetera",
@@ -125,67 +124,6 @@
       "description": "Ha ocurrido un error inesperado. Por favor, inténtelo de nuevo o <link>contáctenos</link> si el problema persiste.",
       "title": "Algo salió mal"
     }
-  },
-  "genesis-drop": {
-    "add-hemi-to-your-wallet": "Agregar {symbol} a su billetera",
-    "apy-in-hemi-up-to": "Hasta {percentage}%",
-    "apy-in-staked-hemi": "TEA en ${symbol}",
-    "claim-and-stake-successful": "Reclamo y Stake exitoso",
-    "claim-details": "Detalles del reclamo",
-    "claim-groups": {
-      "genesis-drop": "Lanzamiento Génesis de Hemi",
-      "other-drop": "Otro Lanzamiento",
-      "spectra-and-dodo": "Spectra + Dodo"
-    },
-    "claim-name": "Nombre del reclamo:",
-    "claim-options": {
-      "and-other-partners": "...¡y muchos otros socios!",
-      "bonus-hemi": "{percentage}% HEMI extra",
-      "bonus-staked-for-months": "<amount></amount> $<symbol></symbol> tokens en stake por <months></months> meses",
-      "bonus-tokens": "Tokens extra",
-      "claim": "Reclamar",
-      "claim-title-24": "Génesis Guardián",
-      "claim-title-48": "Génesis Leyenda",
-      "claim-title-6": "Génesis Viajero",
-      "claiming": "Reclamando...",
-      "future-incentives-from": "Futuros incentivos de",
-      "liquid-hemi": "${symbol} líquidos",
-      "lockup-period-months": "{months} meses",
-      "more-info-description": "De sus tokens totales ganados, una parte será reclamable inmediatamente (\"disponible ahora\") mientras que el resto será puesto automáticamente en stake por un período de bloqueo establecido.",
-      "more-rewards": "+<bonus></bonus>% mas ${symbol}",
-      "plus-staked-tokens": "Más <amount></amount> $<symbol></symbol> tokens en stake<break></break>por <period></period>.",
-      "potential-staked-rewards": "Recompensas potenciales para sus tokens ${symbol} en stake",
-      "recommended": "Recomendado",
-      "staked-hemi": "${symbol} en Stake",
-      "staked-tokens-may-qualify": "Los tokens ${symbol} en stake pueden calificar para hasta un multiplicador de {multiplier}x",
-      "submit-text": "Reclamar y hacer Stake",
-      "this-option-includes-bonus": "Esta opción de reclamo ya incluye un <bonus></bonus>% extra en sus tokens ganados.",
-      "tokens-available-now": "¡${symbol} tokens disponibles ahora!",
-      "tokens-available-now-amount": "¡<amount></amount> ${symbol} tokens disponibles ahora!",
-      "up-to-multiplier-rewards": "Hasta {multiplier}x multiplicador en recompensas en stake"
-    },
-    "claim-rewards": "Reclamar recompensas",
-    "claimed": "Reclamado",
-    "claiming-your-rewards": "Reclamando sus recompensas",
-    "connect-demos-wallet": "Asegúrese de conectar su billetera verificada de Demos.",
-    "go-to-hemi-stake": "Ir a Hemi Stake",
-    "have-questions": "Asegúrese de estar conectado con su billetera verificada de Demos. Si tiene preguntas, abra un ticket en <discordLink>Discord</discordLink>, consulte <absintheLink>Absinthe</absintheLink> o pruebe con otra billetera.",
-    "hemi-token-added": "{symbol} agregado a su billetera",
-    "here-is-your-claim-tx": "Aquí está su transacción de reclamo:",
-    "not-eligible": "No elegible",
-    "rewards-multiplier": "Multiplicador de recompensas",
-    "share-x-text": "¡Soy elegible para {amount} ${symbol} del lanzamiento Génesis TGE de Hemi! 🎉 Verifique si es elegible:",
-    "stake-hemi": "Hacer Stake de {symbol}",
-    "staked-for-months": "{amount} por {months} meses",
-    "switch-to-start-claiming": "Puede cambiar de red para comenzar a reclamar su HEMI.",
-    "terms-and-conditions": {
-      "title": "Términos y Condiciones del programa Lanzamiento Génesis de Hemi"
-    },
-    "title": "Programa de Recompensas",
-    "up-to-multiplier": "Hasta {multiplier}x",
-    "view-tx-on-explorer": "Ver TX en el explorador",
-    "your-earned-tokens": "Sus tokens ${symbol} ganados.",
-    "your-rewards-are-on-their-way": "¡Sus recompensas están en camino!"
   },
   "get-started": {
     "action": "Acción",
@@ -585,6 +523,7 @@
       "claim": "Reclamar",
       "claim-all-rewards": "Reclamar todas las recompensas",
       "claiming-paused": "El reclamo de recompensas está pausado",
+      "could-not-load-positions": "No pudimos cargar sus posiciones",
       "get-started": "Comience haciendo staking de sus ${symbol}",
       "get-started-burned": "Sus posiciones quemadas aparecerán aquí una vez que hayan finalizado sus períodos de bloqueo.",
       "locked-amount": "Cantidad bloqueada",
@@ -625,7 +564,6 @@
     "ecosystem": "Demos",
     "explorer": "Explorador",
     "follow-us": "Síganos",
-    "genesis-drop": "Lanzamiento Génesis",
     "get-started": "Comenzar",
     "help": {
       "language": "Idioma",
@@ -635,7 +573,6 @@
     "network": "Red",
     "network-status": "Estado de la red",
     "new": "Nuevo",
-    "swap": "Intercambiar",
     "tools": "Herramientas",
     "tunnel": "Túnel",
     "tvl": "TVL en Hemi"

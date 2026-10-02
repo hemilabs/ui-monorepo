@@ -20,6 +20,7 @@ import { List } from './list'
 import { NoTokensMatch } from './noTokensMatch'
 import { TokenListSkeleton } from './tokenListSkeleton'
 import { TokenQuickSelect } from './tokenQuickSelect'
+import { getQuickSelectionTokens } from './utils'
 
 type Props = {
   chainId: Chain['id']
@@ -45,25 +46,25 @@ export const TokenList = function ({
   const { height: viewportHeight } = useVisualViewportSize()
 
   // Define a list of default priority tokens by their addresses
-  // These tokens will be prioritized in the quick selection section
+  // These tokens fill the quick selection section when the user has fewer than 3 top tokens
   const defaultPriorityTokensByAddress = [
+    // HEMI Hemi
+    '0x99e3dE3817F6081B2568208337ef83295b7f591D',
+    // HEMI Ethereum
+    '0xEb964A1A6fAB73b8c72A0D15c7337fA4804F484d',
+    // hemiBTC Hemi
+    '0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28',
+    // tBTC Hemi Sepolia
+    '0x36Ab5Dba83d5d470F670BC4c06d7Da685d9afAe7',
     'ETH',
+    // USDC Ethereum
+    '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
     // USDC Sepolia
     '0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8',
     // USDT Sepolia
     '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0',
-    // USDC.e Sepolia
+    // USDC.e Hemi Sepolia
     '0xD47971C7F5B1067d25cd45d30b2c9eb60de96443',
-    // USDT.e Sepolia
-    '0x3Adf21A6cbc9ce6D5a3ea401E7Bae9499d391298',
-    // USDC Mainnet
-    '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    // USDT Mainnet
-    '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-    // USDC Hemi
-    '0xad11a8BEb98bbf61dbb1aa0F6d6F2ECD87b35afA',
-    // USDT Hemi
-    '0xbB0D083fb1be0A9f6157ec484b6C79E0A4e31C2e',
   ]
 
   const userTypedAddress = isAddress(debouncedSearchText)
@@ -83,15 +84,19 @@ export const TokenList = function ({
     isCustomToken(userTokenList, token),
   )
 
-  const quickSelectionTokens = tokens.filter(token =>
-    defaultPriorityTokensByAddress.some(address => token.address === address),
-  )
-
   const {
     isLoading: isLoadingTopTokens,
     sortedTokens: fetchedSortedTopTokens,
   } = useTopTokensToHighlight({
     tokens: supportedTokens,
+  })
+
+  const isLoading = isLoadingTopTokens || searchText !== debouncedSearchText
+
+  const quickSelectionTokens = getQuickSelectionTokens({
+    priorityAddresses: defaultPriorityTokensByAddress,
+    tokens,
+    topTokens: fetchedSortedTopTokens,
   })
 
   const restOfTokens = supportedTokens
@@ -161,6 +166,7 @@ export const TokenList = function ({
       {!searchText ? (
         <div className="mb-4">
           <TokenQuickSelect
+            isLoading={isLoading}
             onSelect={token => handleSelectToken(token)}
             tokens={quickSelectionTokens}
           />
@@ -173,7 +179,7 @@ export const TokenList = function ({
           </div>
         </div>
       )}
-      {isLoadingTopTokens || searchText !== debouncedSearchText ? (
+      {isLoading ? (
         <div className="mt-2">
           <TokenListSkeleton />
         </div>

@@ -10,13 +10,13 @@ import { BoostStaking } from './_components/boostStaking'
 import { Dex } from './_components/dex'
 import { DocsLink } from './_components/docsLink'
 import { EcosystemLink } from './_components/ecosystemLink'
-import { GenesisDrop } from './_components/genesisDrop'
 import { GetStarted } from './_components/getStarted'
 import { HelpButton } from './_components/help/helpButton'
 import { HemiEarn } from './_components/hemiEarn'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
 import { HemiStake } from './_components/hemiStake'
 import { HemiStatusLink } from './_components/hemiStatusLink'
+import { MainnetOnly } from './_components/mainnetOnly'
 import { NetworkSwitch } from './_components/networkSwitch'
 import { SocialLinks } from './_components/socialLinks'
 import { TunnelLink } from './_components/tunnelLink'
@@ -59,12 +59,11 @@ export const NavbarDesktop = () => (
       <PaddedListItem>
         <TunnelLink />
       </PaddedListItem>
-      <PaddedListItem>
-        <Dex />
-      </PaddedListItem>
-      <PaddedListItem>
-        <GenesisDrop />
-      </PaddedListItem>
+      <MainnetOnly>
+        <PaddedListItem>
+          <Dex />
+        </PaddedListItem>
+      </MainnetOnly>
       <PaddedListItem>
         <BoostStaking />
       </PaddedListItem>

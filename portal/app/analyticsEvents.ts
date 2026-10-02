@@ -1,4 +1,3 @@
-import { LockupMonths } from 'genesis-drop-actions'
 import { umamiAnalyticsContextFactory } from 'umami-analytics'
 
 // all analytic events
@@ -11,14 +10,6 @@ const analyticsEvents = [
   'header - hemi price',
   'header - tunnel',
   'header - txn history',
-  // /genesis-drop
-  'genesis-drop - failed validation',
-  'genesis-drop - share eligibility',
-  'genesis-drop - submit reverted',
-  'genesis-drop - submit start',
-  'genesis-drop - submit success',
-  'genesis-drop - terms rejected',
-  'genesis-drop - terms signed',
   // /get-started
   'add to wallet - hemi mainnet',
   'add to wallet - hemi sepolia',
@@ -43,7 +34,6 @@ const analyticsEvents = [
   'tut - setup btc',
   'tut - setup evm',
   'tut - setup safe',
-  'tut - swap tokens',
   'tut - tunnel assets',
   'tut - tunnel eth',
   'tut - wallet setup',
@@ -74,12 +64,10 @@ const analyticsEvents = [
   'hemi earn - withdraw success',
   // nav bar
   'nav - hemi earn',
-  'nav - dex',
   'nav - docs',
   'nav - ecosystem',
   'nav - explorer',
   'nav - hbk',
-  'nav - genesis drop',
   'nav - get started',
   'nav - hemi stake',
   'nav - network status',
@@ -245,21 +233,9 @@ type AnalyticsEventsWithPartnerBridge = Extract<
   'partner bridge'
 >
 
-// these events require a Lockup Month period
-type AnalyticsEventsWithGenesisDropData = Extract<
-  AnalyticsEvent,
-  | 'genesis-drop - failed validation'
-  | 'genesis-drop - submit reverted'
-  | 'genesis-drop - submit start'
-  | 'genesis-drop - submit success'
-  | 'genesis-drop - terms signed'
-  | 'genesis-drop - terms rejected'
->
-
 type WalletChainData = { wallet: string }
 type CustomERC20Data = { address: string }
 type PartnerBridgeData = { partner: string }
-type GenesisDropData = { lockupMonths: LockupMonths }
 
 // Create a mapped type that maps each key to its corresponding value type
 export type EventDataMap = {
@@ -269,9 +245,7 @@ export type EventDataMap = {
       ? CustomERC20Data
       : K extends AnalyticsEventsWithPartnerBridge
         ? PartnerBridgeData
-        : K extends AnalyticsEventsWithGenesisDropData
-          ? GenesisDropData
-          : never
+        : never
 }
 
 export const { UmamiAnalyticsProvider, useUmami } =

@@ -4,7 +4,6 @@ import cors from 'cors'
 import express, { type ErrorRequestHandler, type RequestHandler } from 'express'
 
 import { getBtcVaultsData } from './src/btc-vaults.ts'
-import { createClaims } from './src/claims.ts'
 import { createDune, type DuneOptions } from './src/dune.ts'
 import { BadRequestError } from './src/errors.ts'
 import { globToRegExp } from './src/glob-to-regexp.ts'
@@ -22,15 +21,11 @@ import {
   type SupplyIndexerOptions,
 } from './src/supply-indexer.ts'
 import { toJsonMiddleware, toTextMiddleware } from './src/to-middleware.ts'
-import { createVeHemi } from './src/ve-hemi/index.ts'
 import { getHemiStake } from './src/ve-hemi/stake.ts'
 
 const { getTvl } = createDune(config.get<DuneOptions>('tvl.dune'))
-const { getAllUserClaimData } = createClaims()
 const { getNetStats } = createNetStats(config.get<NetStatsOptions>('rpcUrl'))
 const cache = createRedisCache(config.get<RedisOptions>('redis'))
-
-const { getVeHemiRewards } = createVeHemi({ cache })
 
 const { getPriceHistory } = createPriceHistory({ cache })
 
@@ -66,14 +61,6 @@ app.get(
   '/circulating',
   toTextMiddleware(getCirculatingSupply, {
     revalidate: 5 * 60 * 1000,
-  }),
-)
-
-app.get(
-  /\/claims\/(7?43111)\/(0x[0-9a-fA-F]{40})\/all/,
-  toJsonMiddleware(getAllUserClaimData, {
-    maxAge: 5 * 60 * 1000,
-    resolver: (chainId, address) => `${chainId}:${address}`,
   }),
 )
 
@@ -129,13 +116,6 @@ app.get(
   '/tvl',
   toJsonMiddleware(async () => ({ tvl: await getTvl() }), {
     revalidate: config.get<number>('tvl.revalidateMin') * 60 * 1000,
-  }),
-)
-
-app.get(
-  /\/ve-hemi-rewards\/(7?43111)/,
-  toJsonMiddleware(getVeHemiRewards, {
-    revalidate: 4 * 60 * 60 * 1000, // 4 hours
   }),
 )
 

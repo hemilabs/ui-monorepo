@@ -13,7 +13,6 @@ const Trigger = ({ label }: { label: string }) => (
 
 const meta = {
   argTypes: {
-    borderRadius: { control: 'inline-radio', options: ['4px', '6px', '12px'] },
     children: { control: false },
     placement: {
       control: 'select',

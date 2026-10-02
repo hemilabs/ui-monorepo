@@ -70,7 +70,7 @@ export const WalletClaimable = function () {
   })
 
   const isError = [
-    positionsQuery.isError,
+    positionsQuery.isLoadingError,
     needsPrices && pricesUnavailable,
     rewardsQuery.isError,
     hasError,

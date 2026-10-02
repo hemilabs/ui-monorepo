@@ -13,11 +13,13 @@ const bands = [
   { interval: day, upTo: Infinity },
 ]
 
+const widestBand = bands[bands.length - 1]
+
 export const getTimeoutInterval = function (
   targetTimestamp: number,
   now: number,
 ) {
   const difference = Math.abs(now - targetTimestamp)
-  const index = bands.findIndex(({ upTo }) => difference <= upTo)
-  return bands[index].interval
+  const band = bands.find(({ upTo }) => difference <= upTo)
+  return (band ?? widestBand).interval
 }

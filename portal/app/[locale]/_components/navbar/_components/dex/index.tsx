@@ -6,7 +6,6 @@ import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import { Chevron } from 'components/icons/chevron'
 import { DexIcon as BaseDexIcon } from 'components/icons/dexIcon'
 import { Image } from 'components/image'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import {
   type ComponentProps,
@@ -84,28 +83,6 @@ const ExternalLink = function ({
   )
 }
 
-const HemiSwapLink = function ({ event, text }: Props) {
-  const { enabled, track } = useUmami()
-  const addTracking = () => (enabled && event ? () => track(event) : undefined)
-  return (
-    <ItemContainer>
-      <AnchorTag
-        className="flex-1"
-        href="https://swap.hemi.xyz"
-        onClick={addTracking()}
-      >
-        <Row>
-          <IconContainer>{<DexIcon />}</IconContainer>
-          <ItemText text={text} />
-          <div className="ml-auto hidden size-4 items-center md:group-hover/item:flex">
-            <ArrowDownLeftIcon />
-          </div>
-        </Row>
-      </AnchorTag>
-    </ItemContainer>
-  )
-}
-
 const Backdrop = ({
   onClick,
 }: {
@@ -121,8 +98,6 @@ const DexImpl = function () {
   const [isOpen, setIsOpen] = useState(false)
   const ref = useOnClickOutside<HTMLDivElement>(() => setIsOpen(false))
   const t = useTranslations('navbar.dex')
-  const [networkType] = useNetworkType()
-  const isTestnet = networkType === 'testnet'
 
   const { width } = useWindowSize()
   // Below `xl`, the navbar is rendered inside a Drawer portaled to body, so
@@ -133,9 +108,7 @@ const DexImpl = function () {
     ? getPortalContainer()
     : getDrawerPortalContainer()
 
-  return isTestnet ? (
-    <HemiSwapLink event="nav - dex" text={t('title')} />
-  ) : (
+  return (
     <ItemContainer
       onClick={() => setIsOpen(!isOpen)}
       selected={isOpen}
@@ -281,10 +254,8 @@ const DexImpl = function () {
 export const Dex = function () {
   const t = useTranslations('navbar.dex')
   return (
-    // The only difference for the DEX link for mainnet|testnet is that for testnet
-    // there's an arrow (External link), while for mainnet, there's a chevron (Clickable menu)
-    // As both of these only appear on hover, and there's no hover on a static render
-    // we can just ignore them, and render the text and icon as a fallback
+    // The chevron only appears on hover, and there's no hover on a static render,
+    // so we can just ignore it, and render the text and icon as a fallback
     <Suspense
       fallback={
         <ItemContainer>

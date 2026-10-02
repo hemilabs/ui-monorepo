@@ -1,8 +1,6 @@
 import * as Sentry from '@sentry/react'
 import { EcosystemLayout } from 'app/[locale]/ecosystem/layout'
 import { EcosystemPage } from 'app/[locale]/ecosystem/page'
-import { GenesisDropLayout } from 'app/[locale]/genesis-drop/layout'
-import { GenesisDropPage } from 'app/[locale]/genesis-drop/page'
 import { GetStartedLayout } from 'app/[locale]/get-started/layout'
 import { GetStartedPage } from 'app/[locale]/get-started/page'
 import { HemiEarnLayout } from 'app/[locale]/hemi-earn/layout'
@@ -131,9 +129,6 @@ export const App = () => (
               <Route element={<EcosystemPage />} index />
             </Route>
             <Route element={<ToEcosystem />} path="demos" />
-            <Route element={<GenesisDropLayout />} path="genesis-drop">
-              <Route element={<GenesisDropPage />} index />
-            </Route>
             <Route element={<GetStartedLayout />} path="get-started">
               <Route element={<GetStartedPage />} index />
             </Route>

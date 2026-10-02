@@ -16,4 +16,3 @@ export {
   getTotalVotingPower,
 } from './public/veHemi.ts'
 export { getTotalLocked } from './public/getTotalLocked.ts'
-export { getTotalVeHemiSupplyAt } from './public/getTotalVeHemiSupplyAt.ts'

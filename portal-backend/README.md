@@ -26,33 +26,6 @@ $ curl http://localhost:3006/circulating
 
 The balances come from the HEMI supply snapshots of the [hemi-earn-requests-subgraph](../subgraphs/hemi-earn-requests-subgraph), from the newest day every chain has reached.
 
-#### `GET /claims/:chain-id/:address/all`
-
-Returns an array with the data needed for a user to claim their HEMI tokens.
-
-```console
-$ curl http://localhost:3006/claims/43111/0x0000000000000000000000000000000000000001/all
-[{"amount":"50000000000000000000","claimGroupId":16,"proof":["0x0000000000000000000000000000000000000000000000000000000000000001","0x0000000000000000000000000000000000000000000000000000000000000002","0x0000000000000000000000000000000000000000000000000000000000000003"]}]
-```
-
-The data for each claim group must be located in individual files in the `src/claims-data` folder. Data must be a object whose properties are the user addresses:
-
-```json
-{
-  "0x0000000000000000000000000000000000000001": {
-    "amount": "50000000000000000000",
-    "claimGroupId": 16,
-    "proof": [
-      "0x0000000000000000000000000000000000000000000000000000000000000001",
-      "0x0000000000000000000000000000000000000000000000000000000000000002",
-      "0x0000000000000000000000000000000000000000000000000000000000000003"
-    ]
-  }
-}
-```
-
-Note that the route `GET /claims/:chain-id/:address` is kept for compatibility and will return just the first element of the array.
-
 #### `GET /hemi-stake`
 
 Returns the global veHEMI staking stats. It is Hemi mainnet only.
@@ -119,15 +92,6 @@ This endpoint only reads Dune's latest cached result; it never triggers a new qu
 
 On failure, a message will be posted to Slack using `SLACK_WEBHOOK_URL` and `SLACK_MENTION` as the deploy notifications do.
 
-#### `GET /ve-hemi-rewards/:chain-id`
-
-Returns the veHemi rewards per unit of veHemi weight (voting power) for the next year (60 epochs of 6 days).
-
-```console
-$ curl http://localhost:3006/ve-hemi-rewards/43111
-[0,0,0,0,0,0.001623267574410933,0.0013566087424163847,...other 50 elements,0,0,0]
-```
-
 #### Subgraph routes
 
 The routes under the `/subgraphs` prefix proxy the subgraphs that index the data needed by the Tunnel and the Staking Campaign. Each route validates the `:chain-id` for its operation and returns `404 Not Found` on a mismatch. Most deposit/withdrawal queries run on the Ethereum chains (`1`, `11155111`) and the Hemi chains (`43111`, `743111`) respectively, but note two exceptions: BTC deposits (`/deposits/:hash/btc`) are queried on Hemi, and hashed-withdrawal proofs (`/hashedWithdrawals/:hash`) are queried on Ethereum. Addresses must match `0x[0-9a-fA-F]{40}`.
@@ -186,15 +150,6 @@ $ curl http://localhost:3006/subgraphs/43111/staked
 {"staked":[{"totalStaked":"17616893499688152282458","id":"0x027a9d301FB747cd972CFB29A63f3BDA551DFc5c"},...]}
 ```
 
-##### `GET /subgraphs/:chain-id/claim/:address/:claim-group`
-
-Returns the Merkle claim data for the given address and numeric claim group. Responds with `404 Not Found` if there is no claim.
-
-```console
-$ curl http://localhost:3006/subgraphs/43111/claim/0x0000000000000000000000000000000000000001/0
-{"account":"0x1234...","amount":"50000000000000000000","blockNumber":"1234","blockTimestamp":"1759162804","erc20":"0x0000...","lockupMonths":12,"ratio":15.23,"transactionHash":"0xabc..."}
-```
-
 ##### `GET /subgraphs/:chain-id/locks/:address`
 
 Returns the veHEMI locked positions owned (or previously owned) by the given address, sorted by unlock time, soonest first.
@@ -235,6 +190,7 @@ These environment variables control how the cache works:
 | ------------------------ | ----------------------------------------------------------------- | ---------------------------------- |
 | BTC_VAULTS_CACHE_MIN     | The time to cache the BTC vaults data in minutes.                 | 1                                  |
 | COIN_MARKET_CAP_IDS      | Comma separated `SYMBOL:id` pairs with a daily price history.     | HEMI:38159                         |
+| NODE_ENV                 | Sentry environment. `production` in the Docker images.            | `development`                      |
 | ORIGINS                  | Comma-separated list of allowed origins. Globs are supported (1). | `http://localhost:3000`            |
 | PORT                     | The HTTP port the server listens for requests.                    | 3006                               |
 | REDIS_URL                | The URL of the Redis database.                                    | `redis://localhost:6379`           |
@@ -262,6 +218,7 @@ These environment variables control how the `cron` job behaves:
 
 | Variable              | Description                                                                          | Default                        |
 | --------------------- | ------------------------------------------------------------------------------------ | ------------------------------ |
+| NODE_ENV              | Sentry environment. `production` in the Docker images.                               | `development`                  |
 | REDIS_URL             | The URL of the Redis database.                                                       | `redis://localhost:6379`       |
 | REFRESH_SUPPLY_MIN    | How frequently the cache will be refreshed. If set to 0, it will run once and exit.  | 5                              |
 | RPC_URL_BNB           | URL of the BNB Chain RPC node.                                                       | `https://56.rpc.thirdweb.com`  |
@@ -270,7 +227,6 @@ These environment variables control how the `cron` job behaves:
 | SENTRY_DSN            | The Sentry DSN.                                                                      |                                |
 | SENTRY_LOGGING_LEVELS | The logging levels to send to Sentry (props of console.log).                         | ["log", "warn", "error"]       |
 | SUPPLY_CORRECTION     | Amount of HEMI to be subtracted from the supply. In wei/units, not in HEMI!          | 0                              |
-| SUPPLY_MERKLE_LOCKED  | Percent of HEMI held in MerkleBox that are considered locked.                        | 50                             |
 | SUPPLY_OP_ADDRESSES   | Comma-separated list of addresses, whose balances will be subtracted from the supply |                                |
 
 ### Stored data
@@ -288,10 +244,11 @@ These environment variables control how the `cron` job behaves:
 
 | Variable                | Description                                                                         | Default                  |
 | ----------------------- | ----------------------------------------------------------------------------------- | ------------------------ |
-| CACHE_EXPIRATION_MIN    | How long the prices will be kept in the cache.                                      | 3600                     |
+| CACHE_EXPIRATION_MIN    | How long the prices will be kept in the cache.                                      | 60                       |
 | COIN_MARKET_CAP_API_KEY | The CoinMarketCap API key.                                                          |                          |
 | COIN_MARKET_CAP_IDS     | Comma separated `SYMBOL:id` pairs whose daily price history is kept.                | HEMI:38159               |
 | COIN_MARKET_CAP_SLUGS   | String of comma separated token slugs. I.e. "bitcoin,ethereum"                      | bitcoin                  |
+| NODE_ENV                | Sentry environment. `production` in the Docker images.                              | `development`            |
 | REDIS_URL               | The URL of the Redis database.                                                      | `redis://localhost:6379` |
 | REFRESH_PRICES_MIN      | How frequently the cache will be refreshed. If set to 0, it will run once and exit. | 5                        |
 | SENTRY_DSN              | The Sentry DSN.                                                                     |                          |
@@ -314,12 +271,14 @@ These environment variables control how the `cron` job behaves:
 
 | Variable              | Description                                                                                 | Default                  |
 | --------------------- | ------------------------------------------------------------------------------------------- | ------------------------ |
-| API_URL               | The URL of the API service.                                                                 | `http://localhost:3004`  |
+| API_URL               | The URL of the API service.                                                                 | `http://localhost:3006`  |
 | MAX_BLOCKS_BEHIND     | The maximum difference between Bitcoin kit last header and the actual Bitcoin chain height. | 4                        |
+| NODE_ENV              | Sentry environment. `production` in the Docker images.                                      | `development`            |
 | SENTRY_DSN            | The Sentry DSN.                                                                             |                          |
 | SENTRY_LOGGING_LEVELS | The logging levels to send to Sentry (props of console.log).                                | ["log", "warn", "error"] |
 | SLACK_MENTION         | The user to tag when sending alerts                                                         |                          |
 | SLACK_WEBHOOK_URL     | The full URL of the webhook to send the alerts to.                                          |                          |
+| SLEEP                 | Seconds to wait before starting.                                                            | 0                        |
 | VAULTS_MONITORING_MIN | How frequently the cache will be refreshed. If set to 0, it will run once and exit.         | 5                        |
 
 ## Local development and testing

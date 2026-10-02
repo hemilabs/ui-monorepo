@@ -43,7 +43,6 @@ jobs:
       matrix:
         subgraph:
           - hemi-stake-operations-subgraph
-          - hemi-token-merkle-claims-subgraph
           - hemi-tunnel-btc-deposits-subgraph
           - hemi-tunnel-deposits-subgraph
           - hemi-tunnel-withdrawals-proof-claim-subgraph

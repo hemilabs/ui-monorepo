@@ -17,11 +17,10 @@ export const WalletStaked = function () {
   const t = useTranslations('hemi-stake.stats')
   const token = useHemiToken()
   const { address } = useAccount()
-  const { data, fetchStatus, status } = useStakingPositions()
+  const { data, fetchStatus, isLoadingError, status } = useStakingPositions()
 
   const staked = sumActiveStake(data ?? [], address)
   const isLoading = status === 'pending'
-  const isError = status === 'error'
 
   const { number, suffix } = formatCompactFiatParts(
     Number(formatUnits(staked, token.decimals)),
@@ -49,7 +48,7 @@ export const WalletStaked = function () {
         )
       }
       icon={<WalletIcon height={14} width={17} />}
-      isError={isError}
+      isError={isLoadingError}
       isLoading={isLoading}
       label={t('your-staked')}
       value={`${number}${suffix} ${token.symbol}`}

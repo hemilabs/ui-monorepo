@@ -5,12 +5,15 @@ type SecurityHeadersConfig = {
   analyticsEnabled: boolean
   analyticsUrl?: string
   customRpcUrls: (string | undefined)[]
+  enableSafeApp?: boolean
   isDev?: boolean
   portalApiUrl?: string
   scriptNonce: string
   sentryDsn?: string
   vetroApiUrl?: string
 }
+
+export const safeAppOrigin = 'https://app.safe.global'
 
 const parseUrl = (url?: string) => (url ? URL.parse(url) : null)
 
@@ -213,12 +216,14 @@ const directive = (name: string, sources: string[]) =>
   [name, ...sources.filter(Boolean)].join(' ')
 
 const buildContentSecurityPolicy = ({
+  enableSafeApp,
   fetchDomains,
   fonts,
   isDev,
   scriptDomains,
   scriptNonce,
 }: {
+  enableSafeApp: boolean
   fetchDomains: string[]
   fonts: string[]
   isDev: boolean
@@ -242,7 +247,7 @@ const buildContentSecurityPolicy = ({
     directive('img-src', ["'self'", ...imageSrcUrls, 'blob:', 'data:']),
     directive('connect-src', ["'self'", ...fetchDomains]),
     directive('frame-src', ["'self'", ...frameSrcUrls]),
-    directive('frame-ancestors', ["'none'"]),
+    directive('frame-ancestors', enableSafeApp ? [safeAppOrigin] : ["'none'"]),
     'block-all-mixed-content',
     ...(isDev ? [] : ['upgrade-insecure-requests']),
     directive('font-src', ["'self'", ...fonts]),
@@ -250,10 +255,12 @@ const buildContentSecurityPolicy = ({
   ].join('; ')
 
 export const buildSecurityHeaders = function (config: SecurityHeadersConfig) {
+  const enableSafeApp = config.enableSafeApp ?? false
   const hosts = getThirdPartyHosts(config)
 
   return {
     'Content-Security-Policy': buildContentSecurityPolicy({
+      enableSafeApp,
       fetchDomains: Array.from(buildFetchDomains(config, hosts)),
       fonts: fontDomains,
       isDev: config.isDev ?? false,
@@ -268,6 +275,6 @@ export const buildSecurityHeaders = function (config: SecurityHeadersConfig) {
     'X-Content-Type-Options': 'nosniff',
     'X-DNS-Prefetch-Control': 'off',
     'X-Download-Options': 'noopen',
-    'X-Frame-Options': 'DENY',
+    ...(enableSafeApp ? {} : { 'X-Frame-Options': 'DENY' }),
   }
 }

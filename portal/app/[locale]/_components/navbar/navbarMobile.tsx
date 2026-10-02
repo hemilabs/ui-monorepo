@@ -8,7 +8,6 @@ import { BoostStaking } from './_components/boostStaking'
 import { Dex } from './_components/dex'
 import { DocsLink } from './_components/docsLink'
 import { EcosystemLink } from './_components/ecosystemLink'
-import { GenesisDrop } from './_components/genesisDrop'
 import { GetStarted } from './_components/getStarted'
 import { HelpButton } from './_components/help/helpButton'
 import { HemiEarn } from './_components/hemiEarn'
@@ -16,6 +15,7 @@ import { HemiExplorerLink } from './_components/hemiExplorerLink'
 import { HemiStake } from './_components/hemiStake'
 import { HemiStatusLink } from './_components/hemiStatusLink'
 import { IconContainer as BaseIconContainer } from './_components/iconContainer'
+import { MainnetOnly } from './_components/mainnetOnly'
 import { ItemContainer, ItemText } from './_components/navItem'
 import { NetworkSwitch } from './_components/networkSwitch'
 import { SocialLinks } from './_components/socialLinks'
@@ -71,12 +71,11 @@ export const NavbarMobile = function () {
           <SmallBox>
             <TunnelLink />
           </SmallBox>
-          <SmallBox>
-            <Dex />
-          </SmallBox>
-          <SmallBox>
-            <GenesisDrop />
-          </SmallBox>
+          <MainnetOnly>
+            <SmallBox>
+              <Dex />
+            </SmallBox>
+          </MainnetOnly>
           <SmallBox>
             <BoostStaking />
           </SmallBox>

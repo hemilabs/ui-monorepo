@@ -33,14 +33,14 @@ type Props = {
 export function useTopTokensToHighlight({ tokens }: Props) {
   const { address: account, isConnected } = useAccount()
   const hemiClient = useHemiClient()
-  const { data: prices } = useTokenPrices()
+  const { data: prices, isLoading: isLoadingPrices } = useTokenPrices()
 
   return useQueries({
     combine(results) {
       if (!isConnected || !account || !prices) {
         return {
           isError: false,
-          isLoading: false,
+          isLoading: isConnected && !!account && isLoadingPrices,
           sortedTokens: [],
         }
       }
@@ -79,13 +79,14 @@ export function useTopTokensToHighlight({ tokens }: Props) {
         : getEvmL1PublicClient(chainId)
 
       return {
+        enabled: isConnected && !!account,
         queryFn: () =>
           getTokenBalance({
             account,
             client,
             token,
           }),
-        queryKey: ['top-token-balance', token.chainId, token.address],
+        queryKey: ['top-token-balance', account, token.chainId, token.address],
         select: (balance: bigint) => ({ ...token, balance }),
       }
     }),

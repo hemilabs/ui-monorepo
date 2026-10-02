@@ -10,7 +10,6 @@ on:
       # be dependency-aware via `pnpm --filter "...[ref]"`, but that needs a
       # dynamic-matrix rework — tracked for a future PR/issue.
       - 'packages/ve-hemi-actions/**'
-      - 'packages/ve-hemi-rewards/**'
       - 'portal-backend/**'
 
 permissions:

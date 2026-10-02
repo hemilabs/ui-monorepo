@@ -38,7 +38,6 @@ export const ExtraApproval = function ({
       <div className="flex items-center gap-x-1">
         <span>{label}</span>
         <Tooltip
-          borderRadius="12px"
           id={`${id}-tooltip`}
           text={t('description')}
           title={t(titleKeys[operation])}

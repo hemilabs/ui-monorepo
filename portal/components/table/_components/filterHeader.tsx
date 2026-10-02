@@ -140,7 +140,7 @@ export const FilterHeader = function <TOption extends string>({
       return
     }
     // The menu is appended to the body, so tabbing past its edges would leave
-    // the page. From the trigger, Tab carries on to the next header.
+    // the page. From the trigger, Tab carries on to the next focusable element.
     if (event.shiftKey) {
       event.preventDefault()
     }

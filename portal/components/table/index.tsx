@@ -61,6 +61,7 @@ const TableHeader = <TData,>({
             <tr className="flex w-full items-center" key={headerGroup.id}>
               {headerGroup.headers.map(header => (
                 <ColumnHeader
+                  aria-sort={header.column.columnDef.meta?.ariaSort}
                   className={
                     header.column.columnDef.meta?.className ?? 'justify-start'
                   }

@@ -75,14 +75,20 @@ const ActionHeader = function () {
 
 export const buildColumns = ({
   t,
+  timeDesc,
 }: {
   t: Translate
+  timeDesc: boolean
 }): ColumnDef<TunnelOperation>[] => [
   {
     cell: ({ row }) => <TxTime timestamp={row.original.timestamp} />,
     header: TimeHeader,
     id: 'time',
-    meta: { className: 'justify-start flex-grow-0', width: 130 },
+    meta: {
+      ariaSort: timeDesc ? 'descending' : 'ascending',
+      className: 'justify-start flex-grow-0',
+      width: 130,
+    },
   },
   {
     accessorKey: 'direction',

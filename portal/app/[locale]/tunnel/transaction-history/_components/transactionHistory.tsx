@@ -83,7 +83,10 @@ export const TransactionHistory = function ({
   const { data, isSettled, loading } = useTransactionsHistory(filterOption)
   const { updateTxHash } = useTunnelOperation()
 
-  const columns = useMemo(() => buildColumns({ t }), [t])
+  const columns = useMemo(
+    () => buildColumns({ t, timeDesc: filterOption.timeDesc }),
+    [filterOption.timeDesc, t],
+  )
 
   const handleRowClick = useCallback(
     (operation: TunnelOperation) => updateTxHash(operation.transactionHash),

@@ -1,32 +1,48 @@
+import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
 import { Menu } from 'components/menu'
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import {
+  type FocusEvent,
+  type KeyboardEvent,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import { createPortal } from 'react-dom'
 
-import { Header } from './header'
+import { HeaderButton } from './headerButton'
 
 const edgeGap = 8
 
-// `Menu` insets its items (p-1 + px-2), so aligning the boxes would leave the
-// item text off by this much against the column header.
-const menuTextInset = 12
+// `Menu` insets its items (p-1 + px-2) and the trigger insets its text (px-2):
+// aligning the boxes would leave the item text off by the difference.
+const menuTextInset = 4
 
-type FilterMenuProps = {
+const enabledItemSelector = 'button:not(:disabled)'
+
+type Props<TOption extends string> = {
   align?: 'left' | 'right'
-  items: { content: React.ReactNode; id: string }[]
+  getLabel: (option: TOption) => string
+  onSelect: (option: TOption) => void
+  options: TOption[]
+  selected: TOption
   text: string
 }
 
 // Portaled to the body: the header lives inside an `overflow-x-hidden` container,
 // which would clip the menu, and the body card paints over it.
-export const FilterHeader = function ({
+export const FilterHeader = function <TOption extends string>({
   align = 'left',
-  items,
+  getLabel,
+  onSelect,
+  options,
+  selected,
   text,
-}: FilterMenuProps) {
+}: Props<TOption>) {
   const [isOpen, setIsOpen] = useState(false)
   const [position, setPosition] = useState({ left: 0, top: 0 })
-  const triggerRef = useRef<HTMLSpanElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(
@@ -88,16 +104,96 @@ export const FilterHeader = function ({
     [align, isOpen],
   )
 
+  useEffect(
+    function focusFirstItem() {
+      if (!isOpen) {
+        return
+      }
+      // The menu is appended to the body, so Tab from the trigger would skip it.
+      // preventScroll matters: any scroll closes the menu.
+      menuRef.current
+        ?.querySelector<HTMLButtonElement>(enabledItemSelector)
+        ?.focus({ preventScroll: true })
+    },
+    [isOpen],
+  )
+
+  const closeAndFocusTrigger = function () {
+    setIsOpen(false)
+    triggerRef.current?.focus()
+  }
+
+  const onKeyDown = function (event: KeyboardEvent) {
+    if (!isOpen) {
+      return
+    }
+    if (event.key === 'Escape') {
+      closeAndFocusTrigger()
+      return
+    }
+    if (event.key !== 'Tab') {
+      return
+    }
+    const enabledItems = Array.from(
+      menuRef.current?.querySelectorAll<HTMLButtonElement>(
+        enabledItemSelector,
+      ) ?? [],
+    )
+    const edgeItem = event.shiftKey ? enabledItems[0] : enabledItems.at(-1)
+    if (event.target !== edgeItem) {
+      return
+    }
+    // The menu is appended to the body, so tabbing past its edges would leave
+    // the page. From the trigger, Tab carries on to the next header.
+    if (event.shiftKey) {
+      event.preventDefault()
+    }
+    closeAndFocusTrigger()
+  }
+
+  // A null relatedTarget is a click on a non-focusable spot (or Safari, which
+  // doesn't focus buttons on click): the outside-click handler covers that.
+  const onBlur = function ({ relatedTarget }: FocusEvent) {
+    if (
+      relatedTarget === null ||
+      menuRef.current?.contains(relatedTarget) ||
+      triggerRef.current?.contains(relatedTarget)
+    ) {
+      return
+    }
+    setIsOpen(false)
+  }
+
+  const items = options.map(option => ({
+    content: (
+      <button
+        className="-mx-1 flex items-center gap-x-2 rounded px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500"
+        disabled={selected === option}
+        onClick={function () {
+          closeAndFocusTrigger()
+          onSelect(option)
+        }}
+        type="button"
+      >
+        <span className="whitespace-nowrap">{getLabel(option)}</span>
+        <div className={selected === option ? 'block' : 'invisible'}>
+          <CheckMark />
+        </div>
+      </button>
+    ),
+    id: option,
+  }))
+
   return (
-    <span className="flex flex-col">
-      <span
-        className="flex cursor-pointer items-center gap-2"
+    <span className="flex flex-col" onBlur={onBlur} onKeyDown={onKeyDown}>
+      <HeaderButton
+        aria-expanded={isOpen}
         onClick={() => setIsOpen(!isOpen)}
         ref={triggerRef}
+        text={text}
       >
-        <Header text={text} />
         <Chevron.Bottom className={isOpen ? 'rotate-180' : ''} />
-      </span>
+      </HeaderButton>
       {isOpen &&
         createPortal(
           <div

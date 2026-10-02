@@ -1,9 +1,9 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { Arrow } from 'components/icons/arrow'
-import { CheckMark } from 'components/icons/checkMark'
 import { FilterHeader } from 'components/table/_components/filterHeader'
 import { Header } from 'components/table/_components/header'
+import { HeaderButton } from 'components/table/_components/headerButton'
 import { TxLink } from 'components/txLink'
 import { TunnelOperation } from 'types/tunnel'
 import { useTranslations } from 'use-intl'
@@ -15,7 +15,6 @@ import { Amount } from './amount'
 import { Chain as ChainComponent } from './chain'
 import { DepositAction } from './depositAction'
 import { DepositStatus } from './depositStatus'
-import { FilterOptions } from './topBar'
 import { TxTime } from './txTime'
 import { WithdrawAction } from './withdrawAction'
 import { WithdrawStatus } from './withdrawStatus'
@@ -32,42 +31,27 @@ const TimeHeader = function () {
   const t = useTranslations('tunnel-page.transaction-history')
 
   return (
-    <span
-      className="flex cursor-pointer items-center gap-2"
+    <HeaderButton
       onClick={() =>
         setFilterOption({ ...filterOption, timeDesc: !filterOption.timeDesc })
       }
+      text={t('column-headers.time')}
     >
-      <Header text={t('column-headers.time')} />
       <Arrow className={filterOption.timeDesc ? '' : 'rotate-180'} />
-    </span>
+    </HeaderButton>
   )
 }
 
 const TypeHeader = function () {
   const { filterOption, setFilterOption } = useFilterOptions()
   const t = useTranslations('tunnel-page.transaction-history')
-  const types = ['all', 'deposits', 'withdrawals'] as FilterOptions['type'][]
 
   return (
     <FilterHeader
-      items={types.map(type => ({
-        content: (
-          <button
-            className="flex items-center gap-x-2"
-            disabled={filterOption.type === type}
-            onClick={() => setFilterOption({ ...filterOption, type })}
-          >
-            <span className="whitespace-nowrap">
-              {t(`filters.types.${type}`)}
-            </span>
-            <div className={filterOption.type === type ? 'block' : 'invisible'}>
-              <CheckMark />
-            </div>
-          </button>
-        ),
-        id: type,
-      }))}
+      getLabel={type => t(`filters.types.${type}`)}
+      onSelect={type => setFilterOption({ ...filterOption, type })}
+      options={['all', 'deposits', 'withdrawals']}
+      selected={filterOption.type}
       text={t('column-headers.type')}
     />
   )
@@ -76,30 +60,14 @@ const TypeHeader = function () {
 const ActionHeader = function () {
   const { filterOption, setFilterOption } = useFilterOptions()
   const t = useTranslations('tunnel-page.transaction-history')
-  const actions = ['all', 'pending'] as FilterOptions['action'][]
 
   return (
     <FilterHeader
       align="right"
-      items={actions.map(action => ({
-        content: (
-          <button
-            className="flex items-center gap-x-2"
-            disabled={filterOption.action === action}
-            onClick={() => setFilterOption({ ...filterOption, action })}
-          >
-            <span className="whitespace-nowrap">
-              {t(`filters.actions.${action}`)}
-            </span>
-            <div
-              className={filterOption.action === action ? 'block' : 'invisible'}
-            >
-              <CheckMark />
-            </div>
-          </button>
-        ),
-        id: action,
-      }))}
+      getLabel={action => t(`filters.actions.${action}`)}
+      onSelect={action => setFilterOption({ ...filterOption, action })}
+      options={['all', 'pending']}
+      selected={filterOption.action}
       text={t('column-headers.action')}
     />
   )

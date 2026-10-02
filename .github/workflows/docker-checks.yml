@@ -48,8 +48,6 @@ jobs:
         include:
           - dockerfile: portal-backend/api/Dockerfile
             image: hemilabs/portal-backend-api
-          - dockerfile: portal-backend/cron/hemi-supply/Dockerfile
-            image: hemilabs/hemi-supply-cron
           - dockerfile: portal-backend/cron/token-prices/Dockerfile
             image: hemilabs/token-prices-cron
           - dockerfile: portal-backend/cron/vaults-monitor/Dockerfile

@@ -9,6 +9,8 @@ import { TunnelOperation } from 'types/tunnel'
 import { useTranslations } from 'use-intl'
 import { isDeposit, isWithdraw } from 'utils/tunnel'
 
+import { useFilterOptions } from '../_context/filterOptionsContext'
+
 import { Amount } from './amount'
 import { Chain as ChainComponent } from './chain'
 import { DepositAction } from './depositAction'
@@ -22,32 +24,29 @@ type Translate = ReturnType<
   typeof useTranslations<'tunnel-page.transaction-history'>
 >
 
-type FilterProps = {
-  filterOption: FilterOptions
-  setFilterOption: (filter: FilterOptions) => void
+// Module-level components read the filters from context: an inline header
+// function would be a new component on every filter change, and the remount
+// drops the keyboard focus.
+const TimeHeader = function () {
+  const { filterOption, setFilterOption } = useFilterOptions()
+  const t = useTranslations('tunnel-page.transaction-history')
+
+  return (
+    <span
+      className="flex cursor-pointer items-center gap-2"
+      onClick={() =>
+        setFilterOption({ ...filterOption, timeDesc: !filterOption.timeDesc })
+      }
+    >
+      <Header text={t('column-headers.time')} />
+      <Arrow className={filterOption.timeDesc ? '' : 'rotate-180'} />
+    </span>
+  )
 }
 
-const TimeHeader = ({
-  filterOption,
-  setFilterOption,
-  text,
-}: FilterProps & { text: string }) => (
-  <span
-    className="flex cursor-pointer items-center gap-2"
-    onClick={() =>
-      setFilterOption({ ...filterOption, timeDesc: !filterOption.timeDesc })
-    }
-  >
-    <Header text={text} />
-    <Arrow className={`${filterOption.timeDesc ? '' : 'rotate-180'}`} />
-  </span>
-)
-
-const TypeHeader = function ({
-  filterOption,
-  setFilterOption,
-  t,
-}: FilterProps & { t: Translate }) {
+const TypeHeader = function () {
+  const { filterOption, setFilterOption } = useFilterOptions()
+  const t = useTranslations('tunnel-page.transaction-history')
   const types = ['all', 'deposits', 'withdrawals'] as FilterOptions['type'][]
 
   return (
@@ -74,11 +73,9 @@ const TypeHeader = function ({
   )
 }
 
-const ActionHeader = function ({
-  filterOption,
-  setFilterOption,
-  t,
-}: FilterProps & { t: Translate }) {
+const ActionHeader = function () {
+  const { filterOption, setFilterOption } = useFilterOptions()
+  const t = useTranslations('tunnel-page.transaction-history')
   const actions = ['all', 'pending'] as FilterOptions['action'][]
 
   return (
@@ -108,22 +105,14 @@ const ActionHeader = function ({
   )
 }
 
-type BuildColumnsProps = FilterProps & { t: Translate }
-
 export const buildColumns = ({
-  filterOption,
-  setFilterOption,
   t,
-}: BuildColumnsProps): ColumnDef<TunnelOperation>[] => [
+}: {
+  t: Translate
+}): ColumnDef<TunnelOperation>[] => [
   {
     cell: ({ row }) => <TxTime timestamp={row.original.timestamp} />,
-    header: () => (
-      <TimeHeader
-        filterOption={filterOption}
-        setFilterOption={setFilterOption}
-        text={t('column-headers.time')}
-      />
-    ),
+    header: TimeHeader,
     id: 'time',
     meta: { className: 'justify-start flex-grow-0', width: 130 },
   },
@@ -134,13 +123,7 @@ export const buildColumns = ({
         {t(isDeposit(row.original) ? 'deposit' : 'withdraw')}
       </span>
     ),
-    header: () => (
-      <TypeHeader
-        filterOption={filterOption}
-        setFilterOption={setFilterOption}
-        t={t}
-      />
-    ),
+    header: TypeHeader,
     id: 'type',
     meta: { className: 'justify-start flex-grow-0', width: 75 },
   },
@@ -220,13 +203,7 @@ export const buildColumns = ({
         )}
       </div>
     ),
-    header: () => (
-      <ActionHeader
-        filterOption={filterOption}
-        setFilterOption={setFilterOption}
-        t={t}
-      />
-    ),
+    header: ActionHeader,
     id: 'action',
     meta: { className: 'justify-start lg:justify-end', width: 125 },
   },

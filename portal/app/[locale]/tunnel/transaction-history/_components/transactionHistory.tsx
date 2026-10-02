@@ -15,6 +15,7 @@ import {
 import { useAccount } from 'wagmi'
 
 import { useTunnelOperation } from '../../_hooks/useTunnelOperation'
+import { FilterOptionsContext } from '../_context/filterOptionsContext'
 
 import { buildColumns } from './columns'
 import { ConnectWallet } from './connectWallet'
@@ -82,10 +83,7 @@ export const TransactionHistory = function ({
   const { data, isSettled, loading } = useTransactionsHistory(filterOption)
   const { updateTxHash } = useTunnelOperation()
 
-  const columns = useMemo(
-    () => buildColumns({ filterOption, setFilterOption, t }),
-    [filterOption, setFilterOption, t],
-  )
+  const columns = useMemo(() => buildColumns({ t }), [t])
 
   const handleRowClick = useCallback(
     (operation: TunnelOperation) => updateTxHash(operation.transactionHash),
@@ -123,15 +121,17 @@ export const TransactionHistory = function ({
     }
 
     return (
-      <Table
-        columns={columns}
-        containerClassName="flex h-full flex-col"
-        data={data}
-        fitContainer
-        loading={loading}
-        onRowClick={handleRowClick}
-        priorityColumnIdsOnSmall={['action', 'status', 'type', 'amount']}
-      />
+      <FilterOptionsContext.Provider value={{ filterOption, setFilterOption }}>
+        <Table
+          columns={columns}
+          containerClassName="flex h-full flex-col"
+          data={data}
+          fitContainer
+          loading={loading}
+          onRowClick={handleRowClick}
+          priorityColumnIdsOnSmall={['action', 'status', 'type', 'amount']}
+        />
+      </FilterOptionsContext.Provider>
     )
   }
 

@@ -19,6 +19,7 @@ import { FilterOptionsContext } from '../_context/filterOptionsContext'
 
 import { buildColumns } from './columns'
 import { ConnectWallet } from './connectWallet'
+import { NoMatchingTransactions } from './noMatchingTransactions'
 import { NoTransactions } from './noTransactions'
 import { type FilterOptions } from './topBar'
 
@@ -132,6 +133,9 @@ export const TransactionHistory = function ({
           fitContainer
           loading={loading}
           onRowClick={handleRowClick}
+          placeholder={
+            isSettled && data.length === 0 && <NoMatchingTransactions />
+          }
           priorityColumnIdsOnSmall={['action', 'status', 'type', 'amount']}
         />
       </FilterOptionsContext.Provider>

@@ -1,6 +1,6 @@
 import { Card } from 'components/card'
 import { CompositionIcon } from 'components/icons/compositionIcon'
-import { SegmentedControlItem } from 'components/segmentedControlItem'
+import { SegmentedControl } from 'components/segmentedControl'
 import { useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useTranslations } from 'use-intl'
@@ -77,26 +77,18 @@ export const Composition = function ({ chainId, shareAddress }: Props) {
           </div>
           <div className="flex items-center justify-between">
             <h2 className="shrink-0 text-neutral-950">{renderHeadline()}</h2>
-            <div className="flex items-center gap-2">
-              <SegmentedControlItem
-                onClick={function () {
-                  setViewMode('token')
-                  setHoveredIndex(null)
-                }}
-                selected={viewMode === 'token'}
-              >
-                {t('by-token')}
-              </SegmentedControlItem>
-              <SegmentedControlItem
-                onClick={function () {
-                  setViewMode('protocol')
-                  setHoveredIndex(null)
-                }}
-                selected={viewMode === 'protocol'}
-              >
-                {t('by-protocol')}
-              </SegmentedControlItem>
-            </div>
+            <SegmentedControl
+              label={t('view-mode')}
+              onChange={function (mode) {
+                setViewMode(mode)
+                setHoveredIndex(null)
+              }}
+              options={[
+                { label: t('by-token'), value: 'token' },
+                { label: t('by-protocol'), value: 'protocol' },
+              ]}
+              value={viewMode}
+            />
           </div>
         </div>
         <div className="flex flex-col gap-4 lg:flex-row">

@@ -188,7 +188,8 @@
         "reserve-buffer": "Reserva de liquidez",
         "share": "Participação",
         "title": "Composição",
-        "tokens-count": "{count, plural, one {# token} other {# tokens}}"
+        "tokens-count": "{count, plural, one {# token} other {# tokens}}",
+        "view-mode": "Modo de visualização"
       },
       "deposit-successful": "Depósito realizado com sucesso",
       "drawer": {
@@ -235,7 +236,9 @@
         "1-week": "1 semana",
         "1-year": "1 ano",
         "apy": "TEA",
+        "metric": "Métrica",
         "month": "{count, plural, one {# mês} other {# meses}}",
+        "period": "Período",
         "pool-deposits": "Depósitos do fundo",
         "title": "Métricas históricas"
       },
@@ -398,10 +401,12 @@
       "increased-by": "aumentou",
       "month": "{count, plural, one {# mês} other {# meses}}",
       "non-circulating": "Fora de circulação",
+      "period": "Período",
       "share-of-supply": "{share} da oferta",
       "staked": "Em stake",
       "title": "Oferta de {symbol}",
-      "total": "Total"
+      "total": "Total",
+      "unit": "Unidade"
     },
     "apy-estimate": "Os valores de TEA são estimativas. O retorno real muda conforme a quantidade global em stake.",
     "claim-rewards": {

@@ -1,3 +1,4 @@
+import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
 import { Menu } from 'components/menu'
@@ -38,26 +39,11 @@ export const FilterHeader = function <TOption extends string>({
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
-  useEffect(
-    function closeOnOutsideClick() {
-      if (!isOpen) {
-        return undefined
-      }
-      const onMouseDown = function (event: MouseEvent) {
-        const target = event.target as Node
-        if (
-          menuRef.current?.contains(target) ||
-          triggerRef.current?.contains(target)
-        ) {
-          return
-        }
-        setIsOpen(false)
-      }
-      document.addEventListener('mousedown', onMouseDown)
-      return () => document.removeEventListener('mousedown', onMouseDown)
-    },
-    [isOpen],
-  )
+  useOnClickOutside(function (event) {
+    if (!triggerRef.current?.contains(event.target as Node)) {
+      setIsOpen(false)
+    }
+  }, menuRef)
 
   useLayoutEffect(
     function positionMenu() {

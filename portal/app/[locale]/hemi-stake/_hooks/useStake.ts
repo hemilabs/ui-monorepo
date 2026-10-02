@@ -23,6 +23,7 @@ import { createLock } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 
 import { daysToSeconds } from '../_utils/lockCreationTimes'
+import { prependPosition } from '../_utils/positionsCache'
 
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
 import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
@@ -199,10 +200,22 @@ export const useStake = function ({
           transferable: true,
         }
 
-        queryClient.setQueryData(
-          stakingPositionQueryKey,
-          (old: StakingPosition[] | undefined = []) => [newPosition, ...old],
-        )
+        const addNewPosition = () =>
+          queryClient.setQueryData(
+            stakingPositionQueryKey,
+            prependPosition(newPosition),
+          )
+        const refetchAndAddNewPosition = async function () {
+          await queryClient.invalidateQueries({
+            queryKey: stakingPositionQueryKey,
+          })
+          addNewPosition()
+        }
+        if (queryClient.getQueryData(stakingPositionQueryKey)) {
+          addNewPosition()
+        } else {
+          refetchAndAddNewPosition()
+        }
 
         // fees
         updateNativeBalanceAfterFees(receipt)

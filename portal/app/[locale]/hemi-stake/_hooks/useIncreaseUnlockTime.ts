@@ -9,7 +9,6 @@ import {
   StakingDashboardOperation,
   StakingDashboardStatus,
   StakingDashboardToken,
-  StakingPosition,
 } from 'types/stakingDashboard'
 import { unixNowTimestamp } from 'utils/time'
 import { IncreaseUnlockTimeEvents, SixDaysSeconds } from 've-hemi-actions'
@@ -17,6 +16,7 @@ import { increaseUnlockTime } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 
 import { daysToSeconds } from '../_utils/lockCreationTimes'
+import { updatePosition } from '../_utils/positionsCache'
 
 import { getPositionDelegationDetailsQueryKey } from './usePositionDelegationDetails'
 import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
@@ -103,12 +103,9 @@ export const useIncreaseUnlockTime = function ({
 
           queryClient.setQueryData(
             stakingPositionQueryKey,
-            (old: StakingPosition[] | undefined = []) =>
-              old.map(function (position) {
-                if (position.tokenId !== tokenId) {
-                  return position
-                }
-
+            updatePosition({
+              tokenId,
+              update(position) {
                 // Calculate new unlock time (current time + chosen duration, rounded)
                 const rawUnlockTime =
                   unixNowTimestamp() + daysToSeconds(BigInt(lockupDays))
@@ -122,7 +119,8 @@ export const useIncreaseUnlockTime = function ({
                   ...position,
                   lockTime: newLockTime,
                 }
-              }),
+              },
+            }),
           )
 
           // fees

@@ -66,6 +66,7 @@ const useTransactionsHistory = function (filter: FilterOptions) {
 
   return {
     data,
+    hasHistory: deposits.length > 0 || withdrawals.length > 0,
     isSettled: syncStatus === 'finished' || syncStatus === 'error',
     loading: syncStatus === 'syncing',
   }
@@ -80,7 +81,8 @@ export const TransactionHistory = function ({
 }) {
   const { status } = useAccount()
   const t = useTranslations('tunnel-page.transaction-history')
-  const { data, isSettled, loading } = useTransactionsHistory(filterOption)
+  const { data, hasHistory, isSettled, loading } =
+    useTransactionsHistory(filterOption)
   const { updateTxHash } = useTunnelOperation()
 
   const columns = useMemo(
@@ -113,9 +115,9 @@ export const TransactionHistory = function ({
       )
     }
 
-    // Only show NoTransactions after syncing finishes and data remains empty.
-    // Prevents flicker during initial load.
-    if (isSettled && data.length === 0) {
+    // Only show NoTransactions after syncing finishes and the unfiltered history
+    // remains empty. Prevents flicker during initial load.
+    if (isSettled && !hasHistory) {
       return (
         <TableCard>
           <NoTransactions />

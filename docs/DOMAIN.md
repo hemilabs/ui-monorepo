@@ -160,7 +160,7 @@ Only the owner of a position at the end of an epoch can claim that epoch's rewar
 
 The Lens contract gives a read-only simplified view of the rewards calendar and the whole system state. This way, you can get the status of Hemi Stake (current epoch, settled epoch, token list), how much a position can claim, and the calendar of rewards.
 
-In addition to this rewards system, there was previously another rewards system. This one distributed rewards without a calendar, but at the discretion of the owners of the contract. It included protocol fees as well as incentives paid on HEMI. These rewards were paid twice, in 2 different epochs, and these rewards are considered when showing the historical rewards paid.
+Before this system, the `ve-hemi-rewards` contract (`0x0d85B6676d499c05FE06fcB6A3b620334Eb8012F` on mainnet) paid rewards without a calendar, when its owners decided to. It paid protocol fees and HEMI incentives in 2 funding rounds, in HEMI and hemiBTC. `GET /hemi-stake/rewards/:period` in `portal-backend/api` includes these 2 rounds in the historical rewards.
 
 ## Subgraphs
 

@@ -182,10 +182,13 @@ export const createHemiStakeRewards = function ({ cache }: { cache: Cache }) {
         settled: epoch <= settledEpoch,
         timestamp: (epoch + 1) * epochSeconds,
       }))
-    const preHemiStakeCount = Math.min(
-      preHemiStakeEpochs.length,
-      pastSlots - hemiStakeEpochs.length,
-    )
+    const preHemiStakeCount =
+      fromEpoch === firstFundedEpoch
+        ? Math.min(
+            preHemiStakeEpochs.length,
+            pastSlots - hemiStakeEpochs.length,
+          )
+        : 0
 
     return [
       ...preHemiStakeEpochs.slice(

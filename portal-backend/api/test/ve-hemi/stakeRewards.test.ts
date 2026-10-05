@@ -122,6 +122,15 @@ describe('getHemiStakeRewards', function () {
 
       expect(result.map(({ epoch }) => epoch)).toEqual([3401, 3402, 3403, 3404])
     })
+
+    it('adds no round when the period starts after the first funded epoch', async function () {
+      mockSystemState({ settledEpoch: 3407 })
+      mockFunding([2, 4, 6, 0, 0])
+
+      const result = await getHemiStakeRewards('1m')
+
+      expect(result.map(({ epoch }) => epoch)).toEqual([3406, 3407, 3408])
+    })
   })
 
   it('prices each epoch at the latest daily price up to its end date', async function () {

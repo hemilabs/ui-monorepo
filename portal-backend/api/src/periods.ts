@@ -12,6 +12,8 @@ const periodDays: Record<string, number> = {
 
 export const isPeriod = (period: string) => Object.hasOwn(periodDays, period)
 
+export const getPeriodDays = (period: string) => periodDays[period]
+
 export function getPeriodDates(period: string) {
   const lastDate = toDate(Date.now() - dayMs)
   const firstDate = toDate(

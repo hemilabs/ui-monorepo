@@ -509,6 +509,9 @@ importers:
       ve-hemi-actions:
         specifier: workspace:*
         version: link:../../packages/ve-hemi-actions
+      ve-hemi-epoch-rewards:
+        specifier: workspace:*
+        version: link:../../packages/ve-hemi-epoch-rewards
       viem:
         specifier: 2.28.4
         version: 2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)

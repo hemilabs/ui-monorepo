@@ -523,6 +523,7 @@
       "no-hemi-burned": "Ainda não há posições queimadas",
       "no-hemi-staked": "Sem ${symbol} staked",
       "on": "Em {date}",
+      "position-actions": "Ações da posição",
       "position-delegated-to-you": "Posição delegada para você",
       "rewards": "Recompensas",
       "rewards-available": "{count, plural, one {# disponível} other {# disponíveis}}",

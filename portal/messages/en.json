@@ -523,6 +523,7 @@
       "no-hemi-burned": "No burned positions yet",
       "no-hemi-staked": "No ${symbol} staked",
       "on": "On {date}",
+      "position-actions": "Position actions",
       "position-delegated-to-you": "Position delegated to you",
       "rewards": "Rewards",
       "rewards-available": "{count} Available",

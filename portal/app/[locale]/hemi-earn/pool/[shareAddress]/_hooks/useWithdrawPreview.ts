@@ -4,6 +4,7 @@ import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { type EvmToken } from 'types/token'
+import { createErc20AllowanceStateOverride } from 'utils/erc20StateOverride'
 import { type Address } from 'viem'
 import { useEstimateGas } from 'wagmi'
 
@@ -171,6 +172,12 @@ export const useWithdrawPreview = function ({
         shares,
       }),
       query: { enabled: canWithdraw && !!account && !!quote },
+      stateOverride: createErc20AllowanceStateOverride({
+        enabled: needsApproval,
+        owner: account,
+        spender,
+        token: shareToken,
+      }),
       to: spender,
       value: quote?.nativeFee,
     })

@@ -1,8 +1,5 @@
 {
   "common": {
-    "accept": "Accept",
-    "actions": "Actions",
-    "add": "Add",
     "add-token-to-wallet-error": "Failed to add the token to your wallet",
     "add-token-to-wallet-idle": "Add token to your wallet",
     "add-token-to-wallet-pending": "Adding token to your wallet...",
@@ -14,7 +11,6 @@
     "approve-and-withdraw": "Approve and Withdraw",
     "approving": "Approving...",
     "approving-token": "Approving {symbol}",
-    "balance": "Balance",
     "cancel": "Cancel",
     "close": "Close",
     "close-notification": "Close notification",
@@ -37,7 +33,6 @@
     "failed": "Failed",
     "hours": "{hours} hours",
     "insufficient-balance": "Insufficient {symbol}",
-    "learn-more": "Learn more",
     "min-amount-deposit": "Minimum deposit is {amount} {symbol}",
     "min-amount-stake": "Minimum stake is {amount} {symbol}",
     "min-amount-unstake": "Minimum unstake is {amount} {symbol}",
@@ -48,7 +43,6 @@
     "open": "Open",
     "powered-by": "Powered by <company></company>",
     "stake": "Stake",
-    "start-using-mainnet": "Start using Mainnet",
     "success": "Success",
     "switch-to-mainnet": "Switch to Mainnet",
     "token-price": "{symbol} price",
@@ -67,10 +61,8 @@
     "wait-hours": "Wait ~<hours></hours>",
     "wait-minutes": "Wait ~{minutes, plural, =1 {# minute} other {# minutes}}",
     "waiting-completed": "Waiting completed",
-    "wallets-connected": "{count} Connected {count, plural, =1 {Wallet} other {Wallets}} ",
     "withdraw": "Withdraw",
     "withdrawing": "Withdrawing...",
-    "wrong-network": "Wrong Network",
     "wrong-type-network": "Wrong {type} Network",
     "your-wallet-not-connected": "Your wallet is not connected"
   },
@@ -80,13 +72,10 @@
     "connect-btc-wallet": "Connect your BTC Wallet",
     "connect-evm-wallet": "Connect your EVM Wallet",
     "connect-to-see-balance": "Connect to a supported network to see your balance",
-    "copy-address": "Copy Address",
     "copy-link": "Copy Link",
-    "disconnect": "Disconnect",
     "dont-have": "Don't have {wallet}?",
     "evm-wallet": "EVM Wallet",
     "get": "Get",
-    "get-wallet": "Get {wallet}",
     "install": "Install",
     "installed": "Installed",
     "scan": "Scan",
@@ -125,67 +114,6 @@
       "description": "An unexpected error has occurred. Please try again or <link>contact us</link> if the problem persists.",
       "title": "Something Went Wrong"
     }
-  },
-  "genesis-drop": {
-    "add-hemi-to-your-wallet": "Add {symbol} to your wallet",
-    "apy-in-hemi-up-to": "Up to {percentage}%",
-    "apy-in-staked-hemi": "APY in ${symbol}",
-    "claim-and-stake-successful": "Claim and Stake successful",
-    "claim-details": "Claim details",
-    "claim-groups": {
-      "genesis-drop": "Hemi Genesis Drop",
-      "other-drop": "Other Drop",
-      "spectra-and-dodo": "Spectra + Dodo"
-    },
-    "claim-name": "Claim name:",
-    "claim-options": {
-      "and-other-partners": "...and many other partners!",
-      "bonus-hemi": "{percentage}% Bonus HEMI",
-      "bonus-staked-for-months": "<amount></amount> $<symbol></symbol> tokens staked for <months></months> months",
-      "bonus-tokens": "Bonus tokens",
-      "claim": "Claim",
-      "claim-title-24": "Genesis Guardian",
-      "claim-title-48": "Genesis Legend",
-      "claim-title-6": "Genesis Voyager",
-      "claiming": "Claiming...",
-      "future-incentives-from": "Future incentives from",
-      "liquid-hemi": "Liquid ${symbol}",
-      "lockup-period-months": "{months} months",
-      "more-info-description": "Of your total earned tokens, a portion will be claimable immediately (\"available now\") while the rest will be staked automatically for a set lock-up period.",
-      "more-rewards": "+<bonus></bonus>% more ${symbol}",
-      "plus-staked-tokens": "Plus <amount></amount> $<symbol></symbol> tokens staked<break></break>for <period></period>.",
-      "potential-staked-rewards": "Potential rewards for your staked ${symbol}",
-      "recommended": "Recommended",
-      "staked-hemi": "Staked ${symbol}",
-      "staked-tokens-may-qualify": "Staked ${symbol} tokens may qualify for up to a {multiplier}x multiplier",
-      "submit-text": "Claim & Stake",
-      "this-option-includes-bonus": "This claim option already includes a <bonus></bonus>% bonus on your earned tokens.",
-      "tokens-available-now": "${symbol} tokens available now!",
-      "tokens-available-now-amount": "<amount></amount> ${symbol} tokens available now!",
-      "up-to-multiplier-rewards": "Up to {multiplier}x multiplier on staked rewards"
-    },
-    "claim-rewards": "Claim rewards",
-    "claimed": "Claimed",
-    "claiming-your-rewards": "Claiming your rewards",
-    "connect-demos-wallet": "Make sure to connect your Demos verified wallet.",
-    "go-to-hemi-stake": "Go to Hemi Stake",
-    "have-questions": "Make sure you're connected to your Demos-verified wallet. If you have questions, open a ticket on <discordLink>Discord</discordLink>, check <absintheLink>Absinthe</absintheLink> or try another wallet.",
-    "hemi-token-added": "{symbol} added to your wallet",
-    "here-is-your-claim-tx": "Here's your claim transaction:",
-    "not-eligible": "Not eligible",
-    "rewards-multiplier": "Rewards multiplier",
-    "share-x-text": "I am eligible for {amount} ${symbol} in the TGE Genesis drop of Hemi! 🎉 Check if you are eligible:",
-    "stake-hemi": "Stake {symbol}",
-    "staked-for-months": "{amount} for {months} months",
-    "switch-to-start-claiming": "You can switch networks to start claiming your HEMI.",
-    "terms-and-conditions": {
-      "title": "Hemi Genesis Drop Terms and Conditions"
-    },
-    "title": "Rewards Program",
-    "up-to-multiplier": "Up to {multiplier}x",
-    "view-tx-on-explorer": "View TX on explorer",
-    "your-earned-tokens": "Your earned ${symbol} tokens.",
-    "your-rewards-are-on-their-way": "Your rewards are on their way!"
   },
   "get-started": {
     "action": "Action",
@@ -250,7 +178,8 @@
         "reserve-buffer": "Reserve Buffer",
         "share": "Share",
         "title": "Composition",
-        "tokens-count": "{count, plural, one {# token} other {# tokens}}"
+        "tokens-count": "{count, plural, one {# token} other {# tokens}}",
+        "view-mode": "View mode"
       },
       "deposit-successful": "Deposit successful",
       "drawer": {
@@ -287,7 +216,6 @@
         "hemi-fees": "Hemi fees",
         "network-error": "Preview failed — try again",
         "share-token-available-to-withdraw": "Share token available to withdraw",
-        "total-fee": "Total gas fee",
         "withdraw-share-tokens-as": "Withdraw share token as",
         "withdrawing": "Withdrawing...",
         "you-will-receive": "You'll receive"
@@ -297,7 +225,9 @@
         "1-week": "1 week",
         "1-year": "1 year",
         "apy": "APY",
+        "metric": "Metric",
         "month": "{count, plural, one {# month} other {# months}}",
+        "period": "Period",
         "pool-deposits": "Pool deposits",
         "title": "Historical metrics"
       },
@@ -384,7 +314,6 @@
         "amount": "Amount",
         "date": "Date",
         "status": "Status",
-        "tx-hash": "Tx Hash",
         "type": "Type"
       },
       "connect-to-view": "Connect your wallet to view your earn transactions.",
@@ -460,10 +389,12 @@
       "increased-by": "increased by",
       "month": "{count, plural, one {# month} other {# months}}",
       "non-circulating": "Non-circulating",
+      "period": "Period",
       "share-of-supply": "{share} of supply",
       "staked": "Staked",
       "title": "{symbol} supply",
-      "total": "Total"
+      "total": "Total",
+      "unit": "Unit"
     },
     "apy-estimate": "APY figures are estimates. The actual return changes with the global amount staked.",
     "claim-rewards": {
@@ -521,8 +452,6 @@
       "max-days": "Max. {days} {days, plural, one {day} other {days}}",
       "min-days": "Min. {days} {days, plural, one {day} other {days}}",
       "months": "{months, plural, one {{months} month} other {{months} months}}",
-      "or": "or",
-      "send": "Send",
       "stake": "Stake",
       "staking": "Staking...",
       "title": "Stake",
@@ -639,7 +568,6 @@
     "ecosystem": "Demos",
     "explorer": "Explorer",
     "follow-us": "Follow us",
-    "genesis-drop": "Genesis Drop",
     "get-started": "Get started",
     "help": {
       "language": "Language",
@@ -649,8 +577,6 @@
     "network": "Network",
     "network-status": "Network status",
     "new": "New",
-    "swap": "Swap",
-    "tools": "Tools",
     "tunnel": "Tunnel",
     "tvl": "TVL on Hemi"
   },
@@ -659,11 +585,8 @@
     "asset": "Asset",
     "change-to-mainnet": "Change to Mainnet and stake",
     "dashboard": {
-      "coming-soon": "Coming Soon",
       "heading": "Boost staking",
-      "stake-more": "Stake more",
       "staked": "Staked",
-      "staking-assets": "Staking assets",
       "subtitle": "Monitor your boost staking positions.",
       "title": "Dashboard",
       "total-earned-points": "Total Hemi points earned",
@@ -692,7 +615,6 @@
     },
     "protocol": "Protocol",
     "ready-to-earn": "Ready to stake? Use supported assets and start staking.",
-    "rewards": "Rewards",
     "stake": {
       "action": "Action",
       "heading": "Stake for boost",
@@ -771,17 +693,12 @@
       "add-token-to-wallet-idle": "Add token contract to your wallet",
       "add-token-to-wallet-pending": "Adding token contract to your wallet...",
       "add-token-to-wallet-success": "Token contract added to your wallet",
-      "approve-confirmed": "Approve confirmed",
-      "approve-initiated": "Approve initiated",
       "approve-on": "Approve on {networkName}",
       "btc-deposit-come-back-delay-note": "If you do not receive your deposit after {hours} hours return to this page to manually claim.",
       "click-to-confirm": "Click on 'Confirm Deposit Manually' to deposit your Bitcoin to Hemi.",
       "confirm-deposit-on": "Confirm deposit on {networkName}",
-      "deposit-completed": "Deposit completed",
-      "deposit-finalized": "Deposit finalized",
       "deposit-on-its-way": "Your deposit is on its way! Please wait while the blockchain finalizes the transaction.",
       "get-your-funds-on": "Get your funds on {networkName}",
-      "initiate-deposit": "Initiate deposit",
       "review-deposit": "Review Deposit",
       "start-on": "Start on {networkName}",
       "we-could-not-process-this-deposit": "We couldn't process this deposit automatically",
@@ -789,14 +706,10 @@
     },
     "review-withdrawal": {
       "challenge-to-get-bitcoins-back": "Click 'Challenge withdrawal' to reclaim your BTC and send it back to your Hemi address.",
-      "challenge-withdrawal": "Challenge Withdrawal",
-      "claim-withdrawal": "Claim withdrawal",
       "claim-your-funds": "Claim your funds on {networkName}",
       "get-funds-back": "Get my funds back to {networkName}",
       "heading": "Review Withdrawal",
-      "initiate-withdrawal": "Initiate withdrawal",
       "prove-on": "Prove on {networkName}",
-      "prove-withdrawal": "Prove withdrawal",
       "receive-funds-on": "Receive funds on {networkName}",
       "start-on": "Start on {networkName}",
       "we-could-not-process-this-withdraw": "We couldn't process this withdrawal",
@@ -854,6 +767,8 @@
           "withdrawals": "Withdrawals"
         }
       },
+      "no-matching-transactions": "No matching transactions",
+      "no-matching-transactions-hint": "Try changing the filters.",
       "no-transactions": "No transactions made",
       "no-transactions-get-started": "Get started by tunneling assets from and to hemi",
       "subtitle": "Track the status and details of your Hemi transactions.",
@@ -868,20 +783,7 @@
       "withdraw": "Withdraw"
     },
     "transaction-status": {
-      "claiming-deposit": "Claiming Deposit",
-      "claiming-withdrawal": "Claiming Withdrawal",
-      "deposit-claimed": "Deposit Claimed",
-      "deposited": "{fromInput} {symbol} deposited",
-      "depositing": "Depositing {fromInput} {symbol}",
-      "erc20-approved": "{symbol} approved",
-      "erc20-approving": "Approving {symbol}",
-      "proving-withdrawal": "Proving withdrawal",
-      "see-in-explorer": "See in Explorer",
-      "see-on-explorer": "See on {explorer}",
-      "withdrawal-claimed": "Withdrawal claimed",
-      "withdrawal-proved": "Withdrawal proved",
-      "withdrawing": "Withdrawing {fromInput} {symbol}",
-      "withdrawn": "{fromInput} {symbol} withdrawn"
+      "see-in-explorer": "See in Explorer"
     },
     "tunnel-partners": {
       "deposit": {

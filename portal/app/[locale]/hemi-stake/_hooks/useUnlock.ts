@@ -9,7 +9,6 @@ import { useUmami } from 'hooks/useUmami'
 import {
   CaptureDashboardStatus,
   StakingDashboardToken,
-  StakingPosition,
   StakingPositionStatus,
   UnlockingDashboardOperation,
   UnlockingDashboardStatus,
@@ -18,6 +17,8 @@ import { getVeHemiContractAddress } from 've-hemi-actions'
 import type { CaptureAndWithdrawEvents } from 've-hemi-epoch-rewards'
 import { captureAndWithdraw } from 've-hemi-epoch-rewards/actions'
 import { useAccount } from 'wagmi'
+
+import { updatePosition } from '../_utils/positionsCache'
 
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
 import { useNeedsClassCapture } from './useNeedsClassCapture'
@@ -184,12 +185,13 @@ export const useUnlock = function ({
 
         queryClient.setQueryData(
           stakingPositionQueryKey,
-          (old: StakingPosition[] | undefined = []) =>
-            old.map(position =>
-              position.tokenId === tokenId
-                ? { ...position, status: StakingPositionStatus.WITHDRAWN }
-                : position,
-            ),
+          updatePosition({
+            tokenId,
+            update: position => ({
+              ...position,
+              status: StakingPositionStatus.WITHDRAWN,
+            }),
+          }),
         )
 
         // fees

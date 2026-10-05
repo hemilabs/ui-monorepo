@@ -46,6 +46,16 @@ describe('utils/relativeTimeRefresh', function () {
       expect(intervalIn(4 * 365 * oneDay)).toBe(oneDay)
     })
 
+    it('keeps an infinite distance on the daily band', function () {
+      expect(intervalIn(Infinity)).toBe(oneDay)
+      expect(intervalAgo(Infinity)).toBe(oneDay)
+    })
+
+    it('falls back to the widest band when the distance is NaN', function () {
+      expect(getTimeoutInterval(NaN, now)).toBe(oneDay)
+      expect(getTimeoutInterval(now, NaN)).toBe(oneDay)
+    })
+
     it('treats past and future timestamps the same', function () {
       expect(intervalAgo(30 * oneSecond)).toBe(intervalIn(30 * oneSecond))
       expect(intervalAgo(5 * oneMinute)).toBe(intervalIn(5 * oneMinute))

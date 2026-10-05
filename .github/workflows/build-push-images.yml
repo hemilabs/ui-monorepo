@@ -37,9 +37,6 @@ jobs:
           - dockerfile: portal-backend/api/Dockerfile
             versionFile: portal-backend/api/package.json
             image: hemilabs/portal-backend-api
-          - dockerfile: portal-backend/cron/hemi-supply/Dockerfile
-            versionFile: portal-backend/cron/hemi-supply/package.json
-            image: hemilabs/hemi-supply-cron
           - dockerfile: portal-backend/cron/token-prices/Dockerfile
             versionFile: portal-backend/cron/token-prices/package.json
             image: hemilabs/token-prices-cron

@@ -17,13 +17,8 @@ const useRerender = function (targetTimestamp: number) {
   )
 }
 
-type Props = {
-  timestamp: number
-}
-
-export const InRelativeTime = function ({ timestamp }: Props) {
+const RelativeTime = function ({ milliseconds }: { milliseconds: number }) {
   const locale = useLocale()
-  const milliseconds = timestamp * 1000
   const now = new Date().getTime()
 
   // force rerender depending on how close the target timestamp is
@@ -40,4 +35,15 @@ export const InRelativeTime = function ({ timestamp }: Props) {
         : formatFutureTime(difference, locale)}
     </>
   )
+}
+
+type Props = {
+  timestamp: number
+}
+
+export const InRelativeTime = function ({ timestamp }: Props) {
+  if (!Number.isFinite(timestamp)) {
+    return <>-</>
+  }
+  return <RelativeTime milliseconds={timestamp * 1000} />
 }

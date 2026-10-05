@@ -1,5 +1,4 @@
 import fetch from 'fetch-plus-plus'
-import type { LockupMonths } from 'genesis-drop-actions'
 import type { StakingPosition } from 'types/stakingDashboard'
 import type {
   EvmDepositOperation,
@@ -275,53 +274,4 @@ export const getLockedPositions = function ({
         }) as StakingPosition,
     ),
   )
-}
-
-/**
- * Raw token claim transaction as returned by the subgraph API, with the amount
- * serialized as a string.
- */
-export type ClaimTransaction = {
-  account: Address
-  amount: string
-  lockupMonths: LockupMonths
-  ratio: number
-  transactionHash: Hash
-}
-
-export type ParsedClaimTransaction = Omit<ClaimTransaction, 'amount'> & {
-  amount: bigint
-}
-
-/**
- * Retrieves the token claim transaction for an address and claim group.
- * @param params Parameters of the call.
- * @param params.address The address of the claimer.
- * @param params.chainId Hemi chain Id.
- * @param params.claimGroupId The id of the claim group to query.
- * @returns The claim transaction, or null if not found.
- */
-export const getClaimTransaction = function ({
-  address,
-  chainId,
-  claimGroupId,
-}: {
-  address: Address
-  chainId: Chain['id']
-  claimGroupId: number
-}) {
-  const url = getSubgraphBaseUrl(chainId)
-
-  return request<ClaimTransaction>(`${url}/claim/${address}/${claimGroupId}`)
-    .then(
-      data =>
-        ({
-          account: data.account,
-          amount: BigInt(data.amount),
-          lockupMonths: data.lockupMonths,
-          ratio: data.ratio,
-          transactionHash: data.transactionHash,
-        }) satisfies ParsedClaimTransaction,
-    )
-    .catch(() => null)
 }

@@ -4,7 +4,6 @@ import { Token } from 'types/token'
 import { useTranslations } from 'use-intl'
 
 import { Jumper } from './jumper'
-import { Orbiter } from './orbiter'
 import { Stargate } from './stargate'
 
 type Props = {
@@ -35,9 +34,6 @@ export const CustomTunnelsThroughPartners = function ({
           </DrawerParagraph>
         </div>
         <div className="mb-3 space-y-4">
-          {fromToken.extensions?.tunnelPartners?.includes('orbiter') && (
-            <Orbiter fromToken={fromToken} toToken={toToken} />
-          )}
           {fromToken.extensions?.tunnelPartners?.includes('stargate') && (
             <Stargate fromToken={fromToken} toToken={toToken} />
           )}

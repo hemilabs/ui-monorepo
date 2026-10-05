@@ -1,4 +1,3 @@
-import { GenesisDropTabs } from 'app/[locale]/genesis-drop/_components/genesisDropTabs'
 import { HemiStakeTabs } from 'app/[locale]/hemi-stake/_components/hemiStakeTabs'
 import { ButtonIcon } from 'components/button'
 import { CloseIcon } from 'components/icons/closeIcon'
@@ -38,7 +37,6 @@ export const Header = ({ isMenuOpen, openNavbar, toggleMenu }: Props) => (
     <div className="hidden pl-3 md:block">
       <StakeTabs />
       <TunnelTabs />
-      <GenesisDropTabs />
       <HemiStakeTabs />
     </div>
     <div className="ml-auto flex items-center gap-x-2">

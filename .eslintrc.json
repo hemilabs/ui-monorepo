@@ -51,13 +51,6 @@
       }
     },
     {
-      "extends": ["bloq/node", "prettier"],
-      "files": ["portal-backend/**/*.js"],
-      "rules": {
-        "no-console": "off"
-      }
-    },
-    {
       "extends": ["bloq/node", "bloq/typescript", "prettier"],
       "files": ["portal-backend/**/*.ts"],
       "rules": {
@@ -100,14 +93,6 @@
             "ignores": ["modules"]
           }
         ]
-      }
-    },
-    {
-      "extends": ["bloq/node", "prettier"],
-      "files": ["portal-backend/api/scripts/*.cjs"],
-      "rules": {
-        "no-console": "off",
-        "node/no-unpublished-require": "off"
       }
     },
     {

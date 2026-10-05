@@ -38,7 +38,6 @@
     "esplora-client": "1.2.0",
     "eth-rpc-cache": "2.1.0",
     "fetch-plus-plus": "1.0.0",
-    "genesis-drop-actions": "workspace:*",
     "hemi-earn-actions": "workspace:*",
     "hemi-socials": "2.1.0",
     "hemi-tunnel-actions": "workspace:*",
@@ -53,7 +52,6 @@
     "qrcode.react": "4.2.0",
     "rc-tooltip": "6.4.0",
     "react": "19.2.8",
-    "react-confetti-explosion": "3.0.3",
     "react-device-detect": "2.2.3",
     "react-dom": "19.2.8",
     "react-loading-skeleton": "3.5.0",
@@ -95,7 +93,7 @@
     "typescript": "5.8.3",
     "vite": "8.0.13",
     "vite-plugin-node-polyfills": "0.28.0",
-    "vitest": "4.1.6",
+    "vitest": "5.0.1",
     "wrangler": "4.126.0"
   },
   "engines": {

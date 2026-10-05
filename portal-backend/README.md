@@ -26,33 +26,6 @@ $ curl http://localhost:3006/circulating
 
 The balances come from the HEMI supply snapshots of the [hemi-earn-requests-subgraph](../subgraphs/hemi-earn-requests-subgraph), from the newest day every chain has reached.
 
-#### `GET /claims/:chain-id/:address/all`
-
-Returns an array with the data needed for a user to claim their HEMI tokens.
-
-```console
-$ curl http://localhost:3006/claims/43111/0x0000000000000000000000000000000000000001/all
-[{"amount":"50000000000000000000","claimGroupId":16,"proof":["0x0000000000000000000000000000000000000000000000000000000000000001","0x0000000000000000000000000000000000000000000000000000000000000002","0x0000000000000000000000000000000000000000000000000000000000000003"]}]
-```
-
-The data for each claim group must be located in individual files in the `src/claims-data` folder. Data must be a object whose properties are the user addresses:
-
-```json
-{
-  "0x0000000000000000000000000000000000000001": {
-    "amount": "50000000000000000000",
-    "claimGroupId": 16,
-    "proof": [
-      "0x0000000000000000000000000000000000000000000000000000000000000001",
-      "0x0000000000000000000000000000000000000000000000000000000000000002",
-      "0x0000000000000000000000000000000000000000000000000000000000000003"
-    ]
-  }
-}
-```
-
-Note that the route `GET /claims/:chain-id/:address` is kept for compatibility and will return just the first element of the array.
-
 #### `GET /hemi-stake`
 
 Returns the global veHEMI staking stats. It is Hemi mainnet only.
@@ -177,15 +150,6 @@ $ curl http://localhost:3006/subgraphs/43111/staked
 {"staked":[{"totalStaked":"17616893499688152282458","id":"0x027a9d301FB747cd972CFB29A63f3BDA551DFc5c"},...]}
 ```
 
-##### `GET /subgraphs/:chain-id/claim/:address/:claim-group`
-
-Returns the Merkle claim data for the given address and numeric claim group. Responds with `404 Not Found` if there is no claim.
-
-```console
-$ curl http://localhost:3006/subgraphs/43111/claim/0x0000000000000000000000000000000000000001/0
-{"account":"0x1234...","amount":"50000000000000000000","blockNumber":"1234","blockTimestamp":"1759162804","erc20":"0x0000...","lockupMonths":12,"ratio":15.23,"transactionHash":"0xabc..."}
-```
-
 ##### `GET /subgraphs/:chain-id/locks/:address`
 
 Returns the veHEMI locked positions owned (or previously owned) by the given address, sorted by unlock time, soonest first.
@@ -242,34 +206,6 @@ These environment variables control how the cache works:
 | TVL_REVALIDATE_MIN       | The time the TVL will be considered fresh.                        | 720                                |
 
 (1) Only stars (`*`) are supported. I.e. `https://*.hemi.xyz` will match any subdomain or subdomain chain.
-
-## Hemi supply cron
-
-Periodically retrieves network data to compute the HEMI circulating supply and updates the cache (Redis).
-The main goal is to provide this information to CoinMarketCap.
-
-### Configuration
-
-These environment variables control how the `cron` job behaves:
-
-| Variable              | Description                                                                          | Default                        |
-| --------------------- | ------------------------------------------------------------------------------------ | ------------------------------ |
-| NODE_ENV              | Sentry environment. `production` in the Docker images.                               | `development`                  |
-| REDIS_URL             | The URL of the Redis database.                                                       | `redis://localhost:6379`       |
-| REFRESH_SUPPLY_MIN    | How frequently the cache will be refreshed. If set to 0, it will run once and exit.  | 5                              |
-| RPC_URL_BNB           | URL of the BNB Chain RPC node.                                                       | `https://56.rpc.thirdweb.com`  |
-| RPC_URL_ETH           | URL of the Ethereum RPC node.                                                        | `https://eth.merkle.io`        |
-| RPC_URL_HEMI          | URL of the Hemi RPC node.                                                            | `https://rpc.hemi.network/rpc` |
-| SENTRY_DSN            | The Sentry DSN.                                                                      |                                |
-| SENTRY_LOGGING_LEVELS | The logging levels to send to Sentry (props of console.log).                         | ["log", "warn", "error"]       |
-| SUPPLY_CORRECTION     | Amount of HEMI to be subtracted from the supply. In wei/units, not in HEMI!          | 0                              |
-| SUPPLY_MERKLE_LOCKED  | Percent of HEMI held in MerkleBox that are considered locked.                        | 50                             |
-| SUPPLY_OP_ADDRESSES   | Comma-separated list of addresses, whose balances will be subtracted from the supply |                                |
-
-### Stored data
-
-Data in the `cache` is stored with keys prefixed with `supply:`.
-In addition, a `supply:time` key is also stored every time the cache is refreshed.
 
 ## Token price cron
 

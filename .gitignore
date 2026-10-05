@@ -3,6 +3,7 @@
 .eslintcache
 .next
 .nx/cache
+.pnpm-store
 .serverless
 .vscode/*
 !.vscode/mcp.json

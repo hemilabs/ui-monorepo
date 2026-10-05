@@ -15,7 +15,7 @@ export const customTunnelPartnersWhitelist: Partial<
   [mainnet.id]: {
     // USDC
     '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48': {
-      tunnelPartners: ['jumper', 'orbiter', 'stargate'],
+      tunnelPartners: ['jumper', 'stargate'],
       tunnelSymbol: 'USDC',
     },
     // cbBTC
@@ -32,7 +32,7 @@ export const customTunnelPartnersWhitelist: Partial<
   [hemi.id]: {
     // USDC
     '0xad11a8BEb98bbf61dbb1aa0F6d6F2ECD87b35afA': {
-      tunnelPartners: ['jumper', 'orbiter', 'stargate'],
+      tunnelPartners: ['jumper', 'stargate'],
       tunnelSymbol: 'USDC',
     },
     // USDT

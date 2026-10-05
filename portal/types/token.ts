@@ -1,7 +1,7 @@
 import { BtcChain } from 'btc-wallet/chains'
 import { Address, Chain } from 'viem'
 
-type TunnelPartners = 'jumper' | 'orbiter' | 'stargate'
+type TunnelPartners = 'jumper' | 'stargate'
 
 export type Extensions = {
   birthBlock?: number

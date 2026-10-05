@@ -1,5 +1,8 @@
 import { Card } from 'components/card'
-import { SegmentedControlItem } from 'components/segmentedControlItem'
+import {
+  SegmentedControl,
+  type SegmentedControlOption,
+} from 'components/segmentedControl'
 import { useTranslations } from 'use-intl'
 import { isDataUnavailable } from 'utils/queryStatus'
 
@@ -7,8 +10,6 @@ import { useSupplySeries } from '../_hooks/useSupplyStat'
 import { type SupplyPeriod, type SupplyUnit } from '../_utils/supplyHistory'
 
 import { SupplyChart } from './supplyChart'
-
-const periods: SupplyPeriod[] = ['1w', '1m', '3m']
 
 type Props = {
   onPeriodChange: (period: SupplyPeriod) => void
@@ -36,23 +37,11 @@ export const SupplyChartCard = function ({
 
   const isUnavailable = isDataUnavailable({ fetchStatus, status })
 
-  const periodLabels: Record<SupplyPeriod, string> = {
-    '1m': t('month', { count: 1 }),
-    '1w': t('1-week'),
-    '3m': t('month', { count: 3 }),
-  }
-
-  const periodControls = (className: string) =>
-    periods.map(option => (
-      <SegmentedControlItem
-        className={className}
-        key={option}
-        onClick={() => onPeriodChange(option)}
-        selected={period === option}
-      >
-        {periodLabels[option]}
-      </SegmentedControlItem>
-    ))
+  const periodOptions: SegmentedControlOption<SupplyPeriod>[] = [
+    { label: t('1-week'), value: '1w' },
+    { label: t('month', { count: 1 }), value: '1m' },
+    { label: t('month', { count: 3 }), value: '3m' },
+  ]
 
   return (
     <Card shadow="sm">
@@ -62,24 +51,24 @@ export const SupplyChartCard = function ({
             {t('title', { symbol })}
           </span>
           <div className="flex items-center gap-3">
-            <div className="hidden items-center gap-2 lg:flex">
-              {periodControls('')}
+            <div className="hidden items-center gap-3 lg:flex">
+              <SegmentedControl
+                label={t('period')}
+                onChange={onPeriodChange}
+                options={periodOptions}
+                value={period}
+              />
+              <div className="h-3 w-0.5 bg-neutral-200" />
             </div>
-            <div className="hidden h-3 w-0.5 bg-neutral-200 lg:block" />
-            <div className="flex items-center gap-2">
-              <SegmentedControlItem
-                onClick={() => onUnitChange('hemi')}
-                selected={unit === 'hemi'}
-              >
-                {symbol}
-              </SegmentedControlItem>
-              <SegmentedControlItem
-                onClick={() => onUnitChange('usd')}
-                selected={unit === 'usd'}
-              >
-                USD
-              </SegmentedControlItem>
-            </div>
+            <SegmentedControl
+              label={t('unit')}
+              onChange={onUnitChange}
+              options={[
+                { label: symbol, value: 'hemi' },
+                { label: 'USD', value: 'usd' },
+              ]}
+              value={unit}
+            />
           </div>
         </div>
         <div className="mt-6">
@@ -92,8 +81,14 @@ export const SupplyChartCard = function ({
             unit={unit}
           />
         </div>
-        <div className="mt-6 flex items-center gap-2 lg:hidden">
-          {periodControls('flex-1')}
+        <div className="mt-6 lg:hidden">
+          <SegmentedControl
+            fullWidth
+            label={t('period')}
+            onChange={onPeriodChange}
+            options={periodOptions}
+            value={period}
+          />
         </div>
       </div>
     </Card>

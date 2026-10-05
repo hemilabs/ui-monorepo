@@ -155,7 +155,7 @@ The list of positions comes from the veHEMI subgraph through `portal-backend/api
 
 The Portal needs a user's full operation history across the three chains of the active network type — Hemi, the EVM L1 and Bitcoin — and rebuilding it by scanning blocks over RPC is slow and rate-limited. Subgraphs (The Graph) index the relevant events so history can be queried in bulk.
 
-The `subgraphs/` folder holds one subgraph per concern. The tunnel-related ones cover deposits, BTC deposits, withdrawals, and withdrawal proofs and claims; the rest cover Hemi Earn, staking, veHEMI and Merkle claims. Every subgraph is deployed once per chain, so mainnet and testnet are separate deployments.
+The `subgraphs/` folder holds one subgraph per concern. The tunnel-related ones cover deposits, BTC deposits, withdrawals, and withdrawal proofs and claims; the rest cover Hemi Earn, staking and veHEMI. Every subgraph is deployed once per chain, so mainnet and testnet are separate deployments.
 
 The Portal does not query The Graph directly. Requests go through the backend API (`portal-backend/api`) under `/subgraphs/{chainId}/...`, which keeps API keys server-side and normalizes responses.
 

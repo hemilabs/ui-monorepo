@@ -8,7 +8,6 @@ import { toJsonMiddleware } from '../to-middleware.ts'
 import type { ChainIdPathParams, ReqData } from '../types.ts'
 
 import { getBtcDepositOnHemi } from './route-handlers/get-btc-deposit-on-hemi.ts'
-import { getClaimTransactionHandler } from './route-handlers/get-claim-transaction-hash.ts'
 import { getEarnRequestsHandler } from './route-handlers/get-earn-requests.ts'
 import { getLockedPositionsHandler } from './route-handlers/get-locked-positions.ts'
 import { getWithdrawalProofAndClaimHandler } from './route-handlers/get-withdrawal-proof-and-claim.ts'
@@ -104,14 +103,6 @@ function validateWithdrawalType(
 ) {
   const { type } = req.params
   if (type === 'btc' || type === 'evm') {
-    next()
-  } else {
-    next('route')
-  }
-}
-
-function validateClaimGroup(req: Request, res: Response, next: NextFunction) {
-  if (isInteger(req.params.claimGroup as string)) {
     next()
   } else {
     next('route')
@@ -253,15 +244,6 @@ export function createSubgraphsRouter() {
       maxAge: 30 * 1000,
       resolver: chainIdStr => chainIdStr,
     }),
-  )
-
-  router.get(
-    '/:chainIdStr/claim/:address/:claimGroup',
-    parseChainId,
-    validateAddress,
-    validateClaimGroup,
-    validateChainIsHemi,
-    getClaimTransactionHandler,
   )
 
   router.get(

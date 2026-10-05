@@ -3,13 +3,12 @@ import { RenderFiatBalance } from 'components/fiatBalance'
 import { InfoIcon } from 'components/icons/infoIcon'
 import { Tooltip } from 'components/tooltip'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { defaultLocale } from 'i18n/routing'
 import { useLocale, useTranslations } from 'use-intl'
 import {
+  formatFiatAmount,
   formatNumber,
   formatShortDate,
   formatShortDateWithYear,
-  formatTokenPrice,
 } from 'utils/format'
 import { formatUnits } from 'viem'
 
@@ -19,7 +18,9 @@ type Props = {
   input: string
   lockEnd: number
   lockupDays: number
-  nextPayout: { payout: bigint; timestamp: number }
+  nextPayout: bigint
+  nextPayoutAt: number
+  yearOneTotal: bigint
 }
 
 export const PayoutHeadline = function ({
@@ -29,6 +30,8 @@ export const PayoutHeadline = function ({
   lockEnd,
   lockupDays,
   nextPayout,
+  nextPayoutAt,
+  yearOneTotal,
 }: Props) {
   const locale = useLocale()
   const t = useTranslations('hemi-stake.estimated-payouts')
@@ -39,14 +42,14 @@ export const PayoutHeadline = function ({
       <div className="flex flex-wrap items-baseline gap-x-2">
         <span className="text-xl font-semibold text-neutral-950 sm:text-2xl">
           <RenderFiatBalance
-            balance={nextPayout.payout}
-            customFormatter={amount => formatTokenPrice(amount, defaultLocale)}
+            balance={yearOneTotal}
+            customFormatter={formatFiatAmount}
             queryStatus="success"
             token={token}
           />
         </span>
         <span className="flex items-center gap-x-1 text-sm text-neutral-500">
-          {t('next-payout')}
+          {t('first-year')}
           <Tooltip
             id="estimated-payouts-note"
             text={
@@ -68,16 +71,21 @@ export const PayoutHeadline = function ({
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <div className="rounded-full bg-orange-600 px-2.5 py-1 text-xxs font-medium text-white">
           <DisplayAmount
-            amount={formatUnits(nextPayout.payout, token.decimals)}
+            amount={formatUnits(yearOneTotal, token.decimals)}
             token={token}
           />
         </div>
         <span className="text-xs font-medium text-neutral-700">
-          {t('settles-on', {
-            date: formatShortDate(
-              new Date(nextPayout.timestamp * 1000),
-              locale,
+          {t.rich('next-payout-line', {
+            amount: () => (
+              <RenderFiatBalance
+                balance={nextPayout}
+                customFormatter={formatFiatAmount}
+                queryStatus="success"
+                token={token}
+              />
             ),
+            date: formatShortDate(new Date(nextPayoutAt * 1000), locale),
             epoch: currentEpoch,
           })}
         </span>

@@ -8,6 +8,7 @@ import { formatUnits } from 'viem'
 
 type Props = {
   hasError: boolean
+  hasValidLockup: boolean
   isPending: boolean
   lockEnd: number
   meetsMinimumAmount: boolean
@@ -16,6 +17,7 @@ type Props = {
 
 export const PayoutPlaceholder = function ({
   hasError,
+  hasValidLockup,
   isPending,
   lockEnd,
   meetsMinimumAmount,
@@ -36,6 +38,9 @@ export const PayoutPlaceholder = function ({
           })}
         </span>
       )
+    }
+    if (!hasValidLockup) {
+      return null
     }
     if (hasError) {
       return (
@@ -61,11 +66,13 @@ export const PayoutPlaceholder = function ({
   return (
     <div className="flex flex-col gap-y-2">
       {renderMessage()}
-      <span className="text-xxs text-neutral-400">
-        {t('unlocks-on', {
-          date: formatShortDateWithYear(new Date(lockEnd * 1000), locale),
-        })}
-      </span>
+      {hasValidLockup && (
+        <span className="text-xxs text-neutral-400">
+          {t('unlocks-on', {
+            date: formatShortDateWithYear(new Date(lockEnd * 1000), locale),
+          })}
+        </span>
+      )}
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTokenPrices } from 'hooks/useTokenPrices'
+import Skeleton from 'react-loading-skeleton'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatShortDate } from 'utils/format'
 import { unixNowTimestamp } from 'utils/time'
@@ -36,12 +37,14 @@ const buildForecast = function ({
   amount,
   baseline,
   decimals,
+  hasValidLockup,
   lockupDays,
   weight,
 }: {
   amount: bigint
   baseline: bigint
   decimals: number
+  hasValidLockup: boolean
   lockupDays: number
   weight: bigint
 }) {
@@ -58,9 +61,7 @@ const buildForecast = function ({
     payouts: forecast.payouts,
   })
   const hasForecast =
-    baseline > BigInt(0) &&
-    forecast.meetsMinimumAmount &&
-    isValidLockup({ value: lockupDays })
+    baseline > BigInt(0) && forecast.meetsMinimumAmount && hasValidLockup
 
   return {
     chartSeries: hasForecast
@@ -93,6 +94,7 @@ export const EstimatedPayouts = function () {
   const baseline = forecastInputs?.transferableClassBaseline ?? BigInt(0)
   const weight = forecastInputs?.transferableClassWeight ?? BigInt(0)
 
+  const hasValidLockup = isValidLockup({ value: lockupDays })
   const hasError = isSystemStateError || isForecastError
   const retry = isSystemStateError ? refetchSystemState : refetchForecast
   const price = toPrice(getTokenPrice(token, prices))
@@ -101,6 +103,7 @@ export const EstimatedPayouts = function () {
     amount,
     baseline,
     decimals: token.decimals,
+    hasValidLockup,
     lockupDays,
     weight,
   })
@@ -118,11 +121,14 @@ export const EstimatedPayouts = function () {
             input={input}
             lockEnd={forecast.lockEnd}
             lockupDays={lockupDays}
-            nextPayout={forecast.payouts[0]}
+            nextPayout={forecast.payouts[0].payout}
+            nextPayoutAt={forecast.payouts[0].timestamp}
+            yearOneTotal={forecast.yearOneTotal}
           />
         ) : (
           <PayoutPlaceholder
             hasError={hasError}
+            hasValidLockup={hasValidLockup}
             isPending={isPending}
             lockEnd={forecast.lockEnd}
             meetsMinimumAmount={forecast.meetsMinimumAmount}
@@ -132,9 +138,14 @@ export const EstimatedPayouts = function () {
       </div>
       <div className="flex w-full flex-col gap-y-1.5">
         <span className={sectionLabelClassName}>
-          {systemState === undefined
-            ? '\u00a0'
-            : t('starting-from-epoch', { epoch: systemState.currentEpoch })}
+          {t.rich('starting-from-epoch', {
+            epoch: () =>
+              systemState === undefined ? (
+                <Skeleton className="w-8" />
+              ) : (
+                systemState.currentEpoch
+              ),
+          })}
         </span>
         <PayoutsChart
           formatDate={value => formatShortDate(new Date(value), locale)}

@@ -92,7 +92,7 @@ Deposits have a minimum amount in satoshis (`MINIMUM_DEPOSIT_SATS`) and a tunnel
 
 1. The user sends a transaction on Hemi (`BitcoinTunnelManager`) that burns hemiBTC and requests a payout to a Bitcoin address. The withdrawal is identified by a `uuid`.
 2. The vault's custodians collect the signatures needed to release the BTC, send it on Bitcoin and mark the withdrawal fulfilled. This is the happy path, and the UI shows a wait of **12 hours** on mainnet — read live from the vault, never hardcoded.
-3. If the operator does not fulfil it before the vault's **grace period** expires, the withdrawal becomes challengeable. A **challenge** transaction on Hemi reverses the burn and returns the hemiBTC to the user's Hemi address, so they can try again.
+3. If the operator does not fulfill it before the vault's **grace period** expires, the withdrawal becomes challengeable. A **challenge** transaction on Hemi reverses the burn and returns the hemiBTC to the user's Hemi address, so they can try again.
 
 Statuses (`BtcWithdrawStatus`): `INITIATE_WITHDRAW_PENDING` → `INITIATE_WITHDRAW_CONFIRMED` → `WITHDRAWAL_SUCCEEDED`, or `INITIATE_WITHDRAW_CONFIRMED` → `READY_TO_CHALLENGE` → `CHALLENGE_IN_PROGRESS` → `WITHDRAWAL_CHALLENGED`. Failures land in `WITHDRAWAL_FAILED` or `CHALLENGE_FAILED`.
 
@@ -139,7 +139,7 @@ A position can only grow:
 
 Nothing shrinks a position: there is no partial withdrawal and no way to shorten a lock. The principal comes back through `withdraw`, which is only callable once the lock has expired and which burns the NFT. A user may hold as many positions as they want; each is independent.
 
-Owning a position may also accrue **rewards** distributed by the protocol through the veHEMI rewards contract, in one or more reward tokens. Rewards are allocated per position by the same decaying weight. Claiming is per position and takes everything at once, across every reward token, and is paid out to the position's owner: the row's menu offers the action only while that position has something to claim, and claiming leaves the lock untouched, so the position keeps running afterwards.
+Owning a position may also accrue **rewards** distributed by the protocol through the veHEMI rewards contract, in one or more reward tokens. See [rewards section](#hemi-stake-rewards) for further details.
 
 Positions are ERC-721s. The Portal only ever creates them through `createLock`, which mints transferable, non-forfeitable positions, and it exposes no transfer action of its own — so transfers happen outside of it. It does show their consequences: the positions query matches the connected address as current owner _or_ as a past owner, and rows are tagged as received, transferred away or delegated away.
 
@@ -150,6 +150,15 @@ The dashboard lists positions under two tabs, **Active** and **Burned**. Burned 
 Statuses follow the same shape as the tunnel ones but per operation: `StakingDashboardStatus` covers the approval and the lock transaction (`APPROVAL_TX_PENDING` → `APPROVAL_TX_COMPLETED` → `STAKE_TX_PENDING` → `STAKE_TX_CONFIRMED`, with `*_FAILED` branches) and is reused for the increase-amount and extend flows, while `UnlockingDashboardStatus` and `CollectAllRewardsDashboardStatus` cover unlocking and claiming.
 
 The list of positions comes from the veHEMI subgraph through `portal-backend/api` (`/subgraphs/{chainId}/locks/{address}`). Voting power and claimable rewards are read live from the chain. The countdown to unlock is derived in the browser from the `timestamp` and `lockTime` the subgraph returns.
+
+#### Hemi Stake Rewards
+
+The current Hemi Stake rewards system depends on 2 contracts: The VeHemiEpochRewards contract and VeHemiEpochRewardsLens. With this new schema, time is split into "epochs". Funding per epoch takes place through streams, which are a source of money. For example, "Protocol fees" is a source of money; "Incentives" could be another. Each epoch's pot is split into 3 classes of positions: "Transferable", "Locked", and "Forfeitable". Each class is funded independently, so an epoch can be funded for one class and pay nothing to the other two. At the end of each epoch, the position gets the weight measured against its own class of position. This way, your share becomes `weight / classDenominator`. A non-transferable position whose lock was extended can draw from two pots: its own class for its original lock, and "Transferable" for the extended part.  
+After an epoch ends, rewards become claimable. Rewards that are not claimed can be swept back after a delay. Once a class of an epoch is swept, its rewards for that epoch can no longer be claimed. The streams are defined by the owner of the Rewards contract. Each stream pays in a single token, and different streams may use different tokens.
+
+The Lens contract gives a read-only simplified view of the rewards calendar and the whole system state. This way, you can get the status of Hemi Stake (current epoch, settled epoch, token list), how much a position can claim, and the calendar of rewards.
+
+In addition to this rewards system, there was previously another rewards system. This one distributed rewards without a calendar, but at the discretion of the owners of the contract. It included protocol fees as well as incentives paid on HEMI. These rewards were paid twice, in 2 different epochs, and these rewards are considered when showing the historical rewards paid.
 
 ## Subgraphs
 

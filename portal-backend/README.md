@@ -41,6 +41,8 @@ $ curl http://localhost:3006/hemi-stake
 
 Returns the veHEMI rewards funded per epoch and reward token on Hemi mainnet, with their USD price. The period is `1w`, `1m`, `3m`, `6m` or `1y`. Any other period returns `400 Bad Request`.
 
+The response can start with the rounds paid before hemiStake. These rows have a `preHemiStake` object and a `null` `claimed`. Read their date from `timestamp`, not from `epoch`.
+
 ```console
 $ curl http://localhost:3006/hemi-stake/rewards/1w
 [{"epoch":3402,"rewards":[{"claimed":"1271445882233261269051719","funded":"5772666660000000000000000","priceUsd":"0.00683108945841876","swept":false,"token":{"address":"0x99e3dE3817F6081B2568208337ef83295b7f591D","chainId":43111}},{"claimed":"209442","funded":"700000","priceUsd":"112004.51","swept":false,"token":{"address":"0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28","chainId":43111}}],"settled":true,"timestamp":1789841880}]

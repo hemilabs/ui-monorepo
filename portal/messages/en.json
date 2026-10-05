@@ -574,6 +574,7 @@
     "change-to-mainnet": "Change to Mainnet and stake",
     "dashboard": {
       "heading": "Boost staking",
+      "manage-token": "Manage {symbol}",
       "staked": "Staked",
       "subtitle": "Monitor your boost staking positions.",
       "title": "Dashboard",

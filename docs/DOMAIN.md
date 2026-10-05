@@ -137,7 +137,7 @@ A position can only grow:
 - **Increase the amount**: more HEMI is added to the same NFT. There is no owner check on-chain, so anyone can top up anyone's position.
 - **Extend the lock**: only the owner, and the new end — again a duration from now, rounded down — must be strictly later than the current one and still within four years from now.
 
-Nothing shrinks a position: there is no partial withdrawal and no way to shorten a lock. The principal comes back through `withdraw`, which is only callable once the lock has expired and which burns the NFT. A user may hold as many positions as they want; each is independent.
+Nothing shrinks a position: there is no partial withdrawal and no way to shorten a lock. The principal comes back through `withdraw`, which is only callable once the lock has expired and which burns the NFT. The Portal unlocks with `captureAndWithdraw`, which records the position's class in the rewards contract before the burn deletes it. Without that record, the position can lose its unclaimed rewards. A user may hold as many positions as they want; each is independent.
 
 Owning a position may also accrue **rewards** distributed by the protocol through the veHEMI rewards contract, in one or more reward tokens. See [rewards section](#hemi-stake-rewards) for further details.
 

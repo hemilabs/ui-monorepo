@@ -1,5 +1,8 @@
 import { Card } from 'components/card'
-import { SegmentedControlItem } from 'components/segmentedControlItem'
+import {
+  SegmentedControl,
+  type SegmentedControlOption,
+} from 'components/segmentedControl'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type EvmToken } from 'types/token'
@@ -36,6 +39,17 @@ export const HistoricalMetrics = function ({
     stakingVault,
   })
 
+  const periodOptions: SegmentedControlOption<MetricPeriod>[] = [
+    { label: t('1-week'), value: '1w' },
+    { label: t('month', { count: 1 }), value: '1m' },
+    { label: t('month', { count: 3 }), value: '3m' },
+    { label: t('1-year'), value: '1y' },
+  ]
+  const metricTypeOptions: SegmentedControlOption<MetricType>[] = [
+    { label: t('pool-deposits'), value: 'deposits' },
+    { label: t('apy'), value: 'apy' },
+  ]
+
   const renderHeadline = function () {
     if (isPending) {
       return <Skeleton className="h-7 w-28" />
@@ -67,62 +81,22 @@ export const HistoricalMetrics = function ({
           <h2 className="shrink-0 text-2xl font-semibold leading-8 -tracking-[0.48px] text-neutral-950">
             {renderHeadline()}
           </h2>
-          <div className="hidden items-center gap-3 lg:flex">
-            <div className="flex items-center gap-2">
-              <SegmentedControlItem
-                onClick={() => setPeriod('1w')}
-                selected={period === '1w'}
-              >
-                {t('1-week')}
-              </SegmentedControlItem>
-              <SegmentedControlItem
-                onClick={() => setPeriod('1m')}
-                selected={period === '1m'}
-              >
-                {t('month', { count: 1 })}
-              </SegmentedControlItem>
-              <SegmentedControlItem
-                onClick={() => setPeriod('3m')}
-                selected={period === '3m'}
-              >
-                {t('month', { count: 3 })}
-              </SegmentedControlItem>
-              <SegmentedControlItem
-                onClick={() => setPeriod('1y')}
-                selected={period === '1y'}
-              >
-                {t('1-year')}
-              </SegmentedControlItem>
+          <div className="flex items-center gap-3">
+            <div className="hidden items-center gap-3 lg:flex">
+              <SegmentedControl
+                label={t('period')}
+                onChange={setPeriod}
+                options={periodOptions}
+                value={period}
+              />
+              <div className="h-3 w-0.5 bg-neutral-200" />
             </div>
-            <div className="h-3 w-0.5 bg-neutral-200" />
-            <div className="flex items-center gap-2">
-              <SegmentedControlItem
-                onClick={() => setMetricType('deposits')}
-                selected={metricType === 'deposits'}
-              >
-                {t('pool-deposits')}
-              </SegmentedControlItem>
-              <SegmentedControlItem
-                onClick={() => setMetricType('apy')}
-                selected={metricType === 'apy'}
-              >
-                {t('apy')}
-              </SegmentedControlItem>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 lg:hidden">
-            <SegmentedControlItem
-              onClick={() => setMetricType('deposits')}
-              selected={metricType === 'deposits'}
-            >
-              {t('pool-deposits')}
-            </SegmentedControlItem>
-            <SegmentedControlItem
-              onClick={() => setMetricType('apy')}
-              selected={metricType === 'apy'}
-            >
-              {t('apy')}
-            </SegmentedControlItem>
+            <SegmentedControl
+              label={t('metric')}
+              onChange={setMetricType}
+              options={metricTypeOptions}
+              value={metricType}
+            />
           </div>
         </div>
         <div className="mt-8">
@@ -135,35 +109,14 @@ export const HistoricalMetrics = function ({
             period={period}
           />
         </div>
-        <div className="mt-6 flex items-center gap-2 lg:hidden">
-          <SegmentedControlItem
-            className="flex-1"
-            onClick={() => setPeriod('1w')}
-            selected={period === '1w'}
-          >
-            {t('1-week')}
-          </SegmentedControlItem>
-          <SegmentedControlItem
-            className="flex-1"
-            onClick={() => setPeriod('1m')}
-            selected={period === '1m'}
-          >
-            {t('month', { count: 1 })}
-          </SegmentedControlItem>
-          <SegmentedControlItem
-            className="flex-1"
-            onClick={() => setPeriod('3m')}
-            selected={period === '3m'}
-          >
-            {t('month', { count: 3 })}
-          </SegmentedControlItem>
-          <SegmentedControlItem
-            className="flex-1"
-            onClick={() => setPeriod('1y')}
-            selected={period === '1y'}
-          >
-            {t('1-year')}
-          </SegmentedControlItem>
+        <div className="mt-6 lg:hidden">
+          <SegmentedControl
+            fullWidth
+            label={t('period')}
+            onChange={setPeriod}
+            options={periodOptions}
+            value={period}
+          />
         </div>
       </div>
     </Card>

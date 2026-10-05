@@ -182,3 +182,9 @@ Furthermore, consider the [code structure](./portal/README.md#structure), which 
     - Verbs: conjugate for _você_ (third person) — "Clique", "Use" — not "Clica", "Usa".
     - Pronouns: prefer "você" / "lhe"; avoid "te" / "ti" / "contigo".
   - Keep established product terms untranslated, as the rest of the UI does (e.g. "share tokens", "Testnet").
+
+## portal-backend/api rules
+
+_Applies to `portal-backend/api/**`._
+
+- When a change adds or removes an endpoint, or changes its URL path (a route path or a router mount path), stop and tell the user that the DevOps team must update their monitoring. List each affected URL and the type of change (added, removed or changed). Do not open an issue and do not suggest a repository: the user opens the issue manually. Ask the user to confirm that they opened it, and do not mark the task as done until they confirm.

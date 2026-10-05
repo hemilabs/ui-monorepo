@@ -188,7 +188,8 @@
         "reserve-buffer": "Reserve Buffer",
         "share": "Share",
         "title": "Composition",
-        "tokens-count": "{count, plural, one {# token} other {# tokens}}"
+        "tokens-count": "{count, plural, one {# token} other {# tokens}}",
+        "view-mode": "View mode"
       },
       "deposit-successful": "Deposit successful",
       "drawer": {
@@ -235,7 +236,9 @@
         "1-week": "1 week",
         "1-year": "1 year",
         "apy": "APY",
+        "metric": "Metric",
         "month": "{count, plural, one {# month} other {# months}}",
+        "period": "Period",
         "pool-deposits": "Pool deposits",
         "title": "Historical metrics"
       },
@@ -398,10 +401,12 @@
       "increased-by": "increased by",
       "month": "{count, plural, one {# month} other {# months}}",
       "non-circulating": "Non-circulating",
+      "period": "Period",
       "share-of-supply": "{share} of supply",
       "staked": "Staked",
       "title": "{symbol} supply",
-      "total": "Total"
+      "total": "Total",
+      "unit": "Unit"
     },
     "apy-estimate": "APY figures are estimates. The actual return changes with the global amount staked.",
     "claim-rewards": {
@@ -777,6 +782,8 @@
           "withdrawals": "Withdrawals"
         }
       },
+      "no-matching-transactions": "No matching transactions",
+      "no-matching-transactions-hint": "Try changing the filters.",
       "no-transactions": "No transactions made",
       "no-transactions-get-started": "Get started by tunneling assets from and to hemi",
       "subtitle": "Track the status and details of your Hemi transactions.",

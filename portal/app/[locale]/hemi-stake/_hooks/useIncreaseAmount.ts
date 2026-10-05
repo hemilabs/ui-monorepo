@@ -10,13 +10,14 @@ import {
   type StakingDashboardOperation,
   StakingDashboardStatus,
   type StakingDashboardToken,
-  type StakingPosition,
 } from 'types/stakingDashboard'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { parseTokenUnits } from 'utils/token'
 import { getVeHemiContractAddress, IncreaseAmountEvents } from 've-hemi-actions'
 import { increaseAmount } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
+
+import { updatePosition } from '../_utils/positionsCache'
 
 import { getPositionDelegationDetailsQueryKey } from './usePositionDelegationDetails'
 import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
@@ -143,12 +144,13 @@ export const useIncreaseAmount = function ({
 
         queryClient.setQueryData(
           stakingPositionQueryKey,
-          (old: StakingPosition[] | undefined = []) =>
-            old.map(position =>
-              position.tokenId === tokenId
-                ? { ...position, amount: position.amount + amount }
-                : position,
-            ),
+          updatePosition({
+            tokenId,
+            update: position => ({
+              ...position,
+              amount: position.amount + amount,
+            }),
+          }),
         )
 
         // fees

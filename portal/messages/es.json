@@ -188,7 +188,8 @@
         "reserve-buffer": "Reserva de liquidez",
         "share": "Participación",
         "title": "Composición",
-        "tokens-count": "{count, plural, one {# token} other {# tokens}}"
+        "tokens-count": "{count, plural, one {# token} other {# tokens}}",
+        "view-mode": "Modo de vista"
       },
       "deposit-successful": "Depósito exitoso",
       "drawer": {
@@ -235,7 +236,9 @@
         "1-week": "1 semana",
         "1-year": "1 año",
         "apy": "TEA",
+        "metric": "Métrica",
         "month": "{count, plural, one {# mes} other {# meses}}",
+        "period": "Período",
         "pool-deposits": "Depósitos del fondo",
         "title": "Métricas históricas"
       },
@@ -398,10 +401,12 @@
       "increased-by": "aumentó",
       "month": "{count, plural, one {# mes} other {# meses}}",
       "non-circulating": "Fuera de circulación",
+      "period": "Período",
       "share-of-supply": "{share} de la oferta",
       "staked": "En stake",
       "title": "Oferta de {symbol}",
-      "total": "Total"
+      "total": "Total",
+      "unit": "Unidad"
     },
     "apy-estimate": "Las cifras de TEA son estimaciones. El retorno real cambia según la cantidad global en stake.",
     "claim-rewards": {
@@ -777,6 +782,8 @@
           "withdrawals": "Retiros"
         }
       },
+      "no-matching-transactions": "No hay transacciones coincidentes",
+      "no-matching-transactions-hint": "Intente cambiar los filtros.",
       "no-transactions": "No se han realizado transacciones",
       "no-transactions-get-started": "Comience tunelizando activos desde y hacia hemi.",
       "subtitle": "Consulte el estado y la información detallada de sus transacciones en Hemi.",

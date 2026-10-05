@@ -1,8 +1,5 @@
 import { Interport } from 'components/customTunnelsThroughPartners/interport'
 import { Jumper } from 'components/customTunnelsThroughPartners/jumper'
-import { Orbiter } from 'components/customTunnelsThroughPartners/orbiter'
-import { OwIto } from 'components/customTunnelsThroughPartners/owito'
-import { Relay } from 'components/customTunnelsThroughPartners/relay'
 import { Stargate } from 'components/customTunnelsThroughPartners/stargate'
 import { WarningIcon } from 'components/icons/warningIcon'
 import { Tab, Tabs } from 'components/tabs'
@@ -28,7 +25,7 @@ function ThirdPartyOptions({ fromChainId, toChainId }: ThirdPartyOptionsProps) {
   const toNativeToken = getNativeToken(toChainId)
 
   return (
-    <div className="max-h-72 items-center justify-center space-y-3 overflow-y-auto rounded-lg bg-neutral-50 p-4">
+    <div className="space-y-3 rounded-lg bg-neutral-50 p-4">
       <Stargate
         fromToken={fromNativeToken}
         label="Stargate"
@@ -40,13 +37,6 @@ function ThirdPartyOptions({ fromChainId, toChainId }: ThirdPartyOptionsProps) {
         toToken={toNativeToken}
       />
       <Interport fromChainId={fromChainId} toChainId={toChainId} />
-      <Orbiter
-        fromToken={fromNativeToken}
-        label="Orbiter"
-        toToken={toNativeToken}
-      />
-      <OwIto />
-      <Relay />
     </div>
   )
 }

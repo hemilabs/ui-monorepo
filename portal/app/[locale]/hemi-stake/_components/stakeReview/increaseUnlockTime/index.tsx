@@ -22,6 +22,7 @@ import { useStakingDashboard } from '../../../_context/stakingDashboardContext'
 import { useEstimateIncreaseUnlockTimeFees } from '../../../_hooks/useEstimateIncreaseUnlockTimeFees'
 import { useIncreaseUnlockTime } from '../../../_hooks/useIncreaseUnlockTime'
 import { minDays } from '../../../_utils/lockCreationTimes'
+import { getLockupErrorMessage } from '../../../_utils/lockupError'
 import { getNearestValidValues, isValidLockup } from '../../lockup'
 
 import { Preview } from './preview'
@@ -191,10 +192,11 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
     value: currentLockupDays ?? minDays,
   })
 
-  const isValid = isValidLockup({
-    minLocked: currentLockupDays,
-    value: lockupDays!,
-  })
+  const minLocked = nearest?.maxValue ?? minDays
+
+  const isValid = isValidLockup({ minLocked, value: lockupDays! })
+
+  const lockupError = getLockupErrorMessage({ minLocked, value: lockupDays! })
 
   return (
     <>
@@ -217,7 +219,7 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
         isRunningOperation={isRunningOperation}
         isValid={isValid}
         lockupDays={lockupDays!}
-        minLocked={nearest?.maxValue ?? minDays}
+        minLocked={minLocked}
         onSubmit={increaseUnlockTime}
         onUpdateInputDays={function (value) {
           updateStakingDashboardOperation({
@@ -231,6 +233,7 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
         }}
         operationRunning={operationRunning}
         steps={getSteps()}
+        validationError={lockupError && t(lockupError.key, lockupError.values)}
       />
     </>
   )

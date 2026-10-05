@@ -29,6 +29,13 @@ export const formatNumber = (value: number | string) =>
 export const formatFiatNumber = (value: number | string) =>
   fiatRounder(value, { shouldFormat: true })
 
+export const formatFiatAmount = function (amount: number | string) {
+  const value = Big(amount)
+  return value.gt(0) && value.lt(0.01)
+    ? `< $0.01`
+    : `$${formatFiatNumber(amount)}`
+}
+
 export const formatPercentage = (value: number | string) =>
   `${percentageRounder(value, { shouldFormat: true })}%`
 
@@ -152,4 +159,16 @@ export const formatShortDate = (
     day: '2-digit',
     month: 'short',
     timeZone,
+  }).format(date)
+
+export const formatShortDateWithYear = (
+  date: Date,
+  locale: string,
+  timeZone?: string,
+) =>
+  new Intl.DateTimeFormat(locale, {
+    day: '2-digit',
+    month: 'short',
+    timeZone,
+    year: 'numeric',
   }).format(date)

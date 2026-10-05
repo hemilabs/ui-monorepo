@@ -56,7 +56,7 @@ describe('getEpochEnd', function () {
     )
   })
 
-  // On mainnet each pot settles at (epoch + 1) * epochLength, so `now` on a boundary
+  // On mainnet each epoch settles at (epoch + 1) * epochLength, so `now` on a boundary
   // opens that epoch rather than closing it. Flip this and every payout shifts by one.
   it('settles a full epoch later when it starts on a boundary', function () {
     expect(getEpochEnd({ epochsAhead: 0, now: epochAlignedNow })).toBe(

@@ -7,7 +7,7 @@ type FundedStream = {
 
 const baselineLabel = stringToHex('baseline', { size: 32 })
 
-export const getBaselinePot = (streams: FundedStream[]) =>
+export const getBaseline = (streams: FundedStream[]) =>
   streams
     .filter(stream => stream.label === baselineLabel)
     .reduce(

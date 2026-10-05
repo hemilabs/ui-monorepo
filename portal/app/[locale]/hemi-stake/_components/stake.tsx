@@ -9,7 +9,6 @@ import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useState } from 'react'
 import { StakingOperationRunning } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
-import { getTotal } from 'utils/getTotal'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
@@ -22,6 +21,7 @@ import { useStakingDashboard } from '../_context/stakingDashboardContext'
 import { useEstimateCreateLockFees } from '../_hooks/useEstimateCreateLockFees'
 import { useStake } from '../_hooks/useStake'
 import { daysToSeconds } from '../_utils/lockCreationTimes'
+import { getLockupErrorMessage } from '../_utils/lockupError'
 
 import { FormContent, StakingForm } from './form'
 import { isValidLockup } from './lockup'
@@ -75,6 +75,8 @@ export const Stake = function () {
 
   const canStake = validInput && isValidLockup({ value: lockupDays })
 
+  const lockupError = getLockupErrorMessage({ value: lockupDays })
+
   const { fees: approvalTokenGasFees, isError: isApprovalTokenGasFeesError } =
     useEstimateApproveErc20Fees({
       amount,
@@ -99,13 +101,6 @@ export const Stake = function () {
     label: t('common.network-gas-fee', { network: hemi.name }),
     token: getNativeToken(hemi.id),
   })
-
-  const getTotalStake = () =>
-    getTotal({
-      fees: createLockGasFees,
-      fromInput: input,
-      fromToken: token,
-    })
 
   const { isPending: isRunningOperation, mutate: stake } = useStake({
     input,
@@ -136,11 +131,7 @@ export const Stake = function () {
     if (!canStake) return null
     return (
       <FeesContainer>
-        <EvmFeesSummary
-          gas={getGas()}
-          operationToken={token}
-          total={getTotalStake()}
-        />
+        <EvmFeesSummary gas={getGas()} operationToken={token} />
       </FeesContainer>
     )
   }
@@ -154,7 +145,10 @@ export const Stake = function () {
       needsApproval={needsApproval}
       operationRunning={operationRunning}
       token={token}
-      validationError={validationError}
+      validationError={
+        validationError ??
+        (lockupError && t(lockupError.key, lockupError.values))
+      }
     />
   )
 

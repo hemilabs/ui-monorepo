@@ -26,6 +26,7 @@ import {
   wholeDaysToSeconds,
 } from '../../_utils/lockCreationTimes'
 import { lockupApy } from '../../_utils/lockupApy'
+import { getLockupErrorMessage } from '../../_utils/lockupError'
 import { sanitizeLockup } from '../../_utils/sanitizeLockup'
 
 import { LockupPresets } from './lockupPresets'
@@ -37,14 +38,8 @@ type ValidLockupProps = {
   value: number
 }
 
-export const isValidLockup = ({
-  minLocked = minDays,
-  value,
-}: ValidLockupProps) =>
-  !Number.isNaN(value) &&
-  value >= minLocked &&
-  value <= maxDays &&
-  (value % step === 0 || value === maxDays)
+export const isValidLockup = (props: ValidLockupProps) =>
+  getLockupErrorMessage(props) === undefined
 
 type NearestValidValues = {
   minValue: number | null | undefined
@@ -118,7 +113,7 @@ const VotingPowerEquivalence = function ({
       <DisplayAmount amount={amount} token={token} />
       <span>=</span>
       {isLoadingVeHemiToken || !veHemiToken ? (
-        <Skeleton className="h-4 w-16" />
+        <Skeleton className="w-16" />
       ) : (
         <DisplayAmount amount={votingPower} token={veHemiToken} />
       )}
@@ -426,9 +421,13 @@ export function Lockup({
             />
           )}
         </div>
-        <Divider />
-        <InfoRow label={t('form.expire-date')} value={expireDate} />
-        <Divider />
+        {minLocked !== undefined && (
+          <>
+            <Divider />
+            <InfoRow label={t('form.expire-date')} value={expireDate} />
+            <Divider />
+          </>
+        )}
         <InfoRow
           label={`${t('voting-power')}:`}
           value={
@@ -440,14 +439,11 @@ export function Lockup({
           }
         />
       </div>
-      <div className="mt-5 space-y-2">
-        <WarningMessage isError={touched && !valid}>
-          {t('form.lockup-increment-warning')}
-        </WarningMessage>
-        {minLocked && (
+      {minLocked && (
+        <div className="mt-5">
           <WarningMessage>{t('form.lockup-extend-warning')}</WarningMessage>
-        )}
-      </div>
+        </div>
+      )}
     </>
   )
 }

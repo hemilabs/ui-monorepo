@@ -40,21 +40,30 @@ export const HemiStakePage = function () {
 
   return (
     <StakingDashboardProvider>
-      {isConnected ? <WalletStatsSection /> : null}
+      {isConnected && (
+        <div className="mt-8 lg:hidden">
+          <WalletStatsSection />
+        </div>
+      )}
       <div
         className={`mt-6 flex gap-6 lg:flex-row ${
           isConnected ? 'flex-col-reverse' : 'flex-col'
         }`}
       >
         <div className="w-full lg:w-1/2 xl:shrink xl:grow-2 xl:basis-0">
-          {isConnected ? (
-            <div className="mb-4 ml-1 flex flex-row items-center justify-between gap-x-2">
-              <div className="flex flex-1 md:w-fit md:flex-none">
-                <StakeTableFilter filter={filter} onFilter={handleFilter} />
+          {isConnected && (
+            <>
+              <div className="mb-6 hidden lg:block">
+                <WalletStatsSection />
               </div>
-              <ClaimAllRewards positions={data} />
-            </div>
-          ) : null}
+              <div className="mb-4 ml-1 flex flex-row items-center justify-between gap-x-2">
+                <div className="flex flex-1 md:w-fit md:flex-none">
+                  <StakeTableFilter filter={filter} onFilter={handleFilter} />
+                </div>
+                <ClaimAllRewards positions={data} />
+              </div>
+            </>
+          )}
           <StakeTable
             data={filteredData}
             filter={filter}

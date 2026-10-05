@@ -29,6 +29,13 @@ export const formatNumber = (value: number | string) =>
 export const formatFiatNumber = (value: number | string) =>
   fiatRounder(value, { shouldFormat: true })
 
+export const formatFiatAmount = function (amount: number | string) {
+  const value = Big(amount)
+  return value.gt(0) && value.lt(0.01)
+    ? `< $0.01`
+    : `$${formatFiatNumber(amount)}`
+}
+
 export const formatPercentage = (value: number | string) =>
   `${percentageRounder(value, { shouldFormat: true })}%`
 

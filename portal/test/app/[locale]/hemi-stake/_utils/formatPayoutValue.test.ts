@@ -6,7 +6,7 @@ const hemi = { symbol: 'HEMI' }
 describe('formatPayoutValue', function () {
   it('prices the payout in fiat when a price is known', function () {
     expect(formatPayoutValue({ ...hemi, price: 0.0065, value: 1764 })).toBe(
-      '$11.466',
+      '$11.47',
     )
   })
 
@@ -18,7 +18,7 @@ describe('formatPayoutValue', function () {
 
   it('keeps a small payout readable instead of rounding it to zero', function () {
     expect(formatPayoutValue({ ...hemi, price: 0.00627, value: 0.5 })).toBe(
-      '$0.003135',
+      '< $0.01',
     )
   })
 

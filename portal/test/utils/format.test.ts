@@ -6,6 +6,7 @@ import {
   formatDate,
   formatEvmAddress,
   formatEvmHash,
+  formatFiatAmount,
   formatFutureTime,
   formatPastTime,
   formatPercentage,
@@ -177,6 +178,28 @@ describe('utils/format', function () {
         expect(result).toBe(expected)
       },
     )
+  })
+
+  describe('formatFiatAmount', function () {
+    it('shows two decimals', function () {
+      expect(formatFiatAmount(12.345)).toBe('$12.35')
+    })
+
+    it('flags anything under a cent instead of rounding it to zero', function () {
+      expect(formatFiatAmount(0.0049)).toBe('< $0.01')
+    })
+
+    it('shows a cent as a cent', function () {
+      expect(formatFiatAmount(0.01)).toBe('$0.01')
+    })
+
+    it('reads zero as zero, not as less than a cent', function () {
+      expect(formatFiatAmount(0)).toBe('$0.00')
+    })
+
+    it('groups thousands', function () {
+      expect(formatFiatAmount('1234567')).toBe('$1,234,567.00')
+    })
   })
 
   describe('formatTVL', function () {

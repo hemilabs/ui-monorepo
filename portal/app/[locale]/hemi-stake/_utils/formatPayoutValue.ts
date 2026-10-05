@@ -1,5 +1,4 @@
-import { defaultLocale } from 'i18n/routing'
-import { formatNumber, formatTokenPrice } from 'utils/format'
+import { formatFiatAmount, formatNumber } from 'utils/format'
 
 export const formatPayoutValue = ({
   price,
@@ -12,4 +11,4 @@ export const formatPayoutValue = ({
 }) =>
   price === undefined
     ? `${formatNumber(value)} ${symbol}`
-    : formatTokenPrice(value * price, defaultLocale)
+    : formatFiatAmount(value * price)

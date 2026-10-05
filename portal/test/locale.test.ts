@@ -29,6 +29,7 @@ const dynamicallyReferencedKeys = [
   'hemi-stake.analytics.circulating',
   'hemi-stake.analytics.non-circulating',
   'hemi-stake.analytics.staked',
+  'hemi-stake.form.lockup-increment-warning',
   'metadata.title',
 ]
 

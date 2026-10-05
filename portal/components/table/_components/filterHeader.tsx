@@ -2,14 +2,8 @@ import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
 import { Menu } from 'components/menu'
-import {
-  type FocusEvent,
-  type KeyboardEvent,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react'
+import { useMenuKeyboard } from 'hooks/useMenuKeyboard'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import { HeaderButton } from './headerButton'
@@ -77,57 +71,12 @@ export const FilterHeader = function <TOption extends string>({
     [align, isOpen],
   )
 
-  useEffect(
-    function focusFirstItem() {
-      if (!isOpen) {
-        return
-      }
-      menuRef.current
-        ?.querySelector<HTMLButtonElement>('button')
-        ?.focus({ preventScroll: true })
-    },
-    [isOpen],
-  )
-
-  const closeAndFocusTrigger = function () {
-    setIsOpen(false)
-    triggerRef.current?.focus()
-  }
-
-  const onKeyDown = function (event: KeyboardEvent) {
-    if (!isOpen) {
-      return
-    }
-    if (event.key === 'Escape') {
-      closeAndFocusTrigger()
-      return
-    }
-    if (event.key !== 'Tab') {
-      return
-    }
-    const buttons = Array.from(
-      menuRef.current?.querySelectorAll<HTMLButtonElement>('button') ?? [],
-    )
-    const edgeItem = event.shiftKey ? buttons[0] : buttons.at(-1)
-    if (event.target !== edgeItem) {
-      return
-    }
-    if (event.shiftKey) {
-      event.preventDefault()
-    }
-    closeAndFocusTrigger()
-  }
-
-  const onBlur = function ({ relatedTarget }: FocusEvent) {
-    if (
-      relatedTarget === null ||
-      menuRef.current?.contains(relatedTarget) ||
-      triggerRef.current?.contains(relatedTarget)
-    ) {
-      return
-    }
-    setIsOpen(false)
-  }
+  const { closeAndFocusTrigger, onBlur, onKeyDown } = useMenuKeyboard({
+    isOpen,
+    menuRef,
+    setIsOpen,
+    triggerRef,
+  })
 
   const items = options.map(function (option) {
     const isSelected = option === selected

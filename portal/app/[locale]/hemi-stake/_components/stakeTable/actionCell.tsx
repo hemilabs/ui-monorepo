@@ -67,31 +67,31 @@ export function ActionCell({ row }: Props) {
 
   const { amount, lockTime, timestamp, tokenId } = row.original
 
-  const MENU_WIDTH = 275
-  const MENU_HEIGHT = 60
   const MENU_OFFSET = 4
 
   useEffect(
     function calcMenuPosition() {
       if (isOpen && buttonRef.current) {
         const rect = buttonRef.current.getBoundingClientRect()
+        const menuHeight = menuRef.current?.offsetHeight ?? 0
+        const menuWidth = menuRef.current?.offsetWidth ?? 0
         const spaceBelow = viewportHeight - rect.bottom
 
         // Detect if menu should open upward
-        const shouldFlip = spaceBelow < MENU_HEIGHT + MENU_OFFSET
+        const shouldFlip = spaceBelow < menuHeight + MENU_OFFSET
 
         // Detect if button is too far left (priority column on mobile)
-        const isNearLeftEdge = rect.left < MENU_WIDTH / 2
+        const isNearLeftEdge = rect.left < menuWidth / 2
 
         // If near the left edge, align menu to the left of the button
         // Otherwise, align to the right as before
         let leftPosition = isNearLeftEdge
           ? rect.left + MENU_OFFSET
-          : rect.right - MENU_WIDTH
+          : rect.right - menuWidth
 
         // Ensure the menu doesn't go off screen to the right
-        if (leftPosition + MENU_WIDTH > viewportWidth) {
-          leftPosition = viewportWidth - MENU_WIDTH - MENU_OFFSET
+        if (leftPosition + menuWidth > viewportWidth) {
+          leftPosition = viewportWidth - menuWidth - MENU_OFFSET
         }
 
         // Ensure the menu doesn't go off screen to the left
@@ -102,7 +102,7 @@ export function ActionCell({ row }: Props) {
         setMenuPosition({
           left: leftPosition,
           top: shouldFlip
-            ? rect.top - MENU_HEIGHT - MENU_OFFSET
+            ? rect.top - menuHeight - MENU_OFFSET
             : rect.bottom + MENU_OFFSET,
         })
       }

@@ -6,7 +6,7 @@ const settings = {
   coinMarketCap: {
     apiKey: env('COIN_MARKET_CAP_API_KEY', ''),
     ids: Object.fromEntries(
-      env('COIN_MARKET_CAP_IDS', 'HEMI:38159')
+      env('COIN_MARKET_CAP_IDS', 'HEMI:38159,BTC:1')
         .split(',')
         .map(pair => pair.split(':')),
     ) as Record<string, string>,

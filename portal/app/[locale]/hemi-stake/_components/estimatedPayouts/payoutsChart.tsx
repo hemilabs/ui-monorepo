@@ -21,6 +21,9 @@ const chartColors = {
 }
 
 const chartHeight = 132
+const tooltipCharWidth = 5
+const tooltipHeight = 22
+const tooltipPadding = 20
 const chartPadding = { bottom: 24, left: 64, right: 20, top: 8 }
 const fallbackChartWidth = 320
 
@@ -28,6 +31,11 @@ const widthByBreakpoint: ReadonlyArray<[number, number]> = [
   [screenBreakpoints.lg, 460],
   [screenBreakpoints.md, 420],
 ]
+
+const tooltipLabelStyle = {
+  fontFamily: 'Geist, sans-serif',
+  fontSize: 9,
+}
 
 const tickLabelStyle = {
   fill: chartColors.neutral400,
@@ -102,6 +110,14 @@ export const PayoutsChart = function ({
     widthByBreakpoint.find(([minWidth]) => windowWidth >= minWidth)?.[1] ??
     fallbackChartWidth
 
+  const toTooltipLabel = (point: PayoutPoint) =>
+    `${formatDate(point.x)}  ${formatValue(point.y)}`
+
+  const tooltipWidth =
+    Math.max(...series.map(point => toTooltipLabel(point).length), 0) *
+      tooltipCharWidth +
+    tooltipPadding
+
   const hasPayouts = series.some(point => point.y > 0)
   const maxY = Math.max(...series.map(point => point.y), 0)
 
@@ -136,8 +152,9 @@ export const PayoutsChart = function ({
               <VictoryTooltip
                 constrainToVisibleArea
                 cornerRadius={8}
-                flyoutPadding={{ bottom: 6, left: 10, right: 10, top: 6 }}
+                flyoutHeight={tooltipHeight}
                 flyoutStyle={{ fill: 'white', stroke: chartColors.neutral200 }}
+                flyoutWidth={tooltipWidth}
                 labelComponent={
                   <PayoutTooltipLabel
                     formatDate={formatDate}
@@ -145,10 +162,11 @@ export const PayoutsChart = function ({
                   />
                 }
                 pointerLength={0}
+                style={tooltipLabelStyle}
               />
             }
             labels={({ datum }: { datum: PayoutPoint }) =>
-              `${formatDate(datum.x)}  ${formatValue(datum.y)}`
+              toTooltipLabel(datum)
             }
             voronoiDimension="x"
           />

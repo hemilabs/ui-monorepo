@@ -3,7 +3,7 @@ import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { Row } from '@tanstack/react-table'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useMenuKeyboard } from 'hooks/useMenuKeyboard'
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { type StakingPosition } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
@@ -69,7 +69,7 @@ export function ActionCell({ row }: Props) {
 
   const MENU_OFFSET = 4
 
-  useEffect(
+  useLayoutEffect(
     function calcMenuPosition() {
       if (isOpen && buttonRef.current) {
         const rect = buttonRef.current.getBoundingClientRect()

@@ -255,7 +255,7 @@ These environment variables control how the `cron` job behaves:
 | ----------------------- | ----------------------------------------------------------------------------------- | ------------------------ |
 | CACHE_EXPIRATION_MIN    | How long the prices will be kept in the cache.                                      | 60                       |
 | COIN_MARKET_CAP_API_KEY | The CoinMarketCap API key.                                                          |                          |
-| COIN_MARKET_CAP_IDS     | Comma separated `SYMBOL:id` pairs whose daily price history is kept.                | HEMI:38159               |
+| COIN_MARKET_CAP_IDS     | Comma separated `SYMBOL:id` pairs whose daily price history is kept.                | HEMI:38159,BTC:1         |
 | COIN_MARKET_CAP_SLUGS   | String of comma separated token slugs. I.e. "bitcoin,ethereum"                      | bitcoin                  |
 | NODE_ENV                | Sentry environment. `production` in the Docker images.                              | `development`            |
 | REDIS_URL               | The URL of the Redis database.                                                      | `redis://localhost:6379` |

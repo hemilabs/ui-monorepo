@@ -39,6 +39,13 @@ export const formatFiatAmount = function (amount: number | string) {
 export const formatPercentage = (value: number | string) =>
   `${percentageRounder(value, { shouldFormat: true })}%`
 
+export const formatApyDisplay = function (apy: number) {
+  if (apy !== 0 && apy > -0.01 && apy < 0.01) {
+    return apy > 0 ? '< 0.01%' : '< -0.01%'
+  }
+  return formatPercentage(apy)
+}
+
 // Shared function to format relative time based on thresholds
 const formatRelativeTime = function ({
   locale,

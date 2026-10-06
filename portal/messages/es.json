@@ -396,7 +396,7 @@
       "total": "Total",
       "unit": "Unidad"
     },
-    "apy-estimate": "Las cifras de TEA son estimaciones. El retorno real cambia según la cantidad global en stake.",
+    "apy-estimate": "Nota: hemiStake se lanzó hace poco, por lo que la TEA proyectada es alta. El pool de recompensas es compartido, así que a medida que se haga staking de más HEMI la TEA bajará.",
     "claim-rewards": {
       "heading": "Reclamar recompensas",
       "subheading": "Estamos procesando su solicitud de recompensas. Puede seguir el progreso a continuación."
@@ -429,10 +429,11 @@
       "unlock-token": "Desbloquear {symbol}"
     },
     "estimated-payouts": {
+      "after-unlock": "después del desbloqueo",
+      "apy": "{percentage} TEA",
       "carried-from": "Con base en la época {epoch}, la última financiada.",
       "enter-minimum-amount": "Ingrese al menos {amount} {symbol} para ver su estimación.",
       "first-year": "en el primer año",
-      "forecast-note": "Los pagos bajan a medida que su bloqueo decae, y cambian según cuánto hagan staking los demás.",
       "load-failed": "No se pudieron cargar los datos de recompensas.",
       "locked-summary": "{amount} {symbol} bloqueados por {days, plural, one {# día} other {# días}}",
       "next-payout-line": "próximo pago <amount></amount> · época {epoch}, se liquida el {date}",
@@ -443,7 +444,7 @@
     },
     "form": {
       "approve-and-stake": "Aprobar y Hacer Stake",
-      "approximate": "~{percentage}%",
+      "approximate": "~{percentage}",
       "custom": "Personalizado",
       "days": "{days, plural, one {{days} día} other {{days} días}}",
       "expire-date": "Fecha de vencimiento:",
@@ -456,7 +457,6 @@
       "staking": "Haciendo stake...",
       "title": "Stake",
       "unlocking": "Desbloqueando...",
-      "up-to": "hasta {percentage}%",
       "use-or": "Utilice <min></min> o <max></max>",
       "years": "{years, plural, one {{years} año} other {{years} años}}"
     },

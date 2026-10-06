@@ -1,6 +1,6 @@
 import { hasLocale } from 'use-intl'
 
-const defaultLocale = 'en' as const
+export const defaultLocale = 'en' as const
 export const locales = [defaultLocale, 'es', 'pt'] as const
 
 export type Locale = (typeof locales)[number]

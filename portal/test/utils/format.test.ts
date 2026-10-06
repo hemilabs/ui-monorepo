@@ -1,6 +1,7 @@
 import {
   formatBtcAddress,
   formatBtcHash,
+  formatApyDisplay,
   formatCompactFiat,
   formatCompactFiatParts,
   formatDate,
@@ -178,6 +179,32 @@ describe('utils/format', function () {
         expect(result).toBe(expected)
       },
     )
+  })
+
+  describe('formatApyDisplay', function () {
+    it('flags a tiny positive apy instead of rounding it to zero', function () {
+      expect(formatApyDisplay(0.005)).toBe('< 0.01%')
+    })
+
+    it('flags a tiny negative apy the same way', function () {
+      expect(formatApyDisplay(-0.005)).toBe('< -0.01%')
+    })
+
+    it('reads zero as zero, not as less than a hundredth', function () {
+      expect(formatApyDisplay(0)).toBe('0.00%')
+    })
+
+    it('formats a negative apy beyond the threshold', function () {
+      expect(formatApyDisplay(-5.25)).toBe('-5.25%')
+    })
+
+    it('formats the threshold itself', function () {
+      expect(formatApyDisplay(0.01)).toBe('0.01%')
+    })
+
+    it('formats a larger apy', function () {
+      expect(formatApyDisplay(5.25)).toBe('5.25%')
+    })
   })
 
   describe('formatFiatAmount', function () {

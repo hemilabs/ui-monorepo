@@ -1,8 +1,41 @@
-import { maxDays, oneYear, sixMonths, twoYears } from './lockCreationTimes'
+import { minLockAmount } from 've-hemi-actions'
 
-export const lockupApy: Record<number, number> = {
-  [maxDays]: 80,
-  [oneYear]: 20,
-  [sixMonths]: 10,
-  [twoYears]: 40,
+import {
+  maxDays,
+  oneYear,
+  sixMonths,
+  twoYears,
+  wholeDaysToSeconds,
+} from './lockCreationTimes'
+import { getRewardsForecastByLockDurations } from './stakeRewardsForecast'
+
+const presetDays = [sixMonths, oneYear, twoYears, maxDays]
+
+export const getLockupApys = function ({
+  amount,
+  now,
+  transferableClassBaseline,
+  transferableClassWeight,
+}: {
+  amount: bigint
+  now: number
+  transferableClassBaseline: bigint
+  transferableClassWeight: bigint
+}) {
+  const forecasts = getRewardsForecastByLockDurations({
+    amount: amount < minLockAmount ? minLockAmount : amount,
+    lockDurationsInSeconds: presetDays.map(days =>
+      Number(wholeDaysToSeconds(days)),
+    ),
+    now,
+    transferableClassBaseline,
+    transferableClassWeight,
+  })
+
+  return Object.fromEntries(
+    presetDays.map((days, index) => [
+      days,
+      forecasts[index].yearOneReturnRatio,
+    ]),
+  )
 }

@@ -12,6 +12,8 @@ import {
 } from 'utils/format'
 import { formatUnits } from 'viem'
 
+import { formatApyFromRatio } from '../../_utils/formatApyFromRatio'
+
 type Props = {
   carriedFrom: number | undefined
   currentEpoch: number
@@ -20,6 +22,7 @@ type Props = {
   lockupDays: number
   nextPayout: bigint
   nextPayoutAt: number
+  yearOneReturnRatio: number
   yearOneTotal: bigint
 }
 
@@ -31,30 +34,32 @@ export const PayoutHeadline = function ({
   lockupDays,
   nextPayout,
   nextPayoutAt,
+  yearOneReturnRatio,
   yearOneTotal,
 }: Props) {
   const locale = useLocale()
   const t = useTranslations('hemi-stake.estimated-payouts')
+  const tStake = useTranslations('hemi-stake')
   const token = useHemiToken()
 
   return (
     <div className="flex flex-col gap-y-2">
       <div className="flex flex-wrap items-baseline gap-x-2">
         <span className="text-xl font-semibold text-neutral-950 sm:text-2xl">
-          <RenderFiatBalance
-            balance={yearOneTotal}
-            customFormatter={formatFiatAmount}
-            queryStatus="success"
+          <DisplayAmount
+            amount={formatUnits(yearOneTotal, token.decimals)}
             token={token}
           />
         </span>
-        <span className="flex items-center gap-x-1 text-sm text-neutral-500">
-          {t('first-year')}
+        <span className="text-sm text-neutral-500">{t('first-year')}</span>
+        <span className="hidden text-sm text-neutral-500 sm:inline">·</span>
+        <span className="flex items-center gap-x-1 text-sm font-medium text-neutral-700">
+          {t('apy', { percentage: formatApyFromRatio(yearOneReturnRatio) })}
           <Tooltip
-            id="estimated-payouts-note"
+            id="estimated-payouts-apy"
             text={
               <div className="flex flex-col gap-y-2">
-                <span>{t('forecast-note')}</span>
+                <span>{tStake('apy-estimate')}</span>
                 {carriedFrom !== undefined && (
                   <span>{t('carried-from', { epoch: carriedFrom })}</span>
                 )}
@@ -70,8 +75,10 @@ export const PayoutHeadline = function ({
       </div>
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <div className="rounded-full bg-orange-600 px-2.5 py-1 text-xxs font-medium text-white">
-          <DisplayAmount
-            amount={formatUnits(yearOneTotal, token.decimals)}
+          <RenderFiatBalance
+            balance={yearOneTotal}
+            customFormatter={formatFiatAmount}
+            queryStatus="success"
             token={token}
           />
         </div>

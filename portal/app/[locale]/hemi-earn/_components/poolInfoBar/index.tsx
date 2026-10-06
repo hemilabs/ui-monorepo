@@ -3,9 +3,12 @@ import { ExternalLink } from 'components/externalLink'
 import { TokenLogo } from 'components/tokenLogo'
 import { useChain } from 'hooks/useChain'
 import { useLocale, useTranslations } from 'use-intl'
-import { formatCompactFiat, formatEvmAddress } from 'utils/format'
+import {
+  formatApyDisplay,
+  formatCompactFiat,
+  formatEvmAddress,
+} from 'utils/format'
 
-import { formatApyDisplay } from '../../_utils/formatApy'
 import { type EarnPool } from '../../types'
 import { RenderEarnFiatBalance } from '../earnFiatBalance'
 

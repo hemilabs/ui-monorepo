@@ -1,4 +1,5 @@
 import Big from 'big.js'
+import { isDataUnavailable } from 'utils/queryStatus'
 
 // Unrealized earned USD for one position: current pegged value minus the pegged
 // cost basis, converted to token units and priced. Both inputs are pegged base
@@ -24,4 +25,15 @@ export const positionEarnedUsd = function ({
     .div(Big(10).pow(decimals))
     .times(price)
   return earned.lt(0) ? Big(0) : earned
+}
+
+export const costBasisState = function ({
+  fetchStatus,
+  status,
+}: Parameters<typeof isDataUnavailable>[0]) {
+  const unavailable = isDataUnavailable({ fetchStatus, status })
+  return {
+    isCostBasisPending: status === 'pending' && !unavailable,
+    isCostBasisUnavailable: unavailable,
+  }
 }

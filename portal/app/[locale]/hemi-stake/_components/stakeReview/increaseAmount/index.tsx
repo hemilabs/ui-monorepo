@@ -16,7 +16,6 @@ import {
   type StakingOperationRunning,
 } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
-import { getTotal } from 'utils/getTotal'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
@@ -118,14 +117,6 @@ export const ReviewIncreaseAmount = function ({ onClose }: Props) {
     label: t('common.network-gas-fee', { network: hemi.name }),
     token: getNativeToken(hemi.id),
   })
-
-  const getTotalIncreaseAmount = () =>
-    getTotal({
-      fees:
-        increaseAmountFees + (needsApproval ? approvalTokenGasFees : BigInt(0)),
-      fromInput: input!,
-      fromToken: token,
-    })
 
   const getStepFees = ({
     fee,
@@ -293,7 +284,6 @@ export const ReviewIncreaseAmount = function ({ onClose }: Props) {
           onChange={handleInput}
           onSubmit={increaseAmount}
           operationRunning={operationRunning}
-          total={getTotalIncreaseAmount()}
           validInput={validInput}
           validationError={validationError}
         />

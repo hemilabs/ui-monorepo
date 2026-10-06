@@ -12,7 +12,7 @@ import {
 } from 'utils/format'
 import { formatUnits } from 'viem'
 
-import { formatApy } from '../../_utils/formatApy'
+import { formatApyFromRatio } from '../../_utils/formatApyFromRatio'
 
 type Props = {
   carriedFrom: number | undefined
@@ -54,7 +54,7 @@ export const PayoutHeadline = function ({
         <span className="text-sm text-neutral-500">{t('first-year')}</span>
         <span className="hidden text-sm text-neutral-500 sm:inline">·</span>
         <span className="flex items-center gap-x-1 text-sm font-medium text-neutral-700">
-          {t('apy', { percentage: formatApy(yearOneReturnRatio) })}
+          {t('apy', { percentage: formatApyFromRatio(yearOneReturnRatio) })}
           <Tooltip
             id="estimated-payouts-apy"
             text={

@@ -2,10 +2,9 @@ import { ArrowGrowingIcon } from 'components/icons/arrowGrowingIcon'
 import { TotalDepositsIcon } from 'components/icons/totalDepositsIcon'
 import { StatCard } from 'components/statCard'
 import { useTranslations } from 'use-intl'
-import { formatFiatNumber } from 'utils/format'
+import { formatApyDisplay, formatFiatNumber } from 'utils/format'
 
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
-import { formatApyDisplay } from '../../../_utils/formatApy'
 import { type EarnPool } from '../../../types'
 
 type Props = {

@@ -2,7 +2,7 @@ import Skeleton from 'react-loading-skeleton'
 import { useTranslations } from 'use-intl'
 import { unixNowTimestamp } from 'utils/time'
 
-import { formatApy } from '../_utils/formatApy'
+import { formatApyFromRatio } from '../_utils/formatApyFromRatio'
 import { getLockupApys } from '../_utils/lockupApy'
 
 import { useEpochSystemState } from './useEpochSystemState'
@@ -25,7 +25,7 @@ export const useLockupApySublabels = function (amount: bigint) {
 
   const toSublabel = function (ratio: number) {
     if (forecastInputs?.transferableClassBaseline !== undefined) {
-      return t('approximate', { percentage: formatApy(ratio) })
+      return t('approximate', { percentage: formatApyFromRatio(ratio) })
     }
     if (forecastInputs !== undefined || isForecastError || isSystemStateError) {
       return undefined

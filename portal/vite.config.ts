@@ -114,6 +114,8 @@ export default defineConfig(function ({ mode }) {
       'import.meta.env.VITE_BUILD_BRANCH': JSON.stringify(buildInfo.branch),
       'import.meta.env.VITE_BUILD_VERSION': JSON.stringify(buildInfo.version),
     },
+    // The polyfill plugin injects these shims at transform time, so the dep
+    // scan misses them and Vite re-optimizes and reloads after the first load.
     optimizeDeps: {
       include: polyfillShims.map(
         shim => `vite-plugin-node-polyfills/shims/${shim}`,

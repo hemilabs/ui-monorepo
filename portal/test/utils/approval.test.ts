@@ -3,6 +3,7 @@ import {
   getApprovalAmount,
   getExtraApprovalAmount,
 } from 'utils/approval'
+import { maxUint256 } from 'viem'
 import { describe, expect, it } from 'vitest'
 
 describe('getExtraApprovalAmount', function () {
@@ -24,6 +25,12 @@ describe('getExtraApprovalAmount', function () {
 
   it('returns undefined for a zero amount', function () {
     expect(getExtraApprovalAmount(BigInt(0), true)).toBeUndefined()
+  })
+
+  it('caps the amount at maxUint256 so it can be encoded as a uint256', function () {
+    expect(getExtraApprovalAmount(maxUint256 / BigInt(2), true)).toBe(
+      maxUint256,
+    )
   })
 })
 

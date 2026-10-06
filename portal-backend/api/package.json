@@ -1,6 +1,6 @@
 {
   "name": "portal-backend",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "scripts": {
     "build": "pnpm run typecheck",
     "start": "node --import=./src/instrument.ts server.ts",

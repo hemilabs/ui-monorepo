@@ -229,11 +229,6 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       : undefined
 
   const addApprovalStep = function () {
-    const showFees = [
-      DepositStatus.APPROVAL_TX_FAILED,
-      DepositStatus.APPROVAL_TX_PENDING,
-    ].includes(depositStatus)
-
     const statusMap: Partial<Record<DepositStatusType, ProgressStatusType>> = {
       [DepositStatus.APPROVAL_TX_FAILED]: ProgressStatus.FAILED,
       [DepositStatus.APPROVAL_TX_PENDING]: ProgressStatus.PROGRESS,
@@ -258,7 +253,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       fees: getStepFees({
         fee: approvalGasFees,
         isError: isApprovalGasFeesError,
-        show: showFees,
+        show: needsApproval,
       }),
       status: statusMap[depositStatus] ?? ProgressStatus.COMPLETED,
       txHash: depositOperation?.approvalTxHash,

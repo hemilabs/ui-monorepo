@@ -2,12 +2,14 @@ import pMemoize from 'promise-mem'
 import { tokenList } from 'tokenList'
 import { stakeProtocols, type StakeProtocols, StakeToken } from 'types/stake'
 import { EvmToken, L2Token, Token } from 'types/token'
+import { minBigInt } from 'utils/bigint'
 import { getPublicClient } from 'utils/chainClients'
 import {
   type Address,
   type Chain,
   isAddress,
   isAddressEqual,
+  maxUint256,
   checksumAddress as toChecksum,
   parseUnits as viemParseUnits,
 } from 'viem'
@@ -123,7 +125,8 @@ export const getL2Erc20Token = pMemoize(
 
 /**
  * Parses a token amount string into its raw representation in the smallest unit (e.g., wei for ETH)
- * truncating any excess decimal places beyond the token's defined decimals.
+ * truncating any excess decimal places beyond the token's defined decimals, and
+ * clamping the result to maxUint256 so it can always be encoded as a uint256.
  * @param amount - The token amount as a string.
  * @param token - The token metadata, including its decimals.
  * @returns The parsed token amount in the smallest unit.
@@ -134,5 +137,5 @@ export const parseTokenUnits = function (amount: string, token: Token) {
   const normalizedAmount = truncatedFraction
     ? `${whole}.${truncatedFraction}`
     : whole
-  return viemParseUnits(normalizedAmount, token.decimals)
+  return minBigInt(viemParseUnits(normalizedAmount, token.decimals), maxUint256)
 }

@@ -536,6 +536,7 @@
       "no-hemi-burned": "No burned positions yet",
       "no-hemi-staked": "No ${symbol} staked",
       "on": "On {date}",
+      "position-actions": "Position actions",
       "position-delegated-to-you": "Position delegated to you",
       "rewards": "Rewards",
       "rewards-available": "{count} Available",
@@ -586,6 +587,7 @@
     "change-to-mainnet": "Change to Mainnet and stake",
     "dashboard": {
       "heading": "Boost staking",
+      "manage-token": "Manage {symbol}",
       "staked": "Staked",
       "subtitle": "Monitor your boost staking positions.",
       "title": "Dashboard",

@@ -2,7 +2,8 @@ import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { Row } from '@tanstack/react-table'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { useMenuKeyboard } from 'hooks/useMenuKeyboard'
+import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { type StakingPosition } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
@@ -28,62 +29,69 @@ const ActionItem = ({
   label,
   onClick,
 }: ActionItemProps) => (
-  <div
-    className={`flex items-center gap-2 rounded px-3 py-2 transition-colors ${
+  <button
+    aria-disabled={!enabled}
+    className={`flex w-full items-center gap-2 rounded px-3 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 ${
       enabled
         ? 'cursor-pointer hover:bg-neutral-50 hover:text-neutral-950'
-        : 'cursor-default opacity-50'
+        : 'cursor-default [&>*]:opacity-50'
     }`}
     onClick={enabled ? onClick : undefined}
+    type="button"
   >
     {icon}
     <span>{label}</span>
-  </div>
+  </button>
 )
 
 type Props = {
   row: Row<StakingPosition>
-  openRowId: string | null
-  setOpenRowId: (id: string | null) => void
 }
 
-export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
+export function ActionCell({ row }: Props) {
   const t = useTranslations('hemi-stake')
   const { decimals, symbol } = useHemiToken()
+  const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLDivElement>(null)
-  const menuRef = useOnClickOutside<HTMLDivElement>(() => setOpenRowId(null))
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+  useOnClickOutside(function (event) {
+    if (!triggerRef.current?.contains(event.target as Node)) {
+      setIsOpen(false)
+    }
+  }, menuRef)
   const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 })
   const { height: viewportHeight, width: viewportWidth } = useWindowSize()
   const { updateStakingDashboardOperation } = useStakingDashboard()
   const { setDrawerQueryString } = useDrawerStakingQueryString()
 
-  const { amount, id, lockTime, timestamp, tokenId } = row.original
+  const { amount, lockTime, timestamp, tokenId } = row.original
 
-  const MENU_WIDTH = 275
-  const MENU_HEIGHT = 60
   const MENU_OFFSET = 4
 
-  useEffect(
+  useLayoutEffect(
     function calcMenuPosition() {
-      if (openRowId === id && buttonRef.current) {
+      if (isOpen && buttonRef.current) {
         const rect = buttonRef.current.getBoundingClientRect()
+        const menuHeight = menuRef.current?.offsetHeight ?? 0
+        const menuWidth = menuRef.current?.offsetWidth ?? 0
         const spaceBelow = viewportHeight - rect.bottom
 
         // Detect if menu should open upward
-        const shouldFlip = spaceBelow < MENU_HEIGHT + MENU_OFFSET
+        const shouldFlip = spaceBelow < menuHeight + MENU_OFFSET
 
         // Detect if button is too far left (priority column on mobile)
-        const isNearLeftEdge = rect.left < MENU_WIDTH / 2
+        const isNearLeftEdge = rect.left < menuWidth / 2
 
         // If near the left edge, align menu to the left of the button
         // Otherwise, align to the right as before
         let leftPosition = isNearLeftEdge
           ? rect.left + MENU_OFFSET
-          : rect.right - MENU_WIDTH
+          : rect.right - menuWidth
 
         // Ensure the menu doesn't go off screen to the right
-        if (leftPosition + MENU_WIDTH > viewportWidth) {
-          leftPosition = viewportWidth - MENU_WIDTH - MENU_OFFSET
+        if (leftPosition + menuWidth > viewportWidth) {
+          leftPosition = viewportWidth - menuWidth - MENU_OFFSET
         }
 
         // Ensure the menu doesn't go off screen to the left
@@ -94,18 +102,18 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
         setMenuPosition({
           left: leftPosition,
           top: shouldFlip
-            ? rect.top - MENU_HEIGHT - MENU_OFFSET
+            ? rect.top - menuHeight - MENU_OFFSET
             : rect.bottom + MENU_OFFSET,
         })
       }
     },
-    [openRowId, id, viewportWidth, viewportHeight],
+    [isOpen, viewportWidth, viewportHeight],
   )
 
   useEffect(
     function closeMenuWhenScrolling() {
-      if (openRowId === id) {
-        const handleScroll = () => setOpenRowId(null)
+      if (isOpen) {
+        const handleScroll = () => setIsOpen(false)
 
         window.addEventListener('scroll', handleScroll, true)
 
@@ -113,8 +121,15 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
       }
       return undefined
     },
-    [openRowId, id, setOpenRowId],
+    [isOpen],
   )
+
+  const { closeAndFocusTrigger, onBlur, onKeyDown } = useMenuKeyboard({
+    isOpen,
+    menuRef,
+    setIsOpen,
+    triggerRef,
+  })
 
   const { timeRemainingSeconds } = getUnlockInfo({
     lockTime,
@@ -122,6 +137,7 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
   })
 
   function handleIncreaseAmount() {
+    closeAndFocusTrigger()
     updateStakingDashboardOperation({
       input: '0',
       stakingPosition: {
@@ -130,10 +146,10 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
       },
     })
     setDrawerQueryString('increasingAmount')
-    setOpenRowId(null)
   }
 
   function handleIncreaseUnlockTime() {
+    closeAndFocusTrigger()
     updateStakingDashboardOperation({
       input: formatUnits(amount, decimals),
       inputDays: minDays.toString(),
@@ -146,16 +162,21 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
       },
     })
     setDrawerQueryString('increasingUnlockTime')
-    setOpenRowId(null)
   }
 
   return (
-    <div className="relative" ref={buttonRef}>
+    <div
+      className="relative"
+      onBlur={onBlur}
+      onKeyDown={onKeyDown}
+      ref={buttonRef}
+    >
       <ActionButton
-        isOpen={openRowId === id}
-        setIsOpen={isOpen => setOpenRowId(isOpen ? id : null)}
+        isOpen={isOpen}
+        onClick={() => setIsOpen(!isOpen)}
+        ref={triggerRef}
       />
-      {openRowId === id &&
+      {isOpen &&
         createPortal(
           <div
             className="fixed z-10 min-w-64 cursor-pointer rounded-lg bg-white p-1 text-sm font-medium text-neutral-700 shadow-lg"

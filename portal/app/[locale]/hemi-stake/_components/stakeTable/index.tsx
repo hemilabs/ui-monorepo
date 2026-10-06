@@ -3,7 +3,7 @@ import { ErrorBoundary } from 'components/errorBoundary'
 import { Table } from 'components/table'
 import { Header } from 'components/table/_components/header'
 import { TableCard } from 'components/table/tableCard'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type StakingPosition } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
@@ -25,13 +25,9 @@ import { VotingPower } from './votingPower'
 
 type StakingColumnsProps = {
   t: ReturnType<typeof useTranslations<'hemi-stake'>>
-  openRowId: string | null
-  setOpenRowId: (id: string | null) => void
 }
 
 const stakingColumns = ({
-  openRowId,
-  setOpenRowId,
   t,
 }: StakingColumnsProps): ColumnDef<StakingPosition>[] => [
   {
@@ -91,11 +87,7 @@ const stakingColumns = ({
       <div className="flex w-full flex-row-reverse items-center justify-end gap-x-2 lg:flex-row">
         <ClaimCta operation={row.original} />
         <UnlockCta operation={row.original} />
-        <ActionCell
-          openRowId={openRowId}
-          row={row}
-          setOpenRowId={setOpenRowId}
-        />
+        <ActionCell key={row.original.id} row={row} />
       </div>
     ),
     header: () => <Header text={t('table.action')} />,
@@ -120,18 +112,9 @@ export function StakeTable({
   onRetry,
 }: Props) {
   const t = useTranslations('hemi-stake')
-  const [openRowId, setOpenRowId] = useState<string | null>(null)
   const { status } = useAccount()
 
-  const cols = useMemo(
-    () =>
-      stakingColumns({
-        openRowId,
-        setOpenRowId,
-        t,
-      }),
-    [openRowId, setOpenRowId, t],
-  )
+  const cols = useMemo(() => stakingColumns({ t }), [t])
 
   const table = (
     <Table

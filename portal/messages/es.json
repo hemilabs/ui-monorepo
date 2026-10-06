@@ -429,10 +429,11 @@
       "unlock-token": "Desbloquear {symbol}"
     },
     "estimated-payouts": {
+      "after-unlock": "después del desbloqueo",
+      "apy": "{percentage} TEA",
       "carried-from": "Con base en la época {epoch}, la última financiada.",
       "enter-minimum-amount": "Ingrese al menos {amount} {symbol} para ver su estimación.",
       "first-year": "en el primer año",
-      "forecast-note": "Los pagos bajan a medida que su bloqueo decae, y cambian según cuánto hagan staking los demás.",
       "load-failed": "No se pudieron cargar los datos de recompensas.",
       "locked-summary": "{amount} {symbol} bloqueados por {days, plural, one {# día} other {# días}}",
       "next-payout-line": "próximo pago <amount></amount> · época {epoch}, se liquida el {date}",

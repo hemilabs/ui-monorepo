@@ -9,7 +9,10 @@ import { getTokenPrice, parseTokenUnits } from 'utils/token'
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useEpochSystemState } from '../../_hooks/useEpochSystemState'
 import { useRewardsForecastInputs } from '../../_hooks/useRewardsForecastInputs'
-import { formatPayoutValue } from '../../_utils/formatPayoutValue'
+import {
+  formatPayoutDetail,
+  formatPayoutValue,
+} from '../../_utils/formatPayoutValue'
 import { wholeDaysToSeconds } from '../../_utils/lockCreationTimes'
 import {
   getPayoutAxisTicks,
@@ -123,6 +126,7 @@ export const EstimatedPayouts = function () {
             lockupDays={lockupDays}
             nextPayout={forecast.payouts[0].payout}
             nextPayoutAt={forecast.payouts[0].timestamp}
+            yearOneReturnRatio={forecast.yearOneReturnRatio}
             yearOneTotal={forecast.yearOneTotal}
           />
         ) : (
@@ -149,8 +153,17 @@ export const EstimatedPayouts = function () {
         </span>
         <PayoutsChart
           formatDate={value => formatShortDate(new Date(value), locale)}
+          formatDetail={point =>
+            point.afterUnlock
+              ? t('after-unlock')
+              : formatPayoutDetail({
+                  price,
+                  symbol: token.symbol,
+                  value: point.y,
+                })
+          }
           formatValue={value =>
-            formatPayoutValue({ price, symbol: token.symbol, value })
+            formatPayoutValue({ symbol: token.symbol, value })
           }
           isPending={isPending && !hasError && forecast.meetsMinimumAmount}
           series={chartSeries}

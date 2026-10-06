@@ -1,6 +1,14 @@
 import { formatFiatAmount, formatNumber } from 'utils/format'
 
 export const formatPayoutValue = ({
+  symbol,
+  value,
+}: {
+  symbol: string
+  value: number
+}) => `${formatNumber(value)} ${symbol}`
+
+export const formatPayoutDetail = ({
   price,
   symbol,
   value,
@@ -10,5 +18,5 @@ export const formatPayoutValue = ({
   value: number
 }) =>
   price === undefined
-    ? `${formatNumber(value)} ${symbol}`
-    : formatFiatAmount(value * price)
+    ? formatPayoutValue({ symbol, value })
+    : `${formatPayoutValue({ symbol, value })} · ${formatFiatAmount(value * price)}`

@@ -21,9 +21,6 @@ const chartColors = {
 }
 
 const chartHeight = 132
-const tooltipCharWidth = 5
-const tooltipHeight = 22
-const tooltipPadding = 20
 const chartPadding = { bottom: 24, left: 64, right: 20, top: 8 }
 const fallbackChartWidth = 320
 
@@ -31,6 +28,8 @@ const widthByBreakpoint: ReadonlyArray<[number, number]> = [
   [screenBreakpoints.lg, 460],
   [screenBreakpoints.md, 420],
 ]
+
+const unlockMarkerName = 'unlock-marker'
 
 const tooltipLabelStyle = {
   fontFamily: 'Geist, sans-serif',
@@ -58,13 +57,13 @@ const yAxisStyle = {
 function PayoutTooltipLabel({
   datum,
   formatDate,
-  formatValue,
+  formatDetail,
   x,
   y,
 }: {
   datum?: PayoutPoint
   formatDate: (value: number) => string
-  formatValue: (value: number) => string
+  formatDetail: (point: PayoutPoint) => string
   x?: number
   y?: number
 }) {
@@ -82,7 +81,7 @@ function PayoutTooltipLabel({
     >
       <tspan fill={chartColors.neutral500}>{formatDate(datum.x)}</tspan>
       <tspan dx={4} fill={chartColors.neutral950}>
-        {formatValue(datum.y)}
+        {formatDetail(datum)}
       </tspan>
     </text>
   )
@@ -90,6 +89,7 @@ function PayoutTooltipLabel({
 
 type Props = {
   formatDate: (value: number) => string
+  formatDetail: (point: PayoutPoint) => string
   formatValue: (value: number) => string
   isPending: boolean
   series: PayoutPoint[]
@@ -99,6 +99,7 @@ type Props = {
 
 export const PayoutsChart = function ({
   formatDate,
+  formatDetail,
   formatValue,
   isPending,
   series,
@@ -111,12 +112,7 @@ export const PayoutsChart = function ({
     fallbackChartWidth
 
   const toTooltipLabel = (point: PayoutPoint) =>
-    `${formatDate(point.x)}  ${formatValue(point.y)}`
-
-  const tooltipWidth =
-    Math.max(...series.map(point => toTooltipLabel(point).length), 0) *
-      tooltipCharWidth +
-    tooltipPadding
+    `${formatDate(point.x)}  ${formatDetail(point)}`
 
   const hasPayouts = series.some(point => point.y > 0)
   const maxY = Math.max(...series.map(point => point.y), 0)
@@ -152,13 +148,12 @@ export const PayoutsChart = function ({
               <VictoryTooltip
                 constrainToVisibleArea
                 cornerRadius={8}
-                flyoutHeight={tooltipHeight}
+                flyoutPadding={{ bottom: 6, left: 10, right: 10, top: 6 }}
                 flyoutStyle={{ fill: 'white', stroke: chartColors.neutral200 }}
-                flyoutWidth={tooltipWidth}
                 labelComponent={
                   <PayoutTooltipLabel
                     formatDate={formatDate}
-                    formatValue={formatValue}
+                    formatDetail={formatDetail}
                   />
                 }
                 pointerLength={0}
@@ -168,6 +163,7 @@ export const PayoutsChart = function ({
             labels={({ datum }: { datum: PayoutPoint }) =>
               toTooltipLabel(datum)
             }
+            voronoiBlacklist={[unlockMarkerName]}
             voronoiDimension="x"
           />
         }
@@ -188,6 +184,7 @@ export const PayoutsChart = function ({
               { x: unlockX, y: 0 },
               { x: unlockX, y: maxY },
             ]}
+            name={unlockMarkerName}
             style={{
               data: {
                 stroke: chartColors.neutral400,

@@ -429,10 +429,11 @@
       "unlock-token": "Unlock {symbol}"
     },
     "estimated-payouts": {
+      "after-unlock": "after unlock",
+      "apy": "{percentage} APY",
       "carried-from": "Based on epoch {epoch}, the last one funded.",
       "enter-minimum-amount": "Enter at least {amount} {symbol} to see your estimate.",
       "first-year": "in the first year",
-      "forecast-note": "Payouts shrink as your lock decays, and shift as others stake.",
       "load-failed": "Could not load the reward data.",
       "locked-summary": "{amount} {symbol} locked for {days, plural, one {# day} other {# days}}",
       "next-payout-line": "next payout <amount></amount> · epoch {epoch}, settles {date}",

@@ -7,25 +7,34 @@ import {
   toHex,
 } from 'viem'
 
-// HEMI keeps allowances in slot 1 (OpenZeppelin ERC20 layout), measured on Hemi mainnet and Sepolia
-const allowancesSlot = BigInt(1)
+// The OpenZeppelin ERC20 layout, for tokens the list carries no slot for
+const defaultAllowancesSlot = 1
+
+const toAllowancesSlot = function (slot: number | undefined) {
+  if (slot === undefined || !Number.isInteger(slot) || slot < 0) {
+    return BigInt(defaultAllowancesSlot)
+  }
+  return BigInt(slot)
+}
 
 export const createErc20AllowanceStateOverride = function ({
+  enabled = true,
   owner,
   spender,
   token,
 }: {
+  enabled?: boolean
   owner: Address | undefined
   spender: Address
   token: EvmToken
 }) {
-  if (!owner) {
+  if (!enabled || !owner) {
     return undefined
   }
   const ownerSlot = keccak256(
     encodeAbiParameters(
       [{ type: 'address' }, { type: 'uint256' }],
-      [owner, allowancesSlot],
+      [owner, toAllowancesSlot(token.extensions?.allowanceSlot)],
     ),
   )
   const slot = keccak256(

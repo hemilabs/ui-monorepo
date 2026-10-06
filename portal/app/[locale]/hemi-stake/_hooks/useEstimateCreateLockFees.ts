@@ -1,10 +1,9 @@
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { StakingDashboardToken } from 'types/stakingDashboard'
+import { createErc20AllowanceStateOverride } from 'utils/erc20StateOverride'
 import { getVeHemiContractAddress } from 've-hemi-actions'
 import { encodeCreateLock } from 've-hemi-actions/actions'
 import { useAccount, useEstimateGas } from 'wagmi'
-
-import { createErc20AllowanceStateOverride } from '../_utils/erc20StateOverride'
 
 export const useEstimateCreateLockFees = function ({
   amount,

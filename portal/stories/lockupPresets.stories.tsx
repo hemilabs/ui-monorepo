@@ -49,10 +49,10 @@ export const Hover: Story = {
 export const WithApr: Story = {
   args: {
     options: [
-      { days: 180, label: '6 months', sublabel: '~10%' },
-      { days: 366, label: '1 year', sublabel: '~20%' },
-      { days: 732, label: '2 years', sublabel: '~40%' },
-      { days: 1461, label: '4 years', sublabel: 'up to 80%' },
+      { days: 180, label: '6 months', sublabel: '~65.78%' },
+      { days: 366, label: '1 year', sublabel: '~181.44%' },
+      { days: 732, label: '2 years', sublabel: '~604.19%' },
+      { days: 1461, label: '4 years', sublabel: '~1,853.12%' },
     ],
   },
 }

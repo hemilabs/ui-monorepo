@@ -396,7 +396,7 @@
       "total": "Total",
       "unit": "Unidad"
     },
-    "apy-estimate": "Las cifras de TEA son estimaciones. El retorno real cambia según la cantidad global en stake.",
+    "apy-estimate": "Nota: hemiStake se lanzó hace poco, por lo que la TEA proyectada es alta. El pool de recompensas es compartido, así que a medida que se haga staking de más HEMI la TEA bajará.",
     "claim-rewards": {
       "heading": "Reclamar recompensas",
       "subheading": "Estamos procesando su solicitud de recompensas. Puede seguir el progreso a continuación."
@@ -443,7 +443,7 @@
     },
     "form": {
       "approve-and-stake": "Aprobar y Hacer Stake",
-      "approximate": "~{percentage}%",
+      "approximate": "~{percentage}",
       "custom": "Personalizado",
       "days": "{days, plural, one {{days} día} other {{days} días}}",
       "expire-date": "Fecha de vencimiento:",
@@ -456,7 +456,6 @@
       "staking": "Haciendo stake...",
       "title": "Stake",
       "unlocking": "Desbloqueando...",
-      "up-to": "hasta {percentage}%",
       "use-or": "Utilice <min></min> o <max></max>",
       "years": "{years, plural, one {{years} año} other {{years} años}}"
     },

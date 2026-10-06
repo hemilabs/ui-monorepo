@@ -396,7 +396,7 @@
       "total": "Total",
       "unit": "Unit"
     },
-    "apy-estimate": "APY figures are estimates. The actual return changes with the global amount staked.",
+    "apy-estimate": "Note: hemiStake launched recently, so projected APY is high. The reward pool is shared, so as more HEMI is staked APY will decrease.",
     "claim-rewards": {
       "heading": "Claim rewards",
       "subheading": "We’re processing your reward claim. You can follow the progress below."
@@ -443,7 +443,7 @@
     },
     "form": {
       "approve-and-stake": "Approve and Stake",
-      "approximate": "~{percentage}%",
+      "approximate": "~{percentage}",
       "custom": "Custom",
       "days": "{days, plural, one {{days} day} other {{days} days}}",
       "expire-date": "Expire date:",
@@ -456,7 +456,6 @@
       "staking": "Staking...",
       "title": "Stake",
       "unlocking": "Unlocking...",
-      "up-to": "up to {percentage}%",
       "use-or": "Use <min></min> or <max></max>",
       "years": "{years, plural, one {{years} year} other {{years} years}}"
     },

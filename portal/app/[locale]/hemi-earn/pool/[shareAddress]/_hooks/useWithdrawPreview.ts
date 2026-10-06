@@ -163,6 +163,7 @@ export const useWithdrawPreview = function ({
 
   const { data: withdrawGasUnits, isError: isWithdrawGasUnitsError } =
     useEstimateGas({
+      chainId: shareToken.chainId,
       data: buildGasData({
         asset,
         assetsOutMin,

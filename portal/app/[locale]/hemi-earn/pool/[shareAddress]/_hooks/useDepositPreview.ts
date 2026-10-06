@@ -161,6 +161,7 @@ export const useDepositPreview = function ({
 
   const { data: depositGasUnits, isError: isDepositGasUnitsError } =
     useEstimateGas({
+      chainId: token.chainId,
       data: buildGasData({
         amount,
         asset,

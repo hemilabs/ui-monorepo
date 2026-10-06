@@ -179,6 +179,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
 
   const { data: depositGasUnits, isError: isDepositGasUnitsError } =
     useEstimateGas({
+      chainId,
       data:
         address && quote
           ? encodeRequestDeposit({

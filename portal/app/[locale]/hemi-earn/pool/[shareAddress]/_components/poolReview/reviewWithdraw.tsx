@@ -321,6 +321,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
 
   const { data: withdrawGasUnits, isError: isWithdrawGasUnitsError } =
     useEstimateGas({
+      chainId,
       data: encodeRedeemForGasEstimate({
         account: address,
         assetAddress: selectedAsset.address,

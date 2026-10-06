@@ -10,6 +10,8 @@ import { sitemap } from './plugins/sitemap'
 
 const polyfills = () => nodePolyfills({ include: ['http', 'https', 'util'] })
 
+const polyfillShims = ['buffer', 'global', 'process']
+
 const onlyClient = (environment: { name: string }) =>
   environment.name === 'client'
 
@@ -112,13 +114,20 @@ export default defineConfig(function ({ mode }) {
       'import.meta.env.VITE_BUILD_BRANCH': JSON.stringify(buildInfo.branch),
       'import.meta.env.VITE_BUILD_VERSION': JSON.stringify(buildInfo.version),
     },
+    // The polyfill plugin injects these shims at transform time, so the dep
+    // scan misses them and Vite re-optimizes and reloads after the first load.
+    optimizeDeps: {
+      include: polyfillShims.map(
+        shim => `vite-plugin-node-polyfills/shims/${shim}`,
+      ),
+    },
     plugins,
     resolve: {
       // The plugin injects its shims into whichever file touches `Buffer`,
       // `global` or `process`, including files under packages/, where the plugin
       // is not installed and the import cannot resolve. Mapping all three keeps
       // the next one from failing the build the same way.
-      alias: ['buffer', 'global', 'process'].map(shim => ({
+      alias: polyfillShims.map(shim => ({
         find: `vite-plugin-node-polyfills/shims/${shim}`,
         replacement: fileURLToPath(
           import.meta.resolve(`vite-plugin-node-polyfills/shims/${shim}`),

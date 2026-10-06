@@ -34,15 +34,26 @@ describe('positionEarnedUsd', function () {
     expect(result.toFixed(2)).toBe('60000.00')
   })
 
-  it('can be negative — no clamp', function () {
+  it('floors a position below cost to zero', function () {
     const result = positionEarnedUsd({
       costBasisBaseUnits: '100000000', // 1.0
       currentPegged: BigInt(99000000), // 0.99
       decimals: 8,
       price: '60000',
     })
-    expect(result.lt(0)).toBe(true)
-    expect(result.toFixed(2)).toBe('-600.00')
+    expect(result.toFixed(2)).toBe('0.00')
+  })
+
+  // The OFT dust: cents below cost, which toFixed(2) would render as '-0.00'
+  // and which would otherwise eat into what another position earned.
+  it('floors a sub-cent shortfall to zero', function () {
+    const result = positionEarnedUsd({
+      costBasisBaseUnits: '100000000',
+      currentPegged: BigInt(99999999),
+      decimals: 8,
+      price: '1',
+    })
+    expect(result.toFixed(2)).toBe('0.00')
   })
 
   it('handles fractional (WAD-precision) cost basis and 18 decimals', function () {

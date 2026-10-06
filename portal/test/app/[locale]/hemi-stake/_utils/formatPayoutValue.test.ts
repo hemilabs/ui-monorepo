@@ -7,20 +7,16 @@ import { describe, expect, it } from 'vitest'
 const hemi = { symbol: 'HEMI' }
 
 describe('formatPayoutValue', function () {
-  it('renders the token amount with its symbol', function () {
-    expect(formatPayoutValue({ ...hemi, value: 1764 })).toBe('1,764 HEMI')
+  it('compacts the axis label so it fits the gutter', function () {
+    expect(formatPayoutValue({ ...hemi, value: 10_000 })).toBe('10K HEMI')
   })
 
-  it('keeps the decimals of a small payout', function () {
-    expect(formatPayoutValue({ ...hemi, value: 0.003135 })).toBe(
-      '0.003135 HEMI',
-    )
+  it('keeps a small payout visible instead of compacting it away', function () {
+    expect(formatPayoutValue({ ...hemi, value: 0.0293 })).toBe('0.03 HEMI')
   })
 
-  it('groups a large payout', function () {
-    expect(formatPayoutValue({ ...hemi, value: 1_234_567 })).toBe(
-      '1,234,567 HEMI',
-    )
+  it('compacts millions too', function () {
+    expect(formatPayoutValue({ ...hemi, value: 2_500_000 })).toBe('2.5M HEMI')
   })
 })
 

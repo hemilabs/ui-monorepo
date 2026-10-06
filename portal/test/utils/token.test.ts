@@ -7,7 +7,7 @@ import {
   parseTokenUnits,
   isCustomToken,
 } from 'utils/token'
-import { parseUnits as viemParseUnits } from 'viem'
+import { maxUint256, parseUnits as viemParseUnits } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('utils/chainClients', () => ({
@@ -199,6 +199,18 @@ describe('utils/token', function () {
         token.decimals,
       )
       expect(parseTokenUnits(largeDecimalAmount, token)).toEqual(expected)
+    })
+
+    it('should clamp amounts above maxUint256 to maxUint256', function () {
+      const token = { ...parseBaseToken, decimals: 18 }
+      const amount =
+        '1111111111111111111111111111111111111111111111111111111111111000000000000000000'
+      expect(parseTokenUnits(amount, token)).toEqual(maxUint256)
+    })
+
+    it('should keep an amount equal to maxUint256', function () {
+      const token = { ...parseBaseToken, decimals: 0 }
+      expect(parseTokenUnits(maxUint256.toString(), token)).toEqual(maxUint256)
     })
   })
 })

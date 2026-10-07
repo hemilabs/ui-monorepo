@@ -49,6 +49,7 @@ export function useEstimateBtcDepositFees({
   })
 
   const { data: gasUnits, isError: isGasError } = useEstimateGas({
+    chainId: deposit.l2ChainId,
     data: encodedData,
     query: { enabled: isSuccess && !!encodedData },
     to: bitcoinManagerAddresses,

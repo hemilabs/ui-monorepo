@@ -4,6 +4,22 @@ import { esploraClient } from 'esplora-client'
 
 import { type Unisat } from '../unisat'
 
+const isTaprootAddress = (address: string, network: bitcoin.Network) =>
+  address.toLowerCase().startsWith(`${network.bech32}1p`)
+
+// bitcoinjs-lib needs an ECC library to turn a taproot address into a script,
+// so the script is built from the witness program instead
+const getOutputScript = function (address: string, network: bitcoin.Network) {
+  if (!isTaprootAddress(address, network)) {
+    return bitcoin.address.toOutputScript(address, network)
+  }
+  const { data } = bitcoin.address.fromBech32(address)
+  if (data.length !== 32) {
+    throw new Error(`Invalid taproot address ${address}`)
+  }
+  return bitcoin.script.compile([bitcoin.opcodes.OP_1, data])
+}
+
 /**
  * Manually construct, sign and push the transaction.
  */
@@ -34,9 +50,9 @@ export async function sendBitcoin(
     throw new Error('Insufficient funds')
   }
 
-  const psbt = new bitcoin.Psbt({
-    network: bitcoin.networks[network === 'livenet' ? 'bitcoin' : network],
-  })
+  const btcNetwork =
+    bitcoin.networks[network === 'livenet' ? 'bitcoin' : network]
+  const psbt = new bitcoin.Psbt({ network: btcNetwork })
   for (const input of inputs) {
     const txHex = await client.bitcoin.transactions.getTxHex({
       txid: input.txid as string,
@@ -49,7 +65,7 @@ export async function sendBitcoin(
   }
   for (const output of outputs) {
     psbt.addOutput({
-      address: output.address || address,
+      script: getOutputScript(output.address || address, btcNetwork),
       value: output.value || 0,
     })
   }

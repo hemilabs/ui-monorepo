@@ -110,7 +110,13 @@ export const RetryFailedWithdraw = function ({
   }
 
   return (
-    <form className="flex w-full [&>button]:w-full" onSubmit={handleRetry}>
+    <form
+      className="flex w-full flex-col gap-y-2 [&>button]:w-full"
+      onSubmit={handleRetry}
+    >
+      <span className="body-text-medium text-neutral-500">
+        {t('hemi-earn.pool.settings.slippage-value', { value: slippage })}
+      </span>
       <SubmitWhenConnected
         submitButton={
           <Button disabled={isWithdrawing || !canRetry} size="small">

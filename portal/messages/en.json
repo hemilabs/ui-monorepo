@@ -524,7 +524,7 @@
       "your-claimable": "Available to claim",
       "your-staked": "Your stake"
     },
-    "subheading": "Lock ${symbol} from {minDays, plural, one {# day} other {# days}} to {maxYears, plural, one {# year} other {# years}}. Earn every payout in {symbol}, hemiBTC and USDC, and get a vote.",
+    "subheading": "Lock ${symbol} from {minDays, plural, one {# day} other {# days}} to {maxYears, plural, one {# year} other {# years}}. Earn every payout in {symbol} and hemiBTC, and get a vote.",
     "switch-to-start-staking": "You can switch networks to start staking your HEMI.",
     "table": {
       "action": "Action",

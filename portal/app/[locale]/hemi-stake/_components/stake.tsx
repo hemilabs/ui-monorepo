@@ -131,7 +131,7 @@ export const Stake = function () {
     if (!canStake) return null
     return (
       <FeesContainer>
-        <EvmFeesSummary gas={getGas()} operationToken={token} />
+        <EvmFeesSummary gas={getGas()} />
       </FeesContainer>
     )
   }

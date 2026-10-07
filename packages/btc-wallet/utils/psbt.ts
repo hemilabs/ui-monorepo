@@ -53,6 +53,7 @@ export async function sendBitcoin(
   const btcNetwork =
     bitcoin.networks[network === 'livenet' ? 'bitcoin' : network]
   const psbt = new bitcoin.Psbt({ network: btcNetwork })
+  const isTaprootSender = isTaprootAddress(address, btcNetwork)
   for (const input of inputs) {
     const txHex = await client.bitcoin.transactions.getTxHex({
       txid: input.txid as string,
@@ -61,6 +62,9 @@ export async function sendBitcoin(
       hash: input.txid,
       index: input.vout,
       nonWitnessUtxo: Buffer.from(txHex, 'hex'),
+      ...(isTaprootSender && {
+        witnessUtxo: bitcoin.Transaction.fromHex(txHex).outs[input.vout],
+      }),
     })
   }
   for (const output of outputs) {

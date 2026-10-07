@@ -4,20 +4,19 @@ import { useTranslations } from 'use-intl'
 
 import { DisplayAmount } from './displayAmount'
 
-export const EvmFeesSummary = function ({
-  gas,
-  operationToken,
-  total,
-}: {
+type Props = {
   gas: {
     amount: string
     isError: boolean
     label: string
     token: Token
   }
-  operationToken: Token
-  total?: string
-}) {
+} & (
+  | { operationToken: Token; total: string }
+  | { operationToken?: never; total?: never }
+)
+
+export const EvmFeesSummary = function ({ gas, operationToken, total }: Props) {
   const t = useTranslations()
 
   // gas can't be exact zero. If zero and there is no errors, it means it is loading.

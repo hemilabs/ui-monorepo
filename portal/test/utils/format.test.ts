@@ -9,6 +9,7 @@ import {
   formatEvmHash,
   formatFiatAmount,
   formatFutureTime,
+  formatNumber,
   formatPastTime,
   formatPercentage,
   formatShortDate,
@@ -300,6 +301,12 @@ describe('utils/format', function () {
     it('should format millions in pt locale using "mi" suffix', function () {
       expect(formatCompactFiat(420_000_000, 'pt')).toBe(`$420${nbsp}mi`)
     })
+
+    it('should group thousands of millions in es locale', function () {
+      expect(formatCompactFiat(2_065_440_000, 'es', 2)).toBe(
+        `$2.065,44${nbsp}M`,
+      )
+    })
   })
 
   describe('formatCompactFiatParts', function () {
@@ -351,6 +358,13 @@ describe('utils/format', function () {
       expect(formatCompactFiatParts(420_170_000, 'pt')).toEqual({
         number: `420,17${nbsp}`,
         suffix: 'mi',
+      })
+    })
+
+    it('should group thousands of millions in es locale', function () {
+      expect(formatCompactFiatParts(2_065_440_000, 'es')).toEqual({
+        number: `2.065,44${nbsp}`,
+        suffix: 'M',
       })
     })
   })
@@ -427,6 +441,19 @@ describe('utils/format', function () {
       expect(formatDate(utcMidnight, 'en', 'America/New_York')).toBe(
         '06/24/2026',
       )
+    })
+  })
+
+  describe('formatNumber', function () {
+    it('should default to the en locale separators', function () {
+      expect(formatNumber(1234567)).toBe('1,234,567')
+    })
+
+    it('should follow the locale separators', function () {
+      expect(formatNumber(1234567, 'pt')).toBe('1.234.567')
+      expect(formatNumber(1234567, 'es')).toBe('1.234.567')
+      expect(formatNumber(1234, 'es')).toBe('1.234')
+      expect(formatNumber(1234.5678, 'pt')).toBe('1.234,56')
     })
   })
 

@@ -80,7 +80,7 @@ export async function sendBitcoin(
   }
   const psbtHex = psbt.toHex()
   const signedPsbtHex = await provider.signPsbt(psbtHex, {
-    autoFinalize: true,
+    autoFinalized: true,
     toSignInputs: inputs.map((_, index) => ({ address, index })),
   })
   const signedPsbt = bitcoin.Psbt.fromHex(signedPsbtHex)

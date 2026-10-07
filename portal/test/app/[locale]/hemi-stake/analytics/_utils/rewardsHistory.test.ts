@@ -303,6 +303,48 @@ describe('toRewardsSeries', function () {
     expect(series.points.map(({ x }) => x)).toEqual([3459])
   })
 
+  it('carries the pre-hemiStake round on the points of every series', async function () {
+    const preHemiStake = {
+      from: '2025-08-30',
+      fundedEpoch: 3349,
+      round: 1,
+      to: '2025-09-05',
+    }
+    const series = await toRewardsSeries({
+      epochs: [
+        {
+          epoch: 3400,
+          preHemiStake,
+          rewards: [
+            { funded: '2000000000000000000', priceUsd: '1', token: hemi },
+            { funded: '10000000', priceUsd: '100000', token: hemiBtc },
+          ],
+          settled: true,
+          timestamp: 100,
+        },
+        {
+          epoch: 3462,
+          rewards: [
+            { funded: '2000000000000000000', priceUsd: '1', token: hemi },
+            { funded: '10000000', priceUsd: '100000', token: hemiBtc },
+          ],
+          settled: true,
+          timestamp: 200,
+        },
+      ],
+      getToken,
+      hemiAddress: hemi.address,
+      period: '1y',
+    })
+
+    expect(
+      series.map(({ points }) => points.map(point => point.preHemiStake)),
+    ).toEqual([
+      [preHemiStake, undefined],
+      [preHemiStake, undefined],
+    ])
+  })
+
   it('returns no series without epochs', async function () {
     expect(
       await toRewardsSeries({

@@ -1,18 +1,19 @@
 import { type EvmToken } from 'types/token'
 import { secondsPerDay } from 'utils/time'
-import { getTokenByAddress } from 'utils/token'
 import { SixDaysSeconds } from 've-hemi-actions'
 import { type Address, formatUnits, isAddressEqual } from 'viem'
 
 import { daysPerPeriod } from './periods'
 
+type RewardToken = {
+  address: Address
+  chainId: number
+}
+
 type EpochReward = {
   funded: string
   priceUsd: string | null
-  token: {
-    address: Address
-    chainId: number
-  }
+  token: RewardToken
 }
 
 type PreHemiStakeRound = {
@@ -145,24 +146,28 @@ const toSeries = ({
   symbol: token.symbol,
 })
 
-export const toRewardsSeries = function ({
+export const toRewardsSeries = async function ({
   epochs,
+  getToken,
   hemiAddress,
   period,
 }: {
   epochs: RewardsEpoch[]
+  getToken: (token: RewardToken) => Promise<EvmToken>
   hemiAddress: Address
   period: RewardsPeriod
 }) {
-  const tokens = epochs
-    .flatMap(({ rewards }) => rewards.map(({ token }) => token))
-    .filter(
-      (token, index, all) =>
-        all.findIndex(other => isAddressEqual(other.address, token.address)) ===
-        index,
-    )
-    .map(({ address, chainId }) => getTokenByAddress(address, chainId))
-    .filter((token): token is EvmToken => token !== undefined)
+  const tokens = await Promise.all(
+    epochs
+      .flatMap(({ rewards }) => rewards.map(({ token }) => token))
+      .filter(
+        (token, index, all) =>
+          all.findIndex(other =>
+            isAddressEqual(other.address, token.address),
+          ) === index,
+      )
+      .map(getToken),
+  )
   const hemiToken = tokens.find(token =>
     isAddressEqual(token.address as Address, hemiAddress),
   )

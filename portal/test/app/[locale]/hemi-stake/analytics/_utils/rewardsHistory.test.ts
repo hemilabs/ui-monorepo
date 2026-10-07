@@ -1,9 +1,5 @@
 import { toRewardsSeries } from 'app/[locale]/hemi-stake/analytics/_utils/rewardsHistory'
-import { describe, expect, it, vi } from 'vitest'
-
-vi.mock('utils/chainClients', () => ({
-  getPublicClient: vi.fn(),
-}))
+import { describe, expect, it } from 'vitest'
 
 const hemi = {
   address: '0x99e3dE3817F6081B2568208337ef83295b7f591D',
@@ -18,9 +14,18 @@ const unknown = {
   chainId: 43111,
 } as const
 
+const tokens = [
+  { ...hemi, decimals: 18, symbol: 'HEMI' },
+  { ...hemiBtc, decimals: 8, symbol: 'hemiBTC' },
+  { ...unknown, decimals: 18, symbol: 'NEW' },
+]
+
+const getToken = ({ address }) =>
+  Promise.resolve(tokens.find(token => token.address === address))
+
 describe('toRewardsSeries', function () {
-  it('returns one USD series per reward token', function () {
-    const series = toRewardsSeries({
+  it('returns one USD series per reward token', async function () {
+    const series = await toRewardsSeries({
       epochs: [
         {
           epoch: 3462,
@@ -41,6 +46,7 @@ describe('toRewardsSeries', function () {
           timestamp: 200,
         },
       ],
+      getToken,
       hemiAddress: hemi.address,
       period: '1y',
     })
@@ -89,8 +95,8 @@ describe('toRewardsSeries', function () {
     ])
   })
 
-  it('counts an amount without a price as zero', function () {
-    const [series] = toRewardsSeries({
+  it('counts an amount without a price as zero', async function () {
+    const [series] = await toRewardsSeries({
       epochs: [
         {
           epoch: 3462,
@@ -101,6 +107,7 @@ describe('toRewardsSeries', function () {
           timestamp: 100,
         },
       ],
+      getToken,
       hemiAddress: hemi.address,
       period: '1y',
     })
@@ -116,29 +123,32 @@ describe('toRewardsSeries', function () {
     ])
   })
 
-  it('leaves out a token that is not in the token list', function () {
-    const series = toRewardsSeries({
+  it('includes a token that is not in the token list', async function () {
+    const series = await toRewardsSeries({
       epochs: [
         {
           epoch: 3462,
           rewards: [
-            { funded: '1', priceUsd: '1', token: unknown },
+            { funded: '3000000000000000000', priceUsd: '1', token: unknown },
             { funded: '2000000000000000000', priceUsd: '1', token: hemi },
           ],
           settled: true,
           timestamp: 100,
         },
       ],
+      getToken,
       hemiAddress: hemi.address,
       period: '1y',
     })
 
-    expect(series.map(({ symbol }) => symbol)).toEqual(['HEMI'])
-    expect(series[0].points[0].y).toBe(2)
+    expect(series.map(({ points, symbol }) => [symbol, points[0].y])).toEqual([
+      ['NEW', 3],
+      ['HEMI', 2],
+    ])
   })
 
-  it('adds the baseline HEMI incentives after the last epoch, at the latest HEMI price', function () {
-    const series = toRewardsSeries({
+  it('adds the baseline HEMI incentives after the last epoch, at the latest HEMI price', async function () {
+    const series = await toRewardsSeries({
       epochs: [
         {
           epoch: 3459,
@@ -159,6 +169,7 @@ describe('toRewardsSeries', function () {
           timestamp: 200,
         },
       ],
+      getToken,
       hemiAddress: hemi.address,
       period: '1y',
     })
@@ -181,8 +192,8 @@ describe('toRewardsSeries', function () {
     ])
   })
 
-  it('adds no baseline incentives before their first epoch', function () {
-    const [series] = toRewardsSeries({
+  it('adds no baseline incentives before their first epoch', async function () {
+    const [series] = await toRewardsSeries({
       epochs: [
         {
           epoch: 3400,
@@ -191,6 +202,7 @@ describe('toRewardsSeries', function () {
           timestamp: 100,
         },
       ],
+      getToken,
       hemiAddress: hemi.address,
       period: '1y',
     })
@@ -201,8 +213,8 @@ describe('toRewardsSeries', function () {
     ])
   })
 
-  it('fills the rest of the period with the baseline incentives', function () {
-    const [series] = toRewardsSeries({
+  it('fills the rest of the period with the baseline incentives', async function () {
+    const [series] = await toRewardsSeries({
       epochs: [
         {
           epoch: 3420,
@@ -211,6 +223,7 @@ describe('toRewardsSeries', function () {
           timestamp: 100,
         },
       ],
+      getToken,
       hemiAddress: hemi.address,
       period: '1m',
     })
@@ -220,14 +233,15 @@ describe('toRewardsSeries', function () {
     ])
   })
 
-  it('adds at least one epoch of baseline incentives when the period is full', function () {
-    const [series] = toRewardsSeries({
+  it('adds at least one epoch of baseline incentives when the period is full', async function () {
+    const [series] = await toRewardsSeries({
       epochs: [3410, 3411, 3412, 3413, 3414].map(epoch => ({
         epoch,
         rewards: [{ funded: '0', priceUsd: '1', token: hemi }],
         settled: true,
         timestamp: 100,
       })),
+      getToken,
       hemiAddress: hemi.address,
       period: '1m',
     })
@@ -237,8 +251,8 @@ describe('toRewardsSeries', function () {
     ])
   })
 
-  it('matches each reward to its token by address, not by position', function () {
-    const series = toRewardsSeries({
+  it('matches each reward to its token by address, not by position', async function () {
+    const series = await toRewardsSeries({
       epochs: [
         {
           epoch: 3462,
@@ -258,6 +272,7 @@ describe('toRewardsSeries', function () {
           timestamp: 200,
         },
       ],
+      getToken,
       hemiAddress: hemi.address,
       period: '1y',
     })
@@ -270,8 +285,8 @@ describe('toRewardsSeries', function () {
     ])
   })
 
-  it('adds no baseline incentives without a HEMI price', function () {
-    const [series] = toRewardsSeries({
+  it('adds no baseline incentives without a HEMI price', async function () {
+    const [series] = await toRewardsSeries({
       epochs: [
         {
           epoch: 3459,
@@ -280,6 +295,7 @@ describe('toRewardsSeries', function () {
           timestamp: 100,
         },
       ],
+      getToken,
       hemiAddress: hemi.address,
       period: '1y',
     })
@@ -287,9 +303,14 @@ describe('toRewardsSeries', function () {
     expect(series.points.map(({ x }) => x)).toEqual([3459])
   })
 
-  it('returns no series without epochs', function () {
+  it('returns no series without epochs', async function () {
     expect(
-      toRewardsSeries({ epochs: [], hemiAddress: hemi.address, period: '1y' }),
+      await toRewardsSeries({
+        epochs: [],
+        getToken,
+        hemiAddress: hemi.address,
+        period: '1y',
+      }),
     ).toEqual([])
   })
 })

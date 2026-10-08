@@ -25,6 +25,9 @@ chains:
         name: ShareToken
         start_block: 4539427
       # ---- HEMI supply ----
+      # Foundation Finance
+      - address: '0x83e2d7242ec0da49c853585ddf6565009a7fa762'
+        name: FoundationFinance
       # Investor Allocation Wallet & Hemi Team Bonus (Hemi Labs)
       - address: '0x11B50ab67cb5Ff3a5d8B47bB5220151E5BB07109'
         name: InvestorAndTeamAllocations
@@ -91,6 +94,8 @@ chains:
 contracts:
   - events: []
     name: Dead
+  - events: []
+    name: FoundationFinance
   - events: []
     name: InvestorAndTeamAllocations
   - events: []

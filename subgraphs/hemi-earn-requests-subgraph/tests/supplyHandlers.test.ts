@@ -43,7 +43,8 @@ describe('toSnapshot', function () {
   it('adds every op address into a single value', function () {
     const opValues = opAddresses.map((_, index) => BigInt(index + 1))
 
-    expect(toSnapshot(hemi.id, [1n, 5n, 10n, ...opValues, 9n])).toEqual({
+    expect(toSnapshot(hemi.id, [1n, 5n, 10n, ...opValues, 9n, 11n])).toEqual({
+      hemiFoundationFinance: 11n,
       hemiInvestorAndTeamAllocations: 9n,
       hemiSafe: 1n,
       locked: 5n,

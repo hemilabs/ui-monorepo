@@ -24,6 +24,7 @@ type Snapshot = {
   burned?: bigint
   ethInvestorAndTeamAllocations?: bigint
   ethSafe?: bigint
+  hemiFoundationFinance?: bigint
   hemiInvestorAndTeamAllocations?: bigint
   hemiSafe?: bigint
   locked?: bigint
@@ -62,6 +63,10 @@ const accountsByChain: Record<
     {
       account: chains[hemi.id].InvestorAndTeamAllocations.addresses[0],
       name: 'hemiInvestorAndTeamAllocations',
+    },
+    {
+      account: chains[hemi.id].FoundationFinance.addresses[0],
+      name: 'hemiFoundationFinance',
     },
   ],
   [mainnet.id]: [
@@ -241,6 +246,7 @@ const emptySnapshot = {
   burned: undefined,
   ethInvestorAndTeamAllocations: undefined,
   ethSafe: undefined,
+  hemiFoundationFinance: undefined,
   hemiInvestorAndTeamAllocations: undefined,
   hemiSafe: undefined,
   locked: undefined,
@@ -261,6 +267,7 @@ const snapshotSchema = {
   burned: S.optional(S.bigint),
   ethInvestorAndTeamAllocations: S.optional(S.bigint),
   ethSafe: S.optional(S.bigint),
+  hemiFoundationFinance: S.optional(S.bigint),
   hemiInvestorAndTeamAllocations: S.optional(S.bigint),
   hemiSafe: S.optional(S.bigint),
   locked: S.optional(S.bigint),

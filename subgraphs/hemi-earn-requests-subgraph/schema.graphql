@@ -79,6 +79,7 @@ type DailySupplySnapshot {
   ethInvestorAndTeamAllocations: BigInt
   ethSafe: BigInt
   hemiBlock: Int
+  hemiFoundationFinance: BigInt
   hemiInvestorAndTeamAllocations: BigInt
   hemiSafe: BigInt
   id: ID!

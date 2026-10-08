@@ -450,6 +450,10 @@
       "title": "Pagos estimados",
       "unlocks-on": "Se desbloquea el {date}"
     },
+    "estimator": {
+      "quick-amounts": "Montos rápidos",
+      "yours": "Su saldo · {amount}"
+    },
     "form": {
       "approve-and-stake": "Aprobar y Hacer Stake",
       "approximate": "~{percentage}",

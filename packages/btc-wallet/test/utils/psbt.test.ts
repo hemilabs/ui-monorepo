@@ -1,7 +1,7 @@
 import * as bitcoin from 'bitcoinjs-lib'
 import { describe, expect, it } from 'vitest'
 
-import { getOutputScript } from '../../utils/psbt'
+import { getOutputScript, removeDustChange } from '../../utils/psbt'
 
 const { bitcoin: mainnet, testnet } = bitcoin.networks
 
@@ -11,6 +11,8 @@ const p2trMainnet =
 const p2trTestnet =
   'tb1pqqqqp399et2xygdj5xreqhjjvcmzhxw4aywxecjdzew6hylgvsesf3hn0c'
 const p2wpkh = 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4'
+const p2pkh = '1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2'
+const p2sh = '3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy'
 
 describe('getOutputScript', function () {
   it('builds a P2TR script on mainnet', function () {
@@ -52,4 +54,43 @@ describe('getOutputScript', function () {
       '0014751e76e8199196d454941c45d1b3a323f1433bd6',
     )
   })
+})
+
+describe('removeDustChange', function () {
+  const target = { address: p2wpkh, value: 100 }
+  const cases = [
+    { address: p2trMainnet, dustLimit: 330, network: mainnet, type: 'P2TR' },
+    {
+      address: p2trTestnet,
+      dustLimit: 330,
+      network: testnet,
+      type: 'testnet P2TR',
+    },
+    { address: p2wpkh, dustLimit: 294, network: mainnet, type: 'P2WPKH' },
+    { address: p2pkh, dustLimit: 546, network: mainnet, type: 'P2PKH' },
+    { address: p2sh, dustLimit: 540, network: mainnet, type: 'P2SH' },
+  ]
+
+  it.each(cases)(
+    'drops $type change just below $dustLimit sats',
+    function ({ address, dustLimit, network }) {
+      expect(
+        removeDustChange({
+          address,
+          network,
+          outputs: [target, { value: dustLimit - 1 }],
+        }),
+      ).toEqual([target])
+    },
+  )
+
+  it.each(cases)(
+    'keeps $type change at and just above $dustLimit sats',
+    function ({ address, dustLimit, network }) {
+      ;[dustLimit, dustLimit + 1].forEach(function (value) {
+        const outputs = [target, { value }]
+        expect(removeDustChange({ address, network, outputs })).toEqual(outputs)
+      })
+    },
+  )
 })

@@ -1,8 +1,11 @@
 import * as bitcoin from 'bitcoinjs-lib'
-import coinSelect from 'coinselect'
+import coinSelect, { type Target } from 'coinselect'
 import { esploraClient } from 'esplora-client'
 
 import { type Unisat } from '../unisat'
+
+const isSegwitAddress = (address: string, network: bitcoin.Network) =>
+  address.toLowerCase().startsWith(`${network.bech32}1`)
 
 const isTaprootAddress = (address: string, network: bitcoin.Network) =>
   address.toLowerCase().startsWith(`${network.bech32}1p`)
@@ -21,6 +24,29 @@ export const getOutputScript = function (
     throw new Error(`Invalid taproot address ${address}`)
   }
   return bitcoin.script.compile([bitcoin.opcodes.OP_1, data])
+}
+
+// Bitcoin Core's dust limit with its default dust relay fee of 3 sat/vB
+const getDustLimit = function (address: string, network: bitcoin.Network) {
+  const outputSize = 8 + 1 + getOutputScript(address, network).length
+  const inputSize = isSegwitAddress(address, network) ? 67 : 148
+  return 3 * (outputSize + inputSize)
+}
+
+// coinselect adds change above 148 × feeRate, which can still be dust
+export const removeDustChange = function ({
+  address,
+  network,
+  outputs,
+}: {
+  address: string
+  network: bitcoin.Network
+  outputs: Partial<Target>[]
+}) {
+  const dustLimit = getDustLimit(address, network)
+  return outputs.filter(
+    output => output.address !== undefined || (output.value ?? 0) >= dustLimit,
+  )
 }
 
 /**
@@ -70,7 +96,11 @@ export async function sendBitcoin(
       }),
     })
   }
-  for (const output of outputs) {
+  for (const output of removeDustChange({
+    address,
+    network: btcNetwork,
+    outputs,
+  })) {
     psbt.addOutput({
       script: getOutputScript(output.address || address, btcNetwork),
       value: output.value || 0,

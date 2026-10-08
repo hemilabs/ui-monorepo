@@ -32,6 +32,7 @@ type Props<T extends Token> = {
   label: string
   maxBalanceButton?: ReactNode
   onChange: (value: string) => void
+  showBalance?: boolean
   showFiatBalance?: boolean
   token: T
   tokenSelector: ReactNode
@@ -59,6 +60,7 @@ export const TokenInput = function <T extends Token>({
   label,
   maxBalanceButton,
   onChange,
+  showBalance = true,
   showFiatBalance = true,
   token,
   tokenSelector,
@@ -88,35 +90,39 @@ export const TokenInput = function <T extends Token>({
         </div>
         <div className="shrink-0">{tokenSelector}</div>
       </div>
-      <div className="flex items-center gap-x-2 text-sm">
-        {showFiatBalance && (
-          <div className="flex items-center text-neutral-500">
-            <span className="mr-1">$</span>
-            {fiatBalance ? (
-              <FiatBalanceComponent
-                balance={fiatBalance.balance}
-                queryStatus="success"
-                token={fiatBalance.token}
-              />
-            ) : !Number.isNaN(Number(value)) ? (
-              <FiatBalanceComponent
-                balance={parseTokenUnits(value, token)}
-                queryStatus="success"
-                token={token}
-              />
-            ) : null}
-          </div>
-        )}
-        <div className="ml-auto flex items-center justify-end gap-x-2 whitespace-nowrap">
-          <span className="text-neutral-500">
-            {balanceLabel ?? t('form.balance')}:
-          </span>
-          <span className="text-neutral-950">
-            <BalanceComponent token={token} />
-          </span>
-          {maxBalanceButton}
+      {(showBalance || showFiatBalance) && (
+        <div className="flex items-center gap-x-2 text-sm">
+          {showFiatBalance && (
+            <div className="flex items-center text-neutral-500">
+              <span className="mr-1">$</span>
+              {fiatBalance ? (
+                <FiatBalanceComponent
+                  balance={fiatBalance.balance}
+                  queryStatus="success"
+                  token={fiatBalance.token}
+                />
+              ) : !Number.isNaN(Number(value)) ? (
+                <FiatBalanceComponent
+                  balance={parseTokenUnits(value, token)}
+                  queryStatus="success"
+                  token={token}
+                />
+              ) : null}
+            </div>
+          )}
+          {showBalance && (
+            <div className="ml-auto flex items-center justify-end gap-x-2 whitespace-nowrap">
+              <span className="text-neutral-500">
+                {balanceLabel ?? t('form.balance')}:
+              </span>
+              <span className="text-neutral-950">
+                <BalanceComponent token={token} />
+              </span>
+              {maxBalanceButton}
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </div>
   )
 }

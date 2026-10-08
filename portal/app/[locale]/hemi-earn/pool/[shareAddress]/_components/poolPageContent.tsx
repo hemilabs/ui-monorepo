@@ -23,7 +23,8 @@ type Props = {
 export const PoolPageContent = function ({ shareAddress }: Props) {
   const router = useRouter()
   const [networkType] = useNetworkType()
-  const { data: pools, isPending } = useEarnPools()
+  const { data: pools, isError, isPending } = useEarnPools()
+  const isResolved = !isPending && !isError
 
   const pool = pools
     ? findPoolByShare(pools, shareAddress as Address)
@@ -31,14 +32,14 @@ export const PoolPageContent = function ({ shareAddress }: Props) {
 
   useEffect(
     function redirectIfNotFound() {
-      if (!isPending && !pool) {
+      if (isResolved && !pool) {
         router.push(`/hemi-earn${queryStringObjectToString({ networkType })}`)
       }
     },
-    [isPending, networkType, pool, router],
+    [isResolved, networkType, pool, router],
   )
 
-  if (isPending) {
+  if (!isResolved) {
     return (
       <PageLayout variant="wide">
         <Skeleton className="h-7 w-48 rounded-md" />

@@ -4,8 +4,8 @@ import { describe, expect, it } from 'vitest'
 
 const hemi = (amount: string) => parseUnits(amount, 18)
 
-const presetsFor = (balance: bigint | undefined) =>
-  getAmountPresets({ balance, decimals: 18 })
+const presetsFor = (balance: bigint | undefined, locale = 'en') =>
+  getAmountPresets({ balance, decimals: 18, locale })
 
 describe('getAmountPresets', function () {
   it('labels the fixed presets with their compact notation', function () {
@@ -15,6 +15,17 @@ describe('getAmountPresets', function () {
       { label: '100K', value: '100000' },
       { label: '1M', value: '1000000' },
     ])
+  })
+
+  it('compacts the labels for the given locale', function () {
+    // Intl separates the compact suffix with a non-breaking space
+    const nbsp = '\u00a0'
+    expect(
+      presetsFor(undefined, 'es').presets.map(({ label }) => label),
+    ).toEqual([`1${nbsp}mil`, `10${nbsp}mil`, `100${nbsp}mil`, `1${nbsp}M`])
+    expect(presetsFor(hemi('248500'), 'pt').walletPreset?.label).toBe(
+      `248,5${nbsp}mil`,
+    )
   })
 
   it('has no wallet preset when the balance is unknown', function () {
@@ -56,8 +67,11 @@ describe('getAmountPresets', function () {
 
   it('reads the balance with the decimals it is given', function () {
     expect(
-      getAmountPresets({ balance: parseUnits('42', 6), decimals: 6 })
-        .walletPreset,
+      getAmountPresets({
+        balance: parseUnits('42', 6),
+        decimals: 6,
+        locale: 'en',
+      }).walletPreset,
     ).toEqual({ label: '42', value: '42' })
   })
 

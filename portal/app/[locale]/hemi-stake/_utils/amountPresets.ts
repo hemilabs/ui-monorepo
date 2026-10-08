@@ -1,4 +1,3 @@
-import { defaultLocale } from 'i18n/routing'
 import { formatCompactFiatParts } from 'utils/format'
 import { formatUnits } from 'viem'
 
@@ -8,20 +7,22 @@ const presetAmounts = [1_000, 10_000, 100_000, 1_000_000]
 // that says nothing and fills the field with dust.
 const minWalletAmount = 0.01
 
-const toCompactLabel = function (amount: number) {
-  const { number, suffix } = formatCompactFiatParts(amount, defaultLocale)
+const toCompactLabel = function (amount: number, locale: string) {
+  const { number, suffix } = formatCompactFiatParts(amount, locale)
   return `${number}${suffix}`
 }
 
 export const getAmountPresets = function ({
   balance,
   decimals,
+  locale,
 }: {
   balance: bigint | undefined
   decimals: number
+  locale: string
 }) {
   const presets = presetAmounts.map(amount => ({
-    label: toCompactLabel(amount),
+    label: toCompactLabel(amount, locale),
     value: amount.toString(),
   }))
 
@@ -37,7 +38,10 @@ export const getAmountPresets = function ({
   return {
     presets,
     walletPreset: isWorthShowing
-      ? { label: toCompactLabel(Number(walletAmount)), value: walletAmount }
+      ? {
+          label: toCompactLabel(Number(walletAmount), locale),
+          value: walletAmount,
+        }
       : undefined,
   }
 }

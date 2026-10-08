@@ -1,7 +1,7 @@
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { type Token } from 'types/token'
-import { useTranslations } from 'use-intl'
+import { useLocale, useTranslations } from 'use-intl'
 import { sanitizeAmount } from 'utils/form'
 
 import { getAmountPresets } from '../../_utils/amountPresets'
@@ -21,11 +21,13 @@ export const EstimatorAmountField = function ({
   token,
   value,
 }: Props) {
+  const locale = useLocale()
   const t = useTranslations('hemi-stake')
 
   const { presets, walletPreset } = getAmountPresets({
     balance,
     decimals: token.decimals,
+    locale,
   })
 
   const options =

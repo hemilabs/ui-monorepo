@@ -193,14 +193,18 @@ const Failed = function ({
       </div>
       <TwoRowBox
         bottom={
-          txHash ? (
-            <>
-              <span className="mr-auto text-rose-500">{t('error')}</span>
-              {explorerChainId && txHash && (
-                <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
-              )}
-            </>
-          ) : null
+          <>
+            <span
+              className={`mr-auto ${
+                txHash ? 'text-rose-500' : 'text-neutral-500'
+              }`}
+            >
+              {txHash ? t('error') : t('not-ready')}
+            </span>
+            {explorerChainId && txHash && (
+              <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
+            )}
+          </>
         }
         top={
           <>

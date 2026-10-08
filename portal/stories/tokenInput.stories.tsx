@@ -105,10 +105,6 @@ export const Default: Story = {}
 
 export const WithoutBalance: Story = {
   args: { showBalance: false },
-  render: function Render(args) {
-    const [, updateArgs] = useArgs()
-    return <TokenInput {...args} onChange={value => updateArgs({ value })} />
-  },
 }
 
 export const WithHeaderAction: Story = {

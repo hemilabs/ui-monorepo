@@ -6,6 +6,7 @@ import { NuqsTestingAdapter } from 'nuqs/adapters/testing'
 import { useArgs } from 'storybook/preview-api'
 import { tokenList } from 'tokenList'
 import { IntlProvider } from 'use-intl'
+import { sanitizeAmount } from 'utils/form'
 import { parseUnits } from 'viem'
 
 const hemiTokenAddress = '0x99e3dE3817F6081B2568208337ef83295b7f591D'
@@ -50,7 +51,12 @@ const meta = {
     return (
       <EstimatorAmountField
         {...args}
-        onChange={value => updateArgs({ value })}
+        onChange={function (value) {
+          const result = sanitizeAmount(value)
+          if (!('error' in result)) {
+            updateArgs({ value: result.value })
+          }
+        }}
       />
     )
   },

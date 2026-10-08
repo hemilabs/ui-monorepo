@@ -2,7 +2,6 @@ import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { type Token } from 'types/token'
 import { useLocale, useTranslations } from 'use-intl'
-import { sanitizeAmount } from 'utils/form'
 
 import { getAmountPresets } from '../../_utils/amountPresets'
 
@@ -38,13 +37,6 @@ export const EstimatorAmountField = function ({
           value: walletPreset.value,
         })
 
-  const updateAmount = function (newValue: string) {
-    const result = sanitizeAmount(newValue)
-    if (!('error' in result)) {
-      onChange(result.value)
-    }
-  }
-
   return (
     <TokenInput
       disabled={false}
@@ -52,13 +44,13 @@ export const EstimatorAmountField = function ({
       headerAction={
         <AmountPresets
           label={t('estimator.quick-amounts')}
-          onSelect={updateAmount}
+          onSelect={onChange}
           options={options}
           value={value}
         />
       }
       label={t('amount')}
-      onChange={updateAmount}
+      onChange={onChange}
       showBalance={false}
       token={token}
       tokenSelector={<TokenSelectorReadOnly logoVersion="L1" token={token} />}

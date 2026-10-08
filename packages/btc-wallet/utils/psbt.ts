@@ -9,7 +9,10 @@ const isTaprootAddress = (address: string, network: bitcoin.Network) =>
 
 // bitcoinjs-lib needs an ECC library to turn a taproot address into a script,
 // so the script is built from the witness program instead
-const getOutputScript = function (address: string, network: bitcoin.Network) {
+export const getOutputScript = function (
+  address: string,
+  network: bitcoin.Network,
+) {
   if (!isTaprootAddress(address, network)) {
     return bitcoin.address.toOutputScript(address, network)
   }

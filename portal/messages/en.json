@@ -51,6 +51,7 @@
     "transaction-status": {
       "confirmed": "Confirmed",
       "error": "Failed",
+      "not-ready": "Not ready",
       "pending": "Pending",
       "rejected": "Rejected"
     },

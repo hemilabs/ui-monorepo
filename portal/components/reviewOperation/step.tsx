@@ -69,14 +69,18 @@ const Completed = function ({
       </div>
       <TwoRowBox
         bottom={
-          txHash ? (
-            <>
-              <span className="mr-auto text-emerald-500">{t('confirmed')}</span>
-              {explorerChainId && txHash && (
-                <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
-              )}
-            </>
-          ) : null
+          <>
+            <span
+              className={`mr-auto ${
+                txHash ? 'text-emerald-500' : 'text-neutral-500'
+              }`}
+            >
+              {txHash ? t('confirmed') : t('not-ready')}
+            </span>
+            {explorerChainId && txHash && (
+              <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
+            )}
+          </>
         }
         top={<span className="mr-auto text-neutral-600">{description}</span>}
       />

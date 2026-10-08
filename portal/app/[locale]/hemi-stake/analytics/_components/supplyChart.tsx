@@ -1,7 +1,3 @@
-import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
-import { Button } from 'components/button'
-import Skeleton from 'react-loading-skeleton'
-import { screenBreakpoints } from 'styles'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatDate, formatShortDate } from 'utils/format'
 import {
@@ -13,6 +9,14 @@ import {
   VictoryVoronoiContainer,
 } from 'victory'
 
+import { useChartWidth } from '../_hooks/useChartWidth'
+import {
+  chartHeight,
+  chartPadding,
+  getHalfSlot,
+  xAxisStyle,
+  yAxisStyle,
+} from '../_utils/chartLayout'
 import { formatSupplyValue } from '../_utils/formatSupplyValue'
 import { sliceColors } from '../_utils/sliceColors'
 import {
@@ -25,45 +29,17 @@ import {
   type SupplyUnit,
 } from '../_utils/supplyHistory'
 
-const tickLabelStyle = {
-  fill: '#737373',
-  fontFamily: 'Geist, sans-serif',
-  fontSize: 9,
-  fontWeight: 500,
-  letterSpacing: 0.22,
-  lineHeight: '16px',
-}
+import { ChartPlaceholder } from './chartPlaceholder'
+import {
+  ChartTooltipLabel,
+  getTooltipHeight,
+  tooltipWidth,
+} from './chartTooltipLabel'
 
-const xAxisStyle = {
-  axis: { stroke: 'transparent' },
-  tickLabels: tickLabelStyle,
-}
-
-const yAxisStyle = {
-  ...xAxisStyle,
-  grid: { stroke: '#E5E5E5', strokeDasharray: '4,4' },
-}
-
-const chartHeight = 180
-// right leaves room for the last date label, which is centred on its tick
-const chartPadding = { bottom: 24, left: 64, right: 16, top: 8 }
-
-const fallbackChartWidth = 340
-
-// The SVG scales to fill its container, so a smaller viewBox makes labels look
-// larger. Widths are picked per breakpoint to keep tick labels a steady size.
-const widthByBreakpoint: ReadonlyArray<[number, number]> = [
-  [screenBreakpoints.xl, 900],
-  [screenBreakpoints.lg, 700],
-  [screenBreakpoints.md, 560],
-]
-
-const tooltipRowHeight = 12
-const swatchSize = 7
-const tooltipWidth = 186
-const tooltipHeight = 5 * tooltipRowHeight + 12
-
-const skeletonBarHeights = [46, 62, 54, 70, 58, 74, 64, 80, 68, 86, 76, 92]
+const tooltipHeight = getTooltipHeight({
+  hasNote: false,
+  lineCount: stackOrder.length,
+})
 
 const getPlaceholderXTicks = function (period: SupplyPeriod) {
   const now = Date.now()
@@ -114,65 +90,20 @@ const SupplyTooltipLabel = function ({
     return null
   }
 
-  const left = x - tooltipWidth / 2 + 12
-  const right = x + tooltipWidth / 2 - 12
-  const top = y - tooltipHeight / 2 + 15.5
-
   // Matched on the series name rather than on position, so the swatch cannot
   // drift onto another slice's value.
   const lines = supplySliceLines(activePoints, rows, formatValue)
   const total = activePoints.reduce((sum, point) => sum + point.y, 0)
 
   return (
-    <g style={{ fontFamily: 'Geist, sans-serif', fontSize: 9 }}>
-      <text fill="#737373" fontWeight={500} x={left} y={top}>
-        {formatDate(new Date(activePoints[0].x), locale, 'UTC')}
-      </text>
-      {lines.map((line, index) => (
-        <g key={line.label}>
-          <rect
-            fill={line.color}
-            height={swatchSize}
-            rx={2}
-            width={swatchSize}
-            x={left}
-            y={top + (index + 1) * tooltipRowHeight - swatchSize + 1}
-          />
-          <text
-            fill="#737373"
-            x={left + swatchSize + 5}
-            y={top + (index + 1) * tooltipRowHeight}
-          >
-            {line.label}
-          </text>
-          <text
-            fill="#0a0a0a"
-            textAnchor="end"
-            x={right}
-            y={top + (index + 1) * tooltipRowHeight}
-          >
-            {line.value}
-          </text>
-        </g>
-      ))}
-      <text
-        fill="#0a0a0a"
-        fontWeight={600}
-        x={left}
-        y={top + 4 * tooltipRowHeight}
-      >
-        {totalLabel}
-      </text>
-      <text
-        fill="#0a0a0a"
-        fontWeight={600}
-        textAnchor="end"
-        x={right}
-        y={top + 4 * tooltipRowHeight}
-      >
-        {formatValue(total)}
-      </text>
-    </g>
+    <ChartTooltipLabel
+      lines={lines}
+      title={formatDate(new Date(activePoints[0].x), locale, 'UTC')}
+      total={formatValue(total)}
+      totalLabel={totalLabel}
+      x={x}
+      y={y}
+    />
   )
 }
 
@@ -195,11 +126,7 @@ export const SupplyChart = function ({
 }: Props) {
   const locale = useLocale()
   const t = useTranslations('hemi-stake.analytics')
-  const tCommon = useTranslations('common')
-  const { width: windowWidth } = useWindowSize()
-  const chartWidth =
-    widthByBreakpoint.find(([minWidth]) => windowWidth >= minWidth)?.[1] ??
-    fallbackChartWidth
+  const chartWidth = useChartWidth()
 
   const formatValue = (value: number) =>
     formatSupplyValue({ locale, symbol, unit, value })
@@ -215,11 +142,10 @@ export const SupplyChart = function ({
   ) as Record<SupplySlice, { color: string; label: string }>
 
   if (series !== undefined && series.staked.length > 0) {
-    // A bar takes up its whole slot, so the first and last ones need half a
-    // slot of room or they spill over the axis and its labels.
-    const halfSlot =
-      (chartWidth - chartPadding.left - chartPadding.right) /
-      (2 * series.staked.length)
+    const halfSlot = getHalfSlot({
+      barCount: series.staked.length,
+      chartWidth,
+    })
 
     return (
       <VictoryChart
@@ -279,62 +205,15 @@ export const SupplyChart = function ({
     )
   }
 
-  const emptyChart = (
-    <VictoryChart
-      height={chartHeight}
-      padding={chartPadding}
-      width={chartWidth}
-    >
-      <VictoryAxis
-        style={xAxisStyle}
-        tickFormat={(tick: number) =>
-          formatShortDate(new Date(tick), locale, 'UTC')
-        }
-        tickValues={getPlaceholderXTicks(period)}
-      />
-      <VictoryAxis dependentAxis style={yAxisStyle} tickFormat={() => ''} />
-    </VictoryChart>
-  )
-
-  const plotArea = {
-    bottom: `${(chartPadding.bottom / chartHeight) * 100}%`,
-    left: `${(chartPadding.left / chartWidth) * 100}%`,
-    right: `${(chartPadding.right / chartWidth) * 100}%`,
-    top: `${(chartPadding.top / chartHeight) * 100}%`,
-  }
-
-  if (isPending) {
-    return (
-      <div className="relative">
-        {emptyChart}
-        <div className="absolute flex items-end gap-[2%]" style={plotArea}>
-          {skeletonBarHeights.map(height => (
-            <div
-              className="flex-1"
-              key={height}
-              style={{ height: `${height}%` }}
-            >
-              <Skeleton height="100%" />
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="relative">
-      <div className="opacity-30">{emptyChart}</div>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <Button
-          onClick={onRetry}
-          size="xSmall"
-          type="button"
-          variant="secondary"
-        >
-          {tCommon('try-again')}
-        </Button>
-      </div>
-    </div>
+    <ChartPlaceholder
+      chartWidth={chartWidth}
+      isPending={isPending}
+      onRetry={onRetry}
+      xTickFormat={(tick: number) =>
+        formatShortDate(new Date(tick), locale, 'UTC')
+      }
+      xTicks={getPlaceholderXTicks(period)}
+    />
   )
 }

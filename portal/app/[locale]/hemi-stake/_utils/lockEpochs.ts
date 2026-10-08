@@ -13,7 +13,7 @@ export const getLockEnd = ({
   timestamp: number
 }) => snapToEpoch(timestamp + lockTime)
 
-// Each pot settles at (epoch + 1) * length, so 0 is the close of the epoch `now` is in.
+// Each baseline settles at (epoch + 1) * length, so 0 is the close of the epoch `now` is in.
 export const getEpochEnd = ({
   epochsAhead,
   now,

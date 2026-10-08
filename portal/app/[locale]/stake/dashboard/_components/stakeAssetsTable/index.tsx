@@ -29,6 +29,7 @@ type ActionProps = {
 
 const CallToAction = function ({ stake }: ActionProps) {
   const pathname = usePathname()
+  const t = useTranslations('stake-page')
 
   const queryString = queryStringObjectToString({
     mode: 'manage',
@@ -36,20 +37,23 @@ const CallToAction = function ({ stake }: ActionProps) {
   })
 
   return (
-    <ButtonLink
-      href={`${pathname}${queryString}`}
-      onClick={function (e) {
-        // prevent full navigation - we want a shallow navigation to open the drawer
-        e.preventDefault()
-        // navigation is done in event delegation, in the row
-      }}
-      size="xSmall"
-      variant="tertiary"
-    >
-      <span className="text-lg font-normal text-neutral-500 transition duration-300 hover:text-neutral-950">
-        ···
-      </span>
-    </ButtonLink>
+    <span className="[&>a:focus-visible]:ring-2 [&>a:focus-visible]:ring-neutral-500">
+      <ButtonLink
+        aria-label={t('dashboard.manage-token', { symbol: stake.symbol })}
+        href={`${pathname}${queryString}`}
+        onClick={function (e) {
+          // prevent full navigation - we want a shallow navigation to open the drawer
+          e.preventDefault()
+          // navigation is done in event delegation, in the row
+        }}
+        size="xSmall"
+        variant="tertiary"
+      >
+        <span className="text-lg font-normal text-neutral-500 transition duration-300 hover:text-neutral-950">
+          ···
+        </span>
+      </ButtonLink>
+    </span>
   )
 }
 

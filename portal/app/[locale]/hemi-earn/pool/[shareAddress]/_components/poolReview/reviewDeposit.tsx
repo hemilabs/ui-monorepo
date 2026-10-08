@@ -13,6 +13,7 @@ import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useTranslations } from 'use-intl'
 import { getApprovalAmount } from 'utils/approval'
+import { createErc20AllowanceStateOverride } from 'utils/erc20StateOverride'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { type Hash, formatUnits } from 'viem'
@@ -149,13 +150,15 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   const amount = parseTokenUnits(input, selectedAsset.token)
   const routerAddress = getHemiEarnRouterAddress()
 
+  const needsApproval = [
+    DepositStatus.APPROVAL_TX_FAILED,
+    DepositStatus.APPROVAL_TX_PENDING,
+  ].includes(depositStatus)
+
   const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
     useEstimateApproveErc20Fees({
       amount: getApprovalAmount(amount, approveExtraAmount),
-      enabled: [
-        DepositStatus.APPROVAL_TX_FAILED,
-        DepositStatus.APPROVAL_TX_PENDING,
-      ].includes(depositStatus),
+      enabled: needsApproval,
       spender: routerAddress,
       token: selectedAsset.token,
     })
@@ -176,6 +179,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
 
   const { data: depositGasUnits, isError: isDepositGasUnitsError } =
     useEstimateGas({
+      chainId,
       data:
         address && quote
           ? encodeRequestDeposit({
@@ -188,6 +192,12 @@ export const ReviewDeposit = function ({ onClose }: Props) {
             })
           : undefined,
       query: { enabled: !!address && amount > BigInt(0) && !!quote },
+      stateOverride: createErc20AllowanceStateOverride({
+        enabled: needsApproval,
+        owner: address,
+        spender: routerAddress,
+        token: selectedAsset.token,
+      }),
       to: routerAddress,
       value: quote?.nativeFee,
     })
@@ -220,11 +230,6 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       : undefined
 
   const addApprovalStep = function () {
-    const showFees = [
-      DepositStatus.APPROVAL_TX_FAILED,
-      DepositStatus.APPROVAL_TX_PENDING,
-    ].includes(depositStatus)
-
     const statusMap: Partial<Record<DepositStatusType, ProgressStatusType>> = {
       [DepositStatus.APPROVAL_TX_FAILED]: ProgressStatus.FAILED,
       [DepositStatus.APPROVAL_TX_PENDING]: ProgressStatus.PROGRESS,
@@ -249,7 +254,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       fees: getStepFees({
         fee: approvalGasFees,
         isError: isApprovalGasFeesError,
-        show: showFees,
+        show: needsApproval,
       }),
       status: statusMap[depositStatus] ?? ProgressStatus.COMPLETED,
       txHash: depositOperation?.approvalTxHash,

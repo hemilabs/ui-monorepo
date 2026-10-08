@@ -2,7 +2,7 @@
   "btcVaults": {
     "cacheMin": 1
   },
-  "coinMarketCapIds": "HEMI:38159",
+  "coinMarketCapIds": "HEMI:38159,BTC:1",
   "origins": "http://localhost:3000",
   "port": 3006,
   "redis": {

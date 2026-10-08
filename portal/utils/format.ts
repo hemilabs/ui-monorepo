@@ -23,14 +23,32 @@ const tokenPriceRounder = smartRound(6, 2, 6)
 export const formatEvmHash = (txHash: Hash) =>
   shorten(txHash, { length: 4, prefixes: ['0x'] })
 
-export const formatNumber = (value: number | string) =>
-  cryptoRounder(value, { roundingMode: 'round-down', shouldFormat: true })
+export const formatNumber = (value: number | string, locale?: string) =>
+  cryptoRounder(value, {
+    locale,
+    roundingMode: 'round-down',
+    shouldFormat: true,
+  })
 
 export const formatFiatNumber = (value: number | string) =>
   fiatRounder(value, { shouldFormat: true })
 
+export const formatFiatAmount = function (amount: number | string) {
+  const value = Big(amount)
+  return value.gt(0) && value.lt(0.01)
+    ? `< $0.01`
+    : `$${formatFiatNumber(amount)}`
+}
+
 export const formatPercentage = (value: number | string) =>
   `${percentageRounder(value, { shouldFormat: true })}%`
+
+export const formatApyDisplay = function (apy: number) {
+  if (apy !== 0 && apy > -0.01 && apy < 0.01) {
+    return apy > 0 ? '< 0.01%' : '< -0.01%'
+  }
+  return formatPercentage(apy)
+}
 
 // Shared function to format relative time based on thresholds
 const formatRelativeTime = function ({
@@ -100,10 +118,13 @@ export const formatTVL = function (amount: number | string) {
 
 // When `maximumFractionDigits` is undefined, the Intl compact notation default
 // is used (it rounds based on significant digits, eg. "420M", "1.2B").
+// Compact notation defaults to "min2" grouping, which drops the separator on
+// 4-digit numbers (eg. "2065,44 M" in Spanish), so force it.
 const compactFiatFormatter = (locale: string, maximumFractionDigits?: number) =>
   new Intl.NumberFormat(locale, {
     compactDisplay: 'short',
     notation: 'compact',
+    useGrouping: 'always',
     ...(maximumFractionDigits !== undefined && { maximumFractionDigits }),
   })
 
@@ -152,4 +173,16 @@ export const formatShortDate = (
     day: '2-digit',
     month: 'short',
     timeZone,
+  }).format(date)
+
+export const formatShortDateWithYear = (
+  date: Date,
+  locale: string,
+  timeZone?: string,
+) =>
+  new Intl.DateTimeFormat(locale, {
+    day: '2-digit',
+    month: 'short',
+    timeZone,
+    year: 'numeric',
   }).format(date)

@@ -29,7 +29,6 @@ type Props = {
   onChange: (value: string) => void
   onSubmit: VoidFunction
   operationRunning: StakingOperationRunning
-  total: string | undefined
   validInput: boolean
   validationError: string | undefined
 }
@@ -46,7 +45,6 @@ export function Preview({
   onChange,
   onSubmit,
   operationRunning,
-  total,
   validationError,
   validInput,
 }: Props) {
@@ -84,7 +82,7 @@ export function Preview({
         />
         {validInput && (
           <FeesContainer compact>
-            <EvmFeesSummary gas={gas} operationToken={token} total={total} />
+            <EvmFeesSummary gas={gas} />
           </FeesContainer>
         )}
       </div>

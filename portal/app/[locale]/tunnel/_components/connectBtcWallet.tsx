@@ -1,17 +1,15 @@
-import { useConfig } from 'btc-wallet/hooks/useConfig'
-import { useConnect } from 'btc-wallet/hooks/useConnect'
 import { Button } from 'components/button'
+import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'use-intl'
 
 export const ConnectBtcWallet = function () {
-  const config = useConfig()
-  const { connect } = useConnect()
+  const { openDrawer } = useDrawerContext()
   const t = useTranslations()
   const { track } = useUmami()
 
   const onClick = function () {
-    connect(config.connectors[0].wallet)
+    openDrawer?.()
     track?.('btc connect')
   }
 

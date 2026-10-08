@@ -1,7 +1,9 @@
+import { type ReactNode } from 'react'
+
 type Preset = {
   days: number
   label: string
-  sublabel?: string
+  sublabel?: ReactNode
 }
 
 type Props = {

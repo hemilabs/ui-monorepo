@@ -32,10 +32,21 @@ Returns the global veHEMI staking stats. It is Hemi mainnet only.
 
 ```console
 $ curl http://localhost:3006/hemi-stake
-{"averageLock":63072000,"locksCount":15473,"rewards":[],"totalStaked":"1488392826436605230000147341","walletsStaking":13663}
+{"averageLock":63072000,"locksCount":15473,"totalStaked":"1488392826436605230000147341","walletsStaking":13663}
 ```
 
-`averageLock` is the average lock duration of the active positions, in seconds, read from the veHEMI subgraph. `totalStaked` is the amount of HEMI locked, in its smallest unit. `locksCount` is the number of open positions and `walletsStaking` the number of wallets that hold at least one position, read from the [Hemi explorer](https://explorer.hemi.xyz). `rewards` is the list of all-time paid rewards (to be implemented).
+`averageLock` is the average lock duration of the active positions, in seconds, read from the veHEMI subgraph. `totalStaked` is the amount of HEMI locked, in its smallest unit. `locksCount` is the number of open positions and `walletsStaking` the number of wallets that hold at least one position, read from the [Hemi explorer](https://explorer.hemi.xyz).
+
+#### `GET /hemi-stake/rewards/:period`
+
+Returns the veHEMI rewards funded per epoch and reward token on Hemi mainnet, with their USD price. The period is `1w`, `1m`, `3m`, `6m` or `1y`. Any other period returns `400 Bad Request`.
+
+The response can start with the rounds paid before hemiStake. These rows have a `preHemiStake` object and a `null` `claimed`. Read their date from `timestamp`, not from `epoch`.
+
+```console
+$ curl http://localhost:3006/hemi-stake/rewards/1w
+[{"epoch":3402,"rewards":[{"claimed":"1271445882233261269051719","funded":"5772666660000000000000000","priceUsd":"0.00683108945841876","swept":false,"token":{"address":"0x99e3dE3817F6081B2568208337ef83295b7f591D","chainId":43111}},{"claimed":"209442","funded":"700000","priceUsd":"112004.51","swept":false,"token":{"address":"0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28","chainId":43111}}],"settled":true,"timestamp":1789841880}]
+```
 
 #### `GET /net-stats`
 
@@ -189,7 +200,7 @@ These environment variables control how the cache works:
 | Variable                 | Description                                                       | Default                            |
 | ------------------------ | ----------------------------------------------------------------- | ---------------------------------- |
 | BTC_VAULTS_CACHE_MIN     | The time to cache the BTC vaults data in minutes.                 | 1                                  |
-| COIN_MARKET_CAP_IDS      | Comma separated `SYMBOL:id` pairs with a daily price history.     | HEMI:38159                         |
+| COIN_MARKET_CAP_IDS      | Comma separated `SYMBOL:id` pairs with a daily price history.     | HEMI:38159,BTC:1                   |
 | NODE_ENV                 | Sentry environment. `production` in the Docker images.            | `development`                      |
 | ORIGINS                  | Comma-separated list of allowed origins. Globs are supported (1). | `http://localhost:3000`            |
 | PORT                     | The HTTP port the server listens for requests.                    | 3006                               |
@@ -219,7 +230,7 @@ These environment variables control how the `cron` job behaves:
 | ----------------------- | ----------------------------------------------------------------------------------- | ------------------------ |
 | CACHE_EXPIRATION_MIN    | How long the prices will be kept in the cache.                                      | 60                       |
 | COIN_MARKET_CAP_API_KEY | The CoinMarketCap API key.                                                          |                          |
-| COIN_MARKET_CAP_IDS     | Comma separated `SYMBOL:id` pairs whose daily price history is kept.                | HEMI:38159               |
+| COIN_MARKET_CAP_IDS     | Comma separated `SYMBOL:id` pairs whose daily price history is kept.                | HEMI:38159,BTC:1         |
 | COIN_MARKET_CAP_SLUGS   | String of comma separated token slugs. I.e. "bitcoin,ethereum"                      | bitcoin                  |
 | NODE_ENV                | Sentry environment. `production` in the Docker images.                              | `development`            |
 | REDIS_URL               | The URL of the Redis database.                                                      | `redis://localhost:6379` |

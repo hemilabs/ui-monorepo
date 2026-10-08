@@ -19,12 +19,12 @@ const days = (count: number) => count * 86_400
 
 // A four-year lock of 240 HEMI from a boundary is worth about 239 HEMI at the close of
 // the epoch in progress, because the longest lock spans exactly 240 epochs. Against a
-// class of 761 HEMI the denominator lands on 1000, so a pot of 1000 pays about 239.
+// class of 761 HEMI the denominator lands on 1000, so a baseline of 1000 pays about 239.
 const golden = {
   amount: hemi(240),
   lockDurationInSeconds: MaxLockDurationSeconds,
   now: epochAlignedNow,
-  transferableClassPot: hemi(1000),
+  transferableClassBaseline: hemi(1000),
   transferableClassWeight: hemi(761),
 }
 
@@ -32,20 +32,20 @@ const forecast = (overrides = {}) =>
   getRewardsForecast({ ...golden, ...overrides })
 
 describe('getEpochPayout', function () {
-  it('takes the whole pot when it is the only weight in the class', function () {
+  it('takes the whole baseline when it is the only weight in the class', function () {
     expect(
       getEpochPayout({
-        transferableClassPot: hemi(1000),
+        transferableClassBaseline: hemi(1000),
         transferableClassWeight: BigInt(0),
         weight: hemi(5),
       }),
     ).toBe(hemi(1000))
   })
 
-  it('takes half the pot when it matches the rest of the class', function () {
+  it('takes half the baseline when it matches the rest of the class', function () {
     expect(
       getEpochPayout({
-        transferableClassPot: hemi(1000),
+        transferableClassBaseline: hemi(1000),
         transferableClassWeight: hemi(50),
         weight: hemi(50),
       }),
@@ -55,17 +55,17 @@ describe('getEpochPayout', function () {
   it('pays nothing without weight', function () {
     expect(
       getEpochPayout({
-        transferableClassPot: hemi(1000),
+        transferableClassBaseline: hemi(1000),
         transferableClassWeight: hemi(50),
         weight: BigInt(0),
       }),
     ).toBe(BigInt(0))
   })
 
-  it('pays nothing out of an empty pot', function () {
+  it('pays nothing out of an empty baseline', function () {
     expect(
       getEpochPayout({
-        transferableClassPot: BigInt(0),
+        transferableClassBaseline: BigInt(0),
         transferableClassWeight: hemi(50),
         weight: hemi(50),
       }),
@@ -75,7 +75,7 @@ describe('getEpochPayout', function () {
   it('does not divide by zero on an empty class', function () {
     expect(
       getEpochPayout({
-        transferableClassPot: hemi(1000),
+        transferableClassBaseline: hemi(1000),
         transferableClassWeight: BigInt(0),
         weight: BigInt(0),
       }),
@@ -84,12 +84,12 @@ describe('getEpochPayout', function () {
 
   it('does not pay double for double the weight, the stake dilutes itself', function () {
     const single = getEpochPayout({
-      transferableClassPot: hemi(1000),
+      transferableClassBaseline: hemi(1000),
       transferableClassWeight: hemi(100),
       weight: hemi(100),
     })
     const doubled = getEpochPayout({
-      transferableClassPot: hemi(1000),
+      transferableClassBaseline: hemi(1000),
       transferableClassWeight: hemi(100),
       weight: hemi(200),
     })
@@ -160,7 +160,7 @@ describe('getRewardsForecast', function () {
     )
   })
 
-  it('shares the pot by weight against the class the stake joins', function () {
+  it('shares the baseline by weight against the class the stake joins', function () {
     // It lands just under the round 239 because the truncated slope loses under a wei
     // per second of lock, which caps the shortfall at MaxLockDurationSeconds wei.
     const { nextPayout } = forecast()
@@ -299,7 +299,7 @@ describe('getRewardsForecastByLockDurations', function () {
   })
 
   // The ladder the deployed simulator at hemistake.hemi.xyz showed for 10,000 HEMI on
-  // epoch 3402's pot. Every other test here only proves internal consistency; this one
+  // epoch 3402's baseline. Every other test here only proves internal consistency; this one
   // is the only guard against the whole model drifting.
   it('reproduces the ladder the deployed simulator published', function () {
     const ratios = getRewardsForecastByLockDurations({
@@ -311,7 +311,7 @@ describe('getRewardsForecastByLockDurations', function () {
         MaxLockDurationSeconds,
       ],
       now: SixDaysSeconds * 3402 + 43_200,
-      transferableClassPot: BigInt('4166666660000000000000000'),
+      transferableClassBaseline: BigInt('4166666660000000000000000'),
       transferableClassWeight: hemi(10_056_994),
     }).map(({ yearOneReturnRatio }) => yearOneReturnRatio)
 

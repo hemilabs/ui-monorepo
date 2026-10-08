@@ -39,12 +39,9 @@ export const getHemiStake = async function () {
       getTotalLocked(client),
       getWalletsStaking(),
     ])
-  // TODO implement rewards
-  // See https://github.com/hemilabs/ui-monorepo/issues/2244
   return {
     averageLock,
     locksCount: Number(locksCount),
-    rewards: [],
     totalStaked: totalLocked.toString(),
     walletsStaking,
   }

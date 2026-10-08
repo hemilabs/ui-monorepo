@@ -8,11 +8,12 @@ import { ReactNode, useEffect, useId, useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import type { Token } from 'types/token'
 import { useLocale, useTranslations } from 'use-intl'
-import { formatDate, formatNumber } from 'utils/format'
+import { formatDate } from 'utils/format'
 import { unixNowTimestamp } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
 
+import { useLockupApySublabels } from '../../_hooks/useLockupApySublabels'
 import {
   getNearestPreset,
   getUnlockInfo,
@@ -25,7 +26,7 @@ import {
   twoYears,
   wholeDaysToSeconds,
 } from '../../_utils/lockCreationTimes'
-import { lockupApy } from '../../_utils/lockupApy'
+import { getLockupErrorMessage } from '../../_utils/lockupError'
 import { sanitizeLockup } from '../../_utils/sanitizeLockup'
 
 import { LockupPresets } from './lockupPresets'
@@ -37,14 +38,8 @@ type ValidLockupProps = {
   value: number
 }
 
-export const isValidLockup = ({
-  minLocked = minDays,
-  value,
-}: ValidLockupProps) =>
-  !Number.isNaN(value) &&
-  value >= minLocked &&
-  value <= maxDays &&
-  (value % step === 0 || value === maxDays)
+export const isValidLockup = (props: ValidLockupProps) =>
+  getLockupErrorMessage(props) === undefined
 
 type NearestValidValues = {
   minValue: number | null | undefined
@@ -118,7 +113,7 @@ const VotingPowerEquivalence = function ({
       <DisplayAmount amount={amount} token={token} />
       <span>=</span>
       {isLoadingVeHemiToken || !veHemiToken ? (
-        <Skeleton className="h-4 w-16" />
+        <Skeleton className="w-16" />
       ) : (
         <DisplayAmount amount={votingPower} token={veHemiToken} />
       )}
@@ -204,23 +199,14 @@ export function Lockup({
 
   const amount = parseTokenUnits(input, token)
 
-  const toSublabel = function (days: number) {
-    const apy = lockupApy[days]
-    if (apy === undefined) {
-      return undefined
-    }
-    const percentage = formatNumber(apy)
-    return days === maxDays
-      ? t('form.up-to', { percentage })
-      : t('form.approximate', { percentage })
-  }
+  const sublabels = useLockupApySublabels(amount)
 
   const presets = [
     { days: sixMonths, label: t('form.months', { months: 6 }) },
     { days: oneYear, label: t('form.years', { years: 1 }) },
     { days: twoYears, label: t('form.years', { years: 2 }) },
     { days: maxDays, label: t('form.years', { years: 4 }) },
-  ].map(preset => ({ ...preset, sublabel: toSublabel(preset.days) }))
+  ].map(preset => ({ ...preset, sublabel: sublabels[preset.days] }))
 
   const presetDays = presets.map(preset => preset.days)
 
@@ -426,9 +412,13 @@ export function Lockup({
             />
           )}
         </div>
-        <Divider />
-        <InfoRow label={t('form.expire-date')} value={expireDate} />
-        <Divider />
+        {minLocked !== undefined && (
+          <>
+            <Divider />
+            <InfoRow label={t('form.expire-date')} value={expireDate} />
+            <Divider />
+          </>
+        )}
         <InfoRow
           label={`${t('voting-power')}:`}
           value={
@@ -440,14 +430,11 @@ export function Lockup({
           }
         />
       </div>
-      <div className="mt-5 space-y-2">
-        <WarningMessage isError={touched && !valid}>
-          {t('form.lockup-increment-warning')}
-        </WarningMessage>
-        {minLocked && (
+      {minLocked && (
+        <div className="mt-5">
           <WarningMessage>{t('form.lockup-extend-warning')}</WarningMessage>
-        )}
-      </div>
+        </div>
+      )}
     </>
   )
 }

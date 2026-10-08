@@ -31,6 +31,7 @@ From `ve-hemi-epoch-rewards/actions`:
 - `getEpochStreams(client, { epoch, token })`: the streams that funded the epoch in that token, with `fundedByClass` naming the split the same way `getClassDenominators` does. Labels come as `bytes32`, so read them with `hexToString(label, { size: 32 })`.
 - `getMaxClaimPairs(client)`: the maximum number of epoch and token pairs one claim may settle.
 - `getClaimableByToken(client, { fromEpoch, holder, toEpoch, tokenId })`: what the holder can claim for a position, per reward token, over an epoch range.
+- `getEpochFunding(client, { fromEpoch, toEpoch, tokens })`: for each reward token, the amounts funded and claimed per epoch over an epoch range, and whether each epoch is swept. It reads all the tokens in one multicall.
 - `getPositionClass(client, { tokenId })`: the class recorded for a position, and whether it was recorded at all.
 
 ### Wallet actions

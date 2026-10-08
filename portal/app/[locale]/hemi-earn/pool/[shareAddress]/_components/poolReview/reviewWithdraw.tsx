@@ -14,6 +14,7 @@ import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { getApprovalAmount } from 'utils/approval'
+import { createErc20AllowanceStateOverride } from 'utils/erc20StateOverride'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { type Address, type Hash, formatUnits } from 'viem'
@@ -320,6 +321,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
 
   const { data: withdrawGasUnits, isError: isWithdrawGasUnitsError } =
     useEstimateGas({
+      chainId,
       data: encodeRedeemForGasEstimate({
         account: address,
         assetAddress: selectedAsset.address,
@@ -328,6 +330,12 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         shares,
       }),
       query: { enabled: !!address && shares > BigInt(0) && !!quote },
+      stateOverride: createErc20AllowanceStateOverride({
+        enabled: needsApproval,
+        owner: address,
+        spender: routerAddress,
+        token: pool.shareToken,
+      }),
       to: routerAddress as Address,
       value: quote?.nativeFee,
     })

@@ -22,10 +22,13 @@ import {
 } from './src/supply-indexer.ts'
 import { toJsonMiddleware, toTextMiddleware } from './src/to-middleware.ts'
 import { getHemiStake } from './src/ve-hemi/stake.ts'
+import { createHemiStakeRewards } from './src/ve-hemi/stakeRewards.ts'
 
 const { getTvl } = createDune(config.get<DuneOptions>('tvl.dune'))
 const { getNetStats } = createNetStats(config.get<NetStatsOptions>('rpcUrl'))
 const cache = createRedisCache(config.get<RedisOptions>('redis'))
+
+const { getHemiStakeRewards } = createHemiStakeRewards({ cache })
 
 const { getPriceHistory } = createPriceHistory({ cache })
 
@@ -102,6 +105,12 @@ app.get(
     resolver: (symbol, period) => `${symbol}:${period}`,
     revalidate: 5 * 60 * 1000,
   }),
+)
+
+app.get(
+  '/hemi-stake/rewards/:period',
+  checkPeriod,
+  toJsonMiddleware(getHemiStakeRewards, { revalidate: 5 * 60 * 1000 }),
 )
 
 app.get(

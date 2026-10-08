@@ -14,6 +14,7 @@ import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { type Hash } from 'viem'
 
+import { defaultDepositSlippage } from '../../../_constants/slippage'
 import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
 import {
   getTerminalDeliveryTxHash,
@@ -35,6 +36,7 @@ import {
 
 import { RemoteFailedBanner } from './remoteFailed'
 import { SettleBanner } from './settleShared'
+import { RetrySlippageTooltip } from './slippageTooltip'
 
 type Props = {
   callToAction?: ReactNode
@@ -264,6 +266,12 @@ export const HistoricalDepositReview = function ({
       }
       amount={transaction.amountIn}
       callToAction={callToAction}
+      endAdornment={
+        <RetrySlippageTooltip
+          fallback={defaultDepositSlippage}
+          transaction={transaction}
+        />
+      }
       heading={t('deposit-heading')}
       onClose={onClose}
       steps={steps}

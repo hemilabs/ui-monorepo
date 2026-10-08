@@ -13,7 +13,7 @@ export const ReceivingAddressLabel = ({
   <div className="flex items-center gap-x-2">
     <span className="text-neutral-600">{receivingText}</span>
     <Tooltip id="target-address" text={tooltipText} variant="info">
-      <InfoIcon className="[&>path]:fill-neutral-600" />
+      <InfoIcon className="[&>g>path]:fill-neutral-600" />
     </Tooltip>
   </div>
 )

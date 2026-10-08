@@ -20,9 +20,11 @@ import { bsc, hemi, mainnet } from 'viem/chains'
 
 type Snapshot = {
   bnbInvestorAndTeamAllocations?: bigint
+  bnbOpBalances?: bigint
   bnbSafe?: bigint
   burned?: bigint
   ethInvestorAndTeamAllocations?: bigint
+  ethOpBalances?: bigint
   ethSafe?: bigint
   hemiFoundationFinance?: bigint
   hemiInvestorAndTeamAllocations?: bigint
@@ -51,6 +53,10 @@ const accountsByChain: Record<
       account: chains[bsc.id].InvestorAndTeamAllocations.addresses[0],
       name: 'bnbInvestorAndTeamAllocations',
     },
+    ...chains[bsc.id].OpAddresses.addresses.map(account => ({
+      account,
+      name: 'bnbOpBalances' as const,
+    })),
   ],
   [hemi.id]: [
     { account: chains[hemi.id].Safe.addresses[0], name: 'hemiSafe' },
@@ -77,6 +83,10 @@ const accountsByChain: Record<
       account: chains[mainnet.id].InvestorAndTeamAllocations.addresses[0],
       name: 'ethInvestorAndTeamAllocations',
     },
+    ...chains[mainnet.id].OpAddresses.addresses.map(account => ({
+      account,
+      name: 'ethOpBalances' as const,
+    })),
   ],
 }
 
@@ -242,9 +252,11 @@ const blockFieldByChain = {
 
 const emptySnapshot = {
   bnbInvestorAndTeamAllocations: undefined,
+  bnbOpBalances: undefined,
   bnbSafe: undefined,
   burned: undefined,
   ethInvestorAndTeamAllocations: undefined,
+  ethOpBalances: undefined,
   ethSafe: undefined,
   hemiFoundationFinance: undefined,
   hemiInvestorAndTeamAllocations: undefined,
@@ -263,9 +275,11 @@ const emptyBlocks = {
 
 const snapshotSchema = {
   bnbInvestorAndTeamAllocations: S.optional(S.bigint),
+  bnbOpBalances: S.optional(S.bigint),
   bnbSafe: S.optional(S.bigint),
   burned: S.optional(S.bigint),
   ethInvestorAndTeamAllocations: S.optional(S.bigint),
+  ethOpBalances: S.optional(S.bigint),
   ethSafe: S.optional(S.bigint),
   hemiFoundationFinance: S.optional(S.bigint),
   hemiInvestorAndTeamAllocations: S.optional(S.bigint),

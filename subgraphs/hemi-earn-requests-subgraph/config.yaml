@@ -36,8 +36,9 @@ chains:
       # Accounts whose Hemi balances are not circulating
       - address:
           - '0x000000000000000000000000000000000000dEaD'
-          - '0x297037125A587940aAC0f0AB007B572203f2c2c9'
-          - '0x46EdB3583677cc559968Ba48D12FD64d45A24d0b'
+          - '0x297037125A587940aAC0f0AB007B572203f2c2c9' # Community multisig
+          - '0x46EdB3583677cc559968Ba48D12FD64d45A24d0b' # BD
+          - '0x55A7DcFBEA1DB7290093f57B7684494C0F8ebA59' # Jeff EOA
           - '0xd985C45Fc88CBbceA0C0B273767f7180D1740296'
           - '0xea03D0E996D2C9546Da7400D8bDA9B84eE965782'
         name: OpAddresses
@@ -75,6 +76,12 @@ chains:
       # Investor Allocation Wallet & Hemi Team Bonus (Hemi Labs)
       - address: '0x11B50ab67cb5Ff3a5d8B47bB5220151E5BB07109'
         name: InvestorAndTeamAllocations
+      # Accounts whose Hemi balances are not circulating
+      - address:
+          - '0x297037125A587940aAC0f0AB007B572203f2c2c9' # Community multisig
+          - '0x46EdB3583677cc559968Ba48D12FD64d45A24d0b' # BD
+          - '0x55A7DcFBEA1DB7290093f57B7684494C0F8ebA59' # Jeff EOA
+        name: OpAddresses
       - address: '0x694fA0816999Da16E8783C0f5cDE68c13a33C4e6'
         name: Safe
     id: 1
@@ -85,6 +92,12 @@ chains:
       # Investor Allocation Wallet & Hemi Team Bonus (Hemi Labs)
       - address: '0x11B50ab67cb5Ff3a5d8B47bB5220151E5BB07109'
         name: InvestorAndTeamAllocations
+      # Accounts whose Hemi balances are not circulating
+      - address:
+          - '0x297037125A587940aAC0f0AB007B572203f2c2c9' # Community multisig
+          - '0x46EdB3583677cc559968Ba48D12FD64d45A24d0b' # BD
+          - '0x55A7DcFBEA1DB7290093f57B7684494C0F8ebA59' # Jeff EOA
+        name: OpAddresses
       - address: '0x694fA0816999Da16E8783C0f5cDE68c13a33C4e6'
         name: Safe
     id: 56

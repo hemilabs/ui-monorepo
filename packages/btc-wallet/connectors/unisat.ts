@@ -3,14 +3,20 @@ import { Unisat } from '../unisat'
 import { type ConnectorGroup, type WalletConnector } from './types'
 
 // See https://github.com/unisat-wallet/unisat-dev-docs/blob/master/wallet-api/api-docs/browser-detection.md
-const provider = (typeof window !== 'undefined' &&
-  (window.unisat_wallet || window.unisat)) as Unisat
+// Read on each call: Bitget sets window.unisat before UniSat replaces it
+const getProvider = () =>
+  (typeof window !== 'undefined' &&
+    (window.unisat_wallet || window.unisat)) as Unisat
 
 // Some wallets (e.g., Binance, Bitget and OKX) inject similar APIs but are not
 // UniSat. Exclude them from UniSat detection to avoid false positives.
-const isInstalled = () =>
-  !!provider &&
-  !(provider.isBinance || provider.isBitKeep || provider.isOkxWallet)
+const isInstalled = function () {
+  const provider = getProvider()
+  return (
+    !!provider &&
+    !(provider.isBinance || provider.isBitKeep || provider.isOkxWallet)
+  )
+}
 
 const assertInstalled = function () {
   if (!isInstalled()) {
@@ -23,29 +29,30 @@ const wallet = {
     assertInstalled()
     // in order to connect to unisat, we just need to request accounts and the user
     // will be prompted to connect
-    await provider.requestAccounts()
+    await getProvider().requestAccounts()
   },
   disconnect() {
     assertInstalled()
-    return provider.disconnect()
+    return getProvider().disconnect()
   },
   getAccounts() {
     assertInstalled()
-    return provider.getAccounts()
+    return getProvider().getAccounts()
   },
   getBalance() {
     assertInstalled()
-    return provider.getBalance()
+    return getProvider().getBalance()
   },
   getNetwork() {
     assertInstalled()
-    return provider.getNetwork()
+    return getProvider().getNetwork()
   },
   id: 'unisat',
   isInstalled,
   name: 'Unisat',
   onAccountsChanged(handler) {
     assertInstalled()
+    const provider = getProvider()
     provider.on('accountsChanged', handler)
     return () => provider.removeListener('accountsChanged', handler)
   },
@@ -53,17 +60,18 @@ const wallet = {
     assertInstalled()
     // This event is not listed in the docs, but "networkChanged" doesn't fire
     // See https://github.com/unisat-wallet/extension/issues/211#issuecomment-2290557037
+    const provider = getProvider()
     provider.on('chainChanged', handler)
     return () => provider.removeListener('chainChanged', handler)
   },
   sendBitcoin(toAddress, satoshis, options) {
     assertInstalled()
-    return provider.sendBitcoin(toAddress, satoshis, options)
+    return getProvider().sendBitcoin(toAddress, satoshis, options)
   },
   supportsSwitchNetwork: true,
   switchNetwork(network) {
     assertInstalled()
-    return provider.switchNetwork(network)
+    return getProvider().switchNetwork(network)
   },
 } satisfies WalletConnector
 

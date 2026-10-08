@@ -158,7 +158,7 @@ const TransactionDrawerContent = function () {
   const [txId, setTxDrawerQueryString] = useTxDrawerQueryString()
   const { data: transactions, isPending: isTransactionsPending } =
     useEarnTransactions()
-  const { data: pools, isPending: isPoolsPending } = useEarnPools()
+  const { data: pools } = useEarnPools()
 
   // A malformed txId (e.g. 0x123) isn't a real tx — drop it from the URL and show no drawer.
   const hasInvalidTxId = txId !== null && !isHash(txId)
@@ -177,7 +177,7 @@ const TransactionDrawerContent = function () {
 
   const close = () => setTxDrawerQueryString(null)
 
-  if (isTransactionsPending || isPoolsPending) {
+  if (!pools || isTransactionsPending) {
     return (
       <Drawer onClose={close}>
         <TransactionDrawerSkeleton onClose={close} />

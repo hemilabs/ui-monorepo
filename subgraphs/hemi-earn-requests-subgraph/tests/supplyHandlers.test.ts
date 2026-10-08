@@ -28,18 +28,23 @@ describe('toDate', function () {
 
 describe('toSnapshot', function () {
   it('names the values each chain reads, in order', function () {
-    expect(toSnapshot(mainnet.id, [100n, 4n, 2n])).toEqual({
+    expect(toSnapshot(mainnet.id, [100n, 4n, 2n, 6n])).toEqual({
       burned: 2n,
+      ethInvestorAndTeamAllocations: 6n,
       ethSafe: 4n,
       totalSupply: 100n,
     })
-    expect(toSnapshot(bsc.id, [3n])).toEqual({ bnbSafe: 3n })
+    expect(toSnapshot(bsc.id, [3n, 8n])).toEqual({
+      bnbInvestorAndTeamAllocations: 8n,
+      bnbSafe: 3n,
+    })
   })
 
   it('adds every op address into a single value', function () {
     const opValues = opAddresses.map((_, index) => BigInt(index + 1))
 
-    expect(toSnapshot(hemi.id, [1n, 5n, 10n, ...opValues])).toEqual({
+    expect(toSnapshot(hemi.id, [1n, 5n, 10n, ...opValues, 9n])).toEqual({
+      hemiInvestorAndTeamAllocations: 9n,
       hemiSafe: 1n,
       locked: 5n,
       merkle: 10n,

@@ -6,10 +6,11 @@ import { type ConnectorGroup, type WalletConnector } from './types'
 const provider = (typeof window !== 'undefined' &&
   (window.unisat_wallet || window.unisat)) as Unisat
 
-// Some wallets (e.g., Binance and OKX) inject similar APIs but are not UniSat.
-// Exclude them from UniSat detection to avoid false positives.
+// Some wallets (e.g., Binance, Bitget and OKX) inject similar APIs but are not
+// UniSat. Exclude them from UniSat detection to avoid false positives.
 const isInstalled = () =>
-  !!provider && !(provider.isBinance || provider.isOkxWallet)
+  !!provider &&
+  !(provider.isBinance || provider.isBitKeep || provider.isOkxWallet)
 
 const assertInstalled = function () {
   if (!isInstalled()) {

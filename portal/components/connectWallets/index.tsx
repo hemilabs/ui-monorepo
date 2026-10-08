@@ -8,8 +8,8 @@ import { formatBtcAddress, formatEvmAddress } from 'utils/format'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount as useEvmAccount } from 'wagmi'
 
+import { BtcWalletLogo } from './btcWalletLogo'
 import { EvmWalletLogo } from './evmWalletLogo'
-import { UnisatLogo } from './unisatLogo'
 
 const WalletIcon = (props: ComponentProps<'svg'>) => (
   <svg
@@ -41,7 +41,11 @@ export const WalletConnection = function ({
   const { openDrawer } = useDrawerContext()
   const t = useTranslations()
 
-  const { address: btcAddress, status: btcStatus } = useBtcAccount()
+  const {
+    address: btcAddress,
+    connector: btcConnector,
+    status: btcStatus,
+  } = useBtcAccount()
   const { address: evmAddress, connector, status: evmStatus } = useEvmAccount()
   const { track } = useUmami()
 
@@ -55,7 +59,7 @@ export const WalletConnection = function ({
   if (walletIsConnected(btcStatus)) {
     walletsConnected.push({
       address: btcAddress ? formatBtcAddress(btcAddress) : undefined,
-      icon: <UnisatLogo className="size-4" />,
+      icon: <BtcWalletLogo className="size-4" walletId={btcConnector?.id} />,
     })
   }
 

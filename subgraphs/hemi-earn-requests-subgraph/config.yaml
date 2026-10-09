@@ -107,6 +107,15 @@ chains:
     id: 56
     start_block: 62115614 # 2025-09-23T00:00:00Z
 
+  # ---- Base: HEMI supply only ----
+  - contracts:
+      # Accounts whose Hemi balances are not circulating
+      - address:
+          - '0x55A7DcFBEA1DB7290093f57B7684494C0F8ebA59' # Jeff EOA
+        name: OpAddresses
+    id: 8453
+    start_block: 40120759 # 2025-12-29T17:54:25Z, HEMI deployment on Base
+
 # ---- HEMI supply: accounts whose balance a snapshot reads, no events ----
 contracts:
   - events: []

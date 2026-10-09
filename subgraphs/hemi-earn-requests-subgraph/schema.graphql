@@ -70,6 +70,8 @@ type RateSnapshot {
 
 # HEMI supply
 type DailySupplySnapshot {
+  baseBlock: Int
+  baseOpBalances: BigInt
   bnbBlock: Int
   bnbInvestorAllocation: BigInt
   bnbOpBalances: BigInt

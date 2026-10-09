@@ -49,6 +49,11 @@ describe('getAmountPresets', function () {
     expect(walletPreset?.value).toBe('1234.567891')
   })
 
+  it('rounds the wallet label down so it never overstates the balance', function () {
+    expect(presetsFor(hemi('9999.5')).walletPreset?.label).toBe('9.99K')
+    expect(presetsFor(hemi('999999')).walletPreset?.label).toBe('999.99K')
+  })
+
   it('drops the wallet preset when it duplicates a fixed one', function () {
     expect(presetsFor(hemi('10000')).walletPreset).toBeUndefined()
   })

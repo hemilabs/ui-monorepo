@@ -8,7 +8,7 @@ const presetAmounts = [1_000, 10_000, 100_000, 1_000_000]
 const minWalletAmount = 0.01
 
 const toCompactLabel = function (amount: number, locale: string) {
-  const { number, suffix } = formatCompactFiatParts(amount, locale)
+  const { number, suffix } = formatCompactFiatParts(amount, locale, 2, 'trunc')
   return `${number}${suffix}`
 }
 

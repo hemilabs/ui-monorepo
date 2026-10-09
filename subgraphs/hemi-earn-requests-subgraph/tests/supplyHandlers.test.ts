@@ -9,7 +9,14 @@ import {
   toSnapshot,
 } from '../src/mappings/supplyHandlers.ts'
 
-const opAddresses = indexer.chains[hemi.id].OpAddresses.addresses
+const toOpValues = (
+  chainId: typeof bsc.id | typeof hemi.id | typeof mainnet.id,
+) =>
+  indexer.chains[chainId].OpAddresses.addresses.map((_, index) =>
+    BigInt(index + 1),
+  )
+
+const sum = (values: bigint[]) => values.reduce((a, b) => a + b, 0n)
 
 describe('endOfDay', function () {
   it('returns the midnight UTC that closes the day', function () {
@@ -28,22 +35,33 @@ describe('toDate', function () {
 
 describe('toSnapshot', function () {
   it('names the values each chain reads, in order', function () {
-    expect(toSnapshot(mainnet.id, [100n, 4n, 2n])).toEqual({
+    const ethOpValues = toOpValues(mainnet.id)
+    const bnbOpValues = toOpValues(bsc.id)
+
+    expect(toSnapshot(mainnet.id, [100n, 4n, 2n, 6n, ...ethOpValues])).toEqual({
       burned: 2n,
+      ethInvestorAndTeamAllocations: 6n,
+      ethOpBalances: sum(ethOpValues),
       ethSafe: 4n,
       totalSupply: 100n,
     })
-    expect(toSnapshot(bsc.id, [3n])).toEqual({ bnbSafe: 3n })
+    expect(toSnapshot(bsc.id, [3n, 8n, ...bnbOpValues])).toEqual({
+      bnbInvestorAndTeamAllocations: 8n,
+      bnbOpBalances: sum(bnbOpValues),
+      bnbSafe: 3n,
+    })
   })
 
   it('adds every op address into a single value', function () {
-    const opValues = opAddresses.map((_, index) => BigInt(index + 1))
+    const opValues = toOpValues(hemi.id)
 
-    expect(toSnapshot(hemi.id, [1n, 5n, 10n, ...opValues])).toEqual({
+    expect(toSnapshot(hemi.id, [1n, 5n, 10n, ...opValues, 9n, 11n])).toEqual({
+      hemiFoundationFinance: 11n,
+      hemiInvestorAndTeamAllocations: 9n,
       hemiSafe: 1n,
       locked: 5n,
       merkle: 10n,
-      opBalances: opValues.reduce((sum, value) => sum + value, 0n),
+      opBalances: sum(opValues),
     })
   })
 })

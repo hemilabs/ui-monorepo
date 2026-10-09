@@ -19,9 +19,15 @@ import { getBlock, multicall } from 'viem/actions'
 import { bsc, hemi, mainnet } from 'viem/chains'
 
 type Snapshot = {
+  bnbInvestorAndTeamAllocations?: bigint
+  bnbOpBalances?: bigint
   bnbSafe?: bigint
   burned?: bigint
+  ethInvestorAndTeamAllocations?: bigint
+  ethOpBalances?: bigint
   ethSafe?: bigint
+  hemiFoundationFinance?: bigint
+  hemiInvestorAndTeamAllocations?: bigint
   hemiSafe?: bigint
   locked?: bigint
   merkle?: bigint
@@ -41,7 +47,17 @@ const accountsByChain: Record<
   Chain['id'],
   { account?: string; name: keyof Snapshot }[]
 > = {
-  [bsc.id]: [{ account: chains[bsc.id].Safe.addresses[0], name: 'bnbSafe' }],
+  [bsc.id]: [
+    { account: chains[bsc.id].Safe.addresses[0], name: 'bnbSafe' },
+    {
+      account: chains[bsc.id].InvestorAndTeamAllocations.addresses[0],
+      name: 'bnbInvestorAndTeamAllocations',
+    },
+    ...chains[bsc.id].OpAddresses.addresses.map(account => ({
+      account,
+      name: 'bnbOpBalances' as const,
+    })),
+  ],
   [hemi.id]: [
     { account: chains[hemi.id].Safe.addresses[0], name: 'hemiSafe' },
     { account: chains[hemi.id].VeHemi.addresses[0], name: 'locked' },
@@ -50,11 +66,27 @@ const accountsByChain: Record<
       account,
       name: 'opBalances' as const,
     })),
+    {
+      account: chains[hemi.id].InvestorAndTeamAllocations.addresses[0],
+      name: 'hemiInvestorAndTeamAllocations',
+    },
+    {
+      account: chains[hemi.id].FoundationFinance.addresses[0],
+      name: 'hemiFoundationFinance',
+    },
   ],
   [mainnet.id]: [
     { name: 'totalSupply' },
     { account: chains[mainnet.id].Safe.addresses[0], name: 'ethSafe' },
     { account: chains[mainnet.id].Dead.addresses[0], name: 'burned' },
+    {
+      account: chains[mainnet.id].InvestorAndTeamAllocations.addresses[0],
+      name: 'ethInvestorAndTeamAllocations',
+    },
+    ...chains[mainnet.id].OpAddresses.addresses.map(account => ({
+      account,
+      name: 'ethOpBalances' as const,
+    })),
   ],
 }
 
@@ -219,9 +251,15 @@ const blockFieldByChain = {
 } as const
 
 const emptySnapshot = {
+  bnbInvestorAndTeamAllocations: undefined,
+  bnbOpBalances: undefined,
   bnbSafe: undefined,
   burned: undefined,
+  ethInvestorAndTeamAllocations: undefined,
+  ethOpBalances: undefined,
   ethSafe: undefined,
+  hemiFoundationFinance: undefined,
+  hemiInvestorAndTeamAllocations: undefined,
   hemiSafe: undefined,
   locked: undefined,
   merkle: undefined,
@@ -236,9 +274,15 @@ const emptyBlocks = {
 }
 
 const snapshotSchema = {
+  bnbInvestorAndTeamAllocations: S.optional(S.bigint),
+  bnbOpBalances: S.optional(S.bigint),
   bnbSafe: S.optional(S.bigint),
   burned: S.optional(S.bigint),
+  ethInvestorAndTeamAllocations: S.optional(S.bigint),
+  ethOpBalances: S.optional(S.bigint),
   ethSafe: S.optional(S.bigint),
+  hemiFoundationFinance: S.optional(S.bigint),
+  hemiInvestorAndTeamAllocations: S.optional(S.bigint),
   hemiSafe: S.optional(S.bigint),
   locked: S.optional(S.bigint),
   merkle: S.optional(S.bigint),

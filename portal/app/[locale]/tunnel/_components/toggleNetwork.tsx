@@ -14,7 +14,7 @@ export const ToggleNetwork = ({ disabled, toggle }: Props) => (
       type="button"
       variant="secondary"
     >
-      <DoubleArrow className="size-4 [&>path]:fill-neutral-500 [&>path]:transition-colors [&>path]:duration-200 group-hover/icon:[&>path]:fill-neutral-950" />
+      <DoubleArrow className="size-4 [&>path]:fill-neutral-500 group-hover/icon:[&>path]:fill-neutral-950" />
     </ButtonIcon>
   </div>
 )

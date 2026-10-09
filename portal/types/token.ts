@@ -9,6 +9,7 @@ export type Extensions = {
   l1LogoURI?: string
   bridgeInfo?: {
     [keyof: string]: {
+      allowanceSlot?: number
       tokenAddress?: Address
     }
   }

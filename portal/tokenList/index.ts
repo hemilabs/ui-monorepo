@@ -65,6 +65,7 @@ export const getRemoteTokens = function (token: EvmToken) {
       address: token.extensions!.bridgeInfo![l1ChainId].tokenAddress!,
       chainId: Number(l1ChainId),
       extensions: {
+        allowanceSlot: token.extensions!.bridgeInfo![l1ChainId].allowanceSlot,
         bridgeInfo: {
           [token.chainId]: {
             tokenAddress: token.address as Address,

@@ -450,6 +450,10 @@
       "title": "Estimated payouts",
       "unlocks-on": "Unlocks {date}"
     },
+    "estimator": {
+      "quick-amounts": "Quick amounts",
+      "yours": "Yours · {amount}"
+    },
     "form": {
       "approve-and-stake": "Approve and Stake",
       "approximate": "~{percentage}",

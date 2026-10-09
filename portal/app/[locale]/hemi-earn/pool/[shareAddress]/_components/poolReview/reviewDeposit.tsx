@@ -13,7 +13,6 @@ import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useTranslations } from 'use-intl'
 import { getApprovalAmount } from 'utils/approval'
-import { createErc20AllowanceStateOverride } from 'utils/erc20StateOverride'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { type Hash, formatUnits } from 'viem'
@@ -55,6 +54,7 @@ import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
 import { useSlippageBps } from '../../_hooks/useSlippage'
 import { DepositStatus, type DepositStatusType } from '../../_types/operations'
+import { createFeeEstimateStateOverride } from '../../_utils/feeEstimateStateOverride'
 
 import { RetryDeposit } from './retryDeposit'
 
@@ -192,8 +192,8 @@ export const ReviewDeposit = function ({ onClose }: Props) {
             })
           : undefined,
       query: { enabled: !!address && amount > BigInt(0) && !!quote },
-      stateOverride: createErc20AllowanceStateOverride({
-        enabled: needsApproval,
+      stateOverride: createFeeEstimateStateOverride({
+        needsApproval,
         owner: address,
         spender: routerAddress,
         token: selectedAsset.token,

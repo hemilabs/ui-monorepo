@@ -1,7 +1,27 @@
 import * as bitcoin from 'bitcoinjs-lib'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
-import { getOutputScript, removeDustChange } from '../../utils/psbt'
+import {
+  getOutputScript,
+  removeDustChange,
+  sendBitcoin,
+} from '../../utils/psbt'
+
+const esplora = vi.hoisted(() => ({
+  getAddressTxsUtxo: vi.fn(),
+  getFeesRecommended: vi.fn(),
+  getTxHex: vi.fn(),
+}))
+
+vi.mock('esplora-client', () => ({
+  esploraClient: () => ({
+    bitcoin: {
+      addresses: { getAddressTxsUtxo: esplora.getAddressTxsUtxo },
+      fees: { getFeesRecommended: esplora.getFeesRecommended },
+      transactions: { getTxHex: esplora.getTxHex },
+    },
+  }),
+}))
 
 const { bitcoin: mainnet, testnet } = bitcoin.networks
 
@@ -11,6 +31,7 @@ const p2trMainnet =
 const p2trTestnet =
   'tb1pqqqqp399et2xygdj5xreqhjjvcmzhxw4aywxecjdzew6hylgvsesf3hn0c'
 const p2wpkh = 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4'
+const p2wpkhTestnet = 'tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx'
 const p2pkh = '1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2'
 const p2sh = '3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy'
 
@@ -93,4 +114,99 @@ describe('removeDustChange', function () {
       })
     },
   )
+})
+
+describe('sendBitcoin', function () {
+  const custody = p2wpkhTestnet
+  const memo = '0390B85A9E3DC8F1C8C3A2E9A7B0D4E5F6A7B8C9'
+
+  const setup = function (sender: string) {
+    const fundingTx = new bitcoin.Transaction()
+    fundingTx.addInput(Buffer.alloc(32), 0)
+    fundingTx.addOutput(Buffer.alloc(22), 1000)
+    fundingTx.addOutput(getOutputScript(sender, testnet), 8000)
+    fundingTx.addOutput(getOutputScript(sender, testnet), 6000)
+    esplora.getAddressTxsUtxo.mockResolvedValue([
+      { txid: fundingTx.getId(), value: 8000, vout: 1 },
+      { txid: fundingTx.getId(), value: 6000, vout: 2 },
+    ])
+    esplora.getFeesRecommended.mockResolvedValue({ fastestFee: 1 })
+    esplora.getTxHex.mockResolvedValue(fundingTx.toHex())
+    const provider = {
+      getAccounts: vi.fn().mockResolvedValue([sender]),
+      getNetwork: vi.fn().mockResolvedValue('testnet'),
+      // stop before the signed transaction is extracted and pushed
+      signPsbt: vi.fn().mockRejectedValue(new Error('signed')),
+    }
+    return { fundingTx, provider }
+  }
+
+  const getSignRequest = async function (sender: string) {
+    const { fundingTx, provider } = setup(sender)
+    await expect(
+      sendBitcoin(provider, custody, 10000, { memo }),
+    ).rejects.toThrow('signed')
+    const [psbtHex, options] = provider.signPsbt.mock.calls[0]
+    const psbt = bitcoin.Psbt.fromHex(psbtHex, { network: testnet })
+    return { fundingTx, options, psbt }
+  }
+
+  it('adds witnessUtxo to the inputs of a taproot sender', async function () {
+    const { fundingTx, psbt } = await getSignRequest(p2trTestnet)
+
+    expect(psbt.data.inputs).toHaveLength(2)
+    expect(psbt.data.inputs.map(input => input.witnessUtxo)).toEqual(
+      psbt.txInputs.map(input => fundingTx.outs[input.index]),
+    )
+    psbt.data.inputs.forEach(input =>
+      expect(input.nonWitnessUtxo).toEqual(fundingTx.toBuffer()),
+    )
+  })
+
+  it('does not add witnessUtxo for a non-taproot sender', async function () {
+    const { fundingTx, psbt } = await getSignRequest(p2wpkhTestnet)
+
+    expect(psbt.data.inputs).toHaveLength(2)
+    psbt.data.inputs.forEach(function (input) {
+      expect(input.witnessUtxo).toBeUndefined()
+      expect(input.nonWitnessUtxo).toEqual(fundingTx.toBuffer())
+    })
+  })
+
+  it('asks the wallet to sign and finalize every input', async function () {
+    const { options } = await getSignRequest(p2trTestnet)
+
+    expect(options).toEqual({
+      autoFinalized: true,
+      toSignInputs: [
+        { address: p2trTestnet, index: 0 },
+        { address: p2trTestnet, index: 1 },
+      ],
+    })
+  })
+
+  it('pays the target, returns the change and adds the memo', async function () {
+    const { psbt } = await getSignRequest(p2trTestnet)
+    const outputs = psbt.txOutputs.map(({ script, value }) => ({
+      script: script.toString('hex'),
+      value,
+    }))
+
+    expect(outputs).toEqual([
+      {
+        script: getOutputScript(custody, testnet).toString('hex'),
+        value: 10000,
+      },
+      {
+        script: getOutputScript(p2trTestnet, testnet).toString('hex'),
+        value: 3626,
+      },
+      {
+        script: bitcoin.script
+          .compile([bitcoin.opcodes.OP_RETURN, Buffer.from(memo)])
+          .toString('hex'),
+        value: 0,
+      },
+    ])
+  })
 })

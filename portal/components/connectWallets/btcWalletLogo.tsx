@@ -1,10 +1,12 @@
 import { ComponentProps, ReactNode } from 'react'
 
+import { BitgetWalletLogo } from './logos/bitgetWallet'
 import { OkxLogo } from './okxLogo'
 import { UnisatLogo } from './unisatLogo'
 
 function getLogo(walletId: string, props?: ComponentProps<'svg'>) {
   const wallets: Record<string, ReactNode> = {
+    bitget: <BitgetWalletLogo {...props} />,
     okx: <OkxLogo {...props} />,
     unisat: <UnisatLogo {...props} />,
   }

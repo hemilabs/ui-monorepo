@@ -24,6 +24,7 @@ export interface Unisat {
   getBitcoinUtxos?(): Promise<UTXO[]>
   getNetwork(): Promise<BtcSupportedNetworks>
   isBinance?: boolean
+  isBitKeep?: boolean
   isOkxWallet?: boolean
   requestAccounts(): Promise<Account[]>
   on<Event extends keyof EventMap>(event: Event, handler: EventMap[Event]): void

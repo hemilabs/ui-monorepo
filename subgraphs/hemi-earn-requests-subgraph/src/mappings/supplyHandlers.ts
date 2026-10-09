@@ -16,18 +16,19 @@ import {
   withRetry,
 } from 'viem'
 import { getBlock, multicall } from 'viem/actions'
-import { bsc, hemi, mainnet } from 'viem/chains'
+import { base, bsc, hemi, mainnet } from 'viem/chains'
 
 type Snapshot = {
-  bnbInvestorAndTeamAllocations?: bigint
+  baseOpBalances?: bigint
+  bnbInvestorAllocation?: bigint
   bnbOpBalances?: bigint
   bnbSafe?: bigint
   burned?: bigint
-  ethInvestorAndTeamAllocations?: bigint
+  ethInvestorAllocation?: bigint
   ethOpBalances?: bigint
   ethSafe?: bigint
   hemiFoundationFinance?: bigint
-  hemiInvestorAndTeamAllocations?: bigint
+  hemiInvestorAllocation?: bigint
   hemiSafe?: bigint
   locked?: bigint
   merkle?: bigint
@@ -36,6 +37,7 @@ type Snapshot = {
 }
 
 const hemiToken: Record<Chain['id'], Address> = {
+  [base.id]: '0xBcaBa0baC0F4Bff8cC8659F2218C6d5324b46061',
   [bsc.id]: '0x5ffd0eadc186af9512542d0d5e5eafc65d5afc5b',
   [hemi.id]: '0x99e3dE3817F6081B2568208337ef83295b7f591D',
   [mainnet.id]: '0xEb964A1A6fAB73b8c72A0D15c7337fA4804F484d',
@@ -47,11 +49,15 @@ const accountsByChain: Record<
   Chain['id'],
   { account?: string; name: keyof Snapshot }[]
 > = {
+  [base.id]: chains[base.id].OpAddresses.addresses.map(account => ({
+    account,
+    name: 'baseOpBalances' as const,
+  })),
   [bsc.id]: [
     { account: chains[bsc.id].Safe.addresses[0], name: 'bnbSafe' },
     {
-      account: chains[bsc.id].InvestorAndTeamAllocations.addresses[0],
-      name: 'bnbInvestorAndTeamAllocations',
+      account: chains[bsc.id].InvestorAllocation.addresses[0],
+      name: 'bnbInvestorAllocation',
     },
     ...chains[bsc.id].OpAddresses.addresses.map(account => ({
       account,
@@ -67,8 +73,8 @@ const accountsByChain: Record<
       name: 'opBalances' as const,
     })),
     {
-      account: chains[hemi.id].InvestorAndTeamAllocations.addresses[0],
-      name: 'hemiInvestorAndTeamAllocations',
+      account: chains[hemi.id].InvestorAllocation.addresses[0],
+      name: 'hemiInvestorAllocation',
     },
     {
       account: chains[hemi.id].FoundationFinance.addresses[0],
@@ -80,8 +86,8 @@ const accountsByChain: Record<
     { account: chains[mainnet.id].Safe.addresses[0], name: 'ethSafe' },
     { account: chains[mainnet.id].Dead.addresses[0], name: 'burned' },
     {
-      account: chains[mainnet.id].InvestorAndTeamAllocations.addresses[0],
-      name: 'ethInvestorAndTeamAllocations',
+      account: chains[mainnet.id].InvestorAllocation.addresses[0],
+      name: 'ethInvestorAllocation',
     },
     ...chains[mainnet.id].OpAddresses.addresses.map(account => ({
       account,
@@ -99,6 +105,7 @@ const toContracts = (chainId: Chain['id']) =>
   }))
 
 const contractsByChain: Record<Chain['id'], ReturnType<typeof toContracts>> = {
+  [base.id]: toContracts(base.id),
   [bsc.id]: toContracts(bsc.id),
   [hemi.id]: toContracts(hemi.id),
   [mainnet.id]: toContracts(mainnet.id),
@@ -126,6 +133,7 @@ export const toRpcUrls = (value = '') =>
   value.split('+').filter(url => URL.canParse(url))
 
 const rpcUrls: Record<Chain['id'], string[]> = {
+  [base.id]: toRpcUrls(process.env.ENVIO_RPC_URL_BASE),
   [bsc.id]: toRpcUrls(process.env.ENVIO_RPC_URL_BNB),
   [hemi.id]: toRpcUrls(process.env.ENVIO_RPC_URL_HEMI),
   [mainnet.id]: toRpcUrls(process.env.ENVIO_RPC_URL_ETH),
@@ -164,6 +172,7 @@ const toTransport = function (
 }
 
 const chainById: Record<Chain['id'], Chain> = {
+  [base.id]: base,
   [bsc.id]: bsc,
   [hemi.id]: hemi,
   [mainnet.id]: mainnet,
@@ -208,6 +217,7 @@ const retry = <T>(log: Logger, label: string, fn: () => Promise<T>) =>
   })
 
 const llamaChainByChain: Record<Chain['id'], string> = {
+  [base.id]: 'base',
   [bsc.id]: 'bsc',
   [hemi.id]: 'hemi',
   [mainnet.id]: 'ethereum',
@@ -218,6 +228,7 @@ const rateLimit = { calls: 2, per: 'second' } as const
 
 // The public BNB Chain RPC answers 429 to the faster day-end reads
 const dayEndRateLimit: Record<Chain['id'], RateLimit> = {
+  [base.id]: rateLimit,
   [bsc.id]: { calls: 1, per: 3000 },
   [hemi.id]: rateLimit,
   [mainnet.id]: rateLimit,
@@ -225,6 +236,7 @@ const dayEndRateLimit: Record<Chain['id'], RateLimit> = {
 
 // About 5 minutes of blocks on each chain, for the snapshots at the head
 const realtimeStride: Record<Chain['id'], number> = {
+  [base.id]: 150,
   [bsc.id]: 667,
   [hemi.id]: 25,
   [mainnet.id]: 25,
@@ -233,33 +245,37 @@ const realtimeStride: Record<Chain['id'], number> = {
 // Just under a day of blocks on each chain, so no past day is skipped. BNB
 // Chain's stride is sized for its 0.75s blocks before January 2026.
 const historicalStride: Record<Chain['id'], number> = {
+  [base.id]: 42000,
   [bsc.id]: 110000,
   [hemi.id]: 7000,
   [mainnet.id]: 7000,
 }
 
 const realtimeStartBlock: Record<Chain['id'], string | undefined> = {
+  [base.id]: process.env.ENVIO_SUPPLY_REALTIME_START_BLOCK_BASE,
   [bsc.id]: process.env.ENVIO_SUPPLY_REALTIME_START_BLOCK_BNB,
   [hemi.id]: process.env.ENVIO_SUPPLY_REALTIME_START_BLOCK_HEMI,
   [mainnet.id]: process.env.ENVIO_SUPPLY_REALTIME_START_BLOCK_ETH,
 }
 
 const blockFieldByChain = {
+  [base.id]: 'baseBlock',
   [bsc.id]: 'bnbBlock',
   [hemi.id]: 'hemiBlock',
   [mainnet.id]: 'ethBlock',
 } as const
 
 const emptySnapshot = {
-  bnbInvestorAndTeamAllocations: undefined,
+  baseOpBalances: undefined,
+  bnbInvestorAllocation: undefined,
   bnbOpBalances: undefined,
   bnbSafe: undefined,
   burned: undefined,
-  ethInvestorAndTeamAllocations: undefined,
+  ethInvestorAllocation: undefined,
   ethOpBalances: undefined,
   ethSafe: undefined,
   hemiFoundationFinance: undefined,
-  hemiInvestorAndTeamAllocations: undefined,
+  hemiInvestorAllocation: undefined,
   hemiSafe: undefined,
   locked: undefined,
   merkle: undefined,
@@ -268,21 +284,23 @@ const emptySnapshot = {
 }
 
 const emptyBlocks = {
+  baseBlock: undefined,
   bnbBlock: undefined,
   ethBlock: undefined,
   hemiBlock: undefined,
 }
 
 const snapshotSchema = {
-  bnbInvestorAndTeamAllocations: S.optional(S.bigint),
+  baseOpBalances: S.optional(S.bigint),
+  bnbInvestorAllocation: S.optional(S.bigint),
   bnbOpBalances: S.optional(S.bigint),
   bnbSafe: S.optional(S.bigint),
   burned: S.optional(S.bigint),
-  ethInvestorAndTeamAllocations: S.optional(S.bigint),
+  ethInvestorAllocation: S.optional(S.bigint),
   ethOpBalances: S.optional(S.bigint),
   ethSafe: S.optional(S.bigint),
   hemiFoundationFinance: S.optional(S.bigint),
-  hemiInvestorAndTeamAllocations: S.optional(S.bigint),
+  hemiInvestorAllocation: S.optional(S.bigint),
   hemiSafe: S.optional(S.bigint),
   locked: S.optional(S.bigint),
   merkle: S.optional(S.bigint),
@@ -441,6 +459,7 @@ const readDayEndSnapshotByChain: Record<
   Chain['id'],
   ReturnType<typeof createDayEndSnapshotEffect>
 > = {
+  [base.id]: createDayEndSnapshotEffect(base.id),
   [bsc.id]: createDayEndSnapshotEffect(bsc.id),
   [hemi.id]: createDayEndSnapshotEffect(hemi.id),
   [mainnet.id]: createDayEndSnapshotEffect(mainnet.id),

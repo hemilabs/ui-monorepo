@@ -1,5 +1,5 @@
 import { indexer } from 'envio'
-import { bsc, hemi, mainnet } from 'viem/chains'
+import { base, bsc, hemi, mainnet } from 'viem/chains'
 import { describe, expect, it } from 'vitest'
 
 import {
@@ -10,7 +10,7 @@ import {
 } from '../src/mappings/supplyHandlers.ts'
 
 const toOpValues = (
-  chainId: typeof bsc.id | typeof hemi.id | typeof mainnet.id,
+  chainId: typeof base.id | typeof bsc.id | typeof hemi.id | typeof mainnet.id,
 ) =>
   indexer.chains[chainId].OpAddresses.addresses.map((_, index) =>
     BigInt(index + 1),
@@ -37,18 +37,22 @@ describe('toSnapshot', function () {
   it('names the values each chain reads, in order', function () {
     const ethOpValues = toOpValues(mainnet.id)
     const bnbOpValues = toOpValues(bsc.id)
+    const baseOpValues = toOpValues(base.id)
 
     expect(toSnapshot(mainnet.id, [100n, 4n, 2n, 6n, ...ethOpValues])).toEqual({
       burned: 2n,
-      ethInvestorAndTeamAllocations: 6n,
+      ethInvestorAllocation: 6n,
       ethOpBalances: sum(ethOpValues),
       ethSafe: 4n,
       totalSupply: 100n,
     })
     expect(toSnapshot(bsc.id, [3n, 8n, ...bnbOpValues])).toEqual({
-      bnbInvestorAndTeamAllocations: 8n,
+      bnbInvestorAllocation: 8n,
       bnbOpBalances: sum(bnbOpValues),
       bnbSafe: 3n,
+    })
+    expect(toSnapshot(base.id, baseOpValues)).toEqual({
+      baseOpBalances: sum(baseOpValues),
     })
   })
 
@@ -57,7 +61,7 @@ describe('toSnapshot', function () {
 
     expect(toSnapshot(hemi.id, [1n, 5n, 10n, ...opValues, 9n, 11n])).toEqual({
       hemiFoundationFinance: 11n,
-      hemiInvestorAndTeamAllocations: 9n,
+      hemiInvestorAllocation: 9n,
       hemiSafe: 1n,
       locked: 5n,
       merkle: 10n,

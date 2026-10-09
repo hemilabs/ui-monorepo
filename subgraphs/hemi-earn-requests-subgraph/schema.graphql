@@ -70,19 +70,21 @@ type RateSnapshot {
 
 # HEMI supply
 type DailySupplySnapshot {
+  baseBlock: Int
+  baseOpBalances: BigInt
   bnbBlock: Int
-  bnbInvestorAndTeamAllocations: BigInt
+  bnbInvestorAllocation: BigInt
   bnbOpBalances: BigInt
   bnbSafe: BigInt
   burned: BigInt
   date: String! @index
   ethBlock: Int
-  ethInvestorAndTeamAllocations: BigInt
+  ethInvestorAllocation: BigInt
   ethOpBalances: BigInt
   ethSafe: BigInt
   hemiBlock: Int
   hemiFoundationFinance: BigInt
-  hemiInvestorAndTeamAllocations: BigInt
+  hemiInvestorAllocation: BigInt
   hemiSafe: BigInt
   id: ID!
   locked: BigInt

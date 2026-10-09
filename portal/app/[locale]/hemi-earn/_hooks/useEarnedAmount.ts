@@ -3,7 +3,7 @@ import Big from 'big.js'
 import { getTokenPrice } from 'utils/token'
 
 import { sharesToPeggedOptions } from '../_fetchers/fetchSharesToPegged'
-import { positionEarnedUsd } from '../_utils/earnedAmount'
+import { costBasisState, positionEarnedUsd } from '../_utils/earnedAmount'
 import { inTransitOnlyPositions } from '../_utils/earnRows'
 
 import { useEarnCostBasis } from './useEarnCostBasis'
@@ -28,8 +28,8 @@ export const useEarnedAmount = function () {
   } = useEarnTokenPrices({ retryOnMount: false })
   const {
     data: costBasis,
-    isError: isCostBasisError,
-    isLoading: isCostBasisLoading,
+    fetchStatus: costBasisFetchStatus,
+    status: costBasisStatus,
   } = useEarnCostBasis()
   const { data: inTransitByShare, isPending: isInTransitPending } =
     useInTransitShares()
@@ -68,15 +68,20 @@ export const useEarnedAmount = function () {
 
   const totalUsd = total.toFixed(2)
 
+  const { isCostBasisPending, isCostBasisUnavailable } = costBasisState({
+    fetchStatus: costBasisFetchStatus,
+    status: costBasisStatus,
+  })
+
   const hasRows = rows.length > 0
   const isPending =
     isPositionsPending ||
     isInTransitPending ||
-    (hasRows && (isPricesPending || isCostBasisLoading)) ||
+    (hasRows && (isPricesPending || isCostBasisPending)) ||
     peggedAmountQueries.some(q => q.isPending && q.isFetching)
   const isError =
     isPositionsError ||
-    (hasRows && (isPricesError || isCostBasisError)) ||
+    (hasRows && (isPricesError || isCostBasisUnavailable)) ||
     peggedAmountQueries.some(q => q.isError)
 
   return { data: { totalUsd }, isError, isPending }

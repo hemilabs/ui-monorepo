@@ -22,7 +22,11 @@ export const SegmentedControl = <T extends string>({
   options,
   value,
 }: Props<T>) => (
-  <div aria-label={label} className="flex items-center gap-2" role="group">
+  <div
+    aria-label={label}
+    className="flex flex-wrap items-center gap-2"
+    role="group"
+  >
     {options.map(option => (
       <SegmentedControlItem
         className={fullWidth ? 'flex-1' : undefined}

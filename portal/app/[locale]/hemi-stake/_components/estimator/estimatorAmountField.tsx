@@ -36,17 +36,20 @@ export const EstimatorAmountField = function ({
           value: walletPreset.value,
         })
 
+  const quickAmounts = (
+    <SegmentedControl
+      label={t('estimator.quick-amounts')}
+      onChange={onChange}
+      options={options}
+      value={value}
+    />
+  )
+
   return (
     <TokenInput
       errorKey={undefined}
-      headerAction={
-        <SegmentedControl
-          label={t('estimator.quick-amounts')}
-          onChange={onChange}
-          options={options}
-          value={value}
-        />
-      }
+      footer={<div className="mt-3 sm:hidden">{quickAmounts}</div>}
+      headerAction={<div className="hidden sm:block">{quickAmounts}</div>}
       label={t('amount')}
       onChange={onChange}
       showBalance={false}

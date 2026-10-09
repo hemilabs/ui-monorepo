@@ -27,6 +27,8 @@ type Props<T extends Token> = {
   // `RenderFiatBalance`; callers pricing against a different feed (e.g. Hemi
   // Earn's oracle-merged `RenderEarnFiatBalance`) pass their own.
   fiatBalanceComponent?: ComponentType<ComponentProps<typeof RenderFiatBalance>>
+  // Rendered as the last row inside the card, full width.
+  footer?: ReactNode
   // Rendered at the right of the label row (e.g. the Hemi Earn settings gear).
   headerAction?: ReactNode
   label: string
@@ -56,6 +58,7 @@ export const TokenInput = function <T extends Token>({
   errorKey,
   fiatBalance,
   fiatBalanceComponent,
+  footer,
   headerAction,
   label,
   maxBalanceButton,
@@ -123,6 +126,7 @@ export const TokenInput = function <T extends Token>({
           )}
         </div>
       )}
+      {footer}
     </div>
   )
 }

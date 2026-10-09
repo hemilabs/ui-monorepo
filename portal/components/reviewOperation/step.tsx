@@ -6,7 +6,7 @@ import { Token } from 'types/token'
 import { useTranslations } from 'use-intl'
 
 import { FeesIcon } from './_icons/feesIcon'
-import { OneRowBox, TwoRowBox } from './box'
+import { TwoRowBox } from './box'
 import { PositionStatus } from './positionStatus'
 import { ProgressStatus, type ProgressStatusType } from './progressStatus'
 import { SeeOnExplorer } from './seeOnExplorer'
@@ -93,23 +93,44 @@ const Completed = function ({
   )
 }
 
-const NotReady = ({ description, position, postAction }: Props) => (
-  <>
-    <div className="absolute left-2.25 top-0.5">
-      <ShortVerticalLine stroke="stroke-neutral-300/55" />
-    </div>
-    <div className="mt-4">
-      <PositionStatus position={position} status={ProgressStatus.NOT_READY} />
-    </div>
-    <OneRowBox bgColor="bg-white">
-      <span className="text-neutral-600">{description}</span>
-    </OneRowBox>
-    {!!postAction && (
-      <div className="absolute bottom-6 left-2.25">
+const Waiting = function ({
+  description,
+  position,
+  postAction,
+  status,
+}: Props & {
+  status: typeof ProgressStatus.NOT_READY | typeof ProgressStatus.QUEUED
+}) {
+  const t = useTranslations('common.transaction-status')
+  const isQueued = status === ProgressStatus.QUEUED
+
+  return (
+    <>
+      <div className="absolute left-2.25 top-0.5">
         <ShortVerticalLine stroke="stroke-neutral-300/55" />
       </div>
-    )}
-  </>
+      <div className="mt-4">
+        <PositionStatus position={position} status={status} />
+      </div>
+      <TwoRowBox
+        bottom={
+          <span className="mr-auto text-neutral-500">
+            {t(isQueued ? 'in-queue' : 'not-ready')}
+          </span>
+        }
+        top={<span className="mr-auto text-neutral-600">{description}</span>}
+      />
+      {!!postAction && (
+        <div className="absolute bottom-6 left-2.25">
+          <ShortVerticalLine stroke="stroke-neutral-300/55" />
+        </div>
+      )}
+    </>
+  )
+}
+
+const NotReady = (props: Props) => (
+  <Waiting {...props} status={ProgressStatus.NOT_READY} />
 )
 
 const Progress = function ({
@@ -154,24 +175,36 @@ const Progress = function ({
   )
 }
 
-const Ready = ({ description, fees, position, postAction }: Props) => (
-  <>
-    <div className="absolute left-2.25 top-0.5">
-      <ShortVerticalLine dashed={false} stroke="stroke-orange-600" />
-    </div>
-    <div className="mt-4">
-      <PositionStatus position={position} status={ProgressStatus.READY} />
-    </div>
-    <OneRowBox bgColor="bg-white">
-      <span className="mr-auto text-orange-600">{description}</span>
-      {fees && <Fees {...fees} />}
-    </OneRowBox>
-    {!!postAction && (
-      <div className="absolute bottom-6 left-2.25">
-        <ShortVerticalLine stroke="stroke-neutral-300/55" />
+const Ready = function ({ description, fees, position, postAction }: Props) {
+  const t = useTranslations('common.transaction-status')
+  return (
+    <>
+      <div className="absolute left-2.25 top-0.5">
+        <ShortVerticalLine dashed={false} stroke="stroke-orange-600" />
       </div>
-    )}
-  </>
+      <div className="mt-4">
+        <PositionStatus position={position} status={ProgressStatus.READY} />
+      </div>
+      <TwoRowBox
+        bottom={<span className="mr-auto text-orange-600">{t('ready')}</span>}
+        top={
+          <>
+            <span className="mr-auto text-orange-600">{description}</span>
+            {fees && <Fees {...fees} />}
+          </>
+        }
+      />
+      {!!postAction && (
+        <div className="absolute bottom-6 left-2.25">
+          <ShortVerticalLine stroke="stroke-neutral-300/55" />
+        </div>
+      )}
+    </>
+  )
+}
+
+const Queued = (props: Props) => (
+  <Waiting {...props} status={ProgressStatus.QUEUED} />
 )
 
 const Failed = function ({
@@ -194,13 +227,7 @@ const Failed = function ({
       <TwoRowBox
         bottom={
           <>
-            <span
-              className={`mr-auto ${
-                txHash ? 'text-rose-500' : 'text-neutral-500'
-              }`}
-            >
-              {txHash ? t('error') : t('not-ready')}
-            </span>
+            <span className="mr-auto text-rose-500">{t('error')}</span>
             {explorerChainId && txHash && (
               <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
             )}
@@ -253,6 +280,7 @@ const Rejected = function ({ description, fees, position, postAction }: Props) {
 const statusMap = {
   [ProgressStatus.NOT_READY]: NotReady,
   [ProgressStatus.READY]: Ready,
+  [ProgressStatus.QUEUED]: Queued,
   [ProgressStatus.PROGRESS]: Progress,
   [ProgressStatus.COMPLETED]: Completed,
   [ProgressStatus.FAILED]: Failed,

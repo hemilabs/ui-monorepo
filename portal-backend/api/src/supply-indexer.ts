@@ -138,7 +138,7 @@ function createSupplyIndexer({
       )
     }
     return fromUnit(
-      toAmounts(row, corrections.at(-1)?.amount ?? '0').circulating.toString(),
+      toAmounts(row, getCorrection(row.date)).circulating.toString(),
     )
   }
 

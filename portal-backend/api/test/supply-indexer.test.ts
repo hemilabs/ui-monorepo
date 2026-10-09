@@ -227,13 +227,13 @@ describe('getCirculatingSupply', function () {
     expect(await getCirculatingSupply()).toBe('45.000000000000000000')
   })
 
-  it('adds the last correction', async function () {
+  it('adds the correction of the snapshot day', async function () {
     requestHemiEarn.mockResolvedValue({
       data: { DailySupplySnapshot: [row] },
     })
     const { getCirculatingSupply } = createIndexer([
-      { amount: hemi('1000'), from: '2025-09-23' },
-      { amount: hemi('7'), from: '2026-09-05' },
+      { amount: hemi('7'), from: '2025-09-23' },
+      { amount: hemi('1000'), from: '9999-12-31' },
     ])
 
     expect(await getCirculatingSupply()).toBe('45.000000000000000000')

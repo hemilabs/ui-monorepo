@@ -28,6 +28,7 @@ afterAll(function () {
 const hemi = (amount: string) => parseUnits(amount, 18).toString()
 
 const row = {
+  baseOpBalances: hemi('1'),
   bnbBlock: 1,
   bnbInvestorAllocation: hemi('6'),
   bnbOpBalances: hemi('1'),
@@ -79,11 +80,11 @@ describe('getSupplyHistory', function () {
     const [point] = await getSupplyHistory('1m')
 
     // 1 safe + 3 safe + 4 safe + 9 + 6 + 8 investor + 2 foundation
-    // + 0 burned + 2 + 1 + 1 op + 5 of the merkle box + 7
-    expect(point.nonCirculating).toBe(hemi('49'))
+    // + 0 burned + 2 + 1 + 1 + 1 op + 5 of the merkle box + 7
+    expect(point.nonCirculating).toBe(hemi('50'))
     expect(point.staked).toBe(hemi('5'))
     expect(point.totalSupply).toBe(hemi('100'))
-    expect(point.circulating).toBe(hemi('46'))
+    expect(point.circulating).toBe(hemi('45'))
   })
 
   it('adds the correction of the range that holds each day', async function () {
@@ -102,8 +103,8 @@ describe('getSupplyHistory', function () {
 
     const [first, second] = await getSupplyHistory('1m')
 
-    expect(first.nonCirculating).toBe(hemi('49'))
-    expect(second.nonCirculating).toBe(hemi('45'))
+    expect(first.nonCirculating).toBe(hemi('50'))
+    expect(second.nonCirculating).toBe(hemi('46'))
   })
 
   it.each([
@@ -185,7 +186,7 @@ describe('getSupplyHistory', function () {
     const [point] = await getSupplyHistory('1m')
 
     expect(point.priceUsd).toBeNull()
-    expect(point.circulating).toBe(hemi('53'))
+    expect(point.circulating).toBe(hemi('52'))
     expect(warn).toHaveBeenCalled()
   })
 
@@ -221,7 +222,7 @@ describe('getCirculatingSupply', function () {
     })
     const { getCirculatingSupply } = createIndexer(hemi('7'), 50)
 
-    expect(await getCirculatingSupply()).toBe('46.000000000000000000')
+    expect(await getCirculatingSupply()).toBe('45.000000000000000000')
   })
 
   it('adds the last correction', async function () {
@@ -233,7 +234,7 @@ describe('getCirculatingSupply', function () {
       { amount: hemi('7') },
     ])
 
-    expect(await getCirculatingSupply()).toBe('46.000000000000000000')
+    expect(await getCirculatingSupply()).toBe('45.000000000000000000')
   })
 
   it('keeps the sign when the correction exceeds the supply', async function () {
@@ -242,7 +243,7 @@ describe('getCirculatingSupply', function () {
     })
     const { getCirculatingSupply } = createIndexer(hemi('1000'), 50)
 
-    expect(await getCirculatingSupply()).toBe('-947.000000000000000000')
+    expect(await getCirculatingSupply()).toBe('-948.000000000000000000')
   })
 
   it('fails when the indexer has no day that every chain has reached', async function () {

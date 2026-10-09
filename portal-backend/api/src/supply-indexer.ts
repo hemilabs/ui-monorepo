@@ -20,6 +20,7 @@ export type SupplyIndexerOptions = {
 }
 
 type SupplyRow = {
+  baseOpBalances: string | null
   bnbBlock: number | null
   bnbInvestorAllocation: string | null
   bnbOpBalances: string | null
@@ -41,6 +42,7 @@ type SupplyRow = {
 }
 
 const fields = `
+  baseOpBalances
   bnbBlock
   bnbInvestorAllocation
   bnbOpBalances
@@ -92,6 +94,7 @@ function createSupplyIndexer({
   function toAmounts(row: SupplyRow, correction: string) {
     const nonCirculating =
       BigInt(correction) +
+      toBigInt(row.baseOpBalances) +
       toBigInt(row.bnbInvestorAllocation) +
       toBigInt(row.bnbOpBalances) +
       toBigInt(row.bnbSafe) +

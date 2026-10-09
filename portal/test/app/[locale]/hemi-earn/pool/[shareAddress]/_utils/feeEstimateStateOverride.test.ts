@@ -1,4 +1,5 @@
-import { maxUint256, toHex } from 'viem'
+import { createErc20AllowanceStateOverride } from 'utils/erc20StateOverride'
+import { maxUint256 } from 'viem'
 import { describe, expect, it } from 'vitest'
 
 import { createFeeEstimateStateOverride } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_utils/feeEstimateStateOverride'
@@ -13,9 +14,6 @@ const token = {
 
 const owner = '0x7Ce8B6f479c9c8D75C815C91b9acb1C3acE54906'
 const spender = '0x371d3718D5b7F75EAb050FAe6Da7DF3092031c89'
-
-const allowanceSlot =
-  '0x739908fceadd9a80979566f1d5322aceefa920adc2c2bed9ba9399a5b04bb806'
 
 describe('createFeeEstimateStateOverride', function () {
   it('should return undefined when there is no owner', function () {
@@ -50,12 +48,7 @@ describe('createFeeEstimateStateOverride', function () {
       }),
     ).toEqual([
       { address: owner, balance: maxUint256 },
-      {
-        address: token.address,
-        stateDiff: [
-          { slot: allowanceSlot, value: toHex(maxUint256, { size: 32 }) },
-        ],
-      },
+      ...createErc20AllowanceStateOverride({ owner, spender, token }),
     ])
   })
 })

@@ -1,3 +1,4 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { TokenInput } from 'components/tokenInput'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
@@ -19,7 +20,6 @@ import { usePoolForm } from '../_context/poolFormContext'
 import { useDeposit } from '../_hooks/useDeposit'
 import { useDepositPreview } from '../_hooks/useDepositPreview'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
-import { useInsufficientFeesError } from '../_hooks/useInsufficientFeesError'
 import { useSlippage } from '../_hooks/useSlippage'
 import { type DepositOperationRunning } from '../_types/operations'
 import {
@@ -27,6 +27,7 @@ import {
   resolveErrorKey,
   resolvePreviewIssue,
   resolveValidationError,
+  resolveZeroNativeBalanceError,
 } from '../_utils/formState'
 
 import { AdvancedSettings } from './advancedSettings'
@@ -89,7 +90,6 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     canDeposit,
     depositGasFees,
     ethereumFee,
-    feesPending,
     hemiGasFee,
     isAllowanceError,
     isAllowanceLoading,
@@ -114,11 +114,15 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     validInput,
   })
 
-  const { insufficientFeesError, isNativeBalancePending } =
-    useInsufficientFeesError({
-      chainId: selectedAsset.token.chainId,
-      totalFees,
-    })
+  const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
+  const { data: nativeTokenBalance, isLoading: isNativeBalancePending } =
+    useNativeBalance(selectedAsset.token.chainId)
+  const zeroBalanceError = resolveZeroNativeBalanceError({
+    nativeBalance: nativeTokenBalance?.value,
+    zeroBalanceMessage: t('common.insufficient-balance', {
+      symbol: nativeToken.symbol,
+    }),
+  })
 
   const { setDrawerQueryString } = useDrawerQueryString()
 
@@ -150,7 +154,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   })
 
   const handleDeposit = function () {
-    if (!canDeposit || !quote || insufficientFeesError) {
+    if (!canDeposit || !quote || zeroBalanceError) {
       return
     }
     deposit(undefined, {
@@ -159,7 +163,6 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     setOperationRunning(needsApproval ? 'approving' : 'depositing')
   }
 
-  const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
   const hasQuote = !!quote
 
   const previewIssue = resolvePreviewIssue({
@@ -170,11 +173,11 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     validInput,
   })
   const effectiveValidationError = resolveValidationError({
-    insufficientFeesError,
     previewIssueMessage: previewIssue
       ? t(`hemi-earn.pool.form.${previewIssue}`)
       : undefined,
     validationError,
+    zeroBalanceError,
   })
   const displayedErrorKey = resolveErrorKey(
     walletIsConnected(status),
@@ -183,7 +186,6 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   )
   const isSubmitLoading = computeIsLoading({
     balanceLoaded: tokenBalanceLoaded,
-    feesPending,
     isAllowanceLoading,
     isNativeBalancePending,
     isPreviewLoading,

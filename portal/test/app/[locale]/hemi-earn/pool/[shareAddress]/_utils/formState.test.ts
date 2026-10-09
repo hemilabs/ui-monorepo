@@ -1,12 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
 import {
-  areFeesPending,
   computeIsLoading,
   resolveErrorKey,
-  resolveInsufficientFeesError,
   resolvePreviewIssue,
   resolveValidationError,
+  resolveZeroNativeBalanceError,
 } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_utils/formState'
 
 describe('resolvePreviewIssue', function () {
@@ -94,43 +93,14 @@ describe('resolveErrorKey', function () {
   })
 })
 
-describe('areFeesPending', function () {
-  const base = {
-    canSubmit: true,
-    isFeesError: false,
-    totalFees: undefined,
-  }
-
-  it('is pending while the fees are still unknown', function () {
-    expect(areFeesPending(base)).toBe(true)
-  })
-
-  it('is not pending once the fees resolve', function () {
-    expect(areFeesPending({ ...base, totalFees: BigInt(100) })).toBe(false)
-  })
-
-  it('is not pending when the fees errored', function () {
-    expect(areFeesPending({ ...base, isFeesError: true })).toBe(false)
-  })
-
-  it('is not pending when the operation cannot be estimated', function () {
-    expect(areFeesPending({ ...base, canSubmit: false })).toBe(false)
-  })
-})
-
 describe('computeIsLoading', function () {
   const base = {
     balanceLoaded: true,
-    feesPending: false,
     isAllowanceLoading: false,
     isNativeBalancePending: false,
     isPreviewLoading: false,
     validInput: true,
   }
-
-  it('reports loading while the fees are still being estimated', function () {
-    expect(computeIsLoading({ ...base, feesPending: true })).toBe(true)
-  })
 
   it('reports loading while the native balance is still being read', function () {
     expect(computeIsLoading({ ...base, isNativeBalancePending: true })).toBe(
@@ -162,60 +132,43 @@ describe('computeIsLoading', function () {
   })
 })
 
-describe('resolveInsufficientFeesError', function () {
+describe('resolveZeroNativeBalanceError', function () {
   const base = {
-    insufficientFeesMessage: 'insufficient-eth',
-    nativeBalance: BigInt(200),
-    totalFees: BigInt(100),
+    nativeBalance: BigInt(1),
+    zeroBalanceMessage: 'no-eth',
   }
 
-  it('returns undefined when the balance covers the fees', function () {
-    expect(resolveInsufficientFeesError(base)).toBeUndefined()
+  it('returns the message when the wallet holds no native token', function () {
+    expect(
+      resolveZeroNativeBalanceError({ ...base, nativeBalance: BigInt(0) }),
+    ).toBe('no-eth')
   })
 
-  it('returns undefined when the balance exactly covers the fees', function () {
-    expect(
-      resolveInsufficientFeesError({ ...base, nativeBalance: BigInt(100) }),
-    ).toBeUndefined()
-  })
-
-  it('returns the message when the balance falls short', function () {
-    expect(
-      resolveInsufficientFeesError({ ...base, nativeBalance: BigInt(99) }),
-    ).toBe('insufficient-eth')
+  it('does not block any positive balance, however small', function () {
+    expect(resolveZeroNativeBalanceError(base)).toBeUndefined()
   })
 
   it('does not block while the balance is unknown', function () {
     expect(
-      resolveInsufficientFeesError({ ...base, nativeBalance: undefined }),
-    ).toBeUndefined()
-  })
-
-  it('does not block while the fees are unknown', function () {
-    expect(
-      resolveInsufficientFeesError({
-        ...base,
-        nativeBalance: BigInt(0),
-        totalFees: undefined,
-      }),
+      resolveZeroNativeBalanceError({ ...base, nativeBalance: undefined }),
     ).toBeUndefined()
   })
 })
 
 describe('resolveValidationError', function () {
   const base = {
-    insufficientFeesError: undefined,
     previewIssueMessage: undefined,
     validationError: undefined,
+    zeroBalanceError: undefined,
   }
 
   it('returns the previewIssueMessage when set', function () {
     expect(
       resolveValidationError({
         ...base,
-        insufficientFeesError: 'fees-msg',
         previewIssueMessage: 'preview-msg',
         validationError: 'validation-msg',
+        zeroBalanceError: 'no-eth',
       }),
     ).toBe('preview-msg')
   })
@@ -224,16 +177,16 @@ describe('resolveValidationError', function () {
     expect(
       resolveValidationError({
         ...base,
-        insufficientFeesError: 'fees-msg',
         validationError: 'validation-msg',
+        zeroBalanceError: 'no-eth',
       }),
     ).toBe('validation-msg')
   })
 
-  it('falls back to the insufficientFeesError last', function () {
+  it('falls back to the zeroBalanceError last', function () {
     expect(
-      resolveValidationError({ ...base, insufficientFeesError: 'fees-msg' }),
-    ).toBe('fees-msg')
+      resolveValidationError({ ...base, zeroBalanceError: 'no-eth' }),
+    ).toBe('no-eth')
   })
 
   it('returns undefined when all are undefined', function () {

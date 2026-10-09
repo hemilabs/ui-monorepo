@@ -99,7 +99,6 @@ export const resolveWithdrawInputValues = ({
 
 export const computeWithdrawSubmitLoading = ({
   balanceLoaded,
-  feesPending,
   isAllowanceLoading,
   isAssetsToSharesLoading,
   isNativeBalancePending,
@@ -108,7 +107,6 @@ export const computeWithdrawSubmitLoading = ({
   validInput,
 }: {
   balanceLoaded: boolean
-  feesPending: boolean
   isAllowanceLoading: boolean
   isAssetsToSharesLoading: boolean
   isNativeBalancePending: boolean
@@ -118,7 +116,6 @@ export const computeWithdrawSubmitLoading = ({
 }) =>
   computeIsLoading({
     balanceLoaded,
-    feesPending,
     isAllowanceLoading,
     isNativeBalancePending,
     isPreviewLoading,

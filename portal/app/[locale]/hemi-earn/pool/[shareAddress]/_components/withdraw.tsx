@@ -1,3 +1,4 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
@@ -15,7 +16,6 @@ import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { percentToBps } from '../../../_utils/slippage'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useAssetsToShares } from '../_hooks/useAssetsToShares'
-import { useInsufficientFeesError } from '../_hooks/useInsufficientFeesError'
 import { useMaxWithdrawableAsset } from '../_hooks/useMaxWithdrawableAsset'
 import { useSlippage } from '../_hooks/useSlippage'
 import { useUserShareValue } from '../_hooks/useUserShareValue'
@@ -26,6 +26,7 @@ import {
   resolveErrorKey,
   resolvePreviewIssue,
   resolveValidationError,
+  resolveZeroNativeBalanceError,
 } from '../_utils/formState'
 import {
   applyWithdrawSharesGuard,
@@ -148,7 +149,6 @@ export const Withdraw = function ({
     bridgingFee,
     canWithdraw,
     ethereumFee,
-    feesPending,
     hemiGasFees,
     isAllowanceError,
     isAllowanceLoading,
@@ -172,11 +172,15 @@ export const Withdraw = function ({
     validInput,
   })
 
-  const { insufficientFeesError, isNativeBalancePending } =
-    useInsufficientFeesError({
-      chainId: selectedAsset.token.chainId,
-      totalFees,
-    })
+  const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
+  const { data: nativeTokenBalance, isLoading: isNativeBalancePending } =
+    useNativeBalance(selectedAsset.token.chainId)
+  const zeroBalanceError = resolveZeroNativeBalanceError({
+    nativeBalance: nativeTokenBalance?.value,
+    zeroBalanceMessage: t('common.insufficient-balance', {
+      symbol: nativeToken.symbol,
+    }),
+  })
 
   const { assetValue, sharesValue } = resolveWithdrawInputValues({
     assetOut,
@@ -218,7 +222,7 @@ export const Withdraw = function ({
   })
 
   const handleWithdraw = function () {
-    if (!canWithdraw || !quote || insufficientFeesError) {
+    if (!canWithdraw || !quote || zeroBalanceError) {
       return
     }
     withdrawFn(undefined, {
@@ -227,7 +231,6 @@ export const Withdraw = function ({
     setOperationRunning(needsApproval ? 'approving' : 'withdrawing')
   }
 
-  const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
   const hasQuote = !!quote
   const balanceLoaded = isTokensMode ? maxAssetLoaded : shareValueLoaded
 
@@ -246,11 +249,11 @@ export const Withdraw = function ({
       validInput,
     })
   const effectiveValidationError = resolveValidationError({
-    insufficientFeesError,
     previewIssueMessage: previewIssue
       ? t(`hemi-earn.pool.form.${previewIssue}`)
       : undefined,
     validationError,
+    zeroBalanceError,
   })
   const displayedErrorKey = resolveErrorKey(
     walletIsConnected(status),
@@ -263,7 +266,6 @@ export const Withdraw = function ({
   })
   const isSubmitLoading = computeWithdrawSubmitLoading({
     balanceLoaded,
-    feesPending,
     isAllowanceLoading,
     isAssetsToSharesLoading,
     isNativeBalancePending,

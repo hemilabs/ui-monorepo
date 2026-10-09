@@ -12,6 +12,7 @@ import { type QuoteRedeem } from '../_fetchers/fetchQuoteRedeem'
 import { withdrawPreviewOptions } from '../_fetchers/fetchWithdrawPreview'
 import { computeCrossChainFees } from '../_utils/crossChainFees'
 import { createFeeEstimateStateOverride } from '../_utils/feeEstimateStateOverride'
+import { areFeesPending } from '../_utils/formState'
 
 const buildGasData = ({
   asset,
@@ -206,6 +207,11 @@ export const useWithdrawPreview = function ({
     bridgingFee,
     canWithdraw,
     ethereumFee,
+    feesPending: areFeesPending({
+      canSubmit: canWithdraw,
+      isFeesError,
+      totalFees,
+    }),
     hemiGasFees,
     isAllowanceError,
     isAllowanceLoading,

@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  areFeesPending,
   computeIsLoading,
   resolveErrorKey,
+  resolveInsufficientFeesError,
   resolvePreviewIssue,
   resolveValidationError,
 } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_utils/formState'
@@ -92,13 +94,42 @@ describe('resolveErrorKey', function () {
   })
 })
 
+describe('areFeesPending', function () {
+  const base = {
+    canSubmit: true,
+    isFeesError: false,
+    totalFees: undefined,
+  }
+
+  it('is pending while the fees are still unknown', function () {
+    expect(areFeesPending(base)).toBe(true)
+  })
+
+  it('is not pending once the fees resolve', function () {
+    expect(areFeesPending({ ...base, totalFees: BigInt(100) })).toBe(false)
+  })
+
+  it('is not pending when the fees errored', function () {
+    expect(areFeesPending({ ...base, isFeesError: true })).toBe(false)
+  })
+
+  it('is not pending when the operation cannot be estimated', function () {
+    expect(areFeesPending({ ...base, canSubmit: false })).toBe(false)
+  })
+})
+
 describe('computeIsLoading', function () {
   const base = {
     balanceLoaded: true,
+    feesPending: false,
     isAllowanceLoading: false,
     isPreviewLoading: false,
     validInput: true,
   }
+
+  it('reports loading while the fees are still being estimated', function () {
+    expect(computeIsLoading({ ...base, feesPending: true })).toBe(true)
+  })
 
   it('reports loading while allowance is still resolving', function () {
     expect(computeIsLoading({ ...base, isAllowanceLoading: true })).toBe(true)
@@ -124,20 +155,81 @@ describe('computeIsLoading', function () {
   })
 })
 
+describe('resolveInsufficientFeesError', function () {
+  const base = {
+    insufficientFeesMessage: 'insufficient-eth',
+    nativeBalance: BigInt(200),
+    totalFees: BigInt(100),
+  }
+
+  it('returns undefined when the balance covers the fees', function () {
+    expect(resolveInsufficientFeesError(base)).toBeUndefined()
+  })
+
+  it('returns undefined when the balance exactly covers the fees', function () {
+    expect(
+      resolveInsufficientFeesError({ ...base, nativeBalance: BigInt(100) }),
+    ).toBeUndefined()
+  })
+
+  it('returns the message when the balance falls short', function () {
+    expect(
+      resolveInsufficientFeesError({ ...base, nativeBalance: BigInt(99) }),
+    ).toBe('insufficient-eth')
+  })
+
+  it('does not block while the balance is unknown', function () {
+    expect(
+      resolveInsufficientFeesError({ ...base, nativeBalance: undefined }),
+    ).toBeUndefined()
+  })
+
+  it('does not block while the fees are unknown', function () {
+    expect(
+      resolveInsufficientFeesError({
+        ...base,
+        nativeBalance: BigInt(0),
+        totalFees: undefined,
+      }),
+    ).toBeUndefined()
+  })
+})
+
 describe('resolveValidationError', function () {
+  const base = {
+    insufficientFeesError: undefined,
+    previewIssueMessage: undefined,
+    validationError: undefined,
+  }
+
   it('returns the previewIssueMessage when set', function () {
-    expect(resolveValidationError('preview-msg', 'validation-msg')).toBe(
-      'preview-msg',
-    )
+    expect(
+      resolveValidationError({
+        ...base,
+        insufficientFeesError: 'fees-msg',
+        previewIssueMessage: 'preview-msg',
+        validationError: 'validation-msg',
+      }),
+    ).toBe('preview-msg')
   })
 
   it('falls back to the validationError when previewIssueMessage is undefined', function () {
-    expect(resolveValidationError(undefined, 'validation-msg')).toBe(
-      'validation-msg',
-    )
+    expect(
+      resolveValidationError({
+        ...base,
+        insufficientFeesError: 'fees-msg',
+        validationError: 'validation-msg',
+      }),
+    ).toBe('validation-msg')
   })
 
-  it('returns undefined when both are undefined', function () {
-    expect(resolveValidationError(undefined, undefined)).toBeUndefined()
+  it('falls back to the insufficientFeesError last', function () {
+    expect(
+      resolveValidationError({ ...base, insufficientFeesError: 'fees-msg' }),
+    ).toBe('fees-msg')
+  })
+
+  it('returns undefined when all are undefined', function () {
+    expect(resolveValidationError(base)).toBeUndefined()
   })
 })

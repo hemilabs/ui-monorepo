@@ -12,6 +12,7 @@ import { depositPreviewOptions } from '../_fetchers/fetchDepositPreview'
 import { type QuoteDeposit } from '../_fetchers/fetchQuoteDeposit'
 import { computeCrossChainFees } from '../_utils/crossChainFees'
 import { createFeeEstimateStateOverride } from '../_utils/feeEstimateStateOverride'
+import { areFeesPending } from '../_utils/formState'
 
 const buildGasData = ({
   amount,
@@ -201,6 +202,11 @@ export const useDepositPreview = function ({
     canDeposit,
     depositGasFees,
     ethereumFee,
+    feesPending: areFeesPending({
+      canSubmit: canDeposit,
+      isFeesError,
+      totalFees,
+    }),
     hemiGasFee,
     isAllowanceError,
     isAllowanceLoading,

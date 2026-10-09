@@ -50,7 +50,11 @@ export const SubmitWithdraw = function ({
       submitButton={
         <Button
           disabled={
-            !canWithdraw || isRunningOperation || isLoading || isAllowanceError
+            !canWithdraw ||
+            isRunningOperation ||
+            isLoading ||
+            isAllowanceError ||
+            !!validationError
           }
           size="small"
           type="submit"

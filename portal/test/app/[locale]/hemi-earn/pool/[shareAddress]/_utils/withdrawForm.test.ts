@@ -122,6 +122,7 @@ describe('resolveWithdrawInputValues', function () {
 describe('computeWithdrawSubmitLoading', function () {
   const base = {
     balanceLoaded: true,
+    feesPending: false,
     isAllowanceLoading: false,
     isAssetsToSharesLoading: false,
     isPreviewLoading: false,
@@ -131,6 +132,12 @@ describe('computeWithdrawSubmitLoading', function () {
 
   it('is false when nothing is pending', function () {
     expect(computeWithdrawSubmitLoading(base)).toBe(false)
+  })
+
+  it('is true while the fees are still being estimated', function () {
+    expect(computeWithdrawSubmitLoading({ ...base, feesPending: true })).toBe(
+      true,
+    )
   })
 
   it('is true while the balance is loading', function () {

@@ -33,20 +33,55 @@ export const resolveErrorKey = (
   errorKey: string | undefined,
 ) => (isConnected && balanceLoaded ? errorKey : undefined)
 
+export const areFeesPending = ({
+  canSubmit,
+  isFeesError,
+  totalFees,
+}: {
+  canSubmit: boolean
+  isFeesError: boolean
+  totalFees: bigint | undefined
+}) => canSubmit && !isFeesError && totalFees === undefined
+
 export const computeIsLoading = ({
   balanceLoaded,
+  feesPending,
   isAllowanceLoading,
   isPreviewLoading,
   validInput,
 }: {
   balanceLoaded: boolean
+  feesPending: boolean
   isAllowanceLoading: boolean
   isPreviewLoading: boolean
   validInput: boolean
-}) => isAllowanceLoading || !balanceLoaded || (validInput && isPreviewLoading)
+}) =>
+  isAllowanceLoading ||
+  !balanceLoaded ||
+  (validInput && isPreviewLoading) ||
+  feesPending
 
-// Preview issue takes precedence — it's more specific and mutually exclusive with the validation error.
-export const resolveValidationError = (
-  previewIssueMessage: string | undefined,
-  validationError: string | undefined,
-) => previewIssueMessage ?? validationError
+export const resolveInsufficientFeesError = ({
+  insufficientFeesMessage,
+  nativeBalance,
+  totalFees,
+}: {
+  insufficientFeesMessage: string
+  nativeBalance: bigint | undefined
+  totalFees: bigint | undefined
+}) =>
+  nativeBalance === undefined ||
+  totalFees === undefined ||
+  nativeBalance >= totalFees
+    ? undefined
+    : insufficientFeesMessage
+
+export const resolveValidationError = ({
+  insufficientFeesError,
+  previewIssueMessage,
+  validationError,
+}: {
+  insufficientFeesError: string | undefined
+  previewIssueMessage: string | undefined
+  validationError: string | undefined
+}) => previewIssueMessage ?? validationError ?? insufficientFeesError

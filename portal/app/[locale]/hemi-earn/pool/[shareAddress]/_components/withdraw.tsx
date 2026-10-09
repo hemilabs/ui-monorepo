@@ -15,6 +15,7 @@ import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { percentToBps } from '../../../_utils/slippage'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useAssetsToShares } from '../_hooks/useAssetsToShares'
+import { useInsufficientFeesError } from '../_hooks/useInsufficientFeesError'
 import { useMaxWithdrawableAsset } from '../_hooks/useMaxWithdrawableAsset'
 import { useSlippage } from '../_hooks/useSlippage'
 import { useUserShareValue } from '../_hooks/useUserShareValue'
@@ -147,6 +148,7 @@ export const Withdraw = function ({
     bridgingFee,
     canWithdraw,
     ethereumFee,
+    feesPending,
     hemiGasFees,
     isAllowanceError,
     isAllowanceLoading,
@@ -168,6 +170,11 @@ export const Withdraw = function ({
     slippageBps,
     spender: routerAddress,
     validInput,
+  })
+
+  const insufficientFeesError = useInsufficientFeesError({
+    chainId: selectedAsset.token.chainId,
+    totalFees,
   })
 
   const { assetValue, sharesValue } = resolveWithdrawInputValues({
@@ -210,7 +217,7 @@ export const Withdraw = function ({
   })
 
   const handleWithdraw = function () {
-    if (!canWithdraw || !quote) {
+    if (!canWithdraw || !quote || insufficientFeesError) {
       return
     }
     withdrawFn(undefined, {
@@ -237,10 +244,13 @@ export const Withdraw = function ({
       peggedAmount,
       validInput,
     })
-  const effectiveValidationError = resolveValidationError(
-    previewIssue ? t(`hemi-earn.pool.form.${previewIssue}`) : undefined,
+  const effectiveValidationError = resolveValidationError({
+    insufficientFeesError,
+    previewIssueMessage: previewIssue
+      ? t(`hemi-earn.pool.form.${previewIssue}`)
+      : undefined,
     validationError,
-  )
+  })
   const displayedErrorKey = resolveErrorKey(
     walletIsConnected(status),
     balanceLoaded,
@@ -252,6 +262,7 @@ export const Withdraw = function ({
   })
   const isSubmitLoading = computeWithdrawSubmitLoading({
     balanceLoaded,
+    feesPending,
     isAllowanceLoading,
     isAssetsToSharesLoading,
     isPreviewLoading,

@@ -19,6 +19,7 @@ import { usePoolForm } from '../_context/poolFormContext'
 import { useDeposit } from '../_hooks/useDeposit'
 import { useDepositPreview } from '../_hooks/useDepositPreview'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
+import { useInsufficientFeesError } from '../_hooks/useInsufficientFeesError'
 import { useSlippage } from '../_hooks/useSlippage'
 import { type DepositOperationRunning } from '../_types/operations'
 import {
@@ -88,6 +89,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     canDeposit,
     depositGasFees,
     ethereumFee,
+    feesPending,
     hemiGasFee,
     isAllowanceError,
     isAllowanceLoading,
@@ -110,6 +112,11 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     spender: routerAddress,
     token: selectedAsset.token,
     validInput,
+  })
+
+  const insufficientFeesError = useInsufficientFeesError({
+    chainId: selectedAsset.token.chainId,
+    totalFees,
   })
 
   const { setDrawerQueryString } = useDrawerQueryString()
@@ -142,7 +149,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   })
 
   const handleDeposit = function () {
-    if (!canDeposit || !quote) {
+    if (!canDeposit || !quote || insufficientFeesError) {
       return
     }
     deposit(undefined, {
@@ -161,10 +168,13 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     peggedAmount: quote?.peggedAmount,
     validInput,
   })
-  const effectiveValidationError = resolveValidationError(
-    previewIssue ? t(`hemi-earn.pool.form.${previewIssue}`) : undefined,
+  const effectiveValidationError = resolveValidationError({
+    insufficientFeesError,
+    previewIssueMessage: previewIssue
+      ? t(`hemi-earn.pool.form.${previewIssue}`)
+      : undefined,
     validationError,
-  )
+  })
   const displayedErrorKey = resolveErrorKey(
     walletIsConnected(status),
     tokenBalanceLoaded,
@@ -172,6 +182,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   )
   const isSubmitLoading = computeIsLoading({
     balanceLoaded: tokenBalanceLoaded,
+    feesPending,
     isAllowanceLoading,
     isPreviewLoading,
     validInput,

@@ -12,7 +12,7 @@ type Props<T extends Token> = {
     token: T
   }>
   balanceLabel?: string
-  disabled: boolean
+  disabled?: boolean
   errorKey: string | undefined
   // Overrides the default fiat preview (input × token price). Use when the
   // input unit isn't directly priced and the caller has a pre-converted
@@ -52,7 +52,7 @@ const getTextColor = function (value: string, errorKey: string | undefined) {
 export const TokenInput = function <T extends Token>({
   balanceComponent,
   balanceLabel,
-  disabled,
+  disabled = false,
   errorKey,
   fiatBalance,
   fiatBalanceComponent,

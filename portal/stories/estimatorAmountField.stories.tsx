@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { EstimatorAmountField } from 'app/[locale]/hemi-stake/_components/estimator/estimatorAmountField'
+import { hemi } from 'hemi-viem'
+import { hemiTokenMap } from 'hooks/useHemiToken'
 import messages from 'messages/en.json'
 import { NuqsTestingAdapter } from 'nuqs/adapters/testing'
 import { useArgs } from 'storybook/preview-api'
@@ -9,14 +11,9 @@ import { IntlProvider } from 'use-intl'
 import { sanitizeAmount } from 'utils/form'
 import { parseUnits } from 'viem'
 
-const hemiTokenAddress = '0x99e3dE3817F6081B2568208337ef83295b7f591D'
 const hemiToken = tokenList.tokens.find(
-  token => token.address === hemiTokenAddress,
-)
-
-if (!hemiToken) {
-  throw new Error(`${hemiTokenAddress} is missing from the token list`)
-}
+  token => token.address === hemiTokenMap[hemi.id],
+)!
 
 const queryClient = new QueryClient()
 

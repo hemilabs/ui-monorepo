@@ -1,11 +1,10 @@
+import { SegmentedControl } from 'components/segmentedControl'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { type Token } from 'types/token'
 import { useLocale, useTranslations } from 'use-intl'
 
 import { getAmountPresets } from '../../_utils/amountPresets'
-
-import { AmountPresets } from './amountPresets'
 
 type Props = {
   balance: bigint | undefined
@@ -39,12 +38,11 @@ export const EstimatorAmountField = function ({
 
   return (
     <TokenInput
-      disabled={false}
       errorKey={undefined}
       headerAction={
-        <AmountPresets
+        <SegmentedControl
           label={t('estimator.quick-amounts')}
-          onSelect={onChange}
+          onChange={onChange}
           options={options}
           value={value}
         />

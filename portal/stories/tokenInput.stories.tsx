@@ -86,7 +86,7 @@ const meta = {
         {...args}
         maxBalanceButton={
           <MaxButton
-            disabled={args.disabled}
+            disabled={args.disabled ?? false}
             onClick={() => updateArgs({ value: walletBalance })}
           />
         }

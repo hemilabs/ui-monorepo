@@ -75,7 +75,7 @@ export const NetworkSelector = function ({
   }
 
   const chevronCss =
-    'ml-auto [&>path]:transition-colors [&>path]:duration-200 [&>path]:group-hover/network-selector:fill-neutral-950'
+    'ml-auto [&>path]:group-hover/network-selector:fill-neutral-950'
 
   return (
     <Container>

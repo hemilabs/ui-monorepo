@@ -114,10 +114,11 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     validInput,
   })
 
-  const insufficientFeesError = useInsufficientFeesError({
-    chainId: selectedAsset.token.chainId,
-    totalFees,
-  })
+  const { insufficientFeesError, isNativeBalancePending } =
+    useInsufficientFeesError({
+      chainId: selectedAsset.token.chainId,
+      totalFees,
+    })
 
   const { setDrawerQueryString } = useDrawerQueryString()
 
@@ -184,6 +185,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     balanceLoaded: tokenBalanceLoaded,
     feesPending,
     isAllowanceLoading,
+    isNativeBalancePending,
     isPreviewLoading,
     validInput,
   })

@@ -13,13 +13,16 @@ export const useInsufficientFeesError = function ({
   totalFees: bigint | undefined
 }) {
   const t = useTranslations('common')
-  const { data: nativeTokenBalance } = useNativeBalance(chainId)
+  const { data: nativeTokenBalance, isPending } = useNativeBalance(chainId)
 
-  return resolveInsufficientFeesError({
-    insufficientFeesMessage: t('insufficient-balance', {
-      symbol: getNativeToken(chainId).symbol,
+  return {
+    insufficientFeesError: resolveInsufficientFeesError({
+      insufficientFeesMessage: t('insufficient-balance', {
+        symbol: getNativeToken(chainId).symbol,
+      }),
+      nativeBalance: nativeTokenBalance?.value,
+      totalFees,
     }),
-    nativeBalance: nativeTokenBalance?.value,
-    totalFees,
-  })
+    isNativeBalancePending: isPending,
+  }
 }

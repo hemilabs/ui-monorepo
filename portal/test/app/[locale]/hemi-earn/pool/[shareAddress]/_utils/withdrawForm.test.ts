@@ -125,6 +125,7 @@ describe('computeWithdrawSubmitLoading', function () {
     feesPending: false,
     isAllowanceLoading: false,
     isAssetsToSharesLoading: false,
+    isNativeBalancePending: false,
     isPreviewLoading: false,
     isTokensMode: false,
     validInput: true,
@@ -138,6 +139,12 @@ describe('computeWithdrawSubmitLoading', function () {
     expect(computeWithdrawSubmitLoading({ ...base, feesPending: true })).toBe(
       true,
     )
+  })
+
+  it('is true while the native balance is still being read', function () {
+    expect(
+      computeWithdrawSubmitLoading({ ...base, isNativeBalancePending: true }),
+    ).toBe(true)
   })
 
   it('is true while the balance is loading', function () {

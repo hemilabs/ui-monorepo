@@ -47,17 +47,20 @@ export const computeIsLoading = ({
   balanceLoaded,
   feesPending,
   isAllowanceLoading,
+  isNativeBalancePending,
   isPreviewLoading,
   validInput,
 }: {
   balanceLoaded: boolean
   feesPending: boolean
   isAllowanceLoading: boolean
+  isNativeBalancePending: boolean
   isPreviewLoading: boolean
   validInput: boolean
 }) =>
   isAllowanceLoading ||
   !balanceLoaded ||
+  isNativeBalancePending ||
   (validInput && isPreviewLoading) ||
   feesPending
 

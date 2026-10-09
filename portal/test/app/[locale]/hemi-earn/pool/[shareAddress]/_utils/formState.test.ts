@@ -123,12 +123,19 @@ describe('computeIsLoading', function () {
     balanceLoaded: true,
     feesPending: false,
     isAllowanceLoading: false,
+    isNativeBalancePending: false,
     isPreviewLoading: false,
     validInput: true,
   }
 
   it('reports loading while the fees are still being estimated', function () {
     expect(computeIsLoading({ ...base, feesPending: true })).toBe(true)
+  })
+
+  it('reports loading while the native balance is still being read', function () {
+    expect(computeIsLoading({ ...base, isNativeBalancePending: true })).toBe(
+      true,
+    )
   })
 
   it('reports loading while allowance is still resolving', function () {

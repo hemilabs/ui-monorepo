@@ -172,10 +172,11 @@ export const Withdraw = function ({
     validInput,
   })
 
-  const insufficientFeesError = useInsufficientFeesError({
-    chainId: selectedAsset.token.chainId,
-    totalFees,
-  })
+  const { insufficientFeesError, isNativeBalancePending } =
+    useInsufficientFeesError({
+      chainId: selectedAsset.token.chainId,
+      totalFees,
+    })
 
   const { assetValue, sharesValue } = resolveWithdrawInputValues({
     assetOut,
@@ -265,6 +266,7 @@ export const Withdraw = function ({
     feesPending,
     isAllowanceLoading,
     isAssetsToSharesLoading,
+    isNativeBalancePending,
     isPreviewLoading,
     isTokensMode,
     validInput,

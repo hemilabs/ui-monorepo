@@ -2,6 +2,7 @@ import { encodeDepositErc20, encodeDepositEth } from 'hemi-tunnel-actions'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { EvmToken } from 'types/token'
 import { getL1StandardBridgeAddress } from 'utils/chain'
+import { createErc20AllowanceStateOverride } from 'utils/erc20StateOverride'
 import { isNativeToken } from 'utils/nativeToken'
 import { useAccount, useEstimateGas } from 'wagmi'
 
@@ -35,6 +36,12 @@ export const useEstimateDepositFees = function ({
           })
       : undefined,
     query: { enabled: enabled && !!address },
+    stateOverride: createErc20AllowanceStateOverride({
+      enabled: !isNative,
+      owner: address,
+      spender: l1StandardBridge,
+      token: fromToken,
+    }),
     to: l1StandardBridge,
     value: isNative ? amount : undefined,
   })

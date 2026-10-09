@@ -70,6 +70,14 @@ describe('getOutputScript', function () {
     )
   })
 
+  it("throws for a taproot address whose prefix is not the network's", function () {
+    const address =
+      'tb1p1qqurswpc8qurswpc8qurswpc8qurswpc8qurswpc8qurswpc8qursne2yjr'
+    expect(() => getOutputScript(address, testnet)).toThrow(
+      `Invalid taproot address ${address}`,
+    )
+  })
+
   it('builds a P2WPKH script', function () {
     expect(getOutputScript(p2wpkh, mainnet).toString('hex')).toBe(
       '0014751e76e8199196d454941c45d1b3a323f1433bd6',

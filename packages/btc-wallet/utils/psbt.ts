@@ -19,8 +19,8 @@ export const getOutputScript = function (
   if (!isTaprootAddress(address, network)) {
     return bitcoin.address.toOutputScript(address, network)
   }
-  const { data } = bitcoin.address.fromBech32(address)
-  if (data.length !== 32) {
+  const { data, prefix } = bitcoin.address.fromBech32(address)
+  if (data.length !== 32 || prefix !== network.bech32) {
     throw new Error(`Invalid taproot address ${address}`)
   }
   return bitcoin.script.compile([bitcoin.opcodes.OP_1, data])

@@ -29,12 +29,18 @@ const hemi = (amount: string) => parseUnits(amount, 18).toString()
 
 const row = {
   bnbBlock: 1,
+  bnbInvestorAndTeamAllocations: hemi('6'),
+  bnbOpBalances: hemi('1'),
   bnbSafe: hemi('3'),
   burned: hemi('0'),
   date: yesterday,
   ethBlock: 2,
+  ethInvestorAndTeamAllocations: hemi('8'),
+  ethOpBalances: hemi('1'),
   ethSafe: hemi('4'),
   hemiBlock: 3,
+  hemiFoundationFinance: hemi('2'),
+  hemiInvestorAndTeamAllocations: hemi('9'),
   hemiSafe: hemi('1'),
   locked: hemi('5'),
   merkle: hemi('10'),
@@ -65,11 +71,12 @@ describe('getSupplyHistory', function () {
 
     const [point] = await getSupplyHistory('1m')
 
-    // 1 safe + 3 safe + 4 safe + 0 burned + 2 op + 5 of the merkle box + 7
-    expect(point.nonCirculating).toBe(hemi('22'))
+    // 1 safe + 3 safe + 4 safe + 9 + 6 + 8 investor + 2 foundation
+    // + 0 burned + 2 + 1 + 1 op + 5 of the merkle box + 7
+    expect(point.nonCirculating).toBe(hemi('49'))
     expect(point.staked).toBe(hemi('5'))
     expect(point.totalSupply).toBe(hemi('100'))
-    expect(point.circulating).toBe(hemi('73'))
+    expect(point.circulating).toBe(hemi('46'))
   })
 
   it.each([
@@ -151,7 +158,7 @@ describe('getSupplyHistory', function () {
     const [point] = await getSupplyHistory('1m')
 
     expect(point.priceUsd).toBeNull()
-    expect(point.circulating).toBe(hemi('80'))
+    expect(point.circulating).toBe(hemi('53'))
     expect(warn).toHaveBeenCalled()
   })
 
@@ -187,7 +194,7 @@ describe('getCirculatingSupply', function () {
     })
     const { getCirculatingSupply } = createIndexer(hemi('7'), 50)
 
-    expect(await getCirculatingSupply()).toBe('73.000000000000000000')
+    expect(await getCirculatingSupply()).toBe('46.000000000000000000')
   })
 
   it('keeps the sign when the correction exceeds the supply', async function () {
@@ -196,7 +203,7 @@ describe('getCirculatingSupply', function () {
     })
     const { getCirculatingSupply } = createIndexer(hemi('1000'), 50)
 
-    expect(await getCirculatingSupply()).toBe('-920.000000000000000000')
+    expect(await getCirculatingSupply()).toBe('-947.000000000000000000')
   })
 
   it('fails when the indexer has no day that every chain has reached', async function () {

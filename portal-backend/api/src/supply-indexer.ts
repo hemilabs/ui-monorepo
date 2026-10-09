@@ -16,12 +16,18 @@ export type SupplyIndexerOptions = {
 
 type SupplyRow = {
   bnbBlock: number | null
+  bnbInvestorAndTeamAllocations: string | null
+  bnbOpBalances: string | null
   bnbSafe: string | null
   burned: string | null
   date: string
   ethBlock: number | null
+  ethInvestorAndTeamAllocations: string | null
+  ethOpBalances: string | null
   ethSafe: string | null
   hemiBlock: number | null
+  hemiFoundationFinance: string | null
+  hemiInvestorAndTeamAllocations: string | null
   hemiSafe: string | null
   locked: string | null
   merkle: string | null
@@ -31,12 +37,18 @@ type SupplyRow = {
 
 const fields = `
   bnbBlock
+  bnbInvestorAndTeamAllocations
+  bnbOpBalances
   bnbSafe
   burned
   date
   ethBlock
+  ethInvestorAndTeamAllocations
+  ethOpBalances
   ethSafe
   hemiBlock
+  hemiFoundationFinance
+  hemiInvestorAndTeamAllocations
   hemiSafe
   locked
   merkle
@@ -71,9 +83,15 @@ function createSupplyIndexer({
   function toAmounts(row: SupplyRow) {
     const nonCirculating =
       BigInt(correction) +
+      toBigInt(row.bnbInvestorAndTeamAllocations) +
+      toBigInt(row.bnbOpBalances) +
       toBigInt(row.bnbSafe) +
       toBigInt(row.burned) +
+      toBigInt(row.ethInvestorAndTeamAllocations) +
+      toBigInt(row.ethOpBalances) +
       toBigInt(row.ethSafe) +
+      toBigInt(row.hemiFoundationFinance) +
+      toBigInt(row.hemiInvestorAndTeamAllocations) +
       toBigInt(row.hemiSafe) +
       (toBigInt(row.merkle) * BigInt(merkleLocked)) / 100n +
       toBigInt(row.opBalances)

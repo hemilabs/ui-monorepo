@@ -29,18 +29,18 @@ const hemi = (amount: string) => parseUnits(amount, 18).toString()
 
 const row = {
   bnbBlock: 1,
-  bnbInvestorAndTeamAllocations: hemi('6'),
+  bnbInvestorAllocation: hemi('6'),
   bnbOpBalances: hemi('1'),
   bnbSafe: hemi('3'),
   burned: hemi('0'),
   date: yesterday,
   ethBlock: 2,
-  ethInvestorAndTeamAllocations: hemi('8'),
+  ethInvestorAllocation: hemi('8'),
   ethOpBalances: hemi('1'),
   ethSafe: hemi('4'),
   hemiBlock: 3,
   hemiFoundationFinance: hemi('2'),
-  hemiInvestorAndTeamAllocations: hemi('9'),
+  hemiInvestorAllocation: hemi('9'),
   hemiSafe: hemi('1'),
   locked: hemi('5'),
   merkle: hemi('10'),
@@ -48,17 +48,24 @@ const row = {
   totalSupply: hemi('100'),
 }
 
+type Correction = { amount: string; until?: string }
+
 const noCache = { getPriceHistory: async () => null }
 
-const createIndexer = (correction: string, merkleLocked: number) =>
-  // @ts-expect-error fake cache
-  createSupplyIndexer({ cache: noCache, correction, merkleLocked })
+const createIndexer = (corrections: string | Correction[], merkleLocked = 50) =>
+  createSupplyIndexer({
+    // @ts-expect-error fake cache
+    cache: noCache,
+    corrections:
+      typeof corrections === 'string' ? [{ amount: corrections }] : corrections,
+    merkleLocked,
+  })
 
 const createIndexerWithPrices = (prices: Record<string, string>) =>
   createSupplyIndexer({
     // @ts-expect-error fake cache
     cache: { getPriceHistory: async () => prices },
-    correction: '0',
+    corrections: [{ amount: '0' }],
     merkleLocked: 50,
   })
 
@@ -77,6 +84,26 @@ describe('getSupplyHistory', function () {
     expect(point.staked).toBe(hemi('5'))
     expect(point.totalSupply).toBe(hemi('100'))
     expect(point.circulating).toBe(hemi('46'))
+  })
+
+  it('adds the correction of the range that holds each day', async function () {
+    requestHemiEarn.mockResolvedValue({
+      data: {
+        DailySupplySnapshot: [
+          { ...row, date: '2026-09-04' },
+          { ...row, date: '2026-09-05' },
+        ],
+      },
+    })
+    const { getSupplyHistory } = createIndexer([
+      { amount: hemi('7'), until: '2026-09-04' },
+      { amount: hemi('3') },
+    ])
+
+    const [first, second] = await getSupplyHistory('1m')
+
+    expect(first.nonCirculating).toBe(hemi('49'))
+    expect(second.nonCirculating).toBe(hemi('45'))
   })
 
   it.each([
@@ -151,7 +178,7 @@ describe('getSupplyHistory', function () {
       cache: {
         getPriceHistory: async () => Promise.reject(new Error('no connection')),
       },
-      correction: '0',
+      corrections: [{ amount: '0' }],
       merkleLocked: 50,
     })
 
@@ -170,7 +197,7 @@ describe('getSupplyHistory', function () {
     const { getSupplyHistory } = createSupplyIndexer({
       // @ts-expect-error fake cache
       cache: { getPriceHistory },
-      correction: '0',
+      corrections: [{ amount: '0' }],
       merkleLocked: 50,
     })
 
@@ -193,6 +220,18 @@ describe('getCirculatingSupply', function () {
       data: { DailySupplySnapshot: [row] },
     })
     const { getCirculatingSupply } = createIndexer(hemi('7'), 50)
+
+    expect(await getCirculatingSupply()).toBe('46.000000000000000000')
+  })
+
+  it('adds the last correction', async function () {
+    requestHemiEarn.mockResolvedValue({
+      data: { DailySupplySnapshot: [row] },
+    })
+    const { getCirculatingSupply } = createIndexer([
+      { amount: hemi('1000'), until: '2026-12-31' },
+      { amount: hemi('7') },
+    ])
 
     expect(await getCirculatingSupply()).toBe('46.000000000000000000')
   })

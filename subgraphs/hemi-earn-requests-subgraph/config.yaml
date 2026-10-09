@@ -28,9 +28,9 @@ chains:
       # Foundation Finance
       - address: '0x83e2D7242eC0da49c853585dDF6565009A7fa762'
         name: FoundationFinance
-      # Investor Allocation Wallet & Hemi Team Bonus (Hemi Labs)
+      # Investor Allocation Wallet (Hemi Labs)
       - address: '0x11B50ab67cb5Ff3a5d8B47bB5220151E5BB07109'
-        name: InvestorAndTeamAllocations
+        name: InvestorAllocation
       - address: '0x9Ab3660ceE733332785cEa09D1a4Ff222F31aE54'
         name: MerkleBox
       # Accounts whose Hemi balances are not circulating
@@ -73,9 +73,9 @@ chains:
       # ---- HEMI supply ----
       - address: '0x000000000000000000000000000000000000dEaD'
         name: Dead
-      # Investor Allocation Wallet & Hemi Team Bonus (Hemi Labs)
+      # Investor Allocation Wallet (Hemi Labs)
       - address: '0x11B50ab67cb5Ff3a5d8B47bB5220151E5BB07109'
-        name: InvestorAndTeamAllocations
+        name: InvestorAllocation
       # Accounts whose Hemi balances are not circulating
       - address:
           - '0x297037125A587940aAC0f0AB007B572203f2c2c9' # Community multisig
@@ -91,9 +91,9 @@ chains:
 
   # ---- BNB Chain: HEMI supply only ----
   - contracts:
-      # Investor Allocation Wallet & Hemi Team Bonus (Hemi Labs)
+      # Investor Allocation Wallet (Hemi Labs)
       - address: '0x11B50ab67cb5Ff3a5d8B47bB5220151E5BB07109'
-        name: InvestorAndTeamAllocations
+        name: InvestorAllocation
       # Accounts whose Hemi balances are not circulating
       - address:
           - '0x297037125A587940aAC0f0AB007B572203f2c2c9' # Community multisig
@@ -114,7 +114,7 @@ contracts:
   - events: []
     name: FoundationFinance
   - events: []
-    name: InvestorAndTeamAllocations
+    name: InvestorAllocation
   - events: []
     name: MerkleBox
   - events: []

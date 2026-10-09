@@ -40,13 +40,13 @@ describe('toSnapshot', function () {
 
     expect(toSnapshot(mainnet.id, [100n, 4n, 2n, 6n, ...ethOpValues])).toEqual({
       burned: 2n,
-      ethInvestorAndTeamAllocations: 6n,
+      ethInvestorAllocation: 6n,
       ethOpBalances: sum(ethOpValues),
       ethSafe: 4n,
       totalSupply: 100n,
     })
     expect(toSnapshot(bsc.id, [3n, 8n, ...bnbOpValues])).toEqual({
-      bnbInvestorAndTeamAllocations: 8n,
+      bnbInvestorAllocation: 8n,
       bnbOpBalances: sum(bnbOpValues),
       bnbSafe: 3n,
     })
@@ -57,7 +57,7 @@ describe('toSnapshot', function () {
 
     expect(toSnapshot(hemi.id, [1n, 5n, 10n, ...opValues, 9n, 11n])).toEqual({
       hemiFoundationFinance: 11n,
-      hemiInvestorAndTeamAllocations: 9n,
+      hemiInvestorAllocation: 9n,
       hemiSafe: 1n,
       locked: 5n,
       merkle: 10n,

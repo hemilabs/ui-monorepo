@@ -32,6 +32,7 @@ export const useEstimateStakeFees = function ({
     : undefined
 
   const { data: gasUnits, isError } = useEstimateGas({
+    chainId: token.chainId,
     data,
     query: { enabled: forAccount && enabled },
     to: bridgeAddress,

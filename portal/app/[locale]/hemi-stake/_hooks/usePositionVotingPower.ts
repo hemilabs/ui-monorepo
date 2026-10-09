@@ -1,6 +1,11 @@
 import { usePositionDelegationDetails } from './usePositionDelegationDetails'
 
-export const usePositionVotingPower = (tokenId: bigint) =>
-  usePositionDelegationDetails(tokenId, {
+export const usePositionVotingPower = function (
+  tokenId: bigint,
+  { enabled = true }: { enabled?: boolean } = {},
+) {
+  return usePositionDelegationDetails(tokenId, {
+    enabled,
     select: delegationDetails => delegationDetails.votingPower,
   })
+}

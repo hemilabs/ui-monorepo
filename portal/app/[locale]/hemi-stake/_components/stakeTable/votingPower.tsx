@@ -9,14 +9,28 @@ import { usePositionVotingPower } from '../../_hooks/usePositionVotingPower'
 
 type Props = {
   amount: bigint
+  isBurned?: boolean
   tokenId: bigint
 }
 
-export const VotingPower = function ({ amount, tokenId }: Props) {
+export const VotingPower = function ({
+  amount,
+  isBurned = false,
+  tokenId,
+}: Props) {
   const token = useHemiToken()
   const { data: veHemiToken, isLoading: isLoadingVeHemiToken } =
     useVeHemiToken()
-  const { data: votingPower, error } = usePositionVotingPower(tokenId)
+  const { data: votingPower, error } = usePositionVotingPower(tokenId, {
+    enabled: !isBurned,
+  })
+
+  if (isBurned) {
+    // Burned (withdrawn) positions carry no voting power, so render the
+    // placeholder directly instead of issuing an on-chain query and flashing
+    // a loading skeleton.
+    return <span className="text-sm text-neutral-950">-</span>
+  }
 
   if (isLoadingVeHemiToken || !veHemiToken) {
     return <Skeleton className="h-10 w-20" />

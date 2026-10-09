@@ -5,7 +5,10 @@ import { Header } from 'components/table/_components/header'
 import { TableCard } from 'components/table/tableCard'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { type StakingPosition } from 'types/stakingDashboard'
+import {
+  type StakingPosition,
+  StakingPositionStatus,
+} from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
@@ -65,10 +68,14 @@ const stakingColumns = ({
   },
   {
     cell({ row }) {
-      const { amount, tokenId } = row.original
+      const { amount, status, tokenId } = row.original
       return (
         <div className="flex items-center justify-center gap-x-2">
-          <VotingPower amount={amount} tokenId={tokenId} />
+          <VotingPower
+            amount={amount}
+            isBurned={status === StakingPositionStatus.WITHDRAWN}
+            tokenId={tokenId}
+          />
         </div>
       )
     },

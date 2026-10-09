@@ -21,6 +21,17 @@ type FeeRowProps = {
 }
 
 const FeeRow = function ({ amount, isError, label, token }: FeeRowProps) {
+  if (amount !== undefined) {
+    return (
+      <Row label={label}>
+        <DisplayAmount
+          amount={formatUnits(amount, token.decimals)}
+          showTokenLogo={false}
+          token={token}
+        />
+      </Row>
+    )
+  }
   if (isError) {
     return (
       <Row label={label}>
@@ -28,20 +39,9 @@ const FeeRow = function ({ amount, isError, label, token }: FeeRowProps) {
       </Row>
     )
   }
-  if (amount === undefined) {
-    return (
-      <Row label={label}>
-        <Skeleton className="w-12" />
-      </Row>
-    )
-  }
   return (
     <Row label={label}>
-      <DisplayAmount
-        amount={formatUnits(amount, token.decimals)}
-        showTokenLogo={false}
-        token={token}
-      />
+      <Skeleton className="w-12" />
     </Row>
   )
 }

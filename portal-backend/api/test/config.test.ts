@@ -19,6 +19,14 @@ describe('supply.corrections', function () {
     })
   })
 
+  it('has no end date in the future', function () {
+    untils.forEach(function (until) {
+      expect(new Date(`${until}T00:00:00Z`).getTime()).toBeLessThanOrEqual(
+        Date.now(),
+      )
+    })
+  })
+
   it('sorts the end dates in ascending order', function () {
     expect(untils).toEqual([...new Set(untils)].sort())
   })

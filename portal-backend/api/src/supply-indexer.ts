@@ -10,7 +10,7 @@ import {
 
 type Correction = {
   amount: string
-  until?: string
+  from: string
 }
 
 export type SupplyIndexerOptions = {
@@ -88,8 +88,7 @@ function createSupplyIndexer({
   }
 
   const getCorrection = (date: string) =>
-    corrections.find(({ until }) => until === undefined || date <= until)
-      ?.amount ?? '0'
+    corrections.findLast(({ from }) => from <= date)?.amount ?? '0'
 
   function toAmounts(row: SupplyRow, correction: string) {
     const nonCirculating =

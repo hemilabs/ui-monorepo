@@ -49,7 +49,7 @@ const row = {
   totalSupply: hemi('100'),
 }
 
-type Correction = { amount: string; until?: string }
+type Correction = { amount: string; from: string }
 
 const noCache = { getPriceHistory: async () => null }
 
@@ -58,7 +58,9 @@ const createIndexer = (corrections: string | Correction[], merkleLocked = 50) =>
     // @ts-expect-error fake cache
     cache: noCache,
     corrections:
-      typeof corrections === 'string' ? [{ amount: corrections }] : corrections,
+      typeof corrections === 'string'
+        ? [{ amount: corrections, from: '2025-09-23' }]
+        : corrections,
     merkleLocked,
   })
 
@@ -66,7 +68,7 @@ const createIndexerWithPrices = (prices: Record<string, string>) =>
   createSupplyIndexer({
     // @ts-expect-error fake cache
     cache: { getPriceHistory: async () => prices },
-    corrections: [{ amount: '0' }],
+    corrections: [{ amount: '0', from: '2025-09-23' }],
     merkleLocked: 50,
   })
 
@@ -97,8 +99,8 @@ describe('getSupplyHistory', function () {
       },
     })
     const { getSupplyHistory } = createIndexer([
-      { amount: hemi('7'), until: '2026-09-04' },
-      { amount: hemi('3') },
+      { amount: hemi('7'), from: '2025-09-23' },
+      { amount: hemi('3'), from: '2026-09-05' },
     ])
 
     const [first, second] = await getSupplyHistory('1m')
@@ -179,7 +181,7 @@ describe('getSupplyHistory', function () {
       cache: {
         getPriceHistory: async () => Promise.reject(new Error('no connection')),
       },
-      corrections: [{ amount: '0' }],
+      corrections: [{ amount: '0', from: '2025-09-23' }],
       merkleLocked: 50,
     })
 
@@ -198,7 +200,7 @@ describe('getSupplyHistory', function () {
     const { getSupplyHistory } = createSupplyIndexer({
       // @ts-expect-error fake cache
       cache: { getPriceHistory },
-      corrections: [{ amount: '0' }],
+      corrections: [{ amount: '0', from: '2025-09-23' }],
       merkleLocked: 50,
     })
 
@@ -230,8 +232,8 @@ describe('getCirculatingSupply', function () {
       data: { DailySupplySnapshot: [row] },
     })
     const { getCirculatingSupply } = createIndexer([
-      { amount: hemi('1000'), until: '2026-12-31' },
-      { amount: hemi('7') },
+      { amount: hemi('1000'), from: '2025-09-23' },
+      { amount: hemi('7'), from: '2026-09-05' },
     ])
 
     expect(await getCirculatingSupply()).toBe('45.000000000000000000')

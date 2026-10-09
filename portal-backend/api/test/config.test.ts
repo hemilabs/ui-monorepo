@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest'
 
 describe('supply.corrections', function () {
   const corrections =
-    config.get<{ amount: string; until?: string }[]>('supply.corrections')
+    config.get<{ amount: string; source: string; until?: string }[]>(
+      'supply.corrections',
+    )
   const untils = corrections.slice(0, -1).map(({ until }) => until)
 
   it('ends with a correction with no end date', function () {
@@ -19,6 +21,10 @@ describe('supply.corrections', function () {
 
   it('sorts the end dates in ascending order', function () {
     expect(untils).toEqual([...new Set(untils)].sort())
+  })
+
+  it('has a source in every correction', function () {
+    corrections.forEach(({ source }) => expect(source).toMatch(/\S/))
   })
 
   it('has an amount in wei in every correction', function () {

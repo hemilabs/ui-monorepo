@@ -37,6 +37,12 @@ export interface Unisat {
     satoshis: Satoshis,
     options: object,
   ) => Promise<BtcTransaction>
-  signPsbt(psbtHex: string, options?: object): Promise<string>
+  signPsbt(
+    psbtHex: string,
+    options?: {
+      autoFinalized?: boolean
+      toSignInputs?: { address: Account; index: number }[]
+    },
+  ): Promise<string>
   switchNetwork: (network: BtcSupportedNetworks) => Promise<void>
 }

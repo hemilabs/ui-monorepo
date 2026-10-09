@@ -3,15 +3,6 @@ import { ReactNode } from 'react'
 const commonCss =
   'h-13 w-full rounded-lg border border-solid border-neutral-300/55 p-4 flex items-center'
 
-type BoxProps = {
-  bgColor: 'bg-neutral-50' | 'bg-neutral-100' | 'bg-white'
-  children: ReactNode
-}
-
-export const OneRowBox = ({ bgColor, children }: BoxProps) => (
-  <div className={`${commonCss} ${bgColor}`}>{children}</div>
-)
-
 export const TwoRowBox = ({
   bottom,
   top,

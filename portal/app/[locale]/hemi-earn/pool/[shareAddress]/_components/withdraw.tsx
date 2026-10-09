@@ -1,3 +1,4 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
@@ -25,6 +26,7 @@ import {
   resolveErrorKey,
   resolvePreviewIssue,
   resolveValidationError,
+  resolveZeroNativeBalanceError,
 } from '../_utils/formState'
 import {
   applyWithdrawSharesGuard,
@@ -170,6 +172,16 @@ export const Withdraw = function ({
     validInput,
   })
 
+  const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
+  const { data: nativeTokenBalance, isLoading: isNativeBalancePending } =
+    useNativeBalance(selectedAsset.token.chainId)
+  const zeroBalanceError = resolveZeroNativeBalanceError({
+    nativeBalance: nativeTokenBalance?.value,
+    zeroBalanceMessage: t('common.insufficient-balance', {
+      symbol: nativeToken.symbol,
+    }),
+  })
+
   const { assetValue, sharesValue } = resolveWithdrawInputValues({
     assetOut,
     assetToken: selectedAsset.token,
@@ -210,7 +222,7 @@ export const Withdraw = function ({
   })
 
   const handleWithdraw = function () {
-    if (!canWithdraw || !quote) {
+    if (!canWithdraw || !quote || zeroBalanceError) {
       return
     }
     withdrawFn(undefined, {
@@ -219,7 +231,6 @@ export const Withdraw = function ({
     setOperationRunning(needsApproval ? 'approving' : 'withdrawing')
   }
 
-  const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
   const hasQuote = !!quote
   const balanceLoaded = isTokensMode ? maxAssetLoaded : shareValueLoaded
 
@@ -237,10 +248,13 @@ export const Withdraw = function ({
       peggedAmount,
       validInput,
     })
-  const effectiveValidationError = resolveValidationError(
-    previewIssue ? t(`hemi-earn.pool.form.${previewIssue}`) : undefined,
+  const effectiveValidationError = resolveValidationError({
+    previewIssueMessage: previewIssue
+      ? t(`hemi-earn.pool.form.${previewIssue}`)
+      : undefined,
     validationError,
-  )
+    zeroBalanceError,
+  })
   const displayedErrorKey = resolveErrorKey(
     walletIsConnected(status),
     balanceLoaded,
@@ -254,6 +268,7 @@ export const Withdraw = function ({
     balanceLoaded,
     isAllowanceLoading,
     isAssetsToSharesLoading,
+    isNativeBalancePending,
     isPreviewLoading,
     isTokensMode,
     validInput,

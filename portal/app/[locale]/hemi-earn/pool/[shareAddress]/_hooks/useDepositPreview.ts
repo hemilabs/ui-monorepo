@@ -4,7 +4,6 @@ import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { type EvmToken } from 'types/token'
-import { createErc20AllowanceStateOverride } from 'utils/erc20StateOverride'
 import { type Address } from 'viem'
 import { useEstimateGas } from 'wagmi'
 
@@ -12,6 +11,7 @@ import { applySlippage } from '../../../_constants/slippage'
 import { depositPreviewOptions } from '../_fetchers/fetchDepositPreview'
 import { type QuoteDeposit } from '../_fetchers/fetchQuoteDeposit'
 import { computeCrossChainFees } from '../_utils/crossChainFees'
+import { createFeeEstimateStateOverride } from '../_utils/feeEstimateStateOverride'
 
 const buildGasData = ({
   amount,
@@ -39,25 +39,7 @@ const buildGasData = ({
         sharesOutMin,
       })
 
-// Gas never resolves to exactly 0, so a 0 total means the estimate is still loading.
-const computeTotalFees = function ({
-  approvalGasFees,
-  depositGasFees,
-  layerZeroFee,
-  needsApproval,
-}: {
-  approvalGasFees: bigint
-  depositGasFees: bigint
-  layerZeroFee: bigint
-  needsApproval: boolean
-}) {
-  const total =
-    depositGasFees +
-    layerZeroFee +
-    (needsApproval ? approvalGasFees : BigInt(0))
-  return total === BigInt(0) ? undefined : total
-}
-
+// Gas never resolves to exactly 0, so a 0 leg means that estimate is still loading.
 const computeHemiGasFee = function ({
   approvalGasFees,
   depositGasFees,
@@ -67,9 +49,22 @@ const computeHemiGasFee = function ({
   depositGasFees: bigint
   needsApproval: boolean
 }) {
-  const total = depositGasFees + (needsApproval ? approvalGasFees : BigInt(0))
-  return total === BigInt(0) ? undefined : total
+  if (depositGasFees === BigInt(0)) {
+    return undefined
+  }
+  if (needsApproval && approvalGasFees === BigInt(0)) {
+    return undefined
+  }
+  return depositGasFees + (needsApproval ? approvalGasFees : BigInt(0))
 }
+
+const computeTotalFees = ({
+  hemiGasFee,
+  layerZeroFee,
+}: {
+  hemiGasFee: bigint | undefined
+  layerZeroFee: bigint
+}) => (hemiGasFee === undefined ? undefined : hemiGasFee + layerZeroFee)
 
 const computeIsFeesError = ({
   isApprovalGasFeesError,
@@ -171,8 +166,8 @@ export const useDepositPreview = function ({
         sharesOutMin,
       }),
       query: { enabled: canDeposit && !!account && !!quote },
-      stateOverride: createErc20AllowanceStateOverride({
-        enabled: needsApproval,
+      stateOverride: createFeeEstimateStateOverride({
+        needsApproval,
         owner: account,
         spender,
         token,
@@ -188,24 +183,28 @@ export const useDepositPreview = function ({
       isGasUnitsError: isDepositGasUnitsError,
     })
 
+  const hemiGasFee = computeHemiGasFee({
+    approvalGasFees,
+    depositGasFees,
+    needsApproval,
+  })
+  const totalFees = computeTotalFees({ hemiGasFee, layerZeroFee })
+  const isFeesError = computeIsFeesError({
+    isApprovalGasFeesError,
+    isDepositGasFeesError,
+    isPreviewError,
+    needsApproval,
+  })
+
   return {
     bridgingFee,
     canDeposit,
     depositGasFees,
     ethereumFee,
-    hemiGasFee: computeHemiGasFee({
-      approvalGasFees,
-      depositGasFees,
-      needsApproval,
-    }),
+    hemiGasFee,
     isAllowanceError,
     isAllowanceLoading,
-    isFeesError: computeIsFeesError({
-      isApprovalGasFeesError,
-      isDepositGasFeesError,
-      isPreviewError,
-      needsApproval,
-    }),
+    isFeesError,
     isPreviewError,
     isPreviewLoading,
     layerZeroFee,
@@ -213,11 +212,6 @@ export const useDepositPreview = function ({
     quote,
     shares,
     sharesOutMin,
-    totalFees: computeTotalFees({
-      approvalGasFees,
-      depositGasFees,
-      layerZeroFee,
-      needsApproval,
-    }),
+    totalFees,
   }
 }

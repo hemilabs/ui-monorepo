@@ -1,3 +1,4 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { TokenInput } from 'components/tokenInput'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
@@ -26,6 +27,7 @@ import {
   resolveErrorKey,
   resolvePreviewIssue,
   resolveValidationError,
+  resolveZeroNativeBalanceError,
 } from '../_utils/formState'
 
 import { AdvancedSettings } from './advancedSettings'
@@ -112,6 +114,16 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     validInput,
   })
 
+  const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
+  const { data: nativeTokenBalance, isLoading: isNativeBalancePending } =
+    useNativeBalance(selectedAsset.token.chainId)
+  const zeroBalanceError = resolveZeroNativeBalanceError({
+    nativeBalance: nativeTokenBalance?.value,
+    zeroBalanceMessage: t('common.insufficient-balance', {
+      symbol: nativeToken.symbol,
+    }),
+  })
+
   const { setDrawerQueryString } = useDrawerQueryString()
 
   const { isPending: isRunningOperation, mutate: deposit } = useDeposit({
@@ -142,7 +154,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   })
 
   const handleDeposit = function () {
-    if (!canDeposit || !quote) {
+    if (!canDeposit || !quote || zeroBalanceError) {
       return
     }
     deposit(undefined, {
@@ -151,7 +163,6 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     setOperationRunning(needsApproval ? 'approving' : 'depositing')
   }
 
-  const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
   const hasQuote = !!quote
 
   const previewIssue = resolvePreviewIssue({
@@ -161,10 +172,13 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     peggedAmount: quote?.peggedAmount,
     validInput,
   })
-  const effectiveValidationError = resolveValidationError(
-    previewIssue ? t(`hemi-earn.pool.form.${previewIssue}`) : undefined,
+  const effectiveValidationError = resolveValidationError({
+    previewIssueMessage: previewIssue
+      ? t(`hemi-earn.pool.form.${previewIssue}`)
+      : undefined,
     validationError,
-  )
+    zeroBalanceError,
+  })
   const displayedErrorKey = resolveErrorKey(
     walletIsConnected(status),
     tokenBalanceLoaded,
@@ -173,6 +187,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   const isSubmitLoading = computeIsLoading({
     balanceLoaded: tokenBalanceLoaded,
     isAllowanceLoading,
+    isNativeBalancePending,
     isPreviewLoading,
     validInput,
   })

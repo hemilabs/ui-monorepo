@@ -5,6 +5,7 @@ import {
   resolveErrorKey,
   resolvePreviewIssue,
   resolveValidationError,
+  resolveZeroNativeBalanceError,
 } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_utils/formState'
 
 describe('resolvePreviewIssue', function () {
@@ -96,9 +97,16 @@ describe('computeIsLoading', function () {
   const base = {
     balanceLoaded: true,
     isAllowanceLoading: false,
+    isNativeBalancePending: false,
     isPreviewLoading: false,
     validInput: true,
   }
+
+  it('reports loading while the native balance is still being read', function () {
+    expect(computeIsLoading({ ...base, isNativeBalancePending: true })).toBe(
+      true,
+    )
+  })
 
   it('reports loading while allowance is still resolving', function () {
     expect(computeIsLoading({ ...base, isAllowanceLoading: true })).toBe(true)
@@ -124,20 +132,64 @@ describe('computeIsLoading', function () {
   })
 })
 
+describe('resolveZeroNativeBalanceError', function () {
+  const base = {
+    nativeBalance: BigInt(1),
+    zeroBalanceMessage: 'no-eth',
+  }
+
+  it('returns the message when the wallet holds no native token', function () {
+    expect(
+      resolveZeroNativeBalanceError({ ...base, nativeBalance: BigInt(0) }),
+    ).toBe('no-eth')
+  })
+
+  it('does not block any positive balance, however small', function () {
+    expect(resolveZeroNativeBalanceError(base)).toBeUndefined()
+  })
+
+  it('does not block while the balance is unknown', function () {
+    expect(
+      resolveZeroNativeBalanceError({ ...base, nativeBalance: undefined }),
+    ).toBeUndefined()
+  })
+})
+
 describe('resolveValidationError', function () {
+  const base = {
+    previewIssueMessage: undefined,
+    validationError: undefined,
+    zeroBalanceError: undefined,
+  }
+
   it('returns the previewIssueMessage when set', function () {
-    expect(resolveValidationError('preview-msg', 'validation-msg')).toBe(
-      'preview-msg',
-    )
+    expect(
+      resolveValidationError({
+        ...base,
+        previewIssueMessage: 'preview-msg',
+        validationError: 'validation-msg',
+        zeroBalanceError: 'no-eth',
+      }),
+    ).toBe('preview-msg')
   })
 
   it('falls back to the validationError when previewIssueMessage is undefined', function () {
-    expect(resolveValidationError(undefined, 'validation-msg')).toBe(
-      'validation-msg',
-    )
+    expect(
+      resolveValidationError({
+        ...base,
+        validationError: 'validation-msg',
+        zeroBalanceError: 'no-eth',
+      }),
+    ).toBe('validation-msg')
   })
 
-  it('returns undefined when both are undefined', function () {
-    expect(resolveValidationError(undefined, undefined)).toBeUndefined()
+  it('falls back to the zeroBalanceError last', function () {
+    expect(
+      resolveValidationError({ ...base, zeroBalanceError: 'no-eth' }),
+    ).toBe('no-eth')
+  })
+
+  it('returns undefined when all are undefined', function () {
+    expect(resolveValidationError(base)).toBeUndefined()
   })
 })

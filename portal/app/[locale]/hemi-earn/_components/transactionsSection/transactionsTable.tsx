@@ -1,3 +1,4 @@
+import { DataUnavailable } from 'components/dataUnavailable'
 import { Table } from 'components/table'
 import { TableCard } from 'components/table/tableCard'
 import { useMemo } from 'react'
@@ -17,7 +18,12 @@ import { TransactionDrawer } from './transactionDrawer'
 export const TransactionsTable = function () {
   const t = useTranslations('hemi-earn.transactions')
   const { status } = useAccount()
-  const { data: transactions, isPending } = useEarnTransactions()
+  const {
+    data: transactions,
+    isLoadingError,
+    isPending,
+    refetch,
+  } = useEarnTransactions()
 
   const columns = useMemo(() => buildColumns({ t }), [t])
 
@@ -34,7 +40,14 @@ export const TransactionsTable = function () {
     if (isEmpty) {
       return (
         <TableCard>
-          <NoTransactions />
+          {isLoadingError ? (
+            <DataUnavailable
+              onRetry={() => refetch()}
+              title={t('could-not-load-transactions')}
+            />
+          ) : (
+            <NoTransactions />
+          )}
         </TableCard>
       )
     }

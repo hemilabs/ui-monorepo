@@ -317,6 +317,7 @@
         "type": "Tipo"
       },
       "connect-to-view": "Conecte su billetera para ver sus transacciones de earn.",
+      "could-not-load-transactions": "No pudimos cargar sus transacciones",
       "deposit": "Depósito",
       "drawer": {
         "deposit-heading": "Detalles del depósito de stake",

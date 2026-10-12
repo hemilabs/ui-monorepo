@@ -103,7 +103,8 @@ const localToEarnWithdrawTransaction = (
 // Merges subgraph rows with not-yet-indexed local entries (sorted desc). Side effects
 // live in useEarnDeliveryWatcher so they fire once per poll, not once per consumer.
 export const useEarnTransactions = function () {
-  const { data, isError, isLoading } = useEarnTransactionsQuery()
+  const { data, isError, isLoading, isLoadingError, refetch } =
+    useEarnTransactionsQuery()
   const { localOperations } = useLocalEarnOperations()
 
   const merged = useMemo(
@@ -166,5 +167,11 @@ export const useEarnTransactions = function () {
     [data, localOperations],
   )
 
-  return { data: merged, isError, isPending: isLoading }
+  return {
+    data: merged,
+    isError,
+    isLoadingError,
+    isPending: isLoading,
+    refetch,
+  }
 }

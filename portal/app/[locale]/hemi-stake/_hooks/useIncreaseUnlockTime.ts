@@ -101,6 +101,13 @@ export const useIncreaseUnlockTime = function ({
 
         track?.('hemi stake - signing increase unlock time error')
       })
+      emitter.on('increase-unlock-time-failed', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+
+        track?.('hemi stake - increase unlock time failed')
+      })
       emitter.on(
         'increase-unlock-time-transaction-succeeded',
         function (receipt) {
@@ -172,6 +179,13 @@ export const useIncreaseUnlockTime = function ({
           track?.('hemi stake - increase unlock time reverted')
         },
       )
+      emitter.on('unexpected-error', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+
+        track?.('hemi stake - unexpected error')
+      })
 
       on?.(emitter)
 

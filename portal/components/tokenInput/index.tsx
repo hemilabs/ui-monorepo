@@ -3,9 +3,8 @@ import { RenderFiatBalance } from 'components/fiatBalance'
 import { ComponentProps, ComponentType, ReactNode } from 'react'
 import { Token } from 'types/token'
 import { useTranslations } from 'use-intl'
-import { parseTokenUnits } from 'utils/token'
 
-import { isInputError } from './utils'
+import { isInputError, parseAmountInput } from './utils'
 
 type Props<T extends Token> = {
   balanceComponent?: ComponentType<{
@@ -72,6 +71,7 @@ export const TokenInput = function <T extends Token>({
   const t = useTranslations('tunnel-page')
   const BalanceComponent = balanceComponent ?? Balance
   const FiatBalanceComponent = fiatBalanceComponent ?? RenderFiatBalance
+  const amount = parseAmountInput(value, token)
   return (
     <div className="flex min-h-31 flex-col justify-between rounded-lg border border-solid border-transparent bg-neutral-50 p-4 font-medium text-neutral-500 hover:shadow-bs">
       <div className="flex items-center justify-between gap-x-2">
@@ -104,9 +104,9 @@ export const TokenInput = function <T extends Token>({
                   queryStatus="success"
                   token={fiatBalance.token}
                 />
-              ) : !Number.isNaN(Number(value)) ? (
+              ) : amount !== undefined ? (
                 <FiatBalanceComponent
-                  balance={parseTokenUnits(value, token)}
+                  balance={amount}
                   queryStatus="success"
                   token={token}
                 />

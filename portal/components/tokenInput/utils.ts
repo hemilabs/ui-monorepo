@@ -1,5 +1,6 @@
 import { Token } from 'types/token'
 import { useTranslations } from 'use-intl'
+import { sanitizeAmount } from 'utils/form'
 import { isNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 
@@ -23,6 +24,11 @@ export type InputError = (typeof inputErrors)[number]
 
 export const isInputError = (error: string): error is InputError =>
   (inputErrors as readonly string[]).includes(error)
+
+export const parseAmountInput = function (value: string, token: Token) {
+  const result = sanitizeAmount(value)
+  return 'value' in result ? parseTokenUnits(result.value, token) : undefined
+}
 
 type ValidationResult = {
   isValid: boolean

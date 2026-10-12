@@ -87,6 +87,13 @@ export const useIncreaseUnlockTime = function ({
           track?.('hemi stake - signed increase unlock time')
         },
       )
+      emitter.on('increase-unlock-time-failed-validation', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+
+        track?.('hemi stake - increase unlock time failed validation')
+      })
       emitter.on('user-signing-increase-unlock-time-error', function () {
         updateStakingDashboardOperation({
           status: StakingDashboardStatus.STAKE_TX_FAILED,

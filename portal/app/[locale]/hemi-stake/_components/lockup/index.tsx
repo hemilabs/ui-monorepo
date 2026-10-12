@@ -56,7 +56,7 @@ type NearestValidValuesProps = {
   value: number
 }
 
-export function getNearestValidValues({
+function getNearestValidValues({
   minLocked,
   value,
 }: NearestValidValuesProps): NearestValidValues {

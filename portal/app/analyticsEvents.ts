@@ -105,6 +105,7 @@ const analyticsEvents = [
   'hemi stake - filter burned',
   'hemi stake - increase amount success',
   'hemi stake - increase amount transaction reverted',
+  'hemi stake - increase unlock time failed validation',
   'hemi stake - increase unlock time reverted',
   'hemi stake - increase unlock time success',
   'hemi stake - lock creation failed validation',

@@ -4,7 +4,14 @@ import { Row } from '@tanstack/react-table'
 import { Tooltip } from 'components/tooltip'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useMenuKeyboard } from 'hooks/useMenuKeyboard'
-import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import {
+  ReactNode,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import { createPortal } from 'react-dom'
 import { type StakingPosition } from 'types/stakingDashboard'
 import { useLocale, useTranslations } from 'use-intl'
@@ -31,34 +38,45 @@ type ActionItemProps = {
   tooltip?: string
 }
 
-const ActionItem = ({
+const ActionItem = function ({
   enabled = true,
   icon,
   label,
   onClick,
   tooltip,
-}: ActionItemProps) => (
-  <Tooltip
-    placement="bottom"
-    text={tooltip}
-    trigger={['hover', 'focus']}
-    variant="simple"
-  >
-    <button
-      aria-disabled={!enabled}
-      className={`flex w-full items-center gap-2 rounded px-3 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 ${
-        enabled
-          ? 'cursor-pointer hover:bg-neutral-50 hover:text-neutral-950'
-          : 'cursor-default [&>*]:opacity-50'
-      }`}
-      onClick={enabled ? onClick : undefined}
-      type="button"
+}: ActionItemProps) {
+  const tooltipId = useId()
+  return (
+    <Tooltip
+      placement="bottom"
+      text={tooltip}
+      trigger={['hover', 'focus']}
+      variant="simple"
     >
-      {icon}
-      <span>{label}</span>
-    </button>
-  </Tooltip>
-)
+      <>
+        <button
+          aria-describedby={tooltip ? tooltipId : undefined}
+          aria-disabled={!enabled}
+          className={`flex w-full items-center gap-2 rounded px-3 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 ${
+            enabled
+              ? 'cursor-pointer hover:bg-neutral-50 hover:text-neutral-950'
+              : 'cursor-default [&>*]:opacity-50'
+          }`}
+          onClick={enabled ? onClick : undefined}
+          type="button"
+        >
+          {icon}
+          <span>{label}</span>
+        </button>
+        {tooltip && (
+          <span className="sr-only" id={tooltipId}>
+            {tooltip}
+          </span>
+        )}
+      </>
+    </Tooltip>
+  )
+}
 
 type Props = {
   row: Row<StakingPosition>

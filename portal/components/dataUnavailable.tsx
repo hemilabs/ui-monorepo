@@ -3,7 +3,12 @@ import { WarningIcon } from 'components/icons/warningIcon'
 import { InformationBox } from 'components/informationBox'
 import { useTranslations } from 'use-intl'
 
-export function PositionsUnavailable({ onRetry }: { onRetry: VoidFunction }) {
+type Props = {
+  onRetry: VoidFunction
+  title: string
+}
+
+export function DataUnavailable({ onRetry, title }: Props) {
   const t = useTranslations()
 
   return (
@@ -16,7 +21,7 @@ export function PositionsUnavailable({ onRetry }: { onRetry: VoidFunction }) {
         }
         icon={<WarningIcon className="text-orange-600" />}
         subtitle={t('common.unexpected-error')}
-        title={t('hemi-stake.table.could-not-load-positions')}
+        title={title}
       />
     </div>
   )

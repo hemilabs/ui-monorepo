@@ -56,11 +56,13 @@ export const HemiStakePage = function () {
               <div className="mb-6 hidden lg:block">
                 <WalletStatsSection />
               </div>
-              <div className="mb-4 ml-1 flex flex-row items-center justify-between gap-x-2">
-                <div className="flex flex-1 md:w-fit md:flex-none">
+              <div className="mb-4 ml-1 flex flex-col gap-y-2 md:flex-row md:items-center md:justify-between md:gap-x-2">
+                <div className="flex w-full flex-1 md:w-fit md:flex-none">
                   <StakeTableFilter filter={filter} onFilter={handleFilter} />
                 </div>
-                <ClaimAllRewards positions={data} />
+                <div className="self-end md:self-auto">
+                  <ClaimAllRewards positions={data} />
+                </div>
               </div>
             </>
           )}

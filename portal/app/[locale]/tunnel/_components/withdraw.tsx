@@ -15,6 +15,7 @@ import { useUmami } from 'hooks/useUmami'
 import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useTranslations } from 'use-intl'
+import { maxBigInt } from 'utils/bigint'
 import { isEvmNetwork } from 'utils/chain'
 import { formatBtcAddress } from 'utils/format'
 import { getTotal } from 'utils/getTotal'
@@ -193,7 +194,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     }
 
     return formatUnits(
-      amount - (btcWithdrawalFee ?? BigInt(0)),
+      maxBigInt(amount - (btcWithdrawalFee ?? BigInt(0)), BigInt(0)),
       fromToken.decimals,
     )
   }

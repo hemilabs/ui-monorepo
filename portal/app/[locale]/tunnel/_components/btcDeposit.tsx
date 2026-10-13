@@ -8,6 +8,7 @@ import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useUmami } from 'hooks/useUmami'
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'use-intl'
+import { maxBigInt } from 'utils/bigint'
 import { formatEvmAddress } from 'utils/format'
 import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
@@ -163,7 +164,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     }
 
     return formatUnits(
-      amountBigInt - (btcDepositFee ?? BigInt(0)),
+      maxBigInt(amountBigInt - (btcDepositFee ?? BigInt(0)), BigInt(0)),
       fromToken.decimals,
     )
   }

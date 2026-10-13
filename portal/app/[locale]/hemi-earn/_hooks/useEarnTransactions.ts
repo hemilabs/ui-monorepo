@@ -1,6 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { isDataUnavailable } from 'utils/queryStatus'
 import { type Hash } from 'viem'
 
 import { earnTransactionsKeyPrefix } from '../_fetchers/fetchEarnTransactions'
@@ -176,8 +175,7 @@ export const useEarnTransactions = function () {
     // A poll after a failed load goes back to pending; keep the failure until data arrives.
     hasLoadError: data === undefined && errorUpdateCount > 0,
     // Offline, a first load is paused, not idle; it's still loading.
-    isPending:
-      status === 'pending' && !isDataUnavailable({ fetchStatus, status }),
+    isPending: status === 'pending' && fetchStatus !== 'idle',
     // Reset, not refetch, so a retry counts as a first load and shows the loading state.
     reset: () =>
       queryClient.resetQueries({

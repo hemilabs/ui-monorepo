@@ -11,7 +11,7 @@ import {
   StakingDashboardToken,
 } from 'types/stakingDashboard'
 import { unixNowTimestamp } from 'utils/time'
-import { IncreaseUnlockTimeEvents, SixDaysSeconds } from 've-hemi-actions'
+import { IncreaseUnlockTimeEvents, snapToEpoch } from 've-hemi-actions'
 import { increaseUnlockTime } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 
@@ -123,8 +123,7 @@ export const useIncreaseUnlockTime = function ({
                 // Calculate new unlock time (current time + chosen duration, rounded)
                 const rawUnlockTime =
                   unixNowTimestamp() + daysToSeconds(BigInt(lockupDays))
-                const sixDays = BigInt(SixDaysSeconds)
-                const newUnlockTime = (rawUnlockTime / sixDays) * sixDays
+                const newUnlockTime = BigInt(snapToEpoch(Number(rawUnlockTime)))
 
                 // New lockTime is duration from original start to new end
                 const newLockTime = newUnlockTime - BigInt(position.timestamp)

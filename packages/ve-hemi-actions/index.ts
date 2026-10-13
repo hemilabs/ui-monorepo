@@ -11,6 +11,7 @@ export {
   minLockAmount,
   MinLockDurationSeconds,
   SixDaysSeconds,
+  snapToEpoch,
 } from './constants.ts'
 
 export { getLockEvent, validateCreateLockInputs } from './utils.ts'

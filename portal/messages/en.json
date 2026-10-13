@@ -534,6 +534,7 @@
       "action": "Action",
       "active": "Active",
       "add-liquidity-to-lockup": "Add ${symbol} to this lockup",
+      "add-time-available-on": "Available on {date}",
       "add-time-to-lockup": "Add time to this lockup",
       "burned": "Burned",
       "claim": "Claim",

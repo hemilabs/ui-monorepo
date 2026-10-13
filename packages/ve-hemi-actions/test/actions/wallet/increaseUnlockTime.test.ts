@@ -1,7 +1,7 @@
 import { hemiSepolia } from 'hemi-viem'
 import { zeroAddress, zeroHash } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
-import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { afterEach, describe, expect, it, vi, beforeEach } from 'vitest'
 
 import { increaseUnlockTime } from '../../../actions'
 import {
@@ -9,7 +9,7 @@ import {
   memoizedGetHemiTokenAddress,
   getLockedBalance,
 } from '../../../actions/public/veHemi'
-import { getVeHemiContractAddress } from '../../../constants'
+import { getVeHemiContractAddress, SixDaysSeconds } from '../../../constants'
 
 vi.mock('viem/actions', () => ({
   waitForTransactionReceipt: vi.fn(),
@@ -187,6 +187,70 @@ describe('increaseUnlockTime', function () {
     expect(increaseUnlockTimeFailedValidation).toHaveBeenCalledExactlyOnceWith(
       'new unlock time must be greater than current unlock time',
     )
+  })
+
+  describe('when the new unlock time is rounded down to the epoch grid', function () {
+    const now = 1_800_000_000
+    const end =
+      Math.floor(now / SixDaysSeconds) * SixDaysSeconds + 10 * SixDaysSeconds
+
+    beforeEach(function () {
+      vi.useFakeTimers({ toFake: ['Date'] })
+      vi.setSystemTime(now * 1000)
+      vi.mocked(getLockedBalance).mockResolvedValue({
+        amount: BigInt(500),
+        end: BigInt(end),
+      })
+    })
+
+    afterEach(function () {
+      vi.useRealTimers()
+    })
+
+    it('should emit "increase-unlock-time-failed-validation" if it lands on the current unlock time', async function () {
+      const { emitter, promise } = increaseUnlockTime({
+        ...validParameters,
+        lockDurationInSeconds: end + SixDaysSeconds - 1 - now,
+      })
+
+      const increaseUnlockTimeFailedValidation = vi.fn()
+      emitter.on(
+        'increase-unlock-time-failed-validation',
+        increaseUnlockTimeFailedValidation,
+      )
+
+      await promise
+
+      expect(
+        increaseUnlockTimeFailedValidation,
+      ).toHaveBeenCalledExactlyOnceWith(
+        'new unlock time must be greater than current unlock time',
+      )
+      expect(writeContract).not.toHaveBeenCalled()
+    })
+
+    it('should increase unlock time if it lands on the next epoch', async function () {
+      vi.mocked(writeContract).mockResolvedValue(zeroHash)
+      vi.mocked(waitForTransactionReceipt).mockResolvedValue({
+        status: 'success',
+      })
+
+      const { emitter, promise } = increaseUnlockTime({
+        ...validParameters,
+        lockDurationInSeconds: end + SixDaysSeconds - now,
+      })
+
+      const increaseUnlockTimeFailedValidation = vi.fn()
+      emitter.on(
+        'increase-unlock-time-failed-validation',
+        increaseUnlockTimeFailedValidation,
+      )
+
+      await promise
+
+      expect(increaseUnlockTimeFailedValidation).not.toHaveBeenCalled()
+      expect(writeContract).toHaveBeenCalledOnce()
+    })
   })
 
   it('should successfully increase unlock time', async function () {

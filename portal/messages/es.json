@@ -534,6 +534,7 @@
       "action": "Acción",
       "active": "Activo",
       "add-liquidity-to-lockup": "Agregar ${symbol} a este bloqueo",
+      "add-time-available-on": "Disponible el {date}",
       "add-time-to-lockup": "Agregar tiempo a este bloqueo",
       "burned": "Quemado",
       "claim": "Reclamar",

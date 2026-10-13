@@ -9,7 +9,7 @@ import {
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 
 import { veHemiAbi } from '../../abi.ts'
-import { getVeHemiContractAddress } from '../../constants.ts'
+import { getVeHemiContractAddress, snapToEpoch } from '../../constants.ts'
 import type { IncreaseUnlockTimeEvents } from '../../types.ts'
 import { validateIncreaseUnlockTimeInputs } from '../../utils.ts'
 import { getLockedBalance } from '../public/veHemi.ts'
@@ -59,7 +59,9 @@ const canIncreaseUnlockTime = async function ({
     }
 
     // Check if new duration would actually extend the lock
-    const newUnlockTime = now + BigInt(lockDurationInSeconds)
+    const newUnlockTime = BigInt(
+      snapToEpoch(Number(now) + lockDurationInSeconds),
+    )
     if (newUnlockTime <= end) {
       return {
         canIncrease: false,

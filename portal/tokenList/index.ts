@@ -91,21 +91,24 @@ const createRemoteToken = ({
 
 export const getRemoteTokens = function (token: EvmToken) {
   const bridgeInfo = token.extensions?.bridgeInfo ?? {}
-  const bridgedTokens = Object.keys(bridgeInfo).map(l1ChainId =>
-    createRemoteToken({
-      chainId: l1ChainId,
-      extensions: {
-        allowanceSlot: bridgeInfo[l1ChainId].allowanceSlot,
-        bridgeInfo: {
-          [token.chainId]: {
-            tokenAddress: token.address as Address,
+  const bridgedTokens = Object.keys(bridgeInfo)
+    // Bitcoin pairs (e.g. "livenet") are native tokens, not EVM remote tokens
+    .filter(l1ChainId => Number.isInteger(Number(l1ChainId)))
+    .map(l1ChainId =>
+      createRemoteToken({
+        chainId: l1ChainId,
+        extensions: {
+          allowanceSlot: bridgeInfo[l1ChainId].allowanceSlot,
+          bridgeInfo: {
+            [token.chainId]: {
+              tokenAddress: token.address as Address,
+            },
           },
         },
-      },
-      token,
-      tokenAddress: bridgeInfo[l1ChainId].tokenAddress!,
-    }),
-  )
+        token,
+        tokenAddress: bridgeInfo[l1ChainId].tokenAddress!,
+      }),
+    )
   // OFT peers can't be tunneled, so they get no bridgeInfo back to Hemi
   const peers = token.extensions?.oft?.peers ?? {}
   const peerTokens = Object.keys(peers)

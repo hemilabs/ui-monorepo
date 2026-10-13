@@ -69,6 +69,14 @@ describe('getRemoteTokens', function () {
     )
   })
 
+  it('should not create remote tokens for Bitcoin pairs', function () {
+    const remoteTokens = getRemoteTokens({
+      ...token,
+      extensions: { bridgeInfo: { livenet: { tokenAddress: 'BTC' } } },
+    })
+    expect(remoteTokens).toEqual([])
+  })
+
   it('should create the remote token of an OFT peer on the source chain', function () {
     const remoteTokens = getRemoteTokens(oftToken)
     expect(remoteTokens).toHaveLength(1)
@@ -118,5 +126,13 @@ describe('tokenList', function () {
   it('should not have duplicated tokens', function () {
     const keys = tokenList.tokens.map(t => `${t.chainId}-${t.address}`)
     expect(new Set(keys).size).toBe(keys.length)
+  })
+
+  it('should not have tokens with an invalid chain', function () {
+    expect(
+      tokenList.tokens.filter(
+        t => typeof t.chainId === 'number' && !Number.isInteger(t.chainId),
+      ),
+    ).toEqual([])
   })
 })

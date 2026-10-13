@@ -179,9 +179,9 @@ const TransactionDrawerContent = function () {
   const [txId, setTxDrawerQueryString] = useTxDrawerQueryString()
   const {
     data: transactions,
-    isLoadingError: isTransactionsLoadingError,
+    hasLoadError: hasTransactionsLoadError,
     isPending: isTransactionsPending,
-    refetch: refetchTransactions,
+    reset: resetTransactions,
   } = useEarnTransactions()
   const { data: pools } = useEarnPools()
 
@@ -208,9 +208,9 @@ const TransactionDrawerContent = function () {
       <Drawer onClose={close}>
         <UnresolvedTransaction
           isLoading={!pools || isTransactionsPending}
-          isLoadingError={isTransactionsLoadingError}
+          isLoadingError={hasTransactionsLoadError}
           onClose={close}
-          onRetry={() => refetchTransactions()}
+          onRetry={resetTransactions}
         />
       </Drawer>
     )

@@ -20,14 +20,14 @@ export const TransactionsTable = function () {
   const { status } = useAccount()
   const {
     data: transactions,
-    isLoadingError,
+    hasLoadError,
     isPending,
-    refetch,
+    reset,
   } = useEarnTransactions()
 
   const columns = useMemo(() => buildColumns({ t }), [t])
 
-  const isEmpty = transactions.length === 0 && !isPending
+  const isEmpty = transactions.length === 0 && (hasLoadError || !isPending)
 
   const content = (function () {
     if (!walletIsConnected(status)) {
@@ -40,9 +40,9 @@ export const TransactionsTable = function () {
     if (isEmpty) {
       return (
         <TableCard>
-          {isLoadingError ? (
+          {hasLoadError ? (
             <DataUnavailable
-              onRetry={() => refetch()}
+              onRetry={reset}
               title={t('could-not-load-transactions')}
             />
           ) : (

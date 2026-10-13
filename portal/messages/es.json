@@ -536,6 +536,8 @@
       "add-liquidity-to-lockup": "Agregar ${symbol} a este bloqueo",
       "add-time-available-on": "Disponible el {date}",
       "add-time-to-lockup": "Agregar tiempo a este bloqueo",
+      "auto-relock-off": "Desactivado",
+      "auto-relock-on": "Activado",
       "burned": "Quemado",
       "claim": "Reclamar",
       "claim-all-rewards": "Reclamar todas las recompensas",

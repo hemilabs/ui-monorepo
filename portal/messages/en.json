@@ -536,6 +536,8 @@
       "add-liquidity-to-lockup": "Add ${symbol} to this lockup",
       "add-time-available-on": "Available on {date}",
       "add-time-to-lockup": "Add time to this lockup",
+      "auto-relock-off": "Off",
+      "auto-relock-on": "On",
       "burned": "Burned",
       "claim": "Claim",
       "claim-all-rewards": "Claim all rewards",

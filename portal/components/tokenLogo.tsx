@@ -3,6 +3,7 @@ import { useBitcoin } from 'hooks/useBitcoin'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { type Token } from 'types/token'
 import { isBtcNetworkId } from 'utils/chain'
+import { getL1LogoURI } from 'utils/l1Logo'
 import { getNativeToken } from 'utils/nativeToken'
 
 import { CustomTokenLogo } from './customTokenLogo'
@@ -51,11 +52,7 @@ export function TokenLogo({ size, token, version = 'default' }: Props) {
     )
   }
 
-  const logoURI =
-    version === 'L1' && token.extensions?.l1LogoURI
-      ? token.extensions.l1LogoURI
-      : token.logoURI
-
+  const logoURI = (version === 'L1' && getL1LogoURI(token)) || token.logoURI
   return logoURI ? (
     <div className={`relative shrink-0 ${sizes[size]}`}>
       <Image

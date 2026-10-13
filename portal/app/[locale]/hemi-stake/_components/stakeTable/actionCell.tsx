@@ -23,7 +23,6 @@ import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryS
 import { PlusIcon } from '../../_icons/plusIcon'
 import {
   getExtensionAvailableAt,
-  getMinExtensionDays,
   getUnlockInfo,
   minDays,
 } from '../../_utils/lockCreationTimes'
@@ -171,9 +170,8 @@ export function ActionCell({ row }: Props) {
       lockTime,
       timestamp,
     })
-  const canExtend =
-    getMinExtensionDays({ lockEnd: unlockTime, now: currentTimeInSeconds }) !==
-    null
+  const extensionAvailableAt = getExtensionAvailableAt(unlockTime)
+  const canExtend = currentTimeInSeconds >= extensionAvailableAt
 
   function handleIncreaseAmount() {
     closeAndFocusTrigger()
@@ -238,7 +236,7 @@ export function ActionCell({ row }: Props) {
                   ? undefined
                   : t('table.add-time-available-on', {
                       date: formatDate(
-                        new Date(getExtensionAvailableAt(unlockTime) * 1000),
+                        new Date(extensionAvailableAt * 1000),
                         locale,
                       ),
                     })

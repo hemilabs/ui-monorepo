@@ -156,17 +156,17 @@ const resolveDrawerData = function ({
 }
 
 const UnresolvedTransaction = function ({
+  hasLoadError,
   isLoading,
-  isLoadingError,
   onClose,
   onRetry,
 }: {
+  hasLoadError: boolean
   isLoading: boolean
-  isLoadingError: boolean
   onClose: VoidFunction
   onRetry: VoidFunction
 }) {
-  if (isLoadingError) {
+  if (hasLoadError) {
     return <TransactionUnavailable onClose={onClose} onRetry={onRetry} />
   }
   if (isLoading) {
@@ -207,8 +207,8 @@ const TransactionDrawerContent = function () {
     return (
       <Drawer onClose={close}>
         <UnresolvedTransaction
+          hasLoadError={hasTransactionsLoadError}
           isLoading={!pools || isTransactionsPending}
-          isLoadingError={hasTransactionsLoadError}
           onClose={close}
           onRetry={resetTransactions}
         />

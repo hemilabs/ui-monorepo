@@ -222,14 +222,19 @@ const VotingPowerCaption = function ({
   autoRelock = false,
   expireDate,
   show,
+  valid,
 }: {
   autoRelock?: boolean
   expireDate: string
   show: boolean
+  valid: boolean
 }) {
   const t = useTranslations('hemi-stake.form')
   if (!show) {
     return null
+  }
+  if (!valid) {
+    return <span className="text-xxs text-neutral-400">-</span>
   }
   return (
     <span className="text-xxs text-neutral-400">
@@ -508,6 +513,7 @@ export function Lockup({
             autoRelock={autoRelock}
             expireDate={formatShortDateWithYear(unlockDate, locale)}
             show={canUsePresets}
+            valid={valid}
           />
         </div>
       </div>

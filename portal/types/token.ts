@@ -6,7 +6,6 @@ type TunnelPartners = 'jumper' | 'stargate'
 export type Extensions = {
   allowanceSlot?: number
   birthBlock?: number
-  l1LogoURI?: string
   bridgeInfo?: {
     [keyof: string]: {
       allowanceSlot?: number
@@ -17,6 +16,7 @@ export type Extensions = {
     adapterAddress?: Address
     peers?: {
       [keyof: string]: {
+        allowanceSlot?: number
         tokenAddress?: Address
       }
     }

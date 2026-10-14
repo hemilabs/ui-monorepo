@@ -4,9 +4,11 @@ import { hemiTestnet } from 'networks/hemiTestnet'
 import { type RemoteChain } from 'types/chain'
 import { type EvmToken, type Token } from 'types/token'
 import { toChecksumAddress } from 'utils/address'
+import { getL1LogoURI } from 'utils/l1Logo'
 import { type Address } from 'viem'
 
 import { customTunnelPartnersWhitelist } from './customTunnelPartnersWhitelist'
+import { displayOverrides } from './displayOverrides'
 import { nativeTokens } from './nativeTokens'
 import { priceWhiteList } from './priceTokens'
 import { stakeWhiteList } from './stakeTokens'
@@ -55,39 +57,85 @@ export const normalizeToken = <T extends Token = Token>(token: T) =>
     } as Token['extensions'],
   }) as T
 
-export const getRemoteTokens = function (token: EvmToken) {
-  if (!token.extensions?.bridgeInfo) {
-    return [] satisfies EvmToken[]
-  }
-  return Object.keys(token.extensions!.bridgeInfo!).map(l1ChainId =>
-    normalizeToken({
-      ...token,
-      address: token.extensions!.bridgeInfo![l1ChainId].tokenAddress!,
-      chainId: Number(l1ChainId),
-      extensions: {
-        allowanceSlot: token.extensions!.bridgeInfo![l1ChainId].allowanceSlot,
-        bridgeInfo: {
-          [token.chainId]: {
-            tokenAddress: token.address as Address,
-          },
-        },
-      },
-      logoURI: token.extensions!.l1LogoURI,
-      name: token.name
-        // Remove the ".e" suffix
-        .replace('.e', '')
-        .trim(),
-      symbol: token.symbol
-        // Remove the ".e" suffix
-        .replace('.e', '')
-        .trim(),
-    }),
-  ) as EvmToken[]
+const sourceChainIds: Partial<Record<Token['chainId'], number>> = {
+  [hemiMainnet.id]: hemiMainnet.sourceId,
+  [hemiTestnet.id]: hemiTestnet.sourceId,
 }
 
-const hemiTokens: EvmToken[] = (hemilabsTokenList.tokens as EvmToken[]).filter(
-  t => t.chainId === hemiMainnet.id || t.chainId === hemiTestnet.id,
-)
+const createRemoteToken = ({
+  chainId,
+  extensions,
+  token,
+  tokenAddress,
+}: {
+  chainId: string
+  extensions: Token['extensions']
+  token: EvmToken
+  tokenAddress: string
+}) =>
+  normalizeToken({
+    ...token,
+    address: tokenAddress,
+    chainId: Number(chainId),
+    extensions,
+    logoURI: getL1LogoURI(token),
+    name: token.name
+      // Remove the ".e" suffix
+      .replace('.e', '')
+      .trim(),
+    symbol: token.symbol
+      // Remove the ".e" suffix
+      .replace('.e', '')
+      .trim(),
+  })
+
+export const getRemoteTokens = function (token: EvmToken) {
+  const bridgeInfo = token.extensions?.bridgeInfo ?? {}
+  const bridgedTokens = Object.keys(bridgeInfo)
+    // Bitcoin pairs (e.g. "livenet") are native tokens, not EVM remote tokens
+    .filter(l1ChainId => Number.isInteger(Number(l1ChainId)))
+    .map(l1ChainId =>
+      createRemoteToken({
+        chainId: l1ChainId,
+        extensions: {
+          allowanceSlot: bridgeInfo[l1ChainId].allowanceSlot,
+          bridgeInfo: {
+            [token.chainId]: {
+              tokenAddress: token.address as Address,
+            },
+          },
+        },
+        token,
+        tokenAddress: bridgeInfo[l1ChainId].tokenAddress!,
+      }),
+    )
+  // OFT peers can't be tunneled, so they get no bridgeInfo back to Hemi
+  const peers = token.extensions?.oft?.peers ?? {}
+  const peerTokens = Object.keys(peers)
+    .filter(
+      chainId =>
+        Number(chainId) === sourceChainIds[token.chainId] &&
+        bridgeInfo[chainId] === undefined,
+    )
+    .map(chainId =>
+      createRemoteToken({
+        chainId,
+        extensions: { allowanceSlot: peers[chainId].allowanceSlot },
+        token,
+        tokenAddress: peers[chainId].tokenAddress!,
+      }),
+    )
+  return bridgedTokens.concat(peerTokens) as EvmToken[]
+}
+
+const applyDisplayOverrides = (token: EvmToken) => ({
+  ...token,
+  ...displayOverrides[token.chainId]?.[token.address],
+})
+
+const hemiTokens: EvmToken[] = (hemilabsTokenList.tokens as EvmToken[])
+  .filter(t => t.chainId === hemiMainnet.id || t.chainId === hemiTestnet.id)
+  .map(applyDisplayOverrides)
 
 // the hemiTokens only contains definitions for Hemi tokens, but we can create the L1 version with the extensions field info
 const tokens: Token[] = hemiTokens.concat(hemiTokens.flatMap(getRemoteTokens))

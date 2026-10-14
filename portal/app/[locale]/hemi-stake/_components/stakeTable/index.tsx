@@ -5,7 +5,10 @@ import { Header } from 'components/table/_components/header'
 import { TableCard } from 'components/table/tableCard'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { type StakingPosition } from 'types/stakingDashboard'
+import {
+  type StakingPosition,
+  StakingPositionStatus,
+} from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
@@ -28,7 +31,7 @@ type StakingColumnsProps = {
   t: ReturnType<typeof useTranslations<'hemi-stake'>>
 }
 
-const stakingColumns = ({
+const allStakingColumns = ({
   t,
 }: StakingColumnsProps): ColumnDef<StakingPosition>[] => [
   {
@@ -105,6 +108,15 @@ const stakingColumns = ({
   },
 ]
 
+const stakingColumns = ({
+  filter,
+  ...props
+}: StakingColumnsProps & { filter: StakeTableFilterOptions }) =>
+  allStakingColumns(props).filter(
+    column =>
+      column.id !== 'auto-relock' || filter !== StakingPositionStatus.WITHDRAWN,
+  )
+
 type Props = {
   data: StakingPosition[] | undefined
   filter?: StakeTableFilterOptions
@@ -123,7 +135,7 @@ export function StakeTable({
   const t = useTranslations('hemi-stake')
   const { status } = useAccount()
 
-  const cols = useMemo(() => stakingColumns({ t }), [t])
+  const cols = useMemo(() => stakingColumns({ filter, t }), [filter, t])
 
   const table = (
     <Table

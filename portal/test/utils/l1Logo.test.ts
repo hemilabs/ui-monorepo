@@ -11,7 +11,7 @@ describe('utils/l1Logo', function () {
       ).toBe('https://hemilabs.github.io/token-list/l1Logos/hemibtc.svg')
     })
 
-    it('should return undefined for an L1 logo', function () {
+    it('should return undefined for a logo that already is an L1 one', function () {
       expect(
         getL1LogoURI({
           logoURI: 'https://hemilabs.github.io/token-list/l1Logos/eth.svg',

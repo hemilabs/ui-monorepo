@@ -20,6 +20,7 @@ import { formatUnits } from 'viem'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
+import { AutoRelockIcon } from '../../_icons/autoRelockIcon'
 import { PlusIcon } from '../../_icons/plusIcon'
 import {
   getExtensionAvailableAt,
@@ -241,6 +242,13 @@ export function ActionCell({ row }: Props) {
                       ),
                     })
               }
+            />
+            {/* TODO #2481 enable once the drawer and the upgraded contracts
+                land. There is no write action to call today. */}
+            <ActionItem
+              enabled={false}
+              icon={<AutoRelockIcon />}
+              label={t('table.enable-auto-relock')}
             />
           </div>,
           document.body,

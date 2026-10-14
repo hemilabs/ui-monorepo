@@ -14,6 +14,7 @@ import { Amount } from '../amount'
 import { RewardsDisplay } from '../rewardsDisplay'
 
 import { ActionCell } from './actionCell'
+import { AutoRelockBadge } from './autoRelockBadge'
 import { ClaimCta } from './claimCta'
 import { HeroBanner } from './heroBanner'
 import { LockupTime } from './lockupTime'
@@ -81,6 +82,14 @@ const stakingColumns = ({
     header: () => <Header text={t('table.rewards')} />,
     id: 'rewards',
     meta: { width: 95 },
+  },
+  {
+    // TODO #2481 read the flag from the position once the subgraph exposes it.
+    // No entity field, no contract event, so every position reads as off.
+    cell: () => <AutoRelockBadge enabled={false} />,
+    header: () => <Header text={t('table.auto-relock')} />,
+    id: 'auto-relock',
+    meta: { width: 110 },
   },
   {
     cell: ({ row }) => (

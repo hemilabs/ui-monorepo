@@ -176,7 +176,6 @@ export const useEarnTransactions = function () {
     hasLoadError: data === undefined && errorUpdateCount > 0,
     // Offline, a first load is paused, not idle; it's still loading.
     isPending: status === 'pending' && fetchStatus !== 'idle',
-    // Reset, not refetch, so a retry counts as a first load and shows the loading state.
     reset: () =>
       queryClient.resetQueries({
         queryKey: earnTransactionsKeyPrefix,

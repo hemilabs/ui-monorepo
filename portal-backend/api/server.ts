@@ -37,7 +37,7 @@ const checkPriceSymbol = createCheckPriceSymbol(
 )
 
 const { getCirculatingSupply, getSupplyHistory } = createSupplyIndexer({
-  ...config.get<Pick<SupplyIndexerOptions, 'correction' | 'merkleLocked'>>(
+  ...config.get<Pick<SupplyIndexerOptions, 'corrections' | 'merkleLocked'>>(
     'supply',
   ),
   cache,

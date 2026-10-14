@@ -28,13 +28,20 @@ afterAll(function () {
 const hemi = (amount: string) => parseUnits(amount, 18).toString()
 
 const row = {
+  baseOpBalances: hemi('1'),
   bnbBlock: 1,
+  bnbInvestorAllocation: hemi('6'),
+  bnbOpBalances: hemi('1'),
   bnbSafe: hemi('3'),
   burned: hemi('0'),
   date: yesterday,
   ethBlock: 2,
+  ethInvestorAllocation: hemi('8'),
+  ethOpBalances: hemi('1'),
   ethSafe: hemi('4'),
   hemiBlock: 3,
+  hemiFoundationFinance: hemi('2'),
+  hemiInvestorAllocation: hemi('9'),
   hemiSafe: hemi('1'),
   locked: hemi('5'),
   merkle: hemi('10'),
@@ -42,17 +49,26 @@ const row = {
   totalSupply: hemi('100'),
 }
 
+type Correction = { amount: string; from: string }
+
 const noCache = { getPriceHistory: async () => null }
 
-const createIndexer = (correction: string, merkleLocked: number) =>
-  // @ts-expect-error fake cache
-  createSupplyIndexer({ cache: noCache, correction, merkleLocked })
+const createIndexer = (corrections: string | Correction[], merkleLocked = 50) =>
+  createSupplyIndexer({
+    // @ts-expect-error fake cache
+    cache: noCache,
+    corrections:
+      typeof corrections === 'string'
+        ? [{ amount: corrections, from: '2025-09-23' }]
+        : corrections,
+    merkleLocked,
+  })
 
 const createIndexerWithPrices = (prices: Record<string, string>) =>
   createSupplyIndexer({
     // @ts-expect-error fake cache
     cache: { getPriceHistory: async () => prices },
-    correction: '0',
+    corrections: [{ amount: '0', from: '2025-09-23' }],
     merkleLocked: 50,
   })
 
@@ -65,11 +81,32 @@ describe('getSupplyHistory', function () {
 
     const [point] = await getSupplyHistory('1m')
 
-    // 1 safe + 3 safe + 4 safe + 0 burned + 2 op + 5 of the merkle box + 7
-    expect(point.nonCirculating).toBe(hemi('22'))
+    // 1 safe + 3 safe + 4 safe + 9 + 6 + 8 investor + 2 foundation
+    // + 0 burned + 2 + 1 + 1 + 1 op + 5 of the merkle box + 7
+    expect(point.nonCirculating).toBe(hemi('50'))
     expect(point.staked).toBe(hemi('5'))
     expect(point.totalSupply).toBe(hemi('100'))
-    expect(point.circulating).toBe(hemi('73'))
+    expect(point.circulating).toBe(hemi('45'))
+  })
+
+  it('adds the correction of the range that holds each day', async function () {
+    requestHemiEarn.mockResolvedValue({
+      data: {
+        DailySupplySnapshot: [
+          { ...row, date: '2026-09-04' },
+          { ...row, date: '2026-09-05' },
+        ],
+      },
+    })
+    const { getSupplyHistory } = createIndexer([
+      { amount: hemi('7'), from: '2025-09-23' },
+      { amount: hemi('3'), from: '2026-09-05' },
+    ])
+
+    const [first, second] = await getSupplyHistory('1m')
+
+    expect(first.nonCirculating).toBe(hemi('50'))
+    expect(second.nonCirculating).toBe(hemi('46'))
   })
 
   it.each([
@@ -144,14 +181,14 @@ describe('getSupplyHistory', function () {
       cache: {
         getPriceHistory: async () => Promise.reject(new Error('no connection')),
       },
-      correction: '0',
+      corrections: [{ amount: '0', from: '2025-09-23' }],
       merkleLocked: 50,
     })
 
     const [point] = await getSupplyHistory('1m')
 
     expect(point.priceUsd).toBeNull()
-    expect(point.circulating).toBe(hemi('80'))
+    expect(point.circulating).toBe(hemi('52'))
     expect(warn).toHaveBeenCalled()
   })
 
@@ -163,7 +200,7 @@ describe('getSupplyHistory', function () {
     const { getSupplyHistory } = createSupplyIndexer({
       // @ts-expect-error fake cache
       cache: { getPriceHistory },
-      correction: '0',
+      corrections: [{ amount: '0', from: '2025-09-23' }],
       merkleLocked: 50,
     })
 
@@ -187,7 +224,19 @@ describe('getCirculatingSupply', function () {
     })
     const { getCirculatingSupply } = createIndexer(hemi('7'), 50)
 
-    expect(await getCirculatingSupply()).toBe('73.000000000000000000')
+    expect(await getCirculatingSupply()).toBe('45.000000000000000000')
+  })
+
+  it('adds the correction of the snapshot day', async function () {
+    requestHemiEarn.mockResolvedValue({
+      data: { DailySupplySnapshot: [row] },
+    })
+    const { getCirculatingSupply } = createIndexer([
+      { amount: hemi('7'), from: '2025-09-23' },
+      { amount: hemi('1000'), from: '9999-12-31' },
+    ])
+
+    expect(await getCirculatingSupply()).toBe('45.000000000000000000')
   })
 
   it('keeps the sign when the correction exceeds the supply', async function () {
@@ -196,7 +245,7 @@ describe('getCirculatingSupply', function () {
     })
     const { getCirculatingSupply } = createIndexer(hemi('1000'), 50)
 
-    expect(await getCirculatingSupply()).toBe('-920.000000000000000000')
+    expect(await getCirculatingSupply()).toBe('-948.000000000000000000')
   })
 
   it('fails when the indexer has no day that every chain has reached', async function () {

@@ -1,4 +1,9 @@
 import {
+  getEpochEnd,
+  getLockEnd,
+  getWeightAt,
+} from 'app/[locale]/hemi-stake/_utils/lockEpochs'
+import {
   getEpochPayout,
   getLockMultiplier,
   getRewardsForecast,
@@ -319,5 +324,97 @@ describe('getRewardsForecastByLockDurations', function () {
     expect(ratios[1]).toBeCloseTo(9.266, 2)
     expect(ratios[2]).toBeCloseTo(15.475, 2)
     expect(ratios[3]).toBeCloseTo(21.68, 2)
+  })
+})
+
+describe('getRewardsForecast with auto-relock', function () {
+  const relocked = (overrides = {}) =>
+    forecast({ autoRelock: true, ...overrides })
+  const midEpochNow = epochAlignedNow + days(5)
+  const epochsInMaxLock = 240
+
+  it('carries the same weight through every epoch of the year', function () {
+    const { payouts } = relocked()
+    payouts.forEach(({ weight }) => expect(weight).toBe(payouts[0].weight))
+  })
+
+  it('keeps every epoch a maximum lock started with, forever', function () {
+    const { payouts } = relocked({ now: midEpochNow })
+    expect(payouts[0].weight).toBe(
+      (golden.amount / BigInt(MaxLockDurationSeconds)) *
+        BigInt(epochsInMaxLock * SixDaysSeconds),
+    )
+  })
+
+  it('estimates the same year wherever in the epoch a whole-epoch lock starts', function () {
+    expect(relocked({ now: midEpochNow }).yearOneTotal).toBe(
+      relocked().yearOneTotal,
+    )
+  })
+
+  it('rides the lock end just like the decaying forecast does', function () {
+    // 180 days buys 29 whole epochs from a boundary and 30 from mid-epoch,
+    // because the lock end snaps. Both modes move with it.
+    const lockDurationInSeconds = days(180)
+    const later = { lockDurationInSeconds, now: midEpochNow }
+    const sooner = { lockDurationInSeconds }
+
+    expect(relocked(later).yearOneTotal).toBeGreaterThan(
+      relocked(sooner).yearOneTotal,
+    )
+    expect(forecast(later).yearOneTotal).toBeGreaterThan(
+      forecast(sooner).yearOneTotal,
+    )
+  })
+
+  it('matches extending the lock by one epoch every epoch', function () {
+    const lockDurationInSeconds = days(366)
+    const lockEnd = getLockEnd({
+      lockTime: lockDurationInSeconds,
+      timestamp: epochAlignedNow,
+    })
+    const extended = Array.from({ length: 60 }, (_, epochsAhead) =>
+      getEpochPayout({
+        transferableClassBaseline: golden.transferableClassBaseline,
+        transferableClassWeight: golden.transferableClassWeight,
+        weight: getWeightAt({
+          amount: golden.amount,
+          at: getEpochEnd({ epochsAhead, now: epochAlignedNow }),
+          lockEnd: lockEnd + (epochsAhead + 1) * SixDaysSeconds,
+        }),
+      }),
+    )
+    expect(
+      relocked({ lockDurationInSeconds }).payouts.map(({ payout }) => payout),
+    ).toEqual(extended)
+  })
+
+  it('keeps paying past the end of the lock', function () {
+    const { payouts } = relocked({ lockDurationInSeconds: SixDaysSeconds * 10 })
+    expect(payouts.filter(({ payout }) => payout > BigInt(0))).toHaveLength(60)
+  })
+
+  it('never carries the whole amount as weight on a shorter lock', function () {
+    relocked({ lockDurationInSeconds: days(366) }).payouts.forEach(
+      ({ weight }) =>
+        expect(
+          getLockMultiplier({ amount: golden.amount, weight }),
+        ).toBeLessThan(1),
+    )
+  })
+
+  it('still earns more for a longer lock', function () {
+    const totals = getRewardsForecastByLockDurations({
+      ...golden,
+      autoRelock: true,
+      lockDurationsInSeconds: [days(180), days(366), days(732), days(1461)],
+    }).map(({ yearOneTotal }) => yearOneTotal)
+    totals.slice(1).forEach(function (total, index) {
+      expect(total).toBeGreaterThan(totals[index])
+    })
+  })
+
+  it('leaves the decaying forecast alone when it is off', function () {
+    expect(forecast({ autoRelock: false })).toEqual(forecast())
   })
 })

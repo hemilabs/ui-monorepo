@@ -63,6 +63,17 @@ describe('toPayoutSeries', function () {
     expect(series.some(point => point.afterUnlock)).toBe(false)
     expect(getUnlockMarkerX(series)).toBeUndefined()
   })
+
+  it('marks nothing when the position never unlocks', function () {
+    const series = toPayoutSeries({
+      decimals: 18,
+      lockEnd: undefined,
+      payouts: [payout(0, BigInt(3)), payout(1, BigInt(2))],
+    })
+
+    expect(series.some(point => point.afterUnlock)).toBe(false)
+    expect(getUnlockMarkerX(series)).toBeUndefined()
+  })
 })
 
 describe('getUnlockMarkerX', function () {

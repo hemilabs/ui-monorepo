@@ -89,6 +89,8 @@ export const useStake = function ({
 
       await ensureConnectedTo(token.chainId)
 
+      // TODO #2481 pass the auto-relock flag once the upgraded contracts land.
+      // createLock only takes amount and duration today.
       const { emitter, promise } = createLock({
         account: address,
         amount,

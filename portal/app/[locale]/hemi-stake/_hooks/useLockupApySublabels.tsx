@@ -8,7 +8,10 @@ import { getLockupApys } from '../_utils/lockupApy'
 import { useEpochSystemState } from './useEpochSystemState'
 import { useRewardsForecastInputs } from './useRewardsForecastInputs'
 
-export const useLockupApySublabels = function (amount: bigint) {
+export const useLockupApySublabels = function (
+  amount: bigint,
+  autoRelock?: boolean,
+) {
   const t = useTranslations('hemi-stake.form')
   const { isError: isSystemStateError } = useEpochSystemState()
   const { data: forecastInputs, isError: isForecastError } =
@@ -16,6 +19,7 @@ export const useLockupApySublabels = function (amount: bigint) {
 
   const apys = getLockupApys({
     amount,
+    autoRelock,
     now: Number(unixNowTimestamp()),
     transferableClassBaseline:
       forecastInputs?.transferableClassBaseline ?? BigInt(0),

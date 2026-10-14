@@ -13,17 +13,20 @@ const presetDays = [sixMonths, oneYear, twoYears, maxDays]
 
 export const getLockupApys = function ({
   amount,
+  autoRelock,
   now,
   transferableClassBaseline,
   transferableClassWeight,
 }: {
   amount: bigint
+  autoRelock?: boolean
   now: number
   transferableClassBaseline: bigint
   transferableClassWeight: bigint
 }) {
   const forecasts = getRewardsForecastByLockDurations({
     amount: amount < minLockAmount ? minLockAmount : amount,
+    autoRelock,
     lockDurationsInSeconds: presetDays.map(days =>
       Number(wholeDaysToSeconds(days)),
     ),

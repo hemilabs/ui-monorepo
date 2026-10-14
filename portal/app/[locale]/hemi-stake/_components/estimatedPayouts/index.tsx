@@ -38,6 +38,7 @@ const toPrice = function (value: string | undefined) {
 
 const buildForecast = function ({
   amount,
+  autoRelock,
   baseline,
   decimals,
   hasValidLockup,
@@ -45,6 +46,7 @@ const buildForecast = function ({
   weight,
 }: {
   amount: bigint
+  autoRelock: boolean
   baseline: bigint
   decimals: number
   hasValidLockup: boolean
@@ -53,6 +55,7 @@ const buildForecast = function ({
 }) {
   const forecast = getRewardsForecast({
     amount,
+    autoRelock,
     lockDurationInSeconds: Number(wholeDaysToSeconds(lockupDays)),
     now: Number(unixNowTimestamp()),
     transferableClassBaseline: baseline,
@@ -60,7 +63,7 @@ const buildForecast = function ({
   })
   const series = toPayoutSeries({
     decimals,
-    lockEnd: forecast.lockEnd,
+    lockEnd: autoRelock ? undefined : forecast.lockEnd,
     payouts: forecast.payouts,
   })
   const hasForecast =
@@ -79,7 +82,7 @@ export const EstimatedPayouts = function () {
   const locale = useLocale()
   const t = useTranslations('hemi-stake.estimated-payouts')
   const token = useHemiToken()
-  const { input, lockupDays } = useStakingDashboard()
+  const { autoRelock, input, lockupDays } = useStakingDashboard()
   const {
     data: systemState,
     isError: isSystemStateError,
@@ -104,6 +107,7 @@ export const EstimatedPayouts = function () {
 
   const { chartSeries, forecast, hasForecast } = buildForecast({
     amount,
+    autoRelock,
     baseline,
     decimals: token.decimals,
     hasValidLockup,
@@ -119,6 +123,7 @@ export const EstimatedPayouts = function () {
       <div className="min-h-24.5">
         {hasForecast && systemState !== undefined ? (
           <PayoutHeadline
+            autoRelock={autoRelock}
             carriedFrom={forecastInputs?.carriedFrom}
             currentEpoch={systemState.currentEpoch}
             input={input}
@@ -131,6 +136,7 @@ export const EstimatedPayouts = function () {
           />
         ) : (
           <PayoutPlaceholder
+            autoRelock={autoRelock}
             hasError={hasError}
             hasValidLockup={hasValidLockup}
             isPending={isPending}

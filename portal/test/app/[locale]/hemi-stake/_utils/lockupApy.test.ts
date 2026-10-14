@@ -46,6 +46,19 @@ describe('getLockupApys', function () {
     expect(big[maxDays]).toBeLessThan(apys({ amount: minLockAmount })[maxDays])
   })
 
+  it('lifts every preset with auto-relock, keeping their order', function () {
+    const decaying = apys()
+    const relocked = apys({ autoRelock: true })
+    const presets = [sixMonths, oneYear, twoYears, maxDays]
+
+    presets.forEach(days =>
+      expect(relocked[days]).toBeGreaterThan(decaying[days]),
+    )
+    presets.slice(1).forEach(function (days, index) {
+      expect(relocked[days]).toBeGreaterThan(relocked[presets[index]])
+    })
+  })
+
   it('returns zero for every preset when the baseline is missing', function () {
     const result = apys({ transferableClassBaseline: BigInt(0) })
     expect(Object.values(result)).toEqual([0, 0, 0, 0])

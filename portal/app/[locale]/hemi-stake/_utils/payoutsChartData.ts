@@ -17,11 +17,11 @@ export const toPayoutSeries = ({
   payouts,
 }: {
   decimals: number
-  lockEnd: number
+  lockEnd: number | undefined
   payouts: Payout[]
 }) =>
   payouts.map(({ payout, timestamp }) => ({
-    afterUnlock: timestamp >= lockEnd,
+    afterUnlock: lockEnd !== undefined && timestamp >= lockEnd,
     x: timestamp * 1000,
     y: Number(formatUnits(payout, decimals)),
   }))

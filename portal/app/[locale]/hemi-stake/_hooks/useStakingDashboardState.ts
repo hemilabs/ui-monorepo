@@ -11,6 +11,7 @@ import { type NoPayload, type Payload } from 'utils/typeUtilities'
 import { twoYears } from '../_utils/lockCreationTimes'
 
 type StakingDashboardState = {
+  autoRelock: boolean
   collectRewardsDashboardOperation?: CollectAllRewardsDashboardOperation
   input: string
   inputDays: string
@@ -24,6 +25,7 @@ type Action<T extends string> = {
 }
 
 type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
+type UpdateAutoRelock = Action<'updateAutoRelock'> & Payload<boolean>
 type UpdateCollectRewardsDashboardOperation =
   Action<'updateCollectRewardsDashboardOperation'> &
     Payload<CollectAllRewardsDashboardOperation | undefined>
@@ -39,6 +41,7 @@ type UpdateUnlockingDashboardOperation =
 
 type Actions =
   | ResetStateAfterOperation
+  | UpdateAutoRelock
   | UpdateCollectRewardsDashboardOperation
   | UpdateInput
   | UpdateInputDays
@@ -56,11 +59,16 @@ type ActionHandlers = {
 const actionHandlers: ActionHandlers = {
   resetStateAfterOperation: state => ({
     ...state,
+    autoRelock: false,
     input: '0',
     inputDays: twoYears.toString(),
     lockupDays: twoYears,
   }),
 
+  updateAutoRelock: (state, payload) => ({
+    ...state,
+    autoRelock: payload,
+  }),
   updateCollectRewardsDashboardOperation: (state, payload) => ({
     ...state,
     collectRewardsDashboardOperation: {
@@ -125,6 +133,7 @@ type StakingDashboardFunctionEvents = {
 export const useStakingDashboardState = function (): StakingDashboardState &
   StakingDashboardFunctionEvents {
   const [state, dispatch] = useReducer(reducer, {
+    autoRelock: false,
     input: '0',
     inputDays: twoYears.toString(),
     lockupDays: twoYears,
@@ -147,6 +156,12 @@ export const useStakingDashboardState = function (): StakingDashboardState &
     payload: UpdateInputDays['payload'],
   ) {
     dispatch({ payload, type: 'updateInputDays' })
+  }, [])
+
+  const updateAutoRelock = useCallback(function (
+    payload: UpdateAutoRelock['payload'],
+  ) {
+    dispatch({ payload, type: 'updateAutoRelock' })
   }, [])
 
   const updateLockupDays = useCallback(function (
@@ -186,6 +201,7 @@ export const useStakingDashboardState = function (): StakingDashboardState &
       () => dispatch({ type: 'resetStateAfterOperation' }),
       [],
     ),
+    updateAutoRelock,
     updateCollectRewardsDashboardOperation,
     updateInput,
     updateInputDays,

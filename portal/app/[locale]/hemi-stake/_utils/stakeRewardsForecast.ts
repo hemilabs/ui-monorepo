@@ -3,6 +3,7 @@ import {
   minLockAmount,
   MinLockDurationSeconds,
   SixDaysSeconds,
+  snapToEpoch,
 } from 've-hemi-actions'
 
 import { getEpochEnd, getLockEnd, getWeightAt } from './lockEpochs'
@@ -56,12 +57,14 @@ export const getLockMultiplier = ({
 
 export const getRewardsForecast = function ({
   amount,
+  autoRelock = false,
   lockDurationInSeconds,
   now,
   transferableClassBaseline,
   transferableClassWeight,
 }: {
   amount: bigint
+  autoRelock?: boolean
   lockDurationInSeconds: number
   now: number
   transferableClassBaseline: bigint
@@ -72,11 +75,17 @@ export const getRewardsForecast = function ({
     timestamp: now,
   })
 
+  const relockedWeight = autoRelock
+    ? getWeightAt({ amount, at: snapToEpoch(now), lockEnd })
+    : BigInt(0)
+
   const payouts = Array.from(
     { length: epochsPerYear },
     function (_, epochsAhead) {
       const timestamp = getEpochEnd({ epochsAhead, now })
-      const weight = getWeightAt({ amount, at: timestamp, lockEnd })
+      const weight = autoRelock
+        ? relockedWeight
+        : getWeightAt({ amount, at: timestamp, lockEnd })
       return {
         epochsAhead,
         payout: getEpochPayout({
@@ -107,12 +116,14 @@ export const getRewardsForecast = function ({
 
 export const getRewardsForecastByLockDurations = ({
   amount,
+  autoRelock,
   lockDurationsInSeconds,
   now,
   transferableClassBaseline,
   transferableClassWeight,
 }: {
   amount: bigint
+  autoRelock?: boolean
   lockDurationsInSeconds: number[]
   now: number
   transferableClassBaseline: bigint
@@ -121,6 +132,7 @@ export const getRewardsForecastByLockDurations = ({
   lockDurationsInSeconds.map(lockDurationInSeconds => ({
     ...getRewardsForecast({
       amount,
+      autoRelock,
       lockDurationInSeconds,
       now,
       transferableClassBaseline,

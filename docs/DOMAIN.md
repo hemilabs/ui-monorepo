@@ -132,6 +132,8 @@ The 10 HEMI minimum is hardcoded as `minLockAmount` in the `ve-hemi-actions` pac
 
 Weight — used both for voting and for reward distribution — is `amount * (lock end - now) / MAX_TIME`. It therefore grows linearly with the remaining lock time and decays linearly to zero at the unlock date: 100 HEMI locked for the maximum four years starts at roughly 100 veHEMI, the same amount locked for one year at roughly 25. "Roughly" because the unlock date is rounded down to the epoch grid and the per-second slope is truncated, so the figure sits slightly below the round number.
 
+**Auto-relock** keeps a position at its current duration, so its weight stays flat instead of decaying to zero. It is the same as extending the lock by one epoch every epoch: enabled with 45 epochs left, the position stays at 45 epochs left, and disabling it starts that countdown from that moment. The flat weight raises the first-year APY, the more so the shorter the lockup.
+
 A position can only grow:
 
 - **Increase the amount**: more HEMI is added to the same NFT. There is no owner check on-chain, so anyone can top up anyone's position.

@@ -440,6 +440,7 @@
       "after-unlock": "después del desbloqueo",
       "apy": "{percentage} TEA",
       "carried-from": "Con base en la época {epoch}, la última financiada.",
+      "countdown-paused": "Cuenta regresiva en pausa",
       "enter-minimum-amount": "Ingrese al menos {amount} {symbol} para ver su estimación.",
       "first-year": "en el primer año",
       "load-failed": "No se pudieron cargar los datos de recompensas.",
@@ -457,6 +458,8 @@
     "form": {
       "approve-and-stake": "Aprobar y Hacer Stake",
       "approximate": "~{percentage}",
+      "auto-relock": "Rebloqueo automático",
+      "auto-relock-tooltip": "Su posición mantiene su duración actual para siempre, como si la extendiera una época cada época. Desactívelo y la cuenta regresiva empieza de nuevo.",
       "custom": "Personalizado",
       "days": "{days, plural, one {{days} día} other {{days} días}}",
       "expire-date": "Fecha de vencimiento:",
@@ -470,6 +473,8 @@
       "title": "Stake",
       "unlocking": "Desbloqueando...",
       "use-or": "Utilice <min></min> o <max></max>",
+      "voting-power-decays": "Baja a 0 el {date}",
+      "voting-power-stays": "Se mantiene constante mientras el rebloqueo automático esté activado",
       "years": "{years, plural, one {{years} año} other {{years} años}}"
     },
     "get-started": {

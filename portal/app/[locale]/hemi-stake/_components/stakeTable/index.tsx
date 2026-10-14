@@ -5,7 +5,10 @@ import { Header } from 'components/table/_components/header'
 import { TableCard } from 'components/table/tableCard'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { type StakingPosition } from 'types/stakingDashboard'
+import {
+  type StakingPosition,
+  StakingPositionStatus,
+} from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
@@ -14,6 +17,7 @@ import { Amount } from '../amount'
 import { RewardsDisplay } from '../rewardsDisplay'
 
 import { ActionCell } from './actionCell'
+import { AutoRelockBadge } from './autoRelockBadge'
 import { ClaimCta } from './claimCta'
 import { HeroBanner } from './heroBanner'
 import { LockupTime } from './lockupTime'
@@ -27,7 +31,7 @@ type StakingColumnsProps = {
   t: ReturnType<typeof useTranslations<'hemi-stake'>>
 }
 
-const stakingColumns = ({
+const allStakingColumns = ({
   t,
 }: StakingColumnsProps): ColumnDef<StakingPosition>[] => [
   {
@@ -83,6 +87,14 @@ const stakingColumns = ({
     meta: { width: 95 },
   },
   {
+    // TODO #2481 read the flag from the position once the subgraph exposes it.
+    // No entity field, no contract event, so every position reads as off.
+    cell: () => <AutoRelockBadge enabled={false} />,
+    header: () => <Header text={t('table.auto-relock')} />,
+    id: 'auto-relock',
+    meta: { width: 150 },
+  },
+  {
     cell: ({ row }) => (
       <div className="flex w-full flex-row-reverse items-center justify-end gap-x-2 lg:flex-row">
         <ClaimCta operation={row.original} />
@@ -95,6 +107,15 @@ const stakingColumns = ({
     meta: { className: 'justify-start lg:justify-end', width: 280 },
   },
 ]
+
+const stakingColumns = ({
+  filter,
+  ...props
+}: StakingColumnsProps & { filter: StakeTableFilterOptions }) =>
+  allStakingColumns(props).filter(
+    column =>
+      column.id !== 'auto-relock' || filter !== StakingPositionStatus.WITHDRAWN,
+  )
 
 type Props = {
   data: StakingPosition[] | undefined
@@ -114,7 +135,7 @@ export function StakeTable({
   const t = useTranslations('hemi-stake')
   const { status } = useAccount()
 
-  const cols = useMemo(() => stakingColumns({ t }), [t])
+  const cols = useMemo(() => stakingColumns({ filter, t }), [filter, t])
 
   const table = (
     <Table

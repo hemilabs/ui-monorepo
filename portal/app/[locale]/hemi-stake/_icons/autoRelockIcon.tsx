@@ -2,7 +2,7 @@ export const AutoRelockIcon = () => (
   <svg
     fill="none"
     height="16"
-    viewBox="-5 -5 30 30"
+    viewBox="-2 -2 24 24"
     width="16"
     xmlns="http://www.w3.org/2000/svg"
   >

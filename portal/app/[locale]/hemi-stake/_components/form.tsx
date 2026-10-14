@@ -23,9 +23,11 @@ export const FormContent = function ({
 }: FormContentProps) {
   const token = useHemiToken()
   const {
+    autoRelock,
     input,
     inputDays,
     lockupDays,
+    updateAutoRelock,
     updateInput,
     updateInputDays,
     updateLockupDays,
@@ -51,9 +53,11 @@ export const FormContent = function ({
         value={input}
       />
       <Lockup
+        autoRelock={autoRelock}
         input={input}
         inputDays={inputDays}
         lockupDays={lockupDays}
+        updateAutoRelock={updateAutoRelock}
         updateInputDays={updateInputDays}
         updateLockupDays={updateLockupDays}
       />

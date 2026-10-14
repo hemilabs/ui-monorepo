@@ -7,6 +7,7 @@ import { minLockAmount } from 've-hemi-actions'
 import { formatUnits } from 'viem'
 
 type Props = {
+  autoRelock: boolean
   hasError: boolean
   hasValidLockup: boolean
   isPending: boolean
@@ -16,6 +17,7 @@ type Props = {
 }
 
 export const PayoutPlaceholder = function ({
+  autoRelock,
   hasError,
   hasValidLockup,
   isPending,
@@ -68,9 +70,11 @@ export const PayoutPlaceholder = function ({
       {renderMessage()}
       {hasValidLockup && (
         <span className="text-xxs text-neutral-400">
-          {t('unlocks-on', {
-            date: formatShortDateWithYear(new Date(lockEnd * 1000), locale),
-          })}
+          {autoRelock
+            ? t('countdown-paused')
+            : t('unlocks-on', {
+                date: formatShortDateWithYear(new Date(lockEnd * 1000), locale),
+              })}
         </span>
       )}
     </div>

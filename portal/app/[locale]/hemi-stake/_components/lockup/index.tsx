@@ -1,6 +1,7 @@
 import { DisplayAmount } from 'components/displayAmount'
 import { InfoIcon } from 'components/icons/infoIcon'
 import { LockupInput } from 'components/inputText'
+import { Toggle } from 'components/toggle'
 import { Tooltip } from 'components/tooltip'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useVeHemiToken } from 'hooks/useVeHemiToken'
@@ -8,7 +9,7 @@ import { ReactNode, useEffect, useId, useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import type { Token } from 'types/token'
 import { useLocale, useTranslations } from 'use-intl'
-import { formatDate } from 'utils/format'
+import { formatDate, formatShortDateWithYear } from 'utils/format'
 import { unixNowTimestamp } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
@@ -176,20 +177,84 @@ function TryValuesHint({
   )
 }
 
+const AutoRelockRow = function ({
+  checked = false,
+  onCheckedChange,
+  show,
+}: {
+  checked?: boolean
+  onCheckedChange?: (enabled: boolean) => void
+  show: boolean
+}) {
+  const id = useId()
+  const t = useTranslations('hemi-stake.form')
+  if (!show || onCheckedChange === undefined) {
+    return null
+  }
+  return (
+    <div className="body-text-medium flex items-center justify-between gap-x-2 text-neutral-900">
+      <div className="flex items-center gap-x-1">
+        <span>{t('auto-relock')}</span>
+        <Tooltip
+          id={`auto-relock-estimate-${id}`}
+          text={t('auto-relock-tooltip')}
+          variant="info"
+        >
+          <div className="group/icon flex items-center">
+            <InfoIcon className="[&>g>path]:transition-colors [&>g>path]:duration-200 group-hover/icon:[&>g>path]:fill-neutral-950" />
+          </div>
+        </Tooltip>
+      </div>
+      <Toggle
+        ariaLabel={t('auto-relock')}
+        checked={checked}
+        id={`auto-relock-${id}`}
+        onCheckedChange={onCheckedChange}
+      />
+    </div>
+  )
+}
+
+const VotingPowerCaption = function ({
+  autoRelock = false,
+  expireDate,
+  show,
+}: {
+  autoRelock?: boolean
+  expireDate: string
+  show: boolean
+}) {
+  const t = useTranslations('hemi-stake.form')
+  if (!show) {
+    return null
+  }
+  return (
+    <span className="text-xxs text-neutral-400">
+      {autoRelock
+        ? t('voting-power-stays')
+        : t('voting-power-decays', { date: expireDate })}
+    </span>
+  )
+}
+
 type Props = {
+  autoRelock?: boolean
   input: string
   inputDays: string
   lockupDays: number
   minLocked?: number
+  updateAutoRelock?: (enabled: boolean) => void
   updateInputDays: (days: string) => void
   updateLockupDays: (days: number) => void
 }
 
 export function Lockup({
+  autoRelock,
   input,
   inputDays,
   lockupDays,
   minLocked,
+  updateAutoRelock,
   updateInputDays,
   updateLockupDays,
 }: Props) {
@@ -199,7 +264,7 @@ export function Lockup({
 
   const amount = parseTokenUnits(input, token)
 
-  const sublabels = useLockupApySublabels(amount)
+  const sublabels = useLockupApySublabels(amount, autoRelock)
 
   const presets = [
     { days: sixMonths, label: t('form.months', { months: 6 }) },
@@ -226,13 +291,11 @@ export function Lockup({
   const valid = isValidLockup({ minLocked, value: inputNumber })
   const nearest = getNearestValidValues({ minLocked, value: inputNumber })
   const lockupSeconds = wholeDaysToSeconds(lockupDays)
-  const expireDate = formatDate(
-    getUnlockInfo({
-      lockTime: lockupSeconds,
-      timestamp: Number(unixNowTimestamp()),
-    }).unlockDate,
-    locale,
-  )
+  const { unlockDate } = getUnlockInfo({
+    lockTime: lockupSeconds,
+    timestamp: Number(unixNowTimestamp()),
+  })
+  const expireDate = formatDate(unlockDate, locale)
 
   const votingPowerRatio = useMemo(
     function calcVotingPower() {
@@ -368,6 +431,11 @@ export function Lockup({
             )}
           </div>
         </div>
+        <AutoRelockRow
+          checked={autoRelock}
+          onCheckedChange={updateAutoRelock}
+          show={canUsePresets}
+        />
         <div className="flex min-h-26 flex-col justify-center xs:min-h-14">
           {!showPresets ? (
             <div className="flex flex-col gap-y-4">
@@ -419,16 +487,23 @@ export function Lockup({
             <Divider />
           </>
         )}
-        <InfoRow
-          label={`${t('voting-power')}:`}
-          value={
-            <VotingPowerEquivalence
-              amount={input}
-              token={token}
-              votingPower={votingPowerRatio}
-            />
-          }
-        />
+        <div className="flex flex-col gap-y-0.5">
+          <InfoRow
+            label={`${t('voting-power')}:`}
+            value={
+              <VotingPowerEquivalence
+                amount={input}
+                token={token}
+                votingPower={votingPowerRatio}
+              />
+            }
+          />
+          <VotingPowerCaption
+            autoRelock={autoRelock}
+            expireDate={formatShortDateWithYear(unlockDate, locale)}
+            show={canUsePresets}
+          />
+        </div>
       </div>
       {minLocked && (
         <div className="mt-5">

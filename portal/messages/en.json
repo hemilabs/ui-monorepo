@@ -440,6 +440,7 @@
       "after-unlock": "after unlock",
       "apy": "{percentage} APY",
       "carried-from": "Based on epoch {epoch}, the last one funded.",
+      "countdown-paused": "Countdown paused",
       "enter-minimum-amount": "Enter at least {amount} {symbol} to see your estimate.",
       "first-year": "in the first year",
       "load-failed": "Could not load the reward data.",
@@ -457,6 +458,8 @@
     "form": {
       "approve-and-stake": "Approve and Stake",
       "approximate": "~{percentage}",
+      "auto-relock": "Auto-relock",
+      "auto-relock-tooltip": "Your position keeps its current duration, so its weight stops decaying. Turn it off and the duration starts counting down again.",
       "custom": "Custom",
       "days": "{days, plural, one {{days} day} other {{days} days}}",
       "expire-date": "Expire date:",
@@ -470,6 +473,8 @@
       "title": "Stake",
       "unlocking": "Unlocking...",
       "use-or": "Use <min></min> or <max></max>",
+      "voting-power-decays": "Decays to 0 by {date}",
+      "voting-power-stays": "Stays constant while auto-relock is on",
       "years": "{years, plural, one {{years} year} other {{years} years}}"
     },
     "get-started": {

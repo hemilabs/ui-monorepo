@@ -70,13 +70,7 @@ const Completed = function ({
       <TwoRowBox
         bottom={
           <>
-            <span
-              className={`mr-auto ${
-                txHash ? 'text-emerald-500' : 'text-neutral-500'
-              }`}
-            >
-              {txHash ? t('confirmed') : t('not-ready')}
-            </span>
+            <span className="mr-auto text-emerald-500">{t('confirmed')}</span>
             {explorerChainId && txHash && (
               <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
             )}

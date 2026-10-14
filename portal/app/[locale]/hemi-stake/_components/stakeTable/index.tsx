@@ -89,7 +89,7 @@ const stakingColumns = ({
     cell: () => <AutoRelockBadge enabled={false} />,
     header: () => <Header text={t('table.auto-relock')} />,
     id: 'auto-relock',
-    meta: { width: 110 },
+    meta: { width: 150 },
   },
   {
     cell: ({ row }) => (

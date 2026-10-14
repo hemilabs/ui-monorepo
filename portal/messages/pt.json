@@ -459,7 +459,7 @@
       "approve-and-stake": "Aprovar e Fazer Stake",
       "approximate": "~{percentage}",
       "auto-relock": "Rebloqueio automático",
-      "auto-relock-tooltip": "Sua posição mantém a duração atual, então o peso dela para de decair. Desligue e a duração volta a contar.",
+      "auto-relock-tooltip": "Sua posição mantém a duração atual para sempre, como se você a estendesse uma época a cada época. Desligue e a contagem recomeça.",
       "custom": "Personalizado",
       "days": "{days, plural, one {{days} dia} other {{days} dias}}",
       "expire-date": "Data de vencimento:",

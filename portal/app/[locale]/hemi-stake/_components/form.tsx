@@ -54,6 +54,7 @@ export const FormContent = function ({
       />
       <Lockup
         autoRelock={autoRelock}
+        disabled={isRunningOperation}
         input={input}
         inputDays={inputDays}
         lockupDays={lockupDays}

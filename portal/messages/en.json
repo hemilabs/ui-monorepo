@@ -459,7 +459,7 @@
       "approve-and-stake": "Approve and Stake",
       "approximate": "~{percentage}",
       "auto-relock": "Auto-relock",
-      "auto-relock-tooltip": "Your position keeps its current duration, so its weight stops decaying. Turn it off and the duration starts counting down again.",
+      "auto-relock-tooltip": "Your position keeps its current duration forever, as if you extended it by one epoch every epoch. Turn it off and the countdown starts again.",
       "custom": "Custom",
       "days": "{days, plural, one {{days} day} other {{days} days}}",
       "expire-date": "Expire date:",

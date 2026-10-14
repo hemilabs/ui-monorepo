@@ -179,10 +179,12 @@ function TryValuesHint({
 
 const AutoRelockRow = function ({
   checked = false,
+  disabled,
   onCheckedChange,
   show,
 }: {
   checked?: boolean
+  disabled?: boolean
   onCheckedChange?: (enabled: boolean) => void
   show: boolean
 }) {
@@ -201,13 +203,14 @@ const AutoRelockRow = function ({
           variant="info"
         >
           <div className="group/icon flex items-center">
-            <InfoIcon className="[&>g>path]:transition-colors [&>g>path]:duration-200 group-hover/icon:[&>g>path]:fill-neutral-950" />
+            <InfoIcon className="group-hover/icon:[&>g>path]:fill-neutral-950" />
           </div>
         </Tooltip>
       </div>
       <Toggle
         ariaLabel={t('auto-relock')}
         checked={checked}
+        disabled={disabled}
         id={`auto-relock-${id}`}
         onCheckedChange={onCheckedChange}
       />
@@ -239,6 +242,7 @@ const VotingPowerCaption = function ({
 
 type Props = {
   autoRelock?: boolean
+  disabled?: boolean
   input: string
   inputDays: string
   lockupDays: number
@@ -250,6 +254,7 @@ type Props = {
 
 export function Lockup({
   autoRelock,
+  disabled,
   input,
   inputDays,
   lockupDays,
@@ -433,6 +438,7 @@ export function Lockup({
         </div>
         <AutoRelockRow
           checked={autoRelock}
+          disabled={disabled}
           onCheckedChange={updateAutoRelock}
           show={canUsePresets}
         />

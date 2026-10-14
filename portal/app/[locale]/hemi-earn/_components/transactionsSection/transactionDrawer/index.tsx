@@ -28,6 +28,7 @@ import { RetryFailedWithdraw } from './retryFailedWithdraw'
 import { AddTokenToWalletCta, SettleCta } from './settleShared'
 import { TransactionDrawerSkeleton } from './transactionDrawerSkeleton'
 import { TransactionNotFound } from './transactionNotFound'
+import { TransactionUnavailable } from './transactionUnavailable'
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 // Drawer's already open, so no redirect on sign. A reverted claim/recover stays at
@@ -154,10 +155,34 @@ const resolveDrawerData = function ({
   return { asset, pool, transaction }
 }
 
+const UnresolvedTransaction = function ({
+  hasLoadError,
+  isLoading,
+  onClose,
+  onRetry,
+}: {
+  hasLoadError: boolean
+  isLoading: boolean
+  onClose: VoidFunction
+  onRetry: VoidFunction
+}) {
+  if (hasLoadError) {
+    return <TransactionUnavailable onClose={onClose} onRetry={onRetry} />
+  }
+  if (isLoading) {
+    return <TransactionDrawerSkeleton onClose={onClose} />
+  }
+  return <TransactionNotFound onClose={onClose} />
+}
+
 const TransactionDrawerContent = function () {
   const [txId, setTxDrawerQueryString] = useTxDrawerQueryString()
-  const { data: transactions, isPending: isTransactionsPending } =
-    useEarnTransactions()
+  const {
+    data: transactions,
+    hasLoadError: hasTransactionsLoadError,
+    isPending: isTransactionsPending,
+    reset: resetTransactions,
+  } = useEarnTransactions()
   const { data: pools } = useEarnPools()
 
   // A malformed txId (e.g. 0x123) isn't a real tx — drop it from the URL and show no drawer.
@@ -177,19 +202,16 @@ const TransactionDrawerContent = function () {
 
   const close = () => setTxDrawerQueryString(null)
 
-  if (!pools || isTransactionsPending) {
-    return (
-      <Drawer onClose={close}>
-        <TransactionDrawerSkeleton onClose={close} />
-      </Drawer>
-    )
-  }
-
-  const resolved = resolveDrawerData({ pools, transactions, txId })
+  const resolved = pools && resolveDrawerData({ pools, transactions, txId })
   if (!resolved) {
     return (
       <Drawer onClose={close}>
-        <TransactionNotFound onClose={close} />
+        <UnresolvedTransaction
+          hasLoadError={hasTransactionsLoadError}
+          isLoading={!pools || isTransactionsPending}
+          onClose={close}
+          onRetry={resetTransactions}
+        />
       </Drawer>
     )
   }

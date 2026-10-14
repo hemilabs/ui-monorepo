@@ -76,7 +76,7 @@ const ActionCell = ({ timeRemaining }: { timeRemaining: string }) => (
         type="button"
         variant="tertiary"
       >
-        <MoreItemsIcon className="[&>path]:transition-colors [&>path]:duration-200 group-hover/icon:[&>path]:fill-neutral-950" />
+        <MoreItemsIcon className="group-hover/icon:[&>path]:fill-neutral-950" />
       </ButtonIcon>
     </div>
   </div>

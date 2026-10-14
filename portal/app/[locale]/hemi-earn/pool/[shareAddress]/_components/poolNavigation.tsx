@@ -36,7 +36,7 @@ export const PoolNavigation = function ({ pool }: Props) {
           type="button"
           variant="tertiary"
         >
-          <Chevron.Left className="[&>path]:fill-neutral-500 [&>path]:transition-colors [&>path]:duration-300 group-hover:[&>path]:fill-neutral-950" />
+          <Chevron.Left className="[&>path]:fill-neutral-500 group-hover:[&>path]:fill-neutral-950" />
         </ButtonIcon>
       </div>
       <Button

@@ -14,6 +14,7 @@ const ReloadIcon = (props: ComponentProps<'svg'>) => (
     {...props}
   >
     <path
+      className="transition-colors duration-200"
       clipRule="evenodd"
       d="M12.25 9.14a4.4 4.4 0 0 1-7.36 1.973l-.25-.249h1.946a.6.6 0 1 0 0-1.2H3.192a.6.6 0 0 0-.6.6v3.394a.6.6 0 1 0 1.2 0v-1.944l.248.248a5.6 5.6 0 0 0 9.37-2.51.6.6 0 1 0-1.16-.312Zm.984-2.978a.6.6 0 0 0 .175-.424V2.344a.6.6 0 1 0-1.2 0V4.29l-.248-.248a5.6 5.6 0 0 0-9.37 2.51.6.6 0 1 0 1.16.312 4.4 4.4 0 0 1 7.362-1.974l.248.248H9.416a.6.6 0 1 0 0 1.2h3.394a.6.6 0 0 0 .424-.175Z"
       fill="currentColor"
@@ -46,7 +47,7 @@ export const ReloadHistory = function () {
         {isSyncing ? (
           <Spinner size={16} variant="orange" />
         ) : (
-          <ReloadIcon className="[&>path]:fill-neutral-500 [&>path]:transition-colors [&>path]:duration-200 [&>path]:group-hover:fill-neutral-950" />
+          <ReloadIcon className="[&>path]:fill-neutral-500 [&>path]:group-hover:fill-neutral-950" />
         )}
         {t('reload')}
       </Button>

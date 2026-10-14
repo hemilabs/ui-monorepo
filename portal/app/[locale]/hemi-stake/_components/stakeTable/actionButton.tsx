@@ -28,7 +28,7 @@ export function ActionButton({ isOpen, onClick, ref }: Props) {
         variant="tertiary"
       >
         <MoreItemsIcon
-          className={`[&>path]:transition-colors [&>path]:duration-200 group-hover/icon:[&>path]:fill-neutral-950 ${
+          className={`group-hover/icon:[&>path]:fill-neutral-950 ${
             isOpen ? '[&>path]:fill-neutral-950' : ''
           }`}
         />

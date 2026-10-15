@@ -13,7 +13,10 @@ import {
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
-import { type StakingPosition } from 'types/stakingDashboard'
+import {
+  type StakingPosition,
+  StakingPositionStatus,
+} from 'types/stakingDashboard'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatDate } from 'utils/format'
 import { formatUnits } from 'viem'
@@ -100,7 +103,7 @@ export function ActionCell({ row }: Props) {
   const { updateStakingDashboardOperation } = useStakingDashboard()
   const { setDrawerQueryString } = useDrawerStakingQueryString()
 
-  const { amount, lockTime, timestamp, tokenId } = row.original
+  const { amount, lockTime, status, timestamp, tokenId } = row.original
 
   const MENU_OFFSET = 4
 
@@ -202,6 +205,28 @@ export function ActionCell({ row }: Props) {
     setDrawerQueryString('increasingUnlockTime')
   }
 
+  const isActive = status === StakingPositionStatus.ACTIVE
+
+  // TODO #2481 read the flag from the position once the subgraph exposes it.
+  // Flip it to reach the disable drawer while there is no data behind it.
+  const autoRelock = false
+
+  function handleToggleAutoRelock() {
+    closeAndFocusTrigger()
+    updateStakingDashboardOperation({
+      autoRelock,
+      stakingPosition: {
+        amount,
+        lockTime,
+        timestamp,
+        tokenId,
+      },
+      status: undefined,
+      transactionHash: undefined,
+    })
+    setDrawerQueryString('togglingAutoRelock')
+  }
+
   return (
     <div
       className="relative"
@@ -243,12 +268,15 @@ export function ActionCell({ row }: Props) {
                     })
               }
             />
-            {/* TODO #2481 enable once the drawer and the upgraded contracts
-                land. There is no write action to call today. */}
             <ActionItem
-              enabled={false}
+              enabled={isActive && timeRemainingSeconds > 0}
               icon={<AutoRelockIcon />}
-              label={t('table.enable-auto-relock')}
+              label={t(
+                autoRelock
+                  ? 'table.disable-auto-relock'
+                  : 'table.enable-auto-relock',
+              )}
+              onClick={handleToggleAutoRelock}
             />
           </div>,
           document.body,

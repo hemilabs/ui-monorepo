@@ -97,7 +97,7 @@ const InfoRow = ({ label, value }: { label: string; value: ReactNode }) => (
   </p>
 )
 
-const VotingPowerEquivalence = function ({
+export const VotingPowerEquivalence = function ({
   amount,
   token,
   votingPower,

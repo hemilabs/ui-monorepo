@@ -50,6 +50,7 @@ export type StakingPosition = {
 
 export type StakingDashboardOperation = Partial<{
   approvalTxHash: Hash
+  autoRelock: boolean
   input: string
   inputDays: string
   lockupDays: number

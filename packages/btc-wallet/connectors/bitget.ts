@@ -1,4 +1,10 @@
-import { type Account, type BtcSupportedNetworks, type Unisat } from '../unisat'
+import {
+  type Account,
+  type BtcSupportedNetworks,
+  type BtcTransaction,
+  type Unisat,
+} from '../unisat'
+import { sendBitcoin } from '../utils/psbt'
 
 import { type ConnectorGroup, type WalletConnector } from './types'
 
@@ -13,6 +19,7 @@ export type BitgetProvider = Omit<
   'getBitcoinUtxos' | 'on' | 'pushTx' | 'removeListener'
 > & {
   on<Event extends keyof EventMap>(event: Event, handler: EventMap[Event]): void
+  pushTx(options: { rawtx: string }): Promise<BtcTransaction>
   removeListener<Event extends keyof EventMap>(
     event: Event,
     handler: EventMap[Event],
@@ -66,8 +73,20 @@ const wallet = {
     provider.on('networkChanged', listener)
     return () => provider.removeListener('networkChanged', listener)
   },
-  async sendBitcoin() {
-    throw new Error('Not supported yet')
+  sendBitcoin(toAddress, satoshis, options) {
+    assertInstalled()
+    return sendBitcoin(
+      {
+        getAccounts: () => provider.getAccounts(),
+        getNetwork: () => provider.getNetwork(),
+        pushTx: rawtx => provider.pushTx({ rawtx }),
+        signPsbt: (psbtHex, signOptions) =>
+          provider.signPsbt(psbtHex, signOptions),
+      },
+      toAddress,
+      satoshis,
+      options,
+    )
   },
   supportsSwitchNetwork: true,
   switchNetwork(network) {

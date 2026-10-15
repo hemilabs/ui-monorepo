@@ -52,7 +52,10 @@ export const removeDustChange = function ({
  */
 // eslint-disable-next-line complexity
 export async function sendBitcoin(
-  provider: Unisat,
+  provider: Pick<
+    Unisat,
+    'getAccounts' | 'getBitcoinUtxos' | 'getNetwork' | 'pushTx' | 'signPsbt'
+  >,
   toAddress: string,
   satoshis: number,
   options: { memo?: string } = {},

@@ -415,10 +415,9 @@
       "auto-relock": {
         "apy": "TEA",
         "decays-to-zero": "Cai para 0 em {date}",
-        "legend-gained": "Ganho com o rebloqueio automático",
-        "legend-kept": "Mantido ao desativar",
-        "legend-lost": "Perdido",
+        "legend-after-disabling": "Depois de desativar",
         "legend-today": "Hoje",
+        "legend-with-auto-relock": "Com rebloqueio automático",
         "stays-at": "Fica em {votingPower}",
         "step": "Atualizar o rebloqueio automático"
       },

@@ -415,10 +415,9 @@
       "auto-relock": {
         "apy": "APY",
         "decays-to-zero": "Decays to 0 by {date}",
-        "legend-gained": "Gained with auto-relock",
-        "legend-kept": "Kept after disabling",
-        "legend-lost": "Lost",
+        "legend-after-disabling": "After disabling",
         "legend-today": "Today",
+        "legend-with-auto-relock": "With auto-relock",
         "stays-at": "Stays at {votingPower}",
         "step": "Update auto-relock"
       },

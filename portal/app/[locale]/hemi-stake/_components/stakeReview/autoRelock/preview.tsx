@@ -22,7 +22,7 @@ import {
   getUnlockInfo,
   predictVotingPower,
 } from '../../../_utils/lockCreationTimes'
-import { getWeightAt } from '../../../_utils/lockEpochs'
+import { getEpochEnd, getWeightAt } from '../../../_utils/lockEpochs'
 import {
   getPayoutAxisTicks,
   toStackedPayoutSeries,
@@ -104,6 +104,17 @@ export const Preview = function ({
     timestamp,
   })
 
+  const classWeight = forecastInputs?.transferableClassWeight ?? BigInt(0)
+  const positionWeightAtClose = getWeightAt({
+    amount: stakedAmount,
+    at: getEpochEnd({ epochsAhead: 0, now }),
+    lockEnd: unlockTime,
+  })
+  const otherPositionsWeight =
+    classWeight > positionWeightAtClose
+      ? classWeight - positionWeightAtClose
+      : BigInt(0)
+
   const buildForecast = (relocked: boolean) =>
     getRewardsForecast({
       amount: stakedAmount,
@@ -112,8 +123,7 @@ export const Preview = function ({
       now,
       transferableClassBaseline:
         forecastInputs?.transferableClassBaseline ?? BigInt(0),
-      transferableClassWeight:
-        forecastInputs?.transferableClassWeight ?? BigInt(0),
+      transferableClassWeight: otherPositionsWeight,
     })
 
   const current = buildForecast(autoRelock)
@@ -148,8 +158,8 @@ export const Preview = function ({
     ? [staysCaption, decaysCaption]
     : [decaysCaption, staysCaption]
   const [legendBase, legendDelta] = autoRelock
-    ? [tDrawer('legend-kept'), tDrawer('legend-lost')]
-    : [tDrawer('legend-today'), tDrawer('legend-gained')]
+    ? [tDrawer('legend-after-disabling'), tDrawer('legend-today')]
+    : [tDrawer('legend-today'), tDrawer('legend-with-auto-relock')]
 
   const toApy = (ratio: number) =>
     hasForecast ? formatApyFromRatio(ratio) : '-'

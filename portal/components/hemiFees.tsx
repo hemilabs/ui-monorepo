@@ -24,7 +24,7 @@ export const HemiFees = function ({ fees, isError }: Props) {
 
   return (
     <div className="px-4">
-      <EvmFeesSummary gas={gas} operationToken={nativeToken} />
+      <EvmFeesSummary gas={gas} />
     </div>
   )
 }

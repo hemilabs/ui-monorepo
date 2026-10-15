@@ -1,5 +1,7 @@
 import { formatUnits } from 'viem'
 
+import { daysPerPeriod } from './periods'
+
 export type SupplyPoint = {
   circulating: string
   date: string
@@ -40,12 +42,6 @@ export const sliceLabels = {
   nonCirculating: 'non-circulating',
   staked: 'staked',
 } as const
-
-const daysPerPeriod: Record<SupplyPeriod, number> = {
-  '1m': 30,
-  '1w': 7,
-  '3m': 90,
-}
 
 const oneDayMs = 24 * 60 * 60 * 1000
 

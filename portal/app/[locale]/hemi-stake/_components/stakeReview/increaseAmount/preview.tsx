@@ -82,7 +82,7 @@ export function Preview({
         />
         {validInput && (
           <FeesContainer compact>
-            <EvmFeesSummary gas={gas} operationToken={token} />
+            <EvmFeesSummary gas={gas} />
           </FeesContainer>
         )}
       </div>

@@ -1,6 +1,6 @@
 import { TotalDepositsIcon } from 'components/icons/totalDepositsIcon'
 import { StatCard } from 'components/statCard'
-import { useTranslations } from 'use-intl'
+import { useLocale, useTranslations } from 'use-intl'
 import { formatNumber } from 'utils/format'
 import { isDataUnavailable } from 'utils/queryStatus'
 
@@ -10,6 +10,7 @@ import { useStakeStats } from '../_hooks/useStakeStats'
 const selectWalletsStaking = (stats: StakeStats) => stats.walletsStaking
 
 export const WalletsStaking = function () {
+  const locale = useLocale()
   const t = useTranslations('hemi-stake.stats')
   const { data, fetchStatus, isPending, status } =
     useStakeStats(selectWalletsStaking)
@@ -22,7 +23,7 @@ export const WalletsStaking = function () {
       isError={isUnavailable && data === undefined}
       isLoading={isPending && !isUnavailable}
       label={t('wallets-staking')}
-      value={formatNumber(data ?? 0)}
+      value={formatNumber(data ?? 0, locale)}
     />
   )
 }

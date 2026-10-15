@@ -43,12 +43,13 @@ export function useEstimateBtcDepositFees({
     bitcoinTunnelManagerAddresses[deposit.l2ChainId]
 
   const { data: encodedData, isSuccess } = useQuery({
-    enabled: !!deposit && enabled,
+    enabled,
     queryFn: () => getEncodedConfirmDeposit({ deposit, hemiClient }),
     queryKey: ['encode-confirm-deposit', deposit.transactionHash],
   })
 
   const { data: gasUnits, isError: isGasError } = useEstimateGas({
+    chainId: deposit.l2ChainId,
     data: encodedData,
     query: { enabled: isSuccess && !!encodedData },
     to: bitcoinManagerAddresses,

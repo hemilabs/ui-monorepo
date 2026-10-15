@@ -21,6 +21,7 @@ export const useEstimateDepositFees = function ({
   const isNative = isNativeToken(fromToken)
   const l1StandardBridge = getL1StandardBridgeAddress(fromToken.chainId)
   const { data: gasUnits, isError } = useEstimateGas({
+    chainId: fromToken.chainId,
     data: address
       ? isNative
         ? encodeDepositEth(address)

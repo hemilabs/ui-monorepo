@@ -3,6 +3,7 @@ import { useState } from 'react'
 
 import { StatsSection } from '../_components/statsSection'
 
+import { RewardsChartCard } from './_components/rewardsChartCard'
 import { SupplyChartCard } from './_components/supplyChartCard'
 import { SupplySummary } from './_components/supplySummary'
 import { type SupplyPeriod, type SupplyUnit } from './_utils/supplyHistory'
@@ -24,6 +25,9 @@ export const HemiStakeAnalyticsPage = function () {
           symbol={symbol}
           unit={unit}
         />
+      </div>
+      <div className="mt-6">
+        <RewardsChartCard />
       </div>
     </>
   )

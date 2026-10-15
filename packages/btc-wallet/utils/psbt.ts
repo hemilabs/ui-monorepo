@@ -1,8 +1,51 @@
 import * as bitcoin from 'bitcoinjs-lib'
-import coinSelect from 'coinselect'
+import coinSelect, { type Target } from 'coinselect'
 import { esploraClient } from 'esplora-client'
 
 import { type Unisat } from '../unisat'
+
+const isSegwitAddress = (address: string, network: bitcoin.Network) =>
+  address.toLowerCase().startsWith(`${network.bech32}1`)
+
+const isTaprootAddress = (address: string, network: bitcoin.Network) =>
+  address.toLowerCase().startsWith(`${network.bech32}1p`)
+
+export const getOutputScript = function (
+  address: string,
+  network: bitcoin.Network,
+) {
+  if (!isTaprootAddress(address, network)) {
+    return bitcoin.address.toOutputScript(address, network)
+  }
+  const { data, prefix } = bitcoin.address.fromBech32(address)
+  if (data.length !== 32 || prefix !== network.bech32) {
+    throw new Error(`Invalid taproot address ${address}`)
+  }
+  return bitcoin.script.compile([bitcoin.opcodes.OP_1, data])
+}
+
+const dustRelayFeeRate = 3
+
+const getDustLimit = function (address: string, network: bitcoin.Network) {
+  const outputSize = 8 + 1 + getOutputScript(address, network).length
+  const inputSize = isSegwitAddress(address, network) ? 67 : 148
+  return dustRelayFeeRate * (outputSize + inputSize)
+}
+
+export const removeDustChange = function ({
+  address,
+  network,
+  outputs,
+}: {
+  address: string
+  network: bitcoin.Network
+  outputs: Partial<Target>[]
+}) {
+  const dustLimit = getDustLimit(address, network)
+  return outputs.filter(
+    output => output.address !== undefined || (output.value ?? 0) >= dustLimit,
+  )
+}
 
 /**
  * Manually construct, sign and push the transaction.
@@ -34,9 +77,10 @@ export async function sendBitcoin(
     throw new Error('Insufficient funds')
   }
 
-  const psbt = new bitcoin.Psbt({
-    network: bitcoin.networks[network === 'livenet' ? 'bitcoin' : network],
-  })
+  const btcNetwork =
+    bitcoin.networks[network === 'livenet' ? 'bitcoin' : network]
+  const psbt = new bitcoin.Psbt({ network: btcNetwork })
+  const isTaprootSender = isTaprootAddress(address, btcNetwork)
   for (const input of inputs) {
     const txHex = await client.bitcoin.transactions.getTxHex({
       txid: input.txid as string,
@@ -45,11 +89,21 @@ export async function sendBitcoin(
       hash: input.txid,
       index: input.vout,
       nonWitnessUtxo: Buffer.from(txHex, 'hex'),
+      ...(isTaprootSender && {
+        witnessUtxo: bitcoin.Transaction.fromHex(txHex).outs[input.vout],
+      }),
     })
   }
-  for (const output of outputs) {
+  for (const output of removeDustChange({
+    address,
+    network: btcNetwork,
+    outputs,
+  })) {
     psbt.addOutput({
-      address: output.address || address,
+      script:
+        output.address !== undefined
+          ? bitcoin.address.toOutputScript(output.address, btcNetwork)
+          : getOutputScript(address, btcNetwork),
       value: output.value || 0,
     })
   }
@@ -60,7 +114,7 @@ export async function sendBitcoin(
   }
   const psbtHex = psbt.toHex()
   const signedPsbtHex = await provider.signPsbt(psbtHex, {
-    autoFinalize: true,
+    autoFinalized: true,
     toSignInputs: inputs.map((_, index) => ({ address, index })),
   })
   const signedPsbt = bitcoin.Psbt.fromHex(signedPsbtHex)

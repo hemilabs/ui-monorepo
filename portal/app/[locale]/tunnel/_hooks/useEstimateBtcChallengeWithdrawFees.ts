@@ -15,6 +15,7 @@ export function useEstimateChallengeBtcWithdrawFees({
   const bitcoinManagerAddresses = bitcoinTunnelManagerAddresses[l2ChainId]
 
   const { data: gasUnits, isError } = useEstimateGas({
+    chainId: l2ChainId,
     data: encodeChallengeWithdrawal({
       extraInfo: '0x',
       uuid,

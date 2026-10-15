@@ -19,7 +19,8 @@ import {
 } from 'types/stakingDashboard'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatDate } from 'utils/format'
-import { formatUnits } from 'viem'
+import { type Address, formatUnits, isAddressEqual } from 'viem'
+import { useAccount } from 'wagmi'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
@@ -103,7 +104,17 @@ export function ActionCell({ row }: Props) {
   const { updateStakingDashboardOperation } = useStakingDashboard()
   const { setDrawerQueryString } = useDrawerStakingQueryString()
 
-  const { amount, lockTime, status, timestamp, tokenId } = row.original
+  const {
+    amount,
+    forfeitable,
+    lockTime,
+    owner,
+    status,
+    timestamp,
+    tokenId,
+    transferable,
+  } = row.original
+  const { address } = useAccount()
 
   const MENU_OFFSET = 4
 
@@ -206,6 +217,12 @@ export function ActionCell({ row }: Props) {
   }
 
   const isActive = status === StakingPositionStatus.ACTIVE
+  const isWalletOwner = !!address && isAddressEqual(owner as Address, address)
+  // TODO #2496 enable these once the forecast reads the position's own reward
+  // class, and #2481 defines how the part auto-relock extends is classed.
+  // Not a protocol restriction: extending a non-transferable lock works today.
+  const canAutoRelock =
+    isActive && isWalletOwner && transferable && !forfeitable
 
   // TODO #2481 read the flag from the position once the subgraph exposes it.
   // Flip it to reach the disable drawer while there is no data behind it.
@@ -269,7 +286,7 @@ export function ActionCell({ row }: Props) {
               }
             />
             <ActionItem
-              enabled={isActive && timeRemainingSeconds > 0}
+              enabled={canAutoRelock && timeRemainingSeconds > 0}
               icon={<AutoRelockIcon />}
               label={t(
                 autoRelock

@@ -5,6 +5,7 @@ import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChai
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { type ReactNode } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import { useLocale, useTranslations } from 'use-intl'
 import {
   formatNumber,
@@ -15,19 +16,17 @@ import { unixNowTimestamp } from 'utils/time'
 import { snapToEpoch } from 've-hemi-actions'
 import { formatUnits } from 'viem'
 
+import { useEpochSystemState } from '../../../_hooks/useEpochSystemState'
 import { useRewardsForecastInputs } from '../../../_hooks/useRewardsForecastInputs'
+import { getAutoRelockComparison } from '../../../_utils/autoRelockComparison'
 import { formatApyFromRatio } from '../../../_utils/formatApyFromRatio'
 import { formatPayoutValue } from '../../../_utils/formatPayoutValue'
 import {
   getUnlockInfo,
   predictVotingPower,
 } from '../../../_utils/lockCreationTimes'
-import { getEpochEnd, getWeightAt } from '../../../_utils/lockEpochs'
-import {
-  getPayoutAxisTicks,
-  toStackedPayoutSeries,
-} from '../../../_utils/payoutsChartData'
-import { getRewardsForecast } from '../../../_utils/stakeRewardsForecast'
+import { getWeightAt } from '../../../_utils/lockEpochs'
+import { getPayoutAxisTicks } from '../../../_utils/payoutsChartData'
 import { PayoutsChart } from '../../estimatedPayouts/payoutsChart'
 import { VotingPowerEquivalence } from '../../lockup'
 
@@ -70,6 +69,41 @@ const LegendItem = ({
   </div>
 )
 
+const PayoutsFallback = function ({
+  hasError,
+  isPending,
+  onRetry,
+}: {
+  hasError: boolean
+  isPending: boolean
+  onRetry: VoidFunction
+}) {
+  const t = useTranslations('hemi-stake.estimated-payouts')
+  const tCommon = useTranslations('common')
+
+  if (hasError) {
+    return (
+      <div className="flex flex-col items-start gap-y-2">
+        <span className="text-xs text-neutral-400">{t('load-failed')}</span>
+        <Button
+          onClick={onRetry}
+          size="xSmall"
+          type="button"
+          variant="secondary"
+        >
+          {tCommon('try-again')}
+        </Button>
+      </div>
+    )
+  }
+
+  if (isPending) {
+    return <Skeleton className="h-6 w-40" />
+  }
+
+  return <span className="text-xs text-neutral-400">{t('not-funded')}</span>
+}
+
 type Props = {
   autoRelock: boolean
   isRunningOperation: boolean
@@ -94,9 +128,19 @@ export const Preview = function ({
   const t = useTranslations('hemi-stake')
   const tDrawer = useTranslations('hemi-stake.drawer.auto-relock')
   const token = useHemiToken()
-  const { data: forecastInputs, isPending: isLoadingForecast } =
-    useRewardsForecastInputs()
-  const hasForecast = forecastInputs !== undefined
+  const {
+    data: forecastInputs,
+    isError: isForecastError,
+    isPending: isLoadingForecast,
+    refetch: refetchForecast,
+  } = useRewardsForecastInputs()
+  const { isError: isSystemStateError, refetch: refetchSystemState } =
+    useEpochSystemState()
+
+  const baseline = forecastInputs?.transferableClassBaseline ?? BigInt(0)
+  const hasError = isForecastError || isSystemStateError
+  const hasForecast = baseline > BigInt(0)
+  const retry = isSystemStateError ? refetchSystemState : refetchForecast
 
   const now = Number(unixNowTimestamp())
   const { timeRemainingSeconds, unlockDate, unlockTime } = getUnlockInfo({
@@ -104,35 +148,15 @@ export const Preview = function ({
     timestamp,
   })
 
-  const classWeight = forecastInputs?.transferableClassWeight ?? BigInt(0)
-  const positionWeightAtClose = getWeightAt({
+  const { base, current, delta, next } = getAutoRelockComparison({
     amount: stakedAmount,
-    at: getEpochEnd({ epochsAhead: 0, now }),
-    lockEnd: unlockTime,
-  })
-  const otherPositionsWeight =
-    classWeight > positionWeightAtClose
-      ? classWeight - positionWeightAtClose
-      : BigInt(0)
-
-  const buildForecast = (relocked: boolean) =>
-    getRewardsForecast({
-      amount: stakedAmount,
-      autoRelock: relocked,
-      lockDurationInSeconds: timeRemainingSeconds,
-      now,
-      transferableClassBaseline:
-        forecastInputs?.transferableClassBaseline ?? BigInt(0),
-      transferableClassWeight: otherPositionsWeight,
-    })
-
-  const current = buildForecast(autoRelock)
-  const next = buildForecast(!autoRelock)
-
-  const { base, delta } = toStackedPayoutSeries({
-    current: current.payouts,
+    autoRelock,
+    baseline,
+    classWeight: forecastInputs?.transferableClassWeight ?? BigInt(0),
     decimals: token.decimals,
-    next: next.payouts,
+    lockDurationInSeconds: timeRemainingSeconds,
+    now,
+    unlockTime,
   })
 
   const votingPower = formatUnits(
@@ -164,15 +188,9 @@ export const Preview = function ({
   const toApy = (ratio: number) =>
     hasForecast ? formatApyFromRatio(ratio) : '-'
 
-  const toTotal = (amount: bigint) =>
-    hasForecast ? (
-      <DisplayAmount
-        amount={formatUnits(amount, token.decimals)}
-        token={token}
-      />
-    ) : (
-      '-'
-    )
+  const toTotal = (amount: bigint) => (
+    <DisplayAmount amount={formatUnits(amount, token.decimals)} token={token} />
+  )
 
   return (
     <form
@@ -214,39 +232,55 @@ export const Preview = function ({
           <span className={sectionLabelClassName}>
             {t('estimated-payouts.title')}
           </span>
-          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <span className="text-sm text-neutral-500">
-              {toTotal(current.yearOneTotal)}
-            </span>
-            <Arrow />
-            <span className="text-mid-md font-semibold text-neutral-950">
-              {toTotal(next.yearOneTotal)}
-            </span>
-            <span className="text-sm text-neutral-500">
-              {t('estimated-payouts.first-year')}
-            </span>
-          </div>
-          <PayoutsChart
-            deltaSeries={delta}
-            formatDate={value => formatShortDate(new Date(value), locale)}
-            formatDetail={point =>
-              formatPayoutValue({ symbol: token.symbol, value: point.y })
-            }
-            formatTooltipDate={value =>
-              formatShortDateWithYear(new Date(value), locale)
-            }
-            formatValue={value =>
-              formatPayoutValue({ symbol: token.symbol, value })
-            }
-            isPending={isLoadingForecast}
-            series={base}
-            ticks={getPayoutAxisTicks(base)}
-            unlockX={undefined}
-          />
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <LegendItem label={legendBase} swatchClassName="bg-orange-500" />
-            <LegendItem label={legendDelta} swatchClassName="bg-orange-200" />
-          </div>
+          {hasForecast ? (
+            <>
+              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                <span className="text-sm text-neutral-500">
+                  {toTotal(current.yearOneTotal)}
+                </span>
+                <Arrow />
+                <span className="text-mid-md font-semibold text-neutral-950">
+                  {toTotal(next.yearOneTotal)}
+                </span>
+                <span className="text-sm text-neutral-500">
+                  {t('estimated-payouts.first-year')}
+                </span>
+              </div>
+              <PayoutsChart
+                deltaSeries={delta}
+                formatDate={value => formatShortDate(new Date(value), locale)}
+                formatDetail={point =>
+                  formatPayoutValue({ symbol: token.symbol, value: point.y })
+                }
+                formatTooltipDate={value =>
+                  formatShortDateWithYear(new Date(value), locale)
+                }
+                formatValue={value =>
+                  formatPayoutValue({ symbol: token.symbol, value })
+                }
+                isPending={false}
+                series={base}
+                ticks={getPayoutAxisTicks(base)}
+                unlockX={undefined}
+              />
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                <LegendItem
+                  label={legendBase}
+                  swatchClassName="bg-orange-500"
+                />
+                <LegendItem
+                  label={legendDelta}
+                  swatchClassName="bg-orange-200"
+                />
+              </div>
+            </>
+          ) : (
+            <PayoutsFallback
+              hasError={hasError}
+              isPending={isLoadingForecast && !hasError}
+              onRetry={retry}
+            />
+          )}
         </div>
       </div>
       <CallToActionContainer>

@@ -50,7 +50,18 @@
     }
   },
   "supply": {
-    "correction": "350000000000000000000000000",
+    "corrections": [
+      {
+        "amount": "682839038000000000000000000",
+        "from": "2025-09-23",
+        "source": "Off-chain treasury 504,010,712 + Binance campaigns 178,828,326"
+      },
+      {
+        "amount": "562839038000000000000000000",
+        "from": "2026-09-14",
+        "source": "Off-chain treasury 384,010,712 + Binance campaigns 178,828,326"
+      }
+    ],
     "merkleLocked": 50
   },
   "tvl": {

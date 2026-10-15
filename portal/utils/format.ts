@@ -120,12 +120,17 @@ export const formatTVL = function (amount: number | string) {
 // is used (it rounds based on significant digits, eg. "420M", "1.2B").
 // Compact notation defaults to "min2" grouping, which drops the separator on
 // 4-digit numbers (eg. "2065,44 M" in Spanish), so force it.
-const compactFiatFormatter = (locale: string, maximumFractionDigits?: number) =>
+const compactFiatFormatter = (
+  locale: string,
+  maximumFractionDigits?: number,
+  roundingMode?: Intl.NumberFormatOptions['roundingMode'],
+) =>
   new Intl.NumberFormat(locale, {
     compactDisplay: 'short',
     notation: 'compact',
     useGrouping: 'always',
     ...(maximumFractionDigits !== undefined && { maximumFractionDigits }),
+    ...(roundingMode !== undefined && { roundingMode }),
   })
 
 export const formatCompactFiat = (
@@ -140,10 +145,12 @@ export const formatCompactFiatParts = function (
   value: number,
   locale: string,
   maximumFractionDigits = 2,
+  roundingMode?: Intl.NumberFormatOptions['roundingMode'],
 ) {
   const parts = compactFiatFormatter(
     locale,
     maximumFractionDigits,
+    roundingMode,
   ).formatToParts(value)
   const suffix = parts.find(p => p.type === 'compact')?.value ?? ''
   const number = parts

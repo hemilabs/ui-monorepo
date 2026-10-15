@@ -15,15 +15,19 @@ import {
 } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
 import { getNativeToken } from 'utils/nativeToken'
-import { unixNowTimestamp } from 'utils/time'
 import { formatUnits } from 'viem'
 
 import { useStakingDashboard } from '../../../_context/stakingDashboardContext'
 import { useEstimateIncreaseUnlockTimeFees } from '../../../_hooks/useEstimateIncreaseUnlockTimeFees'
 import { useIncreaseUnlockTime } from '../../../_hooks/useIncreaseUnlockTime'
-import { minDays } from '../../../_utils/lockCreationTimes'
+import {
+  getMinExtensionDays,
+  getUnlockInfo,
+  maxDays,
+  minDays,
+} from '../../../_utils/lockCreationTimes'
 import { getLockupErrorMessage } from '../../../_utils/lockupError'
-import { getNearestValidValues, isValidLockup } from '../../lockup'
+import { isValidLockup } from '../../lockup'
 
 import { Preview } from './preview'
 import { RetryIncreaseUnlockTime } from './retryIncreaseUnlockTime'
@@ -46,7 +50,7 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
   // stakingDashboardOperation and stakingPosition will always be defined here
   const { input, inputDays, lockupDays, stakingPosition, transactionHash } =
     stakingDashboardOperation!
-  const { tokenId } = stakingPosition!
+  const { lockTime, timestamp, tokenId } = stakingPosition!
 
   const stakingDashboardStatus =
     stakingDashboardOperation?.status ?? StakingDashboardStatus.STAKE_TX_PENDING
@@ -161,38 +165,21 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
       updateStakingDashboardOperation,
     })
 
-  const calculateCurrentLockupDays = function () {
-    if (
-      stakingPosition?.lockTime !== undefined &&
-      stakingPosition?.timestamp !== undefined
-    ) {
-      const currentTimestamp = unixNowTimestamp()
-      const sixDays = BigInt(6 * 24 * 60 * 60)
-      const secondsPerDay = BigInt(24 * 60 * 60)
-
-      // Calculate the current unlock time
-      const currentEnd =
-        BigInt(stakingPosition.timestamp) + BigInt(stakingPosition.lockTime)
-      const roundedCurrentEnd = (currentEnd / sixDays) * sixDays
-
-      // Calculate how many days from now until unlock
-      const secondsRemaining = roundedCurrentEnd - currentTimestamp
-      const daysFromNow = Number(secondsRemaining / secondsPerDay)
-
-      // Round to match the minimum days (12 days)
-      return Math.max(0, Math.round(daysFromNow)) + minDays
+  const getMinLocked = function () {
+    if (lockTime === undefined || timestamp === undefined) {
+      return minDays
     }
-
-    return undefined
+    const { currentTimeInSeconds, unlockTime } = getUnlockInfo({
+      lockTime,
+      timestamp,
+    })
+    return (
+      getMinExtensionDays({ lockEnd: unlockTime, now: currentTimeInSeconds }) ??
+      maxDays
+    )
   }
 
-  const currentLockupDays = calculateCurrentLockupDays()
-  const nearest = getNearestValidValues({
-    minLocked: currentLockupDays,
-    value: currentLockupDays ?? minDays,
-  })
-
-  const minLocked = nearest?.maxValue ?? minDays
+  const minLocked = getMinLocked()
 
   const isValid = isValidLockup({ minLocked, value: lockupDays! })
 

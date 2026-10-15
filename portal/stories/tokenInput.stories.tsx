@@ -40,6 +40,7 @@ const meta = {
     disabled: false,
     errorKey: 'none',
     label: 'Amount',
+    showBalance: true,
     showFiatBalance: false,
     token: hemiToken,
     tokenSelector: <TokenSelectorReadOnly logoVersion="L1" token={hemiToken} />,
@@ -60,6 +61,7 @@ const meta = {
     label: { control: 'text' },
     maxBalanceButton: { control: false },
     onChange: { control: false },
+    showBalance: { control: 'boolean' },
     showFiatBalance: { control: false },
     token: { control: false },
     tokenSelector: { control: false },
@@ -84,7 +86,7 @@ const meta = {
         {...args}
         maxBalanceButton={
           <MaxButton
-            disabled={args.disabled}
+            disabled={args.disabled ?? false}
             onClick={() => updateArgs({ value: walletBalance })}
           />
         }
@@ -100,6 +102,10 @@ export default meta
 type Story = StoryObj<typeof TokenInput>
 
 export const Default: Story = {}
+
+export const WithoutBalance: Story = {
+  args: { showBalance: false },
+}
 
 export const WithHeaderAction: Story = {
   render: args =>

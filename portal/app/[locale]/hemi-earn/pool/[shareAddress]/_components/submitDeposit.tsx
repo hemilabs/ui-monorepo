@@ -50,7 +50,11 @@ export const SubmitDeposit = function ({
       submitButton={
         <Button
           disabled={
-            !canDeposit || isRunningOperation || isLoading || isAllowanceError
+            !canDeposit ||
+            isRunningOperation ||
+            isLoading ||
+            isAllowanceError ||
+            !!validationError
           }
           size="small"
           type="submit"

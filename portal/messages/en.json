@@ -317,6 +317,8 @@
         "type": "Type"
       },
       "connect-to-view": "Connect your wallet to view your earn transactions.",
+      "could-not-load-all-transactions": "We couldn't load all your transactions",
+      "could-not-load-transactions": "We couldn't load your transactions",
       "deposit": "Deposit",
       "drawer": {
         "deposit-heading": "Stake deposit details",
@@ -450,6 +452,10 @@
       "title": "Estimated payouts",
       "unlocks-on": "Unlocks {date}"
     },
+    "estimator": {
+      "quick-amounts": "Quick amounts",
+      "yours": "Yours · {amount}"
+    },
     "form": {
       "approve-and-stake": "Approve and Stake",
       "approximate": "~{percentage}",
@@ -530,6 +536,7 @@
       "action": "Action",
       "active": "Active",
       "add-liquidity-to-lockup": "Add ${symbol} to this lockup",
+      "add-time-available-on": "Available on {date}",
       "add-time-to-lockup": "Add time to this lockup",
       "burned": "Burned",
       "claim": "Claim",

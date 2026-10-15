@@ -1,9 +1,12 @@
 import {
+  getExtensionAvailableAt,
+  getMinExtensionDays,
   getNearestPreset,
   getUnlockInfo,
   predictVotingPower,
   wholeDaysToSeconds,
 } from 'app/[locale]/hemi-stake/_utils/lockCreationTimes'
+import { secondsPerDay } from 'utils/time'
 import {
   MaxLockDurationSeconds,
   MinLockDurationSeconds,
@@ -197,5 +200,68 @@ describe('wholeDaysToSeconds', function () {
 
   it('clamps to the shortest lock the contract takes', function () {
     expect(wholeDaysToSeconds(1)).toBe(BigInt(MinLockDurationSeconds))
+  })
+})
+
+describe('getMinExtensionDays', function () {
+  const lockEnd = 3423 * SixDaysSeconds
+  // Picks the moment at which reaching the next epoch takes exactly `minSeconds`
+  const nowFor = (minSeconds: number) => lockEnd + SixDaysSeconds - minSeconds
+
+  it('returns null when the lock already ends at the max for the current epoch', function () {
+    const now = lockEnd - MaxLockDurationSeconds + 1
+    expect(getMinExtensionDays({ lockEnd, now })).toBeNull()
+  })
+
+  it('returns null when the next epoch is beyond the max lock duration', function () {
+    expect(
+      getMinExtensionDays({ lockEnd, now: nowFor(MaxLockDurationSeconds + 1) }),
+    ).toBeNull()
+  })
+
+  it('returns the max days when the next epoch is reachable only with the max lock duration', function () {
+    expect(
+      getMinExtensionDays({ lockEnd, now: nowFor(MaxLockDurationSeconds) }),
+    ).toBe(1461)
+  })
+
+  it('caps the step at the max days', function () {
+    expect(
+      getMinExtensionDays({ lockEnd, now: nowFor(1459 * secondsPerDay) }),
+    ).toBe(1461)
+  })
+
+  it('returns the step that reaches the next epoch exactly', function () {
+    expect(
+      getMinExtensionDays({ lockEnd, now: nowFor(102 * secondsPerDay) }),
+    ).toBe(102)
+  })
+
+  it('rounds up to the next step when a day is not enough', function () {
+    expect(
+      getMinExtensionDays({ lockEnd, now: nowFor(102 * secondsPerDay + 1) }),
+    ).toBe(108)
+  })
+
+  it('returns the min days while the min lock duration reaches the next epoch', function () {
+    expect(
+      getMinExtensionDays({ lockEnd, now: nowFor(MinLockDurationSeconds) }),
+    ).toBe(12)
+  })
+
+  it('returns the next step once the min lock duration is not enough', function () {
+    expect(
+      getMinExtensionDays({ lockEnd, now: nowFor(MinLockDurationSeconds + 1) }),
+    ).toBe(18)
+  })
+})
+
+describe('getExtensionAvailableAt', function () {
+  const lockEnd = 3423 * SixDaysSeconds
+
+  it('returns the first moment the lock can be extended', function () {
+    const availableAt = getExtensionAvailableAt(lockEnd)
+    expect(getMinExtensionDays({ lockEnd, now: availableAt - 1 })).toBeNull()
+    expect(getMinExtensionDays({ lockEnd, now: availableAt })).toBe(1461)
   })
 })

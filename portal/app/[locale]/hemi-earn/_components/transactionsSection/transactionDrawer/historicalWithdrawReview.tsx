@@ -15,6 +15,7 @@ import { useTranslations } from 'use-intl'
 import { type Hash } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { defaultRedeemSlippage } from '../../../_constants/slippage'
 import { useCooldownDuration } from '../../../_hooks/useCooldownDuration'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
@@ -46,6 +47,7 @@ import {
 import { ClaimFromVaultBanner } from './claimFromVault'
 import { RemoteFailedBanner } from './remoteFailed'
 import { SettleBanner } from './settleShared'
+import { RetrySlippageTooltip } from './slippageTooltip'
 
 type Props = {
   callToAction?: ReactNode
@@ -411,6 +413,12 @@ export const HistoricalWithdrawReview = function ({
       }
       amount={displayAmount}
       callToAction={callToAction}
+      endAdornment={
+        <RetrySlippageTooltip
+          fallback={defaultRedeemSlippage}
+          transaction={transaction}
+        />
+      }
       heading={t('withdraw-heading')}
       onClose={onClose}
       steps={steps}

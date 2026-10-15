@@ -36,17 +36,35 @@ export const resolveErrorKey = (
 export const computeIsLoading = ({
   balanceLoaded,
   isAllowanceLoading,
+  isNativeBalancePending,
   isPreviewLoading,
   validInput,
 }: {
   balanceLoaded: boolean
   isAllowanceLoading: boolean
+  isNativeBalancePending: boolean
   isPreviewLoading: boolean
   validInput: boolean
-}) => isAllowanceLoading || !balanceLoaded || (validInput && isPreviewLoading)
+}) =>
+  isAllowanceLoading ||
+  !balanceLoaded ||
+  isNativeBalancePending ||
+  (validInput && isPreviewLoading)
 
-// Preview issue takes precedence — it's more specific and mutually exclusive with the validation error.
-export const resolveValidationError = (
-  previewIssueMessage: string | undefined,
-  validationError: string | undefined,
-) => previewIssueMessage ?? validationError
+export const resolveZeroNativeBalanceError = ({
+  nativeBalance,
+  zeroBalanceMessage,
+}: {
+  nativeBalance: bigint | undefined
+  zeroBalanceMessage: string
+}) => (nativeBalance === BigInt(0) ? zeroBalanceMessage : undefined)
+
+export const resolveValidationError = ({
+  previewIssueMessage,
+  validationError,
+  zeroBalanceError,
+}: {
+  previewIssueMessage: string | undefined
+  validationError: string | undefined
+  zeroBalanceError: string | undefined
+}) => previewIssueMessage ?? validationError ?? zeroBalanceError

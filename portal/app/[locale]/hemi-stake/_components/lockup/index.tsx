@@ -56,7 +56,7 @@ type NearestValidValuesProps = {
   value: number
 }
 
-export function getNearestValidValues({
+function getNearestValidValues({
   minLocked,
   value,
 }: NearestValidValuesProps): NearestValidValues {
@@ -323,7 +323,7 @@ export function Lockup({
                 variant="info"
               >
                 <div className="group/icon flex items-center">
-                  <InfoIcon className="[&>g>path]:transition-colors [&>g>path]:duration-200 group-hover/icon:[&>g>path]:fill-neutral-950" />
+                  <InfoIcon className="group-hover/icon:[&>g>path]:fill-neutral-950" />
                 </div>
               </Tooltip>
             )}

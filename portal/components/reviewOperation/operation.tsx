@@ -21,6 +21,7 @@ export const Operation = ({
   amount,
   bottomSection,
   callToAction,
+  endAdornment,
   heading,
   onClose,
   steps,
@@ -34,7 +35,9 @@ export const Operation = ({
     </div>
     <ReviewOperation
       aboveCallToAction={aboveCallToAction}
-      amount={<Amount token={token} value={amount} />}
+      amount={
+        <Amount endAdornment={endAdornment} token={token} value={amount} />
+      }
       bottomSection={bottomSection}
       callToAction={callToAction}
       steps={steps}

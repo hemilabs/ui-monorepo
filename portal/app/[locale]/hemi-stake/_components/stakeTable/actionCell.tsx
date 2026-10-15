@@ -1,18 +1,31 @@
 import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { Row } from '@tanstack/react-table'
+import { Tooltip } from 'components/tooltip'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useMenuKeyboard } from 'hooks/useMenuKeyboard'
-import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import {
+  ReactNode,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import { createPortal } from 'react-dom'
 import { type StakingPosition } from 'types/stakingDashboard'
-import { useTranslations } from 'use-intl'
+import { useLocale, useTranslations } from 'use-intl'
+import { formatDate } from 'utils/format'
 import { formatUnits } from 'viem'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
 import { PlusIcon } from '../../_icons/plusIcon'
-import { getUnlockInfo, minDays } from '../../_utils/lockCreationTimes'
+import {
+  getExtensionAvailableAt,
+  getUnlockInfo,
+  minDays,
+} from '../../_utils/lockCreationTimes'
 
 import { ActionButton } from './actionButton'
 
@@ -21,28 +34,48 @@ type ActionItemProps = {
   icon: ReactNode
   label: string
   onClick?: VoidFunction
+  tooltip?: string
 }
 
-const ActionItem = ({
+const ActionItem = function ({
   enabled = true,
   icon,
   label,
   onClick,
-}: ActionItemProps) => (
-  <button
-    aria-disabled={!enabled}
-    className={`flex w-full items-center gap-2 rounded px-3 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 ${
-      enabled
-        ? 'cursor-pointer hover:bg-neutral-50 hover:text-neutral-950'
-        : 'cursor-default [&>*]:opacity-50'
-    }`}
-    onClick={enabled ? onClick : undefined}
-    type="button"
-  >
-    {icon}
-    <span>{label}</span>
-  </button>
-)
+  tooltip,
+}: ActionItemProps) {
+  const tooltipId = useId()
+  return (
+    <Tooltip
+      placement="bottom"
+      text={tooltip}
+      trigger={['hover', 'focus']}
+      variant="simple"
+    >
+      <>
+        <button
+          aria-describedby={tooltip ? tooltipId : undefined}
+          aria-disabled={!enabled}
+          className={`flex w-full items-center gap-2 rounded px-3 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 ${
+            enabled
+              ? 'cursor-pointer hover:bg-neutral-50 hover:text-neutral-950'
+              : 'cursor-default [&>*]:opacity-50'
+          }`}
+          onClick={enabled ? onClick : undefined}
+          type="button"
+        >
+          {icon}
+          <span>{label}</span>
+        </button>
+        {tooltip && (
+          <span className="sr-only" id={tooltipId}>
+            {tooltip}
+          </span>
+        )}
+      </>
+    </Tooltip>
+  )
+}
 
 type Props = {
   row: Row<StakingPosition>
@@ -50,6 +83,7 @@ type Props = {
 
 export function ActionCell({ row }: Props) {
   const t = useTranslations('hemi-stake')
+  const locale = useLocale()
   const { decimals, symbol } = useHemiToken()
   const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLDivElement>(null)
@@ -131,10 +165,13 @@ export function ActionCell({ row }: Props) {
     triggerRef,
   })
 
-  const { timeRemainingSeconds } = getUnlockInfo({
-    lockTime,
-    timestamp,
-  })
+  const { currentTimeInSeconds, timeRemainingSeconds, unlockTime } =
+    getUnlockInfo({
+      lockTime,
+      timestamp,
+    })
+  const extensionAvailableAt = getExtensionAvailableAt(unlockTime)
+  const canExtend = currentTimeInSeconds >= extensionAvailableAt
 
   function handleIncreaseAmount() {
     closeAndFocusTrigger()
@@ -190,10 +227,20 @@ export function ActionCell({ row }: Props) {
               onClick={handleIncreaseAmount}
             />
             <ActionItem
-              enabled={timeRemainingSeconds > 0}
+              enabled={timeRemainingSeconds > 0 && canExtend}
               icon={<PlusIcon />}
               label={t('table.add-time-to-lockup')}
               onClick={handleIncreaseUnlockTime}
+              tooltip={
+                canExtend
+                  ? undefined
+                  : t('table.add-time-available-on', {
+                      date: formatDate(
+                        new Date(extensionAvailableAt * 1000),
+                        locale,
+                      ),
+                    })
+              }
             />
           </div>,
           document.body,

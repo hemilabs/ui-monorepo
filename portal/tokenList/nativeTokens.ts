@@ -8,7 +8,8 @@ import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { mainnet } from 'networks/mainnet'
 import { sepolia } from 'networks/sepolia'
-import { Token } from 'types/token'
+import { type EvmToken, Token } from 'types/token'
+import { getL1LogoURI } from 'utils/l1Logo'
 import { type Address, type Chain } from 'viem'
 
 // Special address used by OP to store bridged eth
@@ -17,9 +18,9 @@ import { type Address, type Chain } from 'viem'
 export const NativeTokenSpecialAddressOnL2 =
   '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000' as Address
 
-const ethLogoURI = 'https://hemilabs.github.io/token-list/l1Logos/eth.svg'
-
 const hemiEthLogoURI = 'https://hemilabs.github.io/token-list/logos/eth.svg'
+
+const ethLogoURI = getL1LogoURI({ logoURI: hemiEthLogoURI })
 
 const nativeTokens: Token[] = [
   {
@@ -84,15 +85,15 @@ const nativeTokens: Token[] = [
 
 const addBitcoinTokens = function ({
   btcChain,
-  hemiBtcAddress,
   hemiChain,
 }: {
   btcChain: BtcChain
-  hemiBtcAddress: Address
   hemiChain: Chain
 }) {
-  const btcToken = hemilabsTokenList.tokens.find(
-    t => t.chainId === hemiChain.id && t.address === hemiBtcAddress,
+  const btcToken = (hemilabsTokenList.tokens as EvmToken[]).find(
+    t =>
+      t.chainId === hemiChain.id &&
+      t.extensions?.bridgeInfo?.[btcChain.id] !== undefined,
   )
 
   if (!btcToken) {
@@ -106,7 +107,7 @@ const addBitcoinTokens = function ({
     extensions: {
       bridgeInfo: {
         [hemiChain.id]: {
-          tokenAddress: hemiBtcAddress,
+          tokenAddress: btcToken.address as Address,
         },
       },
     },
@@ -118,15 +119,11 @@ const addBitcoinTokens = function ({
 
 addBitcoinTokens({
   btcChain: bitcoinTestnet,
-  hemiBtcAddress:
-    '0x36Ab5Dba83d5d470F670BC4c06d7Da685d9afAe7' satisfies Address,
   hemiChain: hemiTestnet,
 })
 
 addBitcoinTokens({
   btcChain: bitcoinMainnet,
-  hemiBtcAddress:
-    '0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28' satisfies Address,
   hemiChain: hemiMainnet,
 })
 

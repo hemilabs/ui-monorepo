@@ -14,7 +14,6 @@ import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { getApprovalAmount } from 'utils/approval'
-import { createErc20AllowanceStateOverride } from 'utils/erc20StateOverride'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { type Address, type Hash, formatUnits } from 'viem'
@@ -70,6 +69,7 @@ import {
   WithdrawStatus,
   type WithdrawStatusType,
 } from '../../_types/operations'
+import { createFeeEstimateStateOverride } from '../../_utils/feeEstimateStateOverride'
 
 import { deriveCooldownPostAction } from './cooldownPostAction'
 import { RetryWithdraw } from './retryWithdraw'
@@ -330,8 +330,8 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         shares,
       }),
       query: { enabled: !!address && shares > BigInt(0) && !!quote },
-      stateOverride: createErc20AllowanceStateOverride({
-        enabled: needsApproval,
+      stateOverride: createFeeEstimateStateOverride({
+        needsApproval,
         owner: address,
         spender: routerAddress,
         token: pool.shareToken,

@@ -8,22 +8,20 @@ export const getL1BridgePair = function (
   token: EvmToken,
   remoteNetworks: RemoteChain[],
 ) {
-  const bridgeInfo = token.extensions?.bridgeInfo
-  if (!bridgeInfo) {
+  // LayerZero tokens have no bridgeInfo, so fall back to their peers
+  const pairs = token.extensions?.bridgeInfo ?? token.extensions?.oft?.peers
+  if (!pairs) {
     return null
   }
 
-  const l1ChainIdStr = Object.keys(bridgeInfo)[0]
-  if (!l1ChainIdStr) {
-    return null
-  }
-
-  const network = remoteNetworks.find(n => n.id.toString() === l1ChainIdStr)
+  const network = Object.keys(pairs)
+    .map(chainId => remoteNetworks.find(n => n.id.toString() === chainId))
+    .find(n => n !== undefined)
   if (!network) {
     return null
   }
 
-  const bridgeAddress = bridgeInfo[l1ChainIdStr]?.tokenAddress
+  const bridgeAddress = pairs[network.id.toString()]?.tokenAddress
   // tokenAddress may not be a real 0x address (e.g. "BTC" for Bitcoin-backed
   // tokens), so guard isAddressEqual to avoid throwing during render.
   const isNativeEthOnL2 =

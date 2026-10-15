@@ -11,6 +11,9 @@ export const SupportedChains: number[] = [hemi.id, hemiSepolia.id]
 // In the contract: YEAR = 365.25 days, SIX_DAYS = YEAR / (12 * 5) = 525,960 seconds
 export const SixDaysSeconds = 525_960
 
+export const snapToEpoch = (timestamp: number) =>
+  Math.floor(timestamp / SixDaysSeconds) * SixDaysSeconds
+
 // See https://docs.soliditylang.org/en/latest/units-and-global-variables.html#time-units
 // Maximum lock duration is 4 years (a year is defined in the contract as 365.25 days)
 export const MaxLockDurationSeconds = 4 * 365.25 * 24 * 60 * 60

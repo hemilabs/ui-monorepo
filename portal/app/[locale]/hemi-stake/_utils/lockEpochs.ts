@@ -1,9 +1,10 @@
-import { MaxLockDurationSeconds, SixDaysSeconds } from 've-hemi-actions'
+import {
+  MaxLockDurationSeconds,
+  SixDaysSeconds,
+  snapToEpoch,
+} from 've-hemi-actions'
 
 const maxLockSeconds = BigInt(MaxLockDurationSeconds)
-
-const snapToEpoch = (timestamp: number) =>
-  Math.floor(timestamp / SixDaysSeconds) * SixDaysSeconds
 
 export const getLockEnd = ({
   lockTime,

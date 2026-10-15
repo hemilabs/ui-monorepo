@@ -1,6 +1,10 @@
 import { StakingPosition } from 'types/stakingDashboard'
 import { secondsPerDay, unixNowTimestamp } from 'utils/time'
-import { MaxLockDurationSeconds, MinLockDurationSeconds } from 've-hemi-actions'
+import {
+  MaxLockDurationSeconds,
+  MinLockDurationSeconds,
+  SixDaysSeconds,
+} from 've-hemi-actions'
 
 import { getLockEnd, getWeightAt } from './lockEpochs'
 
@@ -47,6 +51,28 @@ export function daysToSeconds(days: number | bigint): number | bigint {
 
 export const wholeDaysToSeconds = (days: number) =>
   daysToSeconds(BigInt(Math.trunc(days)))
+
+// The contract only accepts an extension whose rounded-down end lands at least one epoch past the current one
+export const getExtensionAvailableAt = (lockEnd: number) =>
+  lockEnd + SixDaysSeconds - MaxLockDurationSeconds
+
+export const getMinExtensionDays = function ({
+  lockEnd,
+  now,
+}: {
+  lockEnd: number
+  now: number
+}) {
+  if (now < getExtensionAvailableAt(lockEnd)) {
+    return null
+  }
+  const minSeconds = lockEnd + SixDaysSeconds - now
+  if (minSeconds <= MinLockDurationSeconds) {
+    return minDays
+  }
+  const days = Math.ceil(minSeconds / secondsPerDay)
+  return Math.min(minDays + Math.ceil((days - minDays) / step) * step, maxDays)
+}
 
 type GetUnlockInfoProps = {
   timestamp: number | bigint

@@ -317,6 +317,8 @@
         "type": "Tipo"
       },
       "connect-to-view": "Conecte su billetera para ver sus transacciones de earn.",
+      "could-not-load-all-transactions": "No pudimos cargar todas sus transacciones",
+      "could-not-load-transactions": "No pudimos cargar sus transacciones",
       "deposit": "Depósito",
       "drawer": {
         "deposit-heading": "Detalles del depósito de stake",
@@ -450,6 +452,10 @@
       "title": "Pagos estimados",
       "unlocks-on": "Se desbloquea el {date}"
     },
+    "estimator": {
+      "quick-amounts": "Montos rápidos",
+      "yours": "Su saldo · {amount}"
+    },
     "form": {
       "approve-and-stake": "Aprobar y Hacer Stake",
       "approximate": "~{percentage}",
@@ -530,6 +536,7 @@
       "action": "Acción",
       "active": "Activo",
       "add-liquidity-to-lockup": "Agregar ${symbol} a este bloqueo",
+      "add-time-available-on": "Disponible el {date}",
       "add-time-to-lockup": "Agregar tiempo a este bloqueo",
       "burned": "Quemado",
       "claim": "Reclamar",

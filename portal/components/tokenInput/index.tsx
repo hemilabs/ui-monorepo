@@ -3,16 +3,15 @@ import { RenderFiatBalance } from 'components/fiatBalance'
 import { ComponentProps, ComponentType, ReactNode } from 'react'
 import { Token } from 'types/token'
 import { useTranslations } from 'use-intl'
-import { parseTokenUnits } from 'utils/token'
 
-import { isInputError } from './utils'
+import { isInputError, parseAmountInput } from './utils'
 
 type Props<T extends Token> = {
   balanceComponent?: ComponentType<{
     token: T
   }>
   balanceLabel?: string
-  disabled: boolean
+  disabled?: boolean
   errorKey: string | undefined
   // Overrides the default fiat preview (input × token price). Use when the
   // input unit isn't directly priced and the caller has a pre-converted
@@ -27,11 +26,14 @@ type Props<T extends Token> = {
   // `RenderFiatBalance`; callers pricing against a different feed (e.g. Hemi
   // Earn's oracle-merged `RenderEarnFiatBalance`) pass their own.
   fiatBalanceComponent?: ComponentType<ComponentProps<typeof RenderFiatBalance>>
+  // Rendered as the last row inside the card, full width.
+  footer?: ReactNode
   // Rendered at the right of the label row (e.g. the Hemi Earn settings gear).
   headerAction?: ReactNode
   label: string
   maxBalanceButton?: ReactNode
   onChange: (value: string) => void
+  showBalance?: boolean
   showFiatBalance?: boolean
   token: T
   tokenSelector: ReactNode
@@ -51,14 +53,16 @@ const getTextColor = function (value: string, errorKey: string | undefined) {
 export const TokenInput = function <T extends Token>({
   balanceComponent,
   balanceLabel,
-  disabled,
+  disabled = false,
   errorKey,
   fiatBalance,
   fiatBalanceComponent,
+  footer,
   headerAction,
   label,
   maxBalanceButton,
   onChange,
+  showBalance = true,
   showFiatBalance = true,
   token,
   tokenSelector,
@@ -67,6 +71,7 @@ export const TokenInput = function <T extends Token>({
   const t = useTranslations('tunnel-page')
   const BalanceComponent = balanceComponent ?? Balance
   const FiatBalanceComponent = fiatBalanceComponent ?? RenderFiatBalance
+  const amount = parseAmountInput(value, token)
   return (
     <div className="flex min-h-31 flex-col justify-between rounded-lg border border-solid border-transparent bg-neutral-50 p-4 font-medium text-neutral-500 hover:shadow-bs">
       <div className="flex items-center justify-between gap-x-2">
@@ -88,35 +93,40 @@ export const TokenInput = function <T extends Token>({
         </div>
         <div className="shrink-0">{tokenSelector}</div>
       </div>
-      <div className="flex items-center gap-x-2 text-sm">
-        {showFiatBalance && (
-          <div className="flex items-center text-neutral-500">
-            <span className="mr-1">$</span>
-            {fiatBalance ? (
-              <FiatBalanceComponent
-                balance={fiatBalance.balance}
-                queryStatus="success"
-                token={fiatBalance.token}
-              />
-            ) : !Number.isNaN(Number(value)) ? (
-              <FiatBalanceComponent
-                balance={parseTokenUnits(value, token)}
-                queryStatus="success"
-                token={token}
-              />
-            ) : null}
-          </div>
-        )}
-        <div className="ml-auto flex items-center justify-end gap-x-2 whitespace-nowrap">
-          <span className="text-neutral-500">
-            {balanceLabel ?? t('form.balance')}:
-          </span>
-          <span className="text-neutral-950">
-            <BalanceComponent token={token} />
-          </span>
-          {maxBalanceButton}
+      {(showBalance || showFiatBalance) && (
+        <div className="flex items-center gap-x-2 text-sm">
+          {showFiatBalance && (
+            <div className="flex items-center text-neutral-500">
+              <span className="mr-1">$</span>
+              {fiatBalance ? (
+                <FiatBalanceComponent
+                  balance={fiatBalance.balance}
+                  queryStatus="success"
+                  token={fiatBalance.token}
+                />
+              ) : amount !== undefined ? (
+                <FiatBalanceComponent
+                  balance={amount}
+                  queryStatus="success"
+                  token={token}
+                />
+              ) : null}
+            </div>
+          )}
+          {showBalance && (
+            <div className="ml-auto flex items-center justify-end gap-x-2 whitespace-nowrap">
+              <span className="text-neutral-500">
+                {balanceLabel ?? t('form.balance')}:
+              </span>
+              <span className="text-neutral-950">
+                <BalanceComponent token={token} />
+              </span>
+              {maxBalanceButton}
+            </div>
+          )}
         </div>
-      </div>
+      )}
+      {footer}
     </div>
   )
 }

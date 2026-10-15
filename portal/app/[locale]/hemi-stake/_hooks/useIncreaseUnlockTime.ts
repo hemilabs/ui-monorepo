@@ -11,7 +11,7 @@ import {
   StakingDashboardToken,
 } from 'types/stakingDashboard'
 import { unixNowTimestamp } from 'utils/time'
-import { IncreaseUnlockTimeEvents, SixDaysSeconds } from 've-hemi-actions'
+import { IncreaseUnlockTimeEvents, snapToEpoch } from 've-hemi-actions'
 import { increaseUnlockTime } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 
@@ -87,12 +87,26 @@ export const useIncreaseUnlockTime = function ({
           track?.('hemi stake - signed increase unlock time')
         },
       )
+      emitter.on('increase-unlock-time-failed-validation', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+
+        track?.('hemi stake - increase unlock time failed validation')
+      })
       emitter.on('user-signing-increase-unlock-time-error', function () {
         updateStakingDashboardOperation({
           status: StakingDashboardStatus.STAKE_TX_FAILED,
         })
 
         track?.('hemi stake - signing increase unlock time error')
+      })
+      emitter.on('increase-unlock-time-failed', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+
+        track?.('hemi stake - increase unlock time failed')
       })
       emitter.on(
         'increase-unlock-time-transaction-succeeded',
@@ -109,8 +123,7 @@ export const useIncreaseUnlockTime = function ({
                 // Calculate new unlock time (current time + chosen duration, rounded)
                 const rawUnlockTime =
                   unixNowTimestamp() + daysToSeconds(BigInt(lockupDays))
-                const sixDays = BigInt(SixDaysSeconds)
-                const newUnlockTime = (rawUnlockTime / sixDays) * sixDays
+                const newUnlockTime = BigInt(snapToEpoch(Number(rawUnlockTime)))
 
                 // New lockTime is duration from original start to new end
                 const newLockTime = newUnlockTime - BigInt(position.timestamp)
@@ -165,6 +178,13 @@ export const useIncreaseUnlockTime = function ({
           track?.('hemi stake - increase unlock time reverted')
         },
       )
+      emitter.on('unexpected-error', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+
+        track?.('hemi stake - unexpected error')
+      })
 
       on?.(emitter)
 

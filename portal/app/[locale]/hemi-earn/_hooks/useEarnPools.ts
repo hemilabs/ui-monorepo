@@ -14,21 +14,13 @@ import { useHemiEarnShares } from './useHemiEarnShares'
 // Combines the shares registry with independent TVL (per-share) and APY (one shared call) queries, each with its own freshness.
 export const useEarnPools = function () {
   const [networkType] = useNetworkType()
-  const {
-    data: shares = [],
-    isError: isSharesError,
-    isPending: isSharesPending,
-  } = useHemiEarnShares()
+  const { data: shares, isError, isPending } = useHemiEarnShares()
 
   // TVL is deliberately out of isPending: the page renders immediately and each cell shows its own skeleton via totalDepositsStatus.
   const tvlQueries = useQueries({
-    queries: shares.map(share => ({
-      ...earnTvlQueryOptions({
-        networkType,
-        stakingVault: share.stakingVault,
-      }),
-      enabled: shares.length > 0,
-    })),
+    queries: (shares ?? []).map(share =>
+      earnTvlQueryOptions({ networkType, stakingVault: share.stakingVault }),
+    ),
   })
 
   const { data: apyByVault, isPending: isApyQueryPending } = useQuery(
@@ -36,7 +28,7 @@ export const useEarnPools = function () {
   )
   const isApyPending = isApyApiConfigured && isApyQueryPending
 
-  const data: EarnPool[] = shares.map((share, index) => ({
+  const data: EarnPool[] | undefined = shares?.map((share, index) => ({
     apy: selectApyValue(apyByVault, isApyPending, share.stakingVault),
     assets: share.assets,
     exposureTokens: share.assets.map(a => ({
@@ -51,5 +43,5 @@ export const useEarnPools = function () {
     totalDepositsStatus: tvlQueries[index]?.status ?? 'pending',
   }))
 
-  return { data, isError: isSharesError, isPending: isSharesPending }
+  return { data, isError, isPending }
 }

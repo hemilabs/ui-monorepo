@@ -102,7 +102,10 @@ export async function sendBitcoin(
     outputs,
   })) {
     psbt.addOutput({
-      script: getOutputScript(output.address || address, btcNetwork),
+      script:
+        output.address !== undefined
+          ? bitcoin.address.toOutputScript(output.address, btcNetwork)
+          : getOutputScript(address, btcNetwork),
       value: output.value || 0,
     })
   }

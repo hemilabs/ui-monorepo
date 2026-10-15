@@ -218,11 +218,11 @@ export function ActionCell({ row }: Props) {
 
   const isActive = status === StakingPositionStatus.ACTIVE
   const isWalletOwner = !!address && isAddressEqual(owner as Address, address)
+  const canOperate = isWalletOwner && timeRemainingSeconds > 0
   // TODO #2496 enable these once the forecast reads the position's own reward
   // class, and #2481 defines how the part auto-relock extends is classed.
   // Not a protocol restriction: extending a non-transferable lock works today.
-  const canAutoRelock =
-    isActive && isWalletOwner && transferable && !forfeitable
+  const canAutoRelock = canOperate && isActive && transferable && !forfeitable
 
   // TODO #2481 read the flag from the position once the subgraph exposes it.
   // Flip it to reach the disable drawer while there is no data behind it.
@@ -264,13 +264,13 @@ export function ActionCell({ row }: Props) {
             style={{ left: menuPosition.left, top: menuPosition.top }}
           >
             <ActionItem
-              enabled={timeRemainingSeconds > 0}
+              enabled={canOperate}
               icon={<PlusIcon />}
               label={t('table.add-liquidity-to-lockup', { symbol })}
               onClick={handleIncreaseAmount}
             />
             <ActionItem
-              enabled={timeRemainingSeconds > 0 && canExtend}
+              enabled={canOperate && canExtend}
               icon={<PlusIcon />}
               label={t('table.add-time-to-lockup')}
               onClick={handleIncreaseUnlockTime}
@@ -286,7 +286,7 @@ export function ActionCell({ row }: Props) {
               }
             />
             <ActionItem
-              enabled={canAutoRelock && timeRemainingSeconds > 0}
+              enabled={canAutoRelock}
               icon={<AutoRelockIcon />}
               label={t(
                 autoRelock

@@ -6,6 +6,7 @@ import {
   VictoryBar,
   VictoryChart,
   VictoryLine,
+  VictoryStack,
   VictoryTooltip,
   VictoryVoronoiContainer,
 } from 'victory'
@@ -17,6 +18,7 @@ const chartColors = {
   neutral400: '#A3A3A3',
   neutral500: '#737373',
   neutral950: '#0A0A0A',
+  orange200: '#FFD1A5',
   orange500: '#FF600A',
 }
 
@@ -29,6 +31,7 @@ const widthByBreakpoint: ReadonlyArray<[number, number]> = [
   [screenBreakpoints.md, 420],
 ]
 
+const deltaSeriesName = 'delta-series'
 const unlockMarkerName = 'unlock-marker'
 
 const tooltipLabelStyle = {
@@ -54,42 +57,115 @@ const yAxisStyle = {
   grid: { stroke: chartColors.neutral200, strokeDasharray: '4,4' },
 }
 
+const tooltipRowHeight = 12
+const tooltipSwatchSize = 6
+
+const TooltipRow = ({
+  label,
+  swatchFill,
+  x,
+  y,
+}: {
+  label: string
+  swatchFill: string
+  x: number
+  y: number
+}) => (
+  <>
+    <rect
+      fill={swatchFill}
+      height={tooltipSwatchSize}
+      rx={1}
+      width={tooltipSwatchSize}
+      x={x}
+      y={y - tooltipSwatchSize / 2}
+    />
+    <text
+      dominantBaseline="central"
+      fill={chartColors.neutral950}
+      style={{ fontSize: 9 }}
+      textAnchor="start"
+      x={x + tooltipSwatchSize + 4}
+      y={y}
+    >
+      {label}
+    </text>
+  </>
+)
+
 function PayoutTooltipLabel({
   datum,
+  deltaSeries,
   formatDate,
   formatDetail,
   x,
   y,
 }: {
   datum?: PayoutPoint
+  deltaSeries?: PayoutPoint[]
   formatDate: (value: number) => string
   formatDetail: (point: PayoutPoint) => string
   x?: number
   y?: number
 }) {
-  if (datum === undefined) {
+  if (datum === undefined || x === undefined || y === undefined) {
     return null
   }
 
+  const delta = deltaSeries?.find(point => point.x === datum.x)
+
+  if (delta === undefined) {
+    return (
+      <text
+        dominantBaseline="central"
+        style={{ fontSize: 9 }}
+        textAnchor="middle"
+        x={x}
+        y={y}
+      >
+        <tspan fill={chartColors.neutral500}>{formatDate(datum.x)}</tspan>
+        <tspan dx={4} fill={chartColors.neutral950}>
+          {formatDetail(datum)}
+        </tspan>
+      </text>
+    )
+  }
+
+  const rowsLeft = x - 34
+
   return (
-    <text
-      dominantBaseline="central"
-      style={{ fontSize: 9 }}
-      textAnchor="middle"
-      x={x}
-      y={y}
-    >
-      <tspan fill={chartColors.neutral500}>{formatDate(datum.x)}</tspan>
-      <tspan dx={4} fill={chartColors.neutral950}>
-        {formatDetail(datum)}
-      </tspan>
-    </text>
+    <g>
+      <text
+        dominantBaseline="central"
+        fill={chartColors.neutral500}
+        style={{ fontSize: 9 }}
+        textAnchor="middle"
+        x={x}
+        y={y - tooltipRowHeight}
+      >
+        {formatDate(datum.x)}
+      </text>
+      <TooltipRow
+        label={formatDetail(datum)}
+        swatchFill={chartColors.orange500}
+        x={rowsLeft}
+        y={y}
+      />
+      <TooltipRow
+        label={formatDetail({ ...datum, y: datum.y + delta.y })}
+        swatchFill={chartColors.orange200}
+        x={rowsLeft}
+        y={y + tooltipRowHeight}
+      />
+    </g>
   )
 }
 
 type Props = {
+  deltaSeries?: PayoutPoint[]
   formatDate: (value: number) => string
   formatDetail: (point: PayoutPoint) => string
+  formatTooltipDate?: (value: number) => string
   formatValue: (value: number) => string
   isPending: boolean
   series: PayoutPoint[]
@@ -98,8 +174,10 @@ type Props = {
 }
 
 export const PayoutsChart = function ({
+  deltaSeries,
   formatDate,
   formatDetail,
+  formatTooltipDate = formatDate,
   formatValue,
   isPending,
   series,
@@ -114,8 +192,12 @@ export const PayoutsChart = function ({
   const toTooltipLabel = (point: PayoutPoint) =>
     `${formatDate(point.x)}  ${formatDetail(point)}`
 
-  const hasPayouts = series.some(point => point.y > 0)
-  const maxY = Math.max(...series.map(point => point.y), 0)
+  const totals = series.map(
+    (point, index) => point.y + (deltaSeries?.[index]?.y ?? 0),
+  )
+  const hasPayouts = totals.some(value => value > 0)
+  const maxY = Math.max(...totals, 0)
+  const stackedFlyout = deltaSeries ? { flyoutHeight: 48, flyoutWidth: 96 } : {}
 
   const halfSlot =
     series.length > 0
@@ -150,9 +232,11 @@ export const PayoutsChart = function ({
                 cornerRadius={8}
                 flyoutPadding={{ bottom: 6, left: 10, right: 10, top: 6 }}
                 flyoutStyle={{ fill: 'white', stroke: chartColors.neutral200 }}
+                {...stackedFlyout}
                 labelComponent={
                   <PayoutTooltipLabel
-                    formatDate={formatDate}
+                    deltaSeries={deltaSeries}
+                    formatDate={formatTooltipDate}
                     formatDetail={formatDetail}
                   />
                 }
@@ -163,7 +247,7 @@ export const PayoutsChart = function ({
             labels={({ datum }: { datum: PayoutPoint }) =>
               toTooltipLabel(datum)
             }
-            voronoiBlacklist={[unlockMarkerName]}
+            voronoiBlacklist={[deltaSeriesName, unlockMarkerName]}
             voronoiDimension="x"
           />
         }
@@ -173,11 +257,27 @@ export const PayoutsChart = function ({
         width={chartWidth}
       >
         {axes}
-        <VictoryBar
-          barRatio={0.7}
-          data={series}
-          style={{ data: { fill: chartColors.orange500 } }}
-        />
+        {deltaSeries === undefined ? (
+          <VictoryBar
+            barRatio={0.7}
+            data={series}
+            style={{ data: { fill: chartColors.orange500 } }}
+          />
+        ) : (
+          <VictoryStack>
+            <VictoryBar
+              barRatio={0.7}
+              data={series}
+              style={{ data: { fill: chartColors.orange500 } }}
+            />
+            <VictoryBar
+              barRatio={0.7}
+              data={deltaSeries}
+              name={deltaSeriesName}
+              style={{ data: { fill: chartColors.orange200 } }}
+            />
+          </VictoryStack>
+        )}
         {unlockX !== undefined && (
           <VictoryLine
             data={[

@@ -10,8 +10,6 @@ const isSegwitAddress = (address: string, network: bitcoin.Network) =>
 const isTaprootAddress = (address: string, network: bitcoin.Network) =>
   address.toLowerCase().startsWith(`${network.bech32}1p`)
 
-// bitcoinjs-lib needs an ECC library to turn a taproot address into a script,
-// so the script is built from the witness program instead
 export const getOutputScript = function (
   address: string,
   network: bitcoin.Network,
@@ -26,14 +24,14 @@ export const getOutputScript = function (
   return bitcoin.script.compile([bitcoin.opcodes.OP_1, data])
 }
 
-// Bitcoin Core's dust limit with its default dust relay fee of 3 sat/vB
+const dustRelayFeeRate = 3
+
 const getDustLimit = function (address: string, network: bitcoin.Network) {
   const outputSize = 8 + 1 + getOutputScript(address, network).length
   const inputSize = isSegwitAddress(address, network) ? 67 : 148
-  return 3 * (outputSize + inputSize)
+  return dustRelayFeeRate * (outputSize + inputSize)
 }
 
-// coinselect adds change above 148 × feeRate, which can still be dust
 export const removeDustChange = function ({
   address,
   network,

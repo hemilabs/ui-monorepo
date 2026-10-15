@@ -25,7 +25,6 @@ vi.mock('esplora-client', () => ({
 
 const { bitcoin: mainnet, testnet } = bitcoin.networks
 
-// Addresses from the BIP173 and BIP350 test vectors
 const p2trMainnet =
   'bc1p0xlxvlhemja6c4dqv22uapctqupfhlxm9h8z3k2e72q4k9hcz7vqzk5jj0'
 const p2trTestnet =
@@ -143,7 +142,6 @@ describe('sendBitcoin', function () {
     const provider = {
       getAccounts: vi.fn().mockResolvedValue([sender]),
       getNetwork: vi.fn().mockResolvedValue('testnet'),
-      // stop before the signed transaction is extracted and pushed
       signPsbt: vi.fn().mockRejectedValue(new Error('signed')),
     }
     return { fundingTx, provider }

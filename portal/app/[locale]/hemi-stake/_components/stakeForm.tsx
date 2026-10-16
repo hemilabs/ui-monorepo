@@ -37,6 +37,7 @@ const SideDrawer = function () {
     increasingAmount: !!stakingDashboardOperation,
     increasingUnlockTime: !!stakingDashboardOperation,
     staking: true,
+    togglingAutoRelock: !!stakingDashboardOperation?.stakingPosition,
     unlocking: !!unlockingDashboardOperation,
   }
 

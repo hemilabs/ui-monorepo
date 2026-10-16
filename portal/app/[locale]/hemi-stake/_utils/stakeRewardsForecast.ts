@@ -1,7 +1,6 @@
 import {
   MaxLockDurationSeconds,
   minLockAmount,
-  MinLockDurationSeconds,
   SixDaysSeconds,
   snapToEpoch,
 } from 've-hemi-actions'
@@ -17,11 +16,8 @@ const toFraction = function (numerator: bigint, denominator: bigint) {
   return Number(numerator) / Number(denominator)
 }
 
-const clampToLockLimits = (lockDurationInSeconds: number) =>
-  Math.min(
-    Math.max(lockDurationInSeconds, MinLockDurationSeconds),
-    MaxLockDurationSeconds,
-  )
+const capAtMaxLock = (lockDurationInSeconds: number) =>
+  Math.min(lockDurationInSeconds, MaxLockDurationSeconds)
 
 export const getEpochPayout = function ({
   transferableClassBaseline,
@@ -71,7 +67,7 @@ export const getRewardsForecast = function ({
   transferableClassWeight: bigint
 }) {
   const lockEnd = getLockEnd({
-    lockTime: clampToLockLimits(lockDurationInSeconds),
+    lockTime: capAtMaxLock(lockDurationInSeconds),
     timestamp: now,
   })
 

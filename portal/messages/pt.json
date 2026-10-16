@@ -412,10 +412,27 @@
     "claim-rewards-successful": "Recompensas reclamadas com sucesso",
     "drawer": {
       "approving": "A aprovar {symbol}",
+      "auto-relock": {
+        "apy": "TEA",
+        "decays-to-zero": "Cai para 0 em {date}",
+        "legend-after-disabling": "Depois de desativar",
+        "legend-today": "Hoje",
+        "legend-with-auto-relock": "Com rebloqueio automático",
+        "stays-at": "Fica em {votingPower}",
+        "step": "Atualizar o rebloqueio automático"
+      },
       "claim-position-rewards": "Reclamar recompensas da posição #{tokenId}",
       "claim-position-rewards-step": "Reclamar recompensas da posição #{tokenId}, épocas {fromEpoch}-{toEpoch} ({step} de {total})",
       "claim-rewards": "Reclamar recompensas",
       "claim-rewards-step": "Reclamar recompensas, épocas {fromEpoch}-{toEpoch} ({step} de {total})",
+      "disable-auto-relock": {
+        "heading": "Desativar rebloqueio automático",
+        "subheading": "Sua posição deixa de renovar a duração a cada época, então a contagem até o desbloqueio recomeça de onde está agora."
+      },
+      "enable-auto-relock": {
+        "heading": "Ativar rebloqueio automático",
+        "subheading": "Sua posição mantém a duração atual para sempre, como se você a estendesse uma época a cada época. Desligue e a contagem recomeça."
+      },
       "increase-amount": {
         "heading": "Adicionar ${symbol} a este bloqueio",
         "subheading": "Deposite ${symbol} adicionais em seu bloqueio existente para aumentar sua quantidade de stake e poder de governança."
@@ -549,6 +566,7 @@
       "claim-all-rewards": "Reclamar todas as recompensas",
       "claiming-paused": "A reivindicação de recompensas está pausada",
       "could-not-load-positions": "Não foi possível carregar suas posições",
+      "disable-auto-relock": "Desativar rebloqueio automático",
       "enable-auto-relock": "Ativar rebloqueio automático",
       "get-started": "Comece a fazer stake com seu ${symbol}",
       "get-started-burned": "As suas posições queimadas aparecerão aqui assim que os seus períodos de bloqueio terminarem.",

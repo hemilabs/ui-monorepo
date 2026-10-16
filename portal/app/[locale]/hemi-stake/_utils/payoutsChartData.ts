@@ -11,6 +11,9 @@ export type PayoutPoint = {
   y: number
 }
 
+const toAmount = (payout: bigint, decimals: number) =>
+  Number(formatUnits(payout, decimals))
+
 export const toPayoutSeries = ({
   decimals,
   lockEnd,
@@ -23,8 +26,33 @@ export const toPayoutSeries = ({
   payouts.map(({ payout, timestamp }) => ({
     afterUnlock: lockEnd !== undefined && timestamp >= lockEnd,
     x: timestamp * 1000,
-    y: Number(formatUnits(payout, decimals)),
+    y: toAmount(payout, decimals),
   }))
+
+export const toStackedPayoutSeries = function ({
+  current,
+  decimals,
+  next,
+}: {
+  current: Payout[]
+  decimals: number
+  next: Payout[]
+}) {
+  const points = current.map(function ({ payout, timestamp }, index) {
+    const other = next[index]?.payout ?? BigInt(0)
+    const [lower, higher] = payout < other ? [payout, other] : [other, payout]
+    const x = timestamp * 1000
+    return {
+      base: { afterUnlock: false, x, y: toAmount(lower, decimals) },
+      delta: { afterUnlock: false, x, y: toAmount(higher - lower, decimals) },
+    }
+  })
+
+  return {
+    base: points.map(point => point.base),
+    delta: points.map(point => point.delta),
+  }
+}
 
 export const getPayoutAxisTicks = function (series: PayoutPoint[]) {
   if (series.length === 0) {

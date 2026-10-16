@@ -2,6 +2,7 @@ import {
   getPayoutAxisTicks,
   getUnlockMarkerX,
   toPayoutSeries,
+  toStackedPayoutSeries,
 } from 'app/[locale]/hemi-stake/_utils/payoutsChartData'
 import { describe, expect, it } from 'vitest'
 
@@ -73,6 +74,51 @@ describe('toPayoutSeries', function () {
 
     expect(series.some(point => point.afterUnlock)).toBe(false)
     expect(getUnlockMarkerX(series)).toBeUndefined()
+  })
+})
+
+describe('toStackedPayoutSeries', function () {
+  const hemi = (amount: number) => BigInt(amount) * BigInt(1e18)
+  const stack = (current: bigint[], next: bigint[]) =>
+    toStackedPayoutSeries({
+      current: current.map((amount, index) => payout(index, amount)),
+      decimals: 18,
+      next: next.map((amount, index) => payout(index, amount)),
+    })
+
+  it('puts the smaller forecast at the base, whichever side it is', function () {
+    expect(
+      stack([hemi(3), hemi(9)], [hemi(8), hemi(4)]).base.map(p => p.y),
+    ).toEqual([3, 4])
+  })
+
+  it('stacks the gap between the two forecasts on top', function () {
+    expect(
+      stack([hemi(3), hemi(9)], [hemi(8), hemi(4)]).delta.map(p => p.y),
+    ).toEqual([5, 5])
+  })
+
+  it('adds up to the larger forecast at every epoch', function () {
+    const { base, delta } = stack([hemi(3), hemi(9)], [hemi(8), hemi(4)])
+    expect(base.map((point, index) => point.y + delta[index].y)).toEqual([8, 9])
+  })
+
+  it('leaves nothing on top when both forecasts match', function () {
+    expect(
+      stack([hemi(5), hemi(2)], [hemi(5), hemi(2)]).delta.map(p => p.y),
+    ).toEqual([0, 0])
+  })
+
+  it('keeps the epoch close on the x axis, in milliseconds', function () {
+    const { base, delta } = stack([hemi(1)], [hemi(2)])
+    expect(base[0].x).toBe(epochLength * 1000)
+    expect(delta[0].x).toBe(epochLength * 1000)
+  })
+
+  it('treats a missing epoch on the other side as nothing paid', function () {
+    const { base, delta } = stack([hemi(6)], [])
+    expect(base[0].y).toBe(0)
+    expect(delta[0].y).toBe(6)
   })
 })
 

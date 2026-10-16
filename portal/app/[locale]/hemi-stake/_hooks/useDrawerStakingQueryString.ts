@@ -4,6 +4,7 @@ const drawerModes = [
   'increasingAmount',
   'increasingUnlockTime',
   'staking',
+  'togglingAutoRelock',
   'unlocking',
   'claimingRewards',
 ] as const

@@ -412,10 +412,27 @@
     "claim-rewards-successful": "Recompensas reclamadas con éxito",
     "drawer": {
       "approving": "Aprobando {symbol}",
+      "auto-relock": {
+        "apy": "TEA",
+        "decays-to-zero": "Baja a 0 el {date}",
+        "legend-after-disabling": "Después de desactivar",
+        "legend-today": "Hoy",
+        "legend-with-auto-relock": "Con rebloqueo automático",
+        "stays-at": "Se mantiene en {votingPower}",
+        "step": "Actualizar el rebloqueo automático"
+      },
       "claim-position-rewards": "Reclamar recompensas de la posición #{tokenId}",
       "claim-position-rewards-step": "Reclamar recompensas de la posición #{tokenId}, épocas {fromEpoch}-{toEpoch} ({step} de {total})",
       "claim-rewards": "Reclamar recompensas",
       "claim-rewards-step": "Reclamar recompensas, épocas {fromEpoch}-{toEpoch} ({step} de {total})",
+      "disable-auto-relock": {
+        "heading": "Desactivar rebloqueo automático",
+        "subheading": "Su posición deja de renovar su duración cada época, así que la cuenta regresiva para el desbloqueo empieza de nuevo desde donde está ahora."
+      },
+      "enable-auto-relock": {
+        "heading": "Activar rebloqueo automático",
+        "subheading": "Su posición mantiene su duración actual para siempre, como si la extendiera una época cada época. Desactívelo y la cuenta regresiva empieza de nuevo."
+      },
       "increase-amount": {
         "heading": "Agregar ${symbol} a este bloqueo",
         "subheading": "Depositar ${symbol} adicionales en su bloqueo existente para aumentar su cantidad de stake y poder de gobernanza."
@@ -549,6 +566,7 @@
       "claim-all-rewards": "Reclamar todas las recompensas",
       "claiming-paused": "El reclamo de recompensas está pausado",
       "could-not-load-positions": "No pudimos cargar sus posiciones",
+      "disable-auto-relock": "Desactivar rebloqueo automático",
       "enable-auto-relock": "Activar rebloqueo automático",
       "get-started": "Comience haciendo staking de sus ${symbol}",
       "get-started-burned": "Sus posiciones quemadas aparecerán aquí una vez que hayan finalizado sus períodos de bloqueo.",

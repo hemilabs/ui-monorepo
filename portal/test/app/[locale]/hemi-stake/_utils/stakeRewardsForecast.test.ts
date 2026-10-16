@@ -13,7 +13,6 @@ import {
 import {
   MaxLockDurationSeconds,
   minLockAmount,
-  MinLockDurationSeconds,
   SixDaysSeconds,
 } from 've-hemi-actions'
 import { describe, expect, it } from 'vitest'
@@ -238,16 +237,17 @@ describe('getRewardsForecast', function () {
     expect(forecast({ amount: BigInt(0) }).yearOneReturnRatio).toBe(0)
   })
 
-  it('prices a duration under the floor as the shortest lock allowed', function () {
-    expect(forecast({ lockDurationInSeconds: 12 * 86_400 }).yearOneTotal).toBe(
-      forecast({ lockDurationInSeconds: MinLockDurationSeconds }).yearOneTotal,
+  it('keeps a duration under the new lock floor as it was given', function () {
+    const lockDurationInSeconds = 12 * 86_400
+    expect(forecast({ lockDurationInSeconds }).lockEnd).toBe(
+      getLockEnd({ lockTime: lockDurationInSeconds, timestamp: golden.now }),
     )
   })
 
-  it('still pays for a duration the caller left under the floor', function () {
-    expect(
-      forecast({ lockDurationInSeconds: 12 * 86_400 }).yearOneTotal,
-    ).toBeGreaterThan(BigInt(0))
+  it('earns nothing once the lock ends before the first epoch close', function () {
+    expect(forecast({ lockDurationInSeconds: 12 * 86_400 }).yearOneTotal).toBe(
+      BigInt(0),
+    )
   })
 
   it('prices a duration past the cap as the longest lock allowed', function () {

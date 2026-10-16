@@ -13,10 +13,14 @@ import {
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
-import { type StakingPosition } from 'types/stakingDashboard'
+import {
+  type StakingPosition,
+  StakingPositionStatus,
+} from 'types/stakingDashboard'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatDate } from 'utils/format'
-import { formatUnits } from 'viem'
+import { type Address, formatUnits, isAddressEqual } from 'viem'
+import { useAccount } from 'wagmi'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
@@ -100,7 +104,17 @@ export function ActionCell({ row }: Props) {
   const { updateStakingDashboardOperation } = useStakingDashboard()
   const { setDrawerQueryString } = useDrawerStakingQueryString()
 
-  const { amount, lockTime, timestamp, tokenId } = row.original
+  const {
+    amount,
+    forfeitable,
+    lockTime,
+    owner,
+    status,
+    timestamp,
+    tokenId,
+    transferable,
+  } = row.original
+  const { address } = useAccount()
 
   const MENU_OFFSET = 4
 
@@ -202,6 +216,34 @@ export function ActionCell({ row }: Props) {
     setDrawerQueryString('increasingUnlockTime')
   }
 
+  const isActive = status === StakingPositionStatus.ACTIVE
+  const isWalletOwner = !!address && isAddressEqual(owner as Address, address)
+  const canOperate = isWalletOwner && timeRemainingSeconds > 0
+  // TODO #2496 enable these once the forecast reads the position's own reward
+  // class, and #2481 defines how the part auto-relock extends is classed.
+  // Not a protocol restriction: extending a non-transferable lock works today.
+  const canAutoRelock = canOperate && isActive && transferable && !forfeitable
+
+  // TODO #2481 read the flag from the position once the subgraph exposes it.
+  // Flip it to reach the disable drawer while there is no data behind it.
+  const autoRelock = false
+
+  function handleToggleAutoRelock() {
+    closeAndFocusTrigger()
+    updateStakingDashboardOperation({
+      autoRelock,
+      stakingPosition: {
+        amount,
+        lockTime,
+        timestamp,
+        tokenId,
+      },
+      status: undefined,
+      transactionHash: undefined,
+    })
+    setDrawerQueryString('togglingAutoRelock')
+  }
+
   return (
     <div
       className="relative"
@@ -222,13 +264,13 @@ export function ActionCell({ row }: Props) {
             style={{ left: menuPosition.left, top: menuPosition.top }}
           >
             <ActionItem
-              enabled={timeRemainingSeconds > 0}
+              enabled={canOperate}
               icon={<PlusIcon />}
               label={t('table.add-liquidity-to-lockup', { symbol })}
               onClick={handleIncreaseAmount}
             />
             <ActionItem
-              enabled={timeRemainingSeconds > 0 && canExtend}
+              enabled={canOperate && canExtend}
               icon={<PlusIcon />}
               label={t('table.add-time-to-lockup')}
               onClick={handleIncreaseUnlockTime}
@@ -243,12 +285,15 @@ export function ActionCell({ row }: Props) {
                     })
               }
             />
-            {/* TODO #2481 enable once the drawer and the upgraded contracts
-                land. There is no write action to call today. */}
             <ActionItem
-              enabled={false}
+              enabled={canAutoRelock}
               icon={<AutoRelockIcon />}
-              label={t('table.enable-auto-relock')}
+              label={t(
+                autoRelock
+                  ? 'table.disable-auto-relock'
+                  : 'table.enable-auto-relock',
+              )}
+              onClick={handleToggleAutoRelock}
             />
           </div>,
           document.body,

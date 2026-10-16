@@ -3,6 +3,7 @@ import {
   getLockEnd,
   getWeightAt,
 } from 'app/[locale]/hemi-stake/_utils/lockEpochs'
+import { emptyInputsByClass } from 'app/[locale]/hemi-stake/_utils/rewardClass'
 import {
   getEpochPayout,
   getLockMultiplier,
@@ -26,10 +27,13 @@ const days = (count: number) => count * 86_400
 // class of 761 HEMI the denominator lands on 1000, so a baseline of 1000 pays about 239.
 const golden = {
   amount: hemi(240),
+  inputsByClass: {
+    forfeitable: { baseline: hemi(7), weight: hemi(13) },
+    locked: { baseline: hemi(29), weight: hemi(31) },
+    transferable: { baseline: hemi(1000), weight: hemi(761) },
+  },
   lockDurationInSeconds: MaxLockDurationSeconds,
   now: epochAlignedNow,
-  transferableClassBaseline: hemi(1000),
-  transferableClassWeight: hemi(761),
 }
 
 const forecast = (overrides = {}) =>
@@ -39,8 +43,8 @@ describe('getEpochPayout', function () {
   it('takes the whole baseline when it is the only weight in the class', function () {
     expect(
       getEpochPayout({
-        transferableClassBaseline: hemi(1000),
-        transferableClassWeight: BigInt(0),
+        baseline: hemi(1000),
+        classWeight: BigInt(0),
         weight: hemi(5),
       }),
     ).toBe(hemi(1000))
@@ -49,8 +53,8 @@ describe('getEpochPayout', function () {
   it('takes half the baseline when it matches the rest of the class', function () {
     expect(
       getEpochPayout({
-        transferableClassBaseline: hemi(1000),
-        transferableClassWeight: hemi(50),
+        baseline: hemi(1000),
+        classWeight: hemi(50),
         weight: hemi(50),
       }),
     ).toBe(hemi(500))
@@ -59,8 +63,8 @@ describe('getEpochPayout', function () {
   it('pays nothing without weight', function () {
     expect(
       getEpochPayout({
-        transferableClassBaseline: hemi(1000),
-        transferableClassWeight: hemi(50),
+        baseline: hemi(1000),
+        classWeight: hemi(50),
         weight: BigInt(0),
       }),
     ).toBe(BigInt(0))
@@ -69,8 +73,8 @@ describe('getEpochPayout', function () {
   it('pays nothing out of an empty baseline', function () {
     expect(
       getEpochPayout({
-        transferableClassBaseline: BigInt(0),
-        transferableClassWeight: hemi(50),
+        baseline: BigInt(0),
+        classWeight: hemi(50),
         weight: hemi(50),
       }),
     ).toBe(BigInt(0))
@@ -79,8 +83,8 @@ describe('getEpochPayout', function () {
   it('does not divide by zero on an empty class', function () {
     expect(
       getEpochPayout({
-        transferableClassBaseline: hemi(1000),
-        transferableClassWeight: BigInt(0),
+        baseline: hemi(1000),
+        classWeight: BigInt(0),
         weight: BigInt(0),
       }),
     ).toBe(BigInt(0))
@@ -88,13 +92,13 @@ describe('getEpochPayout', function () {
 
   it('does not pay double for double the weight, the stake dilutes itself', function () {
     const single = getEpochPayout({
-      transferableClassBaseline: hemi(1000),
-      transferableClassWeight: hemi(100),
+      baseline: hemi(1000),
+      classWeight: hemi(100),
       weight: hemi(100),
     })
     const doubled = getEpochPayout({
-      transferableClassBaseline: hemi(1000),
-      transferableClassWeight: hemi(100),
+      baseline: hemi(1000),
+      classWeight: hemi(100),
       weight: hemi(200),
     })
     expect(doubled).toBeLessThan(single * BigInt(2))
@@ -105,28 +109,26 @@ describe('getWeightShare', function () {
   it('is half when the stake matches the rest of the class', function () {
     expect(
       getWeightShare({
-        transferableClassWeight: hemi(50),
+        classWeight: hemi(50),
         weight: hemi(50),
       }),
     ).toBe(0.5)
   })
 
   it('is nothing without weight', function () {
-    expect(
-      getWeightShare({ transferableClassWeight: hemi(50), weight: BigInt(0) }),
-    ).toBe(0)
+    expect(getWeightShare({ classWeight: hemi(50), weight: BigInt(0) })).toBe(0)
   })
 
   it('is nothing rather than NaN when there is no weight at all', function () {
-    expect(
-      getWeightShare({ transferableClassWeight: BigInt(0), weight: BigInt(0) }),
-    ).toBe(0)
+    expect(getWeightShare({ classWeight: BigInt(0), weight: BigInt(0) })).toBe(
+      0,
+    )
   })
 
   it('still resolves the smallest allowed stake against a millions-strong class', function () {
     expect(
       getWeightShare({
-        transferableClassWeight: hemi(11_660_000),
+        classWeight: hemi(11_660_000),
         weight: minLockAmount,
       }),
     ).toBeGreaterThan(0)
@@ -309,6 +311,13 @@ describe('getRewardsForecastByLockDurations', function () {
   it('reproduces the ladder the deployed simulator published', function () {
     const ratios = getRewardsForecastByLockDurations({
       amount: hemi(10_000),
+      inputsByClass: {
+        ...emptyInputsByClass,
+        transferable: {
+          baseline: BigInt('4166666660000000000000000'),
+          weight: hemi(10_056_994),
+        },
+      },
       lockDurationsInSeconds: [
         days(365),
         days(730),
@@ -316,14 +325,108 @@ describe('getRewardsForecastByLockDurations', function () {
         MaxLockDurationSeconds,
       ],
       now: SixDaysSeconds * 3402 + 43_200,
-      transferableClassBaseline: BigInt('4166666660000000000000000'),
-      transferableClassWeight: hemi(10_056_994),
     }).map(({ yearOneReturnRatio }) => yearOneReturnRatio)
 
     expect(ratios[0]).toBeCloseTo(3.055, 2)
     expect(ratios[1]).toBeCloseTo(9.266, 2)
     expect(ratios[2]).toBeCloseTo(15.475, 2)
     expect(ratios[3]).toBeCloseTo(21.68, 2)
+  })
+})
+
+describe('getRewardsForecast by reward class', function () {
+  const switchesAt = 10
+  const transferableAfter = getEpochEnd({
+    epochsAhead: switchesAt,
+    now: epochAlignedNow,
+  })
+  const locked = { forfeitable: false, transferableAfter }
+
+  it('draws from its own class until it becomes transferable', function () {
+    expect(
+      forecast({ positionClass: locked }).payouts.map(
+        ({ rewardClass }) => rewardClass,
+      ),
+    ).toEqual([
+      ...Array.from({ length: switchesAt }, () => 'locked'),
+      ...Array.from({ length: 60 - switchesAt }, () => 'transferable'),
+    ])
+  })
+
+  it('switches pot exactly at the instant it becomes transferable', function () {
+    const { payouts } = forecast({ positionClass: locked })
+
+    expect(payouts[switchesAt - 1].payout).toBe(
+      getEpochPayout({
+        baseline: golden.inputsByClass.locked.baseline,
+        classWeight: golden.inputsByClass.locked.weight,
+        weight: payouts[switchesAt - 1].weight,
+      }),
+    )
+    expect(payouts[switchesAt].payout).toBe(
+      getEpochPayout({
+        baseline: golden.inputsByClass.transferable.baseline,
+        classWeight: golden.inputsByClass.transferable.weight,
+        weight: payouts[switchesAt].weight,
+      }),
+    )
+  })
+
+  it('prices a forfeitable position out of the forfeitable pot', function () {
+    const { payouts } = forecast({
+      positionClass: {
+        forfeitable: true,
+        transferableAfter: Number.MAX_SAFE_INTEGER,
+      },
+    })
+
+    expect(
+      payouts.every(({ rewardClass }) => rewardClass === 'forfeitable'),
+    ).toBe(true)
+    expect(payouts[0].payout).toBe(
+      getEpochPayout({
+        baseline: golden.inputsByClass.forfeitable.baseline,
+        classWeight: golden.inputsByClass.forfeitable.weight,
+        weight: payouts[0].weight,
+      }),
+    )
+  })
+
+  it('pays nothing out of a class nobody funded, then pays once it turns transferable', function () {
+    const { payouts } = forecast({
+      inputsByClass: {
+        ...golden.inputsByClass,
+        locked: { weight: golden.inputsByClass.locked.weight },
+      },
+      positionClass: locked,
+    })
+
+    expect(payouts.slice(0, switchesAt).map(({ payout }) => payout)).toEqual(
+      Array.from({ length: switchesAt }, () => BigInt(0)),
+    )
+    expect(payouts[switchesAt].payout > BigInt(0)).toBe(true)
+  })
+
+  it('prices the position the form creates exactly as a transferable one', function () {
+    expect(forecast()).toEqual(
+      forecast({
+        positionClass: { forfeitable: false, transferableAfter: 0 },
+      }),
+    )
+  })
+
+  it('switches pot at the same instant with auto-relock on', function () {
+    expect(
+      getRewardsForecast({
+        ...golden,
+        autoRelock: true,
+        positionClass: locked,
+      }).payouts.map(({ rewardClass }) => rewardClass),
+    ).toEqual(
+      forecast({ positionClass: locked }).payouts.map(
+        ({ rewardClass }) => rewardClass,
+      ),
+    )
   })
 })
 
@@ -375,8 +478,8 @@ describe('getRewardsForecast with auto-relock', function () {
     })
     const extended = Array.from({ length: 60 }, (_, epochsAhead) =>
       getEpochPayout({
-        transferableClassBaseline: golden.transferableClassBaseline,
-        transferableClassWeight: golden.transferableClassWeight,
+        baseline: golden.inputsByClass.transferable.baseline,
+        classWeight: golden.inputsByClass.transferable.weight,
         weight: getWeightAt({
           amount: golden.amount,
           at: getEpochEnd({ epochsAhead, now: epochAlignedNow }),

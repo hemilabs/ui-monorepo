@@ -5,6 +5,7 @@ import {
   twoYears,
 } from 'app/[locale]/hemi-stake/_utils/lockCreationTimes'
 import { getLockupApys } from 'app/[locale]/hemi-stake/_utils/lockupApy'
+import { emptyInputsByClass } from 'app/[locale]/hemi-stake/_utils/rewardClass'
 import { minLockAmount, SixDaysSeconds } from 've-hemi-actions'
 import { describe, expect, it } from 'vitest'
 
@@ -12,9 +13,12 @@ const hemi = (amount: number) => BigInt(amount) * BigInt(1e18)
 
 const inputs = {
   amount: hemi(1000),
+  inputsByClass: {
+    forfeitable: { baseline: hemi(2_000), weight: hemi(3_000) },
+    locked: { baseline: hemi(5_000), weight: hemi(7_000) },
+    transferable: { baseline: hemi(1_000_000), weight: hemi(5_000_000) },
+  },
   now: SixDaysSeconds * 3232,
-  transferableClassBaseline: hemi(1_000_000),
-  transferableClassWeight: hemi(5_000_000),
 }
 
 const apys = (overrides = {}) => getLockupApys({ ...inputs, ...overrides })
@@ -60,7 +64,17 @@ describe('getLockupApys', function () {
   })
 
   it('returns zero for every preset when the baseline is missing', function () {
-    const result = apys({ transferableClassBaseline: BigInt(0) })
+    const result = apys({ inputsByClass: emptyInputsByClass })
+    expect(Object.values(result)).toEqual([0, 0, 0, 0])
+  })
+
+  it('ignores what the other classes were funded with', function () {
+    const result = apys({
+      inputsByClass: {
+        ...inputs.inputsByClass,
+        transferable: { weight: hemi(5_000_000) },
+      },
+    })
     expect(Object.values(result)).toEqual([0, 0, 0, 0])
   })
 })

@@ -219,8 +219,8 @@ export function ActionCell({ row }: Props) {
   const isActive = status === StakingPositionStatus.ACTIVE
   const isWalletOwner = !!address && isAddressEqual(owner as Address, address)
   const canOperate = isWalletOwner && timeRemainingSeconds > 0
-  // TODO #2496 enable these once the forecast reads the position's own reward
-  // class, and #2481 defines how the part auto-relock extends is classed.
+  // TODO #2481 enable these once the contract defines how the part auto-relock
+  // extends is classed, which is what the forecast still understates.
   // Not a protocol restriction: extending a non-transferable lock works today.
   const canAutoRelock = canOperate && isActive && transferable && !forfeitable
 

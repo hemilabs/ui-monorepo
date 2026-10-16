@@ -237,6 +237,7 @@ export function ActionCell({ row }: Props) {
         lockTime,
         timestamp,
         tokenId,
+        transferable,
       },
       status: undefined,
       transactionHash: undefined,

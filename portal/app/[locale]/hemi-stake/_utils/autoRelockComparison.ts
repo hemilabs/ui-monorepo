@@ -32,24 +32,29 @@ export const getAutoRelockComparison = function ({
   const currentClose = getEpochEnd({ epochsAhead: 0, now })
   const currentClass = getRewardClassAt({ at: currentClose, ...positionClass })
 
+  const at = autoRelock ? snapToEpoch(now) : currentClose
+  const wholeWeight = getWeightAt({ amount, at, lockEnd: unlockTime })
   const ownWeight = getWeightAt({
     amount,
-    at: autoRelock ? snapToEpoch(now) : currentClose,
+    at,
     lockEnd:
       currentClass === 'transferable'
         ? unlockTime
         : Math.min(unlockTime, positionClass.transferableAfter),
   })
+  const extendedWeight = wholeWeight - ownWeight
+
+  const ownShareOf = function (rewardClass: RewardClass) {
+    if (rewardClass === currentClass) {
+      return ownWeight
+    }
+    return rewardClass === 'transferable' ? extendedWeight : BigInt(0)
+  }
 
   const withoutPosition = function (rewardClass: RewardClass) {
     const { baseline, weight } = inputsByClass[rewardClass]
-    if (rewardClass !== currentClass) {
-      return { baseline, weight }
-    }
-    return {
-      baseline,
-      weight: weight > ownWeight ? weight - ownWeight : BigInt(0),
-    }
+    const own = ownShareOf(rewardClass)
+    return { baseline, weight: weight > own ? weight - own : BigInt(0) }
   }
   const otherPositions: InputsByClass = {
     forfeitable: withoutPosition('forfeitable'),

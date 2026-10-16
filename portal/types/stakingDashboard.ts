@@ -56,7 +56,10 @@ export type StakingDashboardOperation = Partial<{
   lockupDays: number
   transactionHash: Hash
   stakingPosition: Partial<
-    Pick<StakingPosition, 'amount' | 'tokenId' | 'lockTime' | 'timestamp'>
+    Pick<
+      StakingPosition,
+      'amount' | 'lockTime' | 'timestamp' | 'tokenId' | 'transferable'
+    >
   >
   status: StakingDashboardStatusType
 }>

@@ -176,8 +176,13 @@ describe('getAutoRelockComparison', function () {
     expect(asTransferable.current.payouts[0].payout).toBe(baseline)
   })
 
-  it('leaves the denominator of the classes it is not in whole', function () {
+  it('takes the extended part out of the transferable denominator too', function () {
     const switchesAt = getEpochEnd({ epochsAhead: 3, now })
+    const ownWeight = getWeightAt({
+      amount,
+      at: getEpochEnd({ epochsAhead: 0, now }),
+      lockEnd: switchesAt,
+    })
     const { current } = compare({
       autoRelock: false,
       inputsByClass: {
@@ -191,10 +196,28 @@ describe('getAutoRelockComparison', function () {
     expect(current.payouts[3].payout).toBe(
       getEpochPayout({
         baseline,
-        classWeight: weightAtEpochClose,
+        classWeight: weightAtEpochClose - (weightAtEpochClose - ownWeight),
         weight: current.payouts[3].weight,
       }),
     )
+  })
+
+  it('leaves the denominator of a class it is in neither part of whole', function () {
+    const { current } = compare({
+      autoRelock: false,
+      inputsByClass: {
+        forfeitable: { baseline, weight: weightAtEpochClose },
+        locked: { weight: BigInt(0) },
+        transferable: { baseline, weight: weightAtEpochClose },
+      },
+      positionClass: {
+        forfeitable: false,
+        transferableAfter: Number.MAX_SAFE_INTEGER,
+      },
+    })
+
+    // It sits in Locked for the whole window, so Forfeitable never saw its weight.
+    expect(current.payouts[0].rewardClass).toBe('locked')
   })
   it('only takes the part of an extended lock that sits in its own class', function () {
     const transferableAfter = getEpochEnd({ epochsAhead: 2, now })

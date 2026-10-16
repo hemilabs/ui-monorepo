@@ -116,6 +116,7 @@ type Props = {
   submitLabel: string
   timestamp: bigint
   tokenId: bigint
+  transferable: boolean | undefined
 }
 
 export const Preview = function ({
@@ -127,14 +128,16 @@ export const Preview = function ({
   submitLabel,
   timestamp,
   tokenId,
+  transferable,
 }: Props) {
   const hemi = useHemi()
   const locale = useLocale()
   const t = useTranslations('hemi-stake')
   const tDrawer = useTranslations('hemi-stake.drawer.auto-relock')
   const token = useHemiToken()
-  const { hasError, inputsByClass, positionClass, retry } =
-    useAutoRelockInputs(tokenId)
+  const { hasError, inputsByClass, positionClass, retry } = useAutoRelockInputs(
+    { tokenId, transferable },
+  )
 
   const now = Number(unixNowTimestamp())
   const { timeRemainingSeconds, unlockDate, unlockTime } = getUnlockInfo({

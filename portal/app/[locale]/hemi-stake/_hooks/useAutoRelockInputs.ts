@@ -1,8 +1,16 @@
+import { alwaysTransferable } from '../_utils/rewardClass'
+
 import { useEpochSystemState } from './useEpochSystemState'
 import { usePositionClass } from './usePositionClass'
 import { useRewardsForecastInputs } from './useRewardsForecastInputs'
 
-export const useAutoRelockInputs = function (tokenId: bigint) {
+export const useAutoRelockInputs = function ({
+  tokenId,
+  transferable,
+}: {
+  tokenId: bigint
+  transferable: boolean | undefined
+}) {
   const {
     data: inputsByClass,
     isError: isForecastError,
@@ -11,10 +19,10 @@ export const useAutoRelockInputs = function (tokenId: bigint) {
   const { isError: isSystemStateError, refetch: refetchSystemState } =
     useEpochSystemState()
   const {
-    data: positionClass,
+    data: readPositionClass,
     isError: isPositionClassError,
     refetch: refetchPositionClass,
-  } = usePositionClass(tokenId)
+  } = usePositionClass({ tokenId, transferable })
 
   const failed = [
     { isError: isPositionClassError, refetch: refetchPositionClass },
@@ -25,7 +33,8 @@ export const useAutoRelockInputs = function (tokenId: bigint) {
   return {
     hasError: failed !== undefined,
     inputsByClass,
-    positionClass,
+    positionClass:
+      transferable === true ? alwaysTransferable : readPositionClass,
     retry: failed?.refetch ?? refetchForecast,
   }
 }

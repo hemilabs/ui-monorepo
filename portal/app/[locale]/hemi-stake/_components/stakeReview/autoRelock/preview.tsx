@@ -16,8 +16,7 @@ import { unixNowTimestamp } from 'utils/time'
 import { snapToEpoch } from 've-hemi-actions'
 import { formatUnits } from 'viem'
 
-import { useEpochSystemState } from '../../../_hooks/useEpochSystemState'
-import { useRewardsForecastInputs } from '../../../_hooks/useRewardsForecastInputs'
+import { useAutoRelockInputs } from '../../../_hooks/useAutoRelockInputs'
 import { getAutoRelockComparison } from '../../../_utils/autoRelockComparison'
 import { formatApyFromRatio } from '../../../_utils/formatApyFromRatio'
 import { formatPayoutValue } from '../../../_utils/formatPayoutValue'
@@ -27,6 +26,10 @@ import {
 } from '../../../_utils/lockCreationTimes'
 import { getWeightAt } from '../../../_utils/lockEpochs'
 import { getPayoutAxisTicks } from '../../../_utils/payoutsChartData'
+import {
+  alwaysTransferable,
+  emptyInputsByClass,
+} from '../../../_utils/rewardClass'
 import { PayoutsChart } from '../../estimatedPayouts/payoutsChart'
 import { VotingPowerEquivalence } from '../../lockup'
 
@@ -112,6 +115,8 @@ type Props = {
   stakedAmount: bigint
   submitLabel: string
   timestamp: bigint
+  tokenId: bigint
+  transferable: boolean | undefined
 }
 
 export const Preview = function ({
@@ -122,25 +127,17 @@ export const Preview = function ({
   stakedAmount,
   submitLabel,
   timestamp,
+  tokenId,
+  transferable,
 }: Props) {
   const hemi = useHemi()
   const locale = useLocale()
   const t = useTranslations('hemi-stake')
   const tDrawer = useTranslations('hemi-stake.drawer.auto-relock')
   const token = useHemiToken()
-  const {
-    data: forecastInputs,
-    isError: isForecastError,
-    isPending: isLoadingForecast,
-    refetch: refetchForecast,
-  } = useRewardsForecastInputs()
-  const { isError: isSystemStateError, refetch: refetchSystemState } =
-    useEpochSystemState()
-
-  const baseline = forecastInputs?.transferableClassBaseline ?? BigInt(0)
-  const hasError = isForecastError || isSystemStateError
-  const hasForecast = baseline > BigInt(0)
-  const retry = isSystemStateError ? refetchSystemState : refetchForecast
+  const { hasError, inputsByClass, positionClass, retry } = useAutoRelockInputs(
+    { tokenId, transferable },
+  )
 
   const now = Number(unixNowTimestamp())
   const { timeRemainingSeconds, unlockDate, unlockTime } = getUnlockInfo({
@@ -151,13 +148,18 @@ export const Preview = function ({
   const { base, current, delta, next } = getAutoRelockComparison({
     amount: stakedAmount,
     autoRelock,
-    baseline,
-    classWeight: forecastInputs?.transferableClassWeight ?? BigInt(0),
     decimals: token.decimals,
+    inputsByClass: inputsByClass ?? emptyInputsByClass,
     lockDurationInSeconds: timeRemainingSeconds,
     now,
+    positionClass: positionClass ?? alwaysTransferable,
     unlockTime,
   })
+
+  const hasData = inputsByClass !== undefined && positionClass !== undefined
+  const hasForecast =
+    hasData &&
+    (current.yearOneTotal > BigInt(0) || next.yearOneTotal > BigInt(0))
 
   const votingPower = formatUnits(
     predictVotingPower({ amount: stakedAmount, lockTime, timestamp }),
@@ -277,7 +279,7 @@ export const Preview = function ({
           ) : (
             <PayoutsFallback
               hasError={hasError}
-              isPending={isLoadingForecast && !hasError}
+              isPending={!hasData && !hasError}
               onRetry={retry}
             />
           )}

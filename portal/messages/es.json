@@ -51,7 +51,10 @@
     "transaction-status": {
       "confirmed": "Confirmada",
       "error": "La Tx falló",
+      "in-queue": "En cola",
+      "not-ready": "No lista",
       "pending": "Pendiente",
+      "ready": "Lista",
       "rejected": "Rechazada"
     },
     "try-again": "Intente Nuevamente",

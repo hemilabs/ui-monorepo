@@ -51,7 +51,10 @@
     "transaction-status": {
       "confirmed": "Confirmado",
       "error": "Falhou",
+      "in-queue": "Na fila",
+      "not-ready": "Não pronto",
       "pending": "Pendente",
+      "ready": "Pronto",
       "rejected": "Rejeitado"
     },
     "try-again": "Tentar novamente",

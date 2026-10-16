@@ -7,6 +7,7 @@ export const ProgressStatus = {
   COMPLETED: 3,
   FAILED: 4,
   REJECTED: 5,
+  QUEUED: 6,
 } as const
 /* eslint-enable sort-keys */
 

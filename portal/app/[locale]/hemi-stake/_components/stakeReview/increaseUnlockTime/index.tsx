@@ -33,6 +33,7 @@ import {
 } from '../../../_utils/extendLockupState'
 import { minDays } from '../../../_utils/lockCreationTimes'
 import { getLockupErrorMessage } from '../../../_utils/lockupError'
+import { isTransientLockFailure } from '../../../_utils/lockupValidationFailure'
 import { isValidLockup } from '../../lockup'
 
 import { Preview } from './preview'
@@ -42,14 +43,20 @@ type Props = {
   onClose: VoidFunction
 }
 
+type LiveExtendStateInput = {
+  lockTime: bigint | number | undefined
+  timestamp: bigint | number | undefined
+  tokenId: bigint | number | string | undefined
+}
+
 // The drawer reads the lock end for its tokenId from the positions query instead of the
 // copy taken when the row was clicked: if the lock changed on chain while open, the copy's
 // minimum is wrong and retrying fails forever (#2474). Falls back to the copy while loading.
-const useLiveExtendState = function (
-  tokenId: bigint | number | string | undefined,
-  lockTime: bigint | number | undefined,
-  timestamp: bigint | number | undefined,
-) {
+const useLiveExtendState = function ({
+  lockTime,
+  timestamp,
+  tokenId,
+}: LiveExtendStateInput) {
   const positionsQuery = useStakingPositions()
   const freshPosition =
     tokenId === undefined
@@ -69,7 +76,7 @@ const useLiveExtendState = function (
   return {
     canExtend: extendState.canExtend,
     extendState,
-    minLocked: extendState.canExtend ? extendState.minLocked : minDays,
+    minLocked: extendState.canExtend ? extendState.minLocked : undefined,
   }
 }
 
@@ -93,11 +100,11 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
   const { address } = useAccount()
   const queryClient = useQueryClient()
   const locale = useLocale()
-  const { canExtend, extendState, minLocked } = useLiveExtendState(
-    tokenId,
+  const { canExtend, extendState, minLocked } = useLiveExtendState({
     lockTime,
     timestamp,
-  )
+    tokenId,
+  })
 
   const stakingDashboardStatus =
     stakingDashboardOperation?.status ?? StakingDashboardStatus.STAKE_TX_PENDING
@@ -217,11 +224,14 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
         emitter.on('user-signed-increase-unlock-time', () =>
           setOperationRunning('staking'),
         )
-        emitter.on('increase-unlock-time-failed-validation', function () {
+        emitter.on('increase-unlock-time-failed-validation', function (reason) {
           // The snapshot went stale (e.g. extended elsewhere): refresh the positions
           // and send the user back to the form with a recomputed minimum (#2474).
-          // Temporary failures keep the failed step with Retry (unchanged below).
-          handleFailedValidation()
+          // A lock status that couldn't be read is a hiccup, not stale data: the
+          // failed step with Retry stays, instead of a click that looks like a no-op.
+          if (!isTransientLockFailure(reason)) {
+            handleFailedValidation()
+          }
         })
         emitter.on('increase-unlock-time-transaction-succeeded', function () {
           resetStateAfterOperation()
@@ -283,7 +293,7 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
         isRunningOperation={isRunningOperation}
         isValid={isValid}
         lockupDays={lockupDays!}
-        minLocked={canExtend ? minLocked : undefined}
+        minLocked={minLocked}
         onSubmit={handleSubmit}
         onUpdateInputDays={function (value) {
           updateStakingDashboardOperation({

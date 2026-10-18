@@ -14,32 +14,38 @@ const BaseTooltip = lazy(() =>
   import('./base').then(mod => ({ default: mod.BaseTooltip })),
 )
 
+const isPlainElement = (
+  children: ReactNode,
+): children is ReactElement<Record<string, unknown>> =>
+  isValidElement(children) && typeof children.type === 'string'
+
+// rc-tooltip replaces the aria-describedby of the element it receives as a child
+// (getChildren in rc-tooltip@6), so the wrapper belongs to the tooltip and the
+// description is linked to the plain element inside it. Children that hide their
+// focusable element behind a component are wrapped as before, without a description.
 const linkTrigger = function (
   children: ReactNode,
   describedById: string | undefined,
 ) {
-  // Link the description to the trigger itself rather than leaving it orphaned: clone
-  // DOM-element children with aria-describedby (merged with any they already carry),
-  // and link the wrapper too for children that need it (components like Button don't
-  // forward refs). Without a description the historical wrapper passes through unchanged.
-  if (!isValidElement(children) || typeof children.type !== 'string') {
-    return (
-      <div aria-describedby={describedById} className="cursor-pointer">
-        {children}
+  if (describedById === undefined || !isPlainElement(children)) {
+    return {
+      describesTrigger: false,
+      trigger: <div className="cursor-pointer">{children}</div>,
+    }
+  }
+  const existing = children.props['aria-describedby'] as string | undefined
+  return {
+    describesTrigger: true,
+    trigger: (
+      <div className="cursor-pointer">
+        {cloneElement(children, {
+          'aria-describedby': existing
+            ? `${existing} ${describedById}`
+            : describedById,
+        })}
       </div>
-    )
+    ),
   }
-  if (describedById === undefined) {
-    return <div className="cursor-pointer">{children}</div>
-  }
-  const existing = (children.props as { 'aria-describedby'?: string })[
-    'aria-describedby'
-  ]
-  return cloneElement(children as ReactElement<Record<string, unknown>>, {
-    'aria-describedby': existing
-      ? `${existing} ${describedById}`
-      : describedById,
-  })
 }
 
 export const Tooltip = function ({
@@ -53,18 +59,14 @@ export const Tooltip = function ({
     return <>{children}</>
   }
 
-  // An always-present description: rc-tooltip's overlay only exists while visible
-  // (destroyTooltipOnHide) and mounts after focus, so it can't describe the trigger (#2476).
-  // Only plain text is echoed; richer overlays keep their visible content as the source.
-  // The id is linked only when a description is rendered — never a dangling reference.
+  // rc-tooltip's overlay only exists while visible (destroyTooltipOnHide) and mounts
+  // after focus, so the description is always present too. Only plain text is echoed;
+  // richer overlays keep their visible content as the source. It is hidden so it can't
+  // join the accessible name of a button wrapping the trigger, and it is rendered only
+  // next to a trigger that references it.
   const describedById =
     typeof text === 'string' || typeof text === 'number' ? id : undefined
-  const description = describedById ? (
-    <span className="sr-only" id={describedById}>
-      {text}
-    </span>
-  ) : null
-  const trigger = linkTrigger(children, describedById)
+  const { describesTrigger, trigger } = linkTrigger(children, describedById)
 
   return (
     <>
@@ -73,7 +75,11 @@ export const Tooltip = function ({
           {trigger}
         </BaseTooltip>
       </Suspense>
-      {description}
+      {describesTrigger && (
+        <span aria-hidden="true" className="sr-only" id={describedById}>
+          {text}
+        </span>
+      )}
     </>
   )
 }

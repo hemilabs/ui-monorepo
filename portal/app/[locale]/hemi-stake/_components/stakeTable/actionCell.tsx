@@ -30,8 +30,6 @@ type ActionItemProps = {
   tooltip?: string
 }
 
-// The tooltip text is echoed in an always-present sr-only element by Tooltip itself and
-// linked to the button via aria-describedby there — no per-item workaround (#2476).
 const ActionItem = ({
   enabled = true,
   icon,

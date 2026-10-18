@@ -19,6 +19,7 @@ import { useAccount } from 'wagmi'
 
 import { updatePosition } from '../_utils/positionsCache'
 
+import { registerIncreaseAmountFailureHandlers } from './increaseAmountFailures'
 import { getPositionDelegationDetailsQueryKey } from './usePositionDelegationDetails'
 import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
 import { getStakingPositionsQueryKey } from './useStakingPositions'
@@ -196,6 +197,12 @@ export const useIncreaseAmount = function ({
 
         track?.('hemi stake - increase amount transaction reverted')
       })
+
+      registerIncreaseAmountFailureHandlers(
+        emitter,
+        updateStakingDashboardOperation,
+        track,
+      )
 
       on?.(emitter)
 

@@ -40,6 +40,39 @@ describe('Tooltip screen-reader description (#2476)', function () {
     expect(html).toContain('sr-only')
   })
 
+  it('never leaves a dangling reference for rich text', function () {
+    const html = renderToStaticMarkup(
+      <Tooltip text={<span>rich(nodes)</span>} variant="simple">
+        <button type="button">info</button>
+      </Tooltip>,
+    )
+    expect(html).not.toContain('aria-describedby')
+    expect(html).not.toContain('sr-only')
+  })
+
+  it('links the wrapper when the child needs it', function () {
+    const FakeButton = () => <button type="button">x</button>
+    const html = renderToStaticMarkup(
+      <Tooltip text="hello" variant="simple">
+        <FakeButton />
+      </Tooltip>,
+    )
+    const describedBy = html.match(/aria-describedby="([^"]+)"/)?.[1]
+    expect(describedBy).toBeTruthy()
+    expect(html).toContain(`id="${describedBy}"`)
+  })
+
+  it('merges with a pre-existing aria-describedby', function () {
+    const html = renderToStaticMarkup(
+      <Tooltip text="hello" variant="simple">
+        <button aria-describedby="other" type="button">
+          info
+        </button>
+      </Tooltip>,
+    )
+    expect(html).toMatch(/aria-describedby="other _R_\d+_"/)
+  })
+
   it('renders children unchanged when there is no text', function () {
     const html = renderToStaticMarkup(
       <Tooltip text={null} variant="simple">

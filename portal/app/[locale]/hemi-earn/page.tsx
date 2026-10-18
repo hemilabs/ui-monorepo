@@ -3,6 +3,7 @@ import { WarningIcon } from 'components/icons/warningIcon'
 import { InformationBox } from 'components/informationBox'
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { PageLayout } from 'components/pageLayout'
+import { TableCard } from 'components/table/tableCard'
 import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useTranslations } from 'use-intl'
@@ -37,17 +38,19 @@ const TokensGate = function ({ children }: { children: ReactNode }) {
   const t = useTranslations()
   if (isError)
     return (
-      <div className="size-full" role="alert">
-        <InformationBox
-          actions={
-            <Button onClick={() => refetch()} size="xSmall" type="button">
-              {t('common.try-again')}
-            </Button>
-          }
-          icon={<WarningIcon className="text-orange-600" />}
-          subtitle={t('common.unexpected-error')}
-          title={t('hemi-earn.could-not-load')}
-        />
+      <div className="h-90" role="alert">
+        <TableCard>
+          <InformationBox
+            actions={
+              <Button onClick={() => refetch()} size="xSmall" type="button">
+                {t('common.try-again')}
+              </Button>
+            }
+            icon={<WarningIcon className="text-orange-600" />}
+            subtitle={t('common.unexpected-error')}
+            title={t('hemi-earn.could-not-load')}
+          />
+        </TableCard>
       </div>
     )
   return <>{children}</>

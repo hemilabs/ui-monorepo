@@ -13,9 +13,10 @@ export const ReceivingAddressLabel = ({
   <div className="flex items-center gap-x-2">
     <span className="text-neutral-600">{receivingText}</span>
     <Tooltip id="target-address" text={tooltipText} variant="info">
-      <div className="group/icon">
+      {/* A real button so keyboard and screen-reader users reach the description (#2476). */}
+      <button className="group/icon" type="button">
         <InfoIcon className="group-hover/icon:[&>g>path]:fill-neutral-600" />
-      </div>
+      </button>
     </Tooltip>
   </div>
 )

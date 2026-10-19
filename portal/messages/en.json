@@ -439,6 +439,7 @@
       "unlock-token": "Unlock {symbol}"
     },
     "estimated-payouts": {
+      "advanced-estimator": "Advanced estimator",
       "after-unlock": "after unlock",
       "apy": "{percentage} APY",
       "carried-from": "Based on epoch {epoch}, the last one funded.",

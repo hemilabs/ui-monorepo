@@ -439,6 +439,7 @@
       "unlock-token": "Desbloquear {symbol}"
     },
     "estimated-payouts": {
+      "advanced-estimator": "Estimador avançado",
       "after-unlock": "após o desbloqueio",
       "apy": "{percentage} TEA",
       "carried-from": "Com base na época {epoch}, a última financiada.",

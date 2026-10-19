@@ -1,6 +1,8 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { type Hash } from 'viem'
 
+import { earnTransactionsKeyPrefix } from '../_fetchers/fetchEarnTransactions'
 import { hashesMatch } from '../_utils/hashes'
 import { isEarnRowTerminal } from '../_utils/transactionPredicates'
 import {
@@ -103,8 +105,10 @@ const localToEarnWithdrawTransaction = (
 // Merges subgraph rows with not-yet-indexed local entries (sorted desc). Side effects
 // live in useEarnDeliveryWatcher so they fire once per poll, not once per consumer.
 export const useEarnTransactions = function () {
-  const { data, isError, isLoading } = useEarnTransactionsQuery()
+  const { data, errorUpdateCount, fetchStatus, status } =
+    useEarnTransactionsQuery()
   const { localOperations } = useLocalEarnOperations()
+  const queryClient = useQueryClient()
 
   const merged = useMemo(
     function () {
@@ -166,5 +170,16 @@ export const useEarnTransactions = function () {
     [data, localOperations],
   )
 
-  return { data: merged, isError, isPending: isLoading }
+  return {
+    data: merged,
+    // A poll after a failed load goes back to pending; keep the failure until data arrives.
+    hasLoadError: data === undefined && errorUpdateCount > 0,
+    // Offline, a first load is paused, not idle; it's still loading.
+    isPending: status === 'pending' && fetchStatus !== 'idle',
+    reset: () =>
+      queryClient.resetQueries({
+        queryKey: earnTransactionsKeyPrefix,
+        type: 'active',
+      }),
+  }
 }

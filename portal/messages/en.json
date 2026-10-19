@@ -317,6 +317,8 @@
         "type": "Type"
       },
       "connect-to-view": "Connect your wallet to view your earn transactions.",
+      "could-not-load-all-transactions": "We couldn't load all your transactions",
+      "could-not-load-transactions": "We couldn't load your transactions",
       "deposit": "Deposit",
       "drawer": {
         "deposit-heading": "Stake deposit details",

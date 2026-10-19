@@ -317,6 +317,8 @@
         "type": "Tipo"
       },
       "connect-to-view": "Conecte sua carteira para ver suas transações de earn.",
+      "could-not-load-all-transactions": "Não foi possível carregar todas as suas transações",
+      "could-not-load-transactions": "Não foi possível carregar suas transações",
       "deposit": "Depósito",
       "drawer": {
         "deposit-heading": "Detalhes do depósito de stake",

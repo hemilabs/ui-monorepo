@@ -1,4 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table'
+import { DataUnavailable } from 'components/dataUnavailable'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { Table } from 'components/table'
 import { Header } from 'components/table/_components/header'
@@ -22,7 +23,6 @@ import { ClaimCta } from './claimCta'
 import { HeroBanner } from './heroBanner'
 import { LockupTime } from './lockupTime'
 import { NoPositionStaked } from './noPositionStaked'
-import { PositionsUnavailable } from './positionsUnavailable'
 import { type StakeTableFilterOptions } from './stakeTableFilter'
 import { UnlockCta } from './unlockCta'
 import { VotingPower } from './votingPower'
@@ -175,7 +175,10 @@ export function StakeTable({
     if (isError) {
       return (
         <TableCard>
-          <PositionsUnavailable onRetry={onRetry} />
+          <DataUnavailable
+            onRetry={onRetry}
+            title={t('table.could-not-load-positions')}
+          />
         </TableCard>
       )
     }

@@ -43,7 +43,7 @@ const icons: Icon[] = Object.entries(iconComponents)
   )
   .concat(
     Object.entries(iconFiles).map(([globKey, url]) => ({
-      element: <img alt="" className="size-full object-contain" src={url} />,
+      element: <img alt="" className="size-8 object-contain" src={url} />,
       name: toFileName(globKey),
       path: toPath(globKey),
     })),
@@ -58,7 +58,7 @@ const IconGrid = () => (
         key={icon.path + icon.name}
         title={icon.path}
       >
-        <div className="flex size-8 items-center justify-center [&>svg]:size-full">
+        <div className="flex min-h-8 max-w-full items-center justify-center overflow-hidden">
           {icon.element}
         </div>
         <span className="break-all text-center text-xs">{icon.name}</span>

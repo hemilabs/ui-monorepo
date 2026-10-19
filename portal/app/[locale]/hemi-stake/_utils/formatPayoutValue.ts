@@ -5,8 +5,13 @@ import {
   formatNumber,
 } from 'utils/format'
 
-const withSymbol = ({ symbol, value }: { symbol: string; value: number }) =>
-  `${formatNumber(value)} ${symbol}`
+const formatTokenAmount = ({
+  symbol,
+  value,
+}: {
+  symbol: string
+  value: number
+}) => `${formatNumber(value)} ${symbol}`
 
 export const formatPayoutValue = function ({
   symbol,
@@ -29,5 +34,5 @@ export const formatPayoutDetail = ({
   value: number
 }) =>
   price === undefined
-    ? withSymbol({ symbol, value })
-    : `${withSymbol({ symbol, value })} · ${formatFiatAmount(value * price)}`
+    ? formatTokenAmount({ symbol, value })
+    : `${formatTokenAmount({ symbol, value })} · ${formatFiatAmount(value * price)}`

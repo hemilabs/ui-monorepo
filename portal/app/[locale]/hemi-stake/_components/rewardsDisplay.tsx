@@ -1,11 +1,11 @@
+import { DisplayAmount } from 'components/displayAmount'
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
 import Skeleton from 'react-loading-skeleton'
 import { type ClaimableReward } from 'types/stakingDashboard'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
-import { formatTokenAmount } from 'utils/format'
-import { isAddress, isAddressEqual } from 'viem'
+import { formatUnits, isAddress, isAddressEqual } from 'viem'
 
 import { useClaimableRewards } from '../_hooks/useClaimableRewards'
 import { useRewardTokens } from '../_hooks/useRewardTokens'
@@ -19,17 +19,16 @@ type RewardAmountProps = {
   token: EvmToken | undefined
 }
 
-export const RewardAmount = ({ reward, token }: RewardAmountProps) => (
-  <div className="flex items-center gap-x-1 text-sm font-medium text-white">
-    {token ? <TokenLogo size="xSmall" token={token} /> : null}
-    <span>
-      {`${formatTokenAmount({
-        amount: reward.amount,
-        decimals: reward.decimals,
-      })} ${reward.symbol}`}
-    </span>
-  </div>
-)
+export const RewardAmount = ({ reward, token }: RewardAmountProps) =>
+  token ? (
+    <div className="flex items-center gap-x-1 text-sm font-medium text-white">
+      <TokenLogo size="xSmall" token={token} />
+      <DisplayAmount
+        amount={formatUnits(reward.amount, reward.decimals)}
+        token={token}
+      />
+    </div>
+  ) : null
 
 export function RewardsDisplay({ tokenId }: Props) {
   const t = useTranslations('hemi-stake.table')

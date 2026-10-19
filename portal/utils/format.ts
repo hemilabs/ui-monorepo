@@ -2,7 +2,7 @@ import Big from 'big.js'
 import { type Account, type BtcTransaction } from 'btc-wallet/unisat'
 import { shorten } from 'crypto-shortener'
 import { smartRound } from 'smart-round'
-import { formatUnits, type Address, type Hash } from 'viem'
+import { type Address, type Hash } from 'viem'
 
 export const formatBtcAddress = (account: Account) =>
   shorten(account, { length: 5 })
@@ -29,19 +29,6 @@ export const formatNumber = (value: number | string, locale?: string) =>
     roundingMode: 'round-down',
     shouldFormat: true,
   })
-
-export const formatTokenAmount = function ({
-  amount,
-  decimals,
-}: {
-  amount: bigint
-  decimals: number
-}) {
-  const value = Big(formatUnits(amount, decimals))
-  return value.gt(0) && value.lt(0.000001)
-    ? `< 0.000001`
-    : formatNumber(value.toFixed())
-}
 
 export const formatFiatNumber = (value: number | string) =>
   fiatRounder(value, { shouldFormat: true })

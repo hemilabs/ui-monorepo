@@ -4,8 +4,8 @@ import Skeleton from 'react-loading-skeleton'
 import { type ClaimableReward } from 'types/stakingDashboard'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
-import { formatNumber } from 'utils/format'
-import { formatUnits, isAddress, isAddressEqual } from 'viem'
+import { formatTokenAmount } from 'utils/format'
+import { isAddress, isAddressEqual } from 'viem'
 
 import { useClaimableRewards } from '../_hooks/useClaimableRewards'
 import { useRewardTokens } from '../_hooks/useRewardTokens'
@@ -22,9 +22,12 @@ type RewardAmountProps = {
 export const RewardAmount = ({ reward, token }: RewardAmountProps) => (
   <div className="flex items-center gap-x-1 text-sm font-medium text-white">
     {token ? <TokenLogo size="xSmall" token={token} /> : null}
-    <span>{`${formatNumber(formatUnits(reward.amount, reward.decimals))} ${
-      reward.symbol
-    }`}</span>
+    <span>
+      {`${formatTokenAmount({
+        amount: reward.amount,
+        decimals: reward.decimals,
+      })} ${reward.symbol}`}
+    </span>
   </div>
 )
 

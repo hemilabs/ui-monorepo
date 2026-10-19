@@ -14,6 +14,7 @@ import {
   formatPercentage,
   formatShortDate,
   formatShortDateWithYear,
+  formatTokenAmount,
   formatTokenPrice,
   formatTVL,
 } from 'utils/format'
@@ -454,6 +455,63 @@ describe('utils/format', function () {
       expect(formatNumber(1234567, 'es')).toBe('1.234.567')
       expect(formatNumber(1234, 'es')).toBe('1.234')
       expect(formatNumber(1234.5678, 'pt')).toBe('1.234,56')
+    })
+
+    it('should lose an amount below six decimals, which formatTokenAmount exists to avoid', function () {
+      expect(formatNumber('0.00000012')).toBe('0.000000')
+    })
+  })
+
+  describe('formatTokenAmount', function () {
+    it('should keep the digits of an amount that would round down to zero', function () {
+      expect(formatTokenAmount({ amount: BigInt(12), decimals: 8 })).toBe(
+        '0.00000012',
+      )
+    })
+
+    it('should reach the smallest unit a token can hold', function () {
+      expect(formatTokenAmount({ amount: BigInt(1), decimals: 18 })).toBe(
+        '0.000000000000000001',
+      )
+    })
+
+    it('should stop at two significant digits rather than spill every decimal', function () {
+      expect(
+        formatTokenAmount({ amount: BigInt('999999999999'), decimals: 18 }),
+      ).toBe('0.00000099')
+    })
+
+    it('should switch branches at the sixth decimal', function () {
+      expect(formatTokenAmount({ amount: BigInt(1000), decimals: 9 })).toBe(
+        '0.000001',
+      )
+      expect(formatTokenAmount({ amount: BigInt(900), decimals: 9 })).toBe(
+        '0.0000009',
+      )
+    })
+
+    it('should leave an amount the usual rounding already shows untouched', function () {
+      expect(
+        formatTokenAmount({
+          amount: BigInt('11181523456789012345678'),
+          decimals: 18,
+        }),
+      ).toBe('11,181.5')
+    })
+
+    it('should keep the thousands separator', function () {
+      expect(
+        formatTokenAmount({ amount: BigInt('123456789000000'), decimals: 8 }),
+      ).toBe('1,234,567')
+    })
+
+    it('should report zero as zero', function () {
+      expect(formatTokenAmount({ amount: BigInt(0), decimals: 8 })).toBe('0')
+    })
+
+    it('should not blow up on a token without decimals', function () {
+      expect(formatTokenAmount({ amount: BigInt(0), decimals: 0 })).toBe('0')
+      expect(formatTokenAmount({ amount: BigInt(7), decimals: 0 })).toBe('7')
     })
   })
 

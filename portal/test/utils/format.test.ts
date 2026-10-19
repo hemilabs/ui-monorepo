@@ -463,30 +463,24 @@ describe('utils/format', function () {
   })
 
   describe('formatTokenAmount', function () {
-    it('should keep the digits of an amount that would round down to zero', function () {
+    it('should report an amount too small for six decimals as a threshold', function () {
       expect(formatTokenAmount({ amount: BigInt(12), decimals: 8 })).toBe(
-        '0.00000012',
+        '< 0.000001',
       )
     })
 
-    it('should reach the smallest unit a token can hold', function () {
+    it('should report the smallest unit a token can hold as a threshold', function () {
       expect(formatTokenAmount({ amount: BigInt(1), decimals: 18 })).toBe(
-        '0.000000000000000001',
+        '< 0.000001',
       )
     })
 
-    it('should stop at two significant digits rather than spill every decimal', function () {
-      expect(
-        formatTokenAmount({ amount: BigInt('999999999999'), decimals: 18 }),
-      ).toBe('0.00000099')
-    })
-
-    it('should switch branches at the sixth decimal', function () {
+    it('should switch to the threshold at the sixth decimal', function () {
       expect(formatTokenAmount({ amount: BigInt(1000), decimals: 9 })).toBe(
         '0.000001',
       )
-      expect(formatTokenAmount({ amount: BigInt(900), decimals: 9 })).toBe(
-        '0.0000009',
+      expect(formatTokenAmount({ amount: BigInt(999), decimals: 9 })).toBe(
+        '< 0.000001',
       )
     })
 
@@ -505,7 +499,7 @@ describe('utils/format', function () {
       ).toBe('1,234,567')
     })
 
-    it('should report zero as zero', function () {
+    it('should report zero as zero rather than as a threshold', function () {
       expect(formatTokenAmount({ amount: BigInt(0), decimals: 8 })).toBe('0')
     })
 

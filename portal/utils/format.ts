@@ -19,8 +19,6 @@ const fiatRounderTVL = smartRound(6, 0, 0)
 // Same config as fiatRounder, but I think it reads better to use a different rounder
 const percentageRounder = smartRound(6, 2, 2)
 const tokenPriceRounder = smartRound(6, 2, 6)
-const significantRounder = (maxDecimals: number) =>
-  smartRound(2, 0, maxDecimals)
 
 export const formatEvmHash = (txHash: Hash) =>
   shorten(txHash, { length: 4, prefixes: ['0x'] })
@@ -39,17 +37,10 @@ export const formatTokenAmount = function ({
   amount: bigint
   decimals: number
 }) {
-  const value = formatUnits(amount, decimals)
-  const roundsToZero = Big(
-    cryptoRounder(value, { roundingMode: 'round-down' }),
-  ).eq(0)
-
-  return roundsToZero
-    ? significantRounder(decimals)(value, {
-        roundingMode: 'round-down',
-        shouldFormat: true,
-      })
-    : formatNumber(value)
+  const value = Big(formatUnits(amount, decimals))
+  return value.gt(0) && value.lt(0.000001)
+    ? `< 0.000001`
+    : formatNumber(value.toFixed())
 }
 
 export const formatFiatNumber = (value: number | string) =>

@@ -41,12 +41,51 @@ const hemiPartners: Record<
       tunnelSymbol: 'USDT',
     },
   },
+  // svetBTC
+  '0xD8D63De3b64bd06d99F8F5AD8B78Ed2fE7525eC0': {
+    l1: {
+      tunnelPartners: ['stargate'],
+    },
+    l2: {
+      tunnelPartners: ['stargate'],
+    },
+  },
+  // Vetro USD
+  '0xD3599AE62EE280709A22268a46d23164214e345B': {
+    l1: {
+      tunnelPartners: ['stargate'],
+    },
+    l2: {
+      tunnelPartners: ['stargate'],
+    },
+  },
+  // sVUSD
+  '0xfe875CC86cC6BC2E93ab330D6b2c408C3Cd79710': {
+    l1: {
+      tunnelPartners: ['stargate'],
+    },
+    l2: {
+      tunnelPartners: ['stargate'],
+    },
+  },
+  // vetBTC
+  '0xfF16E26B7fFCf24c378D57DF536dC5eC104a7dE4': {
+    l1: {
+      tunnelPartners: ['stargate'],
+    },
+    l2: {
+      tunnelPartners: ['stargate'],
+    },
+  },
 }
 
 const getL1Address = function (address: string) {
-  const l1Address = (hemilabsTokenList.tokens as EvmToken[]).find(
+  const extensions = (hemilabsTokenList.tokens as EvmToken[]).find(
     t => t.chainId === hemi.id && t.address === address,
-  )?.extensions?.bridgeInfo?.[hemi.sourceId]?.tokenAddress
+  )?.extensions
+  const l1Address =
+    extensions?.bridgeInfo?.[hemi.sourceId]?.tokenAddress ??
+    extensions?.oft?.peers?.[hemi.sourceId]?.tokenAddress
   if (!l1Address) {
     throw new Error(`Failed to find the L1 pair of ${address}`)
   }

@@ -27,6 +27,9 @@ export type TunnelState = {
   providerType: TunnelProviderType
 }
 
+const getTunnelPairs = (token: Token) =>
+  token.extensions?.bridgeInfo ?? token.extensions?.oft?.peers
+
 type Action<T extends string> = {
   type: T
 }
@@ -287,7 +290,7 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
   const getTunnelToken = useCallback(
     function (fromToken: Token, toNetworkId: RemoteChain['id']) {
       const bridgeAddress =
-        fromToken.extensions?.bridgeInfo?.[toNetworkId]?.tokenAddress
+        getTunnelPairs(fromToken)?.[toNetworkId]?.tokenAddress
       // find the tunneled pair of the token, or go with the native if missing
       // bitcoin is a special case as it tunnels a native token (btc) into an erc20
       if (fromToken.chainId === bitcoin.id) {
@@ -353,9 +356,9 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
         // if the selected token can't be tunneled to the target chain
         // we need to first update the target network
         // just grab the first available network that's enabled
-        if (!fromToken.extensions?.bridgeInfo?.[state.toNetworkId]) {
+        if (!getTunnelPairs(fromToken)?.[state.toNetworkId]) {
           const [newToNetworkId] = Object.keys(
-            fromToken.extensions!.bridgeInfo!,
+            getTunnelPairs(fromToken)!,
           ).filter(id => networks.some(n => n.id.toString() === id))
           // parse as int or keep as string, depending on the id
           const payload = (

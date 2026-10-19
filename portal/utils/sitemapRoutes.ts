@@ -3,6 +3,7 @@ const contentRoutes = [
   '/get-started',
   '/hemi-stake',
   '/hemi-stake/analytics',
+  '/hemi-stake/estimator',
   '/stake',
   '/stake/dashboard',
   '/tunnel',

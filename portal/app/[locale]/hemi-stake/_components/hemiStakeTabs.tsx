@@ -3,34 +3,34 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathname } from 'i18n/navigation'
 import { Suspense } from 'react'
 import { useTranslations } from 'use-intl'
-import { isSamePathOrUnder } from 'utils/url'
 
 import { isStakingDashboardEnabledOnTestnet } from '../_utils/isStakingDashboardEnabledOnTestnet'
+
+const tabs = [
+  { href: '/hemi-stake', label: 'stake' },
+  { href: '/hemi-stake/analytics', label: 'analytics' },
+  { href: '/hemi-stake/estimator', label: 'estimator' },
+] as const
 
 const HemiStakeTabsImpl = function () {
   const [networkType] = useNetworkType()
   const pathname = usePathname()
   const t = useTranslations('hemi-stake.tabs')
 
-  if (
-    !isSamePathOrUnder(pathname, '/hemi-stake') ||
-    !isStakingDashboardEnabledOnTestnet(networkType)
-  ) {
+  const current = tabs.find(tab => tab.href === pathname)
+
+  if (!current || !isStakingDashboardEnabledOnTestnet(networkType)) {
     return null
   }
 
   return (
     <div className="flex md:w-fit">
       <Tabs>
-        <Tab href="/hemi-stake" selected={pathname === '/hemi-stake'}>
-          <span className="flex justify-center">{t('stake')}</span>
-        </Tab>
-        <Tab
-          href="/hemi-stake/analytics"
-          selected={pathname === '/hemi-stake/analytics'}
-        >
-          <span className="flex justify-center">{t('analytics')}</span>
-        </Tab>
+        {tabs.map(tab => (
+          <Tab href={tab.href} key={tab.href} selected={tab === current}>
+            <span className="flex justify-center">{t(tab.label)}</span>
+          </Tab>
+        ))}
       </Tabs>
     </div>
   )

@@ -562,6 +562,7 @@
     },
     "tabs": {
       "analytics": "Analíticas",
+      "estimator": "Estimador avanzado",
       "stake": "Stake"
     },
     "unlock-successful": "Desbloqueo exitoso",

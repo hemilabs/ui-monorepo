@@ -5,10 +5,11 @@ import Skeleton from 'react-loading-skeleton'
 import { type ClaimableReward } from 'types/stakingDashboard'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
-import { formatUnits, isAddress, isAddressEqual } from 'viem'
+import { formatUnits } from 'viem'
 
 import { useClaimableRewards } from '../_hooks/useClaimableRewards'
 import { useRewardTokens } from '../_hooks/useRewardTokens'
+import { findRewardToken } from '../_utils/rewardToken'
 
 type Props = {
   tokenId: bigint
@@ -25,6 +26,7 @@ export const RewardAmount = ({ reward, token }: RewardAmountProps) =>
       <TokenLogo size="xSmall" token={token} />
       <DisplayAmount
         amount={formatUnits(reward.amount, reward.decimals)}
+        showTooltip={false}
         token={token}
       />
     </div>
@@ -50,10 +52,7 @@ export function RewardsDisplay({ tokenId }: Props) {
   }
 
   const getToken = (reward: ClaimableReward) =>
-    tokens.find(
-      token =>
-        isAddress(token.address) && isAddressEqual(token.address, reward.token),
-    )
+    findRewardToken(tokens, reward.token)
 
   return (
     <Tooltip

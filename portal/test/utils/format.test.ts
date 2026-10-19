@@ -1,3 +1,4 @@
+import Big from 'big.js'
 import {
   formatBtcAddress,
   formatBtcHash,
@@ -16,6 +17,7 @@ import {
   formatShortDateWithYear,
   formatTokenPrice,
   formatTVL,
+  smallestFormattedNumber,
 } from 'utils/format'
 import { describe, expect, it } from 'vitest'
 
@@ -458,6 +460,19 @@ describe('utils/format', function () {
 
     it('should round an amount below six decimals down to zero', function () {
       expect(formatNumber('0.00000012')).toBe('0.000000')
+    })
+  })
+
+  describe('smallestFormattedNumber', function () {
+    it('should be the smallest amount formatNumber keeps intact', function () {
+      expect(formatNumber(smallestFormattedNumber)).toBe(
+        smallestFormattedNumber,
+      )
+    })
+
+    it('should be the last step before formatNumber loses every digit', function () {
+      const below = Big(smallestFormattedNumber).div(10).toFixed()
+      expect(formatNumber(below)).not.toMatch(/[1-9]/)
     })
   })
 

@@ -58,7 +58,7 @@ const IconGrid = () => (
         key={icon.path + icon.name}
         title={icon.path}
       >
-        <div className="flex min-h-8 max-w-full items-center justify-center overflow-hidden">
+        <div className="flex min-h-8 max-w-full items-center justify-center overflow-hidden [&>svg:not([width])]:size-8">
           {icon.element}
         </div>
         <span className="break-all text-center text-xs">{icon.name}</span>

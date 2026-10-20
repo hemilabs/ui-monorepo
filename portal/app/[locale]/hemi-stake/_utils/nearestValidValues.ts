@@ -18,25 +18,17 @@ export const getNearestValidValues = function ({
     return null
   }
 
-  if (value >= maxDays) return { maxValue: maxDays, minValue: null }
-  if (value <= minDays) return { maxValue: null, minValue: minDays }
-
-  // Calculate based on minDays
-  const base = Math.floor((value - minDays) / step) * step + minDays
-  const lower = base
-  const upper = Math.min(base + step, maxDays)
-
-  // Filter out values below minLocked
-  const validLower = minLocked && lower < minLocked ? null : lower
-  const validUpper = minLocked && upper < minLocked ? null : upper
-
-  // If value is below minLocked, only suggest minLocked or higher
   if (minLocked && value < minLocked) {
     return { maxValue: null, minValue: minLocked }
   }
 
+  if (value >= maxDays) return { maxValue: maxDays, minValue: null }
+  if (value <= minDays) return { maxValue: null, minValue: minDays }
+
+  const lower = Math.floor((value - minDays) / step) * step + minDays
+
   return {
-    maxValue: validUpper,
-    minValue: validLower,
+    maxValue: Math.min(lower + step, maxDays),
+    minValue: minLocked && lower < minLocked ? null : lower,
   }
 }

@@ -114,7 +114,13 @@ export function StakeTable({
   const t = useTranslations('hemi-stake')
   const { status } = useAccount()
 
-  const cols = useMemo(() => stakingColumns({ t }), [t])
+  const cols = useMemo(
+    () =>
+      stakingColumns({ t }).filter(
+        column => filter !== 'withdrawn' || column.id !== 'voting-power',
+      ),
+    [filter, t],
+  )
 
   const table = (
     <Table

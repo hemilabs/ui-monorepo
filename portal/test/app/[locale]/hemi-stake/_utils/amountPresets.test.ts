@@ -13,7 +13,6 @@ describe('getAmountPresets', function () {
       { label: '1K', value: '1000' },
       { label: '10K', value: '10000' },
       { label: '100K', value: '100000' },
-      { label: '1M', value: '1000000' },
     ])
   })
 
@@ -22,7 +21,7 @@ describe('getAmountPresets', function () {
     const nbsp = '\u00a0'
     expect(
       presetsFor(undefined, 'es').presets.map(({ label }) => label),
-    ).toEqual([`1${nbsp}mil`, `10${nbsp}mil`, `100${nbsp}mil`, `1${nbsp}M`])
+    ).toEqual([`1${nbsp}mil`, `10${nbsp}mil`, `100${nbsp}mil`])
     expect(presetsFor(hemi('248500'), 'pt').walletPreset?.label).toBe(
       `248,5${nbsp}mil`,
     )

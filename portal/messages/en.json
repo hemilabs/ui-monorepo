@@ -454,7 +454,10 @@
       "unlocks-on": "Unlocks {date}"
     },
     "estimator": {
+      "new-position": "New position",
       "quick-amounts": "Quick amounts",
+      "scope": "Estimate scope",
+      "with-my-positions": "With my positions",
       "yours": "Yours · {amount}"
     },
     "form": {

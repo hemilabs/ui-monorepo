@@ -454,7 +454,10 @@
       "unlocks-on": "Se desbloquea el {date}"
     },
     "estimator": {
+      "new-position": "Nueva posición",
       "quick-amounts": "Montos rápidos",
+      "scope": "Alcance de la estimación",
+      "with-my-positions": "Con mis posiciones",
       "yours": "Su saldo · {amount}"
     },
     "form": {

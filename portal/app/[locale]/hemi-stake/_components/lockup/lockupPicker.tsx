@@ -22,13 +22,11 @@ import { sanitizeLockup } from '../../_utils/sanitizeLockup'
 import { LockupPresets } from './lockupPresets'
 import { RangeSlider } from './rangeSlider'
 
-type TryValuesHintProps = NearestValidValues & {
+type TryValuesHintProps = {
   inputText: string
   isValid: boolean
-}
-
-type TryValuesHintFullProps = TryValuesHintProps & {
   minLocked?: number
+  nearest: NearestValidValues
   onSelectValue: (value: number) => void
   touched?: boolean
 }
@@ -36,12 +34,11 @@ type TryValuesHintFullProps = TryValuesHintProps & {
 function TryValuesHint({
   inputText,
   isValid,
-  maxValue,
   minLocked,
-  minValue,
+  nearest,
   onSelectValue,
   touched,
-}: TryValuesHintFullProps) {
+}: TryValuesHintProps) {
   const t = useTranslations('hemi-stake.form')
   if (
     isValid ||
@@ -50,6 +47,9 @@ function TryValuesHint({
   ) {
     return null
   }
+
+  const maxValue = nearest?.maxValue
+  const minValue = nearest?.minValue
 
   const renderValue = (value: number, label?: ReactNode) => (
     <button
@@ -200,9 +200,8 @@ export function LockupPicker({
               <TryValuesHint
                 inputText={inputDays}
                 isValid={valid}
-                maxValue={nearest?.maxValue}
                 minLocked={minLocked}
-                minValue={nearest?.minValue}
+                nearest={nearest}
                 onSelectValue={value => handleInputChange(value.toString())}
                 touched={touched}
               />

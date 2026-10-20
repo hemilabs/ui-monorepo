@@ -1,8 +1,8 @@
 import { maxDays, minDays, step } from './lockCreationTimes'
 
 export type NearestValidValues = {
-  maxValue: number | null | undefined
-  minValue: number | null | undefined
+  maxValue: number | null
+  minValue: number | null
 } | null
 
 type Props = {

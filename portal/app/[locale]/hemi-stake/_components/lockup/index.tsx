@@ -252,7 +252,10 @@ export function Lockup({
 
     let days = inputDays
 
-    if (minLocked && (!inputDays || Number(inputDays) < minLocked)) {
+    if (
+      minLocked &&
+      (!inputDays || (!touched && Number(inputDays) < minLocked))
+    ) {
       days = String(minLocked)
     }
 

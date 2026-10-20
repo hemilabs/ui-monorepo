@@ -11,6 +11,7 @@
     "approve-and-withdraw": "Aprovar e Sacar",
     "approving": "A aprovar...",
     "approving-token": "A aprovar {symbol}",
+    "apy": "TEA",
     "cancel": "Cancelar",
     "close": "Fechar",
     "close-notification": "Fechar a notificação",
@@ -168,7 +169,6 @@
       "pool-name": "fundo {tokenSymbol}"
     },
     "pool": {
-      "apy": "TEA",
       "composition": {
         "amount": "Valor",
         "by-protocol": "Por protocolo",
@@ -224,7 +224,6 @@
       "historical-metrics": {
         "1-week": "1 semana",
         "1-year": "1 ano",
-        "apy": "TEA",
         "metric": "Métrica",
         "month": "{count, plural, one {# mês} other {# meses}}",
         "period": "Período",
@@ -252,7 +251,6 @@
       "withdraw-successful": "Saque realizado com sucesso"
     },
     "pool-info": {
-      "apy": "TEA",
       "manage": "Gerenciar",
       "pool-contract": "Contrato do fundo",
       "share-token": "Token de participação",

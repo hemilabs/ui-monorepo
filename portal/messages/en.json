@@ -11,6 +11,7 @@
     "approve-and-withdraw": "Approve and Withdraw",
     "approving": "Approving...",
     "approving-token": "Approving {symbol}",
+    "apy": "APY",
     "cancel": "Cancel",
     "close": "Close",
     "close-notification": "Close notification",
@@ -168,7 +169,6 @@
       "pool-name": "{tokenSymbol} pool"
     },
     "pool": {
-      "apy": "APY",
       "composition": {
         "amount": "Amount",
         "by-protocol": "By protocol",
@@ -224,7 +224,6 @@
       "historical-metrics": {
         "1-week": "1 week",
         "1-year": "1 year",
-        "apy": "APY",
         "metric": "Metric",
         "month": "{count, plural, one {# month} other {# months}}",
         "period": "Period",
@@ -252,7 +251,6 @@
       "withdraw-successful": "Withdraw successful"
     },
     "pool-info": {
-      "apy": "APY",
       "manage": "Manage",
       "pool-contract": "Pool Contract",
       "share-token": "Share token",

@@ -22,6 +22,7 @@ type Props = {
 
 export const PoolInfoBar = function ({ pool }: Props) {
   const t = useTranslations('hemi-earn.pool-info')
+  const tCommon = useTranslations('common')
   const locale = useLocale()
   const chain = useChain(pool.shareToken.chainId)
 
@@ -76,7 +77,7 @@ export const PoolInfoBar = function ({ pool }: Props) {
         </div>
         <PoolInfoItem
           isLoading={pool.apy === undefined}
-          label={t('apy')}
+          label={tCommon('apy')}
           value={
             typeof pool.apy === 'number'
               ? formatApyDisplay(pool.apy)

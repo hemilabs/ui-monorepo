@@ -13,6 +13,7 @@ type Props = {
 
 export const PoolInfoCards = function ({ pool }: Props) {
   const t = useTranslations('hemi-earn')
+  const tCommon = useTranslations('common')
 
   return (
     <div className="flex w-full flex-col items-stretch gap-4 sm:flex-row md:gap-5">
@@ -37,7 +38,7 @@ export const PoolInfoCards = function ({ pool }: Props) {
           icon={<ArrowGrowingIcon />}
           isError={pool.apy === null}
           isLoading={pool.apy === undefined}
-          label={t('pool.apy')}
+          label={tCommon('apy')}
           value={
             typeof pool.apy === 'number' ? formatApyDisplay(pool.apy) : null
           }

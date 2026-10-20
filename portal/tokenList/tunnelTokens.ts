@@ -4,6 +4,7 @@ import partition from 'lodash/partition'
 import { RemoteChain } from 'types/chain'
 import { type EvmToken, Extensions } from 'types/token'
 import { isNativeAddress } from 'utils/nativeToken'
+import { getTunnelPairs } from 'utils/tunnelPairs'
 import { type Chain } from 'viem'
 import { mainnet, sepolia } from 'viem/chains'
 
@@ -101,9 +102,7 @@ const whitelistTunnel = function (hemiChain: Chain, addresses: string[]) {
     )
     .map<string | undefined>(
       extensions =>
-        (extensions?.bridgeInfo ?? extensions?.oft?.peers)?.[
-          hemiChain.sourceId!
-        ]?.tokenAddress,
+        getTunnelPairs(extensions)?.[hemiChain.sourceId!]?.tokenAddress,
     )
     // remove empty
     .filter(Boolean)

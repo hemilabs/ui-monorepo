@@ -1,6 +1,7 @@
 import hemilabsTokenList from '@hemilabs/token-list'
 import { hemi } from 'hemi-viem'
 import { type EvmToken, type Extensions } from 'types/token'
+import { getTunnelPairs } from 'utils/tunnelPairs'
 import { type Chain } from 'viem'
 
 type PartnerExtensions = Pick<
@@ -83,9 +84,7 @@ const getL1Address = function (address: string) {
   const extensions = (hemilabsTokenList.tokens as EvmToken[]).find(
     t => t.chainId === hemi.id && t.address === address,
   )?.extensions
-  const l1Address =
-    extensions?.bridgeInfo?.[hemi.sourceId]?.tokenAddress ??
-    extensions?.oft?.peers?.[hemi.sourceId]?.tokenAddress
+  const l1Address = getTunnelPairs(extensions)?.[hemi.sourceId]?.tokenAddress
   if (!l1Address) {
     throw new Error(`Failed to find the L1 pair of ${address}`)
   }

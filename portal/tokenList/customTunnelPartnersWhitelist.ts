@@ -8,7 +8,7 @@ type PartnerExtensions = Pick<
   'tunnelSymbol' | 'tunnelPartners' | 'tunnelDstAddress'
 >
 
-// Keyed by the Hemi token. "l1" applies to its bridgeInfo pair on Ethereum.
+// Keyed by the Hemi token. "l1" applies to its bridgeInfo pair or OFT peer on Ethereum.
 const hemiPartners: Record<
   string,
   { l1?: PartnerExtensions; l2?: PartnerExtensions }

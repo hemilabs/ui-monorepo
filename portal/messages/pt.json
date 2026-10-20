@@ -564,6 +564,7 @@
     "tabs": {
       "analytics": "Análises",
       "estimator": "Estimador avançado",
+      "estimator-short": "Estimador",
       "stake": "Stake"
     },
     "unlock-successful": "Desbloqueio bem-sucedido",

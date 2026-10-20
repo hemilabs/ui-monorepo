@@ -6,11 +6,21 @@ import { useTranslations } from 'use-intl'
 
 import { isStakingDashboardEnabledOnTestnet } from '../_utils/isStakingDashboardEnabledOnTestnet'
 
-const tabs = [
+type StakeTab = {
+  href: string
+  label: 'analytics' | 'estimator' | 'stake'
+  shortLabel?: 'estimator-short'
+}
+
+const tabs: StakeTab[] = [
   { href: '/hemi-stake', label: 'stake' },
   { href: '/hemi-stake/analytics', label: 'analytics' },
-  { href: '/hemi-stake/estimator', label: 'estimator' },
-] as const
+  {
+    href: '/hemi-stake/estimator',
+    label: 'estimator',
+    shortLabel: 'estimator-short',
+  },
+]
 
 const HemiStakeTabsImpl = function () {
   const [networkType] = useNetworkType()
@@ -28,7 +38,16 @@ const HemiStakeTabsImpl = function () {
       <Tabs>
         {tabs.map(tab => (
           <Tab href={tab.href} key={tab.href} selected={tab === current}>
-            <span className="flex justify-center">{t(tab.label)}</span>
+            <span className="flex justify-center">
+              {tab.shortLabel ? (
+                <>
+                  <span className="md:hidden">{t(tab.shortLabel)}</span>
+                  <span className="hidden md:inline">{t(tab.label)}</span>
+                </>
+              ) : (
+                t(tab.label)
+              )}
+            </span>
           </Tab>
         ))}
       </Tabs>

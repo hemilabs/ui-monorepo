@@ -27,6 +27,10 @@ import {
   wholeDaysToSeconds,
 } from '../../_utils/lockCreationTimes'
 import { getLockupErrorMessage } from '../../_utils/lockupError'
+import {
+  getNearestValidValues,
+  type NearestValidValues,
+} from '../../_utils/nearestValidValues'
 import { sanitizeLockup } from '../../_utils/sanitizeLockup'
 
 import { LockupPresets } from './lockupPresets'
@@ -41,50 +45,9 @@ type ValidLockupProps = {
 export const isValidLockup = (props: ValidLockupProps) =>
   getLockupErrorMessage(props) === undefined
 
-type NearestValidValues = {
-  minValue: number | null | undefined
-  maxValue: number | null | undefined
-} | null
-
 type TryValuesHintProps = NearestValidValues & {
   inputText: string
   isValid: boolean
-}
-
-type NearestValidValuesProps = {
-  minLocked?: number
-  value: number
-}
-
-function getNearestValidValues({
-  minLocked,
-  value,
-}: NearestValidValuesProps): NearestValidValues {
-  if (Number.isNaN(value)) {
-    return null
-  }
-
-  if (value >= maxDays) return { maxValue: maxDays, minValue: null }
-  if (value <= minDays) return { maxValue: null, minValue: minDays }
-
-  // Calculate based on minDays
-  const base = Math.floor((value - minDays) / step) * step + minDays
-  const lower = base
-  const upper = Math.min(base + step, maxDays)
-
-  // Filter out values below minLocked
-  const validLower = minLocked && lower < minLocked ? null : lower
-  const validUpper = minLocked && upper < minLocked ? null : upper
-
-  // If value is below minLocked, only suggest minLocked or higher
-  if (minLocked && value < minLocked) {
-    return { maxValue: null, minValue: minLocked }
-  }
-
-  return {
-    maxValue: validUpper,
-    minValue: validLower,
-  }
 }
 
 const Divider = () => <div className="h-px w-full bg-neutral-300/55" />

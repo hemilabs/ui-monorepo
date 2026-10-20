@@ -439,6 +439,7 @@
       "unlock-token": "Desbloquear {symbol}"
     },
     "estimated-payouts": {
+      "advanced-estimator": "Estimador avanzado",
       "after-unlock": "después del desbloqueo",
       "apy": "{percentage} TEA",
       "carried-from": "Con base en la época {epoch}, la última financiada.",
@@ -562,6 +563,8 @@
     },
     "tabs": {
       "analytics": "Analíticas",
+      "estimator": "Estimador avanzado",
+      "estimator-short": "Estimador",
       "stake": "Stake"
     },
     "unlock-successful": "Desbloqueo exitoso",

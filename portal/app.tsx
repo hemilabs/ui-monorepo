@@ -7,6 +7,7 @@ import { HemiEarnLayout } from 'app/[locale]/hemi-earn/layout'
 import { HemiEarnPage } from 'app/[locale]/hemi-earn/page'
 import { PoolPage } from 'app/[locale]/hemi-earn/pool/[shareAddress]/page'
 import { HemiStakeAnalyticsPage } from 'app/[locale]/hemi-stake/analytics/page'
+import { HemiStakeEstimatorPage } from 'app/[locale]/hemi-stake/estimator/page'
 import { HemiStakeLayout } from 'app/[locale]/hemi-stake/layout'
 import { HemiStakePage } from 'app/[locale]/hemi-stake/page'
 import { LocaleLayout } from 'app/[locale]/layout'
@@ -143,6 +144,7 @@ export const App = () => (
             <Route element={<HemiStakeLayout />} path="hemi-stake">
               <Route element={<HemiStakePage />} index />
               <Route element={<HemiStakeAnalyticsPage />} path="analytics" />
+              <Route element={<HemiStakeEstimatorPage />} path="estimator" />
             </Route>
             <Route element={<ToHemiStake />} path="staking-dashboard" />
             <Route element={<NotFound />} path="*" />

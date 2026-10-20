@@ -1,3 +1,5 @@
+import { ButtonLink } from 'components/button'
+import { Chevron } from 'components/icons/chevron'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import Skeleton from 'react-loading-skeleton'
@@ -113,9 +115,19 @@ export const EstimatedPayouts = function () {
 
   return (
     <div className="flex w-full flex-col gap-y-4 rounded-lg border border-solid border-transparent bg-neutral-50 p-4 ring-1 ring-transparent hover:shadow-bs">
-      {/* TODO #2368 bring back the advanced estimator button on this row, with
-          its `advanced-estimator` label, once that page exists */}
-      <span className={sectionLabelClassName}>{t('title')}</span>
+      <div className="flex items-center justify-between gap-x-2">
+        <span className={sectionLabelClassName}>{t('title')}</span>
+        <div className="group">
+          <ButtonLink
+            href="/hemi-stake/estimator"
+            size="xSmall"
+            variant="tertiary"
+          >
+            {t('advanced-estimator')}
+            <Chevron.Right className="[&>path]:fill-neutral-500 group-hover:[&>path]:fill-neutral-950" />
+          </ButtonLink>
+        </div>
+      </div>
       <div className="min-h-24.5">
         {hasForecast && systemState !== undefined ? (
           <PayoutHeadline

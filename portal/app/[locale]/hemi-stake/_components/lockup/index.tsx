@@ -17,9 +17,9 @@ import {
   predictVotingPower,
   wholeDaysToSeconds,
 } from '../../_utils/lockCreationTimes'
+import { WarningMessage } from '../warningMessage'
 
 import { LockupPicker } from './lockupPicker'
-import { WarningMessage } from './warningMessage'
 
 const Divider = () => <div className="h-px w-full bg-neutral-300/55" />
 
@@ -147,7 +147,9 @@ export function Lockup({
       </div>
       {minLocked && (
         <div className="mt-5">
-          <WarningMessage>{t('form.lockup-extend-warning')}</WarningMessage>
+          <WarningMessage className="ml-4">
+            {t('form.lockup-extend-warning')}
+          </WarningMessage>
         </div>
       )}
     </>

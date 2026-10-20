@@ -16,13 +16,13 @@ import {
   formatPayoutValue,
 } from '../../_utils/formatPayoutValue'
 import { wholeDaysToSeconds } from '../../_utils/lockCreationTimes'
+import { isValidLockup } from '../../_utils/lockupError'
 import {
   getPayoutAxisTicks,
   getUnlockMarkerX,
   toPayoutSeries,
 } from '../../_utils/payoutsChartData'
 import { getRewardsForecast } from '../../_utils/stakeRewardsForecast'
-import { isValidLockup } from '../lockup'
 
 import { PayoutHeadline } from './payoutHeadline'
 import { PayoutPlaceholder } from './payoutPlaceholder'

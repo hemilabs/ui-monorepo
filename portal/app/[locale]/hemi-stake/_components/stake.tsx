@@ -21,10 +21,9 @@ import { useStakingDashboard } from '../_context/stakingDashboardContext'
 import { useEstimateCreateLockFees } from '../_hooks/useEstimateCreateLockFees'
 import { useStake } from '../_hooks/useStake'
 import { daysToSeconds } from '../_utils/lockCreationTimes'
-import { getLockupErrorMessage } from '../_utils/lockupError'
+import { getLockupErrorMessage, isValidLockup } from '../_utils/lockupError'
 
 import { FormContent, StakingForm } from './form'
-import { isValidLockup } from './lockup'
 import { SubmitStake } from './submitStake'
 
 export const Stake = function () {

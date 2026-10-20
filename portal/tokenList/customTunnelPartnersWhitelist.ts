@@ -14,10 +14,31 @@ const hemiPartners: Record<
   string,
   { l1?: PartnerExtensions; l2?: PartnerExtensions }
 > = {
+  // Prefer ordering by symbol in comments, instead of by address, which makes it harder
+  // to search for a specific token.
+  /* eslint-disable sort-keys */
   // cbBTC
   '0x1596bE338B999E2376675C908168A7548C8B0525': {
     l1: {
       tunnelDstAddress: '0x9778bC12904DB935Ca8be4fae26636BF7D6Da456',
+      tunnelPartners: ['stargate'],
+    },
+  },
+  // svetBTC
+  '0xD8D63De3b64bd06d99F8F5AD8B78Ed2fE7525eC0': {
+    l1: {
+      tunnelPartners: ['stargate'],
+    },
+    l2: {
+      tunnelPartners: ['stargate'],
+    },
+  },
+  // sVUSD
+  '0xfe875CC86cC6BC2E93ab330D6b2c408C3Cd79710': {
+    l1: {
+      tunnelPartners: ['stargate'],
+    },
+    l2: {
       tunnelPartners: ['stargate'],
     },
   },
@@ -42,8 +63,8 @@ const hemiPartners: Record<
       tunnelSymbol: 'USDT',
     },
   },
-  // svetBTC
-  '0xD8D63De3b64bd06d99F8F5AD8B78Ed2fE7525eC0': {
+  // vetBTC
+  '0xfF16E26B7fFCf24c378D57DF536dC5eC104a7dE4': {
     l1: {
       tunnelPartners: ['stargate'],
     },
@@ -60,24 +81,7 @@ const hemiPartners: Record<
       tunnelPartners: ['stargate'],
     },
   },
-  // sVUSD
-  '0xfe875CC86cC6BC2E93ab330D6b2c408C3Cd79710': {
-    l1: {
-      tunnelPartners: ['stargate'],
-    },
-    l2: {
-      tunnelPartners: ['stargate'],
-    },
-  },
-  // vetBTC
-  '0xfF16E26B7fFCf24c378D57DF536dC5eC104a7dE4': {
-    l1: {
-      tunnelPartners: ['stargate'],
-    },
-    l2: {
-      tunnelPartners: ['stargate'],
-    },
-  },
+  /* eslint-enable sort-keys */
 }
 
 const getL1Address = function (address: string) {

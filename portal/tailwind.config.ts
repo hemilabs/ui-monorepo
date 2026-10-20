@@ -5,6 +5,7 @@ const config: Config = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './stories/**/*.{ts,tsx}',
     // Vite's entry file lives at the package root
     './*.tsx',
   ],

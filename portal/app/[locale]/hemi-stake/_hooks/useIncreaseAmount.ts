@@ -197,6 +197,35 @@ export const useIncreaseAmount = function ({
         track?.('hemi stake - increase amount transaction reverted')
       })
 
+      emitter.on('increase-amount-failed-validation', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+
+        track?.('hemi stake - increase amount failed validation')
+      })
+      emitter.on('approve-failed', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.APPROVAL_TX_FAILED,
+        })
+
+        track?.('hemi stake - approve increase amount failed')
+      })
+      emitter.on('increase-amount-failed', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+
+        track?.('hemi stake - increase amount failed')
+      })
+      emitter.on('unexpected-error', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+
+        track?.('hemi stake - unexpected error')
+      })
+
       on?.(emitter)
 
       return promise

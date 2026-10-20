@@ -89,6 +89,13 @@ describe('getRemoteTokens', function () {
     expect(remoteTokens[0].extensions?.bridgeInfo).toBeUndefined()
   })
 
+  it('should point the remote token of an OFT peer back to the Hemi token', function () {
+    const [remoteToken] = getRemoteTokens(oftToken)
+    expect(remoteToken.extensions?.oft?.peers).toEqual({
+      43111: { tokenAddress: '0xfF16E26B7fFCf24c378D57DF536dC5eC104a7dE4' },
+    })
+  })
+
   it('should prefer the bridged token over an OFT peer on the same chain', function () {
     const remoteTokens = getRemoteTokens({
       ...token,
@@ -121,6 +128,32 @@ describe('tokenList', function () {
     expect(
       findToken(1, '0xf196C68233464A16CFDa319a47c21f4cECa62001'),
     ).toMatchObject({ decimals: 18, symbol: 'vetBTC' })
+  })
+
+  it.each([
+    ['sVUSD', 43111, '0xfe875CC86cC6BC2E93ab330D6b2c408C3Cd79710'],
+    ['sVUSD', 1, '0x476310E34D2810f7d79C43A74E4D79405bd7a925'],
+    ['svetBTC', 43111, '0xD8D63De3b64bd06d99F8F5AD8B78Ed2fE7525eC0'],
+    ['svetBTC', 1, '0x0cB9D84d4bcEc8d3D5B2d99a6F07f4605325987e'],
+    ['vetBTC', 43111, '0xfF16E26B7fFCf24c378D57DF536dC5eC104a7dE4'],
+    ['vetBTC', 1, '0xf196C68233464A16CFDa319a47c21f4cECa62001'],
+    ['VUSD', 43111, '0xD3599AE62EE280709A22268a46d23164214e345B'],
+    ['VUSD', 1, '0xCa83DDE9c22254f58e771bE5E157773212AcBAc3'],
+  ])(
+    'should tunnel %s on chain %i through Stargate',
+    function (symbol, chainId, address) {
+      expect(findToken(chainId, address)).toMatchObject({
+        extensions: { tunnel: true, tunnelPartners: ['stargate'] },
+        symbol,
+      })
+    },
+  )
+
+  it('should not tunnel hemiBTC on Ethereum', function () {
+    expect(
+      findToken(1, '0x06ea695B91700071B161A434fED42D1DcbAD9f00')?.extensions
+        ?.tunnel,
+    ).toBeUndefined()
   })
 
   it('should not have duplicated tokens', function () {

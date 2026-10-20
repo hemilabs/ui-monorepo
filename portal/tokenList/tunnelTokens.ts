@@ -2,8 +2,9 @@ import hemilabsTokenList from '@hemilabs/token-list'
 import { hemi, hemiSepolia } from 'hemi-viem'
 import partition from 'lodash/partition'
 import { RemoteChain } from 'types/chain'
-import { Extensions } from 'types/token'
+import { type EvmToken, Extensions } from 'types/token'
 import { isNativeAddress } from 'utils/nativeToken'
+import { getTunnelPairs } from 'utils/tunnelPairs'
 import { type Chain } from 'viem'
 import { mainnet, sepolia } from 'viem/chains'
 
@@ -42,6 +43,10 @@ const mainnetAddresses = [
   '0xB5686c4f60904Ec2BDA6277d6FE1F7cAa8D1b41a',
   // SUSHI
   '0x1EBD781B9259822d00b0c5F4Ca2F0838D72BBE9c',
+  // svetBTC
+  '0xD8D63De3b64bd06d99F8F5AD8B78Ed2fE7525eC0',
+  // sVUSD
+  '0xfe875CC86cC6BC2E93ab330D6b2c408C3Cd79710',
   // tBTC (v2)
   '0x12B6e6FC45f81cDa81d2656B974E8190e4ab8D93',
   // UNI
@@ -50,6 +55,10 @@ const mainnetAddresses = [
   '0xad11a8BEb98bbf61dbb1aa0F6d6F2ECD87b35afA',
   // USDT
   '0xbB0D083fb1be0A9f6157ec484b6C79E0A4e31C2e',
+  // vetBTC
+  '0xfF16E26B7fFCf24c378D57DF536dC5eC104a7dE4',
+  // Vetro USD
+  '0xD3599AE62EE280709A22268a46d23164214e345B',
   // VSP
   '0x21c1F6be5765d378AdD561edDdD1127a65df3820',
   // VUSD
@@ -87,11 +96,13 @@ const whitelistTunnel = function (hemiChain: Chain, addresses: string[]) {
   const l1Addresses = erc20Tokens
     .map(
       address =>
-        // @ts-expect-error it fails to understand sourceId is a key of bridgeInfo but it works
-        hemilabsTokenList.tokens.find(
+        (hemilabsTokenList.tokens as EvmToken[]).find(
           t => t.chainId === hemiChain.id && t.address === address,
-        )?.extensions?.bridgeInfo?.[hemiChain.sourceId!]
-          ?.tokenAddress satisfies string | undefined,
+        )?.extensions,
+    )
+    .map<string | undefined>(
+      extensions =>
+        getTunnelPairs(extensions)?.[hemiChain.sourceId!]?.tokenAddress,
     )
     // remove empty
     .filter(Boolean)

@@ -105,7 +105,7 @@ Unlike the EVM side, the challenge does not deliver the BTC — it undoes the wi
 The native tunnel is not the only route in and out of Hemi. For EVM ↔ EVM transfers the Portal also offers a "3rd party bridge" tab listing partner bridges.
 
 - The Portal only links out to partners. It does not execute or track those transfers, and the UI states they are used at the user's own risk.
-- Some tokens cannot be tunneled natively and are whitelisted to specific partners instead: USDC and USDT on both Ethereum and Hemi, cbBTC on Ethereum only. For those, the partner list replaces the native form instead of sitting next to it.
+- Some tokens cannot be tunneled natively and are whitelisted to specific partners instead: USDC and USDT on both Ethereum and Hemi, cbBTC on Ethereum only, and the Vetro tokens (VUSD, sVUSD, vetBTC and svetBTC) on both Ethereum and Hemi through Stargate. For those, the partner list replaces the native form instead of sitting next to it.
 
 ## Staking
 

@@ -8,6 +8,10 @@ export const displayOverrides: Partial<
   >
 > = {
   [hemi.id]: {
+    // VUSD
+    '0x7A06C4AeF988e7925575C50261297a946aD204A8': {
+      name: 'Vesper USD',
+    },
     // USDC.e
     '0xad11a8BEb98bbf61dbb1aa0F6d6F2ECD87b35afA': {
       name: 'USDC',

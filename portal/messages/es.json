@@ -11,6 +11,7 @@
     "approve-and-withdraw": "Aprobar y Retirar",
     "approving": "Aprobando...",
     "approving-token": "Aprobando {symbol}",
+    "apy": "TEA",
     "cancel": "Cancelar",
     "close": "Cerrar",
     "close-notification": "Cerrar la notificación",
@@ -168,7 +169,6 @@
       "pool-name": "fondo {tokenSymbol}"
     },
     "pool": {
-      "apy": "TEA",
       "composition": {
         "amount": "Monto",
         "by-protocol": "Por protocolo",
@@ -224,7 +224,6 @@
       "historical-metrics": {
         "1-week": "1 semana",
         "1-year": "1 año",
-        "apy": "TEA",
         "metric": "Métrica",
         "month": "{count, plural, one {# mes} other {# meses}}",
         "period": "Período",
@@ -252,7 +251,6 @@
       "withdraw-successful": "Retiro exitoso"
     },
     "pool-info": {
-      "apy": "TEA",
       "manage": "Gestionar",
       "pool-contract": "Contrato del fondo",
       "share-token": "Token de participación",
@@ -454,7 +452,10 @@
       "unlocks-on": "Se desbloquea el {date}"
     },
     "estimator": {
+      "new-position": "Nueva posición",
       "quick-amounts": "Montos rápidos",
+      "scope": "Alcance de la estimación",
+      "with-my-positions": "Con mis posiciones",
       "yours": "Su saldo · {amount}"
     },
     "form": {

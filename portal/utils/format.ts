@@ -13,7 +13,8 @@ export const formatBtcHash = (txHash: BtcTransaction) =>
 export const formatEvmAddress = (address: Address) =>
   shorten(address, { length: 4, prefixes: ['0x'] })
 
-const cryptoRounder = smartRound(6, 0, 6)
+const cryptoDecimals = 6
+const cryptoRounder = smartRound(6, 0, cryptoDecimals)
 const fiatRounder = smartRound(6, 2, 2)
 const fiatRounderTVL = smartRound(6, 0, 0)
 // Same config as fiatRounder, but I think it reads better to use a different rounder
@@ -29,6 +30,8 @@ export const formatNumber = (value: number | string, locale?: string) =>
     roundingMode: 'round-down',
     shouldFormat: true,
   })
+
+export const smallestFormattedNumber = `0.${'0'.repeat(cryptoDecimals - 1)}1`
 
 export const formatFiatNumber = (value: number | string) =>
   fiatRounder(value, { shouldFormat: true })

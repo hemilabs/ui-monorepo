@@ -114,7 +114,8 @@ const stakingColumns = ({
 }: StakingColumnsProps & { filter: StakeTableFilterOptions }) =>
   allStakingColumns(props).filter(
     column =>
-      column.id !== 'auto-relock' || filter !== StakingPositionStatus.WITHDRAWN,
+      filter !== StakingPositionStatus.WITHDRAWN ||
+      (column.id !== 'auto-relock' && column.id !== 'voting-power'),
   )
 
 type Props = {

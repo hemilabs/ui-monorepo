@@ -3,7 +3,7 @@ import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
 import { ComponentProps, ComponentType, Fragment, ReactNode } from 'react'
 import { Token } from 'types/token'
-import { formatNumber } from 'utils/format'
+import { formatNumber, smallestFormattedNumber } from 'utils/format'
 
 type CustomContainer = ComponentType<{
   children?: ReactNode
@@ -18,9 +18,10 @@ type Props = {
   amountContainer?: CustomContainer
   container?: CustomContainer
   logoVersion?: ComponentProps<typeof TokenLogo>['version']
-  symbolContainer?: CustomContainer
   showSymbol?: boolean
   showTokenLogo?: boolean
+  showTooltip?: boolean
+  symbolContainer?: CustomContainer
   token: Token
 }
 
@@ -31,6 +32,7 @@ export const DisplayAmount = function ({
   logoVersion,
   showSymbol = true,
   showTokenLogo = true,
+  showTooltip = true,
   symbolContainer: SymbolContainer = DefaultTextContainer,
   token,
 }: Props) {
@@ -38,13 +40,15 @@ export const DisplayAmount = function ({
 
   const bigAmount = Big(amount)
   const notZero = !bigAmount.eq(0)
-  // Only show dots for small numbers (x < 1), if the amount is not zero and we're truncating decimals
+  const belowPrecision =
+    bigAmount.gt(0) && bigAmount.lt(smallestFormattedNumber)
   const showDots = bigAmount.lt(1) && notZero && formattedAmount !== amount
   return (
     <Tooltip
+      disabled={!showTooltip}
       id={`amount-tooltip-${token.symbol}`}
       text={
-        notZero ? (
+        showTooltip && notZero ? (
           <div className="flex items-center gap-x-1">
             {showTokenLogo && (
               <TokenLogo size="small" token={token} version={logoVersion} />
@@ -62,9 +66,11 @@ export const DisplayAmount = function ({
       variant="simple"
     >
       <Container>
-        <AmountContainer>{`${formattedAmount}${
-          showDots ? '...' : ''
-        }`}</AmountContainer>
+        <AmountContainer>
+          {belowPrecision
+            ? `< ${smallestFormattedNumber}`
+            : `${formattedAmount}${showDots ? '...' : ''}`}
+        </AmountContainer>
         {showSymbol ? (
           <SymbolContainer>{` ${token.symbol}`}</SymbolContainer>
         ) : null}

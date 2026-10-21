@@ -2,14 +2,14 @@ import { NativeTokenSpecialAddressOnL2 } from 'tokenList/nativeTokens'
 import { RemoteChain } from 'types/chain'
 import { EvmToken } from 'types/token'
 import { getNativeToken } from 'utils/nativeToken'
+import { getTunnelPairs } from 'utils/tunnelPairs'
 import { isAddress, isAddressEqual } from 'viem'
 
 export const getL1BridgePair = function (
   token: EvmToken,
   remoteNetworks: RemoteChain[],
 ) {
-  // LayerZero tokens have no bridgeInfo, so fall back to their peers
-  const pairs = token.extensions?.bridgeInfo ?? token.extensions?.oft?.peers
+  const pairs = getTunnelPairs(token.extensions)
   if (!pairs) {
     return null
   }

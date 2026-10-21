@@ -96,6 +96,7 @@ const analyticsEvents = [
   'stake - unstake success',
   // /hemi-stake
   'hemi stake - approve failed',
+  'hemi stake - approve increase amount failed',
   'hemi stake - approve increase amount reverted',
   'hemi stake - approve reverted',
   'hemi stake - capture position class reverted',
@@ -103,6 +104,8 @@ const analyticsEvents = [
   'hemi stake - collect rewards transaction succeeded',
   'hemi stake - filter active',
   'hemi stake - filter burned',
+  'hemi stake - increase amount failed',
+  'hemi stake - increase amount failed validation',
   'hemi stake - increase amount success',
   'hemi stake - increase amount transaction reverted',
   'hemi stake - increase unlock time failed',

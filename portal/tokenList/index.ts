@@ -120,7 +120,14 @@ export const getRemoteTokens = function (token: EvmToken) {
     .map(chainId =>
       createRemoteToken({
         chainId,
-        extensions: { allowanceSlot: peers[chainId].allowanceSlot },
+        extensions: {
+          allowanceSlot: peers[chainId].allowanceSlot,
+          oft: {
+            peers: {
+              [token.chainId]: { tokenAddress: token.address as Address },
+            },
+          },
+        },
         token,
         tokenAddress: peers[chainId].tokenAddress!,
       }),

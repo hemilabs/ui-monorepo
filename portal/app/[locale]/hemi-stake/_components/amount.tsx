@@ -3,7 +3,7 @@ import { SubLogoTooltip } from 'components/subLogoTooltip'
 import { TokenLogo } from 'components/tokenLogo'
 import { TxLink } from 'components/txLink'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { StakingPosition } from 'types/stakingDashboard'
+import { StakingPosition, StakingPositionStatus } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
 import { Address, formatUnits, isAddressEqual } from 'viem'
 import { useAccount } from 'wagmi'
@@ -16,7 +16,7 @@ type Props = {
 
 export const Amount = function ({ operation }: Props) {
   const t = useTranslations('hemi-stake')
-  const { amount, owner, pastOwners, tokenId } = operation
+  const { amount, owner, pastOwners, status, tokenId } = operation
 
   const { address: ownerAddress } = useAccount()
   const token = useHemiToken()
@@ -31,7 +31,7 @@ export const Amount = function ({ operation }: Props) {
   const isTransferredPosition = !isWalletOwner && isWalletPastOwner
 
   const { data: delegationDetails } = usePositionDelegationDetails(tokenId, {
-    enabled: isWalletOwner,
+    enabled: isWalletOwner && status !== StakingPositionStatus.WITHDRAWN,
   })
   const isReceivedPosition = isWalletOwner && pastOwners.length > 0
   const isDelegatedAway = !!delegationDetails?.isDelegatedAway && isWalletOwner

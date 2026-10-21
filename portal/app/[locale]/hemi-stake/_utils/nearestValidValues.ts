@@ -5,7 +5,7 @@ export type NearestValidValues = {
   minValue: number | null
 } | null
 
-type Props = {
+type GetNearestValidValuesProps = {
   minLocked?: number
   value: number
 }
@@ -13,27 +13,22 @@ type Props = {
 export const getNearestValidValues = function ({
   minLocked,
   value,
-}: Props): NearestValidValues {
+}: GetNearestValidValuesProps): NearestValidValues {
   if (Number.isNaN(value)) {
     return null
   }
-
-  if (value >= maxDays) return { maxValue: maxDays, minValue: null }
-  if (value <= minDays) return { maxValue: null, minValue: minDays }
-
-  const base = Math.floor((value - minDays) / step) * step + minDays
-  const lower = base
-  const upper = Math.min(base + step, maxDays)
-
-  const validLower = minLocked && lower < minLocked ? null : lower
-  const validUpper = minLocked && upper < minLocked ? null : upper
 
   if (minLocked && value < minLocked) {
     return { maxValue: null, minValue: minLocked }
   }
 
+  if (value >= maxDays) return { maxValue: maxDays, minValue: null }
+  if (value <= minDays) return { maxValue: null, minValue: minDays }
+
+  const lower = Math.floor((value - minDays) / step) * step + minDays
+
   return {
-    maxValue: validUpper,
-    minValue: validLower,
+    maxValue: Math.min(lower + step, maxDays),
+    minValue: minLocked && lower < minLocked ? null : lower,
   }
 }

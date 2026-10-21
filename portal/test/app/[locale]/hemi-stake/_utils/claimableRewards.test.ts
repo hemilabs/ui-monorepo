@@ -19,7 +19,6 @@ const reward = (
   amount,
   decimals: 18,
   source: RewardSource.EPOCH,
-  symbol: 'HEMI',
   token,
   ...overrides,
 })
@@ -32,7 +31,7 @@ describe('mergeClaimableRewards', function () {
 
   it('should keep one row per reward token', function () {
     const merged = mergeClaimableRewards([
-      [reward(hemi, BigInt(5)), reward(usdc, BigInt(7), { symbol: 'USDC' })],
+      [reward(hemi, BigInt(5)), reward(usdc, BigInt(7))],
     ])
 
     expect(merged).toHaveLength(2)
@@ -49,18 +48,16 @@ describe('mergeClaimableRewards', function () {
 
   it('should keep the metadata of the first row it saw for a token', function () {
     const merged = mergeClaimableRewards([
-      [reward(hemi, BigInt(5), { decimals: 8, symbol: 'hemiBTC' })],
-      [reward(hemi, BigInt(3), { decimals: 18, symbol: 'HEMI' })],
+      [reward(hemi, BigInt(5), { decimals: 8 })],
+      [reward(hemi, BigInt(3), { decimals: 18 })],
     ])
 
-    expect(merged).toEqual([
-      reward(hemi, BigInt(8), { decimals: 8, symbol: 'hemiBTC' }),
-    ])
+    expect(merged).toEqual([reward(hemi, BigInt(8), { decimals: 8 })])
   })
 
   it('should keep a token that is owed nothing', function () {
     const merged = mergeClaimableRewards([
-      [reward(hemi, BigInt(0)), reward(usdc, BigInt(4), { symbol: 'USDC' })],
+      [reward(hemi, BigInt(0)), reward(usdc, BigInt(4))],
     ])
 
     expect(merged).toHaveLength(2)

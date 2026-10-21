@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv, type PluginOption } from 'vite'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
-import { sitemap } from './plugins/sitemap'
+import { sitemap } from './plugins/sitemap.ts'
 
 const polyfills = () => nodePolyfills({ include: ['http', 'https', 'util'] })
 

@@ -72,7 +72,6 @@ export type ClaimableReward = {
   amount: bigint
   decimals: number
   source: RewardSourceType
-  symbol: string
   token: Address
 }
 

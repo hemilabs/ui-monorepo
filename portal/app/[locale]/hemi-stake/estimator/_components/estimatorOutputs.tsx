@@ -14,7 +14,7 @@ export const EstimatorOutputs = function () {
     stakedReturnRatio,
   } = useEstimatorForecast()
 
-  const unavailable = isError || needsWallet || !hasForecast
+  const unavailable = !isLoading && (isError || needsWallet || !hasForecast)
 
   return (
     <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 [&>.card-container]:min-w-0">

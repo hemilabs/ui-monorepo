@@ -3,7 +3,6 @@ import { useMemo } from 'react'
 import { type StakingPosition } from 'types/stakingDashboard'
 import { unixNowTimestamp } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
-import { minLockAmount } from 've-hemi-actions'
 import { type Address } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -12,15 +11,14 @@ import { useStakingPositions } from '../../_hooks/useStakingPositions'
 import { getBlendedForecast } from '../../_utils/blendedForecast'
 import { wholeDaysToSeconds } from '../../_utils/lockCreationTimes'
 import { getEpochEnd, getLockEnd } from '../../_utils/lockEpochs'
-import { isValidLockup } from '../../_utils/lockupError'
 import {
   alwaysTransferable,
   emptyInputsByClass,
-  type InputsByClass,
   type PositionClass,
 } from '../../_utils/rewardClass'
 import { isActiveStake } from '../../_utils/walletStakedTotal'
 import { useEstimator } from '../_context/estimatorContext'
+import { canForecast } from '../_utils/canForecast'
 
 import { useNeedsWallet } from './useNeedsWallet'
 import { usePositionClasses } from './usePositionClasses'
@@ -62,25 +60,12 @@ const toExistingLegs = (
     positionClass: classes[position.tokenId.toString()] ?? alwaysTransferable,
   }))
 
-const toLoadState = (queries: { isError: boolean; isLoading: boolean }[]) => ({
-  isError: queries.some(query => query.isError),
+const toLoadState = (
+  queries: { data: unknown; isError: boolean; isLoading: boolean }[],
+) => ({
+  isError: queries.some(query => query.isError && query.data === undefined),
   isLoading: queries.some(query => query.isLoading),
 })
-
-const canForecast = ({
-  amountUnits,
-  inputsByClass,
-  lockupDays,
-  staked,
-}: {
-  amountUnits: bigint
-  inputsByClass: InputsByClass
-  lockupDays: number
-  staked: StakingPosition[]
-}) =>
-  (inputsByClass.transferable.baseline ?? BigInt(0)) > BigInt(0) &&
-  (amountUnits >= minLockAmount || staked.length > 0) &&
-  isValidLockup({ value: lockupDays })
 
 export const useEstimatorForecast = function () {
   const { amount, lockupDays, scope } = useEstimator()

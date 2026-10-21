@@ -9,7 +9,7 @@
 # tooling, and intermediate node_modules.
 
 # ---- build: install the workspace, compile the workspace packages, deploy ----
-FROM node:24.14.0-alpine3.23 AS build
+FROM node:24.22.1-alpine3.24 AS build
 RUN corepack enable
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 WORKDIR /repo
@@ -23,7 +23,7 @@ RUN pnpm --filter "portal-backend^..." run build
 RUN pnpm deploy --filter=portal-backend --prod --legacy /app
 
 # ---- runtime: minimal patched image running the deployed app ----
-FROM node:24.14.0-alpine3.23
+FROM node:24.22.1-alpine3.24
 
 # Patch vulnerabilities
 RUN apk update

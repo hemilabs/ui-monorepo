@@ -5,7 +5,7 @@
 # output ships, not the workspace source or dev tooling.
 
 # ---- build: install the workspace, deploy ----
-FROM node:24.14.0-alpine3.23 AS build
+FROM node:24.22.1-alpine3.24 AS build
 RUN corepack enable
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 WORKDIR /repo
@@ -16,7 +16,7 @@ RUN pnpm install --frozen-lockfile --filter vaults-monitor-cron...
 RUN pnpm deploy --filter=vaults-monitor-cron --prod --legacy /app
 
 # ---- runtime: minimal patched image running the deployed app ----
-FROM node:24.14.0-alpine3.23
+FROM node:24.22.1-alpine3.24
 
 # Patch vulnerabilities
 RUN apk update

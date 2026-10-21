@@ -91,8 +91,6 @@ export const EvmWallet = function () {
   )
 
   if (walletIsConnected(status)) {
-    // An EVM address is always valid on Hemi, so on unsupported chains
-    // fall back to the Hemi balance.
     const balanceChainId = chainSupported && chain ? chain.id : hemi.id
     return (
       <Box

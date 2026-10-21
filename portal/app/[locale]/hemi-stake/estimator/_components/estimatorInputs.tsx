@@ -1,4 +1,5 @@
 import { Card } from 'components/card'
+import { LazyConnectEvmWallet } from 'components/lazyConnectEvmWallet'
 import {
   SegmentedControl,
   type SegmentedControlOption,
@@ -11,10 +12,13 @@ import { parseTokenUnits } from 'utils/token'
 import { EstimatorAmountField } from '../../_components/estimator/estimatorAmountField'
 import { LockupPicker } from '../../_components/lockup/lockupPicker'
 import { useEstimator, type EstimatorScope } from '../_context/estimatorContext'
+import { useNeedsWallet } from '../_hooks/useNeedsWallet'
 
 export const EstimatorInputs = function () {
   const t = useTranslations('hemi-stake.estimator')
+  const tCommon = useTranslations('common')
   const token = useHemiToken()
+  const needsWallet = useNeedsWallet()
   const { data: balance } = useTokenBalance(token.chainId, token.address)
   const {
     amount,
@@ -41,20 +45,39 @@ export const EstimatorInputs = function () {
           options={scopeOptions}
           value={scope}
         />
-        <EstimatorAmountField
-          balance={balance}
-          onChange={updateAmount}
-          token={token}
-          value={amount}
-        />
-        <div className="flex flex-col gap-y-3 rounded-lg bg-neutral-50 px-4 py-3">
-          <LockupPicker
-            amount={parseTokenUnits(amount, token)}
-            inputDays={inputDays}
-            lockupDays={lockupDays}
-            updateInputDays={updateInputDays}
-            updateLockupDays={updateLockupDays}
-          />
+        <div className="grid">
+          <div
+            className={`col-start-1 row-start-1 flex flex-col gap-y-3 ${
+              needsWallet ? 'invisible' : ''
+            }`}
+          >
+            <EstimatorAmountField
+              balance={balance}
+              onChange={updateAmount}
+              token={token}
+              value={amount}
+            />
+            <div className="flex flex-col gap-y-3 rounded-lg bg-neutral-50 px-4 py-3">
+              <LockupPicker
+                amount={parseTokenUnits(amount, token)}
+                inputDays={inputDays}
+                lockupDays={lockupDays}
+                updateInputDays={updateInputDays}
+                updateLockupDays={updateLockupDays}
+              />
+            </div>
+          </div>
+          {needsWallet && (
+            <div className="col-start-1 row-start-1 flex flex-col items-center justify-center gap-y-4 text-center">
+              <span className="body-text-medium max-w-64 text-neutral-500">
+                {t('connect-to-blend')}
+              </span>
+              <LazyConnectEvmWallet
+                buttonSize="small"
+                text={tCommon('connect-wallet')}
+              />
+            </div>
+          )}
         </div>
       </div>
     </Card>

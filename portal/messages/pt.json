@@ -452,9 +452,13 @@
       "unlocks-on": "Desbloqueia em {date}"
     },
     "estimator": {
+      "blended-was": "combinada, antes {percentage}",
+      "connect-to-blend": "Conecte sua carteira para incluir suas posições na estimativa",
+      "estimated-payouts-first-year": "Pagamentos estimados no primeiro ano",
       "new-position": "Nova posição",
       "quick-amounts": "Valores rápidos",
       "scope": "Escopo da estimativa",
+      "simple-first-year": "simples, primeiro ano",
       "with-my-positions": "Com minhas posições",
       "yours": "Seu saldo · {amount}"
     },

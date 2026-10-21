@@ -1,8 +1,4 @@
-import {
-  MaxLockDurationSeconds,
-  MinLockDurationSeconds,
-  SixDaysSeconds,
-} from 've-hemi-actions'
+import { MaxLockDurationSeconds, SixDaysSeconds } from 've-hemi-actions'
 
 import { getEpochEnd, getLockEnd, getWeightAt } from './lockEpochs'
 import {
@@ -50,7 +46,7 @@ export const getClassWeights = function ({
   const own = getWeightAt({
     amount,
     at,
-    lockEnd: positionClass.transferableAfter,
+    lockEnd: Math.min(lockEnd, positionClass.transferableAfter),
   })
 
   return {
@@ -100,7 +96,6 @@ export const getBlendedForecast = function ({
   incoming: {
     amount: bigint
     lockDurationInSeconds: number
-    positionClass?: PositionClass
   }
   inputsByClass: InputsByClass
   now: number
@@ -108,12 +103,8 @@ export const getBlendedForecast = function ({
   const settledAt = getEpochEnd({ epochsAhead: 0, now })
   const staked = existing.filter(position => position.lockEnd > settledAt)
 
-  const incomingClass = incoming.positionClass ?? alwaysTransferable
   const incomingLockEnd = getLockEnd({
-    lockTime: Math.min(
-      Math.max(incoming.lockDurationInSeconds, MinLockDurationSeconds),
-      MaxLockDurationSeconds,
-    ),
+    lockTime: Math.min(incoming.lockDurationInSeconds, MaxLockDurationSeconds),
     timestamp: now,
   })
 
@@ -130,7 +121,7 @@ export const getBlendedForecast = function ({
       amount: incoming.amount,
       at,
       lockEnd: incomingLockEnd,
-      positionClass: incomingClass,
+      positionClass: alwaysTransferable,
     })
 
     // The denominators are frozen at the settled epoch, where they already

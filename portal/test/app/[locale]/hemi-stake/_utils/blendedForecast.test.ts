@@ -8,7 +8,7 @@ import {
 } from 'app/[locale]/hemi-stake/_utils/lockEpochs'
 import { alwaysTransferable } from 'app/[locale]/hemi-stake/_utils/rewardClass'
 import { getRewardsForecast } from 'app/[locale]/hemi-stake/_utils/stakeRewardsForecast'
-import { MinLockDurationSeconds, SixDaysSeconds } from 've-hemi-actions'
+import { SixDaysSeconds } from 've-hemi-actions'
 import { describe, expect, it } from 'vitest'
 
 const now = SixDaysSeconds * 3000
@@ -87,6 +87,23 @@ describe('getClassWeights', function () {
       }),
     ).toEqual({
       forfeitable: getWeightAt({ amount, at, lockEnd: transferableAfter }),
+      transferable: BigInt(0),
+    })
+  })
+
+  it('never leaves a negative residual when the lock ends first', function () {
+    const at = now
+    const shortLockEnd = transferableAfter - oneYear / 2
+
+    expect(
+      getClassWeights({
+        amount,
+        at,
+        lockEnd: shortLockEnd,
+        positionClass: { forfeitable: true, transferableAfter },
+      }),
+    ).toEqual({
+      forfeitable: getWeightAt({ amount, at, lockEnd: shortLockEnd }),
       transferable: BigInt(0),
     })
   })
@@ -259,19 +276,28 @@ describe('getBlendedForecast', function () {
     )
   })
 
-  it('lands the blended rate between the two legs', function () {
-    const { blended, existing, incoming } = getBlendedForecast({
+  it('grows the denominator by exactly the incoming weight', function () {
+    const { blended, existing } = getBlendedForecast({
       existing: [anExistingPosition],
       incoming: anIncomingPosition,
       inputsByClass,
       now,
     })
 
-    expect(blended.yearOneReturnRatio).toBeGreaterThanOrEqual(
-      Math.min(existing.yearOneReturnRatio, incoming.yearOneReturnRatio),
-    )
-    expect(blended.yearOneReturnRatio).toBeLessThanOrEqual(
-      Math.max(existing.yearOneReturnRatio, incoming.yearOneReturnRatio),
+    const at = getEpochEnd({ epochsAhead: 0, now })
+    const weight = getWeightAt({
+      amount: anExistingPosition.amount,
+      at,
+      lockEnd: anExistingPosition.lockEnd,
+    })
+    const incomingWeight = getWeightAt({
+      amount: anIncomingPosition.amount,
+      at,
+      lockEnd: blended.lockEnd,
+    })
+
+    expect(existing.payouts[0].payout).toBe(
+      (transferableBaseline * weight) / (transferableWeight + incomingWeight),
     )
   })
 
@@ -311,25 +337,22 @@ describe('getBlendedForecast', function () {
     expect(existing.payouts[5].payout).toBe(BigInt(0))
   })
 
-  it('holds an incoming lock to the contract minimum', function () {
+  it('prices a lock below the minimum like the single position forecast', function () {
+    const lockDurationInSeconds = 12 * 86400
     const { incoming } = getBlendedForecast({
       existing: [],
-      incoming: { amount: hemi(10_000), lockDurationInSeconds: 12 * 86400 },
+      incoming: { amount: hemi(10_000), lockDurationInSeconds },
       inputsByClass,
       now,
     })
-    const atTheMinimum = getBlendedForecast({
-      existing: [],
-      incoming: {
-        amount: hemi(10_000),
-        lockDurationInSeconds: MinLockDurationSeconds,
-      },
+    const alone = getRewardsForecast({
+      amount: hemi(10_000),
       inputsByClass,
+      lockDurationInSeconds,
       now,
     })
 
-    expect(incoming.yearOneTotal).toBeGreaterThan(BigInt(0))
-    expect(incoming.yearOneTotal).toBe(atTheMinimum.incoming.yearOneTotal)
+    expect(incoming.yearOneTotal).toBe(alone.yearOneTotal)
   })
 
   it('dilutes what is already staked when a position joins', function () {

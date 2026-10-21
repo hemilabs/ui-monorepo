@@ -58,6 +58,37 @@ export const getOwnerOf = async function (client: Client, tokenId: bigint) {
   })
 }
 
+export const getLivePositionClass = async function (
+  client: Client,
+  tokenId: bigint,
+) {
+  if (!client.chain) {
+    throw new Error('Client chain is not defined')
+  }
+
+  const veHemiAddress = getVeHemiContractAddress(client.chain.id)
+
+  const [forfeitable, transferableAfter] = await multicall(client, {
+    allowFailure: false,
+    contracts: [
+      {
+        abi: veHemiAbi,
+        address: veHemiAddress,
+        args: [tokenId],
+        functionName: 'forfeitable',
+      },
+      {
+        abi: veHemiAbi,
+        address: veHemiAddress,
+        args: [tokenId],
+        functionName: 'transferableAfter',
+      },
+    ],
+  })
+
+  return { forfeitable, transferableAfter }
+}
+
 export const getBalanceOfNFTAt = async function (
   client: Client,
   tokenId: bigint,

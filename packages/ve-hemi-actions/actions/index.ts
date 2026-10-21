@@ -10,6 +10,7 @@ export {
 export { encodeWithdraw, withdraw } from './wallet/withdraw.ts'
 export {
   getBalanceOfNFTAt,
+  getLivePositionClass,
   getLockedBalance,
   getPositionVotingPowerDetails,
   getPositionsVotingPowerSum,

@@ -4,11 +4,15 @@ import { unixNowTimestamp } from 'utils/time'
 
 import { formatApyFromRatio } from '../_utils/formatApyFromRatio'
 import { getLockupApys } from '../_utils/lockupApy'
+import { emptyInputsByClass } from '../_utils/rewardClass'
 
 import { useEpochSystemState } from './useEpochSystemState'
 import { useRewardsForecastInputs } from './useRewardsForecastInputs'
 
-export const useLockupApySublabels = function (amount: bigint) {
+export const useLockupApySublabels = function (
+  amount: bigint,
+  autoRelock?: boolean,
+) {
   const t = useTranslations('hemi-stake.form')
   const { isError: isSystemStateError } = useEpochSystemState()
   const { data: forecastInputs, isError: isForecastError } =
@@ -16,15 +20,13 @@ export const useLockupApySublabels = function (amount: bigint) {
 
   const apys = getLockupApys({
     amount,
+    autoRelock,
+    inputsByClass: forecastInputs ?? emptyInputsByClass,
     now: Number(unixNowTimestamp()),
-    transferableClassBaseline:
-      forecastInputs?.transferableClassBaseline ?? BigInt(0),
-    transferableClassWeight:
-      forecastInputs?.transferableClassWeight ?? BigInt(0),
   })
 
   const toSublabel = function (ratio: number) {
-    if (forecastInputs?.transferableClassBaseline !== undefined) {
+    if (forecastInputs?.transferable.baseline !== undefined) {
       return t('approximate', { percentage: formatApyFromRatio(ratio) })
     }
     if (forecastInputs !== undefined || isForecastError || isSystemStateError) {

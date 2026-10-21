@@ -22,6 +22,10 @@ import {
   getUnlockMarkerX,
   toPayoutSeries,
 } from '../../_utils/payoutsChartData'
+import {
+  emptyInputsByClass,
+  type InputsByClass,
+} from '../../_utils/rewardClass'
 import { getRewardsForecast } from '../../_utils/stakeRewardsForecast'
 
 import { PayoutHeadline } from './payoutHeadline'
@@ -40,25 +44,22 @@ const toPrice = function (value: string | undefined) {
 
 const buildForecast = function ({
   amount,
-  baseline,
   decimals,
   hasValidLockup,
+  inputsByClass,
   lockupDays,
-  weight,
 }: {
   amount: bigint
-  baseline: bigint
   decimals: number
   hasValidLockup: boolean
+  inputsByClass: InputsByClass
   lockupDays: number
-  weight: bigint
 }) {
   const forecast = getRewardsForecast({
     amount,
+    inputsByClass,
     lockDurationInSeconds: Number(wholeDaysToSeconds(lockupDays)),
     now: Number(unixNowTimestamp()),
-    transferableClassBaseline: baseline,
-    transferableClassWeight: weight,
   })
   const series = toPayoutSeries({
     decimals,
@@ -66,7 +67,9 @@ const buildForecast = function ({
     payouts: forecast.payouts,
   })
   const hasForecast =
-    baseline > BigInt(0) && forecast.meetsMinimumAmount && hasValidLockup
+    (inputsByClass.transferable.baseline ?? BigInt(0)) > BigInt(0) &&
+    forecast.meetsMinimumAmount &&
+    hasValidLockup
 
   return {
     chartSeries: hasForecast
@@ -96,8 +99,7 @@ export const EstimatedPayouts = function () {
   const { data: prices } = useTokenPrices()
 
   const amount = parseTokenUnits(input, token)
-  const baseline = forecastInputs?.transferableClassBaseline ?? BigInt(0)
-  const weight = forecastInputs?.transferableClassWeight ?? BigInt(0)
+  const inputsByClass = forecastInputs ?? emptyInputsByClass
 
   const hasValidLockup = isValidLockup({ value: lockupDays })
   const hasError = isSystemStateError || isForecastError
@@ -106,11 +108,10 @@ export const EstimatedPayouts = function () {
 
   const { chartSeries, forecast, hasForecast } = buildForecast({
     amount,
-    baseline,
     decimals: token.decimals,
     hasValidLockup,
+    inputsByClass,
     lockupDays,
-    weight,
   })
 
   return (
@@ -131,7 +132,7 @@ export const EstimatedPayouts = function () {
       <div className="min-h-24.5">
         {hasForecast && systemState !== undefined ? (
           <PayoutHeadline
-            carriedFrom={forecastInputs?.carriedFrom}
+            carriedFrom={forecastInputs?.transferable.carriedFrom}
             currentEpoch={systemState.currentEpoch}
             input={input}
             lockEnd={forecast.lockEnd}

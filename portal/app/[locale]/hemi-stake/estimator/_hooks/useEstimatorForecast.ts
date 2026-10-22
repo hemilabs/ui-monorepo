@@ -20,6 +20,7 @@ import {
 import { isActiveStake } from '../../_utils/walletStakedTotal'
 import { useEstimator } from '../_context/estimatorContext'
 import { canForecast } from '../_utils/canForecast'
+import { isForecastUnavailable } from '../_utils/isForecastUnavailable'
 
 import { useNeedsWallet } from './useNeedsWallet'
 import { usePositionClasses } from './usePositionClasses'
@@ -120,21 +121,27 @@ export const useEstimatorForecast = function () {
     ],
   )
 
+  const { isError, isLoading } = toLoadState(
+    blends
+      ? [systemState, forecastInputs, positions, classes]
+      : [systemState, forecastInputs],
+  )
+
   return {
     forecast: blended,
-    hasForecast: canForecast({
-      amountUnits,
-      inputsByClass,
-      lockupDays,
-      staked,
-    }),
     isBlended: staked.length > 0,
-    ...toLoadState(
-      blends
-        ? [systemState, forecastInputs, positions, classes]
-        : [systemState, forecastInputs],
-    ),
-    needsWallet,
+    isLoading,
     stakedReturnRatio: stakedAlone.yearOneReturnRatio,
+    unavailable: isForecastUnavailable({
+      hasForecast: canForecast({
+        amountUnits,
+        inputsByClass,
+        lockupDays,
+        staked,
+      }),
+      isError,
+      isLoading,
+      needsWallet,
+    }),
   }
 }

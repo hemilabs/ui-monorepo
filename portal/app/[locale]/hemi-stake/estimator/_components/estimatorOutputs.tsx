@@ -4,17 +4,8 @@ import { ApyCard } from './apyCard'
 import { PayoutsCard } from './payoutsCard'
 
 export const EstimatorOutputs = function () {
-  const {
-    forecast,
-    hasForecast,
-    isBlended,
-    isError,
-    isLoading,
-    needsWallet,
-    stakedReturnRatio,
-  } = useEstimatorForecast()
-
-  const unavailable = isError || (!isLoading && (needsWallet || !hasForecast))
+  const { forecast, isBlended, isLoading, stakedReturnRatio, unavailable } =
+    useEstimatorForecast()
 
   return (
     <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 [&>.card-container]:min-w-0">

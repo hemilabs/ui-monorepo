@@ -9,6 +9,7 @@ export {
 } from './wallet/increaseUnlockTime.ts'
 export { encodeWithdraw, withdraw } from './wallet/withdraw.ts'
 export {
+  getAutoRelockStatus,
   getBalanceOfNFTAt,
   getLivePositionClass,
   getLockedBalance,

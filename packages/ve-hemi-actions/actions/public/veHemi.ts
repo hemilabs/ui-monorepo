@@ -108,6 +108,44 @@ export const getBalanceOfNFTAt = async function (
   })
 }
 
+export const getAutoRelockStatus = async function (
+  client: Client,
+  tokenIds: bigint[],
+) {
+  if (!client.chain) {
+    throw new Error('Client chain is not defined')
+  }
+
+  if (tokenIds.length === 0) {
+    return []
+  }
+
+  const veHemiAddress = getVeHemiContractAddress(client.chain.id)
+
+  const results = await multicall(client, {
+    allowFailure: false,
+    contracts: tokenIds.flatMap(tokenId => [
+      {
+        abi: veHemiAbi,
+        address: veHemiAddress,
+        args: [tokenId],
+        functionName: 'effectiveLockEnd' as const,
+      },
+      {
+        abi: veHemiAbi,
+        address: veHemiAddress,
+        args: [tokenId],
+        functionName: 'isAutoRelockEnabled' as const,
+      },
+    ]),
+  })
+
+  return tokenIds.map((_, index) => ({
+    effectiveLockEnd: results[index * 2] as bigint,
+    isAutoRelockEnabled: results[index * 2 + 1] as boolean,
+  }))
+}
+
 const getVoteDelegationAddress = async function (client: Client) {
   if (!client.chain) {
     throw new Error('Client chain is not defined')

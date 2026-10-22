@@ -45,6 +45,11 @@ describe('getTransferableAfter', function () {
     expect(second).toEqual(BigInt(9))
   })
 
+  it('should not reach the chain when there is nothing to read', async function () {
+    await expect(getTransferableAfter({ chain: hemi }, [])).resolves.toEqual([])
+    expect(multicall).not.toHaveBeenCalled()
+  })
+
   it('should throw error when client chain is not defined', async function () {
     await expect(
       // @ts-expect-error testing invalid input

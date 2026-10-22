@@ -9,12 +9,10 @@ export const fetchPositionClasses = async function (
   { positions }: { positions: StakingPosition[] },
 ) {
   const pending = positions.filter(position => !position.transferable)
-  const instants = pending.length
-    ? await getTransferableAfter(
-        client,
-        pending.map(position => position.tokenId),
-      )
-    : []
+  const instants = await getTransferableAfter(
+    client,
+    pending.map(position => position.tokenId),
+  )
 
   const instantByToken = new Map(
     pending.map((position, index) => [position.tokenId, instants[index]]),

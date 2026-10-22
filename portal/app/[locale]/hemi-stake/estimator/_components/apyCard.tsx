@@ -21,9 +21,8 @@ export const ApyCard = function ({
   stakedReturnRatio,
   yearOneReturnRatio,
 }: Props) {
-  const t = useTranslations('hemi-stake.estimator')
+  const t = useTranslations('hemi-stake')
   const tCommon = useTranslations('common')
-  const tStake = useTranslations('hemi-stake')
 
   return (
     <StatCard
@@ -33,8 +32,8 @@ export const ApyCard = function ({
         ) : (
           <Badge size="small" variant="secondary">
             {stakedReturnRatio === undefined
-              ? t('simple-first-year')
-              : t('blended-was', {
+              ? t('estimator.simple-first-year')
+              : t('estimator.blended-was', {
                   percentage: formatApyFromRatio(stakedReturnRatio),
                 })}
           </Badge>
@@ -46,11 +45,7 @@ export const ApyCard = function ({
       label={
         <span className="flex items-center gap-x-1">
           {tCommon('apy')}
-          <Tooltip
-            id="estimator-apy"
-            text={tStake('apy-estimate')}
-            variant="info"
-          >
+          <Tooltip id="estimator-apy" text={t('apy-estimate')} variant="info">
             <div className="group/icon flex items-center">
               <InfoIcon className="group-hover/icon:[&>g>path]:fill-neutral-950" />
             </div>

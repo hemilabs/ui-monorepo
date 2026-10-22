@@ -23,7 +23,7 @@ describe('fetchPositionClasses', function () {
       positions: [position(1, { transferable: true })],
     })
 
-    expect(getTransferableAfter).not.toHaveBeenCalled()
+    expect(getTransferableAfter).toHaveBeenCalledWith(client, [])
     expect(classes).toEqual({
       '1': { forfeitable: false, transferableAfter: 0 },
     })

@@ -7,9 +7,7 @@ import { isAddressEqual, type Address } from 'viem'
 export const isActiveStake = (
   { owner, status }: StakingPosition,
   wallet: Address,
-) =>
-  status === StakingPositionStatus.ACTIVE &&
-  isAddressEqual(owner as Address, wallet)
+) => status === StakingPositionStatus.ACTIVE && isAddressEqual(owner, wallet)
 
 export const sumActiveStake = (
   positions: StakingPosition[],

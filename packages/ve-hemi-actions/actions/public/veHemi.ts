@@ -271,6 +271,10 @@ export const getTransferableAfter = async function (
     throw new Error('Client chain is not defined')
   }
 
+  if (tokenIds.length === 0) {
+    return []
+  }
+
   const veHemiAddress = getVeHemiContractAddress(client.chain.id)
 
   return multicall(client, {

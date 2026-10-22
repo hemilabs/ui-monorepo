@@ -1,11 +1,12 @@
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { type StakingPosition } from 'types/stakingDashboard'
 import { unixNowTimestamp } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
 import { type Address } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { useEpochSystemState } from '../../_hooks/useEpochSystemState'
 import { useRewardsForecastInputs } from '../../_hooks/useRewardsForecastInputs'
 import { useStakingPositions } from '../../_hooks/useStakingPositions'
 import { getBlendedForecast } from '../../_utils/blendedForecast'
@@ -61,10 +62,10 @@ const toExistingLegs = (
   }))
 
 const toLoadState = (
-  queries: { data: unknown; isError: boolean; isLoading: boolean }[],
+  queries: { data: unknown; isError: boolean; isPending: boolean }[],
 ) => ({
   isError: queries.some(query => query.isError && query.data === undefined),
-  isLoading: queries.some(query => query.isLoading),
+  isLoading: queries.some(query => query.isPending),
 })
 
 export const useEstimatorForecast = function () {
@@ -74,12 +75,13 @@ export const useEstimatorForecast = function () {
   const needsWallet = useNeedsWallet()
 
   // Frozen on mount so the projection does not shift while the amount is typed.
-  const now = useMemo(() => Number(unixNowTimestamp()), [])
+  const [now] = useState(() => Number(unixNowTimestamp()))
 
   const blends = scope === 'with-my-positions' && !needsWallet
 
+  const systemState = useEpochSystemState()
   const forecastInputs = useRewardsForecastInputs()
-  const positions = useStakingPositions()
+  const positions = useStakingPositions({ enabled: blends })
 
   const staked = useMemo(
     () =>
@@ -128,7 +130,9 @@ export const useEstimatorForecast = function () {
     }),
     isBlended: staked.length > 0,
     ...toLoadState(
-      blends ? [forecastInputs, positions, classes] : [forecastInputs],
+      blends
+        ? [systemState, forecastInputs, positions, classes]
+        : [systemState, forecastInputs],
     ),
     needsWallet,
     stakedReturnRatio: stakedAlone.yearOneReturnRatio,

@@ -166,9 +166,7 @@ describe('toggleAutoRelock', function () {
     emitter.on('unexpected-error', unexpected)
     await promise
 
-    expect(failed).toHaveBeenCalledExactlyOnceWith(
-      'lock too short for auto-relock',
-    )
+    expect(failed).toHaveBeenCalledExactlyOnceWith('lock expired')
     expect(unexpected).not.toHaveBeenCalled()
   })
 

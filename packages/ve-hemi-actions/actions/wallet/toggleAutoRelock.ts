@@ -34,9 +34,12 @@ const toToggleRefusal = function ({
   }
 
   if (enable) {
-    const floor = BigInt(
-      snapToEpoch(Math.floor(Date.now() / 1000)) + MinLockDurationSeconds,
-    )
+    const now = Math.floor(Date.now() / 1000)
+    if (status.effectiveLockEnd <= BigInt(now)) {
+      return 'lock expired'
+    }
+
+    const floor = BigInt(snapToEpoch(now) + MinLockDurationSeconds)
     if (status.effectiveLockEnd < floor) {
       return 'lock too short for auto-relock'
     }
@@ -128,25 +131,14 @@ const runToggleAutoRelock = ({
 
       emitter.emit('pre-auto-relock')
 
-      const toggleHash = await (
-        enable
-          ? writeContract(walletClient, {
-              abi: veHemiAbi,
-              account,
-              address: veHemiAddress,
-              args: [tokenId],
-              chain: walletClient.chain,
-              functionName: 'enableAutoRelock',
-            })
-          : writeContract(walletClient, {
-              abi: veHemiAbi,
-              account,
-              address: veHemiAddress,
-              args: [tokenId],
-              chain: walletClient.chain,
-              functionName: 'disableAutoRelock',
-            })
-      ).catch(function (error) {
+      const toggleHash = await writeContract(walletClient, {
+        abi: veHemiAbi,
+        account,
+        address: veHemiAddress,
+        args: [tokenId],
+        chain: walletClient.chain,
+        functionName: enable ? 'enableAutoRelock' : 'disableAutoRelock',
+      }).catch(function (error) {
         emitter.emit('user-signing-auto-relock-error', error)
       })
 

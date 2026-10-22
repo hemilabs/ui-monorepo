@@ -6,7 +6,10 @@ import { Header } from 'components/table/_components/header'
 import { TableCard } from 'components/table/tableCard'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { type StakingPosition } from 'types/stakingDashboard'
+import {
+  type StakingPosition,
+  StakingPositionStatus,
+} from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
@@ -87,7 +90,9 @@ const stakingColumns = ({
       <div className="flex w-full flex-row-reverse items-center justify-end gap-x-2 lg:flex-row">
         <ClaimCta operation={row.original} />
         <UnlockCta operation={row.original} />
-        <ActionCell key={row.original.id} row={row} />
+        {row.original.status !== StakingPositionStatus.WITHDRAWN && (
+          <ActionCell key={row.original.id} row={row} />
+        )}
       </div>
     ),
     header: () => <Header text={t('table.action')} />,

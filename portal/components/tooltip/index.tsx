@@ -19,10 +19,6 @@ const isPlainElement = (
 ): children is ReactElement<Record<string, unknown>> =>
   isValidElement(children) && typeof children.type === 'string'
 
-// rc-tooltip replaces the aria-describedby of the element it receives as a child
-// (getChildren in rc-tooltip@6), so the wrapper belongs to the tooltip and the
-// description is linked to the plain element inside it. Children that hide their
-// focusable element behind a component are wrapped as before, without a description.
 const linkTrigger = function (
   children: ReactNode,
   describedById: string | undefined,
@@ -59,11 +55,6 @@ export const Tooltip = function ({
     return <>{children}</>
   }
 
-  // rc-tooltip's overlay only exists while visible (destroyTooltipOnHide) and mounts
-  // after focus, so the description is always present too. Only plain text is echoed;
-  // richer overlays keep their visible content as the source. It is hidden so it can't
-  // join the accessible name of a button wrapping the trigger, and it is rendered only
-  // next to a trigger that references it.
   const describedById =
     typeof text === 'string' || typeof text === 'number' ? id : undefined
   const { describesTrigger, trigger } = linkTrigger(children, describedById)

@@ -1,7 +1,6 @@
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { type StakingPosition } from 'types/stakingDashboard'
-import { unixNowTimestamp } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
 import { type Address } from 'viem'
 import { useAccount } from 'wagmi'
@@ -22,6 +21,7 @@ import { useEstimator } from '../_context/estimatorContext'
 import { canForecast } from '../_utils/canForecast'
 import { isForecastUnavailable } from '../_utils/isForecastUnavailable'
 
+import { useEpochAnchoredNow } from './useEpochAnchoredNow'
 import { useNeedsWallet } from './useNeedsWallet'
 import { usePositionClasses } from './usePositionClasses'
 
@@ -75,12 +75,10 @@ export const useEstimatorForecast = function () {
   const token = useHemiToken()
   const needsWallet = useNeedsWallet()
 
-  // Frozen on mount so the projection does not shift while the amount is typed.
-  const [now] = useState(() => Number(unixNowTimestamp()))
-
   const blends = scope === 'with-my-positions' && !needsWallet
 
   const systemState = useEpochSystemState()
+  const now = useEpochAnchoredNow(systemState.data?.currentEpoch)
   const forecastInputs = useRewardsForecastInputs()
   const positions = useStakingPositions({ enabled: blends })
 

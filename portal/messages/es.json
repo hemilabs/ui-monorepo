@@ -452,9 +452,13 @@
       "unlocks-on": "Se desbloquea el {date}"
     },
     "estimator": {
+      "blended-was": "combinada, antes {percentage}",
+      "connect-to-blend": "Conecte su billetera para incluir sus posiciones en la estimación",
+      "estimated-payouts-first-year": "Pagos estimados en el primer año",
       "new-position": "Nueva posición",
       "quick-amounts": "Montos rápidos",
       "scope": "Alcance de la estimación",
+      "simple-first-year": "simple, primer año",
       "with-my-positions": "Con mis posiciones",
       "yours": "Su saldo · {amount}"
     },

@@ -15,5 +15,6 @@ export {
   getPositionVotingPowerDetails,
   getPositionsVotingPowerSum,
   getTotalVotingPower,
+  getTransferableAfter,
 } from './public/veHemi.ts'
 export { getTotalLocked } from './public/getTotalLocked.ts'

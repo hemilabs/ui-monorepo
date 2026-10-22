@@ -262,3 +262,28 @@ export const getTotalVotingPower = async function ({
 
   return votes
 }
+
+export const getTransferableAfter = async function (
+  client: Client,
+  tokenIds: bigint[],
+) {
+  if (!client.chain) {
+    throw new Error('Client chain is not defined')
+  }
+
+  if (tokenIds.length === 0) {
+    return []
+  }
+
+  const veHemiAddress = getVeHemiContractAddress(client.chain.id)
+
+  return multicall(client, {
+    allowFailure: false,
+    contracts: tokenIds.map(tokenId => ({
+      abi: veHemiAbi,
+      address: veHemiAddress,
+      args: [tokenId],
+      functionName: 'transferableAfter' as const,
+    })),
+  })
+}

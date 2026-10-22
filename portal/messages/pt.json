@@ -156,6 +156,7 @@
     "view-all-tutorials": "Ver todos os tutoriais"
   },
   "hemi-earn": {
+    "could-not-load": "Não foi possível carregar os dados de Earn",
     "heading": "Obtenha rendimento com Hemi Earn",
     "info": {
       "earned-amount": "Valor ganho",

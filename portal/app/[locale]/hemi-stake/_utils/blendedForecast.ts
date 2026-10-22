@@ -1,6 +1,12 @@
-import { MaxLockDurationSeconds, SixDaysSeconds } from 've-hemi-actions'
+import { toFraction } from 'utils/bigint'
 
-import { getEpochEnd, getLockEnd, getWeightAt } from './lockEpochs'
+import {
+  capAtMaxLock,
+  epochsPerYear,
+  getEpochEnd,
+  getLockEnd,
+  getWeightAt,
+} from './lockEpochs'
 import {
   alwaysTransferable,
   type InputsByClass,
@@ -8,15 +14,6 @@ import {
   rewardClasses,
   type RewardClass,
 } from './rewardClass'
-
-const epochsPerYear = MaxLockDurationSeconds / (4 * SixDaysSeconds)
-
-const toFraction = function (numerator: bigint, denominator: bigint) {
-  if (denominator === BigInt(0)) {
-    return 0
-  }
-  return Number(numerator) / Number(denominator)
-}
 
 type ClassWeights = Partial<Record<RewardClass, bigint>>
 
@@ -104,7 +101,7 @@ export const getBlendedForecast = function ({
   const staked = existing.filter(position => position.lockEnd > settledAt)
 
   const incomingLockEnd = getLockEnd({
-    lockTime: Math.min(incoming.lockDurationInSeconds, MaxLockDurationSeconds),
+    lockTime: capAtMaxLock(incoming.lockDurationInSeconds),
     timestamp: now,
   })
 
@@ -125,8 +122,9 @@ export const getBlendedForecast = function ({
     })
 
     // The denominators are frozen at the settled epoch, where they already
-    // count what is staked. Only what moves between classes, plus the position
-    // that is not on chain yet, changes them.
+    // count what is staked. What shifts them is how the wallet's own weight
+    // changes from that instant, by decay, expiry or a class crossing, plus
+    // the position that is not on chain yet.
     const denominators = Object.fromEntries(
       rewardClasses.map(function (rewardClass) {
         const moved = stakedWeights.reduce(

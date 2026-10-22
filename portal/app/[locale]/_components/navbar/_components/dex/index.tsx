@@ -22,16 +22,15 @@ import { getDrawerPortalContainer, getPortalContainer } from 'utils/document'
 import { IconContainer } from '../iconContainer'
 import { ItemContainer, ItemText, Row } from '../navItem'
 
-import atlasIcon from './_images/atlas.png'
 import brownFiIcon from './_images/brownFi.svg'
 import dodoIcon from './_images/dodo.png'
 import dzapIcon from './_images/dzap.png'
 import eisenIcon from './_images/eisen.png'
 import izumiIcon from './_images/izumi.png'
+import jumperIcon from './_images/jumper.svg'
 import lunarFiIcon from './_images/lunarFi.svg'
 import okuIcon from './_images/oku.png'
 import oneDeltaIcon from './_images/oneDelta.png'
-import rubicIcon from './_images/rubic.png'
 import sushiIcon from './_images/sushi.png'
 
 type Props = {
@@ -147,12 +146,12 @@ const DexImpl = function () {
             <ItemTitle text={t('aggregators')} />
             <div className="w-full *:w-full *:bg-white *:px-3 *:py-2 *:max-md:h-14 *:max-md:bg-transparent [&_a>div]:flex-row [&_a]:w-full [&_span]:max-md:text-base">
               <ExternalLink
-                event="nav - rubic"
-                href="https://app.rubic.exchange"
+                event="nav - jumper"
+                href="https://jumper.xyz/?fromChain=43111&toChain=43111"
                 icon={
-                  <Image alt="Rubic" className="size-full" src={rubicIcon} />
+                  <Image alt="Jumper" className="size-full" src={jumperIcon} />
                 }
-                text="Rubic"
+                text="Jumper"
               />
               <ExternalLink
                 event="nav - dzap"
@@ -162,7 +161,7 @@ const DexImpl = function () {
               />
               <ExternalLink
                 event="nav - 1delta"
-                href="https://1delta.io"
+                href="https://app.1delta.io/swap?chain=hemi"
                 icon={
                   <Image
                     alt="1delta"
@@ -180,6 +179,18 @@ const DexImpl = function () {
                 }
                 text="Eisen"
               />
+              <ExternalLink
+                event="nav - lunarfi"
+                href="https://lunarfinance.io/"
+                icon={
+                  <Image
+                    alt="LunarFi"
+                    className="size-full"
+                    src={lunarFiIcon}
+                  />
+                }
+                text="LunarFi"
+              />
               <ItemTitle text={t('subtitle')} />
               <ExternalLink
                 event="nav - sushi"
@@ -190,12 +201,28 @@ const DexImpl = function () {
                 text="Sushi"
               />
               <ExternalLink
+                event="nav - brownfi"
+                href="https://app.brownfi.io/clamm/swap"
+                icon={
+                  <Image
+                    alt="BrownFi"
+                    className="size-full"
+                    src={brownFiIcon}
+                  />
+                }
+                text="BrownFi"
+              />
+              <ExternalLink
                 event="nav - oku"
                 href="https://oku.trade?inputChain=hemi"
                 icon={
-                  <Image alt="Oku (uni)" className="size-full" src={okuIcon} />
+                  <Image
+                    alt="Oku (Uniswap)"
+                    className="size-full"
+                    src={okuIcon}
+                  />
                 }
-                text="Oku (uni)"
+                text="Oku (Uniswap)"
               />
               <ExternalLink
                 event="nav - izumi"
@@ -210,38 +237,6 @@ const DexImpl = function () {
                 href="https://app.dodoex.io/swap/network/hemi"
                 icon={<Image alt="Dodo" className="size-full" src={dodoIcon} />}
                 text="Dodo"
-              />
-              <ExternalLink
-                event="nav - atlas"
-                href="https://www.atlasexchange.xyz/swap"
-                icon={
-                  <Image alt="Atlas" className="size-full" src={atlasIcon} />
-                }
-                text="Atlas"
-              />
-              <ExternalLink
-                event="nav - lunarfi"
-                href="https://lunarfinance.io/"
-                icon={
-                  <Image
-                    alt="LunarFi"
-                    className="size-full"
-                    src={lunarFiIcon}
-                  />
-                }
-                text="LunarFi"
-              />
-              <ExternalLink
-                event="nav - brownfi"
-                href="https://app.brownfi.io/clamm/swap"
-                icon={
-                  <Image
-                    alt="BrownFi"
-                    className="size-full"
-                    src={brownFiIcon}
-                  />
-                }
-                text="BrownFi"
               />
             </div>
           </div>,

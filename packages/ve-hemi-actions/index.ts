@@ -1,4 +1,5 @@
 export type {
+  AutoRelockEvents,
   CreateLockEvents,
   IncreaseAmountEvents,
   IncreaseUnlockTimeEvents,

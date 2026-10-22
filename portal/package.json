@@ -64,7 +64,7 @@
     "ve-hemi-epoch-rewards": "workspace:*",
     "victory": "37.3.6",
     "viem": "2.28.4",
-    "viem-erc20": "2.0.0",
+    "viem-erc20": "2.2.1",
     "viem-erc4626": "1.0.0",
     "wagmi": "2.15.7"
   },

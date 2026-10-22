@@ -2,8 +2,8 @@ import type { Preview } from '@storybook/react-vite'
 import { createElement } from 'react'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
-import 'styles/globals.css'
 import 'react-loading-skeleton/dist/skeleton.css'
+import 'styles/globals.css'
 
 const preview: Preview = {
   // Mirrors the SkeletonTheme in app/[locale]/layout.tsx, so skeleton-based

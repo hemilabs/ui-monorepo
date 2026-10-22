@@ -5,7 +5,7 @@
 # output ships, not the workspace source or dev tooling.
 
 # ---- build: install the workspace, deploy ----
-FROM node:24.14.0-alpine3.23 AS build
+FROM node:24.22.1-alpine3.24 AS build
 RUN corepack enable
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 WORKDIR /repo
@@ -16,11 +16,10 @@ RUN pnpm install --frozen-lockfile --filter vaults-monitor-cron...
 RUN pnpm deploy --filter=vaults-monitor-cron --prod --legacy /app
 
 # ---- runtime: minimal patched image running the deployed app ----
-FROM node:24.14.0-alpine3.23
+FROM node:24.22.1-alpine3.24
 
 # Patch vulnerabilities
 RUN apk update
-RUN apk add --upgrade musl=1.2.5-r23 musl-utils=1.2.5-r23
 RUN apk add --upgrade openssl=3.5.9-r0
 # https://scout.docker.com/v/CVE-2026-85091
 RUN apk add --upgrade zlib=1.3.2-r1

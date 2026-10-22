@@ -99,7 +99,9 @@ const allStakingColumns = ({
       <div className="flex w-full flex-row-reverse items-center justify-end gap-x-2 lg:flex-row">
         <ClaimCta operation={row.original} />
         <UnlockCta operation={row.original} />
-        <ActionCell key={row.original.id} row={row} />
+        {row.original.status !== StakingPositionStatus.WITHDRAWN && (
+          <ActionCell key={row.original.id} row={row} />
+        )}
       </div>
     ),
     header: () => <Header text={t('table.action')} />,

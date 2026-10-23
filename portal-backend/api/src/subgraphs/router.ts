@@ -239,10 +239,11 @@ export function createSubgraphsRouter() {
     parseChainId,
     validateChainIsHemi,
     // Cached: the total staked is a per-chain aggregate that tolerates mild
-    // staleness. Keyed by chainId (the only path param).
+    // staleness. Keyed by the normalized chainId (the only path param), so
+    // variants with leading zeros share one entry.
     toJsonMiddleware(getStaked, {
       maxAge: 30 * 1000,
-      resolver: chainIdStr => chainIdStr,
+      resolver: chainIdStr => String(Number(chainIdStr)),
     }),
   )
 
@@ -270,7 +271,7 @@ export function createSubgraphsRouter() {
     toJsonMiddleware(getCostBasis, {
       maxAge: 30 * 1000,
       resolver: (chainIdStr, address) =>
-        `${chainIdStr}-${String(address).toLowerCase()}`,
+        `${Number(chainIdStr)}-${String(address).toLowerCase()}`,
     }),
   )
 

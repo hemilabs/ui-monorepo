@@ -311,8 +311,8 @@ importers:
         specifier: workspace:*
         version: link:../packages/hemi-tunnel-actions
       hemi-viem:
-        specifier: 2.9.0
-        version: 2.9.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+        specifier: 2.9.1
+        version: 2.9.1(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       hemi-viem-stake-actions:
         specifier: workspace:*
         version: link:../packages/hemi-viem-stake-actions
@@ -6262,6 +6262,11 @@ packages:
 
   hemi-viem@2.9.0:
     resolution: {integrity: sha512-Ab/pqc/H0C/0VcKQaoVm/fwrU8IP8D1R43VZUzFyqTIoGZ7Kft/fTglEkwwdSQaGPzx6rc7luVHaKWhD0xCptA==}
+    peerDependencies:
+      viem: ^2.x
+
+  hemi-viem@2.9.1:
+    resolution: {integrity: sha512-1lksZQc7cTEz+qUIyL8jJNJk5F2aCv1DcCzXEf0z3lwajGXVKuT/6N6ezt6Texrcnx8wLqzp0R88m5B7KlWDmw==}
     peerDependencies:
       viem: ^2.x
 
@@ -16861,6 +16866,10 @@ snapshots:
   hemi-socials@2.1.0: {}
 
   hemi-viem@2.9.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)):
+    dependencies:
+      viem: 2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
+
+  hemi-viem@2.9.1(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)):
     dependencies:
       viem: 2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
 

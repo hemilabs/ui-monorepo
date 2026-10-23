@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi, beforeEach } from 'vitest'
 
 import { increaseUnlockTime } from '../../../actions'
 import {
+  getAutoRelockStatus,
   getHemiTokenAddress,
   memoizedGetHemiTokenAddress,
   getLockedBalance,
@@ -17,6 +18,7 @@ vi.mock('viem/actions', () => ({
 }))
 
 vi.mock('../../../actions/public/veHemi', () => ({
+  getAutoRelockStatus: vi.fn(),
   getHemiTokenAddress: vi.fn(),
   getLockedBalance: vi.fn(),
   memoizedGetHemiTokenAddress: vi.fn(),
@@ -34,12 +36,14 @@ describe('increaseUnlockTime', function () {
     vi.mocked(getHemiTokenAddress).mockResolvedValue(zeroAddress)
     vi.mocked(memoizedGetHemiTokenAddress).mockResolvedValue(zeroAddress)
 
-    // Mock getLockedBalance to return a lock with amount and future expiry date
-    const futureTimestamp = BigInt(Math.floor(Date.now() / 1000) + 86400) // 1 day from now
+    const futureTimestamp = BigInt(Math.floor(Date.now() / 1000) + 86400)
     vi.mocked(getLockedBalance).mockResolvedValue({
       amount: BigInt(500),
       end: futureTimestamp,
     })
+    vi.mocked(getAutoRelockStatus).mockResolvedValue([
+      { effectiveLockEnd: futureTimestamp, isAutoRelockEnabled: false },
+    ])
   })
 
   it('should emit "increase-unlock-time-failed-validation" if the account is not a valid address', async function () {
@@ -119,7 +123,6 @@ describe('increaseUnlockTime', function () {
   })
 
   it('should emit "increase-unlock-time-failed-validation" if no existing lock', async function () {
-    // Mock no existing lock (amount = 0)
     vi.mocked(getLockedBalance).mockResolvedValue({
       amount: BigInt(0),
       end: BigInt(Math.floor(Date.now() / 1000) + 86400),
@@ -141,12 +144,10 @@ describe('increaseUnlockTime', function () {
   })
 
   it('should emit "increase-unlock-time-failed-validation" if lock is expired', async function () {
-    // Mock expired lock (end timestamp in the past)
-    const pastTimestamp = BigInt(Math.floor(Date.now() / 1000) - 86400) // 1 day ago
-    vi.mocked(getLockedBalance).mockResolvedValue({
-      amount: BigInt(500),
-      end: pastTimestamp,
-    })
+    const pastTimestamp = BigInt(Math.floor(Date.now() / 1000) - 86400)
+    vi.mocked(getAutoRelockStatus).mockResolvedValue([
+      { effectiveLockEnd: pastTimestamp, isAutoRelockEnabled: false },
+    ])
 
     const { emitter, promise } = increaseUnlockTime(validParameters)
 
@@ -164,12 +165,10 @@ describe('increaseUnlockTime', function () {
   })
 
   it('should emit "increase-unlock-time-failed-validation" if new unlock time is not greater than current', async function () {
-    // Mock lock with end time that would not be extended by the short duration
-    const futureTimestamp = BigInt(Math.floor(Date.now() / 1000) + 86400 * 60) // 60 days from now
-    vi.mocked(getLockedBalance).mockResolvedValue({
-      amount: BigInt(500),
-      end: futureTimestamp,
-    })
+    const futureTimestamp = BigInt(Math.floor(Date.now() / 1000) + 86400 * 60)
+    vi.mocked(getAutoRelockStatus).mockResolvedValue([
+      { effectiveLockEnd: futureTimestamp, isAutoRelockEnabled: false },
+    ])
 
     const { emitter, promise } = increaseUnlockTime({
       ...validParameters,
@@ -197,10 +196,9 @@ describe('increaseUnlockTime', function () {
     beforeEach(function () {
       vi.useFakeTimers({ toFake: ['Date'] })
       vi.setSystemTime(now * 1000)
-      vi.mocked(getLockedBalance).mockResolvedValue({
-        amount: BigInt(500),
-        end: BigInt(end),
-      })
+      vi.mocked(getAutoRelockStatus).mockResolvedValue([
+        { effectiveLockEnd: BigInt(end), isAutoRelockEnabled: false },
+      ])
     })
 
     afterEach(function () {
@@ -251,6 +249,67 @@ describe('increaseUnlockTime', function () {
       expect(increaseUnlockTimeFailedValidation).not.toHaveBeenCalled()
       expect(writeContract).toHaveBeenCalledOnce()
     })
+  })
+
+  it('should increase unlock time while auto-relock is enabled', async function () {
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue({
+      status: 'success',
+    })
+    vi.mocked(getLockedBalance).mockResolvedValue({
+      amount: BigInt(500),
+      end: BigInt(Math.floor(Date.now() / 1000) - 86400),
+    })
+    vi.mocked(getAutoRelockStatus).mockResolvedValue([
+      {
+        effectiveLockEnd: BigInt(Math.floor(Date.now() / 1000) + 86400),
+        isAutoRelockEnabled: true,
+      },
+    ])
+
+    const { emitter, promise } = increaseUnlockTime(validParameters)
+
+    const increaseUnlockTimeFailedValidation = vi.fn()
+    emitter.on(
+      'increase-unlock-time-failed-validation',
+      increaseUnlockTimeFailedValidation,
+    )
+
+    await promise
+
+    expect(increaseUnlockTimeFailedValidation).not.toHaveBeenCalled()
+    expect(writeContract).toHaveBeenCalledOnce()
+  })
+
+  it('should emit "increase-unlock-time-failed-validation" if the new unlock time only clears the stored end', async function () {
+    vi.mocked(getLockedBalance).mockResolvedValue({
+      amount: BigInt(500),
+      end: BigInt(Math.floor(Date.now() / 1000) + 86400 * 10),
+    })
+    vi.mocked(getAutoRelockStatus).mockResolvedValue([
+      {
+        effectiveLockEnd: BigInt(Math.floor(Date.now() / 1000) + 86400 * 60),
+        isAutoRelockEnabled: true,
+      },
+    ])
+
+    const { emitter, promise } = increaseUnlockTime({
+      ...validParameters,
+      lockDurationInSeconds: 86400 * 30,
+    })
+
+    const increaseUnlockTimeFailedValidation = vi.fn()
+    emitter.on(
+      'increase-unlock-time-failed-validation',
+      increaseUnlockTimeFailedValidation,
+    )
+
+    await promise
+
+    expect(increaseUnlockTimeFailedValidation).toHaveBeenCalledExactlyOnceWith(
+      'new unlock time must be greater than current unlock time',
+    )
+    expect(writeContract).not.toHaveBeenCalled()
   })
 
   it('should successfully increase unlock time', async function () {

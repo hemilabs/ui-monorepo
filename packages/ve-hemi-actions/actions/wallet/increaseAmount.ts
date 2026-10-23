@@ -14,7 +14,7 @@ import { getVeHemiContractAddress } from '../../constants.ts'
 import type { IncreaseAmountEvents } from '../../types.ts'
 import { validateIncreaseAmountInputs } from '../../utils.ts'
 import {
-  getLockedBalance,
+  getAutoRelockStatus,
   memoizedGetHemiTokenAddress,
 } from '../public/veHemi.ts'
 
@@ -65,11 +65,11 @@ const canIncreaseAmount = async function ({
       return { canIncrease: false, reason: 'insufficient balance' }
     }
 
-    // check if lock is expired
-    // if expired, cannot increase amount
-    const { end } = await getLockedBalance(walletClient, tokenId)
+    const [{ effectiveLockEnd }] = await getAutoRelockStatus(walletClient, [
+      tokenId,
+    ])
     const now = BigInt(Math.floor(Date.now() / 1000))
-    if (end <= now) {
+    if (effectiveLockEnd <= now) {
       return { canIncrease: false, reason: 'lock already expired' }
     }
 

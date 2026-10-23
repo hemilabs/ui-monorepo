@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { getRemoteTokens, normalizeToken } from 'tokenList'
 import { type EvmToken } from 'types/token'
 import useLocalStorageState from 'use-local-storage-state'
+import { isListedToken } from 'utils/token'
 import { type Chain, isAddress, isAddressEqual } from 'viem'
 
 import { useNetworkType } from './useNetworkType'
@@ -26,6 +27,9 @@ export const useUserTokenList = function (chainId?: Chain['id']) {
           throw new Error('Invalid token address')
         }
         const normalizedToken = normalizeToken(token)
+        if (isListedToken(normalizedToken)) {
+          return
+        }
 
         setUserTokenList(function (prevList) {
           const found = prevList.tokens.some(
@@ -44,9 +48,11 @@ export const useUserTokenList = function (chainId?: Chain['id']) {
           }
         })
       },
+      // A custom token may have been listed later, or share a listed remote token
       userTokenList: userTokenList.tokens
         .map(normalizeToken)
         .concat(userTokenList.tokens.flatMap(getRemoteTokens))
+        .filter(t => !isListedToken(t))
         .filter(t => !chainId || t.chainId === chainId),
     }),
     [chainId, userTokenList, setUserTokenList],

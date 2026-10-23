@@ -2,7 +2,7 @@ import hemilabsTokenList from '@hemilabs/token-list'
 import { hemi } from 'hemi-viem'
 import { type EvmToken, type Extensions } from 'types/token'
 import { getTunnelPairs } from 'utils/tunnelPairs'
-import { type Chain } from 'viem'
+import { type Address, type Chain, isAddressEqual } from 'viem'
 
 type PartnerExtensions = Pick<
   Extensions,
@@ -20,7 +20,6 @@ const hemiPartners: Record<
   // cbBTC
   '0x1596bE338B999E2376675C908168A7548C8B0525': {
     l1: {
-      tunnelDstAddress: '0x9778bC12904DB935Ca8be4fae26636BF7D6Da456',
       tunnelPartners: ['stargate'],
     },
   },
@@ -84,15 +83,37 @@ const hemiPartners: Record<
   /* eslint-enable sort-keys */
 }
 
+const hemiTokens = (hemilabsTokenList.tokens as EvmToken[]).filter(
+  t => t.chainId === hemi.id,
+)
+
 const getL1Address = function (address: string) {
-  const extensions = (hemilabsTokenList.tokens as EvmToken[]).find(
-    t => t.chainId === hemi.id && t.address === address,
-  )?.extensions
+  const extensions = hemiTokens.find(t => t.address === address)?.extensions
   const l1Address = getTunnelPairs(extensions)?.[hemi.sourceId]?.tokenAddress
   if (!l1Address) {
     throw new Error(`Failed to find the L1 pair of ${address}`)
   }
   return l1Address
+}
+
+// Another Hemi token peered with the same L1 token is the one partners deliver (e.g. Stargate cbBTC)
+const getPartnerDstAddress = (address: string, l1Address: Address) =>
+  hemiTokens.find(function (t) {
+    const peerAddress = t.extensions?.oft?.peers?.[hemi.sourceId]?.tokenAddress
+    return (
+      t.address !== address &&
+      peerAddress !== undefined &&
+      isAddressEqual(peerAddress, l1Address)
+    )
+  })?.address
+
+const getL1Extensions = function (address: string, l1: PartnerExtensions) {
+  const l1Address = getL1Address(address)
+  const tunnelDstAddress = getPartnerDstAddress(address, l1Address)
+  return [
+    l1Address,
+    tunnelDstAddress ? { ...l1, tunnelDstAddress } : l1,
+  ] as const
 }
 
 const partnerEntries = Object.entries(hemiPartners)
@@ -103,7 +124,7 @@ export const customTunnelPartnersWhitelist: Partial<
   [hemi.sourceId]: Object.fromEntries(
     partnerEntries
       .filter(([, { l1 }]) => l1 !== undefined)
-      .map(([address, { l1 }]) => [getL1Address(address), l1!]),
+      .map(([address, { l1 }]) => getL1Extensions(address, l1!)),
   ),
   [hemi.id]: Object.fromEntries(
     partnerEntries

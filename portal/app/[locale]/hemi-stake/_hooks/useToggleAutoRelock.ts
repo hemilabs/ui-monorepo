@@ -16,7 +16,7 @@ import { useAccount } from 'wagmi'
 
 import { getPositionDelegationDetailsQueryKey } from './usePositionDelegationDetails'
 import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
-import { getPositionWeightQueryKey } from './usePositionWeight'
+import { getPositionWeightQueryKeyPrefix } from './usePositionWeight'
 import { getStakingPositionsQueryKey } from './useStakingPositions'
 import { getTotalVotingPowerQueryKey } from './useTotalVotingPower'
 
@@ -145,7 +145,7 @@ export const useToggleAutoRelock = function ({
         queryKey: nativeTokenBalanceQueryKey,
       })
       queryClient.invalidateQueries({
-        queryKey: getPositionWeightQueryKey({
+        queryKey: getPositionWeightQueryKeyPrefix({
           chainId: token.chainId,
           tokenId,
         }),

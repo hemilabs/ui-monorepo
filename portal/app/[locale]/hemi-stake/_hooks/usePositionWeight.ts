@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { unixNowTimestamp } from 'utils/time'
+import { snapToEpoch } from 've-hemi-actions'
 import { getPositionWeight } from 've-hemi-actions/actions'
 import type { Chain } from 'viem'
 
-export const getPositionWeightQueryKey = ({
+export const getPositionWeightQueryKeyPrefix = ({
   chainId,
   tokenId,
 }: {
@@ -18,10 +19,13 @@ export const usePositionWeight = function (tokenId: bigint) {
   return useQuery({
     enabled: tokenId > BigInt(0),
     queryFn: () => getPositionWeight(hemiClient, tokenId, unixNowTimestamp()),
-    queryKey: getPositionWeightQueryKey({
-      chainId: hemiClient.chain.id,
-      tokenId,
-    }),
+    queryKey: [
+      ...getPositionWeightQueryKeyPrefix({
+        chainId: hemiClient.chain.id,
+        tokenId,
+      }),
+      snapToEpoch(Number(unixNowTimestamp())),
+    ],
     refetchInterval: 1000 * 60 * 5,
     retry: 2,
   })

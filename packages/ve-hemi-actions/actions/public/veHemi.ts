@@ -122,13 +122,11 @@ export const getPositionWeight = async function (
     ],
   })
 
-  const slope = current - ahead
+  const slope = current > ahead ? current - ahead : BigInt(0)
   const elapsedInEpoch = now % BigInt(SixDaysSeconds)
+  const relocked = current + slope * (elapsedInEpoch - BigInt(halfEpochSeconds))
 
-  return {
-    current,
-    relocked: current + slope * (elapsedInEpoch - BigInt(halfEpochSeconds)),
-  }
+  return { current, relocked: relocked > BigInt(0) ? relocked : BigInt(0) }
 }
 
 export const getAutoRelockStatus = async function (

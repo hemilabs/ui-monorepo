@@ -108,6 +108,26 @@ describe('getPositionWeight', function () {
     ).resolves.toEqual({ current: 0n, relocked: 0n })
   })
 
+  it('should ignore reads a fresh checkpoint turned upside down', async function () {
+    vi.mocked(multicall).mockResolvedValue([relocked, relocked * 2n])
+
+    await expect(
+      getPositionWeight(client, tokenId, 1792786000n),
+    ).resolves.toEqual({ current: relocked, relocked })
+  })
+
+  it('should never report a negative weight', async function () {
+    vi.mocked(multicall).mockResolvedValue([1n, 0n])
+
+    const { relocked: held } = await getPositionWeight(
+      client,
+      tokenId,
+      bucketStart,
+    )
+
+    expect(held).toBe(0n)
+  })
+
   it('should throw error when client chain is not defined', async function () {
     await expect(getPositionWeight({}, tokenId, 1792786000n)).rejects.toThrow(
       'Client chain is not defined',

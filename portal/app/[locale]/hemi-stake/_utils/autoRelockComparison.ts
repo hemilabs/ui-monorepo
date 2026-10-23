@@ -37,12 +37,16 @@ export const getAutoRelockComparison = function ({
       ? getRelockedWeight({ amount, lockEnd, now })
       : getWeightAt({ amount, at: currentClose, lockEnd })
 
-  const wholeWeight = weightOf(unlockTime)
-  const ownWeight = weightOf(
+  const wholeWeight =
+    autoRelock && relockedWeight !== undefined
+      ? relockedWeight
+      : weightOf(unlockTime)
+  const ownLockEnd =
     currentClass === 'transferable'
       ? unlockTime
-      : Math.min(unlockTime, positionClass.transferableAfter),
-  )
+      : Math.min(unlockTime, positionClass.transferableAfter)
+  const ownWeight =
+    ownLockEnd === unlockTime ? wholeWeight : weightOf(ownLockEnd)
   const extendedWeight = wholeWeight - ownWeight
 
   const ownShareOf = function (rewardClass: RewardClass) {

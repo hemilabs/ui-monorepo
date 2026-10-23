@@ -75,11 +75,16 @@ export const getMinExtensionDays = function ({
 }
 
 type GetUnlockInfoProps = {
-  timestamp: number | bigint
+  effectiveLockEnd?: bigint
   lockTime: number | bigint
+  timestamp: number | bigint
 }
 
-export function getUnlockInfo({ lockTime, timestamp }: GetUnlockInfoProps) {
+export function getUnlockInfo({
+  effectiveLockEnd,
+  lockTime,
+  timestamp,
+}: GetUnlockInfoProps) {
   const currentTimeInSeconds = Number(unixNowTimestamp())
 
   // Convert to Number for calculations
@@ -87,6 +92,7 @@ export function getUnlockInfo({ lockTime, timestamp }: GetUnlockInfoProps) {
   const lockTimeNum = Number(lockTime)
 
   const unlockTime = getLockEnd({
+    effectiveLockEnd,
     lockTime: lockTimeNum,
     timestamp: timestampNum,
   })
@@ -107,10 +113,12 @@ export function getUnlockInfo({ lockTime, timestamp }: GetUnlockInfoProps) {
 type PredictVotingPowerProps = Pick<
   StakingPosition,
   'amount' | 'lockTime' | 'timestamp'
-> & { now?: number }
+> &
+  Partial<Pick<StakingPosition, 'effectiveLockEnd'>> & { now?: number }
 
 export const predictVotingPower = ({
   amount,
+  effectiveLockEnd,
   lockTime,
   now = Number(unixNowTimestamp()),
   timestamp,
@@ -119,6 +127,7 @@ export const predictVotingPower = ({
     amount,
     at: now,
     lockEnd: getLockEnd({
+      effectiveLockEnd,
       lockTime: Number(lockTime),
       timestamp: Number(timestamp),
     }),

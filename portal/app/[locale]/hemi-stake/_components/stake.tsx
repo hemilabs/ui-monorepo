@@ -35,6 +35,7 @@ export const Stake = function () {
     useState<Exclude<StakingOperationRunning, 'staked'>>('idle')
 
   const {
+    autoRelock,
     input,
     lockupDays,
     resetStateAfterOperation,
@@ -87,6 +88,7 @@ export const Stake = function () {
   const { fees: createLockGasFees, isError: isCreateLockFeesError } =
     useEstimateCreateLockFees({
       amount,
+      autoRelock,
       lockDurationInSeconds: BigInt(daysToSeconds(lockupDays)),
       token,
     })
@@ -103,6 +105,7 @@ export const Stake = function () {
   })
 
   const { isPending: isRunningOperation, mutate: stake } = useStake({
+    autoRelock,
     input,
     lockupDays,
     on(emitter) {

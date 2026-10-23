@@ -48,6 +48,29 @@ describe('getUnlockInfo', function () {
     // unlockTime (1771959240) - mockNow (1756500000) = 15459240
     expect(result.timeRemainingSeconds).toBe(1771959240 - Number(mockNow))
   })
+
+  it('measures an armed position against the effective end', function () {
+    const effectiveLockEnd = BigInt(Number(mockNow) + SixDaysSeconds * 3)
+    const result = getUnlockInfo({
+      effectiveLockEnd,
+      lockTime: 15778800,
+      timestamp: 1709000000,
+    })
+
+    expect(result.unlockTime).toBe(Number(effectiveLockEnd))
+    expect(result.timeRemainingSeconds).toBe(SixDaysSeconds * 3)
+    expect(result.unlockDate).toEqual(new Date(Number(effectiveLockEnd) * 1000))
+  })
+
+  it('still reports the stored duration while the effective end moves', function () {
+    const result = getUnlockInfo({
+      effectiveLockEnd: BigInt(Number(mockNow) + SixDaysSeconds * 3),
+      lockTime: 15778800,
+      timestamp: 1709000000,
+    })
+
+    expect(result.totalLockTimeSeconds).toBe(15778800)
+  })
 })
 
 describe('predictVotingPower', function () {
@@ -73,6 +96,20 @@ describe('predictVotingPower', function () {
 
     // Starting 100 seconds early costs the lock its sixtieth epoch entirely.
     expect(result).toBe(slope * BigInt(SixDaysSeconds * 59))
+  })
+
+  it('is worth the effective remainder for an armed position', function () {
+    const effectiveLockEnd = BigInt(Number(mockNow) + SixDaysSeconds * 10)
+
+    const result = predictVotingPower({
+      amount,
+      effectiveLockEnd,
+      lockTime: BigInt(100),
+      now: Number(mockNow),
+      timestamp: mockNow - BigInt(200),
+    })
+
+    expect(result).toBe(slope * BigInt(SixDaysSeconds * 10))
   })
 
   it('is worth nothing for an expired position', function () {

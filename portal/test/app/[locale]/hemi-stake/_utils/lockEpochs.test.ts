@@ -49,6 +49,26 @@ describe('getLockEnd', function () {
   })
 })
 
+it('takes the effective end as given, off the grid included', function () {
+  expect(
+    getLockEnd({
+      effectiveLockEnd: BigInt(epochs(4) + 1),
+      lockTime: SixDaysSeconds * 40,
+      timestamp: epochAlignedNow,
+    }),
+  ).toBe(epochs(4) + 1)
+})
+
+it('honours an effective end of zero instead of deriving one', function () {
+  expect(
+    getLockEnd({
+      effectiveLockEnd: BigInt(0),
+      lockTime: SixDaysSeconds * 4,
+      timestamp: epochAlignedNow,
+    }),
+  ).toBe(0)
+})
+
 describe('getEpochEnd', function () {
   it('settles the epoch in progress first, after a mid-epoch start', function () {
     expect(getEpochEnd({ epochsAhead: 0, now: epochAlignedNow + 1 })).toBe(

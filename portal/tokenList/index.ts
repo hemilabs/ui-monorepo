@@ -1,4 +1,6 @@
 import hemilabsTokenList from '@hemilabs/token-list'
+import partition from 'lodash/partition'
+import uniqBy from 'lodash/uniqBy'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { type RemoteChain } from 'types/chain'
@@ -144,8 +146,18 @@ const hemiTokens: EvmToken[] = (hemilabsTokenList.tokens as EvmToken[])
   .filter(t => t.chainId === hemiMainnet.id || t.chainId === hemiTestnet.id)
   .map(applyDisplayOverrides)
 
+// Two Hemi tokens can share a remote token (e.g. cbBTC through the standard bridge and Stargate), so keep the bridged copy
+const [bridgedRemoteTokens, peerRemoteTokens] = partition(
+  hemiTokens.flatMap(getRemoteTokens),
+  t => t.extensions?.bridgeInfo !== undefined,
+)
+const remoteTokens = uniqBy(
+  bridgedRemoteTokens.concat(peerRemoteTokens),
+  t => `${t.chainId}-${t.address}`,
+)
+
 // the hemiTokens only contains definitions for Hemi tokens, but we can create the L1 version with the extensions field info
-const tokens: Token[] = hemiTokens.concat(hemiTokens.flatMap(getRemoteTokens))
+const tokens: Token[] = hemiTokens.concat(remoteTokens)
 
 export const tokenList = {
   name: hemilabsTokenList.name,

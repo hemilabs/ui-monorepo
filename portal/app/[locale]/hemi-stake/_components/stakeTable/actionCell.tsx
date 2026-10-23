@@ -26,6 +26,7 @@ import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
 import { AutoRelockIcon } from '../../_icons/autoRelockIcon'
 import { PlusIcon } from '../../_icons/plusIcon'
+import { canEnableAutoRelock } from '../../_utils/autoRelockEligibility'
 import {
   getExtensionAvailableAt,
   getUnlockInfo,
@@ -108,6 +109,7 @@ export function ActionCell({ row }: Props) {
     amount,
     autoRelock,
     effectiveLockEnd,
+    forfeitable,
     lockTime,
     owner,
     status,
@@ -222,7 +224,16 @@ export function ActionCell({ row }: Props) {
   const isActive = status === StakingPositionStatus.ACTIVE
   const isWalletOwner = !!address && isAddressEqual(owner as Address, address)
   const canOperate = isWalletOwner && timeRemainingSeconds > 0
-  const canAutoRelock = canOperate && isActive
+  const canAutoRelock =
+    canOperate &&
+    isActive &&
+    (autoRelock ||
+      canEnableAutoRelock({
+        effectiveLockEnd,
+        forfeitable,
+        now: currentTimeInSeconds,
+        transferable,
+      }))
 
   function handleToggleAutoRelock() {
     closeAndFocusTrigger()

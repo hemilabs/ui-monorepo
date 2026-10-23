@@ -1,6 +1,4 @@
-import { snapToEpoch } from 've-hemi-actions'
-
-import { getEpochEnd, getWeightAt } from './lockEpochs'
+import { getEpochEnd, getRelockedWeight, getWeightAt } from './lockEpochs'
 import { toStackedPayoutSeries } from './payoutsChartData'
 import {
   getRewardClassAt,
@@ -18,6 +16,7 @@ export const getAutoRelockComparison = function ({
   lockDurationInSeconds,
   now,
   positionClass,
+  relockedWeight,
   unlockTime,
 }: {
   amount: bigint
@@ -27,21 +26,23 @@ export const getAutoRelockComparison = function ({
   lockDurationInSeconds: number
   now: number
   positionClass: PositionClass
+  relockedWeight?: bigint
   unlockTime: number
 }) {
   const currentClose = getEpochEnd({ epochsAhead: 0, now })
   const currentClass = getRewardClassAt({ at: currentClose, ...positionClass })
 
-  const at = autoRelock ? snapToEpoch(now) : currentClose
-  const wholeWeight = getWeightAt({ amount, at, lockEnd: unlockTime })
-  const ownWeight = getWeightAt({
-    amount,
-    at,
-    lockEnd:
-      currentClass === 'transferable'
-        ? unlockTime
-        : Math.min(unlockTime, positionClass.transferableAfter),
-  })
+  const weightOf = (lockEnd: number) =>
+    autoRelock
+      ? getRelockedWeight({ amount, lockEnd, now })
+      : getWeightAt({ amount, at: currentClose, lockEnd })
+
+  const wholeWeight = weightOf(unlockTime)
+  const ownWeight = weightOf(
+    currentClass === 'transferable'
+      ? unlockTime
+      : Math.min(unlockTime, positionClass.transferableAfter),
+  )
   const extendedWeight = wholeWeight - ownWeight
 
   const ownShareOf = function (rewardClass: RewardClass) {
@@ -70,6 +71,7 @@ export const getAutoRelockComparison = function ({
       lockDurationInSeconds,
       now,
       positionClass,
+      relockedWeight,
     })
 
   const current = buildForecast(autoRelock)

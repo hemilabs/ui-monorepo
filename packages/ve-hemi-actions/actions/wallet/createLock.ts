@@ -72,12 +72,14 @@ const runCreateLock = ({
   account,
   amount,
   approvalAmount,
+  autoRelock = false,
   lockDurationInSeconds,
   walletClient,
 }: {
   account: Address
   amount: bigint
   approvalAmount?: bigint
+  autoRelock?: boolean
   lockDurationInSeconds: number
   walletClient: WalletClient
 }) =>
@@ -119,14 +121,25 @@ const runCreateLock = ({
 
       emitter.emit('pre-lock-creation')
 
-      const lockHash = await writeContract(walletClient, {
-        abi: veHemiAbi,
-        account,
-        address: veHemiAddress,
-        args: [amount, BigInt(lockDurationInSeconds)],
-        chain: walletClient.chain,
-        functionName: 'createLock',
-      }).catch(function (error) {
+      const lockHash = await (
+        autoRelock
+          ? writeContract(walletClient, {
+              abi: veHemiAbi,
+              account,
+              address: veHemiAddress,
+              args: [amount, BigInt(lockDurationInSeconds), true, false],
+              chain: walletClient.chain,
+              functionName: 'createLockWithAutoRelock',
+            })
+          : writeContract(walletClient, {
+              abi: veHemiAbi,
+              account,
+              address: veHemiAddress,
+              args: [amount, BigInt(lockDurationInSeconds)],
+              chain: walletClient.chain,
+              functionName: 'createLock',
+            })
+      ).catch(function (error) {
         emitter.emit('user-signing-lock-creation-error', error)
       })
 
@@ -170,13 +183,21 @@ export const createLock = (...args: Parameters<typeof runCreateLock>) =>
  */
 export const encodeCreateLock = ({
   amount,
+  autoRelock = false,
   lockDurationInSeconds,
 }: {
   amount: bigint
+  autoRelock?: boolean
   lockDurationInSeconds: bigint
 }) =>
-  encodeFunctionData({
-    abi: veHemiAbi,
-    args: [amount, lockDurationInSeconds],
-    functionName: 'createLock',
-  })
+  autoRelock
+    ? encodeFunctionData({
+        abi: veHemiAbi,
+        args: [amount, lockDurationInSeconds, true, false],
+        functionName: 'createLockWithAutoRelock',
+      })
+    : encodeFunctionData({
+        abi: veHemiAbi,
+        args: [amount, lockDurationInSeconds],
+        functionName: 'createLock',
+      })

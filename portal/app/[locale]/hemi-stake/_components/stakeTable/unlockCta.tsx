@@ -16,9 +16,11 @@ export function UnlockCta({ operation }: Props) {
   const t = useTranslations('hemi-stake.table')
   const locale = useLocale()
 
-  const { amount, lockTime, status, timestamp, tokenId } = operation
+  const { amount, effectiveLockEnd, lockTime, status, timestamp, tokenId } =
+    operation
 
   const { timeRemainingSeconds, unlockDate } = getUnlockInfo({
+    effectiveLockEnd,
     lockTime,
     timestamp,
   })

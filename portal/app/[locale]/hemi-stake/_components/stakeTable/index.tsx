@@ -50,12 +50,15 @@ const allStakingColumns = ({
   },
   {
     cell({ row }) {
-      const { lockTime, status, timestamp } = row.original
+      const { autoRelock, effectiveLockEnd, lockTime, status, timestamp } =
+        row.original
       return (
         <ErrorBoundary
           fallback={<span className="text-sm text-neutral-950">-</span>}
         >
           <LockupTime
+            autoRelock={autoRelock}
+            effectiveLockEnd={effectiveLockEnd}
             lockTime={lockTime}
             status={status}
             timestamp={timestamp}
@@ -87,9 +90,7 @@ const allStakingColumns = ({
     meta: { width: 95 },
   },
   {
-    // TODO #2481 read the flag from the position once the subgraph exposes it.
-    // No entity field, no contract event, so every position reads as off.
-    cell: () => <AutoRelockBadge enabled={false} />,
+    cell: ({ row }) => <AutoRelockBadge enabled={row.original.autoRelock} />,
     header: () => <Header text={t('table.auto-relock')} />,
     id: 'auto-relock',
     meta: { width: 150 },

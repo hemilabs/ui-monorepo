@@ -11,19 +11,31 @@ import { formatDate } from 'utils/format'
 import { getUnlockInfo } from '../../_utils/lockCreationTimes'
 
 type Props = {
+  autoRelock: boolean
+  effectiveLockEnd: StakingPosition['effectiveLockEnd']
   lockTime: bigint
   status: StakingPosition['status']
   timestamp: bigint
 }
 
-export const LockupTime = function ({ lockTime, status, timestamp }: Props) {
+export const LockupTime = function ({
+  autoRelock,
+  effectiveLockEnd,
+  lockTime,
+  status,
+  timestamp,
+}: Props) {
   const locale = useLocale()
   const t = useTranslations('hemi-stake.table')
-  const { unlockDate, unlockTime } = getUnlockInfo({ lockTime, timestamp })
+  const { unlockDate, unlockTime } = getUnlockInfo({
+    effectiveLockEnd,
+    lockTime,
+    timestamp,
+  })
 
   return (
     <Tooltip
-      text={t('lockup-tooltip', {
+      text={t(autoRelock ? 'lockup-tooltip-auto-relock' : 'lockup-tooltip', {
         date: formatDate(unlockDate, locale),
         duration: formatDuration(Number(lockTime), locale),
       })}

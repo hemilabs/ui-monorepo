@@ -50,7 +50,7 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
   // stakingDashboardOperation and stakingPosition will always be defined here
   const { input, inputDays, lockupDays, stakingPosition, transactionHash } =
     stakingDashboardOperation!
-  const { lockTime, timestamp, tokenId } = stakingPosition!
+  const { effectiveLockEnd, lockTime, timestamp, tokenId } = stakingPosition!
 
   const stakingDashboardStatus =
     stakingDashboardOperation?.status ?? StakingDashboardStatus.STAKE_TX_PENDING
@@ -170,6 +170,7 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
       return minDays
     }
     const { currentTimeInSeconds, unlockTime } = getUnlockInfo({
+      effectiveLockEnd,
       lockTime,
       timestamp,
     })

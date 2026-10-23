@@ -135,6 +135,7 @@ export const useIncreaseUnlockTime = function ({
               },
             }),
           )
+          queryClient.invalidateQueries({ queryKey: stakingPositionQueryKey })
 
           // fees
           updateNativeBalanceAfterFees(receipt)

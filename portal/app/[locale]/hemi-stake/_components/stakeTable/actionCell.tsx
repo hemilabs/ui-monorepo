@@ -106,7 +106,8 @@ export function ActionCell({ row }: Props) {
 
   const {
     amount,
-    forfeitable,
+    autoRelock,
+    effectiveLockEnd,
     lockTime,
     owner,
     status,
@@ -182,6 +183,7 @@ export function ActionCell({ row }: Props) {
 
   const { currentTimeInSeconds, timeRemainingSeconds, unlockTime } =
     getUnlockInfo({
+      effectiveLockEnd,
       lockTime,
       timestamp,
     })
@@ -208,6 +210,7 @@ export function ActionCell({ row }: Props) {
       lockupDays: minDays,
       stakingPosition: {
         amount,
+        effectiveLockEnd,
         lockTime,
         timestamp,
         tokenId,
@@ -219,14 +222,7 @@ export function ActionCell({ row }: Props) {
   const isActive = status === StakingPositionStatus.ACTIVE
   const isWalletOwner = !!address && isAddressEqual(owner as Address, address)
   const canOperate = isWalletOwner && timeRemainingSeconds > 0
-  // TODO #2481 enable these once the contract defines how the part auto-relock
-  // extends is classed, which is what the forecast still understates.
-  // Not a protocol restriction: extending a non-transferable lock works today.
-  const canAutoRelock = canOperate && isActive && transferable && !forfeitable
-
-  // TODO #2481 read the flag from the position once the subgraph exposes it.
-  // Flip it to reach the disable drawer while there is no data behind it.
-  const autoRelock = false
+  const canAutoRelock = canOperate && isActive
 
   function handleToggleAutoRelock() {
     closeAndFocusTrigger()
@@ -234,6 +230,7 @@ export function ActionCell({ row }: Props) {
       autoRelock,
       stakingPosition: {
         amount,
+        effectiveLockEnd,
         lockTime,
         timestamp,
         tokenId,

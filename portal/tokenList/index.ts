@@ -151,10 +151,11 @@ const [bridgedRemoteTokens, peerRemoteTokens] = partition(
   hemiTokens.flatMap(getRemoteTokens),
   t => t.extensions?.bridgeInfo !== undefined,
 )
+// Remote tokens inherit the Hemi name, so apply the overrides again for their own chain
 const remoteTokens = uniqBy(
   bridgedRemoteTokens.concat(peerRemoteTokens),
   t => `${t.chainId}-${t.address}`,
-)
+).map(applyDisplayOverrides)
 
 // the hemiTokens only contains definitions for Hemi tokens, but we can create the L1 version with the extensions field info
 const tokens: Token[] = hemiTokens.concat(remoteTokens)

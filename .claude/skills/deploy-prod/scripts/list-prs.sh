@@ -33,7 +33,7 @@ gh api graphql \
     .data.repository[]
     | .url as $self
     | [.closingIssuesReferences.nodes[] | {title, url}] as $closes
-    | ([.bodyHTML | scan("href=\"(https://github\\.com/[^/\"]+/[^/\"]+/(?:issues|pull)/[0-9]+)") | .[0]]
+    | ([.bodyHTML | scan("href=\"(https://github\\.com/[A-Za-z0-9._-]+/[A-Za-z0-9._-]+/(?:issues|pull)/[0-9]+)") | .[0]]
       | unique_by(key)
       | map(select(key as $k | [$closes[].url, $self] | map(key) | index($k) | not))) as $refs
     | [

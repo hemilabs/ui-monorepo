@@ -1,11 +1,14 @@
 import { Button } from 'components/button'
 import { DisplayAmount } from 'components/displayAmount'
+import { EvmFeesSummary } from 'components/evmFeesSummary'
+import { FeesContainer } from 'components/feesContainer'
 import { CallToActionContainer } from 'components/reviewOperation/callToActionContainer'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
+import { type Token } from 'types/token'
 import { useLocale, useTranslations } from 'use-intl'
 import {
   formatNumber,
@@ -109,6 +112,13 @@ const PayoutsFallback = function ({
 
 type Props = {
   autoRelock: boolean
+  effectiveLockEnd: bigint | undefined
+  gas: {
+    amount: string
+    isError: boolean
+    label: string
+    token: Token
+  }
   isRunningOperation: boolean
   lockTime: bigint
   onSubmit: VoidFunction
@@ -121,6 +131,8 @@ type Props = {
 
 export const Preview = function ({
   autoRelock,
+  effectiveLockEnd,
+  gas,
   isRunningOperation,
   lockTime,
   onSubmit,
@@ -141,6 +153,7 @@ export const Preview = function ({
 
   const now = Number(unixNowTimestamp())
   const { timeRemainingSeconds, unlockDate, unlockTime } = getUnlockInfo({
+    effectiveLockEnd,
     lockTime,
     timestamp,
   })
@@ -162,7 +175,12 @@ export const Preview = function ({
     (current.yearOneTotal > BigInt(0) || next.yearOneTotal > BigInt(0))
 
   const votingPower = formatUnits(
-    predictVotingPower({ amount: stakedAmount, lockTime, timestamp }),
+    predictVotingPower({
+      amount: stakedAmount,
+      effectiveLockEnd,
+      lockTime,
+      timestamp,
+    }),
     token.decimals,
   )
   const decaysCaption = tDrawer('decays-to-zero', {
@@ -284,6 +302,9 @@ export const Preview = function ({
             />
           )}
         </div>
+        <FeesContainer compact>
+          <EvmFeesSummary gas={gas} />
+        </FeesContainer>
       </div>
       <CallToActionContainer>
         <div className="flex w-full [&>button]:w-full">

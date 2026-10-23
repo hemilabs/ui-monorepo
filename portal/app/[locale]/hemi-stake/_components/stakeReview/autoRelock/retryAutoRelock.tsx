@@ -2,6 +2,7 @@ import { useToggleAutoRelock } from 'app/[locale]/hemi-stake/_hooks/useToggleAut
 import { Button } from 'components/button'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
+import { useHemiToken } from 'hooks/useHemiToken'
 import { type SubmitEvent, useState } from 'react'
 import { type StakingOperationRunning } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
@@ -12,16 +13,32 @@ export const RetryAutoRelock = function () {
   const [operationRunning, setOperationRunning] =
     useState<StakingOperationRunning>('idle')
 
-  const { resetStateAfterOperation, updateStakingDashboardOperation } =
-    useStakingDashboard()
+  const {
+    resetStateAfterOperation,
+    stakingDashboardOperation,
+    updateStakingDashboardOperation,
+  } = useStakingDashboard()
+
+  const { autoRelock = false, stakingPosition } = stakingDashboardOperation!
+  const { tokenId } = stakingPosition!
 
   const hemi = useHemi()
   const t = useTranslations()
+  const token = useHemiToken()
 
   const { mutate: runToggle } = useToggleAutoRelock({
-    onSettled: () => setOperationRunning('staked'),
-    onSigned: () => setOperationRunning('staking'),
-    onSucceeded: resetStateAfterOperation,
+    enable: !autoRelock,
+    on(emitter) {
+      emitter.on('user-signed-auto-relock', () =>
+        setOperationRunning('staking'),
+      )
+      emitter.on('auto-relock-transaction-succeeded', function () {
+        resetStateAfterOperation()
+      })
+      emitter.on('auto-relock-settled', () => setOperationRunning('staked'))
+    },
+    token,
+    tokenId: tokenId!,
     updateStakingDashboardOperation,
   })
 

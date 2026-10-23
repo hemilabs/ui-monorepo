@@ -23,6 +23,7 @@ import { createLock } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 
 import { daysToSeconds } from '../_utils/lockCreationTimes'
+import { getLockEnd } from '../_utils/lockEpochs'
 import { prependPosition } from '../_utils/positionsCache'
 
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
@@ -192,7 +193,12 @@ export const useStake = function ({
           autoRelock,
           blockNumber,
           blockTimestamp: ts,
-          effectiveLockEnd: undefined,
+          effectiveLockEnd: BigInt(
+            getLockEnd({
+              lockTime: Number(lockDuration),
+              timestamp: Number(ts),
+            }),
+          ),
           forfeitable: false,
           id: tokenId.toString(),
           lockTime: lockDuration,

@@ -15,6 +15,7 @@ import {
 import { WalletStatsSection } from './_components/walletStatsSection'
 import { StakingDashboardProvider } from './_context/stakingDashboardContext'
 import { useStakingPositions } from './_hooks/useStakingPositions'
+import { sortPositionsByUnlock } from './_utils/sortPositionsByUnlock'
 
 export const HemiStakePage = function () {
   const { data, isLoading, isLoadingError, refetch } = useStakingPositions()
@@ -29,9 +30,10 @@ export const HemiStakePage = function () {
   const filteredData = useMemo(
     function () {
       const positions = data?.filter(position => position.status === filter)
-      return filter === StakingPositionStatus.WITHDRAWN
-        ? positions?.reverse()
-        : positions
+      if (filter === StakingPositionStatus.WITHDRAWN) {
+        return positions?.reverse()
+      }
+      return positions && sortPositionsByUnlock(positions)
     },
     [data, filter],
   )

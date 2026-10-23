@@ -441,11 +441,11 @@ describe('getRewardsForecast with auto-relock', function () {
     payouts.forEach(({ weight }) => expect(weight).toBe(payouts[0].weight))
   })
 
-  it('keeps every epoch a maximum lock started with, forever', function () {
+  it('keeps all but half an epoch of a maximum lock, forever', function () {
     const { payouts } = relocked({ now: midEpochNow })
     expect(payouts[0].weight).toBe(
       (golden.amount / BigInt(MaxLockDurationSeconds)) *
-        BigInt(epochsInMaxLock * SixDaysSeconds),
+        BigInt(epochsInMaxLock * SixDaysSeconds - SixDaysSeconds / 2),
     )
   })
 
@@ -482,7 +482,9 @@ describe('getRewardsForecast with auto-relock', function () {
         classWeight: golden.inputsByClass.transferable.weight,
         weight: getWeightAt({
           amount: golden.amount,
-          at: getEpochEnd({ epochsAhead, now: epochAlignedNow }),
+          at:
+            getEpochEnd({ epochsAhead, now: epochAlignedNow }) +
+            SixDaysSeconds / 2,
           lockEnd: lockEnd + (epochsAhead + 1) * SixDaysSeconds,
         }),
       }),
@@ -490,6 +492,18 @@ describe('getRewardsForecast with auto-relock', function () {
     expect(
       relocked({ lockDurationInSeconds }).payouts.map(({ payout }) => payout),
     ).toEqual(extended)
+  })
+
+  it('carries a weight read off the contract through every epoch', function () {
+    const { payouts } = relocked({ relockedWeight: hemi(7) })
+
+    payouts.forEach(({ weight }) => expect(weight).toBe(hemi(7)))
+  })
+
+  it('ignores a weight read off the contract while decaying', function () {
+    expect(forecast({ relockedWeight: hemi(7) }).payouts).toEqual(
+      forecast().payouts,
+    )
   })
 
   it('keeps paying past the end of the lock', function () {

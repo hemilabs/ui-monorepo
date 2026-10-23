@@ -1,12 +1,9 @@
-import { StakingPosition } from 'types/stakingDashboard'
 import { secondsPerDay, unixNowTimestamp } from 'utils/time'
 import {
   MaxLockDurationSeconds,
   MinLockDurationSeconds,
   SixDaysSeconds,
 } from 've-hemi-actions'
-
-import { getWeightAt } from './lockEpochs'
 
 export const minDays = Math.floor(MinLockDurationSeconds / secondsPerDay)
 export const maxDays = Math.floor(MaxLockDurationSeconds / secondsPerDay)
@@ -93,15 +90,3 @@ export function getUnlockInfo({ unlockTime }: GetUnlockInfoProps) {
     unlockTime: unlockTimeNum,
   }
 }
-
-type PredictVotingPowerProps = Pick<StakingPosition, 'amount'> & {
-  now?: number
-  unlockTime: number | bigint
-}
-
-export const predictVotingPower = ({
-  amount,
-  now = Number(unixNowTimestamp()),
-  unlockTime,
-}: PredictVotingPowerProps) =>
-  getWeightAt({ amount, at: now, lockEnd: Number(unlockTime) })

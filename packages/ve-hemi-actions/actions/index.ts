@@ -14,10 +14,10 @@ export {
 export { encodeWithdraw, withdraw } from './wallet/withdraw.ts'
 export {
   getAutoRelockStatus,
-  getBalanceOfNFTAt,
   getLivePositionClass,
   getLockedBalance,
   getPositionVotingPowerDetails,
+  getPositionWeight,
   getPositionsVotingPowerSum,
   getTotalVotingPower,
 } from './public/veHemi.ts'

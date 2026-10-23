@@ -21,13 +21,12 @@ import {
   maxDays,
   minDays,
   oneYear,
-  predictVotingPower,
   sixMonths,
   step,
   twoYears,
   wholeDaysToSeconds,
 } from '../../_utils/lockCreationTimes'
-import { getLockEnd } from '../../_utils/lockEpochs'
+import { getLockEnd, getPositionWeights } from '../../_utils/lockEpochs'
 import { getLockupErrorMessage } from '../../_utils/lockupError'
 import {
   getNearestValidValues,
@@ -222,7 +221,7 @@ type Props = {
 }
 
 export function Lockup({
-  autoRelock,
+  autoRelock = false,
   disabled,
   input,
   inputDays,
@@ -280,15 +279,18 @@ export function Lockup({
         return '0'
       }
 
-      const votingPower = predictVotingPower({
+      const { current } = getPositionWeights({
         amount,
-        unlockTime: lockEnd,
+        autoRelock,
+        fromChain: undefined,
+        lockEnd,
+        now: Number(unixNowTimestamp()),
       })
 
-      const formattedPower = formatUnits(votingPower, token.decimals)
+      const formattedPower = formatUnits(current, token.decimals)
       return formattedPower.toString()
     },
-    [amount, lockEnd, token.decimals],
+    [amount, autoRelock, lockEnd, token.decimals],
   )
 
   function handleSliderChange(val: number) {

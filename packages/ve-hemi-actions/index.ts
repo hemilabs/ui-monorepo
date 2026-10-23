@@ -8,6 +8,7 @@ export type {
 
 export {
   getVeHemiContractAddress,
+  halfEpochSeconds,
   MaxLockDurationSeconds,
   minLockAmount,
   MinLockDurationSeconds,

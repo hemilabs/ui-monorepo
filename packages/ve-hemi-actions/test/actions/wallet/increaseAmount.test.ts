@@ -6,9 +6,9 @@ import { describe, expect, it, vi, beforeEach } from 'vitest'
 
 import { increaseAmount } from '../../../actions'
 import {
+  getAutoRelockStatus,
   getHemiTokenAddress,
   memoizedGetHemiTokenAddress,
-  getLockedBalance,
 } from '../../../actions/public/veHemi'
 import { getVeHemiContractAddress } from '../../../constants'
 
@@ -24,8 +24,8 @@ vi.mock('viem-erc20/actions', () => ({
 }))
 
 vi.mock('../../../actions/public/veHemi', () => ({
+  getAutoRelockStatus: vi.fn(),
   getHemiTokenAddress: vi.fn(),
-  getLockedBalance: vi.fn(),
   memoizedGetHemiTokenAddress: vi.fn(),
 }))
 
@@ -41,12 +41,10 @@ describe('increaseAmount', function () {
     vi.mocked(getHemiTokenAddress).mockResolvedValue(zeroAddress)
     vi.mocked(memoizedGetHemiTokenAddress).mockResolvedValue(zeroAddress)
 
-    // Mock getLockedBalance to return a future expiry date (not expired)
-    const futureTimestamp = BigInt(Math.floor(Date.now() / 1000) + 86400) // 1 day from now
-    vi.mocked(getLockedBalance).mockResolvedValue({
-      amount: BigInt(500),
-      end: futureTimestamp,
-    })
+    const futureTimestamp = BigInt(Math.floor(Date.now() / 1000) + 86400)
+    vi.mocked(getAutoRelockStatus).mockResolvedValue([
+      { effectiveLockEnd: futureTimestamp, isAutoRelockEnabled: false },
+    ])
   })
 
   it('should emit "increase-amount-failed-validation" if the account is not a valid address', async function () {
@@ -127,12 +125,10 @@ describe('increaseAmount', function () {
   it('should emit "increase-amount-failed-validation" if lock is expired', async function () {
     vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
 
-    // Mock expired lock (end timestamp in the past)
-    const pastTimestamp = BigInt(Math.floor(Date.now() / 1000) - 86400) // 1 day ago
-    vi.mocked(getLockedBalance).mockResolvedValue({
-      amount: BigInt(500),
-      end: pastTimestamp,
-    })
+    const pastTimestamp = BigInt(Math.floor(Date.now() / 1000) - 86400)
+    vi.mocked(getAutoRelockStatus).mockResolvedValue([
+      { effectiveLockEnd: pastTimestamp, isAutoRelockEnabled: false },
+    ])
 
     const { emitter, promise } = increaseAmount(validParameters)
 
@@ -215,6 +211,36 @@ describe('increaseAmount', function () {
         amount: customApprovalAmount,
       }),
     )
+  })
+
+  it('should increase amount while auto-relock is enabled', async function () {
+    vi.mocked(balanceOf).mockResolvedValue(validParameters.additionalAmount)
+    vi.mocked(allowance).mockResolvedValue(
+      BigInt(validParameters.additionalAmount),
+    )
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue({
+      status: 'success',
+    })
+    vi.mocked(getAutoRelockStatus).mockResolvedValue([
+      {
+        effectiveLockEnd: BigInt(Math.floor(Date.now() / 1000) + 86400),
+        isAutoRelockEnabled: true,
+      },
+    ])
+
+    const { emitter, promise } = increaseAmount(validParameters)
+
+    const increaseAmountFailedValidation = vi.fn()
+    emitter.on(
+      'increase-amount-failed-validation',
+      increaseAmountFailedValidation,
+    )
+
+    await promise
+
+    expect(increaseAmountFailedValidation).not.toHaveBeenCalled()
+    expect(writeContract).toHaveBeenCalled()
   })
 
   it('should successfully increase amount after approval', async function () {
@@ -474,9 +500,11 @@ describe('increaseAmount', function () {
     )
   })
 
-  it('should handle getLockedBalance failure', async function () {
+  it('should handle getAutoRelockStatus failure', async function () {
     vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
-    vi.mocked(getLockedBalance).mockRejectedValue(new Error('Contract error'))
+    vi.mocked(getAutoRelockStatus).mockRejectedValue(
+      new Error('Contract error'),
+    )
 
     const { emitter, promise } = increaseAmount(validParameters)
 

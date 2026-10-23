@@ -575,6 +575,7 @@
       "locked-amount": "Locked Amount",
       "lockup": "Lockup",
       "lockup-tooltip": "Locked for {duration}, unlocks on {date}",
+      "lockup-tooltip-auto-relock": "Auto-relock holds the lockup at {duration}. Turn it off and it unlocks on {date}.",
       "no-hemi-burned": "No burned positions yet",
       "no-hemi-staked": "No ${symbol} staked",
       "on": "On {date}",

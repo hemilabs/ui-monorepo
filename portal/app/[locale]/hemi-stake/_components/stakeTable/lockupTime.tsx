@@ -7,25 +7,39 @@ import {
 import { useLocale, useTranslations } from 'use-intl'
 import { formatDuration } from 'utils/duration'
 import { formatDate } from 'utils/format'
+import { snapToEpoch } from 've-hemi-actions'
 
 import { getUnlockInfo } from '../../_utils/lockCreationTimes'
 
 type Props = {
+  autoRelock: boolean
+  effectiveLockEnd: StakingPosition['effectiveLockEnd']
   lockTime: bigint
   status: StakingPosition['status']
-  timestamp: bigint
 }
 
-export const LockupTime = function ({ lockTime, status, timestamp }: Props) {
+export const LockupTime = function ({
+  autoRelock,
+  effectiveLockEnd,
+  lockTime,
+  status,
+}: Props) {
   const locale = useLocale()
   const t = useTranslations('hemi-stake.table')
-  const { unlockDate, unlockTime } = getUnlockInfo({ lockTime, timestamp })
+  const { currentTimeInSeconds, unlockDate, unlockTime } = getUnlockInfo({
+    unlockTime: effectiveLockEnd,
+  })
 
   return (
     <Tooltip
-      text={t('lockup-tooltip', {
+      text={t(autoRelock ? 'lockup-tooltip-auto-relock' : 'lockup-tooltip', {
         date: formatDate(unlockDate, locale),
-        duration: formatDuration(Number(lockTime), locale),
+        duration: formatDuration(
+          autoRelock
+            ? unlockTime - snapToEpoch(currentTimeInSeconds)
+            : Number(lockTime),
+          locale,
+        ),
       })}
       variant="simple"
     >

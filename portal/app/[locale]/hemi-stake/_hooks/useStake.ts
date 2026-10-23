@@ -23,6 +23,7 @@ import { createLock } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 
 import { daysToSeconds } from '../_utils/lockCreationTimes'
+import { getLockEnd } from '../_utils/lockEpochs'
 import { prependPosition } from '../_utils/positionsCache'
 
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
@@ -31,6 +32,7 @@ import { getStakingPositionsQueryKey } from './useStakingPositions'
 import { getTotalVotingPowerQueryKey } from './useTotalVotingPower'
 
 type UseStake = {
+  autoRelock: boolean
   input: string
   lockupDays: number
   on?: (emitter: EventEmitter<CreateLockEvents>) => void
@@ -39,6 +41,7 @@ type UseStake = {
 }
 
 export const useStake = function ({
+  autoRelock,
   input,
   lockupDays,
   on,
@@ -89,12 +92,11 @@ export const useStake = function ({
 
       await ensureConnectedTo(token.chainId)
 
-      // TODO #2481 pass the auto-relock flag once the upgraded contracts land.
-      // createLock only takes amount and duration today.
       const { emitter, promise } = createLock({
         account: address,
         amount,
         approvalAmount: amount,
+        autoRelock,
         lockDurationInSeconds: daysToSeconds(lockupDays),
         walletClient: hemiWalletClient!,
       })
@@ -188,8 +190,15 @@ export const useStake = function ({
 
         const newPosition: StakingPosition = {
           amount,
+          autoRelock,
           blockNumber,
           blockTimestamp: ts,
+          effectiveLockEnd: BigInt(
+            getLockEnd({
+              lockTime: Number(lockDuration),
+              timestamp: Number(ts),
+            }),
+          ),
           forfeitable: false,
           id: tokenId.toString(),
           lockTime: lockDuration,

@@ -13,8 +13,11 @@ import {
   type StakingOperationRunning,
 } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
+import { getNativeToken } from 'utils/nativeToken'
+import { formatUnits } from 'viem'
 
 import { useStakingDashboard } from '../../../_context/stakingDashboardContext'
+import { useEstimateToggleAutoRelockFees } from '../../../_hooks/useEstimateToggleAutoRelockFees'
 import { useToggleAutoRelock } from '../../../_hooks/useToggleAutoRelock'
 import { Operation } from '../../operation'
 
@@ -40,15 +43,31 @@ export const ReviewAutoRelock = function ({ onClose }: Props) {
     stakingPosition,
     transactionHash,
   } = stakingDashboardOperation!
-  const { amount, lockTime, timestamp, tokenId, transferable } =
-    stakingPosition!
+  const { amount, effectiveLockEnd, tokenId, transferable } = stakingPosition!
 
   const stakingDashboardStatus =
     stakingDashboardOperation?.status ?? StakingDashboardStatus.STAKE_TX_PENDING
 
   const hemi = useHemi()
+  const t = useTranslations()
   const tDrawer = useTranslations('hemi-stake.drawer')
   const token = useHemiToken()
+
+  const { fees: toggleFees, isError: isToggleFeesError } =
+    useEstimateToggleAutoRelockFees({
+      enable: !autoRelock,
+      enabled:
+        stakingDashboardStatus !== StakingDashboardStatus.STAKE_TX_CONFIRMED,
+      token,
+      tokenId: tokenId!,
+    })
+
+  const getGas = () => ({
+    amount: formatUnits(toggleFees, hemi.nativeCurrency.decimals),
+    isError: isToggleFeesError,
+    label: t('common.network-gas-fee', { network: hemi.name }),
+    token: getNativeToken(hemi.id),
+  })
 
   const heading = autoRelock
     ? tDrawer('disable-auto-relock.heading')
@@ -91,9 +110,18 @@ export const ReviewAutoRelock = function ({ onClose }: Props) {
 
   const { isPending: isRunningOperation, mutate: toggleAutoRelock } =
     useToggleAutoRelock({
-      onSettled: () => setOperationRunning('staked'),
-      onSigned: () => setOperationRunning('staking'),
-      onSucceeded: resetStateAfterOperation,
+      enable: !autoRelock,
+      on(emitter) {
+        emitter.on('user-signed-auto-relock', () =>
+          setOperationRunning('staking'),
+        )
+        emitter.on('auto-relock-transaction-succeeded', function () {
+          resetStateAfterOperation()
+        })
+        emitter.on('auto-relock-settled', () => setOperationRunning('staked'))
+      },
+      token,
+      tokenId: tokenId!,
       updateStakingDashboardOperation,
     })
 
@@ -106,12 +134,12 @@ export const ReviewAutoRelock = function ({ onClose }: Props) {
       preview={
         <Preview
           autoRelock={autoRelock}
+          effectiveLockEnd={effectiveLockEnd!}
+          gas={getGas()}
           isRunningOperation={isRunningOperation}
-          lockTime={lockTime!}
           onSubmit={toggleAutoRelock}
           stakedAmount={amount!}
           submitLabel={heading}
-          timestamp={timestamp!}
           tokenId={tokenId!}
           transferable={transferable}
         />

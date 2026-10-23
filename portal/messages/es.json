@@ -575,6 +575,7 @@
       "locked-amount": "Cantidad bloqueada",
       "lockup": "Bloqueo",
       "lockup-tooltip": "Bloqueo de {duration}, se desbloquea el {date}",
+      "lockup-tooltip-auto-relock": "El rebloqueo automático mantiene el bloqueo en {duration}. Desactívelo y se desbloquea el {date}.",
       "no-hemi-burned": "Aún no hay posiciones quemadas.",
       "no-hemi-staked": "No hay ${symbol} en stake",
       "on": "En {date}",

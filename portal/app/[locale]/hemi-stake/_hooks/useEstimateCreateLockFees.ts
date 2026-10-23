@@ -7,11 +7,13 @@ import { useAccount, useEstimateGas } from 'wagmi'
 
 export const useEstimateCreateLockFees = function ({
   amount,
+  autoRelock,
   enabled = true,
   lockDurationInSeconds,
   token,
 }: {
   amount: bigint
+  autoRelock: boolean
   enabled?: boolean
   lockDurationInSeconds: bigint
   token: StakingDashboardToken
@@ -21,6 +23,7 @@ export const useEstimateCreateLockFees = function ({
 
   const data = encodeCreateLock({
     amount,
+    autoRelock,
     lockDurationInSeconds,
   })
 

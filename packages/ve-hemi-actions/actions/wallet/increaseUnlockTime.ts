@@ -12,7 +12,7 @@ import { veHemiAbi } from '../../abi.ts'
 import { getVeHemiContractAddress, snapToEpoch } from '../../constants.ts'
 import type { IncreaseUnlockTimeEvents } from '../../types.ts'
 import { validateIncreaseUnlockTimeInputs } from '../../utils.ts'
-import { getLockedBalance } from '../public/veHemi.ts'
+import { getAutoRelockStatus, getLockedBalance } from '../public/veHemi.ts'
 
 const canIncreaseUnlockTime = async function ({
   account,
@@ -46,23 +46,24 @@ const canIncreaseUnlockTime = async function ({
   }
 
   try {
-    // Check if lock exists and is not expired
-    const { amount, end } = await getLockedBalance(walletClient, tokenId)
+    const [{ amount }, [{ effectiveLockEnd }]] = await Promise.all([
+      getLockedBalance(walletClient, tokenId),
+      getAutoRelockStatus(walletClient, [tokenId]),
+    ])
     const now = BigInt(Math.floor(Date.now() / 1000))
 
     if (amount <= 0) {
       return { canIncrease: false, reason: 'no existing lock' }
     }
 
-    if (end <= now) {
+    if (effectiveLockEnd <= now) {
       return { canIncrease: false, reason: 'lock already expired' }
     }
 
-    // Check if new duration would actually extend the lock
     const newUnlockTime = BigInt(
       snapToEpoch(Number(now) + lockDurationInSeconds),
     )
-    if (newUnlockTime <= end) {
+    if (newUnlockTime <= effectiveLockEnd) {
       return {
         canIncrease: false,
         reason: 'new unlock time must be greater than current unlock time',

@@ -26,6 +26,7 @@ import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
 import { AutoRelockIcon } from '../../_icons/autoRelockIcon'
 import { PlusIcon } from '../../_icons/plusIcon'
+import { canEnableAutoRelock } from '../../_utils/autoRelockEligibility'
 import {
   getExtensionAvailableAt,
   getUnlockInfo,
@@ -106,11 +107,11 @@ export function ActionCell({ row }: Props) {
 
   const {
     amount,
+    autoRelock,
+    effectiveLockEnd,
     forfeitable,
-    lockTime,
     owner,
     status,
-    timestamp,
     tokenId,
     transferable,
   } = row.original
@@ -182,8 +183,7 @@ export function ActionCell({ row }: Props) {
 
   const { currentTimeInSeconds, timeRemainingSeconds, unlockTime } =
     getUnlockInfo({
-      lockTime,
-      timestamp,
+      unlockTime: effectiveLockEnd,
     })
   const extensionAvailableAt = getExtensionAvailableAt(unlockTime)
   const canExtend = currentTimeInSeconds >= extensionAvailableAt
@@ -208,8 +208,7 @@ export function ActionCell({ row }: Props) {
       lockupDays: minDays,
       stakingPosition: {
         amount,
-        lockTime,
-        timestamp,
+        effectiveLockEnd,
         tokenId,
       },
     })
@@ -219,14 +218,16 @@ export function ActionCell({ row }: Props) {
   const isActive = status === StakingPositionStatus.ACTIVE
   const isWalletOwner = !!address && isAddressEqual(owner as Address, address)
   const canOperate = isWalletOwner && timeRemainingSeconds > 0
-  // TODO #2481 enable these once the contract defines how the part auto-relock
-  // extends is classed, which is what the forecast still understates.
-  // Not a protocol restriction: extending a non-transferable lock works today.
-  const canAutoRelock = canOperate && isActive && transferable && !forfeitable
-
-  // TODO #2481 read the flag from the position once the subgraph exposes it.
-  // Flip it to reach the disable drawer while there is no data behind it.
-  const autoRelock = false
+  const canAutoRelock =
+    canOperate &&
+    isActive &&
+    (autoRelock ||
+      canEnableAutoRelock({
+        effectiveLockEnd,
+        forfeitable,
+        now: currentTimeInSeconds,
+        transferable,
+      }))
 
   function handleToggleAutoRelock() {
     closeAndFocusTrigger()
@@ -234,8 +235,7 @@ export function ActionCell({ row }: Props) {
       autoRelock,
       stakingPosition: {
         amount,
-        lockTime,
-        timestamp,
+        effectiveLockEnd,
         tokenId,
         transferable,
       },

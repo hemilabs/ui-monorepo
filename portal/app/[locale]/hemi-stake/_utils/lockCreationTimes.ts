@@ -6,7 +6,7 @@ import {
   SixDaysSeconds,
 } from 've-hemi-actions'
 
-import { getLockEnd, getWeightAt } from './lockEpochs'
+import { getWeightAt } from './lockEpochs'
 
 export const minDays = Math.floor(MinLockDurationSeconds / secondsPerDay)
 export const maxDays = Math.floor(MaxLockDurationSeconds / secondsPerDay)
@@ -75,51 +75,33 @@ export const getMinExtensionDays = function ({
 }
 
 type GetUnlockInfoProps = {
-  timestamp: number | bigint
-  lockTime: number | bigint
+  unlockTime: number | bigint
 }
 
-export function getUnlockInfo({ lockTime, timestamp }: GetUnlockInfoProps) {
+export function getUnlockInfo({ unlockTime }: GetUnlockInfoProps) {
   const currentTimeInSeconds = Number(unixNowTimestamp())
 
-  // Convert to Number for calculations
-  const timestampNum = Number(timestamp)
-  const lockTimeNum = Number(lockTime)
+  const unlockTimeNum = Number(unlockTime)
+  const timeRemainingSeconds = unlockTimeNum - currentTimeInSeconds
 
-  const unlockTime = getLockEnd({
-    lockTime: lockTimeNum,
-    timestamp: timestampNum,
-  })
-  const timeRemainingSeconds = unlockTime - currentTimeInSeconds
-
-  // Calculate unlock date in UTC
-  const unlockDate = new Date(unlockTime * 1000)
+  const unlockDate = new Date(unlockTimeNum * 1000)
 
   return {
     currentTimeInSeconds,
     timeRemainingSeconds,
-    totalLockTimeSeconds: lockTimeNum,
     unlockDate,
-    unlockTime,
+    unlockTime: unlockTimeNum,
   }
 }
 
-type PredictVotingPowerProps = Pick<
-  StakingPosition,
-  'amount' | 'lockTime' | 'timestamp'
-> & { now?: number }
+type PredictVotingPowerProps = Pick<StakingPosition, 'amount'> & {
+  now?: number
+  unlockTime: number | bigint
+}
 
 export const predictVotingPower = ({
   amount,
-  lockTime,
   now = Number(unixNowTimestamp()),
-  timestamp,
+  unlockTime,
 }: PredictVotingPowerProps) =>
-  getWeightAt({
-    amount,
-    at: now,
-    lockEnd: getLockEnd({
-      lockTime: Number(lockTime),
-      timestamp: Number(timestamp),
-    }),
-  })
+  getWeightAt({ amount, at: now, lockEnd: Number(unlockTime) })

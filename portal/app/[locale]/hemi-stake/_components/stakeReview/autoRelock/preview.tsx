@@ -1,11 +1,14 @@
 import { Button } from 'components/button'
 import { DisplayAmount } from 'components/displayAmount'
+import { EvmFeesSummary } from 'components/evmFeesSummary'
+import { FeesContainer } from 'components/feesContainer'
 import { CallToActionContainer } from 'components/reviewOperation/callToActionContainer'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
+import { type Token } from 'types/token'
 import { useLocale, useTranslations } from 'use-intl'
 import {
   formatNumber,
@@ -109,24 +112,29 @@ const PayoutsFallback = function ({
 
 type Props = {
   autoRelock: boolean
+  effectiveLockEnd: bigint
+  gas: {
+    amount: string
+    isError: boolean
+    label: string
+    token: Token
+  }
   isRunningOperation: boolean
-  lockTime: bigint
   onSubmit: VoidFunction
   stakedAmount: bigint
   submitLabel: string
-  timestamp: bigint
   tokenId: bigint
   transferable: boolean | undefined
 }
 
 export const Preview = function ({
   autoRelock,
+  effectiveLockEnd,
+  gas,
   isRunningOperation,
-  lockTime,
   onSubmit,
   stakedAmount,
   submitLabel,
-  timestamp,
   tokenId,
   transferable,
 }: Props) {
@@ -141,8 +149,7 @@ export const Preview = function ({
 
   const now = Number(unixNowTimestamp())
   const { timeRemainingSeconds, unlockDate, unlockTime } = getUnlockInfo({
-    lockTime,
-    timestamp,
+    unlockTime: effectiveLockEnd,
   })
 
   const { base, current, delta, next } = getAutoRelockComparison({
@@ -162,7 +169,10 @@ export const Preview = function ({
     (current.yearOneTotal > BigInt(0) || next.yearOneTotal > BigInt(0))
 
   const votingPower = formatUnits(
-    predictVotingPower({ amount: stakedAmount, lockTime, timestamp }),
+    predictVotingPower({
+      amount: stakedAmount,
+      unlockTime: effectiveLockEnd,
+    }),
     token.decimals,
   )
   const decaysCaption = tDrawer('decays-to-zero', {
@@ -284,6 +294,9 @@ export const Preview = function ({
             />
           )}
         </div>
+        <FeesContainer compact>
+          <EvmFeesSummary gas={gas} />
+        </FeesContainer>
       </div>
       <CallToActionContainer>
         <div className="flex w-full [&>button]:w-full">

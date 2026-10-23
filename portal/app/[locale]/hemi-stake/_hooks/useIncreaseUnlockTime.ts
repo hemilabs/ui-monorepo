@@ -76,10 +76,7 @@ export const useIncreaseUnlockTime = function ({
         'user-signed-increase-unlock-time',
         function (transactionHash) {
           updateStakingDashboardOperation({
-            stakingPosition: {
-              lockTime: daysToSeconds(BigInt(lockupDays)),
-              tokenId,
-            },
+            stakingPosition: { tokenId },
             status: StakingDashboardStatus.STAKE_TX_PENDING,
             transactionHash,
           })
@@ -130,6 +127,7 @@ export const useIncreaseUnlockTime = function ({
 
                 return {
                   ...position,
+                  effectiveLockEnd: newUnlockTime,
                   lockTime: newLockTime,
                 }
               },
@@ -191,6 +189,8 @@ export const useIncreaseUnlockTime = function ({
       return promise
     },
     onSettled() {
+      queryClient.invalidateQueries({ queryKey: stakingPositionQueryKey })
+
       // Do not return the promises here. Doing so will delay the resolution of
       // the mutation, which will cause the UI to be out of sync until balances are re-validated.
       // Query invalidation here must work as fire and forget, as, after all, it runs in the background!

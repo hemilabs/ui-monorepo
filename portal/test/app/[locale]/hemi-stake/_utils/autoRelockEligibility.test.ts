@@ -45,10 +45,4 @@ describe('canEnableAutoRelock', function () {
   it('refuses a forfeitable position', function () {
     expect(canEnableAutoRelock(position({ forfeitable: true }))).toBe(false)
   })
-
-  it('refuses when the effective end is unknown', function () {
-    expect(
-      canEnableAutoRelock({ ...position(), effectiveLockEnd: undefined }),
-    ).toBe(false)
-  })
 })

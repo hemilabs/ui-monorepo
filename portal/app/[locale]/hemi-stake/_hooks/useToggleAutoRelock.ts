@@ -108,31 +108,7 @@ export const useToggleAutoRelock = function ({
           status: StakingDashboardStatus.STAKE_TX_CONFIRMED,
         })
 
-        queryClient.invalidateQueries({ queryKey: stakingPositionQueryKey })
-
         updateNativeBalanceAfterFees(receipt)
-
-        if (address) {
-          queryClient.invalidateQueries({
-            queryKey: getPositionDelegationDetailsQueryKey({
-              chainId: token.chainId,
-              ownerAddress: address,
-              tokenId,
-            }),
-          })
-          queryClient.invalidateQueries({
-            queryKey: getTotalVotingPowerQueryKey({
-              address,
-              chainId: token.chainId,
-            }),
-          })
-          queryClient.invalidateQueries({
-            queryKey: getPositionsVotingPowerSumQueryKeyPrefix({
-              chainId: token.chainId,
-              ownerAddress: address,
-            }),
-          })
-        }
 
         track?.('hemi stake - auto relock success')
       })
@@ -163,9 +139,32 @@ export const useToggleAutoRelock = function ({
       })
     },
     onSettled() {
+      queryClient.invalidateQueries({ queryKey: stakingPositionQueryKey })
       queryClient.invalidateQueries({
         queryKey: nativeTokenBalanceQueryKey,
       })
+
+      if (address) {
+        queryClient.invalidateQueries({
+          queryKey: getPositionDelegationDetailsQueryKey({
+            chainId: token.chainId,
+            ownerAddress: address,
+            tokenId,
+          }),
+        })
+        queryClient.invalidateQueries({
+          queryKey: getTotalVotingPowerQueryKey({
+            address,
+            chainId: token.chainId,
+          }),
+        })
+        queryClient.invalidateQueries({
+          queryKey: getPositionsVotingPowerSumQueryKeyPrefix({
+            chainId: token.chainId,
+            ownerAddress: address,
+          }),
+        })
+      }
     },
   })
 }

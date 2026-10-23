@@ -14,5 +14,4 @@ export const canEnableAutoRelock = ({
 }: CanEnableAutoRelock) =>
   transferable &&
   !forfeitable &&
-  effectiveLockEnd !== undefined &&
   effectiveLockEnd >= BigInt(snapToEpoch(now) + MinLockDurationSeconds)

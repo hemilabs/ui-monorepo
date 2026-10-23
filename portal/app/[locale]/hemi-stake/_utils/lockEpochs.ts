@@ -7,17 +7,12 @@ import {
 const maxLockSeconds = BigInt(MaxLockDurationSeconds)
 
 export const getLockEnd = ({
-  effectiveLockEnd,
   lockTime,
   timestamp,
 }: {
-  effectiveLockEnd?: bigint
   lockTime: number
   timestamp: number
-}) =>
-  effectiveLockEnd === undefined
-    ? snapToEpoch(timestamp + lockTime)
-    : Number(effectiveLockEnd)
+}) => snapToEpoch(timestamp + lockTime)
 
 // Each baseline settles at (epoch + 1) * length, so 0 is the close of the epoch `now` is in.
 export const getEpochEnd = ({

@@ -112,7 +112,7 @@ const PayoutsFallback = function ({
 
 type Props = {
   autoRelock: boolean
-  effectiveLockEnd: bigint | undefined
+  effectiveLockEnd: bigint
   gas: {
     amount: string
     isError: boolean
@@ -120,11 +120,9 @@ type Props = {
     token: Token
   }
   isRunningOperation: boolean
-  lockTime: bigint
   onSubmit: VoidFunction
   stakedAmount: bigint
   submitLabel: string
-  timestamp: bigint
   tokenId: bigint
   transferable: boolean | undefined
 }
@@ -134,11 +132,9 @@ export const Preview = function ({
   effectiveLockEnd,
   gas,
   isRunningOperation,
-  lockTime,
   onSubmit,
   stakedAmount,
   submitLabel,
-  timestamp,
   tokenId,
   transferable,
 }: Props) {
@@ -153,9 +149,7 @@ export const Preview = function ({
 
   const now = Number(unixNowTimestamp())
   const { timeRemainingSeconds, unlockDate, unlockTime } = getUnlockInfo({
-    effectiveLockEnd,
-    lockTime,
-    timestamp,
+    unlockTime: effectiveLockEnd,
   })
 
   const { base, current, delta, next } = getAutoRelockComparison({
@@ -177,9 +171,7 @@ export const Preview = function ({
   const votingPower = formatUnits(
     predictVotingPower({
       amount: stakedAmount,
-      effectiveLockEnd,
-      lockTime,
-      timestamp,
+      unlockTime: effectiveLockEnd,
     }),
     token.decimals,
   )

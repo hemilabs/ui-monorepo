@@ -50,8 +50,7 @@ const allStakingColumns = ({
   },
   {
     cell({ row }) {
-      const { autoRelock, effectiveLockEnd, lockTime, status, timestamp } =
-        row.original
+      const { autoRelock, effectiveLockEnd, lockTime, status } = row.original
       return (
         <ErrorBoundary
           fallback={<span className="text-sm text-neutral-950">-</span>}
@@ -61,7 +60,6 @@ const allStakingColumns = ({
             effectiveLockEnd={effectiveLockEnd}
             lockTime={lockTime}
             status={status}
-            timestamp={timestamp}
           />
         </ErrorBoundary>
       )

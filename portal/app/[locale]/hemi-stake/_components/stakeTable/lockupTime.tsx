@@ -16,7 +16,6 @@ type Props = {
   effectiveLockEnd: StakingPosition['effectiveLockEnd']
   lockTime: bigint
   status: StakingPosition['status']
-  timestamp: bigint
 }
 
 export const LockupTime = function ({
@@ -24,23 +23,19 @@ export const LockupTime = function ({
   effectiveLockEnd,
   lockTime,
   status,
-  timestamp,
 }: Props) {
   const locale = useLocale()
   const t = useTranslations('hemi-stake.table')
   const { currentTimeInSeconds, unlockDate, unlockTime } = getUnlockInfo({
-    effectiveLockEnd,
-    lockTime,
-    timestamp,
+    unlockTime: effectiveLockEnd,
   })
-  const relocked = autoRelock && effectiveLockEnd !== undefined
 
   return (
     <Tooltip
-      text={t(relocked ? 'lockup-tooltip-auto-relock' : 'lockup-tooltip', {
+      text={t(autoRelock ? 'lockup-tooltip-auto-relock' : 'lockup-tooltip', {
         date: formatDate(unlockDate, locale),
         duration: formatDuration(
-          relocked
+          autoRelock
             ? unlockTime - snapToEpoch(currentTimeInSeconds)
             : Number(lockTime),
           locale,

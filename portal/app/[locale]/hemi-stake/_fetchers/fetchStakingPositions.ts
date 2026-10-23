@@ -3,6 +3,8 @@ import { getLockedPositions } from 'utils/subgraph'
 import { getAutoRelockStatus } from 've-hemi-actions/actions'
 import { type Address, type Chain, type Client } from 'viem'
 
+import { getLockEnd } from '../_utils/lockEpochs'
+
 export const fetchStakingPositions = async function ({
   address,
   chainId,
@@ -29,13 +31,19 @@ export const fetchStakingPositions = async function ({
 
   return positions.map(function (position) {
     const status = statusByTokenId.get(position.tokenId)
-    const effectiveLockEnd = status?.effectiveLockEnd
+    const fromChain = status?.effectiveLockEnd
 
     return {
       ...position,
       autoRelock: status?.isAutoRelockEnabled ?? false,
       effectiveLockEnd:
-        effectiveLockEnd === BigInt(0) ? undefined : effectiveLockEnd,
+        fromChain ??
+        BigInt(
+          getLockEnd({
+            lockTime: Number(position.lockTime),
+            timestamp: Number(position.timestamp),
+          }),
+        ),
     }
   })
 }

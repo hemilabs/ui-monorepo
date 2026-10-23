@@ -43,14 +43,7 @@ export const ReviewAutoRelock = function ({ onClose }: Props) {
     stakingPosition,
     transactionHash,
   } = stakingDashboardOperation!
-  const {
-    amount,
-    effectiveLockEnd,
-    lockTime,
-    timestamp,
-    tokenId,
-    transferable,
-  } = stakingPosition!
+  const { amount, effectiveLockEnd, tokenId, transferable } = stakingPosition!
 
   const stakingDashboardStatus =
     stakingDashboardOperation?.status ?? StakingDashboardStatus.STAKE_TX_PENDING
@@ -141,14 +134,12 @@ export const ReviewAutoRelock = function ({ onClose }: Props) {
       preview={
         <Preview
           autoRelock={autoRelock}
-          effectiveLockEnd={effectiveLockEnd}
+          effectiveLockEnd={effectiveLockEnd!}
           gas={getGas()}
           isRunningOperation={isRunningOperation}
-          lockTime={lockTime!}
           onSubmit={toggleAutoRelock}
           stakedAmount={amount!}
           submitLabel={heading}
-          timestamp={timestamp!}
           tokenId={tokenId!}
           transferable={transferable}
         />

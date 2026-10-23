@@ -4,19 +4,9 @@ import { describe, expect, it } from 'vitest'
 
 const epochAlignedStart = SixDaysSeconds * 3232
 
-const position = ({
-  effectiveLockEnd,
-  epochs,
-  tokenId,
-}: {
-  effectiveLockEnd?: bigint
-  epochs: number
-  tokenId: number
-}) =>
+const position = ({ epochs, tokenId }: { epochs: number; tokenId: number }) =>
   ({
-    effectiveLockEnd,
-    lockTime: BigInt(SixDaysSeconds * epochs),
-    timestamp: BigInt(epochAlignedStart),
+    effectiveLockEnd: BigInt(epochAlignedStart + SixDaysSeconds * epochs),
     tokenId: BigInt(tokenId),
   }) as never
 
@@ -33,18 +23,14 @@ describe('sortPositionsByUnlock', function () {
     expect(ids(sorted)).toEqual([2, 3, 1])
   })
 
-  it('places an armed position by its effective end, not its stored one', function () {
+  it('keeps a stable order when two positions end on the same epoch', function () {
     const sorted = sortPositionsByUnlock([
-      position({ epochs: 20, tokenId: 1 }),
-      position({
-        effectiveLockEnd: BigInt(epochAlignedStart + SixDaysSeconds * 90),
-        epochs: 5,
-        tokenId: 2,
-      }),
-      position({ epochs: 40, tokenId: 3 }),
+      position({ epochs: 30, tokenId: 1 }),
+      position({ epochs: 10, tokenId: 2 }),
+      position({ epochs: 30, tokenId: 3 }),
     ])
 
-    expect(ids(sorted)).toEqual([1, 3, 2])
+    expect(ids(sorted)).toEqual([2, 1, 3])
   })
 
   it('leaves the given array untouched', function () {

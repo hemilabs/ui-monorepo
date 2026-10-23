@@ -35,7 +35,6 @@ export const RetryAutoRelock = function () {
       emitter.on('auto-relock-transaction-succeeded', function () {
         resetStateAfterOperation()
       })
-      emitter.on('auto-relock-settled', () => setOperationRunning('staked'))
     },
     token,
     tokenId: tokenId!,
@@ -47,7 +46,7 @@ export const RetryAutoRelock = function () {
   const handleRetry = function (e: SubmitEvent) {
     e.preventDefault()
     setOperationRunning('staking')
-    runToggle()
+    runToggle(undefined, { onSettled: () => setOperationRunning('staked') })
   }
 
   return (

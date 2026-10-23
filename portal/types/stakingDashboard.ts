@@ -37,7 +37,7 @@ export type StakingPosition = {
   autoRelock: boolean
   blockNumber: bigint
   blockTimestamp: bigint
-  effectiveLockEnd: bigint | undefined
+  effectiveLockEnd: bigint
   forfeitable: boolean
   id: string
   lockTime: bigint
@@ -60,12 +60,7 @@ export type StakingDashboardOperation = Partial<{
   stakingPosition: Partial<
     Pick<
       StakingPosition,
-      | 'amount'
-      | 'effectiveLockEnd'
-      | 'lockTime'
-      | 'timestamp'
-      | 'tokenId'
-      | 'transferable'
+      'amount' | 'effectiveLockEnd' | 'tokenId' | 'transferable'
     >
   >
   status: StakingDashboardStatusType

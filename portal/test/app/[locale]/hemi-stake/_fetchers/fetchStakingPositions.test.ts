@@ -23,6 +23,9 @@ const status = (effectiveLockEnd, isAutoRelockEnabled) => ({
   isAutoRelockEnabled,
 })
 
+// snapToEpoch(1794337048 + 15778800), pinned so a drift in the derivation fails here
+const derivedEnd = BigInt(1810115848 - (1810115848 % 525960))
+
 const fetch = () => fetchStakingPositions({ address, chainId, hemiClient })
 
 describe('fetchStakingPositions', function () {
@@ -65,7 +68,7 @@ describe('fetchStakingPositions', function () {
     ])
     expect(positions[1]).toMatchObject({
       autoRelock: false,
-      effectiveLockEnd: undefined,
+      effectiveLockEnd: derivedEnd,
       tokenId: BigInt(20),
     })
   })
@@ -89,7 +92,7 @@ describe('fetchStakingPositions', function () {
     ])
     expect(positions.map(({ effectiveLockEnd }) => effectiveLockEnd)).toEqual([
       BigInt(111),
-      undefined,
+      derivedEnd,
       BigInt(333),
     ])
     expect(positions.map(({ autoRelock }) => autoRelock)).toEqual([
@@ -99,13 +102,13 @@ describe('fetchStakingPositions', function () {
     ])
   })
 
-  it('falls back to the derived end when the contract answers zero', async function () {
+  it('keeps the zero a burned token answers instead of inventing an end', async function () {
     vi.mocked(getLockedPositions).mockResolvedValue([position(10)])
     vi.mocked(getAutoRelockStatus).mockResolvedValue([status(0, false)])
 
     const [onlyPosition] = await fetch()
 
-    expect(onlyPosition.effectiveLockEnd).toBeUndefined()
+    expect(onlyPosition.effectiveLockEnd).toBe(BigInt(0))
   })
 
   it('leaves the chain alone when no position is active', async function () {

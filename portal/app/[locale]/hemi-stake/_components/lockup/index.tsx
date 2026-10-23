@@ -27,6 +27,7 @@ import {
   twoYears,
   wholeDaysToSeconds,
 } from '../../_utils/lockCreationTimes'
+import { getLockEnd } from '../../_utils/lockEpochs'
 import { getLockupErrorMessage } from '../../_utils/lockupError'
 import {
   getNearestValidValues,
@@ -264,9 +265,12 @@ export function Lockup({
   const valid = isValidLockup({ minLocked, value: inputNumber })
   const nearest = getNearestValidValues({ minLocked, value: inputNumber })
   const lockupSeconds = wholeDaysToSeconds(lockupDays)
-  const { unlockDate } = getUnlockInfo({
-    lockTime: lockupSeconds,
+  const lockEnd = getLockEnd({
+    lockTime: Number(lockupSeconds),
     timestamp: Number(unixNowTimestamp()),
+  })
+  const { unlockDate } = getUnlockInfo({
+    unlockTime: lockEnd,
   })
   const expireDate = formatDate(unlockDate, locale)
 
@@ -278,14 +282,13 @@ export function Lockup({
 
       const votingPower = predictVotingPower({
         amount,
-        lockTime: lockupSeconds,
-        timestamp: unixNowTimestamp(),
+        unlockTime: lockEnd,
       })
 
       const formattedPower = formatUnits(votingPower, token.decimals)
       return formattedPower.toString()
     },
-    [amount, lockupSeconds, token.decimals],
+    [amount, lockEnd, token.decimals],
   )
 
   function handleSliderChange(val: number) {

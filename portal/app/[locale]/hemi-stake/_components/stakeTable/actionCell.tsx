@@ -110,10 +110,8 @@ export function ActionCell({ row }: Props) {
     autoRelock,
     effectiveLockEnd,
     forfeitable,
-    lockTime,
     owner,
     status,
-    timestamp,
     tokenId,
     transferable,
   } = row.original
@@ -185,9 +183,7 @@ export function ActionCell({ row }: Props) {
 
   const { currentTimeInSeconds, timeRemainingSeconds, unlockTime } =
     getUnlockInfo({
-      effectiveLockEnd,
-      lockTime,
-      timestamp,
+      unlockTime: effectiveLockEnd,
     })
   const extensionAvailableAt = getExtensionAvailableAt(unlockTime)
   const canExtend = currentTimeInSeconds >= extensionAvailableAt
@@ -213,8 +209,6 @@ export function ActionCell({ row }: Props) {
       stakingPosition: {
         amount,
         effectiveLockEnd,
-        lockTime,
-        timestamp,
         tokenId,
       },
     })
@@ -242,8 +236,6 @@ export function ActionCell({ row }: Props) {
       stakingPosition: {
         amount,
         effectiveLockEnd,
-        lockTime,
-        timestamp,
         tokenId,
         transferable,
       },

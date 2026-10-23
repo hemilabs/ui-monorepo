@@ -5,7 +5,11 @@ import { type StakingPosition } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
-import { useCollectRewards } from '../../_hooks/useCollectAllRewards'
+import {
+  useCollectRewards,
+  useIsCollectingRewards,
+} from '../../_hooks/useCollectAllRewards'
+import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
 import { useHasRewards } from '../../_hooks/useHasRewards'
 import { useRewardsPaused } from '../../_hooks/useRewardsPaused'
 
@@ -19,28 +23,43 @@ export function ClaimCta({ operation }: Props) {
   const { hasRewards } = useHasRewards(tokenId)
   const isPaused = useRewardsPaused()
   const { updateCollectRewardsDashboardOperation } = useStakingDashboard()
+  const { setDrawerQueryString } = useDrawerStakingQueryString()
+  const isCollecting = useIsCollectingRewards()
 
-  const { isPending: isCollecting, mutate: runCollectRewards } =
-    useCollectRewards({
-      tokenIds: [tokenId],
-      updateCollectRewardsDashboardOperation,
-    })
+  const { mutate: runCollectRewards } = useCollectRewards({
+    tokenIds: [tokenId],
+    updateCollectRewardsDashboardOperation,
+  })
 
   if (!hasRewards) {
     return null
   }
 
+  const handleClick = function () {
+    if (isCollecting) {
+      setDrawerQueryString('claimingRewards')
+      return
+    }
+    runCollectRewards()
+  }
+
+  const showPaused = isPaused && !isCollecting
+
   return (
-    <Tooltip disabled={!isPaused} text={t('claiming-paused')} variant="simple">
+    <Tooltip
+      disabled={!showPaused}
+      text={t('claiming-paused')}
+      variant="simple"
+    >
       <Button
-        disabled={isCollecting || isPaused}
-        onClick={() => runCollectRewards()}
+        disabled={showPaused}
+        onClick={handleClick}
         size="xxSmall"
         variant="secondary"
       >
         <span className="flex items-center gap-x-1">
           {t('claim')}
-          {isPaused ? <InfoIcon /> : null}
+          {showPaused ? <InfoIcon /> : null}
         </span>
       </Button>
     </Tooltip>

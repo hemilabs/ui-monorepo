@@ -1,7 +1,11 @@
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  useIsMutating,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { EventEmitter } from 'events'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useHemi } from 'hooks/useHemi'
@@ -28,6 +32,12 @@ type UseCollectRewards = {
     payload?: CollectAllRewardsDashboardOperation,
   ) => void
 }
+
+// Shared by every claim run, so any of them can tell whether another one is in progress
+const collectRewardsMutationKey = ['hemi-stake-collect-rewards']
+
+export const useIsCollectingRewards = () =>
+  useIsMutating({ mutationKey: collectRewardsMutationKey }) > 0
 
 /**
  * Claims everything the positions are owed, one position after the other, in as many
@@ -128,6 +138,7 @@ export const useCollectRewards = function ({
 
         emitter.on('user-signed-claim-from', function (transactionHash) {
           track?.('hemi stake - signed collect rewards')
+          setDrawerQueryString('claimingRewards')
           updateStep(index, {
             status: CollectAllRewardsDashboardStatus.COLLECT_TX_PENDING,
             transactionHash,
@@ -140,6 +151,7 @@ export const useCollectRewards = function ({
 
         emitter.on('user-signing-claim-from-error', function () {
           track?.('hemi stake - signing collect rewards error')
+          setDrawerQueryString('claimingRewards')
           failed = true
           updateStep(index, {
             status: CollectAllRewardsDashboardStatus.COLLECT_TX_FAILED,
@@ -207,6 +219,7 @@ export const useCollectRewards = function ({
         status: CollectAllRewardsDashboardStatus.COLLECT_TX_CONFIRMED,
       })
     },
+    mutationKey: collectRewardsMutationKey,
     onSettled() {
       // Invalidate in the background. Returning these would hold the mutation open and
       // leave the UI out of sync until every balance is re-read.

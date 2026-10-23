@@ -18,7 +18,7 @@ import {
   getLastIndexedBlock,
   getTotalStaked,
 } from './subgraph.ts'
-import { isInteger } from './utils.ts'
+import { isChainId, isInteger } from './utils.ts'
 
 function parseChainId(
   req: Request<ChainIdPathParams> & ReqData,
@@ -26,7 +26,7 @@ function parseChainId(
   next: NextFunction,
 ) {
   const { chainIdStr } = req.params
-  if (!isInteger(chainIdStr)) {
+  if (!isChainId(chainIdStr)) {
     next('route')
     return
   }
@@ -239,10 +239,10 @@ export function createSubgraphsRouter() {
     parseChainId,
     validateChainIsHemi,
     // Cached: the total staked is a per-chain aggregate that tolerates mild
-    // staleness. Keyed by the normalized chainId (the only path param).
+    // staleness. Keyed by chainId (the only path param).
     toJsonMiddleware(getStaked, {
       maxAge: 30 * 1000,
-      resolver: chainIdStr => String(Number(chainIdStr)),
+      resolver: chainIdStr => chainIdStr,
     }),
   )
 
@@ -270,7 +270,7 @@ export function createSubgraphsRouter() {
     toJsonMiddleware(getCostBasis, {
       maxAge: 30 * 1000,
       resolver: (chainIdStr, address) =>
-        `${Number(chainIdStr)}-${String(address).toLowerCase()}`,
+        `${chainIdStr}-${String(address).toLowerCase()}`,
     }),
   )
 

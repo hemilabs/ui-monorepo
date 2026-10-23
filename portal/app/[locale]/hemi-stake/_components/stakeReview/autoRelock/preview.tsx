@@ -15,19 +15,14 @@ import {
   formatShortDate,
   formatShortDateWithYear,
 } from 'utils/format'
-import { unixNowTimestamp } from 'utils/time'
-import { snapToEpoch } from 've-hemi-actions'
 import { formatUnits } from 'viem'
 
 import { useAutoRelockInputs } from '../../../_hooks/useAutoRelockInputs'
 import { getAutoRelockComparison } from '../../../_utils/autoRelockComparison'
 import { formatApyFromRatio } from '../../../_utils/formatApyFromRatio'
 import { formatPayoutValue } from '../../../_utils/formatPayoutValue'
-import {
-  getUnlockInfo,
-  predictVotingPower,
-} from '../../../_utils/lockCreationTimes'
-import { getWeightAt } from '../../../_utils/lockEpochs'
+import { getUnlockInfo } from '../../../_utils/lockCreationTimes'
+import { getPositionWeights } from '../../../_utils/lockEpochs'
 import { getPayoutAxisTicks } from '../../../_utils/payoutsChartData'
 import {
   alwaysTransferable,
@@ -143,14 +138,24 @@ export const Preview = function ({
   const t = useTranslations('hemi-stake')
   const tDrawer = useTranslations('hemi-stake.drawer.auto-relock')
   const token = useHemiToken()
-  const { hasError, inputsByClass, positionClass, retry } = useAutoRelockInputs(
-    { tokenId, transferable },
-  )
+  const { hasError, inputsByClass, positionClass, retry, weight } =
+    useAutoRelockInputs({ tokenId, transferable })
 
-  const now = Number(unixNowTimestamp())
-  const { timeRemainingSeconds, unlockDate, unlockTime } = getUnlockInfo({
-    unlockTime: effectiveLockEnd,
-  })
+  const {
+    currentTimeInSeconds: now,
+    timeRemainingSeconds,
+    unlockDate,
+    unlockTime,
+  } = getUnlockInfo({ unlockTime: effectiveLockEnd })
+
+  const { current: currentWeight, relocked: relockedWeight } =
+    getPositionWeights({
+      amount: stakedAmount,
+      autoRelock,
+      fromChain: weight,
+      lockEnd: unlockTime,
+      now,
+    })
 
   const { base, current, delta, next } = getAutoRelockComparison({
     amount: stakedAmount,
@@ -160,6 +165,7 @@ export const Preview = function ({
     lockDurationInSeconds: timeRemainingSeconds,
     now,
     positionClass: positionClass ?? alwaysTransferable,
+    relockedWeight,
     unlockTime,
   })
 
@@ -168,24 +174,11 @@ export const Preview = function ({
     hasData &&
     (current.yearOneTotal > BigInt(0) || next.yearOneTotal > BigInt(0))
 
-  const votingPower = formatUnits(
-    predictVotingPower({
-      amount: stakedAmount,
-      unlockTime: effectiveLockEnd,
-    }),
-    token.decimals,
-  )
+  const votingPower = formatUnits(currentWeight, token.decimals)
   const decaysCaption = tDrawer('decays-to-zero', {
     date: formatShortDateWithYear(unlockDate, locale),
   })
-  const frozenVotingPower = formatUnits(
-    getWeightAt({
-      amount: stakedAmount,
-      at: snapToEpoch(now),
-      lockEnd: unlockTime,
-    }),
-    token.decimals,
-  )
+  const frozenVotingPower = formatUnits(relockedWeight, token.decimals)
   const staysCaption = tDrawer('stays-at', {
     votingPower: formatNumber(frozenVotingPower),
   })

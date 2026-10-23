@@ -13,9 +13,16 @@ export const ReceivingAddressLabel = ({
   <div className="flex items-center gap-x-2">
     <span className="text-neutral-600">{receivingText}</span>
     <Tooltip id="target-address" text={tooltipText} variant="info">
-      <div className="group/icon">
-        <InfoIcon className="group-hover/icon:[&>g>path]:fill-neutral-600" />
-      </div>
+      <button
+        aria-label={tooltipText}
+        className="group/icon flex rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400"
+        type="button"
+      >
+        <InfoIcon
+          aria-hidden
+          className="group-hover/icon:[&>g>path]:fill-neutral-600"
+        />
+      </button>
     </Tooltip>
   </div>
 )

@@ -4,7 +4,9 @@ import { DepositConfirmed as DepositConfirmedEvent } from '../../generated/Bitco
 import { BtcConfirmedDeposit } from '../../generated/schema'
 
 export function handleDepositConfirmed(event: DepositConfirmedEvent): void {
-  let entity = new BtcConfirmedDeposit(event.transaction.hash)
+  const entity = new BtcConfirmedDeposit(
+    event.transaction.hash.toHexString() + '-' + event.logIndex.toString(),
+  )
 
   entity.blockNumber = event.block.number
   entity.depositTxId = event.params.depositTxId

@@ -156,6 +156,7 @@
     "view-all-tutorials": "View all tutorials"
   },
   "hemi-earn": {
+    "could-not-load": "Could not load Earn data",
     "heading": "Earn yield with Hemi Earn",
     "info": {
       "earned-amount": "Your earned amount",

@@ -24,17 +24,12 @@ export const useAutoRelockInputs = function ({
     isError: isPositionClassError,
     refetch: refetchPositionClass,
   } = usePositionClass({ tokenId, transferable })
-  const {
-    data: weight,
-    isError: isWeightError,
-    refetch: refetchWeight,
-  } = usePositionWeight(tokenId)
+  const { data: weight } = usePositionWeight(tokenId)
 
   const failed = [
     { isError: isPositionClassError, refetch: refetchPositionClass },
     { isError: isSystemStateError, refetch: refetchSystemState },
     { isError: isForecastError, refetch: refetchForecast },
-    { isError: isWeightError, refetch: refetchWeight },
   ].find(query => query.isError)
 
   return {

@@ -11,12 +11,14 @@ on:
       - 'packages/ve-hemi-epoch-rewards/**'
       - 'pnpm-lock.yaml'
       - 'portal-backend/**'
+      - 'vex.json'
   push:
     paths:
       - 'packages/ve-hemi-actions/**'
       - 'packages/ve-hemi-epoch-rewards/**'
       - 'pnpm-lock.yaml'
       - 'portal-backend/**'
+      - 'vex.json'
 
 permissions:
   contents: read

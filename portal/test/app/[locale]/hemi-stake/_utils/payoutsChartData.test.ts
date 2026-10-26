@@ -115,6 +115,20 @@ describe('getPayoutAxisTicks', function () {
     ])
   })
 
+  it('spreads a wider axis over as many ticks as it is asked for', function () {
+    const series = toPayoutSeries({
+      decimals: 18,
+      lockEnd: Number.MAX_SAFE_INTEGER,
+      payouts: Array.from({ length: 9 }, (_, index) =>
+        payout(index, BigInt(0)),
+      ),
+    })
+
+    expect(getPayoutAxisTicks(series, 5)).toEqual(
+      [1, 3, 5, 7, 9].map(epoch => epoch * epochLength * 1000),
+    )
+  })
+
   it('has no tick to offer for an empty series', function () {
     expect(getPayoutAxisTicks([])).toEqual([])
   })

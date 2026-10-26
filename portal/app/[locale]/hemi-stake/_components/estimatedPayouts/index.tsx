@@ -27,20 +27,14 @@ import {
   type InputsByClass,
 } from '../../_utils/rewardClass'
 import { getRewardsForecast } from '../../_utils/stakeRewardsForecast'
+import { toPrice } from '../../_utils/toPrice'
+import { PayoutsChart } from '../payoutsChart'
 
 import { PayoutHeadline } from './payoutHeadline'
 import { PayoutPlaceholder } from './payoutPlaceholder'
-import { PayoutsChart } from './payoutsChart'
 
 const sectionLabelClassName =
   'text-xxs font-medium uppercase tracking-widest text-neutral-500'
-
-const toPrice = function (value: string | undefined) {
-  const price = Number(value)
-  return value !== undefined && Number.isFinite(price) && price > 0
-    ? price
-    : undefined
-}
 
 const buildForecast = function ({
   amount,

@@ -186,7 +186,7 @@ const analyticsEvents = [
   'evm copy',
   'evm disconnected',
   // dex's
-  'nav - rubic',
+  'nav - jumper',
   'nav - dzap',
   'nav - 1delta',
   'nav - eisen',
@@ -194,7 +194,6 @@ const analyticsEvents = [
   'nav - oku',
   'nav - izumi',
   'nav - dodo',
-  'nav - atlas',
   'nav - lunarfi',
   'nav - brownfi',
   // custom Tokens for the tunnel

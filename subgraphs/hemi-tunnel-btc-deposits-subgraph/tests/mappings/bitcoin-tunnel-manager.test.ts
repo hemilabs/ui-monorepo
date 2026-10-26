@@ -89,9 +89,8 @@ describe('handleDepositConfirmed', function () {
 
     assert.entityCount('BtcConfirmedDeposit', 2)
 
-    const idA = txHash.toHexString() + '-0'
-    const idB =
-      '0x1111111111111111111111111111111111111111111111111111111111111111-1'
+    const idA = txHashHex + '-0'
+    const idB = txHashHex + '-1'
 
     assert.fieldEquals(
       'BtcConfirmedDeposit',

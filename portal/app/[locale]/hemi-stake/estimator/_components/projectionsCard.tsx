@@ -63,17 +63,19 @@ type ProjectionEpoch = {
   weight: bigint
 }
 
-const EpochHeading = function ({
+const HeadingLabel = function ({
+  className,
   isError,
   label,
 }: {
+  className: string
   isError: boolean
   label: string | undefined
 }) {
   if (label !== undefined) {
     return <>{label}</>
   }
-  return isError ? <>-</> : <Skeleton className="w-48" />
+  return isError ? <>-</> : <Skeleton className={className} />
 }
 
 const RetryOverlay = function ({
@@ -214,28 +216,29 @@ export const ProjectionsCard = function ({
   const isPending = isLoading && !isError
   const headlineWeight = votingPower.length > 0 ? votingPower[0].y : 0
 
-  const shown = isError
-    ? {
-        below: undefined,
-        headline: '-',
-        payouts: zeroed(incomingBars),
-        unlockX: undefined,
-        weights: zeroed(votingPower),
-      }
-    : {
-        below: isBlended
-          ? {
-              label: t('my-positions'),
-              points: existingBars,
-              seriesLabel: t('new-position'),
-              totalLabel: tPayouts('title'),
-            }
-          : undefined,
-        headline: formatNumber(headlineWeight, locale),
-        payouts: incomingBars,
-        unlockX,
-        weights: votingPower,
-      }
+  const shown =
+    isError || isPending
+      ? {
+          below: undefined,
+          headline: undefined,
+          payouts: zeroed(incomingBars),
+          unlockX: undefined,
+          weights: zeroed(votingPower),
+        }
+      : {
+          below: isBlended
+            ? {
+                label: t('my-positions'),
+                points: existingBars,
+                seriesLabel: t('new-position'),
+                totalLabel: tPayouts('title'),
+              }
+            : undefined,
+          headline: formatNumber(headlineWeight, locale),
+          payouts: incomingBars,
+          unlockX,
+          weights: votingPower,
+        }
 
   return (
     <Card shadow="sm">
@@ -248,7 +251,8 @@ export const ProjectionsCard = function ({
           <div className="flex flex-col gap-y-3">
             <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
               <span className="body-text-medium text-neutral-500">
-                <EpochHeading
+                <HeadingLabel
+                  className="w-48"
                   isError={isError}
                   label={
                     currentEpoch === undefined
@@ -307,8 +311,14 @@ export const ProjectionsCard = function ({
           </div>
           <div className="flex flex-col gap-y-3">
             <span className="body-text-medium text-neutral-500">
-              {t('voting-power-title', {
-                amount: shown.headline,
+              {t.rich('voting-power-title', {
+                amount: () => (
+                  <HeadingLabel
+                    className="w-16"
+                    isError={isError}
+                    label={shown.headline}
+                  />
+                ),
               })}
             </span>
             <VotingPowerChart

@@ -462,7 +462,7 @@
       "scope": "Alcance de la estimación",
       "simple-first-year": "simple, primer año",
       "unit": "Unidad",
-      "voting-power-title": "Poder de voto · {amount} veHemi",
+      "voting-power-title": "Poder de voto · <amount></amount> veHemi",
       "with-my-positions": "Con mis posiciones",
       "yours": "Su saldo · {amount}"
     },

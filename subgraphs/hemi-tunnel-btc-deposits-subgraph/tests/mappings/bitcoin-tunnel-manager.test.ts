@@ -1,4 +1,3 @@
-// This file is AssemblyScript (compiled and run by matchstick), not TypeScript.
 import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts'
 import {
   assert,

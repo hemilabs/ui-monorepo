@@ -9,7 +9,12 @@ import {
   VictoryVoronoiContainer,
 } from 'victory'
 
-import { useChartWidth } from '../_hooks/useChartWidth'
+import {
+  ChartTooltipLabel,
+  getTooltipHeight,
+  tooltipWidth,
+} from '../../_components/chartTooltipLabel'
+import { useChartWidth } from '../../_hooks/useChartWidth'
 import {
   chartHeight,
   chartPadding,
@@ -30,11 +35,6 @@ import {
 } from '../_utils/supplyHistory'
 
 import { ChartPlaceholder } from './chartPlaceholder'
-import {
-  ChartTooltipLabel,
-  getTooltipHeight,
-  tooltipWidth,
-} from './chartTooltipLabel'
 
 const tooltipHeight = getTooltipHeight({
   hasNote: false,

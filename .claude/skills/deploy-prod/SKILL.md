@@ -32,7 +32,7 @@ The goal: a reader of the PR description knows which changes go to production. A
 - One PR refers to another PR in the list.
 - They work toward the same result, for example the branches `ad_2368-positions-calculator-math`, `ad_2368-epoch-rewards-reads` and `ad_2368-calculator-hooks`.
 
-These signs are not rules. A PR can mention a new issue for follow-up work, or a PR that gave an idea, and these do not make it part of the same change. For example, many dependency bumps refer to the same tracking issue, but each bump is its own change. If you do not know what a `refs` issue is about, read its title with `gh issue view <url> --json title -q .title`.
+These signs are not rules. A PR can mention a new issue for follow-up work, or a PR that gave an idea, and these do not make it part of the same change. For example, many dependency bumps refer to the same tracking issue, but each bump is its own change. If you do not know what a `refs` issue is about, read its title with `gh issue view '<url>' --json title -q .title`.
 
 Write each change as one short line in imperative mood, then the PRs that deliver it as `#<number>`. Include every PR exactly once. Put each change in one of these sections, in this order, and omit empty sections:
 

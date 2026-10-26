@@ -50,16 +50,17 @@ const getSubgraphUrl = function ({
     throw new Error(`Unsupported subgraph for chain Id ${chainId}`)
   }
 
-  return (
-    `${subgraphConfig.apiUrl}` +
-    `${subgraphConfig.apiKey ? `/${subgraphConfig.apiKey}` : ''}` +
-    `/subgraphs/id/${subgraphId}`
-  )
+  return `${subgraphConfig.apiUrl}/subgraphs/id/${subgraphId}`
 }
 
 const request = <TResponse>(url: string, schema: Schema): Promise<TResponse> =>
   postJson(url, schema, {
-    headers: { Origin: subgraphConfig.origin },
+    headers: {
+      ...(subgraphConfig.apiKey && {
+        Authorization: `Bearer ${subgraphConfig.apiKey}`,
+      }),
+      Origin: subgraphConfig.origin,
+    },
   }).catch(function (err) {
     throw new UpstreamGraphQLError(err.message, { cause: err })
   }) as Promise<TResponse>

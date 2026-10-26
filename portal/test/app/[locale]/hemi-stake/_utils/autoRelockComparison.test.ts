@@ -1,6 +1,7 @@
 import { getAutoRelockComparison } from 'app/[locale]/hemi-stake/_utils/autoRelockComparison'
 import {
   getEpochEnd,
+  getRelockedWeight,
   getWeightAt,
 } from 'app/[locale]/hemi-stake/_utils/lockEpochs'
 import {
@@ -29,10 +30,10 @@ const weightAtEpochClose = getWeightAt({
   at: getEpochEnd({ epochsAhead: 0, now }),
   lockEnd: unlockTime,
 })
-const weightAtEpochStart = getWeightAt({
+const weightAtEpochMean = getRelockedWeight({
   amount,
-  at: snapToEpoch(now),
   lockEnd: unlockTime,
+  now,
 })
 
 const transferableOnly = (weight: bigint) => ({
@@ -93,14 +94,14 @@ describe('getAutoRelockComparison', function () {
     expect(current.payouts[0].payout).toBe(baseline)
   })
 
-  it('measures the position at the epoch start when auto-relock is on', function () {
+  it('measures the position at the epoch mean when auto-relock is on', function () {
     const relocked = compare({
       autoRelock: true,
-      inputsByClass: transferableOnly(weightAtEpochStart),
+      inputsByClass: transferableOnly(weightAtEpochMean),
     })
     const notRelocked = compare({
       autoRelock: false,
-      inputsByClass: transferableOnly(weightAtEpochStart),
+      inputsByClass: transferableOnly(weightAtEpochMean),
     })
 
     // Same anchor as the class weight, so the position is the whole class.

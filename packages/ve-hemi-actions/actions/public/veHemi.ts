@@ -5,7 +5,11 @@ import { multicall, readContract } from 'viem/actions'
 import { veHemiAbi } from '../../abi.ts'
 import { veHemiVoteDelegationAbi } from '../../voteDelegationAbi.ts'
 
-import { getVeHemiContractAddress } from './../../constants.ts'
+import {
+  getVeHemiContractAddress,
+  halfEpochSeconds,
+  SixDaysSeconds,
+} from './../../constants.ts'
 
 export const getHemiTokenAddress = async function (client: Client) {
   if (!client.chain) {
@@ -89,10 +93,10 @@ export const getLivePositionClass = async function (
   return { forfeitable, transferableAfter }
 }
 
-export const getBalanceOfNFTAt = async function (
+export const getPositionWeight = async function (
   client: Client,
   tokenId: bigint,
-  timestamp: bigint,
+  now: bigint,
 ) {
   if (!client.chain) {
     throw new Error('Client chain is not defined')
@@ -100,12 +104,29 @@ export const getBalanceOfNFTAt = async function (
 
   const veHemiAddress = getVeHemiContractAddress(client.chain.id)
 
-  return readContract(client, {
-    abi: veHemiAbi,
-    address: veHemiAddress,
-    args: [tokenId, timestamp],
-    functionName: 'balanceOfNFTAt',
+  const [current, ahead] = await multicall(client, {
+    allowFailure: false,
+    contracts: [
+      {
+        abi: veHemiAbi,
+        address: veHemiAddress,
+        args: [tokenId, now],
+        functionName: 'balanceOfNFTAt' as const,
+      },
+      {
+        abi: veHemiAbi,
+        address: veHemiAddress,
+        args: [tokenId, now + BigInt(1)],
+        functionName: 'balanceOfNFTAt' as const,
+      },
+    ],
   })
+
+  const slope = current > ahead ? current - ahead : BigInt(0)
+  const elapsedInEpoch = now % BigInt(SixDaysSeconds)
+  const relocked = current + slope * (elapsedInEpoch - BigInt(halfEpochSeconds))
+
+  return { current, relocked: relocked > BigInt(0) ? relocked : BigInt(0) }
 }
 
 export const getAutoRelockStatus = async function (

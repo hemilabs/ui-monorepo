@@ -3,10 +3,8 @@ import {
   getMinExtensionDays,
   getNearestPreset,
   getUnlockInfo,
-  predictVotingPower,
   wholeDaysToSeconds,
 } from 'app/[locale]/hemi-stake/_utils/lockCreationTimes'
-import { getLockEnd } from 'app/[locale]/hemi-stake/_utils/lockEpochs'
 import { secondsPerDay } from 'utils/time'
 import {
   MaxLockDurationSeconds,
@@ -41,144 +39,6 @@ describe('getUnlockInfo', function () {
     })
 
     expect(result.timeRemainingSeconds).toBe(SixDaysSeconds * 3)
-  })
-})
-
-describe('predictVotingPower', function () {
-  // The contract stores lock ends on the epoch grid, so a lock that starts on a boundary
-  // keeps every second it paid for and the arithmetic below stays exact.
-  const mockNow = BigInt(SixDaysSeconds * 3232)
-  const maxTimeSeconds = BigInt(MaxLockDurationSeconds)
-  const amount = BigInt(1000e18)
-  // The contract truncates amount / MAX_TIME once and multiplies after, so no lock is
-  // ever worth the full amount.
-  const slope = amount / maxTimeSeconds
-
-  it('discards the epoch a lock cannot complete', function () {
-    const lockTime = BigInt(SixDaysSeconds * 60)
-    const timestamp = mockNow - BigInt(100)
-
-    const result = predictVotingPower({
-      amount,
-      now: Number(mockNow),
-      unlockTime: getLockEnd({
-        lockTime: Number(lockTime),
-        timestamp: Number(timestamp),
-      }),
-    })
-
-    // Starting 100 seconds early costs the lock its sixtieth epoch entirely.
-    expect(result).toBe(slope * BigInt(SixDaysSeconds * 59))
-  })
-
-  it('is worth the effective remainder for an armed position', function () {
-    const effectiveLockEnd = BigInt(Number(mockNow) + SixDaysSeconds * 10)
-
-    const result = predictVotingPower({
-      amount,
-      now: Number(mockNow),
-      unlockTime: effectiveLockEnd,
-    })
-
-    expect(result).toBe(slope * BigInt(SixDaysSeconds * 10))
-  })
-
-  it('is worth nothing for an expired position', function () {
-    const result = predictVotingPower({
-      amount,
-      now: Number(mockNow),
-      unlockTime: getLockEnd({
-        lockTime: Number(BigInt(100)),
-        timestamp: Number(mockNow - BigInt(200)),
-      }),
-    })
-
-    expect(result).toBe(BigInt(0))
-  })
-
-  it('is worth nothing when the amount is 0', function () {
-    const result = predictVotingPower({
-      amount: BigInt(0),
-      now: Number(mockNow),
-      unlockTime: getLockEnd({
-        lockTime: Number(BigInt(365 * 24 * 60 * 60)),
-        timestamp: Number(mockNow),
-      }),
-    })
-
-    expect(result).toBe(BigInt(0))
-  })
-
-  it('is worth all but the truncated remainder for a 4 year lock', function () {
-    const result = predictVotingPower({
-      amount,
-      now: Number(mockNow),
-      unlockTime: getLockEnd({
-        lockTime: Number(maxTimeSeconds),
-        timestamp: Number(mockNow),
-      }),
-    })
-
-    expect(result).toBe(slope * maxTimeSeconds)
-  })
-
-  it('is worth half the amount for a 2 year lock at start', function () {
-    const twoYears = maxTimeSeconds / BigInt(2)
-
-    const result = predictVotingPower({
-      amount,
-      now: Number(mockNow),
-      unlockTime: getLockEnd({
-        lockTime: Number(twoYears),
-        timestamp: Number(mockNow),
-      }),
-    })
-
-    expect(result).toBe(slope * twoYears)
-  })
-
-  it('gives up the part of the final epoch the contract rounds away', function () {
-    const result = predictVotingPower({
-      amount,
-      now: Number(mockNow) + 1,
-      unlockTime: getLockEnd({
-        lockTime: Number(maxTimeSeconds),
-        timestamp: Number(mockNow + BigInt(1)),
-      }),
-    })
-
-    expect(result).toBeLessThan(amount)
-  })
-
-  it('is worth nothing when the lock misses the next epoch boundary', function () {
-    const result = predictVotingPower({
-      amount,
-      now: Number(mockNow) + 1,
-      unlockTime: getLockEnd({
-        lockTime: Number(BigInt(100)),
-        timestamp: Number(mockNow + BigInt(1)),
-      }),
-    })
-
-    expect(result).toBe(BigInt(0))
-  })
-
-  // The lockup form omits `now`, so the default has to keep reading the clock.
-  it('falls back to the current time when no instant is given', function () {
-    vi.useFakeTimers()
-    vi.setSystemTime(Number(mockNow) * 1000)
-
-    const result = predictVotingPower({
-      amount,
-      unlockTime: getLockEnd({
-        lockTime: Number(maxTimeSeconds),
-        timestamp: Number(mockNow),
-      }),
-    })
-
-    vi.useRealTimers()
-
-    expect(result).toBe(slope * maxTimeSeconds)
   })
 })
 

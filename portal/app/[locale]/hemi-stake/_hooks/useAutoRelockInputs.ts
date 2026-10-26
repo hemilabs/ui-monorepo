@@ -2,6 +2,7 @@ import { alwaysTransferable } from '../_utils/rewardClass'
 
 import { useEpochSystemState } from './useEpochSystemState'
 import { usePositionClass } from './usePositionClass'
+import { usePositionWeight } from './usePositionWeight'
 import { useRewardsForecastInputs } from './useRewardsForecastInputs'
 
 export const useAutoRelockInputs = function ({
@@ -23,6 +24,7 @@ export const useAutoRelockInputs = function ({
     isError: isPositionClassError,
     refetch: refetchPositionClass,
   } = usePositionClass({ tokenId, transferable })
+  const { data: weight } = usePositionWeight(tokenId)
 
   const failed = [
     { isError: isPositionClassError, refetch: refetchPositionClass },
@@ -36,5 +38,6 @@ export const useAutoRelockInputs = function ({
     positionClass:
       transferable === true ? alwaysTransferable : readPositionClass,
     retry: failed?.refetch ?? refetchForecast,
+    weight,
   }
 }

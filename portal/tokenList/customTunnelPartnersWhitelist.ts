@@ -23,6 +23,12 @@ const hemiPartners: Record<
       tunnelPartners: ['stargate'],
     },
   },
+  // cbBTC (Stargate). Its L1 peer is covered by the cbBTC entry above
+  '0x9778bC12904DB935Ca8be4fae26636BF7D6Da456': {
+    l2: {
+      tunnelPartners: ['stargate'],
+    },
+  },
   // svetBTC
   '0xD8D63De3b64bd06d99F8F5AD8B78Ed2fE7525eC0': {
     l1: {

@@ -161,6 +161,8 @@ describe('tokenList', function () {
   })
 
   it.each([
+    ['cbBTC', 43111, '0x9778bC12904DB935Ca8be4fae26636BF7D6Da456'],
+    ['cbBTC', 1, '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf'],
     ['sVUSD', 43111, '0xfe875CC86cC6BC2E93ab330D6b2c408C3Cd79710'],
     ['sVUSD', 1, '0x476310E34D2810f7d79C43A74E4D79405bd7a925'],
     ['svetBTC', 43111, '0xD8D63De3b64bd06d99F8F5AD8B78Ed2fE7525eC0'],

@@ -112,7 +112,7 @@ describe('tokenList', function () {
   it('should apply the display overrides to the Hemi tokens and their remote tokens', function () {
     expect(
       findToken(43111, '0xad11a8BEb98bbf61dbb1aa0F6d6F2ECD87b35afA'),
-    ).toMatchObject({ name: 'USDC', symbol: 'USDC.e' })
+    ).toMatchObject({ name: 'USDC (Stargate)', symbol: 'USDC.e' })
     expect(
       findToken(1, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'),
     ).toMatchObject({ name: 'USDC', symbol: 'USDC' })
@@ -124,6 +124,36 @@ describe('tokenList', function () {
     ).toMatchObject({ name: 'Dai Stablecoin', symbol: 'DAI' })
   })
 
+  it.each([
+    [
+      'cbBTC',
+      '0x1596bE338B999E2376675C908168A7548C8B0525',
+      'Coinbase Wrapped BTC',
+    ],
+    [
+      'cbBTC',
+      '0x9778bC12904DB935Ca8be4fae26636BF7D6Da456',
+      'Coinbase Wrapped BTC (Stargate)',
+    ],
+    ['USDT', '0xbB0D083fb1be0A9f6157ec484b6C79E0A4e31C2e', 'USDT (Stargate)'],
+  ])('should name %s at %s on Hemi as %s', function (symbol, address, name) {
+    expect(findToken(43111, address)).toMatchObject({ name, symbol })
+  })
+
+  it.each([
+    [
+      'cbBTC',
+      '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+      'Coinbase Wrapped BTC',
+    ],
+    ['USDT', '0xdAC17F958D2ee523a2206206994597C13D831ec7', 'USDT'],
+  ])(
+    'should keep the %s name on Ethereum without the bridge suffix',
+    function (symbol, address, name) {
+      expect(findToken(1, address)).toMatchObject({ name, symbol })
+    },
+  )
+
   it('should include vetBTC on Ethereum', function () {
     expect(
       findToken(1, '0xf196C68233464A16CFDa319a47c21f4cECa62001'),
@@ -131,6 +161,8 @@ describe('tokenList', function () {
   })
 
   it.each([
+    ['cbBTC', 43111, '0x9778bC12904DB935Ca8be4fae26636BF7D6Da456'],
+    ['cbBTC', 1, '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf'],
     ['sVUSD', 43111, '0xfe875CC86cC6BC2E93ab330D6b2c408C3Cd79710'],
     ['sVUSD', 1, '0x476310E34D2810f7d79C43A74E4D79405bd7a925'],
     ['svetBTC', 43111, '0xD8D63De3b64bd06d99F8F5AD8B78Ed2fE7525eC0'],

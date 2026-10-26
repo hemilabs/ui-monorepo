@@ -44,6 +44,9 @@ export const isCustomToken = (userTokenList: Token[], token: Token) =>
     t => t.address === token.address && t.chainId === token.chainId,
   )
 
+export const isListedToken = (token: Token) =>
+  getTokenByAddress(token.address, token.chainId) !== undefined
+
 export const isEvmToken = (token: Token): token is EvmToken =>
   typeof token.chainId === 'number'
 

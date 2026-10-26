@@ -1,8 +1,8 @@
 diff --git a/src/hemi.tokenlist.json b/src/hemi.tokenlist.json
-index 905c30d9c8d35824f05f49d2648cf53d2593ee3a..90899306116f1690939d2e9c537d8a22ade09224 100644
+index 5c7c120f1568f7458b072218cd81796e00119540..27f7643878e85c2c1fe63f0284a326703d6832f6 100644
 --- a/src/hemi.tokenlist.json
 +++ b/src/hemi.tokenlist.json
-@@ -408,6 +408,11 @@
+@@ -433,6 +433,11 @@
        "extensions": {
          "allowanceSlot": 1,
          "birthBlock": 1125154,
@@ -14,7 +14,7 @@ index 905c30d9c8d35824f05f49d2648cf53d2593ee3a..90899306116f1690939d2e9c537d8a22
          "oft": {
            "adapterAddress": "0xDefa4A253a0Ec96a2e6D74A409B3B348924bf390",
            "peers": {
-@@ -439,7 +444,12 @@
+@@ -464,7 +469,12 @@
        "decimals": 6,
        "extensions": {
          "allowanceSlot": 10,
@@ -28,7 +28,7 @@ index 905c30d9c8d35824f05f49d2648cf53d2593ee3a..90899306116f1690939d2e9c537d8a22
        },
        "logoURI": "https://hemilabs.github.io/token-list/logos/usdc.svg",
        "name": "Bridged USDC (Stargate)",
-@@ -496,7 +506,12 @@
+@@ -521,7 +531,12 @@
        "decimals": 6,
        "extensions": {
          "allowanceSlot": 52,
@@ -42,7 +42,7 @@ index 905c30d9c8d35824f05f49d2648cf53d2593ee3a..90899306116f1690939d2e9c537d8a22
        },
        "logoURI": "https://hemilabs.github.io/token-list/logos/usdt.svg",
        "name": "USDT",
-@@ -786,7 +801,12 @@
+@@ -811,7 +826,12 @@
        "chainId": 743111,
        "decimals": 8,
        "extensions": {
@@ -56,7 +56,7 @@ index 905c30d9c8d35824f05f49d2648cf53d2593ee3a..90899306116f1690939d2e9c537d8a22
        },
        "logoURI": "https://hemilabs.github.io/token-list/logos/hemibtc.svg",
        "name": "HemiBitcoin",
-@@ -855,6 +875,17 @@
+@@ -880,6 +900,17 @@
        "logoURI": "https://hemilabs.github.io/token-list/logos/hdai.svg",
        "name": "Hemi Tunneled DAI",
        "symbol": "hDAI"

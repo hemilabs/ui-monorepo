@@ -6,6 +6,7 @@ import {
   tunnelsThroughPartners,
   parseTokenUnits,
   isCustomToken,
+  isListedToken,
 } from 'utils/token'
 import { maxUint256, parseUnits as viemParseUnits } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
@@ -38,6 +39,47 @@ describe('utils/token', function () {
       }
       const prices = { USDT: '0.99' }
       expect(getTokenPrice(token, prices)).toBe('0.99')
+    })
+  })
+
+  describe('isListedToken', function () {
+    it('should return true for a listed token', function () {
+      expect(
+        isListedToken({
+          ...baseToken,
+          address: '0x1596bE338B999E2376675C908168A7548C8B0525',
+          chainId: 43111,
+        }),
+      ).toBe(true)
+    })
+
+    it('should match a listed token regardless of the address casing', function () {
+      expect(
+        isListedToken({
+          ...baseToken,
+          address: '0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf',
+          chainId: 1,
+        }),
+      ).toBe(true)
+    })
+
+    it('should return false for a listed address on another chain', function () {
+      expect(
+        isListedToken({
+          ...baseToken,
+          address: '0x1596bE338B999E2376675C908168A7548C8B0525',
+          chainId: 1,
+        }),
+      ).toBe(false)
+    })
+
+    it('should return false for a token that is not listed', function () {
+      expect(
+        isListedToken({
+          ...baseToken,
+          address: '0x0000000000000000000000000000000000000001',
+        }),
+      ).toBe(false)
     })
   })
 

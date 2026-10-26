@@ -1,3 +1,5 @@
+import { type ReactNode } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatDate } from 'utils/format'
 import { SixDaysSeconds } from 've-hemi-actions'
@@ -28,6 +30,7 @@ import { ChartTooltipLabel, getTooltipHeight } from './chartTooltipLabel'
 const tooltipWidth = 216
 const openEpochOpacity = 0.4
 const maxXTicks = 8
+const legendSkeletonWidths = [48, 56, 64]
 
 const isShown = ({ projected, y }: RewardsBar) => !projected || y > 0
 
@@ -98,6 +101,12 @@ const RewardsTooltipLabel = function ({
     />
   )
 }
+
+const Legend = ({ children }: { children: ReactNode }) => (
+  <div className="body-text-caption mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-500">
+    {children}
+  </div>
+)
 
 type Props = {
   isPending: boolean
@@ -241,7 +250,7 @@ export const RewardsChart = function ({ isPending, onRetry, series }: Props) {
             ))}
           </VictoryStack>
         </VictoryChart>
-        <div className="body-text-caption mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-500">
+        <Legend>
           {series.map(({ color, symbol }) => (
             <span className="flex items-center gap-1.5" key={symbol}>
               <span
@@ -260,20 +269,30 @@ export const RewardsChart = function ({ isPending, onRetry, series }: Props) {
               {t('projected')}
             </span>
           )}
-        </div>
+        </Legend>
       </>
     )
   }
 
   return (
-    <ChartPlaceholder
-      chartWidth={chartWidth}
-      isPending={isPending}
-      onRetry={onRetry}
-      padding={rewardsChartPadding}
-      xAxisLabel={t('epochs')}
-      xTickFormat={() => ''}
-      xTicks={[]}
-    />
+    <>
+      <ChartPlaceholder
+        chartWidth={chartWidth}
+        isPending={isPending}
+        onRetry={onRetry}
+        padding={rewardsChartPadding}
+        xAxisLabel={t('epochs')}
+        xTickFormat={() => ''}
+        xTicks={[]}
+      />
+      <Legend>
+        <span className="flex h-4 items-center gap-x-4">
+          {isPending &&
+            legendSkeletonWidths.map(width => (
+              <Skeleton height={8} key={width} width={width} />
+            ))}
+        </span>
+      </Legend>
+    </>
   )
 }

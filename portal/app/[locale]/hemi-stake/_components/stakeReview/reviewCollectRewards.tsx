@@ -150,7 +150,9 @@ export const ReviewCollectRewards = function ({ onClose }: Props) {
         : undefined,
       status:
         stepStatus === undefined
-          ? ProgressStatus.NOT_READY
+          ? isNext
+            ? ProgressStatus.READY
+            : ProgressStatus.NOT_READY
           : statusMap[stepStatus],
       txHash: step.transactionHash,
     }

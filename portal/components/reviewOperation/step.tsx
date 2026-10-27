@@ -69,14 +69,12 @@ const Completed = function ({
       </div>
       <TwoRowBox
         bottom={
-          txHash ? (
-            <>
-              <span className="mr-auto text-emerald-500">{t('confirmed')}</span>
-              {explorerChainId && txHash && (
-                <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
-              )}
-            </>
-          ) : null
+          <>
+            <span className="mr-auto text-emerald-500">{t('confirmed')}</span>
+            {explorerChainId && txHash && (
+              <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
+            )}
+          </>
         }
         top={<span className="mr-auto text-neutral-600">{description}</span>}
       />
@@ -189,14 +187,12 @@ const Failed = function ({
       </div>
       <TwoRowBox
         bottom={
-          txHash ? (
-            <>
-              <span className="mr-auto text-rose-500">{t('error')}</span>
-              {explorerChainId && txHash && (
-                <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
-              )}
-            </>
-          ) : null
+          <>
+            <span className="mr-auto text-rose-500">{t('error')}</span>
+            {explorerChainId && txHash && (
+              <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
+            )}
+          </>
         }
         top={
           <>

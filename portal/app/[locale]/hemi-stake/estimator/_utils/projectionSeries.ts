@@ -1,10 +1,9 @@
 import { formatUnits } from 'viem'
 
+import { type ChartUnit } from '../../_utils/chartUnit'
 import { toPayoutSeries } from '../../_utils/payoutsChartData'
 
-export type ProjectionUnit = 'hemi' | 'usd'
-
-type ProjectionEpoch = {
+export type ProjectionEpoch = {
   payout: bigint
   timestamp: number
   weight: bigint
@@ -20,7 +19,7 @@ export const toPayoutBars = ({
   decimals: number
   lockEnd: number
   payouts: ProjectionEpoch[]
-  unit: ProjectionUnit
+  unit: ChartUnit
   usdPrice: number | undefined
 }) =>
   toPayoutSeries({ decimals, lockEnd, payouts }).map(point => ({

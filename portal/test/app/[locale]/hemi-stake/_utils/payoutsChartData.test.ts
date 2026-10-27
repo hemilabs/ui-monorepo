@@ -2,6 +2,7 @@ import {
   getPayoutAxisTicks,
   getUnlockMarkerX,
   toPayoutSeries,
+  toZeroedSeries,
 } from 'app/[locale]/hemi-stake/_utils/payoutsChartData'
 import { describe, expect, it } from 'vitest'
 
@@ -131,5 +132,38 @@ describe('getPayoutAxisTicks', function () {
 
   it('has no tick to offer for an empty series', function () {
     expect(getPayoutAxisTicks([])).toEqual([])
+  })
+})
+
+describe('toZeroedSeries', function () {
+  it('flattens every payout while keeping the axis', function () {
+    const series = toPayoutSeries({
+      decimals: 18,
+      lockEnd: 2 * epochLength,
+      payouts: [
+        payout(0, BigInt(1e18)),
+        payout(1, BigInt(2e18)),
+        payout(2, BigInt(3e18)),
+      ],
+    })
+
+    expect(toZeroedSeries(series)).toEqual(
+      series.map(point => ({ afterUnlock: false, x: point.x, y: 0 })),
+    )
+  })
+
+  it('clears the unlock marker it would otherwise place', function () {
+    const series = toPayoutSeries({
+      decimals: 18,
+      lockEnd: 2 * epochLength,
+      payouts: [payout(0, BigInt(1e18)), payout(1, BigInt(2e18))],
+    })
+
+    expect(getUnlockMarkerX(series)).not.toBeUndefined()
+    expect(getUnlockMarkerX(toZeroedSeries(series))).toBeUndefined()
+  })
+
+  it('has nothing to flatten in an empty series', function () {
+    expect(toZeroedSeries([])).toEqual([])
   })
 })

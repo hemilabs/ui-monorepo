@@ -13,6 +13,7 @@ import { useLocale, useTranslations } from 'use-intl'
 import {
   formatCompactFiat,
   formatCompactFiatParts,
+  formatFiatAmount,
   formatNumber,
   formatShortDate,
   formatShortDateWithYear,
@@ -25,6 +26,7 @@ import {
   payoutsColor,
 } from '../../_components/payoutsChart'
 import { type ChartWidths } from '../../_hooks/useChartWidth'
+import { type ChartUnit } from '../../_utils/chartUnit'
 import {
   formatPayoutDetail,
   formatPayoutValue,
@@ -33,10 +35,11 @@ import {
   type PayoutPoint,
   getPayoutAxisTicks,
   getUnlockMarkerX,
+  toZeroedSeries,
 } from '../../_utils/payoutsChartData'
 import { toPrice } from '../../_utils/toPrice'
 import {
-  type ProjectionUnit,
+  type ProjectionEpoch,
   toPayoutBars,
   toVotingPowerCurve,
 } from '../_utils/projectionSeries'
@@ -54,13 +57,56 @@ const columnWidths: ChartWidths = {
   fallback: 300,
 }
 
-const zeroed = (series: PayoutPoint[]) =>
-  series.map(point => ({ ...point, afterUnlock: false, y: 0 }))
+const toShown = function ({
+  existingBars,
+  incomingBars,
+  isBlended,
+  isReady,
+  labels,
+  locale,
+  unlocksOn,
+  votingPower,
+}: {
+  existingBars: PayoutPoint[]
+  incomingBars: PayoutPoint[]
+  isBlended: boolean
+  isReady: boolean
+  labels: { below: string; series: string; total: string }
+  locale: string
+  unlocksOn: string
+  votingPower: PayoutPoint[]
+}) {
+  if (!isReady) {
+    return {
+      below: undefined,
+      headline: undefined,
+      payouts: toZeroedSeries(incomingBars),
+      unlocksOn: undefined,
+      unlockX: undefined,
+      weights: toZeroedSeries(votingPower),
+    }
+  }
 
-type ProjectionEpoch = {
-  payout: bigint
-  timestamp: number
-  weight: bigint
+  const hasNewPosition = incomingBars.some(point => point.y > 0)
+
+  return {
+    below: isBlended
+      ? {
+          label: labels.below,
+          points: existingBars,
+          seriesLabel: labels.series,
+          totalLabel: labels.total,
+        }
+      : undefined,
+    headline: formatNumber(
+      votingPower.length > 0 ? votingPower[0].y : 0,
+      locale,
+    ),
+    payouts: incomingBars,
+    unlocksOn: hasNewPosition ? unlocksOn : undefined,
+    unlockX: hasNewPosition ? getUnlockMarkerX(incomingBars) : undefined,
+    weights: votingPower,
+  }
 }
 
 const HeadingLabel = function ({
@@ -119,10 +165,10 @@ const UnitToggle = function ({
   value,
 }: {
   label: string
-  onChange: (unit: ProjectionUnit) => void
-  options: SegmentedControlOption<ProjectionUnit>[]
+  onChange: (unit: ChartUnit) => void
+  options: SegmentedControlOption<ChartUnit>[]
   price: number | undefined
-  value: ProjectionUnit
+  value: ChartUnit
 }) {
   if (price === undefined) {
     return null
@@ -167,11 +213,10 @@ export const ProjectionsCard = function ({
   lockEnd,
   onRetry,
 }: Props) {
-  const [unit, setUnit] = useState<ProjectionUnit>('hemi')
+  const [unit, setUnit] = useState<ChartUnit>('hemi')
   const locale = useLocale()
-  const t = useTranslations('hemi-stake.estimator')
+  const t = useTranslations('hemi-stake')
   const tCommon = useTranslations('common')
-  const tPayouts = useTranslations('hemi-stake.estimated-payouts')
   const token = useHemiToken()
   const { data: prices } = useTokenPrices()
 
@@ -189,7 +234,6 @@ export const ProjectionsCard = function ({
     })
 
   const incomingBars = toBars(incoming, lockEnd)
-  const existingBars = toBars(existing, Number.MAX_SAFE_INTEGER)
   const votingPower = toVotingPowerCurve({
     decimals: token.decimals,
     lockEnd,
@@ -197,53 +241,47 @@ export const ProjectionsCard = function ({
   })
 
   const ticks = getPayoutAxisTicks(incomingBars, axisTickCount)
-  const unlockX = getUnlockMarkerX(incomingBars)
   const formatDate = (value: number) => formatShortDate(new Date(value), locale)
   const formatPayout = (value: number) =>
     activeUnit === 'usd'
       ? formatCompactFiat(value, locale, 2)
       : formatPayoutValue({ symbol: token.symbol, value })
+  const formatDetail = (value: number) =>
+    activeUnit === 'usd'
+      ? formatFiatAmount(value)
+      : formatPayoutDetail({ price, symbol: token.symbol, value })
   const formatWeight = function (value: number) {
     const { number, suffix } = formatCompactFiatParts(value, locale)
     return `${number}${suffix}`
   }
 
-  const unitOptions: SegmentedControlOption<ProjectionUnit>[] = [
+  const unitOptions: SegmentedControlOption<ChartUnit>[] = [
     { label: token.symbol, value: 'hemi' },
     { label: 'USD', value: 'usd' },
   ]
 
   const isPending = isLoading && !isError
-  const headlineWeight = votingPower.length > 0 ? votingPower[0].y : 0
-
-  const shown =
-    isError || isPending
-      ? {
-          below: undefined,
-          headline: undefined,
-          payouts: zeroed(incomingBars),
-          unlockX: undefined,
-          weights: zeroed(votingPower),
-        }
-      : {
-          below: isBlended
-            ? {
-                label: t('my-positions'),
-                points: existingBars,
-                seriesLabel: t('new-position'),
-                totalLabel: tPayouts('title'),
-              }
-            : undefined,
-          headline: formatNumber(headlineWeight, locale),
-          payouts: incomingBars,
-          unlockX,
-          weights: votingPower,
-        }
+  const shown = toShown({
+    existingBars: toBars(existing, Number.MAX_SAFE_INTEGER),
+    incomingBars,
+    isBlended,
+    isReady: !isError && !isPending,
+    labels: {
+      below: t('estimator.my-positions'),
+      series: t('estimator.new-position'),
+      total: t('estimated-payouts.title'),
+    },
+    locale,
+    unlocksOn: t('estimated-payouts.unlocks-on', {
+      date: formatShortDateWithYear(new Date(lockEnd * 1000), locale),
+    }),
+    votingPower,
+  })
 
   return (
     <Card shadow="sm">
       <RetryOverlay
-        message={tPayouts('load-failed')}
+        message={t('estimated-payouts.load-failed')}
         onRetry={onRetry}
         tryAgain={tCommon('try-again')}
       >
@@ -257,21 +295,21 @@ export const ProjectionsCard = function ({
                   label={
                     currentEpoch === undefined
                       ? undefined
-                      : t('per-epoch', { epoch: String(currentEpoch), symbol })
+                      : t('estimator.per-epoch', {
+                          epoch: String(currentEpoch),
+                          symbol,
+                        })
                   }
                 />
               </span>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                <span className="body-text-caption text-neutral-400">
-                  {tPayouts('unlocks-on', {
-                    date: formatShortDateWithYear(
-                      new Date(lockEnd * 1000),
-                      locale,
-                    ),
-                  })}
-                </span>
+                {shown.unlocksOn !== undefined && (
+                  <span className="body-text-caption text-neutral-400">
+                    {shown.unlocksOn}
+                  </span>
+                )}
                 <UnitToggle
-                  label={t('unit')}
+                  label={t('estimator.unit')}
                   onChange={setUnit}
                   options={unitOptions}
                   price={price}
@@ -284,12 +322,8 @@ export const ProjectionsCard = function ({
               formatDate={formatDate}
               formatDetail={point =>
                 point.afterUnlock
-                  ? tPayouts('after-unlock')
-                  : formatPayoutDetail({
-                      price: activeUnit === 'usd' ? undefined : price,
-                      symbol,
-                      value: point.y,
-                    })
+                  ? t('estimated-payouts.after-unlock')
+                  : formatDetail(point.y)
               }
               formatValue={formatPayout}
               height={150}
@@ -301,17 +335,20 @@ export const ProjectionsCard = function ({
             />
             {shown.below !== undefined && (
               <div className="body-text-caption flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-500">
-                <LegendItem color={payoutsColor} label={t('new-position')} />
+                <LegendItem
+                  color={payoutsColor}
+                  label={t('estimator.new-position')}
+                />
                 <LegendItem
                   color={stackedBelowColor}
-                  label={t('my-positions')}
+                  label={t('estimator.my-positions')}
                 />
               </div>
             )}
           </div>
           <div className="flex flex-col gap-y-3">
             <span className="body-text-medium text-neutral-500">
-              {t.rich('voting-power-title', {
+              {t.rich('estimator.voting-power-title', {
                 amount: () => (
                   <HeadingLabel
                     className="w-16"

@@ -15,6 +15,7 @@ import {
   tooltipWidth,
 } from '../../_components/chartTooltipLabel'
 import { useChartWidth } from '../../_hooks/useChartWidth'
+import { type ChartUnit } from '../../_utils/chartUnit'
 import {
   chartHeight,
   chartPadding,
@@ -31,7 +32,6 @@ import {
   type ChartPoint,
   type SupplyPeriod,
   type SupplySlice,
-  type SupplyUnit,
 } from '../_utils/supplyHistory'
 
 import { ChartPlaceholder } from './chartPlaceholder'
@@ -113,7 +113,7 @@ type Props = {
   period: SupplyPeriod
   series: Record<SupplySlice, ChartPoint[]> | undefined
   symbol: string
-  unit: SupplyUnit
+  unit: ChartUnit
 }
 
 export const SupplyChart = function ({

@@ -21,6 +21,7 @@ import {
   getPayoutAxisTicks,
   getUnlockMarkerX,
   toPayoutSeries,
+  toZeroedSeries,
 } from '../../_utils/payoutsChartData'
 import {
   emptyInputsByClass,
@@ -66,9 +67,7 @@ const buildForecast = function ({
     hasValidLockup
 
   return {
-    chartSeries: hasForecast
-      ? series
-      : series.map(point => ({ ...point, afterUnlock: false, y: 0 })),
+    chartSeries: hasForecast ? series : toZeroedSeries(series),
     forecast,
     hasForecast,
   }

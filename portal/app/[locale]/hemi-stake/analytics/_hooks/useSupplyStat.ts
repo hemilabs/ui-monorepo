@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
 
+import { type ChartUnit } from '../../_utils/chartUnit'
 import {
   getSupplySummary,
   toChartSeries,
   type ParsedSupplyPoint,
   type SupplyPeriod,
   type SupplySlice,
-  type SupplyUnit,
 } from '../_utils/supplyHistory'
 
 import { useHemiSupplyHistory } from './useHemiSupplyHistory'
@@ -18,7 +18,7 @@ export const useSupplySlice = ({
 }: {
   period: SupplyPeriod
   slice: SupplySlice
-  unit: SupplyUnit
+  unit: ChartUnit
 }) =>
   useHemiSupplyHistory({
     period,
@@ -34,7 +34,7 @@ export const useSupplySeries = ({
   unit,
 }: {
   period: SupplyPeriod
-  unit: SupplyUnit
+  unit: ChartUnit
 }) =>
   useHemiSupplyHistory({
     period,

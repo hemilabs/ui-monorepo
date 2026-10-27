@@ -26,6 +26,9 @@ export const toPayoutSeries = ({
     y: Number(formatUnits(payout, decimals)),
   }))
 
+export const toZeroedSeries = (series: PayoutPoint[]) =>
+  series.map(point => ({ ...point, afterUnlock: false, y: 0 }))
+
 export const getPayoutAxisTicks = function (series: PayoutPoint[], count = 3) {
   if (series.length === 0) {
     return []

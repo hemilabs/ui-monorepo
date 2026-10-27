@@ -75,13 +75,13 @@ export const NetworkSelector = function ({
   }
 
   const chevronCss =
-    'ml-auto [&>path]:group-hover/network-selector:fill-neutral-950'
+    'ml-auto [&>path]:group-enabled/network-selector:group-hover/network-selector:fill-neutral-950'
 
   return (
     <Container>
       <Label text={label} />
       <button
-        className={`${commonCss} group/network-selector relative cursor-pointer transition-colors duration-200 hover:bg-neutral-50`}
+        className={`${commonCss} group/network-selector relative transition-colors duration-200 enabled:cursor-pointer enabled:hover:bg-neutral-50 disabled:cursor-not-allowed`}
         disabled={disabled || networks.length < 2}
         onClick={() => setShowNetworkDropdown(prev => !prev)}
         ref={ref}

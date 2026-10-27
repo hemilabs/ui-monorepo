@@ -37,8 +37,17 @@
       "vulnerability": {
         "name": "CVE-2026-102278"
       }
+    },
+    {
+      "justification": "vulnerable_code_not_in_execute_path",
+      "products": [{ "@id": "pkg:npm/zod@3.25.76" }],
+      "status": "not_affected",
+      "timestamp": "2026-10-26T00:00:00.000Z",
+      "vulnerability": {
+        "name": "CVE-2023-54404"
+      }
     }
   ],
-  "timestamp": "2026-09-30T00:00:00.000Z",
+  "timestamp": "2026-10-26T00:00:00.000Z",
   "version": 1
 }

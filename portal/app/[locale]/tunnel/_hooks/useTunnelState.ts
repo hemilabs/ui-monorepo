@@ -287,8 +287,10 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
 
   const getTunnelToken = useCallback(
     function (fromToken: Token, toNetworkId: RemoteChain['id']) {
-      const bridgeAddress = getTunnelPairs(fromToken.extensions)?.[toNetworkId]
-        ?.tokenAddress
+      // Partners may deliver another token than the tunnel pair
+      const bridgeAddress =
+        fromToken.extensions?.tunnelDstAddress ??
+        getTunnelPairs(fromToken.extensions)?.[toNetworkId]?.tokenAddress
       // find the tunneled pair of the token, or go with the native if missing
       // bitcoin is a special case as it tunnels a native token (btc) into an erc20
       if (fromToken.chainId === bitcoin.id) {
@@ -325,8 +327,24 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
         tunnelOperation.updateTxHash(null)
         tunnelOperation.updateOperation(newOperation)
         dispatch({ type: 'toggleInput' })
+        if (state.toToken.extensions?.tunnelDstAddress) {
+          dispatch({
+            payload: {
+              fromToken: state.toToken,
+              toToken: getTunnelToken(state.toToken, state.fromNetworkId),
+            },
+            type: 'updateFromToken',
+          })
+        }
       },
-      [dispatch, operation, tunnelOperation],
+      [
+        dispatch,
+        getTunnelToken,
+        operation,
+        state.fromNetworkId,
+        state.toToken,
+        tunnelOperation,
+      ],
     ),
     toggleTunnelProviderType,
     updateFromInput,

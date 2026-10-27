@@ -18,8 +18,7 @@ export const PositionStatus = function ({ position, status }: Props) {
     return <ErrorIcon />
   }
 
-  const isNotReady =
-    status === ProgressStatus.NOT_READY || status === ProgressStatus.QUEUED
+  const isNotReady = status === ProgressStatus.NOT_READY
   const isInProgress = status === ProgressStatus.PROGRESS
 
   return (

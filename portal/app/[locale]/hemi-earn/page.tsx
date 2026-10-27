@@ -3,7 +3,9 @@ import { PageLayout } from 'components/pageLayout'
 import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
+import { EarnFooter } from './_components/earnFooter'
 import { InfoCards } from './_components/infoCards'
+import { OperatorBanner } from './_components/operatorDisclosure'
 import { TopSection } from './_components/topSection'
 import { TransactionsSection } from './_components/transactionsSection'
 import { useHemiEarnShares } from './_hooks/useHemiEarnShares'
@@ -35,11 +37,17 @@ const TokensGate = function ({ children }: { children: ReactNode }) {
 
 export const HemiEarnPage = () => (
   <PageLayout variant="wide">
-    <TopSection />
-    <TokensGate>
-      <InfoCards />
-      <PoolsSection />
-      <TransactionsSection />
-    </TokensGate>
+    <div className="md:pb-32">
+      <TopSection />
+      <div className="mb-6">
+        <OperatorBanner />
+      </div>
+      <TokensGate>
+        <InfoCards />
+        <PoolsSection />
+        <TransactionsSection />
+      </TokensGate>
+    </div>
+    <EarnFooter />
   </PageLayout>
 )

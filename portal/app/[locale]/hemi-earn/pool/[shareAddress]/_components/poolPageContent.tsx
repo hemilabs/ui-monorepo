@@ -6,6 +6,8 @@ import Skeleton from 'react-loading-skeleton'
 import { queryStringObjectToString } from 'utils/url'
 import { type Address } from 'viem'
 
+import { EarnFooter } from '../../../_components/earnFooter'
+import { OperatorBanner } from '../../../_components/operatorDisclosure'
 import { useEarnPools } from '../../../_hooks/useEarnPools'
 import { findPoolByShare } from '../../../_utils/pools'
 import { PoolFormProvider } from '../_context/poolFormContext'
@@ -44,25 +46,31 @@ export const PoolPageContent = function ({ shareAddress }: Props) {
     return (
       <PageLayout variant="wide">
         <PoolFormProvider pool={pool}>
-          <PoolNavigation pool={pool} />
-          <div className="mt-6 flex flex-col gap-3 md:gap-5 lg:flex-row">
-            <div className="order-2 flex flex-col gap-4 md:gap-5 lg:order-1 lg:basis-3/5">
-              <PoolInfoCards pool={pool} />
-              <HistoricalMetrics
-                peggedToken={pool.peggedToken}
-                shareToken={pool.shareToken}
-                stakingVault={pool.stakingVault}
-              />
-              <Composition
-                chainId={pool.shareToken.chainId}
-                shareAddress={pool.shareAddress}
-              />
+          <div className="md:pb-32">
+            <PoolNavigation pool={pool} />
+            <div className="mt-6">
+              <OperatorBanner />
             </div>
-            <div className="order-1 lg:sticky lg:top-4 lg:order-2 lg:basis-2/5 lg:self-start">
-              <PoolForm />
+            <div className="mt-6 flex flex-col gap-3 md:gap-5 lg:flex-row">
+              <div className="order-2 flex flex-col gap-4 md:gap-5 lg:order-1 lg:basis-3/5">
+                <PoolInfoCards pool={pool} />
+                <HistoricalMetrics
+                  peggedToken={pool.peggedToken}
+                  shareToken={pool.shareToken}
+                  stakingVault={pool.stakingVault}
+                />
+                <Composition
+                  chainId={pool.shareToken.chainId}
+                  shareAddress={pool.shareAddress}
+                />
+              </div>
+              <div className="order-1 lg:sticky lg:top-4 lg:order-2 lg:basis-2/5 lg:self-start">
+                <PoolForm />
+              </div>
             </div>
           </div>
         </PoolFormProvider>
+        <EarnFooter />
       </PageLayout>
     )
   }

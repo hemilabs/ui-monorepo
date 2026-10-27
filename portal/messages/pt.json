@@ -156,6 +156,11 @@
     "view-all-tutorials": "Ver todos os tutoriais"
   },
   "hemi-earn": {
+    "footer": {
+      "attribution": "O Hemi Earn é operado pela Vetro Service & Support Corp. Os fundos disponíveis pelo Hemi Earn podem ser operados pela Vetro ou por terceiros. A Hemispheres Service & Support (BVI) Ltd., a Hemi Labs, Inc. e suas afiliadas não operam, administram, custodiam nem garantem o Hemi Earn ou qualquer fundo, e não são partes do seu acordo com a Vetro. O Hemi Earn não está disponível para pessoas dos EUA nem para outras pessoas restritas.",
+      "vetro-privacy": "Política de Privacidade da Vetro",
+      "vetro-terms": "Termos de Uso da Vetro"
+    },
     "heading": "Obtenha rendimento com Hemi Earn",
     "info": {
       "earned-amount": "Valor ganho",
@@ -166,6 +171,12 @@
       "back": "Voltar",
       "hemi-earn": "Hemi Earn",
       "pool-name": "fundo {tokenSymbol}"
+    },
+    "operator": {
+      "banner": "O Hemi Earn é operado pela Vetro Service & Support Corp. A Hemi fornece apenas esta interface.",
+      "note": "Operado pela Vetro Service & Support Corp.",
+      "terms": "Termos",
+      "view-terms": "Ver os Termos da Vetro"
     },
     "pool": {
       "apy": "TEA",

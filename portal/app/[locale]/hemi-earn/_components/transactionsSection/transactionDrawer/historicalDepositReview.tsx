@@ -33,6 +33,7 @@ import {
   type EarnTransaction,
   type EarnTransactionStatusType,
 } from '../../../types'
+import { OperatorNote } from '../../operatorDisclosure'
 
 import { RemoteFailedBanner } from './remoteFailed'
 import { SettleBanner } from './settleShared'
@@ -265,6 +266,7 @@ export const HistoricalDepositReview = function ({
         </>
       }
       amount={transaction.amountIn}
+      belowSubheading={<OperatorNote />}
       callToAction={callToAction}
       endAdornment={
         <RetrySlippageTooltip

@@ -19,6 +19,7 @@ import { parseTokenUnits } from 'utils/token'
 import { type Address, type Hash, formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
+import { OperatorNote } from '../../../../_components/operatorDisclosure'
 import {
   ClaimFromVaultBanner,
   ClaimFromVaultCta,
@@ -566,6 +567,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         </>
       }
       amount={withdrawOperation?.amountIn ?? shares.toString()}
+      belowSubheading={<OperatorNote />}
       callToAction={getCallToAction()}
       heading={t('withdraw.heading')}
       onClose={onClose}

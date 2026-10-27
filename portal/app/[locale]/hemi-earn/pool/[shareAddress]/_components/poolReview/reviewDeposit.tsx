@@ -18,6 +18,7 @@ import { parseTokenUnits } from 'utils/token'
 import { type Hash, formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
+import { OperatorNote } from '../../../../_components/operatorDisclosure'
 import {
   RemoteFailedBanner,
   RemoteFailedCta,
@@ -409,6 +410,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         </>
       }
       amount={depositOperation?.amountIn ?? amount.toString()}
+      belowSubheading={<OperatorNote />}
       callToAction={getCallToAction()}
       heading={t('deposit.heading')}
       onClose={onClose}

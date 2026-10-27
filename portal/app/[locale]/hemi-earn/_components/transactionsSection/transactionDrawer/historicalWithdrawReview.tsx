@@ -43,6 +43,7 @@ import {
   type EarnTransaction,
   type EarnTransactionStatusType,
 } from '../../../types'
+import { OperatorNote } from '../../operatorDisclosure'
 
 import { ClaimFromVaultBanner } from './claimFromVault'
 import { RemoteFailedBanner } from './remoteFailed'
@@ -412,6 +413,7 @@ export const HistoricalWithdrawReview = function ({
         </>
       }
       amount={displayAmount}
+      belowSubheading={<OperatorNote />}
       callToAction={callToAction}
       endAdornment={
         <RetrySlippageTooltip

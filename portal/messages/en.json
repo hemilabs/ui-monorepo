@@ -574,6 +574,7 @@
     "agree-to-terms-and-policy": "By using this application, you agree to the <terms>Terms of Use</terms> and <policy>Privacy Policy</policy>",
     "bitcoinkit": "Hemi Bitcoin Kit",
     "boost-staking": "Boost staking",
+    "by-vetro": "by Vetro",
     "data-attribution": "Data provided by <link>CoinMarketCap.com</link>",
     "dex": {
       "aggregators": "Aggregators",
@@ -589,6 +590,7 @@
       "language": "Language",
       "legal-and-privacy": "Legal and Privacy"
     },
+    "hemi-earn": "Hemi Earn",
     "hemi-stake": "Hemi Stake",
     "network": "Network",
     "network-status": "Network status",

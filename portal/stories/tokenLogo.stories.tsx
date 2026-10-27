@@ -4,7 +4,6 @@ import { TokenLogo } from 'components/tokenLogo'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { mainnet } from 'networks/mainnet'
-import { NuqsTestingAdapter } from 'nuqs/adapters/testing'
 import { tokenList } from 'tokenList'
 import { type Token } from 'types/token'
 
@@ -44,13 +43,6 @@ const meta = {
     },
   },
   component: TokenLogo,
-  decorators: [
-    (Story, { parameters }) => (
-      <NuqsTestingAdapter searchParams={parameters.searchParams}>
-        <Story />
-      </NuqsTestingAdapter>
-    ),
-  ],
   parameters: {
     layout: 'centered',
   },

@@ -5,7 +5,6 @@ import { TokenSelector } from 'components/tokenSelector'
 import messages from 'messages/en.json'
 import { allEvmNetworks } from 'networks'
 import { hemiMainnet } from 'networks/hemiMainnet'
-import { NuqsTestingAdapter } from 'nuqs/adapters/testing'
 import { useArgs } from 'storybook/preview-api'
 import { tokenList } from 'tokenList'
 import { IntlProvider } from 'use-intl'
@@ -49,11 +48,9 @@ const meta = {
       <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={queryClient}>
           <IntlProvider locale="en" messages={messages}>
-            <NuqsTestingAdapter>
-              <UmamiAnalyticsProvider>
-                <Story />
-              </UmamiAnalyticsProvider>
-            </NuqsTestingAdapter>
+            <UmamiAnalyticsProvider>
+              <Story />
+            </UmamiAnalyticsProvider>
           </IntlProvider>
         </QueryClientProvider>
       </WagmiProvider>

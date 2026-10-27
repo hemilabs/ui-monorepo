@@ -136,6 +136,10 @@ export const useCollectRewards = function ({
           walletClient: hemiWalletClient!,
         })
 
+        emitter.on('pre-claim-from', function () {
+          setDrawerQueryString('claimingRewards')
+        })
+
         emitter.on('user-signed-claim-from', function (transactionHash) {
           track?.('hemi stake - signed collect rewards')
           setDrawerQueryString('claimingRewards')

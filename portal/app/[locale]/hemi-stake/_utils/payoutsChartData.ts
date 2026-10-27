@@ -1,14 +1,14 @@
 import { formatUnits } from 'viem'
 
+import { type ChartPoint } from './chartPoint'
+
 type Payout = {
   payout: bigint
   timestamp: number
 }
 
-export type PayoutPoint = {
+export type PayoutPoint = ChartPoint & {
   afterUnlock: boolean
-  x: number
-  y: number
 }
 
 export const toPayoutSeries = ({

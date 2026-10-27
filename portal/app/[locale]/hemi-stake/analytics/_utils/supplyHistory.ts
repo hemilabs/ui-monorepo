@@ -1,5 +1,6 @@
 import { formatUnits } from 'viem'
 
+import { type ChartPoint } from '../../_utils/chartPoint'
 import { type ChartUnit } from '../../_utils/chartUnit'
 
 import { daysPerPeriod } from './periods'
@@ -21,11 +22,6 @@ export type ParsedSupplyPoint = Record<SupplySlice, number> & {
   priceUsd: number | null
   timestamp: number
   totalSupply: number
-}
-
-export type ChartPoint = {
-  x: number
-  y: number
 }
 
 // legend order, top of the stack first

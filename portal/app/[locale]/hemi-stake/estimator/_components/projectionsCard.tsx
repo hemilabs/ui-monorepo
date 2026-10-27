@@ -26,6 +26,7 @@ import {
   payoutsColor,
 } from '../../_components/payoutsChart'
 import { type ChartWidths } from '../../_hooks/useChartWidth'
+import { type ChartPoint } from '../../_utils/chartPoint'
 import { type ChartUnit } from '../../_utils/chartUnit'
 import {
   formatPayoutDetail,
@@ -68,7 +69,7 @@ const toShown = function ({
   unlocksOn,
   votingPower,
 }: {
-  existingBars: PayoutPoint[]
+  existingBars: ChartPoint[]
   hasNewPosition: boolean
   incomingBars: PayoutPoint[]
   isBlended: boolean
@@ -76,7 +77,7 @@ const toShown = function ({
   labels: { below: string; series: string; total: string }
   locale: string
   unlocksOn: string
-  votingPower: PayoutPoint[]
+  votingPower: ChartPoint[]
 }) {
   if (!isReady) {
     return {
@@ -85,7 +86,7 @@ const toShown = function ({
       payouts: toZeroedSeries(incomingBars),
       unlocksOn: undefined,
       unlockX: undefined,
-      weights: toZeroedSeries(votingPower),
+      weights: votingPower.map(point => ({ ...point, y: 0 })),
     }
   }
 
@@ -224,19 +225,18 @@ export const ProjectionsCard = function ({
   const activeUnit = price === undefined ? 'hemi' : unit
   const symbol = activeUnit === 'usd' ? 'USD' : token.symbol
 
-  const toBars = (payouts: ProjectionEpoch[], unlocksAt: number) =>
+  const toBars = (payouts: ProjectionEpoch[]) =>
     toPayoutBars({
       decimals: token.decimals,
-      lockEnd: unlocksAt,
+      lockEnd,
       payouts,
       unit: activeUnit,
       usdPrice: price,
     })
 
-  const incomingBars = toBars(incoming, lockEnd)
+  const incomingBars = toBars(incoming)
   const votingPower = toVotingPowerCurve({
     decimals: token.decimals,
-    lockEnd,
     payouts: blended,
   })
 
@@ -262,7 +262,7 @@ export const ProjectionsCard = function ({
 
   const isPending = isLoading && !isError
   const shown = toShown({
-    existingBars: toBars(existing, Number.MAX_SAFE_INTEGER),
+    existingBars: toBars(existing).map(({ x, y }) => ({ x, y })),
     hasNewPosition: incoming.some(epoch => epoch.weight > BigInt(0)),
     incomingBars,
     isBlended,
@@ -319,13 +319,10 @@ export const ProjectionsCard = function ({
               </div>
             </div>
             <PayoutsChart
+              afterUnlockLabel={t('estimated-payouts.after-unlock')}
               below={shown.below}
               formatDate={formatDate}
-              formatDetail={point =>
-                point.afterUnlock
-                  ? t('estimated-payouts.after-unlock')
-                  : formatDetail(point.y)
-              }
+              formatDetail={formatDetail}
               formatValue={formatPayout}
               height={150}
               isPending={isPending}

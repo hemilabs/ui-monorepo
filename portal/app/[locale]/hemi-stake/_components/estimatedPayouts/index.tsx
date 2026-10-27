@@ -158,15 +158,10 @@ export const EstimatedPayouts = function () {
           })}
         </span>
         <PayoutsChart
+          afterUnlockLabel={t('after-unlock')}
           formatDate={value => formatShortDate(new Date(value), locale)}
-          formatDetail={point =>
-            point.afterUnlock
-              ? t('after-unlock')
-              : formatPayoutDetail({
-                  price,
-                  symbol: token.symbol,
-                  value: point.y,
-                })
+          formatDetail={value =>
+            formatPayoutDetail({ price, symbol: token.symbol, value })
           }
           formatValue={value =>
             formatPayoutValue({ symbol: token.symbol, value })

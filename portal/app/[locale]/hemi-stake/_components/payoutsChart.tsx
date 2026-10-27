@@ -11,6 +11,7 @@ import {
 } from 'victory'
 
 import { type ChartWidths, useChartWidth } from '../_hooks/useChartWidth'
+import { type ChartPoint } from '../_utils/chartPoint'
 import { type PayoutPoint } from '../_utils/payoutsChartData'
 
 import {
@@ -66,15 +67,17 @@ const yAxisStyle = {
 }
 
 function PayoutTooltipLabel({
+  afterUnlockLabel,
   datum,
   formatDate,
   formatDetail,
   x,
   y,
 }: {
+  afterUnlockLabel: string
   datum?: PayoutPoint
   formatDate: (value: number) => string
-  formatDetail: (point: PayoutPoint) => string
+  formatDetail: (value: number) => string
   x?: number
   y?: number
 }) {
@@ -92,7 +95,7 @@ function PayoutTooltipLabel({
     >
       <tspan fill={chartColors.neutral500}>{formatDate(datum.x)}</tspan>
       <tspan dx={4} fill={chartColors.neutral950}>
-        {formatDetail(datum)}
+        {datum.afterUnlock ? afterUnlockLabel : formatDetail(datum.y)}
       </tspan>
     </text>
   )
@@ -100,27 +103,29 @@ function PayoutTooltipLabel({
 
 type StackedBelow = {
   label: string
-  points: PayoutPoint[]
+  points: ChartPoint[]
   seriesLabel: string
   totalLabel: string
 }
 
 function StackedTooltipLabel({
+  afterUnlockLabel,
   below,
   belowByX,
   datum,
   formatDate,
-  formatValue,
+  formatDetail,
   seriesByX,
   x,
   y,
 }: {
+  afterUnlockLabel: string
   below: StackedBelow
   belowByX: Map<number, number>
-  datum?: PayoutPoint
+  datum?: ChartPoint
   formatDate: (value: number) => string
-  formatValue: (value: number) => string
-  seriesByX: Map<number, number>
+  formatDetail: (value: number) => string
+  seriesByX: Map<number, PayoutPoint>
   x?: number
   y?: number
 }) {
@@ -128,7 +133,8 @@ function StackedTooltipLabel({
     return null
   }
 
-  const top = seriesByX.get(datum.x) ?? 0
+  const incoming = seriesByX.get(datum.x)
+  const top = incoming?.y ?? 0
   const bottom = belowByX.get(datum.x) ?? 0
 
   return (
@@ -137,16 +143,16 @@ function StackedTooltipLabel({
         {
           color: payoutsColor,
           label: below.seriesLabel,
-          value: formatValue(top),
+          value: incoming?.afterUnlock ? afterUnlockLabel : formatDetail(top),
         },
         {
           color: stackedBelowColor,
           label: below.label,
-          value: formatValue(bottom),
+          value: formatDetail(bottom),
         },
       ]}
       title={formatDate(datum.x)}
-      total={formatValue(top + bottom)}
+      total={formatDetail(top + bottom)}
       totalLabel={below.totalLabel}
       x={x}
       y={y}
@@ -154,10 +160,64 @@ function StackedTooltipLabel({
   )
 }
 
+const toTooltip = ({
+  afterUnlockLabel,
+  below,
+  belowByX,
+  formatDate,
+  formatDetail,
+  seriesByX,
+}: {
+  afterUnlockLabel: string
+  below: StackedBelow | undefined
+  belowByX: Map<number, number>
+  formatDate: (value: number) => string
+  formatDetail: (value: number) => string
+  seriesByX: Map<number, PayoutPoint>
+}) => (
+  <VictoryTooltip
+    constrainToVisibleArea
+    cornerRadius={8}
+    flyoutHeight={
+      below === undefined
+        ? undefined
+        : getTooltipHeight({ hasNote: false, lineCount: 2 })
+    }
+    flyoutPadding={
+      below === undefined
+        ? { bottom: 6, left: 10, right: 10, top: 6 }
+        : undefined
+    }
+    flyoutStyle={{ fill: 'white', stroke: chartColors.neutral200 }}
+    flyoutWidth={below === undefined ? undefined : tooltipWidth}
+    labelComponent={
+      below === undefined ? (
+        <PayoutTooltipLabel
+          afterUnlockLabel={afterUnlockLabel}
+          formatDate={formatDate}
+          formatDetail={formatDetail}
+        />
+      ) : (
+        <StackedTooltipLabel
+          afterUnlockLabel={afterUnlockLabel}
+          below={below}
+          belowByX={belowByX}
+          formatDate={formatDate}
+          formatDetail={formatDetail}
+          seriesByX={seriesByX}
+        />
+      )
+    }
+    pointerLength={0}
+    style={tooltipLabelStyle}
+  />
+)
+
 type Props = {
+  afterUnlockLabel: string
   below?: StackedBelow
   formatDate: (value: number) => string
-  formatDetail: (point: PayoutPoint) => string
+  formatDetail: (value: number) => string
   formatValue: (value: number) => string
   height?: number
   isPending: boolean
@@ -168,6 +228,7 @@ type Props = {
 }
 
 export const PayoutsChart = function ({
+  afterUnlockLabel,
   below,
   formatDate,
   formatDetail,
@@ -183,7 +244,7 @@ export const PayoutsChart = function ({
 
   const belowPoints = below ? below.points : []
   const belowByX = new Map(belowPoints.map(point => [point.x, point.y]))
-  const seriesByX = new Map(series.map(point => [point.x, point.y]))
+  const seriesByX = new Map(series.map(point => [point.x, point]))
 
   const hasPayouts = [...series, ...belowPoints].some(point => point.y > 0)
   const maxY = Math.max(
@@ -213,62 +274,24 @@ export const PayoutsChart = function ({
     />,
   ]
 
-  // Victory builds the tooltip datum from the first stacked child, so the
-  // stacked label resolves both legs by x instead of reading that datum.
-  const singleTooltip = (
-    <VictoryTooltip
-      constrainToVisibleArea
-      cornerRadius={8}
-      flyoutPadding={{ bottom: 6, left: 10, right: 10, top: 6 }}
-      flyoutStyle={{ fill: 'white', stroke: chartColors.neutral200 }}
-      labelComponent={
-        <PayoutTooltipLabel
-          formatDate={formatDate}
-          formatDetail={formatDetail}
-        />
-      }
-      pointerLength={0}
-      style={tooltipLabelStyle}
-    />
-  )
-
   if (hasPayouts) {
     return (
       <VictoryChart
         containerComponent={
           <VictoryVoronoiContainer
-            labelComponent={
-              below === undefined ? (
-                singleTooltip
-              ) : (
-                <VictoryTooltip
-                  constrainToVisibleArea
-                  cornerRadius={8}
-                  flyoutHeight={getTooltipHeight({
-                    hasNote: false,
-                    lineCount: 2,
-                  })}
-                  flyoutStyle={{
-                    fill: 'white',
-                    stroke: chartColors.neutral200,
-                  }}
-                  flyoutWidth={tooltipWidth}
-                  labelComponent={
-                    <StackedTooltipLabel
-                      below={below}
-                      belowByX={belowByX}
-                      formatDate={formatDate}
-                      formatValue={formatValue}
-                      seriesByX={seriesByX}
-                    />
-                  }
-                  pointerLength={0}
-                />
-              )
-            }
+            labelComponent={toTooltip({
+              afterUnlockLabel,
+              below,
+              belowByX,
+              formatDate,
+              formatDetail,
+              seriesByX,
+            })}
             labels={({ datum }: { datum: PayoutPoint }) =>
               below === undefined
-                ? `${formatDate(datum.x)}  ${formatDetail(datum)}`
+                ? `${formatDate(datum.x)}  ${
+                    datum.afterUnlock ? afterUnlockLabel : formatDetail(datum.y)
+                  }`
                 : ' '
             }
             voronoiBlacklist={[unlockMarkerName]}

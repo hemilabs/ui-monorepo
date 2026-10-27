@@ -3,7 +3,7 @@ import { VictoryArea, VictoryAxis, VictoryChart, VictoryLine } from 'victory'
 
 import { payoutsColor } from '../../_components/payoutsChart'
 import { type ChartWidths, useChartWidth } from '../../_hooks/useChartWidth'
-import { type PayoutPoint } from '../../_utils/payoutsChartData'
+import { type ChartPoint } from '../../_utils/chartPoint'
 
 const chartHeight = 130
 const chartPadding = { bottom: 24, left: 64, right: 20, top: 8 }
@@ -31,7 +31,7 @@ type Props = {
   formatDate: (value: number) => string
   formatValue: (value: number) => string
   isPending: boolean
-  series: PayoutPoint[]
+  series: ChartPoint[]
   ticks: number[]
   unlockX: number | undefined
   widths: ChartWidths

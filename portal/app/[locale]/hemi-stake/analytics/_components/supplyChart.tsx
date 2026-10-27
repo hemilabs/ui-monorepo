@@ -15,6 +15,7 @@ import {
   tooltipWidth,
 } from '../../_components/chartTooltipLabel'
 import { useChartWidth } from '../../_hooks/useChartWidth'
+import { type ChartPoint } from '../../_utils/chartPoint'
 import { type ChartUnit } from '../../_utils/chartUnit'
 import {
   chartHeight,
@@ -29,7 +30,6 @@ import {
   getPeriodDurationMs,
   sliceLabels,
   stackOrder,
-  type ChartPoint,
   type SupplyPeriod,
   type SupplySlice,
 } from '../_utils/supplyHistory'

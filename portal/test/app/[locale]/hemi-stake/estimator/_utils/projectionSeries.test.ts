@@ -67,21 +67,11 @@ describe('toPayoutBars', function () {
 describe('toVotingPowerCurve', function () {
   it('plots the weight, not the payout', function () {
     expect(
-      toVotingPowerCurve({ decimals, lockEnd, payouts: epochs }).map(
-        point => point.y,
-      ),
+      toVotingPowerCurve({ decimals, payouts: epochs }).map(point => point.y),
     ).toEqual([300, 150, 0])
   })
 
-  it('carries the same unlock flag the bars use', function () {
-    expect(
-      toVotingPowerCurve({ decimals, lockEnd, payouts: epochs }).map(
-        point => point.afterUnlock,
-      ),
-    ).toEqual([false, false, true])
-  })
-
   it('is empty without epochs', function () {
-    expect(toVotingPowerCurve({ decimals, lockEnd, payouts: [] })).toEqual([])
+    expect(toVotingPowerCurve({ decimals, payouts: [] })).toEqual([])
   })
 })

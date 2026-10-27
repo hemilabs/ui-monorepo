@@ -6,7 +6,6 @@ import {
   calculateWithdrawalFee,
   getTransactionByTxId,
   getTxConfirmations,
-  getVaultIndexByBTCAddress,
   isAddressValid,
   isBitcoinWithdrawalChallenged,
   isBitcoinWithdrawalFulfilled,
@@ -38,6 +37,7 @@ import {
   getBitcoinVaultGracePeriod,
   getBitcoinVaultStateAddress,
   getVaultAddressByIndex,
+  getVaultIndexByBTCAddress,
 } from './hemiMemoized'
 
 // Max Sanchez note: looks like if we pass in all lower-case hex, Unisat publishes the bytes instead of the string.
@@ -50,7 +50,7 @@ export const getBitcoinDepositVault = (
   hemiClient: PublicClient,
   bitcoinAddress: string,
 ) =>
-  getVaultIndexByBTCAddress(hemiClient, { btcAddress: bitcoinAddress }).then(
+  getVaultIndexByBTCAddress(hemiClient, bitcoinAddress).then(
     async vaultIndex => ({
       vaultAddress: await getVaultAddressByIndex(hemiClient, vaultIndex),
       vaultIndex,

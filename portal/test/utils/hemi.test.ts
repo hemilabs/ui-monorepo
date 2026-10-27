@@ -28,7 +28,7 @@ import {
   isValidBtcAddress,
 } from 'utils/hemi'
 import { type PublicClient, zeroAddress } from 'viem'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 // Mock the imported functions
 vi.mock('hemi-viem/actions', () => ({
@@ -80,21 +80,34 @@ const withdrawal: ToBtcWithdrawOperation = {
 
 describe('utils/hemi', function () {
   describe('getBitcoinDepositVault', function () {
-    it('resolves the vault from the deposit BTC custody address', async function () {
-      vi.mocked(getVaultIndexByBTCAddress).mockResolvedValue(8)
+    afterEach(() => vi.useRealTimers())
 
-      const result = await getBitcoinDepositVault(hemiClient, 'tb1qcustody')
+    it('caches the matching vault and refreshes it after five minutes', async function () {
+      const bitcoinAddress = 'tb1qlookupcustody'
+      const getVaultIndex = vi.mocked(getVaultIndexByBTCAddress)
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-01-01T00:00:00Z'))
+      getVaultIndex.mockClear()
+      getVaultIndex.mockResolvedValueOnce(8).mockResolvedValueOnce(9)
 
-      expect(getVaultIndexByBTCAddress).toHaveBeenCalledWith(hemiClient, {
-        btcAddress: 'tb1qcustody',
-      })
-      expect(getVaultByIndex).toHaveBeenCalledWith(hemiClient, {
-        vaultIndex: 8,
-      })
-      expect(result).toEqual({
-        vaultAddress: mappedVaultAddress,
-        vaultIndex: 8,
-      })
+      const firstResult = await getBitcoinDepositVault(
+        hemiClient,
+        bitcoinAddress,
+      )
+      await getBitcoinDepositVault(hemiClient, bitcoinAddress)
+
+      expect(getVaultIndex).toHaveBeenCalledTimes(1)
+      expect(firstResult.vaultIndex).toBe(8)
+
+      vi.advanceTimersByTime(5 * 60 * 1000)
+
+      const refreshedResult = await getBitcoinDepositVault(
+        hemiClient,
+        bitcoinAddress,
+      )
+
+      expect(getVaultIndex).toHaveBeenCalledTimes(2)
+      expect(refreshedResult.vaultIndex).toBe(9)
     })
   })
 

@@ -44,7 +44,7 @@
     "hemi-viem": "2.9.0",
     "hemi-viem-stake-actions": "workspace:*",
     "lodash": "4.18.1",
-    "nuqs": "2.9.1",
+    "nuqs": "2.10.2",
     "p-all": "5.0.0",
     "p-do-whilst": "2.1.0",
     "p-queue": "9.2.0",

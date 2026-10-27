@@ -13,7 +13,11 @@ import {
   VictoryVoronoiContainer,
 } from 'victory'
 
-import { useChartWidth } from '../_hooks/useChartWidth'
+import {
+  ChartTooltipLabel,
+  getTooltipHeight,
+} from '../../_components/chartTooltipLabel'
+import { useChartWidth } from '../../_hooks/useChartWidth'
 import {
   chartHeight,
   epochAxisStyle,
@@ -25,7 +29,6 @@ import { formatSupplyValue } from '../_utils/formatSupplyValue'
 import { type RewardsBar, type RewardsSeries } from '../_utils/rewardsHistory'
 
 import { ChartPlaceholder } from './chartPlaceholder'
-import { ChartTooltipLabel, getTooltipHeight } from './chartTooltipLabel'
 
 const tooltipWidth = 216
 const openEpochOpacity = 0.4

@@ -62,12 +62,23 @@ const toExistingLegs = (
     positionClass: classes[position.tokenId.toString()] ?? alwaysTransferable,
   }))
 
-const toLoadState = (
-  queries: { data: unknown; isError: boolean; isPending: boolean }[],
-) => ({
-  isError: queries.some(query => query.isError && query.data === undefined),
-  isLoading: queries.some(query => query.isPending),
-})
+const toLoadState = function (
+  queries: {
+    data: unknown
+    isError: boolean
+    isPending: boolean
+    refetch: () => unknown
+  }[],
+) {
+  const failed = queries.filter(
+    query => query.isError && query.data === undefined,
+  )
+  return {
+    isError: failed.length > 0,
+    isLoading: queries.some(query => query.isPending),
+    retry: () => failed.forEach(query => query.refetch()),
+  }
+}
 
 export const useEstimatorForecast = function () {
   const { amount, lockupDays, scope } = useEstimator()
@@ -119,16 +130,19 @@ export const useEstimatorForecast = function () {
     ],
   )
 
-  const { isError, isLoading } = toLoadState(
+  const { isError, isLoading, retry } = toLoadState(
     blends
       ? [systemState, forecastInputs, positions, classes]
       : [systemState, forecastInputs],
   )
 
   return {
+    currentEpoch: systemState.data?.currentEpoch,
     forecast: blended,
     isBlended: staked.length > 0,
+    isError,
     isLoading,
+    retry,
     stakedReturnRatio: stakedAlone.yearOneReturnRatio,
     unavailable: isForecastUnavailable({
       hasForecast: canForecast({

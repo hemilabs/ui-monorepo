@@ -21,26 +21,21 @@ import {
   getPayoutAxisTicks,
   getUnlockMarkerX,
   toPayoutSeries,
+  toZeroedSeries,
 } from '../../_utils/payoutsChartData'
 import {
   emptyInputsByClass,
   type InputsByClass,
 } from '../../_utils/rewardClass'
 import { getRewardsForecast } from '../../_utils/stakeRewardsForecast'
+import { toPrice } from '../../_utils/toPrice'
+import { PayoutsChart } from '../payoutsChart'
 
 import { PayoutHeadline } from './payoutHeadline'
 import { PayoutPlaceholder } from './payoutPlaceholder'
-import { PayoutsChart } from './payoutsChart'
 
 const sectionLabelClassName =
   'text-xxs font-medium uppercase tracking-widest text-neutral-500'
-
-const toPrice = function (value: string | undefined) {
-  const price = Number(value)
-  return value !== undefined && Number.isFinite(price) && price > 0
-    ? price
-    : undefined
-}
 
 const buildForecast = function ({
   amount,
@@ -72,9 +67,7 @@ const buildForecast = function ({
     hasValidLockup
 
   return {
-    chartSeries: hasForecast
-      ? series
-      : series.map(point => ({ ...point, afterUnlock: false, y: 0 })),
+    chartSeries: hasForecast ? series : toZeroedSeries(series),
     forecast,
     hasForecast,
   }
@@ -165,15 +158,10 @@ export const EstimatedPayouts = function () {
           })}
         </span>
         <PayoutsChart
+          afterUnlockLabel={t('after-unlock')}
           formatDate={value => formatShortDate(new Date(value), locale)}
-          formatDetail={point =>
-            point.afterUnlock
-              ? t('after-unlock')
-              : formatPayoutDetail({
-                  price,
-                  symbol: token.symbol,
-                  value: point.y,
-                })
+          formatDetail={value =>
+            formatPayoutDetail({ price, symbol: token.symbol, value })
           }
           formatValue={value =>
             formatPayoutValue({ symbol: token.symbol, value })

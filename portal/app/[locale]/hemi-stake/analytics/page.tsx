@@ -2,16 +2,17 @@ import { useHemiToken } from 'hooks/useHemiToken'
 import { useState } from 'react'
 
 import { StatsSection } from '../_components/statsSection'
+import { type ChartUnit } from '../_utils/chartUnit'
 
 import { RewardsChartCard } from './_components/rewardsChartCard'
 import { SupplyChartCard } from './_components/supplyChartCard'
 import { SupplySummary } from './_components/supplySummary'
-import { type SupplyPeriod, type SupplyUnit } from './_utils/supplyHistory'
+import { type SupplyPeriod } from './_utils/supplyHistory'
 
 export const HemiStakeAnalyticsPage = function () {
   const { symbol } = useHemiToken()
   const [period, setPeriod] = useState<SupplyPeriod>('3m')
-  const [unit, setUnit] = useState<SupplyUnit>('usd')
+  const [unit, setUnit] = useState<ChartUnit>('usd')
 
   return (
     <>

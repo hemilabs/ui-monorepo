@@ -1,14 +1,14 @@
 import { formatUnits } from 'viem'
 
+import { type ChartPoint } from './chartPoint'
+
 type Payout = {
   payout: bigint
   timestamp: number
 }
 
-export type PayoutPoint = {
+export type PayoutPoint = ChartPoint & {
   afterUnlock: boolean
-  x: number
-  y: number
 }
 
 export const toPayoutSeries = ({
@@ -26,16 +26,23 @@ export const toPayoutSeries = ({
     y: Number(formatUnits(payout, decimals)),
   }))
 
-export const getPayoutAxisTicks = function (series: PayoutPoint[]) {
+export const toZeroedSeries = (series: PayoutPoint[]) =>
+  series.map(point => ({ ...point, afterUnlock: false, y: 0 }))
+
+export const getPayoutAxisTicks = function (series: PayoutPoint[], count = 3) {
   if (series.length === 0) {
     return []
   }
 
-  const ticks = [
-    series[0].x,
-    series[Math.floor((series.length - 1) / 2)].x,
-    series[series.length - 1].x,
-  ]
+  if (count < 2) {
+    return [series[0].x]
+  }
+
+  const last = series.length - 1
+  const ticks = Array.from(
+    { length: count },
+    (_, index) => series[Math.floor((index * last) / (count - 1))].x,
+  )
 
   return [...new Set(ticks)]
 }

@@ -59,6 +59,7 @@ const columnWidths: ChartWidths = {
 
 const toShown = function ({
   existingBars,
+  hasNewPosition,
   incomingBars,
   isBlended,
   isReady,
@@ -68,6 +69,7 @@ const toShown = function ({
   votingPower,
 }: {
   existingBars: PayoutPoint[]
+  hasNewPosition: boolean
   incomingBars: PayoutPoint[]
   isBlended: boolean
   isReady: boolean
@@ -86,8 +88,6 @@ const toShown = function ({
       weights: toZeroedSeries(votingPower),
     }
   }
-
-  const hasNewPosition = incomingBars.some(point => point.y > 0)
 
   return {
     below: isBlended
@@ -263,6 +263,7 @@ export const ProjectionsCard = function ({
   const isPending = isLoading && !isError
   const shown = toShown({
     existingBars: toBars(existing, Number.MAX_SAFE_INTEGER),
+    hasNewPosition: incoming.some(epoch => epoch.weight > BigInt(0)),
     incomingBars,
     isBlended,
     isReady: !isError && !isPending,

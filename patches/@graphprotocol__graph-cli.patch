@@ -1,0 +1,18 @@
+diff --git a/dist/commands/test.js b/dist/commands/test.js
+index 179ec3b..65216c3 100644
+--- a/dist/commands/test.js
++++ b/dist/commands/test.js
+@@ -137,9 +137,11 @@ async function runBinary(datasource, opts) {
+                 throw new Error(`Status: ${response.statusText}`);
+             if (!response.body)
+                 throw new Error('No response body received');
+-            const fileStream = fs.createWriteStream(binPath);
++            const downloadPath = `${binPath}.${crypto.randomUUID()}`;
++            const fileStream = fs.createWriteStream(downloadPath);
+             await pipeline(response.body, fileStream);
+-            await fs.promises.chmod(binPath, '755');
++            await fs.promises.chmod(downloadPath, '755');
++            await fs.promises.rename(downloadPath, binPath);
+         }
+     }
+     catch (e) {

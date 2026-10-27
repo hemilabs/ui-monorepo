@@ -156,7 +156,7 @@
     "view-all-tutorials": "View all tutorials"
   },
   "hemi-earn": {
-    "heading": "Earn yield with Hemi Earn",
+    "heading": "Earn on your BTC and stablecoins",
     "info": {
       "earned-amount": "Your earned amount",
       "from-pools": "{count, plural, one {From # pool} other {From # pools}}",
@@ -259,7 +259,7 @@
       "staked-balance": "Your staked balance",
       "total-deposits": "Total deposits"
     },
-    "subheading": "One click earn for your assets",
+    "subheading": "Hemi Earn, operated by Vetro, gives you access to yield vaults right from the Hemi portal. Choose a vault and deposit in a few steps. Yields are variable and not guaranteed.",
     "switch-to-start-earning": "You can switch networks to start earning with Hemi.",
     "transactions": {
       "banner": {

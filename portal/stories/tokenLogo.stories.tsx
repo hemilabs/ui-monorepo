@@ -4,13 +4,11 @@ import { TokenLogo } from 'components/tokenLogo'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { mainnet } from 'networks/mainnet'
-import { tokenList } from 'tokenList'
 import { type Token } from 'types/token'
+import { getTokenBySymbol } from 'utils/token'
 
 const findToken = function (chainId: Token['chainId'], symbol: string) {
-  const token = tokenList.tokens.find(
-    t => t.chainId === chainId && t.symbol === symbol,
-  )
+  const token = getTokenBySymbol(symbol, chainId)
   if (!token) {
     throw new Error(
       `${symbol} on chain ${chainId} is missing from the token list`,

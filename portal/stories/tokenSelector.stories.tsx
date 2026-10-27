@@ -8,6 +8,7 @@ import { hemiMainnet } from 'networks/hemiMainnet'
 import { useArgs } from 'storybook/preview-api'
 import { tokenList } from 'tokenList'
 import { IntlProvider } from 'use-intl'
+import { getTokenBySymbol } from 'utils/token'
 import { buildTransports } from 'utils/transport'
 import { createConfig, WagmiProvider } from 'wagmi'
 
@@ -15,7 +16,7 @@ const hemiTokens = tokenList.tokens.filter(
   token => token.chainId === hemiMainnet.id,
 )
 
-const hemiToken = hemiTokens.find(token => token.symbol === 'HEMI')
+const hemiToken = getTokenBySymbol('HEMI', hemiMainnet.id)
 
 if (!hemiToken) {
   throw new Error('HEMI is missing from the token list')

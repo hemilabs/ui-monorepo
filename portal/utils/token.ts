@@ -39,6 +39,14 @@ export const getTokenByAddress = function (
   )
 }
 
+export const getTokenBySymbol = (
+  symbol: Token['symbol'],
+  chainId: Token['chainId'],
+) =>
+  tokenList.tokens.find(
+    token => token.chainId === chainId && token.symbol === symbol,
+  )
+
 export const isCustomToken = (userTokenList: Token[], token: Token) =>
   userTokenList.some(
     t => t.address === token.address && t.chainId === token.chainId,
@@ -73,9 +81,7 @@ export const getTokenPrice = function (
 }
 
 export const getWrappedEther = (chainId: Chain['id']) =>
-  tokenList.tokens.find(
-    t => t.symbol === 'WETH' && t.chainId === chainId,
-  ) as EvmToken
+  getTokenBySymbol('WETH', chainId) as EvmToken
 
 export const getErc20Token = pMemoize(
   async function ({

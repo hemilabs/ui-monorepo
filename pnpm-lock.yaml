@@ -9,6 +9,7 @@ overrides:
   postcss: 8.5.14
 
 patchedDependencies:
+  '@graphprotocol/graph-cli@*': 292989c6ec0108c55f7a64e5fa65246d9cafe745bae932b200ad551bd4105eab
   '@hemilabs/token-list@4.2.0': 7ead909661edef5a6581247db5ad007a391b9e4c20cffa1d71548a90e42f3f28
   '@hemilabs/wallet-watch-asset@1.0.2': 29bbea75a794a36a5ab734b563912a6cde0b08398e00727b76066fe46a72f5ec
   coinselect@3.1.13: 4adadde16e5d7510c97e713d4b42d8a95ff8e295fb98452f6cab707163850789
@@ -623,7 +624,7 @@ importers:
     dependencies:
       '@graphprotocol/graph-cli':
         specifier: 0.97.1
-        version: 0.97.1(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@8.1.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
+        version: 0.97.1(patch_hash=292989c6ec0108c55f7a64e5fa65246d9cafe745bae932b200ad551bd4105eab)(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@8.1.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@graphprotocol/graph-ts':
         specifier: 0.38.1
         version: 0.38.1
@@ -632,7 +633,7 @@ importers:
     dependencies:
       '@graphprotocol/graph-cli':
         specifier: 0.97.1
-        version: 0.97.1(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@10.2.2)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
+        version: 0.97.1(patch_hash=292989c6ec0108c55f7a64e5fa65246d9cafe745bae932b200ad551bd4105eab)(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@10.2.2)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@graphprotocol/graph-ts':
         specifier: 0.38.1
         version: 0.38.1
@@ -648,7 +649,7 @@ importers:
     dependencies:
       '@graphprotocol/graph-cli':
         specifier: 0.97.1
-        version: 0.97.1(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@10.2.2)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
+        version: 0.97.1(patch_hash=292989c6ec0108c55f7a64e5fa65246d9cafe745bae932b200ad551bd4105eab)(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@10.2.2)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@graphprotocol/graph-ts':
         specifier: 0.38.1
         version: 0.38.1
@@ -657,7 +658,7 @@ importers:
     dependencies:
       '@graphprotocol/graph-cli':
         specifier: 0.97.1
-        version: 0.97.1(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@10.2.2)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
+        version: 0.97.1(patch_hash=292989c6ec0108c55f7a64e5fa65246d9cafe745bae932b200ad551bd4105eab)(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@10.2.2)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@graphprotocol/graph-ts':
         specifier: 0.38.1
         version: 0.38.1
@@ -666,7 +667,7 @@ importers:
     dependencies:
       '@graphprotocol/graph-cli':
         specifier: 0.97.1
-        version: 0.97.1(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@10.2.2)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
+        version: 0.97.1(patch_hash=292989c6ec0108c55f7a64e5fa65246d9cafe745bae932b200ad551bd4105eab)(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@10.2.2)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@graphprotocol/graph-ts':
         specifier: 0.38.1
         version: 0.38.1
@@ -675,7 +676,7 @@ importers:
     dependencies:
       '@graphprotocol/graph-cli':
         specifier: 0.97.1
-        version: 0.97.1(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@10.2.2)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
+        version: 0.97.1(patch_hash=292989c6ec0108c55f7a64e5fa65246d9cafe745bae932b200ad551bd4105eab)(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@10.2.2)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@graphprotocol/graph-ts':
         specifier: 0.38.1
         version: 0.38.1
@@ -10812,7 +10813,7 @@ snapshots:
       chalk: 4.1.2
       cli-table: 0.3.11
 
-  '@graphprotocol/graph-cli@0.97.1(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@10.2.2)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)':
+  '@graphprotocol/graph-cli@0.97.1(patch_hash=292989c6ec0108c55f7a64e5fa65246d9cafe745bae932b200ad551bd4105eab)(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@10.2.2)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)':
     dependencies:
       '@float-capital/float-subgraph-uncrashable': 0.0.0-internal-testing.5
       '@oclif/core': 4.3.0
@@ -10848,7 +10849,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@graphprotocol/graph-cli@0.97.1(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@8.1.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)':
+  '@graphprotocol/graph-cli@0.97.1(patch_hash=292989c6ec0108c55f7a64e5fa65246d9cafe745bae932b200ad551bd4105eab)(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@8.1.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)':
     dependencies:
       '@float-capital/float-subgraph-uncrashable': 0.0.0-internal-testing.5
       '@oclif/core': 4.3.0

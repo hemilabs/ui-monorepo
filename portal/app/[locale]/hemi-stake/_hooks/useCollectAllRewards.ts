@@ -85,10 +85,13 @@ export const useCollectRewards = function ({
   const markWindowAsClaimed = async function (
     step: Pick<CollectAllRewardsStep, 'fromEpoch' | 'toEpoch' | 'tokenId'>,
   ) {
-    const queryKey = getEpochClaimableRewardsQueryKeyPrefix({
-      chainId: hemi.id,
-      tokenId: step.tokenId,
-    })
+    const queryKey = [
+      ...getEpochClaimableRewardsQueryKeyPrefix({
+        chainId: hemi.id,
+        tokenId: step.tokenId,
+      }),
+      address,
+    ]
     await queryClient.cancelQueries({ queryKey })
     queryClient.setQueriesData<ClaimWindows>({ queryKey }, windows =>
       windows ? markClaimWindowAsClaimed(windows, step) : windows,

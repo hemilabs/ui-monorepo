@@ -161,7 +161,7 @@
       "vetro-privacy": "Política de Privacidad de Vetro",
       "vetro-terms": "Términos de Uso de Vetro"
     },
-    "heading": "Obtenga rendimiento con Hemi Earn",
+    "heading": "Obtenga rendimiento con su BTC y sus stablecoins",
     "info": {
       "earned-amount": "Cantidad ganada",
       "from-pools": "{count, plural, one {De # fondo} other {De # fondos}}",
@@ -268,7 +268,7 @@
       "staked-balance": "Su saldo invertido",
       "total-deposits": "Depósitos totales"
     },
-    "subheading": "Gane rendimiento con sus activos en un solo clic",
+    "subheading": "Hemi Earn, operado por Vetro, le da acceso a fondos de rendimiento directamente desde el portal de Hemi. Elija un fondo y deposite en unos pocos pasos. Los rendimientos son variables y no están garantizados.",
     "switch-to-start-earning": "Puede cambiar de red para comenzar a ganar con Hemi.",
     "transactions": {
       "banner": {
@@ -583,6 +583,7 @@
     "agree-to-terms-and-policy": "Al usar esta aplicación, usted acepta los <terms>Términos de Uso</terms> y la <policy>Política de Privacidad</policy>",
     "bitcoinkit": "Kit de Hemi Bitcoin",
     "boost-staking": "Boost staking",
+    "by-vetro": "por Vetro",
     "data-attribution": "Datos proporcionados por <link>CoinMarketCap.com</link>",
     "dex": {
       "aggregators": "Agregadores",
@@ -598,6 +599,7 @@
       "language": "Idioma",
       "legal-and-privacy": "Privacidad y Legales"
     },
+    "hemi-earn": "Hemi Earn",
     "hemi-stake": "Hemi Stake",
     "network": "Red",
     "network-status": "Estado de la red",

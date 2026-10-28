@@ -161,7 +161,7 @@
       "vetro-privacy": "Vetro Privacy Policy",
       "vetro-terms": "Vetro Terms of Use"
     },
-    "heading": "Earn yield with Hemi Earn",
+    "heading": "Earn on your BTC and stablecoins",
     "info": {
       "earned-amount": "Your earned amount",
       "from-pools": "{count, plural, one {From # pool} other {From # pools}}",
@@ -268,7 +268,7 @@
       "staked-balance": "Your staked balance",
       "total-deposits": "Total deposits"
     },
-    "subheading": "One click earn for your assets",
+    "subheading": "Hemi Earn, operated by Vetro, gives you access to yield vaults right from the Hemi portal. Choose a vault and deposit in a few steps. Yields are variable and not guaranteed.",
     "switch-to-start-earning": "You can switch networks to start earning with Hemi.",
     "transactions": {
       "banner": {
@@ -583,6 +583,7 @@
     "agree-to-terms-and-policy": "By using this application, you agree to the <terms>Terms of Use</terms> and <policy>Privacy Policy</policy>",
     "bitcoinkit": "Hemi Bitcoin Kit",
     "boost-staking": "Boost staking",
+    "by-vetro": "by Vetro",
     "data-attribution": "Data provided by <link>CoinMarketCap.com</link>",
     "dex": {
       "aggregators": "Aggregators",
@@ -598,6 +599,7 @@
       "language": "Language",
       "legal-and-privacy": "Legal and Privacy"
     },
+    "hemi-earn": "Hemi Earn",
     "hemi-stake": "Hemi Stake",
     "network": "Network",
     "network-status": "Network status",

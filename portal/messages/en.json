@@ -195,24 +195,24 @@
         "approving": "Approving {symbol}",
         "cooldown-ended": "Cooldown period complete",
         "deposit": {
-          "heading": "Review stake deposit",
+          "heading": "Review deposit",
           "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
         },
+        "deposit-token": "Deposit {symbol} into vault",
         "funds-returned": "Funds returned",
         "funds-to-recover": "Funds to recover",
         "get-share-tokens": "Get share tokens",
         "receive-token": "Receive {symbol}",
         "shares-returned": "Shares returned",
         "shares-to-recover": "Shares to recover",
-        "stake-token": "Stake {symbol}",
-        "unstake-token": "Unstake {symbol}",
         "wait-cooldown-countdown": "{days, plural, =0 {Cooldown ends in {hours}h} other {Cooldown ends in #d {hours}h}}",
         "wait-cooldown-countdown-soon": "Cooldown ends in less than an hour",
         "wait-cooldown-pending": "Wait for the {days, plural, one {# day} other {# days}} cooldown period",
         "withdraw": {
-          "heading": "Review stake withdrawal",
+          "heading": "Review withdrawal",
           "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
-        }
+        },
+        "withdraw-token": "Withdraw {symbol} from vault"
       },
       "form": {
         "amount-too-small": "Amount too small",
@@ -310,7 +310,7 @@
       "cancel-modal": {
         "cancelling": "Cancelling...",
         "confirm": "Cancel withdrawal",
-        "description": "If you cancel it, your funds will go back to being staked and will no longer be in the cooldown lock.",
+        "description": "If you cancel it, your funds will remain deposited in the vault and will no longer be in the cooldown lock.",
         "keep": "Keep withdrawal",
         "title": "Cancel withdrawal"
       },
@@ -330,22 +330,22 @@
       "could-not-load-transactions": "We couldn't load your transactions",
       "deposit": "Deposit",
       "drawer": {
-        "deposit-heading": "Stake deposit details",
-        "deposit-subheading": "Review your stake deposit transaction.",
+        "deposit-heading": "Deposit details",
+        "deposit-subheading": "Review your deposit transaction.",
         "step": {
           "approval-needed": "Approval needed",
           "approve-token": "Approve {symbol}",
+          "deposit-token": "Deposit {symbol} into vault",
           "funds-returned": "Funds returned",
           "funds-to-recover": "Funds to recover",
           "get-share-tokens": "Get share tokens",
           "receive-token": "Receive {symbol}",
           "shares-returned": "Shares returned",
           "shares-to-recover": "Shares to recover",
-          "stake-token": "Stake {symbol}",
-          "unstake-token": "Unstake {symbol}"
+          "withdraw-token": "Withdraw {symbol} from vault"
         },
-        "withdraw-heading": "Stake withdrawal details",
-        "withdraw-subheading": "Review your stake withdrawal transaction."
+        "withdraw-heading": "Withdrawal details",
+        "withdraw-subheading": "Review your withdrawal transaction."
       },
       "nothing-here": "Nothing here yet",
       "nothing-here-subtitle": "Your transactions will appear once you get started.",

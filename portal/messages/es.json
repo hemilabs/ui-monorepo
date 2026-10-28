@@ -195,24 +195,24 @@
         "approving": "Aprobando {symbol}",
         "cooldown-ended": "Período de espera completado",
         "deposit": {
-          "heading": "Revisar depósito de stake",
+          "heading": "Revisar depósito",
           "subheading": "Su transacción ha sido enviada y está esperando confirmación en la blockchain."
         },
+        "deposit-token": "Depositar {symbol} en el fondo",
         "funds-returned": "Fondos devueltos",
         "funds-to-recover": "Fondos por recuperar",
         "get-share-tokens": "Recibir share tokens",
         "receive-token": "Recibir {symbol}",
         "shares-returned": "Shares devueltas",
         "shares-to-recover": "Shares por recuperar",
-        "stake-token": "Hacer stake de {symbol}",
-        "unstake-token": "Hacer unstake de {symbol}",
         "wait-cooldown-countdown": "{days, plural, =0 {El período de espera termina en {hours}h} other {El período de espera termina en #d {hours}h}}",
         "wait-cooldown-countdown-soon": "El período de espera termina en menos de una hora",
         "wait-cooldown-pending": "El período de espera es de {days, plural, one {# día} other {# días}}",
         "withdraw": {
-          "heading": "Revisar retiro de stake",
+          "heading": "Revisar retiro",
           "subheading": "Su transacción ha sido enviada y está esperando confirmación en la blockchain."
-        }
+        },
+        "withdraw-token": "Retirar {symbol} del fondo"
       },
       "form": {
         "amount-too-small": "Monto demasiado pequeño",
@@ -310,7 +310,7 @@
       "cancel-modal": {
         "cancelling": "Cancelando...",
         "confirm": "Cancelar retiro",
-        "description": "Si lo cancela, sus fondos volverán a estar en stake y dejarán de estar en el período de espera.",
+        "description": "Si lo cancela, sus fondos permanecerán depositados en el fondo y dejarán de estar en el período de espera.",
         "keep": "Mantener retiro",
         "title": "Cancelar retiro"
       },
@@ -330,22 +330,22 @@
       "could-not-load-transactions": "No pudimos cargar sus transacciones",
       "deposit": "Depósito",
       "drawer": {
-        "deposit-heading": "Detalles del depósito de stake",
-        "deposit-subheading": "Revise su transacción de depósito de stake.",
+        "deposit-heading": "Detalles del depósito",
+        "deposit-subheading": "Revise su transacción de depósito.",
         "step": {
           "approval-needed": "Aprobación necesaria",
           "approve-token": "Aprobar {symbol}",
+          "deposit-token": "Depositar {symbol} en el fondo",
           "funds-returned": "Fondos devueltos",
           "funds-to-recover": "Fondos por recuperar",
           "get-share-tokens": "Recibir share tokens",
           "receive-token": "Recibir {symbol}",
           "shares-returned": "Shares devueltas",
           "shares-to-recover": "Shares por recuperar",
-          "stake-token": "Hacer stake de {symbol}",
-          "unstake-token": "Retirar {symbol}"
+          "withdraw-token": "Retirar {symbol} del fondo"
         },
-        "withdraw-heading": "Detalles del retiro de stake",
-        "withdraw-subheading": "Revise su transacción de retiro de stake."
+        "withdraw-heading": "Detalles del retiro",
+        "withdraw-subheading": "Revise su transacción de retiro."
       },
       "nothing-here": "Aún no hay nada aquí",
       "nothing-here-subtitle": "Sus transacciones aparecerán una vez que comience.",

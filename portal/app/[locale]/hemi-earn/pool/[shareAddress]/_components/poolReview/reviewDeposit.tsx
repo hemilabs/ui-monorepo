@@ -287,7 +287,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         <div className="flex items-center gap-x-2">
           <TokenLogo size="small" token={selectedAsset.token} />
           <span>
-            {t('stake-token', { symbol: selectedAsset.token.symbol })}
+            {t('deposit-token', { symbol: selectedAsset.token.symbol })}
           </span>
         </div>
       ),

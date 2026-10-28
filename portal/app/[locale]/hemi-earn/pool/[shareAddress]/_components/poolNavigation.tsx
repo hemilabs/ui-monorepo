@@ -58,7 +58,7 @@ export const PoolNavigation = function ({ pool }: Props) {
           variant="tertiary"
         >
           <TokenLogo size="xSmall" token={pool.shareToken} version="L1" />
-          {t('navigation.pool-name', { tokenSymbol: pool.shareToken.symbol })}
+          {t('navigation.vault-name', { tokenSymbol: pool.shareToken.symbol })}
           <Chevron.Bottom className="[&>path]:fill-neutral-950" />
         </Button>
         {isDropdownOpen && (
@@ -71,7 +71,7 @@ export const PoolNavigation = function ({ pool }: Props) {
                     onClick={function () {
                       setIsDropdownOpen(false)
                       router.push(
-                        `/hemi-earn/pool/${
+                        `/hemi-earn/vault/${
                           p.shareAddress
                         }${queryStringObjectToString({ networkType })}`,
                       )
@@ -83,7 +83,7 @@ export const PoolNavigation = function ({ pool }: Props) {
                       token={p.shareToken}
                       version="L1"
                     />
-                    {t('navigation.pool-name', {
+                    {t('navigation.vault-name', {
                       tokenSymbol: p.shareToken.symbol,
                     })}
                   </button>

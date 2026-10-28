@@ -163,14 +163,14 @@
     },
     "heading": "Earn on your BTC and stablecoins",
     "info": {
-      "earned-amount": "Your earned amount",
-      "from-pools": "{count, plural, one {From # pool} other {From # pools}}",
-      "staked-balance": "Your staked balance"
+      "estimated-earnings": "Your estimated earnings",
+      "from-vaults": "{count, plural, one {From # vault} other {From # vaults}}",
+      "your-deposits": "Your deposits"
     },
     "navigation": {
       "back": "Back",
       "hemi-earn": "Hemi Earn",
-      "pool-name": "{tokenSymbol} pool"
+      "vault-name": "{tokenSymbol} vault"
     },
     "operator": {
       "banner": "Hemi Earn is operated by Vetro Service & Support Corp. Hemi provides this interface only. <link>View Vetro's Terms</link>",
@@ -195,24 +195,24 @@
         "approving": "Approving {symbol}",
         "cooldown-ended": "Cooldown period complete",
         "deposit": {
-          "heading": "Review stake deposit",
+          "heading": "Review deposit",
           "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
         },
+        "deposit-token": "Deposit {symbol} into vault",
         "funds-returned": "Funds returned",
         "funds-to-recover": "Funds to recover",
         "get-share-tokens": "Get share tokens",
         "receive-token": "Receive {symbol}",
         "shares-returned": "Shares returned",
         "shares-to-recover": "Shares to recover",
-        "stake-token": "Stake {symbol}",
-        "unstake-token": "Unstake {symbol}",
         "wait-cooldown-countdown": "{days, plural, =0 {Cooldown ends in {hours}h} other {Cooldown ends in #d {hours}h}}",
         "wait-cooldown-countdown-soon": "Cooldown ends in less than an hour",
         "wait-cooldown-pending": "Wait for the {days, plural, one {# day} other {# days}} cooldown period",
         "withdraw": {
-          "heading": "Review stake withdrawal",
+          "heading": "Review withdrawal",
           "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
-        }
+        },
+        "withdraw-token": "Withdraw {symbol} from vault"
       },
       "form": {
         "amount-too-small": "Amount too small",
@@ -222,7 +222,7 @@
         "cooldown-warning": "Withdrawing funds takes {days, plural, one {# day} other {# days}} to complete.",
         "cooldown-warning-fallback": "Withdrawing funds takes several days to complete.",
         "ethereum-gas-fee": "Ethereum gas fee",
-        "hemi-fees": "Hemi fees",
+        "hemi-network-fee": "Hemi network fee",
         "network-error": "Preview failed — try again",
         "share-token-available-to-withdraw": "Share token available to withdraw",
         "withdraw-share-tokens-as": "Withdraw share token as",
@@ -237,8 +237,8 @@
         "metric": "Metric",
         "month": "{count, plural, one {# month} other {# months}}",
         "period": "Period",
-        "pool-deposits": "Pool deposits",
-        "title": "Historical metrics"
+        "title": "Historical metrics",
+        "vault-deposits": "Vault deposits"
       },
       "settings": {
         "accept-risk": "I understand and accept the risk",
@@ -257,16 +257,16 @@
         "warning-description-withdrawal": "<highlight>Your slippage is set above {threshold}%.</highlight> This increases your exposure to price impact. You may receive significantly fewer tokens than quoted.",
         "warning-title": "High slippage warning"
       },
-      "total-deposits": "Pool total deposits",
+      "total-deposits": "Vault total deposits",
       "withdraw-successful": "Withdraw successful"
     },
     "pool-info": {
       "apy": "APY",
       "manage": "Manage",
-      "pool-contract": "Pool Contract",
       "share-token": "Share token",
-      "staked-balance": "Your staked balance",
-      "total-deposits": "Total deposits"
+      "total-deposits": "Total deposits",
+      "vault-contract": "Vault contract",
+      "your-deposits": "Your deposits"
     },
     "subheading": "Hemi Earn, operated by Vetro, gives you access to yield vaults right from the Hemi portal. Choose a vault and deposit in a few steps. Yields are variable and not guaranteed.",
     "switch-to-start-earning": "You can switch networks to start earning with Hemi.",
@@ -310,7 +310,7 @@
       "cancel-modal": {
         "cancelling": "Cancelling...",
         "confirm": "Cancel withdrawal",
-        "description": "If you cancel it, your funds will go back to being staked and will no longer be in the cooldown lock.",
+        "description": "If you cancel it, your funds will remain deposited in the vault and will no longer be in the cooldown lock.",
         "keep": "Keep withdrawal",
         "title": "Cancel withdrawal"
       },
@@ -330,22 +330,22 @@
       "could-not-load-transactions": "We couldn't load your transactions",
       "deposit": "Deposit",
       "drawer": {
-        "deposit-heading": "Stake deposit details",
-        "deposit-subheading": "Review your stake deposit transaction.",
+        "deposit-heading": "Deposit details",
+        "deposit-subheading": "Review your deposit transaction.",
         "step": {
           "approval-needed": "Approval needed",
           "approve-token": "Approve {symbol}",
+          "deposit-token": "Deposit {symbol} into vault",
           "funds-returned": "Funds returned",
           "funds-to-recover": "Funds to recover",
           "get-share-tokens": "Get share tokens",
           "receive-token": "Receive {symbol}",
           "shares-returned": "Shares returned",
           "shares-to-recover": "Shares to recover",
-          "stake-token": "Stake {symbol}",
-          "unstake-token": "Unstake {symbol}"
+          "withdraw-token": "Withdraw {symbol} from vault"
         },
-        "withdraw-heading": "Stake withdrawal details",
-        "withdraw-subheading": "Review your stake withdrawal transaction."
+        "withdraw-heading": "Withdrawal details",
+        "withdraw-subheading": "Review your withdrawal transaction."
       },
       "nothing-here": "Nothing here yet",
       "nothing-here-subtitle": "Your transactions will appear once you get started.",

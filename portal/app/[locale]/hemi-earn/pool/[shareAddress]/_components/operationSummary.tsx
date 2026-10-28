@@ -103,7 +103,7 @@ export const OperationSummary = function ({
       <FeeRow
         amount={hemiGasFee}
         isError={isFeesError}
-        label={t('hemi-earn.pool.form.hemi-fees')}
+        label={t('hemi-earn.pool.form.hemi-network-fee')}
         token={nativeToken}
       />
       <FeeRow

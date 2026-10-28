@@ -103,7 +103,7 @@ function buildStakeStep(tx: EarnTransaction, token: EvmToken, t: Translator) {
     description: (
       <div className="flex items-center gap-x-2">
         <TokenLogo size="small" token={token} />
-        <span>{t('step.stake-token', { symbol: token.symbol })}</span>
+        <span>{t('step.deposit-token', { symbol: token.symbol })}</span>
       </div>
     ),
     explorerChainId: hemi.id,

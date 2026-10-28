@@ -35,7 +35,7 @@ export const PoolInfoBar = function ({ pool }: Props) {
       </div>
       <div className="grid grid-cols-2 gap-4 md:flex md:flex-1 md:items-center md:gap-6">
         <div className="md:w-32">
-          <PoolInfoItem label={t('pool-contract')}>
+          <PoolInfoItem label={t('vault-contract')}>
             <span className="body-text-medium text-neutral-950">
               {explorerUrl ? (
                 <ExternalLink
@@ -87,7 +87,7 @@ export const PoolInfoBar = function ({ pool }: Props) {
       </div>
       <div className="flex w-full *:flex-1 md:ml-auto md:w-auto md:*:flex-initial">
         <ButtonLink
-          href={`/hemi-earn/pool/${pool.shareAddress}`}
+          href={`/hemi-earn/vault/${pool.shareAddress}`}
           size="small"
           variant="primary"
         >

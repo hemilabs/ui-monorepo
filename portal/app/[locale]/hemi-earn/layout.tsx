@@ -15,7 +15,7 @@ import { LocalEarnOperationsProvider } from './_context/localEarnOperationsConte
 
 export const HemiEarnLayout = function () {
   const [networkType] = useNetworkType()
-  const pool = useMatch('/:locale/hemi-earn/pool/:shareAddress')
+  const pool = useMatch('/:locale/hemi-earn/vault/:shareAddress')
   const t = useTranslations('hemi-earn')
 
   if (!featureFlags.enableHemiEarnPage) {

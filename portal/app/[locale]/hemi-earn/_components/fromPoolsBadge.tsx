@@ -87,7 +87,7 @@ export const FromPoolsBadge = function () {
       variant="simple"
     >
       <Badge size="small" variant="secondary">
-        {t('from-pools', { count })}
+        {t('from-vaults', { count })}
       </Badge>
     </Tooltip>
   )

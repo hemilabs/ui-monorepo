@@ -116,7 +116,7 @@ const buildUnstakeStep = (
   description: (
     <div className="flex items-center gap-x-2">
       <TokenLogo size="small" token={shareToken} />
-      <span>{t('step.unstake-token', { symbol: shareToken.symbol })}</span>
+      <span>{t('step.withdraw-token', { symbol: shareToken.symbol })}</span>
     </div>
   ),
   explorerChainId: hemi.id,

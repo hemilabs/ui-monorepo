@@ -428,7 +428,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       description: (
         <div className="flex items-center gap-x-2">
           <TokenLogo size="small" token={pool.shareToken} />
-          <span>{t('unstake-token', { symbol: pool.shareToken.symbol })}</span>
+          <span>{t('withdraw-token', { symbol: pool.shareToken.symbol })}</span>
         </div>
       ),
       explorerChainId: chainId,

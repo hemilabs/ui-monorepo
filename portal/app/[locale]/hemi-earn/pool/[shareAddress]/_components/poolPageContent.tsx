@@ -1,4 +1,3 @@
-import { PageLayout } from 'components/pageLayout'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useRouter } from 'i18n/navigation'
 import { useEffect } from 'react'
@@ -6,7 +5,6 @@ import Skeleton from 'react-loading-skeleton'
 import { queryStringObjectToString } from 'utils/url'
 import { type Address } from 'viem'
 
-import { EarnFooter } from '../../../_components/earnFooter'
 import { OperatorBanner } from '../../../_components/operatorDisclosure'
 import { useEarnPools } from '../../../_hooks/useEarnPools'
 import { findPoolByShare } from '../../../_utils/pools'
@@ -43,44 +41,41 @@ export const PoolPageContent = function ({ shareAddress }: Props) {
   )
 
   return (
-    <PageLayout variant="wide">
-      <div className="md:pb-32">
-        {pool ? (
-          <PoolNavigation pool={pool} />
-        ) : (
-          <Skeleton className="h-7 w-48 rounded-md" />
-        )}
-        <div className="mt-6">
-          <OperatorBanner />
-        </div>
-        {pool ? (
-          <PoolFormProvider pool={pool}>
-            <div className="mt-6 flex flex-col gap-3 md:gap-5 lg:flex-row">
-              <div className="order-2 flex flex-col gap-4 md:gap-5 lg:order-1 lg:basis-3/5">
-                <PoolInfoCards pool={pool} />
-                <HistoricalMetrics
-                  peggedToken={pool.peggedToken}
-                  shareToken={pool.shareToken}
-                  stakingVault={pool.stakingVault}
-                />
-                <Composition
-                  chainId={pool.shareToken.chainId}
-                  shareAddress={pool.shareAddress}
-                />
-              </div>
-              <div className="order-1 lg:sticky lg:top-4 lg:order-2 lg:basis-2/5 lg:self-start">
-                <PoolForm />
-              </div>
-            </div>
-          </PoolFormProvider>
-        ) : (
-          <div className="mt-6 flex gap-4">
-            <Skeleton className="h-24 rounded-xl" containerClassName="flex-1" />
-            <Skeleton className="h-24 rounded-xl" containerClassName="flex-1" />
-          </div>
-        )}
+    <>
+      {pool ? (
+        <PoolNavigation pool={pool} />
+      ) : (
+        <Skeleton className="h-7 w-48 rounded-md" />
+      )}
+      <div className="mt-6">
+        <OperatorBanner />
       </div>
-      <EarnFooter />
-    </PageLayout>
+      {pool ? (
+        <PoolFormProvider pool={pool}>
+          <div className="mt-6 flex flex-col gap-3 md:gap-5 lg:flex-row">
+            <div className="order-2 flex flex-col gap-4 md:gap-5 lg:order-1 lg:basis-3/5">
+              <PoolInfoCards pool={pool} />
+              <HistoricalMetrics
+                peggedToken={pool.peggedToken}
+                shareToken={pool.shareToken}
+                stakingVault={pool.stakingVault}
+              />
+              <Composition
+                chainId={pool.shareToken.chainId}
+                shareAddress={pool.shareAddress}
+              />
+            </div>
+            <div className="order-1 lg:sticky lg:top-4 lg:order-2 lg:basis-2/5 lg:self-start">
+              <PoolForm />
+            </div>
+          </div>
+        </PoolFormProvider>
+      ) : (
+        <div className="mt-6 flex gap-4">
+          <Skeleton className="h-24 rounded-xl" containerClassName="flex-1" />
+          <Skeleton className="h-24 rounded-xl" containerClassName="flex-1" />
+        </div>
+      )}
+    </>
   )
 }

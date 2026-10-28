@@ -22,7 +22,7 @@ export const StakedBalance = function () {
       icon={<TotalDepositsIcon />}
       isError={hasError}
       isLoading={isPending}
-      label={t('info.staked-balance')}
+      label={t('info.your-deposits')}
       value={<>${formatFiatNumber(data?.totalUsd ?? 0)}</>}
     />
   )

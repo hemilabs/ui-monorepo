@@ -163,9 +163,9 @@
     },
     "heading": "Earn on your BTC and stablecoins",
     "info": {
-      "earned-amount": "Your earned amount",
+      "estimated-earnings": "Your estimated earnings",
       "from-pools": "{count, plural, one {From # pool} other {From # pools}}",
-      "staked-balance": "Your staked balance"
+      "your-deposits": "Your deposits"
     },
     "navigation": {
       "back": "Back",
@@ -222,7 +222,7 @@
         "cooldown-warning": "Withdrawing funds takes {days, plural, one {# day} other {# days}} to complete.",
         "cooldown-warning-fallback": "Withdrawing funds takes several days to complete.",
         "ethereum-gas-fee": "Ethereum gas fee",
-        "hemi-fees": "Hemi fees",
+        "hemi-network-fee": "Hemi network fee",
         "network-error": "Preview failed — try again",
         "share-token-available-to-withdraw": "Share token available to withdraw",
         "withdraw-share-tokens-as": "Withdraw share token as",
@@ -263,10 +263,10 @@
     "pool-info": {
       "apy": "APY",
       "manage": "Manage",
-      "pool-contract": "Pool Contract",
       "share-token": "Share token",
-      "staked-balance": "Your staked balance",
-      "total-deposits": "Total deposits"
+      "total-deposits": "Total deposits",
+      "vault-contract": "Vault contract",
+      "your-deposits": "Your deposits"
     },
     "subheading": "Hemi Earn, operated by Vetro, gives you access to yield vaults right from the Hemi portal. Choose a vault and deposit in a few steps. Yields are variable and not guaranteed.",
     "switch-to-start-earning": "You can switch networks to start earning with Hemi.",

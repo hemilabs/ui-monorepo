@@ -163,9 +163,9 @@
     },
     "heading": "Obtenga rendimiento con su BTC y sus stablecoins",
     "info": {
-      "earned-amount": "Cantidad ganada",
+      "estimated-earnings": "Sus ganancias estimadas",
       "from-pools": "{count, plural, one {De # fondo} other {De # fondos}}",
-      "staked-balance": "Su saldo invertido"
+      "your-deposits": "Sus depósitos"
     },
     "navigation": {
       "back": "Atrás",
@@ -222,7 +222,7 @@
         "cooldown-warning": "Retirar fondos tarda {days, plural, one {# día} other {# días}} en completarse.",
         "cooldown-warning-fallback": "Retirar fondos tarda algunos días en completarse.",
         "ethereum-gas-fee": "Tarifa de gas de Ethereum",
-        "hemi-fees": "Tarifas de Hemi",
+        "hemi-network-fee": "Tarifa de red de Hemi",
         "network-error": "Error al previsualizar — reintente",
         "share-token-available-to-withdraw": "Token de participación disponible para retirar",
         "withdraw-share-tokens-as": "Retirar token de participación como",
@@ -263,10 +263,10 @@
     "pool-info": {
       "apy": "TEA",
       "manage": "Gestionar",
-      "pool-contract": "Contrato del fondo",
       "share-token": "Token de participación",
-      "staked-balance": "Su saldo invertido",
-      "total-deposits": "Depósitos totales"
+      "total-deposits": "Depósitos totales",
+      "vault-contract": "Contrato del fondo",
+      "your-deposits": "Sus depósitos"
     },
     "subheading": "Hemi Earn, operado por Vetro, le da acceso a fondos de rendimiento directamente desde el portal de Hemi. Elija un fondo y deposite en unos pocos pasos. Los rendimientos son variables y no están garantizados.",
     "switch-to-start-earning": "Puede cambiar de red para comenzar a ganar con Hemi.",

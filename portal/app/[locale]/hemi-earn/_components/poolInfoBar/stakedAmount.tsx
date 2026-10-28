@@ -31,7 +31,7 @@ export const StakedAmount = function ({ pool }: Props) {
 
   if (position) {
     return (
-      <PoolInfoItem label={t('staked-balance')}>
+      <PoolInfoItem label={t('your-deposits')}>
         <span className="body-text-medium inline-flex items-center text-neutral-950">
           <span className="mr-1">$</span>
           <RenderEarnFiatBalance
@@ -44,5 +44,5 @@ export const StakedAmount = function ({ pool }: Props) {
     )
   }
 
-  return <PoolInfoItem isLoading={isPending} label={t('staked-balance')} />
+  return <PoolInfoItem isLoading={isPending} label={t('your-deposits')} />
 }

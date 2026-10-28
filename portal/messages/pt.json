@@ -310,7 +310,7 @@
       "cancel-modal": {
         "cancelling": "Cancelando...",
         "confirm": "Cancelar saque",
-        "description": "Se você cancelar, seus fundos permanecem depositados no fundo e saem do período de espera.",
+        "description": "Se você cancelar, seu depósito permanece no fundo e sai do período de espera.",
         "keep": "Manter saque",
         "title": "Cancelar saque"
       },

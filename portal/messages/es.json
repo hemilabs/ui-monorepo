@@ -310,7 +310,7 @@
       "cancel-modal": {
         "cancelling": "Cancelando...",
         "confirm": "Cancelar retiro",
-        "description": "Si lo cancela, sus fondos permanecerán depositados en el fondo y dejarán de estar en el período de espera.",
+        "description": "Si lo cancela, su depósito permanecerá en el fondo y dejará de estar en el período de espera.",
         "keep": "Mantener retiro",
         "title": "Cancelar retiro"
       },

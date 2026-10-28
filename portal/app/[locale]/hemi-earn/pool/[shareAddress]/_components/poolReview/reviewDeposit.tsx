@@ -19,6 +19,7 @@ import { type Hash, formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
 import { OperatorNote } from '../../../../_components/operatorDisclosure'
+import { RiskWarningBanner } from '../../../../_components/riskWarningBanner'
 import {
   RemoteFailedBanner,
   RemoteFailedCta,
@@ -350,13 +351,21 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     }
   }
 
+  const canRetryDeposit = [
+    DepositStatus.APPROVAL_TX_FAILED,
+    DepositStatus.DEPOSIT_TX_FAILED,
+  ].includes(depositStatus)
+
+  const getAboveCallToAction = () => (
+    <>
+      {canRetryDeposit && <RiskWarningBanner />}
+      <SettleBanner transaction={settledRow} />
+      <RemoteFailedBanner transaction={settledRow} />
+    </>
+  )
+
   const getCallToAction = function () {
-    if (
-      [
-        DepositStatus.APPROVAL_TX_FAILED,
-        DepositStatus.DEPOSIT_TX_FAILED,
-      ].includes(depositStatus)
-    ) {
+    if (canRetryDeposit) {
       return <RetryDeposit />
     }
     if (settledRow && isRemoteFailed(settledRow)) {
@@ -403,12 +412,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
 
   return (
     <Operation
-      aboveCallToAction={
-        <>
-          <SettleBanner transaction={settledRow} />
-          <RemoteFailedBanner transaction={settledRow} />
-        </>
-      }
+      aboveCallToAction={getAboveCallToAction()}
       amount={depositOperation?.amountIn ?? amount.toString()}
       belowSubheading={<OperatorNote />}
       callToAction={getCallToAction()}

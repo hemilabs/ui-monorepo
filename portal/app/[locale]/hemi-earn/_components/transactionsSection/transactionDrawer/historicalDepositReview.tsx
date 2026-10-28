@@ -22,6 +22,7 @@ import {
   resolveStepExplorerChainId,
 } from '../../../_utils/settleUi'
 import {
+  canRetryRow,
   isLocalEarnTransactionRow,
   isRecoverPath,
   isRemoteFailed,
@@ -34,6 +35,7 @@ import {
   type EarnTransactionStatusType,
 } from '../../../types'
 import { OperatorNote } from '../../operatorDisclosure'
+import { RiskWarningBanner } from '../../riskWarningBanner'
 
 import { RemoteFailedBanner } from './remoteFailed'
 import { SettleBanner } from './settleShared'
@@ -261,6 +263,7 @@ export const HistoricalDepositReview = function ({
     <Operation
       aboveCallToAction={
         <>
+          {canRetryRow(transaction) && <RiskWarningBanner />}
           <SettleBanner transaction={transaction} />
           <RemoteFailedBanner transaction={transaction} />
         </>

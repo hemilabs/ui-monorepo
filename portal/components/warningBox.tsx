@@ -20,7 +20,7 @@ export const WarningBox = function ({
 }: Props) {
   const close = !!onClose && (
     <CloseIcon
-      className="h-5 w-5 shrink-0 cursor-pointer [&>path]:hover:stroke-neutral-950"
+      className="size-5 shrink-0 cursor-pointer [&>path]:hover:stroke-neutral-950"
       onClick={onClose}
     />
   )

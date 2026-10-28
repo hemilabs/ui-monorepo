@@ -80,9 +80,7 @@ export const HistoricalMetrics = function ({
         </div>
         <div className="mt-3 flex items-center justify-between">
           <div className="flex shrink-0 items-center gap-x-1.5">
-            <h2 className="text-2xl font-semibold leading-8 -tracking-[0.48px] text-neutral-950">
-              {renderHeadline()}
-            </h2>
+            <h2 className="text-neutral-950">{renderHeadline()}</h2>
             {metricType === 'apy' && <RiskWarningTooltip />}
           </div>
           <div className="flex items-center gap-3">

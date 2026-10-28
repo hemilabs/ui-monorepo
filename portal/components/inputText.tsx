@@ -122,9 +122,7 @@ export const SearchInput = function ({
       </div>
       <input
         {...props}
-        className={`${inputTextStyles} ${sizeClass.typography} ${
-          sizeClass.padding
-        } ${sizeClass.placeholder} ${sharedInputStyles} ${sizeClass.iconLeftPadding} ${showCloseIcon ? 'pr-8' : ''}`}
+        className={`${inputTextStyles} ${sizeClass.typography} ${sizeClass.padding} ${sizeClass.placeholder} ${sharedInputStyles} ${sizeClass.iconLeftPadding} ${showCloseIcon ? 'pr-8' : ''}`}
         disabled={props.disabled}
         type="text"
       />

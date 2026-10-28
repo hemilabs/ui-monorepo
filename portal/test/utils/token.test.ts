@@ -1,4 +1,6 @@
+import { getNativeToken } from 'utils/nativeToken'
 import {
+  getTokenByAddress,
   getTokenBySymbol,
   getTokenPrice,
   isStakeToken,
@@ -6,10 +8,8 @@ import {
   isEvmToken,
   tunnelsThroughPartners,
   parseTokenUnits,
-  isCustomToken,
-  isListedToken,
 } from 'utils/token'
-import { maxUint256, parseUnits as viemParseUnits } from 'viem'
+import { maxUint256, parseUnits as viemParseUnits, zeroAddress } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('utils/chainClients', () => ({
@@ -25,6 +25,44 @@ const baseToken = {
 }
 
 describe('utils/token', function () {
+  describe('getTokenByAddress', function () {
+    it('should return the listed token with that address on the chain', function () {
+      expect(
+        getTokenByAddress('0x1596bE338B999E2376675C908168A7548C8B0525', 43111),
+      ).toMatchObject({
+        address: '0x1596bE338B999E2376675C908168A7548C8B0525',
+        chainId: 43111,
+      })
+    })
+
+    it('should match a listed token regardless of the address casing', function () {
+      expect(
+        getTokenByAddress('0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf', 1),
+      ).toMatchObject({
+        address: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+        chainId: 1,
+      })
+    })
+
+    it('should return undefined for a listed address on another chain', function () {
+      expect(
+        getTokenByAddress('0x1596bE338B999E2376675C908168A7548C8B0525', 1),
+      ).toBeUndefined()
+    })
+
+    it('should return undefined for an address that is not listed', function () {
+      expect(
+        getTokenByAddress('0x0000000000000000000000000000000000000001', 1),
+      ).toBeUndefined()
+    })
+
+    it('should return the native token for the native address', function () {
+      expect(getTokenByAddress(zeroAddress, 43111)).toEqual(
+        getNativeToken(43111),
+      )
+    })
+  })
+
   describe('getTokenBySymbol', function () {
     it('should return the listed token with that symbol on the chain', function () {
       expect(getTokenBySymbol('HEMI', 43111)).toMatchObject({
@@ -62,73 +100,6 @@ describe('utils/token', function () {
       }
       const prices = { USDT: '0.99' }
       expect(getTokenPrice(token, prices)).toBe('0.99')
-    })
-  })
-
-  describe('isListedToken', function () {
-    it('should return true for a listed token', function () {
-      expect(
-        isListedToken({
-          ...baseToken,
-          address: '0x1596bE338B999E2376675C908168A7548C8B0525',
-          chainId: 43111,
-        }),
-      ).toBe(true)
-    })
-
-    it('should match a listed token regardless of the address casing', function () {
-      expect(
-        isListedToken({
-          ...baseToken,
-          address: '0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf',
-          chainId: 1,
-        }),
-      ).toBe(true)
-    })
-
-    it('should return false for a listed address on another chain', function () {
-      expect(
-        isListedToken({
-          ...baseToken,
-          address: '0x1596bE338B999E2376675C908168A7548C8B0525',
-          chainId: 1,
-        }),
-      ).toBe(false)
-    })
-
-    it('should return false for a token that is not listed', function () {
-      expect(
-        isListedToken({
-          ...baseToken,
-          address: '0x0000000000000000000000000000000000000001',
-        }),
-      ).toBe(false)
-    })
-  })
-
-  describe('isCustomToken', function () {
-    it('should return true if token exists in the user token list', function () {
-      const userTokenList = [baseToken]
-      const token = { ...baseToken }
-      expect(isCustomToken(userTokenList, token)).toBe(true)
-    })
-
-    it('should return false if token is not in the user token list', function () {
-      const userTokenList = []
-      const token = { ...baseToken }
-      expect(isCustomToken(userTokenList, token)).toBe(false)
-    })
-
-    it('should return false if chainId differs even with same address', function () {
-      const userTokenList = [{ ...baseToken, chainId: 10 }]
-      const token = { ...baseToken }
-      expect(isCustomToken(userTokenList, token)).toBe(false)
-    })
-
-    it('should return false if address differs even with same chainId', function () {
-      const userTokenList = [{ ...baseToken, address: '0xnot123' }]
-      const token = { ...baseToken }
-      expect(isCustomToken(userTokenList, token)).toBe(false)
     })
   })
 

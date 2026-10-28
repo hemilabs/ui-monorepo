@@ -31,13 +31,11 @@ const wagmiConfig = createConfig({
 
 const meta = {
   args: {
-    chainId: hemiMainnet.id,
     disabled: false,
     selectedToken: hemiToken,
     tokens: hemiTokens,
   },
   argTypes: {
-    chainId: { control: false },
     disabled: { control: 'boolean' },
     onSelectToken: { control: false },
     selectedToken: { control: false },

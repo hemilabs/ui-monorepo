@@ -1,7 +1,7 @@
 import pMemoize from 'promise-mem'
 import { tokenList } from 'tokenList'
 import { stakeProtocols, type StakeProtocols, StakeToken } from 'types/stake'
-import { EvmToken, L2Token, Token } from 'types/token'
+import { EvmToken, Token } from 'types/token'
 import { minBigInt } from 'utils/bigint'
 import { getPublicClient } from 'utils/chainClients'
 import {
@@ -13,7 +13,6 @@ import {
   checksumAddress as toChecksum,
   parseUnits as viemParseUnits,
 } from 'viem'
-import { readContract } from 'viem/actions'
 import {
   decimals as getDecimals,
   name as getName,
@@ -21,7 +20,6 @@ import {
 } from 'viem-erc20/actions'
 
 import { getNativeToken, isNativeAddress } from './nativeToken'
-import { opErc20Abi } from './opErc20Abi'
 
 export const getTokenByAddress = function (
   address: Token['address'],
@@ -46,14 +44,6 @@ export const getTokenBySymbol = (
   tokenList.tokens.find(
     token => token.chainId === chainId && token.symbol === symbol,
   )
-
-export const isCustomToken = (userTokenList: Token[], token: Token) =>
-  userTokenList.some(
-    t => t.address === token.address && t.chainId === token.chainId,
-  )
-
-export const isListedToken = (token: Token) =>
-  getTokenByAddress(token.address, token.chainId) !== undefined
 
 export const isEvmToken = (token: Token): token is EvmToken =>
   typeof token.chainId === 'number'
@@ -108,27 +98,6 @@ export const getErc20Token = pMemoize(
         }) satisfies Token,
     )
   },
-  { resolver: ({ address, chainId }) => `${address}-${chainId}` },
-)
-
-export const getL2Erc20Token = pMemoize(
-  async ({ address, chainId }: { address: Address; chainId: Chain['id'] }) =>
-    Promise.all([
-      getErc20Token({ address, chainId }),
-      readContract(getPublicClient(chainId), {
-        abi: opErc20Abi,
-        address,
-        functionName: 'l1Token',
-        // The token may not have an l1 counter part
-      }).catch(() => undefined),
-    ]).then(
-      ([token, l1Token]) =>
-        ({
-          ...token,
-          address,
-          l1Token: l1Token ? toChecksum(l1Token, chainId) : undefined,
-        }) satisfies L2Token,
-    ),
   { resolver: ({ address, chainId }) => `${address}-${chainId}` },
 )
 

@@ -666,30 +666,12 @@
     },
     "wallet-balance": "Saldo da carteira"
   },
-  "token-custom-drawer": {
-    "add-contract-to-preview": "Adicione um endereço de contrato para visualizar o token...",
-    "add-this-pair": "Adicionar este par à lista de tokens da Hemi para todos tunelarem",
-    "add-token": "Adicionar token",
-    "add-token-on-chain": "Adicionar o endereço do contrato do token na rede {network}",
-    "address-does-not-match-l2": "Não corresponde ao par L1",
-    "heading": "Tunelar um token ERC-20 existente",
-    "i-am-sure-to-tunnel": "Tenho a certeza de que quero tunelar com este token.",
-    "l1-address-not-configured": "Endereço L1 não configurado no contrato",
-    "layer-token-address": "Endereço do token da Camada {layer}",
-    "make-a-request-to-add": "Se deseja adicionar este par de tokens ERC-20 à lista de tokens aprovados da Hemi, <link>faça um pedido</link>.",
-    "see-on-explorer": "Ver no {explorer}",
-    "subheading": "Precisa de inserir o par de endereços de contrato de Ethereum e Hemi para tunelar com este token.",
-    "this-address-is-not-valid": "Este endereço não é válido",
-    "this-address-is-valid": "Este endereço é válido"
-  },
   "token-selector": {
     "all-tokens": "Todos os tokens",
-    "manually-added-tokens": "Tokens adicionados manualmente",
     "no-results-for": "Nenhum resultado encontrado para <search></search>",
     "search-results": "Resultados da busca",
     "search-tokens": "Pesquisar por nome ou endereço do token...",
     "select-token": "Selecionar token",
-    "validating-token-address": "A validar endereço do token...",
     "your-tokens": "Seus tokens"
   },
   "transaction-history": {

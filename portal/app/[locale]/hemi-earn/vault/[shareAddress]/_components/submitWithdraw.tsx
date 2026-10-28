@@ -37,7 +37,7 @@ export const SubmitWithdraw = function ({
       return t('common.approving')
     }
     if (operationRunning === 'withdrawing') {
-      return t('hemi-earn.pool.form.withdrawing')
+      return t('hemi-earn.vault.form.withdrawing')
     }
     if (validationError) {
       return validationError

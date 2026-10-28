@@ -9,7 +9,7 @@ import { type CompositionItem } from '../../_hooks/useComposition'
 export type CompositionItemWithColor = CompositionItem & { color: string }
 
 export const useGetCompositionColumns = function () {
-  const t = useTranslations('hemi-earn.pool.composition')
+  const t = useTranslations('hemi-earn.vault.composition')
 
   return useMemo(
     () =>

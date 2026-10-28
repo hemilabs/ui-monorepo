@@ -250,7 +250,7 @@ export const Withdraw = function ({
     })
   const effectiveValidationError = resolveValidationError({
     previewIssueMessage: previewIssue
-      ? t(`hemi-earn.pool.form.${previewIssue}`)
+      ? t(`hemi-earn.vault.form.${previewIssue}`)
       : undefined,
     validationError,
     zeroBalanceError,
@@ -289,7 +289,7 @@ export const Withdraw = function ({
             stakingVault={vault.stakingVault}
             topRow={{
               amount: assetOutRaw,
-              label: t('hemi-earn.pool.form.you-will-receive'),
+              label: t('hemi-earn.vault.form.you-will-receive'),
               token: selectedAsset.token,
             }}
             totalFees={totalFees}
@@ -314,7 +314,7 @@ export const Withdraw = function ({
                 operation="withdraw"
               />
             }
-            label={t('hemi-earn.pool.form.share-token-available-to-withdraw')}
+            label={t('hemi-earn.vault.form.share-token-available-to-withdraw')}
             maxBalanceButton={
               <WithdrawMaxBalance
                 disabled={isRunningOperation}
@@ -328,11 +328,11 @@ export const Withdraw = function ({
           />
           <TokenInput
             balanceComponent={WithdrawAvailableBalance}
-            balanceLabel={t('hemi-earn.pool.form.available')}
+            balanceLabel={t('hemi-earn.vault.form.available')}
             disabled={isRunningOperation}
             errorKey={assetErrorKey}
             fiatBalanceComponent={RenderEarnFiatBalance}
-            label={t('hemi-earn.pool.form.withdraw-share-tokens-as')}
+            label={t('hemi-earn.vault.form.withdraw-share-tokens-as')}
             onChange={updateAssetInput}
             token={selectedAsset.token}
             tokenSelector={

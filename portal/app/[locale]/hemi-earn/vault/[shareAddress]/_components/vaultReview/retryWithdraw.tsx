@@ -107,7 +107,7 @@ export const RetryWithdraw = function () {
           <Button disabled={isWithdrawing || !canRetry} size="small">
             {t(
               isWithdrawing
-                ? 'hemi-earn.pool.form.withdrawing'
+                ? 'hemi-earn.vault.form.withdrawing'
                 : 'common.try-again',
             )}
           </Button>

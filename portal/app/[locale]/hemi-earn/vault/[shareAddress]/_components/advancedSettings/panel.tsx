@@ -45,7 +45,7 @@ export const SettingsPanel = function ({
   onEnter,
   operation,
 }: Props) {
-  const t = useTranslations('hemi-earn.pool.settings')
+  const t = useTranslations('hemi-earn.vault.settings')
 
   const handleKeyDown = function (event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === 'Enter') {

@@ -25,8 +25,8 @@ export const CooldownWarning = function ({ stakingVault }: Props) {
       ) : (
         <p>
           {days !== undefined
-            ? t('hemi-earn.pool.form.cooldown-warning', { days })
-            : t('hemi-earn.pool.form.cooldown-warning-fallback')}
+            ? t('hemi-earn.vault.form.cooldown-warning', { days })
+            : t('hemi-earn.vault.form.cooldown-warning-fallback')}
         </p>
       )}
     </div>

@@ -32,7 +32,7 @@ type Props = {
 }
 
 export const Composition = function ({ chainId, shareAddress }: Props) {
-  const t = useTranslations('hemi-earn.pool.composition')
+  const t = useTranslations('hemi-earn.vault.composition')
   const [viewMode, setViewMode] = useState<CompositionViewMode>('token')
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 

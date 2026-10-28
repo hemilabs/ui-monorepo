@@ -22,7 +22,7 @@ export const VaultInfoCards = function ({ vault }: Props) {
           icon={<TotalDepositsIcon />}
           isError={false}
           isLoading={false}
-          label={t('pool.total-deposits')}
+          label={t('vault.total-deposits')}
           value={
             <RenderEarnFiatBalance
               balance={vault.totalDeposits}
@@ -40,7 +40,7 @@ export const VaultInfoCards = function ({ vault }: Props) {
           isLoading={vault.apy === undefined}
           label={
             <div className="flex items-center gap-x-1">
-              {t('pool.apy')}
+              {t('vault.apy')}
               <RiskWarningTooltip />
             </div>
           }

@@ -103,19 +103,19 @@ export const OperationSummary = function ({
       <FeeRow
         amount={hemiGasFee}
         isError={isFeesError}
-        label={t('hemi-earn.pool.form.hemi-network-fee')}
+        label={t('hemi-earn.vault.form.hemi-network-fee')}
         token={nativeToken}
       />
       <FeeRow
         amount={bridgingFee}
         isError={isFeesError}
-        label={t('hemi-earn.pool.form.bridging-fees')}
+        label={t('hemi-earn.vault.form.bridging-fees')}
         token={nativeToken}
       />
       <FeeRow
         amount={ethereumFee}
         isError={isFeesError}
-        label={t('hemi-earn.pool.form.ethereum-gas-fee')}
+        label={t('hemi-earn.vault.form.ethereum-gas-fee')}
         token={nativeToken}
       />
       <FeeRow

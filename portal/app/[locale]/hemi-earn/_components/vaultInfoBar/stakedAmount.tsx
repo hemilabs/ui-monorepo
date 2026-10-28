@@ -13,7 +13,7 @@ type Props = {
 }
 
 export const StakedAmount = function ({ vault }: Props) {
-  const t = useTranslations('hemi-earn.pool-info')
+  const t = useTranslations('hemi-earn.vault-info')
   const { data: positions, isPending } = useEarnPositions()
 
   const position = positions.find(

@@ -44,7 +44,7 @@ export const SettingsTrigger = function ({
   ref,
   slippage,
 }: Props) {
-  const t = useTranslations('hemi-earn.pool.settings')
+  const t = useTranslations('hemi-earn.vault.settings')
 
   return (
     <div className="flex shrink-0 items-center gap-x-2">

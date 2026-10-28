@@ -20,7 +20,7 @@ export type CooldownInputs = {
   cooldownRemainingSec: number | undefined
   isCooldownEligible: boolean | undefined
   subgraphStatus: string | undefined
-  t: ReturnType<typeof useTranslations<'hemi-earn.pool.drawer'>>
+  t: ReturnType<typeof useTranslations<'hemi-earn.vault.drawer'>>
   unstakeMined: boolean
 }
 

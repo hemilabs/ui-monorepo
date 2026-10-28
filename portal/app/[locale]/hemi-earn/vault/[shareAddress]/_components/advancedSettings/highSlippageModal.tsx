@@ -43,7 +43,7 @@ export const HighSlippageModal = function ({
     },
     [returnFocusTo],
   )
-  const t = useTranslations('hemi-earn.pool.settings')
+  const t = useTranslations('hemi-earn.vault.settings')
   const tCommon = useTranslations('common')
 
   const isVeryHigh = getSlippageLevel(slippage) === 'veryHigh'

@@ -126,7 +126,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     useVaultForm()
   const slippageBps = useSlippageBps('deposit')
   const { localOperations } = useLocalEarnOperations()
-  const t = useTranslations('hemi-earn.pool.drawer')
+  const t = useTranslations('hemi-earn.vault.drawer')
   const chainId = selectedAsset.token.chainId
   const chain = useChain(chainId)
   const { address } = useAccount()

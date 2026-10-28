@@ -22,7 +22,7 @@ type Props = {
 }
 
 export const VaultInfoBar = function ({ vault }: Props) {
-  const t = useTranslations('hemi-earn.pool-info')
+  const t = useTranslations('hemi-earn.vault-info')
   const locale = useLocale()
   const chain = useChain(vault.shareToken.chainId)
 

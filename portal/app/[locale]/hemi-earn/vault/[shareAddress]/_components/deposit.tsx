@@ -175,7 +175,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   })
   const effectiveValidationError = resolveValidationError({
     previewIssueMessage: previewIssue
-      ? t(`hemi-earn.pool.form.${previewIssue}`)
+      ? t(`hemi-earn.vault.form.${previewIssue}`)
       : undefined,
     validationError,
     zeroBalanceError,
@@ -209,7 +209,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
             stakingVault={vault.stakingVault}
             topRow={{
               amount: shares,
-              label: t('hemi-earn.pool.form.you-will-receive'),
+              label: t('hemi-earn.vault.form.you-will-receive'),
               token: vault.shareToken,
             }}
             totalFees={totalFees}

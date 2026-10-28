@@ -60,7 +60,7 @@ export const useComposition = function ({
   viewMode,
 }: UseComposition) {
   const queryClient = useQueryClient()
-  const t = useTranslations('hemi-earn.pool.composition')
+  const t = useTranslations('hemi-earn.vault.composition')
 
   return useQuery({
     ...compositionQueryOptions({

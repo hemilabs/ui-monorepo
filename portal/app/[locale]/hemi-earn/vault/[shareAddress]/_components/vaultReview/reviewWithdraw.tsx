@@ -148,7 +148,7 @@ function buildReceiveStep({
   isCooldownEligible: boolean | undefined
   receiveToken: EvmToken
   row: EarnTransaction | undefined
-  t: ReturnType<typeof useTranslations<'hemi-earn.pool.drawer'>>
+  t: ReturnType<typeof useTranslations<'hemi-earn.vault.drawer'>>
   withdrawStatus: WithdrawStatusType
 }): StepPropsWithoutPosition {
   // Only FINALIZED delivers the asset; RECOVERED returns shares (rendered by addRecoverStep).
@@ -245,7 +245,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   const { approveExtraAmount, input, vault, selectedAsset, withdrawOperation } =
     useVaultForm()
   const slippageBps = useSlippageBps('withdraw')
-  const t = useTranslations('hemi-earn.pool.drawer')
+  const t = useTranslations('hemi-earn.vault.drawer')
   const chainId = selectedAsset.token.chainId
   const chain = useChain(chainId)
   const { address } = useAccount()

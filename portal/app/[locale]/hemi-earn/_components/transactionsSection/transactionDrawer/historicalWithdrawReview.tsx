@@ -313,7 +313,7 @@ export const HistoricalWithdrawReview = function ({
 }: Props) {
   const t = useTranslations('hemi-earn.transactions.drawer')
   // Cooldown copy is shared with the live vault review — reuse the vault.drawer namespace instead of duplicating keys.
-  const tCooldown = useTranslations('hemi-earn.pool.drawer')
+  const tCooldown = useTranslations('hemi-earn.vault.drawer')
   const { address } = useAccount()
 
   // useToken returns Token | undefined; for the Hemi-side asset it's always an EvmToken.

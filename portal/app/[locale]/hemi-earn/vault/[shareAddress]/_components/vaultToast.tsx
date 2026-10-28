@@ -16,7 +16,7 @@ export const VaultToast = function ({
   transactionHash,
 }: Props) {
   const chain = useChain(chainId)
-  const t = useTranslations('hemi-earn.pool')
+  const t = useTranslations('hemi-earn.vault')
   return (
     <Toast
       description={t('here-is-your-tx')}

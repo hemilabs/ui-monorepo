@@ -28,7 +28,7 @@ export const HistoricalMetrics = function ({
   shareToken,
   stakingVault,
 }: Props) {
-  const t = useTranslations('hemi-earn.pool.historical-metrics')
+  const t = useTranslations('hemi-earn.vault.historical-metrics')
   const [period, setPeriod] = useState<MetricPeriod>('1w')
   const [metricType, setMetricType] = useState<MetricType>('deposits')
 

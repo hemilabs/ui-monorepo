@@ -164,13 +164,13 @@
     "heading": "Earn on your BTC and stablecoins",
     "info": {
       "estimated-earnings": "Your estimated earnings",
-      "from-pools": "{count, plural, one {From # pool} other {From # pools}}",
+      "from-vaults": "{count, plural, one {From # vault} other {From # vaults}}",
       "your-deposits": "Your deposits"
     },
     "navigation": {
       "back": "Back",
       "hemi-earn": "Hemi Earn",
-      "pool-name": "{tokenSymbol} pool"
+      "vault-name": "{tokenSymbol} vault"
     },
     "operator": {
       "banner": "Hemi Earn is operated by Vetro Service & Support Corp. Hemi provides this interface only. <link>View Vetro's Terms</link>",
@@ -237,8 +237,8 @@
         "metric": "Metric",
         "month": "{count, plural, one {# month} other {# months}}",
         "period": "Period",
-        "pool-deposits": "Pool deposits",
-        "title": "Historical metrics"
+        "title": "Historical metrics",
+        "vault-deposits": "Vault deposits"
       },
       "settings": {
         "accept-risk": "I understand and accept the risk",
@@ -257,7 +257,7 @@
         "warning-description-withdrawal": "<highlight>Your slippage is set above {threshold}%.</highlight> This increases your exposure to price impact. You may receive significantly fewer tokens than quoted.",
         "warning-title": "High slippage warning"
       },
-      "total-deposits": "Pool total deposits",
+      "total-deposits": "Vault total deposits",
       "withdraw-successful": "Withdraw successful"
     },
     "pool-info": {

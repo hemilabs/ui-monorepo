@@ -87,7 +87,7 @@ export const PoolInfoBar = function ({ pool }: Props) {
       </div>
       <div className="flex w-full *:flex-1 md:ml-auto md:w-auto md:*:flex-initial">
         <ButtonLink
-          href={`/hemi-earn/pool/${pool.shareAddress}`}
+          href={`/hemi-earn/vault/${pool.shareAddress}`}
           size="small"
           variant="primary"
         >

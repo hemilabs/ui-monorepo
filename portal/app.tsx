@@ -134,7 +134,7 @@ export const App = () => (
             </Route>
             <Route element={<HemiEarnLayout />} path="hemi-earn">
               <Route element={<HemiEarnPage />} index />
-              <Route element={<PoolPage />} path="pool/:shareAddress" />
+              <Route element={<PoolPage />} path="vault/:shareAddress" />
             </Route>
             <Route element={<StakeLayout />} path="stake">
               <Route element={<StakePage />} index />

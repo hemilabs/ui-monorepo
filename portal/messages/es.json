@@ -164,13 +164,13 @@
     "heading": "Obtenga rendimiento con su BTC y sus stablecoins",
     "info": {
       "estimated-earnings": "Sus ganancias estimadas",
-      "from-pools": "{count, plural, one {De # fondo} other {De # fondos}}",
+      "from-vaults": "{count, plural, one {De # fondo} other {De # fondos}}",
       "your-deposits": "Sus depósitos"
     },
     "navigation": {
       "back": "Atrás",
       "hemi-earn": "Hemi Earn",
-      "pool-name": "fondo {tokenSymbol}"
+      "vault-name": "fondo {tokenSymbol}"
     },
     "operator": {
       "banner": "Hemi Earn es operado por Vetro Service & Support Corp. Hemi solo proporciona esta interfaz. <link>Ver los Términos de Vetro</link>",
@@ -237,8 +237,8 @@
         "metric": "Métrica",
         "month": "{count, plural, one {# mes} other {# meses}}",
         "period": "Período",
-        "pool-deposits": "Depósitos del fondo",
-        "title": "Métricas históricas"
+        "title": "Métricas históricas",
+        "vault-deposits": "Depósitos del fondo"
       },
       "settings": {
         "accept-risk": "Entiendo y acepto el riesgo",

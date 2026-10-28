@@ -46,7 +46,7 @@ export const HistoricalMetrics = function ({
     { label: t('1-year'), value: '1y' },
   ]
   const metricTypeOptions: SegmentedControlOption<MetricType>[] = [
-    { label: t('pool-deposits'), value: 'deposits' },
+    { label: t('vault-deposits'), value: 'deposits' },
     { label: t('apy'), value: 'apy' },
   ]
 

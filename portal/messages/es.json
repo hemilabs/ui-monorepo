@@ -420,6 +420,11 @@
       "heading": "Reclamar recompensas",
       "subheading": "Estamos procesando su solicitud de recompensas. Puede seguir el progreso a continuación."
     },
+    "claim-rewards-failed": {
+      "description": "No se pudieron reclamar todas sus recompensas. Abra los detalles para intentarlo de nuevo.",
+      "title": "Error al reclamar recompensas",
+      "view-details": "Ver detalles"
+    },
     "claim-rewards-successful": "Recompensas reclamadas con éxito",
     "drawer": {
       "approving": "Aprobando {symbol}",
@@ -550,6 +555,7 @@
       "burned": "Quemado",
       "claim": "Reclamar",
       "claim-all-rewards": "Reclamar todas las recompensas",
+      "claiming": "Reclamando...",
       "claiming-paused": "El reclamo de recompensas está pausado",
       "could-not-load-positions": "No pudimos cargar sus posiciones",
       "get-started": "Comience haciendo staking de sus ${symbol}",

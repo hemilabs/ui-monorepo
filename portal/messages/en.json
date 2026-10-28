@@ -420,6 +420,11 @@
       "heading": "Claim rewards",
       "subheading": "We’re processing your reward claim. You can follow the progress below."
     },
+    "claim-rewards-failed": {
+      "description": "Not all of your rewards could be claimed. Open the details to try again.",
+      "title": "Claim rewards failed",
+      "view-details": "View details"
+    },
     "claim-rewards-successful": "Claim rewards successful",
     "drawer": {
       "approving": "Approving {symbol}",
@@ -550,6 +555,7 @@
       "burned": "Burned",
       "claim": "Claim",
       "claim-all-rewards": "Claim all rewards",
+      "claiming": "Claiming...",
       "claiming-paused": "Rewards claiming is paused",
       "could-not-load-positions": "We couldn't load your positions",
       "get-started": "Get started by staking your ${symbol}",

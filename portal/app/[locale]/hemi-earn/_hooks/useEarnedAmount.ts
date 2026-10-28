@@ -7,7 +7,7 @@ import { positionEarnedUsd } from '../_utils/earnedAmount'
 import { inTransitOnlyPositions } from '../_utils/earnRows'
 
 import { useEarnCostBasis } from './useEarnCostBasis'
-import { useEarnPools } from './useEarnPools'
+import { useEarnPools } from './useEarnVaults'
 import { useEarnPositions } from './useEarnPositions'
 import { useEarnTokenPrices } from './useEarnTokenPrices'
 import { useInTransitShares } from './useInTransitShares'

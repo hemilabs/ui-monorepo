@@ -16,7 +16,7 @@ const PoolsListSkeleton = () => (
 
 const PoolsSection = lazyWithFallback(
   () =>
-    import('./_components/poolsSection').then(mod => ({
+    import('./_components/vaultsSection').then(mod => ({
       default: mod.PoolsSection,
     })),
   <PoolsListSkeleton />,

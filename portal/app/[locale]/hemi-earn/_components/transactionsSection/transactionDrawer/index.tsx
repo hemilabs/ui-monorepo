@@ -2,10 +2,10 @@ import { Drawer } from 'components/drawer'
 import { Suspense, useEffect } from 'react'
 import { isAddressEqual, isHash } from 'viem'
 
-import { useEarnPools } from '../../../_hooks/useEarnPools'
+import { useEarnPools } from '../../../_hooks/useEarnVaults'
 import { useEarnTransactions } from '../../../_hooks/useEarnTransactions'
 import { hashesMatch } from '../../../_utils/hashes'
-import { findPoolByAsset } from '../../../_utils/pools'
+import { findPoolByAsset } from '../../../_utils/vaults'
 import {
   canRetryRow,
   isAwaitingFinalize,

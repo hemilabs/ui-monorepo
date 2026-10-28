@@ -9,7 +9,7 @@ import { useState } from 'react'
 import { useTranslations } from 'use-intl'
 import { queryStringObjectToString } from 'utils/url'
 
-import { useEarnPools } from '../../../_hooks/useEarnPools'
+import { useEarnPools } from '../../../_hooks/useEarnVaults'
 import { type EarnPool } from '../../../types'
 
 type Props = {

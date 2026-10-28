@@ -1,6 +1,6 @@
 import { Drawer } from 'components/drawer'
 
-import { usePoolForm } from '../../_context/poolFormContext'
+import { usePoolForm } from '../../_context/vaultFormContext'
 import { useDrawerQueryString } from '../../_hooks/useDrawerQueryString'
 
 import { ReviewDeposit } from './reviewDeposit'

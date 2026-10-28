@@ -1,6 +1,6 @@
 import { sumInTransitSharesByShare } from '../_utils/earnRows'
 
-import { useEarnPools } from './useEarnPools'
+import { useEarnPools } from './useEarnVaults'
 import { useEarnTransactions } from './useEarnTransactions'
 
 export const useInTransitShares = function () {

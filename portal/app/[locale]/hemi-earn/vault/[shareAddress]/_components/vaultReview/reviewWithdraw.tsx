@@ -61,7 +61,7 @@ import {
   needsRecover,
 } from '../../../../_utils/transactionPredicates'
 import { type EarnSettlement, type EarnTransaction } from '../../../../types'
-import { usePoolForm } from '../../_context/poolFormContext'
+import { usePoolForm } from '../../_context/vaultFormContext'
 import { useEarnCooldownRemaining } from '../../_hooks/useEarnCooldownRemaining'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
 import { useSharesToAssets } from '../../_hooks/useSharesToAssets'

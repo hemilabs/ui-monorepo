@@ -6,15 +6,15 @@ import { queryStringObjectToString } from 'utils/url'
 import { type Address } from 'viem'
 
 import { OperatorBanner } from '../../../_components/operatorDisclosure'
-import { useEarnPools } from '../../../_hooks/useEarnPools'
-import { findPoolByShare } from '../../../_utils/pools'
-import { PoolFormProvider } from '../_context/poolFormContext'
+import { useEarnPools } from '../../../_hooks/useEarnVaults'
+import { findPoolByShare } from '../../../_utils/vaults'
+import { PoolFormProvider } from '../_context/vaultFormContext'
 
 import { Composition } from './composition'
 import { HistoricalMetrics } from './historicalMetrics'
-import { PoolForm } from './poolForm'
-import { PoolInfoCards } from './poolInfoCards'
-import { PoolNavigation } from './poolNavigation'
+import { PoolForm } from './vaultForm'
+import { PoolInfoCards } from './vaultInfoCards'
+import { PoolNavigation } from './vaultNavigation'
 
 type Props = {
   shareAddress: string

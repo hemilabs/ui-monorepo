@@ -1,12 +1,12 @@
 import { Suspense, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
-import { usePoolForm } from '../_context/poolFormContext'
+import { usePoolForm } from '../_context/vaultFormContext'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
 import { type PoolOperation } from '../_types/operations'
 
 import { Deposit } from './deposit'
-import { PoolReview } from './poolReview'
+import { PoolReview } from './vaultReview'
 import { Withdraw } from './withdraw'
 
 const SideDrawer = function () {

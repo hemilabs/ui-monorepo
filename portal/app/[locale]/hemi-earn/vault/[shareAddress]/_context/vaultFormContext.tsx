@@ -10,7 +10,7 @@ import {
 import { isAddressEqual } from 'viem'
 
 import { type EarnAsset, type EarnPool } from '../../../types'
-import { usePoolFormState } from '../_hooks/usePoolFormState'
+import { usePoolFormState } from '../_hooks/useVaultFormState'
 
 type PoolFormContextValue = ReturnType<typeof usePoolFormState> & {
   pool: EarnPool

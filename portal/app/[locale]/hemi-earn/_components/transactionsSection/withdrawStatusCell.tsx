@@ -8,9 +8,9 @@ import {
 import { useAccount } from 'wagmi'
 
 import { useCooldownDuration } from '../../_hooks/useCooldownDuration'
-import { useEarnPools } from '../../_hooks/useEarnPools'
+import { useEarnPools } from '../../_hooks/useEarnVaults'
 import { useIsCooldownEligible } from '../../_hooks/useIsCooldownEligible'
-import { findPoolByAsset } from '../../_utils/pools'
+import { findPoolByAsset } from '../../_utils/vaults'
 import { useEarnCooldownRemaining } from '../../vault/[shareAddress]/_hooks/useEarnCooldownRemaining'
 import { type EarnPool, type EarnTransaction } from '../../types'
 

@@ -10,9 +10,9 @@ import Skeleton from 'react-loading-skeleton'
 import { type useTranslations } from 'use-intl'
 import { formatUnits } from 'viem'
 
-import { useEarnPools } from '../../_hooks/useEarnPools'
+import { useEarnPools } from '../../_hooks/useEarnVaults'
 import { pickEarnRowAmount } from '../../_utils/earnRows'
-import { findPoolByAsset } from '../../_utils/pools'
+import { findPoolByAsset } from '../../_utils/vaults'
 import { type EarnTransaction } from '../../types'
 
 import { RowActions } from './rowActions'

@@ -6,7 +6,7 @@ import { useEarnPositions } from '../../_hooks/useEarnPositions'
 import { type EarnPool } from '../../types'
 import { RenderEarnFiatBalance } from '../earnFiatBalance'
 
-import { PoolInfoItem } from './poolInfoItem'
+import { PoolInfoItem } from './vaultInfoItem'
 
 type Props = {
   pool: EarnPool

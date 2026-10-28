@@ -3,7 +3,7 @@ import {
   defaultRedeemSlippage,
 } from '../../../_constants/slippage'
 import { clampSlippage, percentToBps } from '../../../_utils/slippage'
-import { usePoolForm } from '../_context/poolFormContext'
+import { usePoolForm } from '../_context/vaultFormContext'
 import { type PoolOperation } from '../_types/operations'
 
 export const getDefaultSlippage = (operation: PoolOperation) =>

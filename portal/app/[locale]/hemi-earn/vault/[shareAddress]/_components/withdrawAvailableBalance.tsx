@@ -2,7 +2,7 @@ import { RenderCryptoBalance } from 'components/cryptoBalance'
 import { type EvmToken } from 'types/token'
 import { useAccount } from 'wagmi'
 
-import { usePoolForm } from '../_context/poolFormContext'
+import { usePoolForm } from '../_context/vaultFormContext'
 import { useMaxWithdrawableAsset } from '../_hooks/useMaxWithdrawableAsset'
 
 export const WithdrawAvailableBalance = function ({

@@ -51,7 +51,7 @@ import {
   needsRecover,
 } from '../../../../_utils/transactionPredicates'
 import { type EarnTransaction } from '../../../../types'
-import { usePoolForm } from '../../_context/poolFormContext'
+import { usePoolForm } from '../../_context/vaultFormContext'
 import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
 import { useSlippageBps } from '../../_hooks/useSlippage'

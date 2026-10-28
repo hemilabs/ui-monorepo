@@ -1,8 +1,8 @@
 import Skeleton from 'react-loading-skeleton'
 
-import { useEarnPools } from '../_hooks/useEarnPools'
+import { useEarnPools } from '../_hooks/useEarnVaults'
 
-import { PoolInfoBar } from './poolInfoBar'
+import { PoolInfoBar } from './vaultInfoBar'
 
 const PoolInfoBarSkeleton = () => (
   <Skeleton className="h-58 w-full rounded-xl md:h-19.5" />

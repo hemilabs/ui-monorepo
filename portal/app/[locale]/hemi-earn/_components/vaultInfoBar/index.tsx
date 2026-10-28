@@ -13,7 +13,7 @@ import { type EarnPool } from '../../types'
 import { RenderEarnFiatBalance } from '../earnFiatBalance'
 import { RiskWarningTooltip } from '../riskWarningTooltip'
 
-import { PoolInfoItem } from './poolInfoItem'
+import { PoolInfoItem } from './vaultInfoItem'
 import { StakedAmount } from './stakedAmount'
 import { TokenIconStack } from './tokenIconStack'
 

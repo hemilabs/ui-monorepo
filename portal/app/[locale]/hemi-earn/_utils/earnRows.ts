@@ -8,7 +8,7 @@ import {
   type LocalEarnOperation,
 } from '../types'
 
-import { findPoolByAsset, findPoolByShare } from './pools'
+import { findPoolByAsset, findPoolByShare } from './vaults'
 import { isEarnRowInFlight } from './transactionPredicates'
 
 // DEPOSIT renders amountIn (asset units) — never amountOut, which is 18-dec shares.

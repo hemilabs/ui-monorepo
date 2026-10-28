@@ -11,7 +11,7 @@ import {
   needsRiskConfirmation,
   sanitizeSlippage,
 } from '../../../../_utils/slippage'
-import { usePoolForm } from '../../_context/poolFormContext'
+import { usePoolForm } from '../../_context/vaultFormContext'
 import { getDefaultSlippage } from '../../_hooks/useSlippage'
 import { type PoolOperation } from '../../_types/operations'
 

@@ -6,7 +6,7 @@ import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { useState } from 'react'
 
 import { type EarnPool } from '../../../types'
-import { usePoolForm } from '../_context/poolFormContext'
+import { usePoolForm } from '../_context/vaultFormContext'
 
 type Props = {
   disabled?: boolean

@@ -7,7 +7,7 @@ import { useAccount } from 'wagmi'
 
 import { useTotalDeposits } from '../_hooks/useTotalDeposits'
 
-import { FromPoolsBadge } from './fromPoolsBadge'
+import { FromPoolsBadge } from './fromVaultsBadge'
 
 export const StakedBalance = function () {
   const { data, isError, isPending } = useTotalDeposits()

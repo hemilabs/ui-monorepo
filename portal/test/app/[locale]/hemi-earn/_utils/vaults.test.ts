@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 import {
   findPoolByAsset,
   findPoolByShare,
-} from '../../../../../app/[locale]/hemi-earn/_utils/pools'
+} from '../../../../../app/[locale]/hemi-earn/_utils/vaults'
 import { type EarnPool } from '../../../../../app/[locale]/hemi-earn/types'
 
 describe('pools', function () {

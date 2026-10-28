@@ -36,7 +36,7 @@ import {
   needsManualClaim,
   needsRecover,
 } from '../../../_utils/transactionPredicates'
-import { deriveCooldownPostAction } from '../../../vault/[shareAddress]/_components/poolReview/cooldownPostAction'
+import { deriveCooldownPostAction } from '../../../vault/[shareAddress]/_components/vaultReview/cooldownPostAction'
 import { useEarnCooldownRemaining } from '../../../vault/[shareAddress]/_hooks/useEarnCooldownRemaining'
 import {
   type EarnPool,

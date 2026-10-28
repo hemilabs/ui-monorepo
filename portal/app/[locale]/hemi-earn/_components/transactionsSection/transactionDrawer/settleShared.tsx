@@ -13,9 +13,9 @@ import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { isAddressEqual } from 'viem'
 
-import { useEarnPools } from '../../../_hooks/useEarnPools'
+import { useEarnPools } from '../../../_hooks/useEarnVaults'
 import { useSettle } from '../../../_hooks/useSettle'
-import { findPoolByAsset } from '../../../_utils/pools'
+import { findPoolByAsset } from '../../../_utils/vaults'
 import { pickSettleBannerKey } from '../../../_utils/settleUi'
 import {
   needsManualClaim,

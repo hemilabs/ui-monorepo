@@ -1,7 +1,7 @@
 import { MaxButton } from 'components/setMaxBalance'
 import { formatUnits } from 'viem'
 
-import { usePoolForm } from '../_context/poolFormContext'
+import { usePoolForm } from '../_context/vaultFormContext'
 import { useUserShareValue } from '../_hooks/useUserShareValue'
 
 type Props = {

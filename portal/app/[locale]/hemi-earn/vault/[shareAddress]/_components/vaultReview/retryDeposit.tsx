@@ -7,7 +7,7 @@ import { parseTokenUnits } from 'utils/token'
 
 import { applySlippage } from '../../../../_constants/slippage'
 import { percentToBps } from '../../../../_utils/slippage'
-import { usePoolForm } from '../../_context/poolFormContext'
+import { usePoolForm } from '../../_context/vaultFormContext'
 import { useDeposit } from '../../_hooks/useDeposit'
 import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useDrawerQueryString } from '../../_hooks/useDrawerQueryString'

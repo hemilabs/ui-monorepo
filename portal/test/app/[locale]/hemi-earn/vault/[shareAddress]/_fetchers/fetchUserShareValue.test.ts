@@ -2,7 +2,7 @@ import { type Address } from 'viem'
 import { balanceOf } from 'viem-erc20/actions'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { fetchUserShareValue } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_fetchers/fetchUserShareValue'
+import { fetchUserShareValue } from '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_fetchers/fetchUserShareValue'
 
 vi.mock('viem-erc20/actions', () => ({
   balanceOf: vi.fn(),

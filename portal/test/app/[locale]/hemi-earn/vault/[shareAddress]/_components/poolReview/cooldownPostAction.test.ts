@@ -1,7 +1,7 @@
 import {
   type CooldownInputs,
   deriveCooldownPostAction,
-} from 'app/[locale]/hemi-earn/pool/[shareAddress]/_components/poolReview/cooldownPostAction'
+} from 'app/[locale]/hemi-earn/vault/[shareAddress]/_components/poolReview/cooldownPostAction'
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { describe, expect, it } from 'vitest'
 

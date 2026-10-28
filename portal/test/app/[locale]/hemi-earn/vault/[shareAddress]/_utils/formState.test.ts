@@ -6,7 +6,7 @@ import {
   resolvePreviewIssue,
   resolveValidationError,
   resolveZeroNativeBalanceError,
-} from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_utils/formState'
+} from '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_utils/formState'
 
 describe('resolvePreviewIssue', function () {
   const base = {

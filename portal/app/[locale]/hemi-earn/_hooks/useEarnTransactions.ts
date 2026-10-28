@@ -12,7 +12,7 @@ import {
   type DepositStatusType,
   type WithdrawOperation,
   type WithdrawStatusType,
-} from '../pool/[shareAddress]/_types/operations'
+} from '../vault/[shareAddress]/_types/operations'
 import {
   type EarnTransaction,
   type EarnTransactionStatusType,

@@ -10,7 +10,7 @@ import {
   resolveRoundToZeroIssue,
   resolveWithdrawInputValues,
   splitWithdrawErrorKey,
-} from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_utils/withdrawForm'
+} from '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_utils/withdrawForm'
 
 // `parseTokenUnits` transitively imports `utils/chainClients`, whose
 // `eth-rpc-cache` dependency fails to resolve under vitest. Stub it — these

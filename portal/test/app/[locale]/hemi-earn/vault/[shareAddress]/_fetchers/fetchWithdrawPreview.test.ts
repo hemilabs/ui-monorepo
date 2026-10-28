@@ -1,14 +1,14 @@
 import { type Address } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 
-import { withdrawPreviewOptions } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_fetchers/fetchWithdrawPreview'
+import { withdrawPreviewOptions } from '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_fetchers/fetchWithdrawPreview'
 
 const account = '0x3333333333333333333333333333333333333333' as Address
 const asset = '0x1111111111111111111111111111111111111111' as Address
 const shareAddress = '0x2222222222222222222222222222222222222222' as Address
 
 vi.mock(
-  '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_fetchers/fetchSharesToAssets',
+  '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_fetchers/fetchSharesToAssets',
   () => ({
     sharesToAssetsOptions: () => ({
       queryKey: ['hemi-earn', 'shares-to-assets'],
@@ -17,7 +17,7 @@ vi.mock(
 )
 
 vi.mock(
-  '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_fetchers/fetchQuoteRedeem',
+  '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_fetchers/fetchQuoteRedeem',
   () => ({
     quoteRedeemOptions: () => ({ queryKey: ['hemi-earn', 'quote-redeem'] }),
   }),

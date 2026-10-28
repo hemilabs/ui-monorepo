@@ -3,7 +3,7 @@ import { type Address } from 'viem'
 import { convertToShares } from 'viem-erc4626/actions'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { fetchDepositShares } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_fetchers/fetchDepositShares'
+import { fetchDepositShares } from '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_fetchers/fetchDepositShares'
 
 vi.mock('viem-erc4626/actions', () => ({
   convertToShares: vi.fn(),

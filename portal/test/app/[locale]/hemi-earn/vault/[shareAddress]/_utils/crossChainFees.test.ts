@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { computeCrossChainFees } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_utils/crossChainFees'
+import { computeCrossChainFees } from '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_utils/crossChainFees'
 
 describe('computeCrossChainFees', function () {
   it('splits layerZeroFee into bridging + ethereum when a quote is present', function () {

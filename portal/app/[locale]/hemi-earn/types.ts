@@ -5,7 +5,7 @@ import { type Address, type Chain, type Hash } from 'viem'
 import {
   type DepositOperation,
   type WithdrawOperation,
-} from './pool/[shareAddress]/_types/operations'
+} from './vault/[shareAddress]/_types/operations'
 
 export type MetricDataPoint = { x: number; y: number }
 export type MetricPeriod = '1w' | '1m' | '3m' | '1y'

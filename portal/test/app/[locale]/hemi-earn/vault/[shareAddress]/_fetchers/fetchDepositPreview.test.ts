@@ -1,14 +1,14 @@
 import { type Address } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 
-import { depositPreviewOptions } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_fetchers/fetchDepositPreview'
+import { depositPreviewOptions } from '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_fetchers/fetchDepositPreview'
 
 const account = '0x3333333333333333333333333333333333333333' as Address
 const asset = '0x1111111111111111111111111111111111111111' as Address
 const shareAddress = '0x2222222222222222222222222222222222222222' as Address
 
 vi.mock(
-  '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_fetchers/fetchDepositShares',
+  '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_fetchers/fetchDepositShares',
   () => ({
     depositSharesOptions: () => ({
       queryKey: ['hemi-earn', 'deposit-shares'],
@@ -17,7 +17,7 @@ vi.mock(
 )
 
 vi.mock(
-  '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_fetchers/fetchQuoteDeposit',
+  '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_fetchers/fetchQuoteDeposit',
   () => ({
     quoteDepositOptions: () => ({ queryKey: ['hemi-earn', 'quote-deposit'] }),
   }),

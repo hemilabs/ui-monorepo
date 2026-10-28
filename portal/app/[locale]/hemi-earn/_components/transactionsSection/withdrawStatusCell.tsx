@@ -11,7 +11,7 @@ import { useCooldownDuration } from '../../_hooks/useCooldownDuration'
 import { useEarnPools } from '../../_hooks/useEarnPools'
 import { useIsCooldownEligible } from '../../_hooks/useIsCooldownEligible'
 import { findPoolByAsset } from '../../_utils/pools'
-import { useEarnCooldownRemaining } from '../../pool/[shareAddress]/_hooks/useEarnCooldownRemaining'
+import { useEarnCooldownRemaining } from '../../vault/[shareAddress]/_hooks/useEarnCooldownRemaining'
 import { type EarnPool, type EarnTransaction } from '../../types'
 
 import { StatusBadge } from './statusBadge'

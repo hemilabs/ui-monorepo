@@ -2,7 +2,7 @@ import { createErc20AllowanceStateOverride } from 'utils/erc20StateOverride'
 import { maxUint256 } from 'viem'
 import { describe, expect, it } from 'vitest'
 
-import { createFeeEstimateStateOverride } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_utils/feeEstimateStateOverride'
+import { createFeeEstimateStateOverride } from '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_utils/feeEstimateStateOverride'
 
 const token = {
   address: '0x99e3dE3817F6081B2568208337ef83295b7f591D',

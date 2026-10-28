@@ -8,10 +8,10 @@ import {
   applySlippage,
 } from '../../../_constants/slippage'
 import { percentToBps, resolveRetrySlippage } from '../../../_utils/slippage'
-import { useQuoteRedeem } from '../../../pool/[shareAddress]/_hooks/useQuoteRedeem'
-import { useSharesToAssets } from '../../../pool/[shareAddress]/_hooks/useSharesToAssets'
-import { useWithdraw } from '../../../pool/[shareAddress]/_hooks/useWithdraw'
-import { type WithdrawOperationRunning } from '../../../pool/[shareAddress]/_types/operations'
+import { useQuoteRedeem } from '../../../vault/[shareAddress]/_hooks/useQuoteRedeem'
+import { useSharesToAssets } from '../../../vault/[shareAddress]/_hooks/useSharesToAssets'
+import { useWithdraw } from '../../../vault/[shareAddress]/_hooks/useWithdraw'
+import { type WithdrawOperationRunning } from '../../../vault/[shareAddress]/_types/operations'
 import {
   type EarnAsset,
   type EarnPool,

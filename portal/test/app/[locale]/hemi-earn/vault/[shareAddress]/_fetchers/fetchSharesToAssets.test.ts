@@ -2,7 +2,7 @@ import { previewRedeem } from '@vetro-protocol/gateway/actions'
 import { type Address } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { fetchSharesToAssets } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_fetchers/fetchSharesToAssets'
+import { fetchSharesToAssets } from '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_fetchers/fetchSharesToAssets'
 
 vi.mock('@vetro-protocol/gateway/actions', () => ({
   previewRedeem: vi.fn(),

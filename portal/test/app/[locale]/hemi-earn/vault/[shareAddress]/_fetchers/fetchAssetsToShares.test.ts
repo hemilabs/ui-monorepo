@@ -3,7 +3,7 @@ import { type Address } from 'viem'
 import { convertToShares } from 'viem-erc4626/actions'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { fetchAssetsToShares } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_fetchers/fetchAssetsToShares'
+import { fetchAssetsToShares } from '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_fetchers/fetchAssetsToShares'
 
 vi.mock('@vetro-protocol/gateway/actions', () => ({
   previewWithdraw: vi.fn(),

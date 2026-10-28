@@ -9,10 +9,10 @@ import {
   applySlippage,
 } from '../../../_constants/slippage'
 import { percentToBps, resolveRetrySlippage } from '../../../_utils/slippage'
-import { useDeposit } from '../../../pool/[shareAddress]/_hooks/useDeposit'
-import { useDepositShares } from '../../../pool/[shareAddress]/_hooks/useDepositShares'
-import { useQuoteDeposit } from '../../../pool/[shareAddress]/_hooks/useQuoteDeposit'
-import { type DepositOperationRunning } from '../../../pool/[shareAddress]/_types/operations'
+import { useDeposit } from '../../../vault/[shareAddress]/_hooks/useDeposit'
+import { useDepositShares } from '../../../vault/[shareAddress]/_hooks/useDepositShares'
+import { useQuoteDeposit } from '../../../vault/[shareAddress]/_hooks/useQuoteDeposit'
+import { type DepositOperationRunning } from '../../../vault/[shareAddress]/_types/operations'
 import {
   type EarnAsset,
   type EarnPool,

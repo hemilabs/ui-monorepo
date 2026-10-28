@@ -7,7 +7,7 @@ import {
 import { type Address } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { fetchQuoteRedeem } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_fetchers/fetchQuoteRedeem'
+import { fetchQuoteRedeem } from '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_fetchers/fetchQuoteRedeem'
 
 vi.mock('hemi-earn-actions/actions', () => ({
   getAgentAddress: vi.fn(),

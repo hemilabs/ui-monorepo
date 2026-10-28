@@ -8,6 +8,7 @@ import { isAddress } from 'viem'
 
 import { NotFound } from '../not-found'
 
+import { EarnFooter } from './_components/earnFooter'
 import { EarnStatusUpdaters } from './_components/earnStatusUpdaters'
 import { TopSection } from './_components/topSection'
 import { LocalEarnOperationsProvider } from './_context/localEarnOperationsContext'
@@ -39,7 +40,12 @@ export const HemiEarnLayout = function () {
   return (
     <LocalEarnOperationsProvider>
       <EarnStatusUpdaters />
-      <Outlet />
+      <div className="mx-auto flex min-h-full flex-col px-4 lg:px-12 lg:pb-12">
+        <div className="flex-1 md:pb-32">
+          <Outlet />
+        </div>
+        <EarnFooter />
+      </div>
     </LocalEarnOperationsProvider>
   )
 }

@@ -156,6 +156,11 @@
     "view-all-tutorials": "View all tutorials"
   },
   "hemi-earn": {
+    "footer": {
+      "attribution": "Hemi Earn is operated by Vetro Service & Support Corp. Vaults available through Hemi Earn may be operated by Vetro or by third parties. Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. and their affiliates do not operate, manage, custody or guarantee Hemi Earn or any vault and are not parties to your agreement with Vetro. Hemi Earn is not available to U.S. persons or other restricted persons.",
+      "vetro-privacy": "Vetro Privacy Policy",
+      "vetro-terms": "Vetro Terms of Use"
+    },
     "heading": "Earn on your BTC and stablecoins",
     "info": {
       "earned-amount": "Your earned amount",
@@ -166,6 +171,10 @@
       "back": "Back",
       "hemi-earn": "Hemi Earn",
       "pool-name": "{tokenSymbol} pool"
+    },
+    "operator": {
+      "banner": "Hemi Earn is operated by Vetro Service & Support Corp. Hemi provides this interface only. <link>View Vetro's Terms</link>",
+      "note": "Operated by Vetro Service & Support Corp. <link>Terms</link>"
     },
     "pool": {
       "apy": "APY",

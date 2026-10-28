@@ -1,4 +1,3 @@
-import { PageLayout } from 'components/pageLayout'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useRouter } from 'i18n/navigation'
 import { useEffect } from 'react'
@@ -6,6 +5,7 @@ import Skeleton from 'react-loading-skeleton'
 import { queryStringObjectToString } from 'utils/url'
 import { type Address } from 'viem'
 
+import { OperatorBanner } from '../../../_components/operatorDisclosure'
 import { useEarnPools } from '../../../_hooks/useEarnPools'
 import { findPoolByShare } from '../../../_utils/pools'
 import { PoolFormProvider } from '../_context/poolFormContext'
@@ -40,11 +40,18 @@ export const PoolPageContent = function ({ shareAddress }: Props) {
     [arePoolsLoaded, networkType, pool, router],
   )
 
-  if (pool) {
-    return (
-      <PageLayout variant="wide">
+  return (
+    <>
+      {pool ? (
+        <PoolNavigation pool={pool} />
+      ) : (
+        <Skeleton className="h-7 w-48 rounded-md" />
+      )}
+      <div className="mt-6">
+        <OperatorBanner />
+      </div>
+      {pool ? (
         <PoolFormProvider pool={pool}>
-          <PoolNavigation pool={pool} />
           <div className="mt-6 flex flex-col gap-3 md:gap-5 lg:flex-row">
             <div className="order-2 flex flex-col gap-4 md:gap-5 lg:order-1 lg:basis-3/5">
               <PoolInfoCards pool={pool} />
@@ -63,17 +70,12 @@ export const PoolPageContent = function ({ shareAddress }: Props) {
             </div>
           </div>
         </PoolFormProvider>
-      </PageLayout>
-    )
-  }
-
-  return (
-    <PageLayout variant="wide">
-      <Skeleton className="h-7 w-48 rounded-md" />
-      <div className="mt-8 flex gap-4">
-        <Skeleton className="h-24 flex-1 rounded-xl" />
-        <Skeleton className="h-24 flex-1 rounded-xl" />
-      </div>
-    </PageLayout>
+      ) : (
+        <div className="mt-6 flex gap-4">
+          <Skeleton className="h-24 rounded-xl" containerClassName="flex-1" />
+          <Skeleton className="h-24 rounded-xl" containerClassName="flex-1" />
+        </div>
+      )}
+    </>
   )
 }

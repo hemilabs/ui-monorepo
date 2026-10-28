@@ -20,9 +20,18 @@ import type { ClaimFromEvents } from 've-hemi-epoch-rewards'
 import { claimFrom } from 've-hemi-epoch-rewards/actions'
 import { useAccount } from 'wagmi'
 
+import { markClaimWindowAsClaimed } from '../_utils/claimableRewards'
+
 import { useClaimablePositions } from './useClaimablePositions'
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
-import { getEpochClaimableRewardsQueryKeyPrefix } from './useEpochClaimableRewards'
+import {
+  getEpochClaimableRewardsQueryKeyPrefix,
+  type useEpochClaimableRewards,
+} from './useEpochClaimableRewards'
+
+type ClaimWindows = NonNullable<
+  ReturnType<typeof useEpochClaimableRewards>['data']
+>
 
 type UseCollectRewards = {
   completedSteps?: CollectAllRewardsStep[]
@@ -73,13 +82,24 @@ export const useCollectRewards = function ({
 
   const { hemiWalletClient } = useHemiWalletClient()
 
+  const markWindowAsClaimed = async function (
+    step: Pick<CollectAllRewardsStep, 'fromEpoch' | 'toEpoch' | 'tokenId'>,
+  ) {
+    const queryKey = getEpochClaimableRewardsQueryKeyPrefix({
+      chainId: hemi.id,
+      tokenId: step.tokenId,
+    })
+    await queryClient.cancelQueries({ queryKey })
+    queryClient.setQueriesData<ClaimWindows>({ queryKey }, windows =>
+      windows ? markClaimWindowAsClaimed(windows, step) : windows,
+    )
+  }
+
   return useMutation({
     mutationFn: async function runCollectRewards() {
       if (!address) {
         throw new Error('No account connected')
       }
-
-      await ensureConnectedTo(hemi.id)
 
       const transactions = [...positions]
         .sort((a, b) => (a.tokenId < b.tokenId ? -1 : 1))
@@ -118,6 +138,14 @@ export const useCollectRewards = function ({
         status: undefined,
         steps,
       })
+
+      await ensureConnectedTo(hemi.id).catch(function (error) {
+        updateCollectRewardsDashboardOperation({
+          status: CollectAllRewardsDashboardStatus.COLLECT_TX_FAILED,
+        })
+        throw error
+      })
+
       setDrawerQueryString('claimingRewards')
 
       // Sequential on purpose: every window is a signature, and a wallet asked for
@@ -186,6 +214,7 @@ export const useCollectRewards = function ({
           updateCollectRewardsDashboardOperation({
             transactionHash: receipt.transactionHash,
           })
+          markWindowAsClaimed(transaction)
         })
 
         emitter.on('claim-from-transaction-reverted', function (receipt) {

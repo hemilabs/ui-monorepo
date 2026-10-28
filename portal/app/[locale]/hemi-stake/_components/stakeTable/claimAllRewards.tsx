@@ -21,7 +21,10 @@ type Props = {
 export function ClaimAllRewards({ positions }: Props) {
   const t = useTranslations('hemi-stake.table')
   const isPaused = useRewardsPaused()
-  const { updateCollectRewardsDashboardOperation } = useStakingDashboard()
+  const {
+    collectRewardsDashboardOperation,
+    updateCollectRewardsDashboardOperation,
+  } = useStakingDashboard()
   const { setDrawerQueryString } = useDrawerStakingQueryString()
   const isCollecting = useIsCollectingRewards()
 
@@ -41,7 +44,7 @@ export function ClaimAllRewards({ positions }: Props) {
     ({ transactions }) => transactions.length > 0,
   )
 
-  if (positionsWithRewards.length < 2) {
+  if (positionsWithRewards.length < 2 && !isCollecting) {
     return null
   }
 
@@ -61,7 +64,13 @@ export function ClaimAllRewards({ positions }: Props) {
       text={t('claiming-paused')}
       variant="simple"
     >
-      <Button disabled={showPaused} onClick={handleClick} size="xSmall">
+      <Button
+        disabled={
+          showPaused || (isCollecting && !collectRewardsDashboardOperation)
+        }
+        onClick={handleClick}
+        size="xSmall"
+      >
         <span className="flex items-center gap-x-1">
           {t(isCollecting ? 'claiming' : 'claim-all-rewards')}
           {showPaused ? <InfoIcon /> : null}

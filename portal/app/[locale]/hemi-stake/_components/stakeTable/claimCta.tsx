@@ -22,7 +22,10 @@ export function ClaimCta({ operation }: Props) {
   const { tokenId } = operation
   const { hasRewards } = useHasRewards(tokenId)
   const isPaused = useRewardsPaused()
-  const { updateCollectRewardsDashboardOperation } = useStakingDashboard()
+  const {
+    collectRewardsDashboardOperation,
+    updateCollectRewardsDashboardOperation,
+  } = useStakingDashboard()
   const { setDrawerQueryString } = useDrawerStakingQueryString()
   const isCollecting = useIsCollectingRewards()
 
@@ -35,8 +38,14 @@ export function ClaimCta({ operation }: Props) {
     return null
   }
 
+  const isInRun =
+    isCollecting &&
+    (collectRewardsDashboardOperation?.steps ?? []).some(
+      step => step.tokenId === tokenId,
+    )
+
   const handleClick = function () {
-    if (isCollecting) {
+    if (isInRun) {
       setDrawerQueryString('claimingRewards')
       return
     }
@@ -52,13 +61,13 @@ export function ClaimCta({ operation }: Props) {
       variant="simple"
     >
       <Button
-        disabled={showPaused}
+        disabled={showPaused || (isCollecting && !isInRun)}
         onClick={handleClick}
         size="xxSmall"
         variant="secondary"
       >
         <span className="flex items-center gap-x-1">
-          {t('claim')}
+          {t(isInRun ? 'claiming' : 'claim')}
           {showPaused ? <InfoIcon /> : null}
         </span>
       </Button>

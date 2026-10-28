@@ -1,7 +1,7 @@
-import { PoolsList } from './vaultsList'
+import { VaultsList } from './vaultsList'
 
-export const PoolsSection = () => (
+export const VaultsSection = () => (
   <div className="mt-6 w-full">
-    <PoolsList />
+    <VaultsList />
   </div>
 )

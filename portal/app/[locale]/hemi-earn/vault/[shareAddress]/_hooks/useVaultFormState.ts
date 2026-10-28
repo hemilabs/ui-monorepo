@@ -9,7 +9,7 @@ import {
 
 type WithdrawMode = 'shares' | 'tokens'
 
-type PoolFormState = {
+type VaultFormState = {
   approveExtraAmount: boolean
   depositOperation?: DepositOperation
   input: string
@@ -46,9 +46,9 @@ type Actions =
 
 type ActionHandlers = {
   [K in Actions['type']]: (
-    state: PoolFormState,
+    state: VaultFormState,
     payload: Extract<Actions, { type: K }>['payload'],
-  ) => PoolFormState
+  ) => VaultFormState
 }
 
 const settingsDefaults = {
@@ -100,18 +100,18 @@ const actionHandlers: ActionHandlers = {
   }),
 }
 
-function reducer(state: PoolFormState, action: Actions) {
+function reducer(state: VaultFormState, action: Actions) {
   const handler = actionHandlers[action.type]
 
   return (
     handler as (
-      state: PoolFormState,
+      state: VaultFormState,
       payload: typeof action.payload,
-    ) => PoolFormState
+    ) => VaultFormState
   )(state, action.payload)
 }
 
-export const usePoolFormState = function () {
+export const useVaultFormState = function () {
   const [state, dispatch] = useReducer(reducer, {
     ...settingsDefaults,
     input: '0',

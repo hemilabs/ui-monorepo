@@ -7,7 +7,7 @@ import { useAccount } from 'wagmi'
 
 import { useTotalDeposits } from '../_hooks/useTotalDeposits'
 
-import { FromPoolsBadge } from './fromVaultsBadge'
+import { FromVaultsBadge } from './fromVaultsBadge'
 
 export const StakedBalance = function () {
   const { data, isError, isPending } = useTotalDeposits()
@@ -18,7 +18,7 @@ export const StakedBalance = function () {
 
   return (
     <StatCard
-      badge={isPending ? undefined : <FromPoolsBadge />}
+      badge={isPending ? undefined : <FromVaultsBadge />}
       icon={<TotalDepositsIcon />}
       isError={hasError}
       isLoading={isPending}

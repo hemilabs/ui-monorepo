@@ -51,7 +51,7 @@ import {
   needsRecover,
 } from '../../../../_utils/transactionPredicates'
 import { type EarnTransaction } from '../../../../types'
-import { usePoolForm } from '../../_context/vaultFormContext'
+import { useVaultForm } from '../../_context/vaultFormContext'
 import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
 import { useSlippageBps } from '../../_hooks/useSlippage'
@@ -122,8 +122,8 @@ function getSharesStepMeta(
 }
 
 export const ReviewDeposit = function ({ onClose }: Props) {
-  const { approveExtraAmount, depositOperation, input, pool, selectedAsset } =
-    usePoolForm()
+  const { approveExtraAmount, depositOperation, input, vault, selectedAsset } =
+    useVaultForm()
   const slippageBps = useSlippageBps('deposit')
   const { localOperations } = useLocalEarnOperations()
   const t = useTranslations('hemi-earn.pool.drawer')
@@ -168,13 +168,13 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   const { data: quote } = useQuoteDeposit({
     amount,
     asset: selectedAsset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
   })
 
   const { data: shares } = useDepositShares({
     amount,
     asset: selectedAsset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
   })
 
   const sharesOutMin = shares ? applySlippage(shares, slippageBps) : BigInt(0)
@@ -377,7 +377,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         <SettleCta
           asset={selectedAsset}
           operation="CLAIM"
-          pool={pool}
+          vault={vault}
           transaction={settledRow}
         />
       )
@@ -388,14 +388,14 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         <SettleCta
           asset={selectedAsset}
           operation="RECOVER"
-          pool={pool}
+          vault={vault}
           transaction={settledRow}
         />
       )
     }
     // Only offer "Add token" at FINALIZED — earlier the wallet has no balance, and some wallets gate metadata reads on a non-zero balance.
     if (subgraphRow?.status === 'FINALIZED') {
-      return <AddTokenToWalletCta token={pool.shareToken} />
+      return <AddTokenToWalletCta token={vault.shareToken} />
     }
     return null
   }

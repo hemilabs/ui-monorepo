@@ -1,6 +1,6 @@
 import { Drawer } from 'components/drawer'
 
-import { usePoolForm } from '../../_context/vaultFormContext'
+import { useVaultForm } from '../../_context/vaultFormContext'
 import { useDrawerQueryString } from '../../_hooks/useDrawerQueryString'
 
 import { ReviewDeposit } from './reviewDeposit'
@@ -10,9 +10,9 @@ type Props = {
   closeDrawer: VoidFunction
 }
 
-export const PoolReview = function ({ closeDrawer }: Props) {
+export const VaultReview = function ({ closeDrawer }: Props) {
   const { drawerMode } = useDrawerQueryString()
-  const { depositOperation, withdrawOperation } = usePoolForm()
+  const { depositOperation, withdrawOperation } = useVaultForm()
 
   const renderContent = function () {
     if (drawerMode === 'depositing' && depositOperation) {

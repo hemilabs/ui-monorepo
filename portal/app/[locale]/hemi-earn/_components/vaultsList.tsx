@@ -1,21 +1,21 @@
 import Skeleton from 'react-loading-skeleton'
 
-import { useEarnPools } from '../_hooks/useEarnVaults'
+import { useEarnVaults } from '../_hooks/useEarnVaults'
 
-import { PoolInfoBar } from './vaultInfoBar'
+import { VaultInfoBar } from './vaultInfoBar'
 
-const PoolInfoBarSkeleton = () => (
+const VaultInfoBarSkeleton = () => (
   <Skeleton className="h-58 w-full rounded-xl md:h-19.5" />
 )
 
-export const PoolsList = function () {
-  const { data: pools = [], isPending } = useEarnPools()
+export const VaultsList = function () {
+  const { data: vaults = [], isPending } = useEarnVaults()
 
   if (!isPending) {
     return (
       <div className="flex flex-col gap-4">
-        {pools.map(pool => (
-          <PoolInfoBar key={pool.shareAddress} pool={pool} />
+        {vaults.map(vault => (
+          <VaultInfoBar key={vault.shareAddress} vault={vault} />
         ))}
       </div>
     )
@@ -23,7 +23,7 @@ export const PoolsList = function () {
 
   return (
     <div className="flex flex-col gap-4">
-      <PoolInfoBarSkeleton />
+      <VaultInfoBarSkeleton />
     </div>
   )
 }

@@ -23,7 +23,7 @@ export type HemiEarnAssetConfig = AssetData & {
 
 // One representative config per share OFT. A share can accept multiple deposit
 // assets (e.g. USDC + USDT → sVUSD), so `share`/`remoteShare` repeat across
-// configs while `asset` does not — consumers that key off the share (pools,
+// configs while `asset` does not — consumers that key off the share (vaults,
 // TVL) must dedupe first or they double-count.
 export const uniqueShareConfigs = (configs: HemiEarnAssetConfig[]) => [
   ...new Map(
@@ -99,7 +99,7 @@ const fetchHemiEarnAssetConfigs = async function (): Promise<
   // `assetsData` is a mapping getter: it returns a zero-valued struct
   // (`share === zeroAddress`) for tokens the Router doesn't know — drop those.
   // Disabled assets revert `requestDeposit`/`requestRedeem`, so drop them too
-  // rather than surface a pool the user can't actually deposit into.
+  // rather than surface a vault the user can't actually deposit into.
   return configs.filter(
     config =>
       config.enabled !== false && !isAddressEqual(config.share, zeroAddress),

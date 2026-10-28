@@ -9,17 +9,17 @@ import { useState } from 'react'
 import { useTranslations } from 'use-intl'
 import { queryStringObjectToString } from 'utils/url'
 
-import { useEarnPools } from '../../../_hooks/useEarnVaults'
-import { type EarnPool } from '../../../types'
+import { useEarnVaults } from '../../../_hooks/useEarnVaults'
+import { type EarnVault } from '../../../types'
 
 type Props = {
-  pool: EarnPool
+  vault: EarnVault
 }
 
-export const PoolNavigation = function ({ pool }: Props) {
+export const VaultNavigation = function ({ vault }: Props) {
   const router = useRouter()
   const t = useTranslations('hemi-earn')
-  const { data: pools = [] } = useEarnPools()
+  const { data: vaults = [] } = useEarnVaults()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [networkType] = useNetworkType()
   const dropdownRef = useOnClickOutside<HTMLDivElement>(() =>
@@ -57,14 +57,14 @@ export const PoolNavigation = function ({ pool }: Props) {
           type="button"
           variant="tertiary"
         >
-          <TokenLogo size="xSmall" token={pool.shareToken} version="L1" />
-          {t('navigation.vault-name', { tokenSymbol: pool.shareToken.symbol })}
+          <TokenLogo size="xSmall" token={vault.shareToken} version="L1" />
+          {t('navigation.vault-name', { tokenSymbol: vault.shareToken.symbol })}
           <Chevron.Bottom className="[&>path]:fill-neutral-950" />
         </Button>
         {isDropdownOpen && (
           <div className="absolute left-0 top-full z-20 mt-1">
             <Menu
-              items={pools.map(p => ({
+              items={vaults.map(p => ({
                 content: (
                   <button
                     className="-mx-2 -my-1 flex items-center gap-x-2 whitespace-nowrap px-2 py-1 text-left text-sm"

@@ -39,7 +39,7 @@ import {
 import { deriveCooldownPostAction } from '../../../vault/[shareAddress]/_components/vaultReview/cooldownPostAction'
 import { useEarnCooldownRemaining } from '../../../vault/[shareAddress]/_hooks/useEarnCooldownRemaining'
 import {
-  type EarnPool,
+  type EarnVault,
   type EarnTransaction,
   type EarnTransactionStatusType,
 } from '../../../types'
@@ -53,7 +53,7 @@ import { RetrySlippageTooltip } from './slippageTooltip'
 type Props = {
   callToAction?: ReactNode
   onClose: VoidFunction
-  pool: EarnPool
+  vault: EarnVault
   transaction: EarnTransaction
 }
 
@@ -235,7 +235,7 @@ function deriveReceiveStatus({
 function buildSteps({
   cooldownPostAction,
   needsApproval,
-  pool,
+  vault,
   receive,
   receiveToken,
   settlementTxHash,
@@ -244,7 +244,7 @@ function buildSteps({
 }: {
   cooldownPostAction: ReturnType<typeof deriveCooldownPostAction>
   needsApproval: boolean
-  pool: EarnPool
+  vault: EarnVault
   receive: ProgressStatusType
   receiveToken: EvmToken | undefined
   settlementTxHash: Hash | undefined
@@ -260,7 +260,7 @@ function buildSteps({
     steps.push({
       description: (
         <div className="flex items-center gap-x-2">
-          <TokenLogo size="small" token={pool.shareToken} />
+          <TokenLogo size="small" token={vault.shareToken} />
           <span>{t('step.approval-needed')}</span>
         </div>
       ),
@@ -269,10 +269,10 @@ function buildSteps({
   }
   if (transaction.approvalTxHash) {
     steps.push(
-      buildApprovalStep(transaction.approvalTxHash, pool.shareToken, t),
+      buildApprovalStep(transaction.approvalTxHash, vault.shareToken, t),
     )
   }
-  const unstakeStep = buildUnstakeStep(transaction, pool.shareToken, t)
+  const unstakeStep = buildUnstakeStep(transaction, vault.shareToken, t)
   // Recover path: shares come back, so the cooldown/receive machinery doesn't apply. A
   // still-PENDING deliberate cancel joins here too, dropping the now-moot countdown + Receive step.
   if (
@@ -282,7 +282,7 @@ function buildSteps({
   ) {
     steps.push(unstakeStep)
     steps.push(
-      buildRecoverStep(transaction, pool.shareToken, t, settlementTxHash),
+      buildRecoverStep(transaction, vault.shareToken, t, settlementTxHash),
     )
     return steps
   }
@@ -308,11 +308,11 @@ function buildSteps({
 export const HistoricalWithdrawReview = function ({
   callToAction,
   onClose,
-  pool,
+  vault,
   transaction,
 }: Props) {
   const t = useTranslations('hemi-earn.transactions.drawer')
-  // Cooldown copy is shared with the live pool review — reuse the pool.drawer namespace instead of duplicating keys.
+  // Cooldown copy is shared with the live vault review — reuse the vault.drawer namespace instead of duplicating keys.
   const tCooldown = useTranslations('hemi-earn.pool.drawer')
   const { address } = useAccount()
 
@@ -324,7 +324,7 @@ export const HistoricalWithdrawReview = function ({
   const receiveToken = rawReceiveToken as EvmToken | undefined
 
   const { needsApproval } = useNeedsApproval({
-    address: pool.shareAddress,
+    address: vault.shareAddress,
     amount: BigInt(transaction.amountIn),
     chainId: hemi.id,
     spender: getHemiEarnRouterAddress(),
@@ -332,12 +332,12 @@ export const HistoricalWithdrawReview = function ({
 
   const { data: isCooldownEligible } = useIsCooldownEligible({
     account: address,
-    stakingVault: pool.stakingVault,
+    stakingVault: vault.stakingVault,
   })
 
   const { data: cooldownDurationSec } = useCooldownDuration({
     enabled: !isEarnRowTerminal(transaction),
-    stakingVault: pool.stakingVault,
+    stakingVault: vault.stakingVault,
   })
 
   const claimableAt = transaction.claimableAt ?? null
@@ -384,7 +384,7 @@ export const HistoricalWithdrawReview = function ({
 
   const { amount: displayAmount, token: displayToken } = pickDisplay(
     transaction,
-    pool.shareToken,
+    vault.shareToken,
     receiveToken,
   )
 
@@ -395,12 +395,12 @@ export const HistoricalWithdrawReview = function ({
   const steps = buildSteps({
     cooldownPostAction,
     needsApproval,
-    pool,
     receive,
     receiveToken,
     settlementTxHash,
     t,
     transaction,
+    vault,
   })
 
   return (

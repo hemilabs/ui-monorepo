@@ -12,7 +12,7 @@ import { useEarnPositions } from '../_hooks/useEarnPositions'
 
 import { RenderEarnFiatBalance } from './earnFiatBalance'
 
-type PoolRowProps = {
+type VaultRowProps = {
   peggedAmount: bigint | undefined
   peggedAmountStatus: 'error' | 'pending' | 'success'
   peggedToken: EvmToken
@@ -20,13 +20,13 @@ type PoolRowProps = {
   shareToken: EvmToken
 }
 
-const PoolRow = ({
+const VaultRow = ({
   peggedAmount,
   peggedAmountStatus,
   peggedToken,
   shareAmount,
   shareToken,
-}: PoolRowProps) => (
+}: VaultRowProps) => (
   <div className="flex items-center gap-x-1 sm:min-w-52">
     <TokenLogo size="small" token={shareToken} />
     <span className="mr-auto text-sm font-medium text-white">
@@ -47,7 +47,7 @@ const PoolRow = ({
   </div>
 )
 
-export const FromPoolsBadge = function () {
+export const FromVaultsBadge = function () {
   const t = useTranslations('hemi-earn.info')
   const { data: positions = [], isError, isPending } = useEarnPositions()
 
@@ -71,7 +71,7 @@ export const FromPoolsBadge = function () {
       text={
         <div className="flex flex-col gap-y-1">
           {positions.map((position, index) => (
-            <PoolRow
+            <VaultRow
               key={position.shareAddress}
               peggedAmount={peggedAmountQueries[index]?.data?.peggedAmount}
               peggedAmountStatus={

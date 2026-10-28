@@ -14,7 +14,7 @@ import { useAccount as useEvmAccount } from 'wagmi'
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { percentToBps } from '../../../_utils/slippage'
-import { usePoolForm } from '../_context/vaultFormContext'
+import { useVaultForm } from '../_context/vaultFormContext'
 import { useAssetsToShares } from '../_hooks/useAssetsToShares'
 import { useMaxWithdrawableAsset } from '../_hooks/useMaxWithdrawableAsset'
 import { useSlippage } from '../_hooks/useSlippage'
@@ -43,7 +43,7 @@ import { AdvancedSettings } from './advancedSettings'
 import { AssetSelector } from './assetSelector'
 import { VaultFormLayout } from './form'
 import { OperationBelowForm } from './operationBelowForm'
-import { PoolFormContent } from './vaultFormContent'
+import { VaultFormContent } from './vaultFormContent'
 import { SubmitWithdraw } from './submitWithdraw'
 import { WithdrawAvailableBalance } from './withdrawAvailableBalance'
 import { WithdrawMaxBalance } from './withdrawMaxBalance'
@@ -61,14 +61,14 @@ export const Withdraw = function ({
   const {
     approveExtraAmount,
     input,
-    pool,
+    vault,
     resetStateAfterOperation,
     selectedAsset,
     updateAssetInput,
     updateSharesInput,
     updateWithdrawOperation,
     withdrawMode,
-  } = usePoolForm()
+  } = useVaultForm()
 
   const slippage = useSlippage('withdraw')
   const slippageBps = percentToBps(slippage)
@@ -85,25 +85,25 @@ export const Withdraw = function ({
         token: selectedAsset.token,
       }),
       assetAddress: selectedAsset.address,
-      shareAddress: pool.shareAddress,
+      shareAddress: vault.shareAddress,
     })
 
   const shares = deriveWithdrawShares({
     assetShares: assetsToShares?.shares,
     input,
     isTokensMode,
-    shareToken: pool.shareToken,
+    shareToken: vault.shareToken,
   })
 
   const { data: shareValue, isSuccess: shareValueLoaded } = useUserShareValue({
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
   })
   const shareBalance = shareValue?.shares ?? BigInt(0)
 
   const { data: maxWithdrawable, isFetched: maxAssetLoaded } =
     useMaxWithdrawableAsset({
       assetAddress: selectedAsset.address,
-      shareAddress: pool.shareAddress,
+      shareAddress: vault.shareAddress,
     })
   const maxAssetOut = maxWithdrawable?.assetOut
 
@@ -113,7 +113,7 @@ export const Withdraw = function ({
       isTokensMode,
       maxAssetOut,
       shareBalance,
-      shareToken: pool.shareToken,
+      shareToken: vault.shareToken,
     })
   const {
     canSubmit: baseValid,
@@ -164,9 +164,9 @@ export const Withdraw = function ({
     account: address,
     approvalAmount: extraApprovalAmount ?? shares,
     asset: selectedAsset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
     shares,
-    shareToken: pool.shareToken,
+    shareToken: vault.shareToken,
     slippageBps,
     spender: routerAddress,
     validInput,
@@ -188,13 +188,13 @@ export const Withdraw = function ({
     input,
     isTokensMode,
     shares,
-    shareToken: pool.shareToken,
+    shareToken: vault.shareToken,
   })
 
   // Fail-safe: assume the cooldown applies while eligibility loads/errors, so we don't imply an instant withdraw.
   const { data: isCooldownEligible = true } = useIsCooldownEligible({
     account: address,
-    stakingVault: pool.stakingVault,
+    stakingVault: vault.stakingVault,
   })
 
   const { callbackFee = BigInt(0), isInstant = false } = quote ?? {}
@@ -214,11 +214,11 @@ export const Withdraw = function ({
       emitter.on('withdraw-settled', () => setOperationRunning('idle'))
     },
     peggedAmount,
-    pool,
     selectedAsset,
     shares,
     slippage,
     updateWithdrawOperation,
+    vault,
   })
 
   const handleWithdraw = function () {
@@ -286,7 +286,7 @@ export const Withdraw = function ({
             isCooldownEligible={isCooldownEligible}
             isFeesError={isFeesError}
             nativeToken={nativeToken}
-            stakingVault={pool.stakingVault}
+            stakingVault={vault.stakingVault}
             topRow={{
               amount: assetOutRaw,
               label: t('hemi-earn.pool.form.you-will-receive'),
@@ -297,7 +297,7 @@ export const Withdraw = function ({
         )
       }
       formContent={
-        <PoolFormContent activeTab="withdraw" onSwitchTab={onSwitchToDeposit}>
+        <VaultFormContent activeTab="withdraw" onSwitchTab={onSwitchToDeposit}>
           <TokenInput
             balanceComponent={WithdrawShareBalance}
             disabled={isRunningOperation}
@@ -305,7 +305,7 @@ export const Withdraw = function ({
             fiatBalance={{
               // shares 0n keeps the preview disabled (peggedAmountRaw undefined) — force 0n so the fiat row reads "$0", not a stuck skeleton.
               balance: shares > BigInt(0) ? peggedAmountRaw : BigInt(0),
-              token: pool.peggedToken,
+              token: vault.peggedToken,
             }}
             fiatBalanceComponent={RenderEarnFiatBalance}
             headerAction={
@@ -322,8 +322,8 @@ export const Withdraw = function ({
               />
             }
             onChange={updateSharesInput}
-            token={pool.shareToken}
-            tokenSelector={<TokenSelectorReadOnly token={pool.shareToken} />}
+            token={vault.shareToken}
+            tokenSelector={<TokenSelectorReadOnly token={vault.shareToken} />}
             value={sharesValue}
           />
           <TokenInput
@@ -336,11 +336,11 @@ export const Withdraw = function ({
             onChange={updateAssetInput}
             token={selectedAsset.token}
             tokenSelector={
-              <AssetSelector disabled={isRunningOperation} pool={pool} />
+              <AssetSelector disabled={isRunningOperation} vault={vault} />
             }
             value={assetValue}
           />
-        </PoolFormContent>
+        </VaultFormContent>
       }
       onSubmit={handleWithdraw}
       submitButton={

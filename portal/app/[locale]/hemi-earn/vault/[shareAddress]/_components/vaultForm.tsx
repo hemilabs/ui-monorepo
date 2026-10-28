@@ -1,28 +1,28 @@
 import { Suspense, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
-import { usePoolForm } from '../_context/vaultFormContext'
+import { useVaultForm } from '../_context/vaultFormContext'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
-import { type PoolOperation } from '../_types/operations'
+import { type VaultOperation } from '../_types/operations'
 
 import { Deposit } from './deposit'
-import { PoolReview } from './vaultReview'
+import { VaultReview } from './vaultReview'
 import { Withdraw } from './withdraw'
 
 const SideDrawer = function () {
   const { drawerMode, setDrawerQueryString } = useDrawerQueryString()
-  const { depositOperation, withdrawOperation } = usePoolForm()
+  const { depositOperation, withdrawOperation } = useVaultForm()
 
   if (!drawerMode || (!depositOperation && !withdrawOperation)) {
     return null
   }
 
-  return <PoolReview closeDrawer={() => setDrawerQueryString(null)} />
+  return <VaultReview closeDrawer={() => setDrawerQueryString(null)} />
 }
 
-export const PoolForm = function () {
-  const { pool, resetSettings, updateSharesInput } = usePoolForm()
-  const [activeTab, setActiveTab] = useState<PoolOperation>('deposit')
+export const VaultForm = function () {
+  const { vault, resetSettings, updateSharesInput } = useVaultForm()
+  const [activeTab, setActiveTab] = useState<VaultOperation>('deposit')
 
   const switchToDeposit = function () {
     updateSharesInput('0')
@@ -36,7 +36,7 @@ export const PoolForm = function () {
     setActiveTab('withdraw')
   }
 
-  if (!pool.shareToken) {
+  if (!vault.shareToken) {
     return (
       <Skeleton
         className="min-h-72 rounded-2xl"

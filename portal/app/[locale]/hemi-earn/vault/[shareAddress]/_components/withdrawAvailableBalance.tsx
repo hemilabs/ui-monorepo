@@ -2,7 +2,7 @@ import { RenderCryptoBalance } from 'components/cryptoBalance'
 import { type EvmToken } from 'types/token'
 import { useAccount } from 'wagmi'
 
-import { usePoolForm } from '../_context/vaultFormContext'
+import { useVaultForm } from '../_context/vaultFormContext'
 import { useMaxWithdrawableAsset } from '../_hooks/useMaxWithdrawableAsset'
 
 export const WithdrawAvailableBalance = function ({
@@ -10,11 +10,11 @@ export const WithdrawAvailableBalance = function ({
 }: {
   token: EvmToken
 }) {
-  const { pool, selectedAsset } = usePoolForm()
+  const { vault, selectedAsset } = useVaultForm()
   const { isConnected } = useAccount()
   const { data, status } = useMaxWithdrawableAsset({
     assetAddress: selectedAsset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
   })
 
   if (!isConnected) {

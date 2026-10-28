@@ -9,12 +9,12 @@ import {
   veryHighSlippageThreshold,
 } from '../../../../_constants/slippage'
 import { getSlippageLevel } from '../../../../_utils/slippage'
-import { type PoolOperation } from '../../_types/operations'
+import { type VaultOperation } from '../../_types/operations'
 
 type Props = {
   onClose: VoidFunction
   onConfirm: VoidFunction
-  operation: PoolOperation
+  operation: VaultOperation
   // Captured by the caller before the settings panel unmounted, so focus can go
   // back to whatever held it rather than being dropped on the body.
   returnFocusTo: HTMLElement | null

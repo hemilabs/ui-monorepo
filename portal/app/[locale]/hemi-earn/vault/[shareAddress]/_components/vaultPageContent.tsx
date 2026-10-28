@@ -6,70 +6,70 @@ import { queryStringObjectToString } from 'utils/url'
 import { type Address } from 'viem'
 
 import { OperatorBanner } from '../../../_components/operatorDisclosure'
-import { useEarnPools } from '../../../_hooks/useEarnVaults'
-import { findPoolByShare } from '../../../_utils/vaults'
-import { PoolFormProvider } from '../_context/vaultFormContext'
+import { useEarnVaults } from '../../../_hooks/useEarnVaults'
+import { findVaultByShare } from '../../../_utils/vaults'
+import { VaultFormProvider } from '../_context/vaultFormContext'
 
 import { Composition } from './composition'
 import { HistoricalMetrics } from './historicalMetrics'
-import { PoolForm } from './vaultForm'
-import { PoolInfoCards } from './vaultInfoCards'
-import { PoolNavigation } from './vaultNavigation'
+import { VaultForm } from './vaultForm'
+import { VaultInfoCards } from './vaultInfoCards'
+import { VaultNavigation } from './vaultNavigation'
 
 type Props = {
   shareAddress: string
 }
 
-export const PoolPageContent = function ({ shareAddress }: Props) {
+export const VaultPageContent = function ({ shareAddress }: Props) {
   const router = useRouter()
   const [networkType] = useNetworkType()
-  const { data: pools } = useEarnPools()
+  const { data: vaults } = useEarnVaults()
 
-  const pool = pools
-    ? findPoolByShare(pools, shareAddress as Address)
+  const vault = vaults
+    ? findVaultByShare(vaults, shareAddress as Address)
     : undefined
 
-  const arePoolsLoaded = pools !== undefined
+  const areVaultsLoaded = vaults !== undefined
 
   useEffect(
     function redirectIfNotFound() {
-      if (arePoolsLoaded && !pool) {
+      if (areVaultsLoaded && !vault) {
         router.push(`/hemi-earn${queryStringObjectToString({ networkType })}`)
       }
     },
-    [arePoolsLoaded, networkType, pool, router],
+    [areVaultsLoaded, networkType, vault, router],
   )
 
   return (
     <>
-      {pool ? (
-        <PoolNavigation pool={pool} />
+      {vault ? (
+        <VaultNavigation vault={vault} />
       ) : (
         <Skeleton className="h-7 w-48 rounded-md" />
       )}
       <div className="mt-6">
         <OperatorBanner />
       </div>
-      {pool ? (
-        <PoolFormProvider pool={pool}>
+      {vault ? (
+        <VaultFormProvider vault={vault}>
           <div className="mt-6 flex flex-col gap-3 md:gap-5 lg:flex-row">
             <div className="order-2 flex flex-col gap-4 md:gap-5 lg:order-1 lg:basis-3/5">
-              <PoolInfoCards pool={pool} />
+              <VaultInfoCards vault={vault} />
               <HistoricalMetrics
-                peggedToken={pool.peggedToken}
-                shareToken={pool.shareToken}
-                stakingVault={pool.stakingVault}
+                peggedToken={vault.peggedToken}
+                shareToken={vault.shareToken}
+                stakingVault={vault.stakingVault}
               />
               <Composition
-                chainId={pool.shareToken.chainId}
-                shareAddress={pool.shareAddress}
+                chainId={vault.shareToken.chainId}
+                shareAddress={vault.shareAddress}
               />
             </div>
             <div className="order-1 lg:sticky lg:top-4 lg:order-2 lg:basis-2/5 lg:self-start">
-              <PoolForm />
+              <VaultForm />
             </div>
           </div>
-        </PoolFormProvider>
+        </VaultFormProvider>
       ) : (
         <div className="mt-6 flex gap-4">
           <Skeleton className="h-24 rounded-xl" containerClassName="flex-1" />

@@ -9,39 +9,39 @@ import {
   formatEvmAddress,
 } from 'utils/format'
 
-import { type EarnPool } from '../../types'
+import { type EarnVault } from '../../types'
 import { RenderEarnFiatBalance } from '../earnFiatBalance'
 import { RiskWarningTooltip } from '../riskWarningTooltip'
 
-import { PoolInfoItem } from './vaultInfoItem'
+import { VaultInfoItem } from './vaultInfoItem'
 import { StakedAmount } from './stakedAmount'
 import { TokenIconStack } from './tokenIconStack'
 
 type Props = {
-  pool: EarnPool
+  vault: EarnVault
 }
 
-export const PoolInfoBar = function ({ pool }: Props) {
+export const VaultInfoBar = function ({ vault }: Props) {
   const t = useTranslations('hemi-earn.pool-info')
   const locale = useLocale()
-  const chain = useChain(pool.shareToken.chainId)
+  const chain = useChain(vault.shareToken.chainId)
 
-  const formattedAddress = formatEvmAddress(pool.shareAddress)
+  const formattedAddress = formatEvmAddress(vault.shareAddress)
   const explorerUrl = chain?.blockExplorers?.default.url
 
   return (
     <div className="flex w-full flex-col gap-4 rounded-xl bg-white p-4 shadow-sm md:min-h-19.5 md:flex-row md:items-center md:gap-6">
       <div className="flex h-10 w-full shrink-0 items-center justify-center rounded-lg bg-neutral-100 md:w-19">
-        <TokenIconStack tokens={pool.exposureTokens} />
+        <TokenIconStack tokens={vault.exposureTokens} />
       </div>
       <div className="grid grid-cols-2 gap-4 md:flex md:flex-1 md:items-center md:gap-6">
         <div className="md:w-32">
-          <PoolInfoItem label={t('vault-contract')}>
+          <VaultInfoItem label={t('vault-contract')}>
             <span className="body-text-medium text-neutral-950">
               {explorerUrl ? (
                 <ExternalLink
                   className="hover:text-orange-500"
-                  href={`${explorerUrl}/address/${pool.shareAddress}`}
+                  href={`${explorerUrl}/address/${vault.shareAddress}`}
                 >
                   {formattedAddress}
                 </ExternalLink>
@@ -49,34 +49,34 @@ export const PoolInfoBar = function ({ pool }: Props) {
                 formattedAddress
               )}
             </span>
-          </PoolInfoItem>
+          </VaultInfoItem>
         </div>
         <div className="md:w-24">
-          <PoolInfoItem label={t('share-token')}>
+          <VaultInfoItem label={t('share-token')}>
             <div className="flex items-center gap-x-1.5">
               <div className="flex items-center justify-center rounded-full border border-gray-200">
-                <TokenLogo size="small" token={pool.shareToken} version="L1" />
+                <TokenLogo size="small" token={vault.shareToken} version="L1" />
               </div>
               <span className="body-text-medium text-neutral-950">
-                {pool.shareToken.symbol}
+                {vault.shareToken.symbol}
               </span>
             </div>
-          </PoolInfoItem>
+          </VaultInfoItem>
         </div>
         <div className="md:w-24">
-          <PoolInfoItem label={t('total-deposits')}>
+          <VaultInfoItem label={t('total-deposits')}>
             <span className="body-text-medium text-neutral-950">
               <RenderEarnFiatBalance
-                balance={pool.totalDeposits}
+                balance={vault.totalDeposits}
                 customFormatter={usd => formatCompactFiat(Number(usd), locale)}
-                queryStatus={pool.totalDepositsStatus}
-                token={pool.peggedToken}
+                queryStatus={vault.totalDepositsStatus}
+                token={vault.peggedToken}
               />
             </span>
-          </PoolInfoItem>
+          </VaultInfoItem>
         </div>
-        <PoolInfoItem
-          isLoading={pool.apy === undefined}
+        <VaultInfoItem
+          isLoading={vault.apy === undefined}
           label={
             <>
               {t('apy')}
@@ -84,16 +84,16 @@ export const PoolInfoBar = function ({ pool }: Props) {
             </>
           }
           value={
-            typeof pool.apy === 'number'
-              ? formatApyDisplay(pool.apy)
+            typeof vault.apy === 'number'
+              ? formatApyDisplay(vault.apy)
               : undefined
           }
         />
-        <StakedAmount pool={pool} />
+        <StakedAmount vault={vault} />
       </div>
       <div className="flex w-full *:flex-1 md:ml-auto md:w-auto md:*:flex-initial">
         <ButtonLink
-          href={`/hemi-earn/vault/${pool.shareAddress}`}
+          href={`/hemi-earn/vault/${vault.shareAddress}`}
           size="small"
           variant="primary"
         >

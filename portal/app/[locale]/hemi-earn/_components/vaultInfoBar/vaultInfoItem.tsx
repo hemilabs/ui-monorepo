@@ -8,7 +8,7 @@ type Props = {
   value?: string
 }
 
-export const PoolInfoItem = function ({
+export const VaultInfoItem = function ({
   children,
   isLoading,
   label,

@@ -1,7 +1,7 @@
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { useNetworkType } from 'hooks/useNetworkType'
 
-import { type EarnPool } from '../types'
+import { type EarnVault } from '../types'
 
 import {
   earnApyQueryOptions,
@@ -12,7 +12,7 @@ import { earnTvlQueryOptions } from './useEarnTvl'
 import { useHemiEarnShares } from './useHemiEarnShares'
 
 // Combines the shares registry with independent TVL (per-share) and APY (one shared call) queries, each with its own freshness.
-export const useEarnPools = function () {
+export const useEarnVaults = function () {
   const [networkType] = useNetworkType()
   const { data: shares, isError, isPending } = useHemiEarnShares()
 
@@ -28,7 +28,7 @@ export const useEarnPools = function () {
   )
   const isApyPending = isApyApiConfigured && isApyQueryPending
 
-  const data: EarnPool[] | undefined = shares?.map((share, index) => ({
+  const data: EarnVault[] | undefined = shares?.map((share, index) => ({
     apy: selectApyValue(apyByVault, isApyPending, share.stakingVault),
     assets: share.assets,
     exposureTokens: share.assets.map(a => ({

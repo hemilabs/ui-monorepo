@@ -17,7 +17,7 @@ import { useAccount as useEvmAccount } from 'wagmi'
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { percentToBps } from '../../../_utils/slippage'
-import { usePoolForm } from '../_context/vaultFormContext'
+import { useVaultForm } from '../_context/vaultFormContext'
 import { useDeposit } from '../_hooks/useDeposit'
 import { useDepositPreview } from '../_hooks/useDepositPreview'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
@@ -35,7 +35,7 @@ import { AdvancedSettings } from './advancedSettings'
 import { AssetSelector } from './assetSelector'
 import { VaultFormLayout } from './form'
 import { OperationBelowForm } from './operationBelowForm'
-import { PoolFormContent } from './vaultFormContent'
+import { VaultFormContent } from './vaultFormContent'
 import { SubmitDeposit } from './submitDeposit'
 
 type Props = {
@@ -50,12 +50,12 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   const {
     approveExtraAmount,
     input,
-    pool,
+    vault,
     resetStateAfterOperation,
     selectedAsset,
     updateDepositOperation,
     updateInput,
-  } = usePoolForm()
+  } = useVaultForm()
 
   const { address, status } = useEvmAccount()
 
@@ -83,7 +83,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   // Fail-safe: assume the cooldown applies while eligibility loads/errors, so we don't imply an instant withdraw.
   const { data: isCooldownEligible = true } = useIsCooldownEligible({
     account: address,
-    stakingVault: pool.stakingVault,
+    stakingVault: vault.stakingVault,
   })
 
   const {
@@ -108,7 +108,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     amount,
     approvalAmount: extraApprovalAmount ?? amount,
     asset: selectedAsset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
     slippageBps,
     spender: routerAddress,
     token: selectedAsset.token,
@@ -132,7 +132,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     callbackFee: quote?.callbackFee ?? BigInt(0),
     input,
     on(emitter) {
-      // Open the drawer on first signature — wired here, not in useDeposit, so the hook stays reusable off the pool page (home retry has no drawer).
+      // Open the drawer on first signature — wired here, not in useDeposit, so the hook stays reusable off the vault page (home retry has no drawer).
       emitter.on('user-signed-approval', () =>
         setDrawerQueryString('depositing'),
       )
@@ -147,11 +147,11 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
       })
       emitter.on('deposit-settled', () => setOperationRunning('idle'))
     },
-    pool,
     selectedAsset,
     sharesOutMin,
     slippage,
     updateDepositOperation,
+    vault,
   })
 
   const handleDeposit = function () {
@@ -206,18 +206,18 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
             isCooldownEligible={isCooldownEligible}
             isFeesError={isFeesError}
             nativeToken={nativeToken}
-            stakingVault={pool.stakingVault}
+            stakingVault={vault.stakingVault}
             topRow={{
               amount: shares,
               label: t('hemi-earn.pool.form.you-will-receive'),
-              token: pool.shareToken,
+              token: vault.shareToken,
             }}
             totalFees={totalFees}
           />
         )
       }
       formContent={
-        <PoolFormContent activeTab="deposit" onSwitchTab={onSwitchToWithdraw}>
+        <VaultFormContent activeTab="deposit" onSwitchTab={onSwitchToWithdraw}>
           <TokenInput
             disabled={isRunningOperation}
             errorKey={displayedErrorKey}
@@ -240,11 +240,11 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
             onChange={updateInput}
             token={selectedAsset.token}
             tokenSelector={
-              <AssetSelector disabled={isRunningOperation} pool={pool} />
+              <AssetSelector disabled={isRunningOperation} vault={vault} />
             }
             value={input}
           />
-        </PoolFormContent>
+        </VaultFormContent>
       }
       onSubmit={handleDeposit}
       submitButton={

@@ -15,7 +15,7 @@ import { useQuoteDeposit } from '../../../vault/[shareAddress]/_hooks/useQuoteDe
 import { type DepositOperationRunning } from '../../../vault/[shareAddress]/_types/operations'
 import {
   type EarnAsset,
-  type EarnPool,
+  type EarnVault,
   type EarnTransaction,
 } from '../../../types'
 
@@ -23,7 +23,7 @@ import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 type Props = {
   asset: EarnAsset
-  pool: EarnPool
+  vault: EarnVault
   transaction: EarnTransaction
 }
 
@@ -31,7 +31,7 @@ type Props = {
 // earnTxId to the new tx so the drawer transitions in place from FAILED to in-flight.
 export const RetryFailedDeposit = function ({
   asset,
-  pool,
+  vault,
   transaction,
 }: Props) {
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
@@ -45,13 +45,13 @@ export const RetryFailedDeposit = function ({
   const { data: quote } = useQuoteDeposit({
     amount,
     asset: asset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
   })
 
   const { data: shares } = useDepositShares({
     amount,
     asset: asset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
   })
 
   const slippage = resolveRetrySlippage({
@@ -84,13 +84,13 @@ export const RetryFailedDeposit = function ({
         setTxDrawerQueryString(newInitiateTxHash)
       })
     },
-    pool,
     priorApprovalTxHash: transaction.approvalTxHash,
     selectedAsset: asset,
     sharesOutMin,
     slippage,
     // Hide the specific failed row from the table once this retry is signed.
     supersedesInitiateTxHash: transaction.requestTxHash,
+    vault,
   })
 
   const isDepositing = operationRunning === 'depositing'

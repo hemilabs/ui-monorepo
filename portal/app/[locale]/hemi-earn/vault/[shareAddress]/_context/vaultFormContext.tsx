@@ -9,43 +9,43 @@ import {
 } from 'react'
 import { isAddressEqual } from 'viem'
 
-import { type EarnAsset, type EarnPool } from '../../../types'
-import { usePoolFormState } from '../_hooks/useVaultFormState'
+import { type EarnAsset, type EarnVault } from '../../../types'
+import { useVaultFormState } from '../_hooks/useVaultFormState'
 
-type PoolFormContextValue = ReturnType<typeof usePoolFormState> & {
-  pool: EarnPool
+type VaultFormContextValue = ReturnType<typeof useVaultFormState> & {
+  vault: EarnVault
   selectedAsset: EarnAsset
   setSelectedAsset: (asset: EarnAsset) => void
 }
 
-const PoolFormContext = createContext<PoolFormContextValue | undefined>(
+const VaultFormContext = createContext<VaultFormContextValue | undefined>(
   undefined,
 )
 
-export function PoolFormProvider({
+export function VaultFormProvider({
   children,
-  pool,
+  vault,
 }: {
   children: ReactNode
-  pool: EarnPool
+  vault: EarnVault
 }) {
-  const state = usePoolFormState()
+  const state = useVaultFormState()
   const [selectedAssetAddress, setSelectedAssetAddress] = useState(
-    () => pool.assets[0].address,
+    () => vault.assets[0].address,
   )
 
   useEffect(
-    function resetSelectionOnPoolChange() {
-      setSelectedAssetAddress(pool.assets[0].address)
+    function resetSelectionOnVaultChange() {
+      setSelectedAssetAddress(vault.assets[0].address)
     },
-    [pool.shareAddress, pool.assets],
+    [vault.shareAddress, vault.assets],
   )
 
   const selectedAsset = useMemo(
     () =>
-      pool.assets.find(a => isAddressEqual(a.address, selectedAssetAddress)) ??
-      pool.assets[0],
-    [pool.assets, selectedAssetAddress],
+      vault.assets.find(a => isAddressEqual(a.address, selectedAssetAddress)) ??
+      vault.assets[0],
+    [vault.assets, selectedAssetAddress],
   )
 
   const setSelectedAsset = useCallback(function (asset: EarnAsset) {
@@ -53,18 +53,18 @@ export function PoolFormProvider({
   }, [])
 
   return (
-    <PoolFormContext.Provider
-      value={{ ...state, pool, selectedAsset, setSelectedAsset }}
+    <VaultFormContext.Provider
+      value={{ ...state, selectedAsset, setSelectedAsset, vault }}
     >
       {children}
-    </PoolFormContext.Provider>
+    </VaultFormContext.Provider>
   )
 }
 
-export function usePoolForm(): PoolFormContextValue {
-  const ctx = useContext(PoolFormContext)
+export function useVaultForm(): VaultFormContextValue {
+  const ctx = useContext(VaultFormContext)
   if (!ctx) {
-    throw new Error('usePoolForm must be used inside <PoolFormProvider>')
+    throw new Error('useVaultForm must be used inside <VaultFormProvider>')
   }
   return ctx
 }

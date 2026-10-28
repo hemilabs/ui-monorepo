@@ -15,7 +15,7 @@ import { LocalEarnOperationsProvider } from './_context/localEarnOperationsConte
 
 export const HemiEarnLayout = function () {
   const [networkType] = useNetworkType()
-  const pool = useMatch('/:locale/hemi-earn/vault/:shareAddress')
+  const vault = useMatch('/:locale/hemi-earn/vault/:shareAddress')
   const t = useTranslations('hemi-earn')
 
   if (!featureFlags.enableHemiEarnPage) {
@@ -24,7 +24,7 @@ export const HemiEarnLayout = function () {
 
   // Checked up here rather than in the page: below this point the layout has
   // already mounted the delivery watcher, and a 404 has no business polling.
-  if (pool && !isAddress(pool.params.shareAddress ?? '')) {
+  if (vault && !isAddress(vault.params.shareAddress ?? '')) {
     return <NotFound />
   }
 

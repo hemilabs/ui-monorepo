@@ -10,9 +10,9 @@ import Skeleton from 'react-loading-skeleton'
 import { type useTranslations } from 'use-intl'
 import { formatUnits } from 'viem'
 
-import { useEarnPools } from '../../_hooks/useEarnVaults'
+import { useEarnVaults } from '../../_hooks/useEarnVaults'
 import { pickEarnRowAmount } from '../../_utils/earnRows'
-import { findPoolByAsset } from '../../_utils/vaults'
+import { findVaultByAsset } from '../../_utils/vaults'
 import { type EarnTransaction } from '../../types'
 
 import { RowActions } from './rowActions'
@@ -24,19 +24,19 @@ function AmountCell({ transaction }: { transaction: EarnTransaction }) {
     address: transaction.asset,
     chainId: hemi.id,
   })
-  const { data: pools = [], isPending: isPoolsPending } = useEarnPools()
-  const pool =
+  const { data: vaults = [], isPending: isVaultsPending } = useEarnVaults()
+  const vault =
     transaction.kind === 'REDEEM'
-      ? findPoolByAsset(pools, transaction.asset)
+      ? findVaultByAsset(vaults, transaction.asset)
       : undefined
 
   const { rawAmount, token } = pickEarnRowAmount(transaction, {
     assetToken,
-    shareToken: pool?.shareToken,
+    shareToken: vault?.shareToken,
   })
 
   if (!token) {
-    if (isLoading || isPoolsPending) return <Skeleton className="w-16" />
+    if (isLoading || isVaultsPending) return <Skeleton className="w-16" />
     return <span className="text-neutral-950">{rawAmount}</span>
   }
   return (

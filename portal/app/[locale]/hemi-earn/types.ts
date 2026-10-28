@@ -72,8 +72,8 @@ export type EarnAsset = {
   token: EvmToken
 }
 
-// A pool = one Vetro share vault (Ethereum) plus every Hemi deposit asset that settles into it.
-export type EarnPool = {
+// A vault = one Vetro share vault (Ethereum) plus every Hemi deposit asset that settles into it.
+export type EarnVault = {
   // null = settled with no value (show '-'); undefined = still pending.
   apy: number | null | undefined
   assets: EarnAsset[]

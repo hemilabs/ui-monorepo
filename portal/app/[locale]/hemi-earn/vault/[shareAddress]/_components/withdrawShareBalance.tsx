@@ -2,14 +2,14 @@ import { RenderCryptoBalance } from 'components/cryptoBalance'
 import { type EvmToken } from 'types/token'
 import { useAccount } from 'wagmi'
 
-import { usePoolForm } from '../_context/vaultFormContext'
+import { useVaultForm } from '../_context/vaultFormContext'
 import { useUserShareValue } from '../_hooks/useUserShareValue'
 
 export const WithdrawShareBalance = function ({ token }: { token: EvmToken }) {
-  const { pool } = usePoolForm()
+  const { vault } = useVaultForm()
   const { isConnected } = useAccount()
   const { data, status } = useUserShareValue({
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
   })
 
   if (!isConnected) {

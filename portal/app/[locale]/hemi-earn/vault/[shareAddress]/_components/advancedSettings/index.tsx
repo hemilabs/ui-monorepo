@@ -11,9 +11,9 @@ import {
   needsRiskConfirmation,
   sanitizeSlippage,
 } from '../../../../_utils/slippage'
-import { usePoolForm } from '../../_context/vaultFormContext'
+import { useVaultForm } from '../../_context/vaultFormContext'
 import { getDefaultSlippage } from '../../_hooks/useSlippage'
-import { type PoolOperation } from '../../_types/operations'
+import { type VaultOperation } from '../../_types/operations'
 
 import { HighSlippageModal } from './highSlippageModal'
 import { SettingsPanel } from './panel'
@@ -21,7 +21,7 @@ import { SettingsTrigger } from './trigger'
 
 type Props = {
   disabled?: boolean
-  operation: PoolOperation
+  operation: VaultOperation
 }
 
 export const AdvancedSettings = function ({
@@ -33,7 +33,7 @@ export const AdvancedSettings = function ({
     slippage,
     updateApproveExtraAmount,
     updateSlippage,
-  } = usePoolForm()
+  } = useVaultForm()
 
   const defaultSlippage = getDefaultSlippage(operation)
 

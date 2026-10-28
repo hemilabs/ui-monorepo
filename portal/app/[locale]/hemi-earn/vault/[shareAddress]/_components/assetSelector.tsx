@@ -5,23 +5,23 @@ import { TokenLogo } from 'components/tokenLogo'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { useState } from 'react'
 
-import { type EarnPool } from '../../../types'
-import { usePoolForm } from '../_context/vaultFormContext'
+import { type EarnVault } from '../../../types'
+import { useVaultForm } from '../_context/vaultFormContext'
 
 type Props = {
   disabled?: boolean
-  pool: EarnPool
+  vault: EarnVault
 }
 
-// Local state only — picking a deposit asset doesn't navigate; a single-asset pool renders read-only.
-export const AssetSelector = function ({ disabled, pool }: Props) {
-  const { selectedAsset, setSelectedAsset } = usePoolForm()
+// Local state only — picking a deposit asset doesn't navigate; a single-asset vault renders read-only.
+export const AssetSelector = function ({ disabled, vault }: Props) {
+  const { selectedAsset, setSelectedAsset } = useVaultForm()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const dropdownRef = useOnClickOutside<HTMLDivElement>(() =>
     setIsDropdownOpen(false),
   )
 
-  if (pool.assets.length <= 1) {
+  if (vault.assets.length <= 1) {
     return <TokenSelectorReadOnly token={selectedAsset.token} />
   }
 
@@ -42,7 +42,7 @@ export const AssetSelector = function ({ disabled, pool }: Props) {
       {isDropdownOpen && (
         <div className="absolute right-0 top-full z-20 mt-1">
           <Menu
-            items={pool.assets.map(asset => ({
+            items={vault.assets.map(asset => ({
               content: (
                 <button
                   className="-mx-2 -my-1 flex items-center gap-x-2 px-2 py-1 text-left text-sm"

@@ -2,10 +2,10 @@ import { Drawer } from 'components/drawer'
 import { Suspense, useEffect } from 'react'
 import { isAddressEqual, isHash } from 'viem'
 
-import { useEarnPools } from '../../../_hooks/useEarnVaults'
+import { useEarnVaults } from '../../../_hooks/useEarnVaults'
 import { useEarnTransactions } from '../../../_hooks/useEarnTransactions'
 import { hashesMatch } from '../../../_utils/hashes'
-import { findPoolByAsset } from '../../../_utils/vaults'
+import { findVaultByAsset } from '../../../_utils/vaults'
 import {
   canRetryRow,
   isAwaitingFinalize,
@@ -15,7 +15,7 @@ import {
 } from '../../../_utils/transactionPredicates'
 import {
   type EarnAsset,
-  type EarnPool,
+  type EarnVault,
   type EarnTransaction,
 } from '../../../types'
 
@@ -35,16 +35,20 @@ import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 // FULFILLED/CANCELLED, re-surfacing the same CTA (as "try again").
 function depositCallToAction({
   asset,
-  pool,
+  vault,
   transaction,
 }: {
   asset: EarnAsset
-  pool: EarnPool
+  vault: EarnVault
   transaction: EarnTransaction
 }) {
   if (canRetryRow(transaction)) {
     return (
-      <RetryFailedDeposit asset={asset} pool={pool} transaction={transaction} />
+      <RetryFailedDeposit
+        asset={asset}
+        vault={vault}
+        transaction={transaction}
+      />
     )
   }
   if (isRemoteFailed(transaction)) {
@@ -55,7 +59,7 @@ function depositCallToAction({
       <SettleCta
         asset={asset}
         operation="CLAIM"
-        pool={pool}
+        vault={vault}
         transaction={transaction}
       />
     )
@@ -65,14 +69,14 @@ function depositCallToAction({
       <SettleCta
         asset={asset}
         operation="RECOVER"
-        pool={pool}
+        vault={vault}
         transaction={transaction}
       />
     )
   }
   // Claim done — offer to add the share token to the wallet.
   if (transaction.status === 'FINALIZED') {
-    return <AddTokenToWalletCta token={pool.shareToken} />
+    return <AddTokenToWalletCta token={vault.shareToken} />
   }
   return null
 }
@@ -80,18 +84,18 @@ function depositCallToAction({
 // Redeem mirror: claim delivers the asset, recover returns the shares.
 function redeemCallToAction({
   asset,
-  pool,
+  vault,
   transaction,
 }: {
   asset: EarnAsset
-  pool: EarnPool
+  vault: EarnVault
   transaction: EarnTransaction
 }) {
   if (canRetryRow(transaction)) {
     return (
       <RetryFailedWithdraw
         asset={asset}
-        pool={pool}
+        vault={vault}
         transaction={transaction}
       />
     )
@@ -107,7 +111,7 @@ function redeemCallToAction({
       <SettleCta
         asset={asset}
         operation="CLAIM"
-        pool={pool}
+        vault={vault}
         transaction={transaction}
       />
     )
@@ -117,7 +121,7 @@ function redeemCallToAction({
       <SettleCta
         asset={asset}
         operation="RECOVER"
-        pool={pool}
+        vault={vault}
         transaction={transaction}
       />
     )
@@ -133,11 +137,11 @@ const findTransactionByTxId = (transactions: EarnTransaction[], txId: string) =>
   transactions.find(t => hashesMatch(t.requestTxHash, txId))
 
 const resolveDrawerData = function ({
-  pools,
+  vaults,
   transactions,
   txId,
 }: {
-  pools: EarnPool[]
+  vaults: EarnVault[]
   transactions: EarnTransaction[]
   txId: string
 }) {
@@ -145,14 +149,14 @@ const resolveDrawerData = function ({
   if (!transaction) {
     return undefined
   }
-  const pool = findPoolByAsset(pools, transaction.asset)
-  const asset = pool?.assets.find(a =>
+  const vault = findVaultByAsset(vaults, transaction.asset)
+  const asset = vault?.assets.find(a =>
     isAddressEqual(a.address, transaction.asset),
   )
-  if (!pool || !asset) {
+  if (!vault || !asset) {
     return undefined
   }
-  return { asset, pool, transaction }
+  return { asset, transaction, vault }
 }
 
 const UnresolvedTransaction = function ({
@@ -183,7 +187,7 @@ const TransactionDrawerContent = function () {
     isPending: isTransactionsPending,
     reset: resetTransactions,
   } = useEarnTransactions()
-  const { data: pools } = useEarnPools()
+  const { data: vaults } = useEarnVaults()
 
   // A malformed txId (e.g. 0x123) isn't a real tx — drop it from the URL and show no drawer.
   const hasInvalidTxId = txId !== null && !isHash(txId)
@@ -202,13 +206,13 @@ const TransactionDrawerContent = function () {
 
   const close = () => setTxDrawerQueryString(null)
 
-  const resolved = pools && resolveDrawerData({ pools, transactions, txId })
+  const resolved = vaults && resolveDrawerData({ transactions, txId, vaults })
   if (!resolved) {
     return (
       <Drawer onClose={close}>
         <UnresolvedTransaction
           hasLoadError={hasTransactionsLoadError}
-          isLoading={!pools || isTransactionsPending}
+          isLoading={!vaults || isTransactionsPending}
           onClose={close}
           onRetry={resetTransactions}
         />
@@ -221,12 +225,12 @@ const TransactionDrawerContent = function () {
     transaction.kind === 'REDEEM'
       ? redeemCallToAction({
           asset: resolved.asset,
-          pool: resolved.pool,
           transaction,
+          vault: resolved.vault,
         })
       : depositCallToAction({
           asset: resolved.asset,
-          pool: resolved.pool,
+          vault: resolved.vault,
           transaction,
         })
 
@@ -237,7 +241,7 @@ const TransactionDrawerContent = function () {
           <HistoricalWithdrawReview
             callToAction={callToAction}
             onClose={close}
-            pool={resolved.pool}
+            vault={resolved.vault}
             transaction={transaction}
           />
         ) : (

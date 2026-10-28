@@ -4,7 +4,7 @@ import { type KeyboardEvent } from 'react'
 import { useTranslations } from 'use-intl'
 
 import { type SlippageLevel } from '../../../../_utils/slippage'
-import { type PoolOperation } from '../../_types/operations'
+import { type VaultOperation } from '../../_types/operations'
 
 type Props = {
   approveExtraAmount: boolean
@@ -15,7 +15,7 @@ type Props = {
   onAutoClick: VoidFunction
   onDraftChange: (value: string) => void
   onEnter: VoidFunction
-  operation: PoolOperation
+  operation: VaultOperation
 }
 
 const levelStyles: Record<SlippageLevel, string> = {
@@ -49,7 +49,7 @@ export const SettingsPanel = function ({
 
   const handleKeyDown = function (event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === 'Enter') {
-      // Without this the keypress submits the surrounding pool form.
+      // Without this the keypress submits the surrounding vault form.
       event.preventDefault()
       onEnter()
     }

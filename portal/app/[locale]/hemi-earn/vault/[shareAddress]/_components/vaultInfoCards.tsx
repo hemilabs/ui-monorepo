@@ -6,13 +6,13 @@ import { formatApyDisplay, formatFiatNumber } from 'utils/format'
 
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
 import { RiskWarningTooltip } from '../../../_components/riskWarningTooltip'
-import { type EarnPool } from '../../../types'
+import { type EarnVault } from '../../../types'
 
 type Props = {
-  pool: EarnPool
+  vault: EarnVault
 }
 
-export const PoolInfoCards = function ({ pool }: Props) {
+export const VaultInfoCards = function ({ vault }: Props) {
   const t = useTranslations('hemi-earn')
 
   return (
@@ -25,10 +25,10 @@ export const PoolInfoCards = function ({ pool }: Props) {
           label={t('pool.total-deposits')}
           value={
             <RenderEarnFiatBalance
-              balance={pool.totalDeposits}
+              balance={vault.totalDeposits}
               customFormatter={usd => `$${formatFiatNumber(usd)}`}
-              queryStatus={pool.totalDepositsStatus}
-              token={pool.peggedToken}
+              queryStatus={vault.totalDepositsStatus}
+              token={vault.peggedToken}
             />
           }
         />
@@ -36,8 +36,8 @@ export const PoolInfoCards = function ({ pool }: Props) {
       <div className="flex-1">
         <StatCard
           icon={<ArrowGrowingIcon />}
-          isError={pool.apy === null}
-          isLoading={pool.apy === undefined}
+          isError={vault.apy === null}
+          isLoading={vault.apy === undefined}
           label={
             <div className="flex items-center gap-x-1">
               {t('pool.apy')}
@@ -45,7 +45,7 @@ export const PoolInfoCards = function ({ pool }: Props) {
             </div>
           }
           value={
-            typeof pool.apy === 'number' ? formatApyDisplay(pool.apy) : null
+            typeof vault.apy === 'number' ? formatApyDisplay(vault.apy) : null
           }
         />
       </div>

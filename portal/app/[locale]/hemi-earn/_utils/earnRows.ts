@@ -2,13 +2,13 @@ import { type Token } from 'types/token'
 import { type Address } from 'viem'
 
 import {
-  type EarnPool,
+  type EarnVault,
   type EarnPosition,
   type EarnTransaction,
   type LocalEarnOperation,
 } from '../types'
 
-import { findPoolByAsset, findPoolByShare } from './vaults'
+import { findVaultByAsset, findVaultByShare } from './vaults'
 import { isEarnRowInFlight } from './transactionPredicates'
 
 // DEPOSIT renders amountIn (asset units) — never amountOut, which is 18-dec shares.
@@ -28,7 +28,7 @@ export const pickEarnRowAmount = (
 // basis hasn't disposed them yet, so the earned card adds them back to stay consistent.
 export const sumInTransitSharesByShare = (
   transactions: EarnTransaction[],
-  pools: EarnPool[],
+  vaults: EarnVault[],
 ) =>
   transactions.reduce<Record<string, bigint>>(function (acc, tx) {
     if (
@@ -38,7 +38,7 @@ export const sumInTransitSharesByShare = (
       !isEarnRowInFlight(tx)
     )
       return acc
-    const shareAddress = findPoolByAsset(pools, tx.asset)?.shareAddress
+    const shareAddress = findVaultByAsset(vaults, tx.asset)?.shareAddress
     if (!shareAddress) return acc
     const key = shareAddress.toLowerCase()
     acc[key] = (acc[key] ?? BigInt(0)) + BigInt(tx.amountIn)
@@ -51,17 +51,17 @@ export const sumInTransitSharesByShare = (
 export const inTransitOnlyPositions = function (
   inTransitByShare: Record<string, bigint>,
   positions: EarnPosition[],
-  pools: EarnPool[],
+  vaults: EarnVault[],
 ) {
   const held = new Set(positions.map(p => p.shareAddress.toLowerCase()))
   return Object.keys(inTransitByShare)
     .filter(share => !held.has(share))
-    .map(share => findPoolByShare(pools, share as Address))
-    .filter((pool): pool is EarnPool => pool !== undefined)
-    .map(pool => ({
-      peggedToken: pool.peggedToken,
-      shareAddress: pool.shareAddress,
-      shareToken: pool.shareToken,
+    .map(share => findVaultByShare(vaults, share as Address))
+    .filter((vault): vault is EarnVault => vault !== undefined)
+    .map(vault => ({
+      peggedToken: vault.peggedToken,
+      shareAddress: vault.shareAddress,
+      shareToken: vault.shareToken,
       yourDeposit: BigInt(0),
     }))
 }

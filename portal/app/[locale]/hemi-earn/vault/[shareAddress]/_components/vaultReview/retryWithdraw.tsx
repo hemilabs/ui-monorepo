@@ -7,7 +7,7 @@ import { parseTokenUnits } from 'utils/token'
 
 import { applySlippage } from '../../../../_constants/slippage'
 import { percentToBps } from '../../../../_utils/slippage'
-import { usePoolForm } from '../../_context/vaultFormContext'
+import { useVaultForm } from '../../_context/vaultFormContext'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
 import { useSharesToAssets } from '../../_hooks/useSharesToAssets'
 import { useSlippage } from '../../_hooks/useSlippage'
@@ -21,18 +21,18 @@ export const RetryWithdraw = function () {
   const {
     approveExtraAmount,
     input,
-    pool,
+    vault,
     resetStateAfterOperation,
     selectedAsset,
     updateWithdrawOperation,
     withdrawOperation,
-  } = usePoolForm()
+  } = useVaultForm()
 
   const t = useTranslations()
   const slippage = useSlippage('withdraw')
   const slippageBps = percentToBps(slippage)
   // Input is in share units — the Router burns shares directly; assetsOutMin comes from the asset preview below.
-  const shares = parseTokenUnits(input, pool.shareToken)
+  const shares = parseTokenUnits(input, vault.shareToken)
 
   const {
     data: { assetOut, peggedAmount } = {
@@ -41,7 +41,7 @@ export const RetryWithdraw = function () {
     },
   } = useSharesToAssets({
     assetAddress: selectedAsset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
     shares,
   })
 
@@ -50,7 +50,7 @@ export const RetryWithdraw = function () {
 
   const { data: quote } = useQuoteRedeem({
     asset: selectedAsset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
     shares,
   })
 
@@ -79,7 +79,6 @@ export const RetryWithdraw = function () {
       })
     },
     peggedAmount,
-    pool,
     priorApprovalTxHash: withdrawOperation?.approvalTxHash,
     selectedAsset,
     shares,
@@ -87,6 +86,7 @@ export const RetryWithdraw = function () {
     // Hide the specific failed row once this retry is signed (transactionHash is the failed redeem's hash).
     supersedesInitiateTxHash: withdrawOperation?.transactionHash,
     updateWithdrawOperation,
+    vault,
   })
 
   const isWithdrawing = operationRunning === 'withdrawing'

@@ -8,7 +8,7 @@ type Props = {
   onSwitchTab: VoidFunction
 }
 
-export const PoolFormContent = function ({
+export const VaultFormContent = function ({
   activeTab,
   children,
   onSwitchTab,

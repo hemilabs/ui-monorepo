@@ -20,7 +20,7 @@ import { getWalletClient } from 'wagmi/actions'
 
 import { earnTransactionsKeyPrefix } from '../../../_fetchers/fetchEarnTransactions'
 import { useLocalEarnOperations } from '../../../_hooks/useLocalEarnOperations'
-import { type EarnAsset, type EarnPool } from '../../../types'
+import { type EarnAsset, type EarnVault } from '../../../types'
 import { type DepositOperation, DepositStatus } from '../_types/operations'
 
 type UseDeposit = {
@@ -28,7 +28,7 @@ type UseDeposit = {
   callbackFee: bigint
   input: string
   on?: (emitter: EventEmitter<RequestDepositEvents>) => void
-  pool: EarnPool
+  vault: EarnVault
   // Retry callers pass the prior approval hash (allowance still on-chain, so no new
   // user-signed-approval); carried into the new entry so the drawer keeps the approval step.
   priorApprovalTxHash?: Hash
@@ -47,7 +47,7 @@ export const useDeposit = function ({
   callbackFee,
   input,
   on,
-  pool,
+  vault,
   priorApprovalTxHash,
   selectedAsset,
   sharesOutMin,
@@ -105,7 +105,7 @@ export const useDeposit = function ({
         chainId,
         kind: 'DEPOSIT' as const,
         operator: address,
-        shareAddress: pool.shareAddress,
+        shareAddress: vault.shareAddress,
         slippage,
         startedAt,
       }
@@ -200,7 +200,7 @@ export const useDeposit = function ({
         })
         updateNativeBalanceAfterFees(receipt)
 
-        // Decrement the wallet balance now — the Router pulled tokens in this tx. Pool TVL/position
+        // Decrement the wallet balance now — the Router pulled tokens in this tx. Vault TVL/position
         // wait for the cross-chain delivery (reconciled by useEarnTransactions at the terminal status).
         queryClient.setQueryData<bigint>(tokenBalanceQueryKey, old =>
           old === undefined ? old : maxBigInt(old - amount, BigInt(0)),

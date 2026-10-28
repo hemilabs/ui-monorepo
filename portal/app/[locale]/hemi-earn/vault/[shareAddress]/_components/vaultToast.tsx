@@ -10,7 +10,11 @@ type Props = {
   transactionHash: Hash
 }
 
-export const PoolToast = function ({ chainId, title, transactionHash }: Props) {
+export const VaultToast = function ({
+  chainId,
+  title,
+  transactionHash,
+}: Props) {
   const chain = useChain(chainId)
   const t = useTranslations('hemi-earn.pool')
   return (

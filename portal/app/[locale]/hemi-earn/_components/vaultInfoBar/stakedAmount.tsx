@@ -3,35 +3,35 @@ import { useTranslations } from 'use-intl'
 
 import { sharesToPeggedOptions } from '../../_fetchers/fetchSharesToPegged'
 import { useEarnPositions } from '../../_hooks/useEarnPositions'
-import { type EarnPool } from '../../types'
+import { type EarnVault } from '../../types'
 import { RenderEarnFiatBalance } from '../earnFiatBalance'
 
-import { PoolInfoItem } from './vaultInfoItem'
+import { VaultInfoItem } from './vaultInfoItem'
 
 type Props = {
-  pool: EarnPool
+  vault: EarnVault
 }
 
-export const StakedAmount = function ({ pool }: Props) {
+export const StakedAmount = function ({ vault }: Props) {
   const t = useTranslations('hemi-earn.pool-info')
   const { data: positions, isPending } = useEarnPositions()
 
   const position = positions.find(
-    ({ shareAddress }) => shareAddress === pool.shareAddress,
+    ({ shareAddress }) => shareAddress === vault.shareAddress,
   )
 
-  // Shares → pegged shares the query key with FromPoolsBadge and useTotalDeposits,
+  // Shares → pegged shares the query key with FromVaultsBadge and useTotalDeposits,
   // so this adds no extra RPC calls.
   const { data, status } = useQuery(
     sharesToPeggedOptions({
-      shareAddress: pool.shareAddress,
+      shareAddress: vault.shareAddress,
       shares: position?.yourDeposit ?? BigInt(0),
     }),
   )
 
   if (position) {
     return (
-      <PoolInfoItem label={t('your-deposits')}>
+      <VaultInfoItem label={t('your-deposits')}>
         <span className="body-text-medium inline-flex items-center text-neutral-950">
           <span className="mr-1">$</span>
           <RenderEarnFiatBalance
@@ -40,9 +40,9 @@ export const StakedAmount = function ({ pool }: Props) {
             token={position.peggedToken}
           />
         </span>
-      </PoolInfoItem>
+      </VaultInfoItem>
     )
   }
 
-  return <PoolInfoItem isLoading={isPending} label={t('your-deposits')} />
+  return <VaultInfoItem isLoading={isPending} label={t('your-deposits')} />
 }

@@ -1,6 +1,6 @@
 import type { Hash } from 'viem'
 
-export type PoolOperation = 'deposit' | 'withdraw'
+export type VaultOperation = 'deposit' | 'withdraw'
 
 // Prefer ordering these by value rather than by key
 /* eslint-disable sort-keys */

@@ -2,13 +2,13 @@ import { type Address } from 'viem'
 import { describe, expect, it } from 'vitest'
 
 import {
-  findPoolByAsset,
-  findPoolByShare,
+  findVaultByAsset,
+  findVaultByShare,
 } from '../../../../../app/[locale]/hemi-earn/_utils/vaults'
-import { type EarnPool } from '../../../../../app/[locale]/hemi-earn/types'
+import { type EarnVault } from '../../../../../app/[locale]/hemi-earn/types'
 
-describe('pools', function () {
-  describe('findPoolByAsset / findPoolByShare', function () {
+describe('vaults', function () {
+  describe('findVaultByAsset / findVaultByShare', function () {
     const shareA = '0x000000000000000000000000000000000000aaaa' as Address
     const shareB = '0x000000000000000000000000000000000000bbbb' as Address
     const assetA1 = '0x0000000000000000000000000000000000001111' as Address
@@ -16,32 +16,32 @@ describe('pools', function () {
     const assetB1 = '0x0000000000000000000000000000000000003333' as Address
     const unknown = '0x0000000000000000000000000000000000009999' as Address
 
-    const makePool = (shareAddress: Address, assets: Address[]) =>
+    const makeVault = (shareAddress: Address, assets: Address[]) =>
       ({
         assets: assets.map(address => ({ address })),
         shareAddress,
-      }) as unknown as EarnPool
+      }) as unknown as EarnVault
 
-    const pools: EarnPool[] = [
-      makePool(shareA, [assetA1, assetA2]),
-      makePool(shareB, [assetB1]),
+    const vaults: EarnVault[] = [
+      makeVault(shareA, [assetA1, assetA2]),
+      makeVault(shareB, [assetB1]),
     ]
 
-    it('findPoolByAsset finds the pool whose `assets` includes the address', function () {
-      expect(findPoolByAsset(pools, assetA2)?.shareAddress).toBe(shareA)
-      expect(findPoolByAsset(pools, assetB1)?.shareAddress).toBe(shareB)
+    it('findVaultByAsset finds the vault whose `assets` includes the address', function () {
+      expect(findVaultByAsset(vaults, assetA2)?.shareAddress).toBe(shareA)
+      expect(findVaultByAsset(vaults, assetB1)?.shareAddress).toBe(shareB)
     })
 
-    it('findPoolByAsset returns undefined for an unknown asset', function () {
-      expect(findPoolByAsset(pools, unknown)).toBeUndefined()
+    it('findVaultByAsset returns undefined for an unknown asset', function () {
+      expect(findVaultByAsset(vaults, unknown)).toBeUndefined()
     })
 
-    it('findPoolByShare finds the pool by share address', function () {
-      expect(findPoolByShare(pools, shareB)?.shareAddress).toBe(shareB)
+    it('findVaultByShare finds the vault by share address', function () {
+      expect(findVaultByShare(vaults, shareB)?.shareAddress).toBe(shareB)
     })
 
-    it('findPoolByShare returns undefined for an unknown share', function () {
-      expect(findPoolByShare(pools, unknown)).toBeUndefined()
+    it('findVaultByShare returns undefined for an unknown share', function () {
+      expect(findVaultByShare(vaults, unknown)).toBeUndefined()
     })
   })
 })

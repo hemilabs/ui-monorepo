@@ -61,7 +61,7 @@ import {
   needsRecover,
 } from '../../../../_utils/transactionPredicates'
 import { type EarnSettlement, type EarnTransaction } from '../../../../types'
-import { usePoolForm } from '../../_context/vaultFormContext'
+import { useVaultForm } from '../../_context/vaultFormContext'
 import { useEarnCooldownRemaining } from '../../_hooks/useEarnCooldownRemaining'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
 import { useSharesToAssets } from '../../_hooks/useSharesToAssets'
@@ -242,8 +242,8 @@ const toCooldownSeconds = (claimableAt: EarnTransaction['claimableAt']) =>
     : undefined
 
 export const ReviewWithdraw = function ({ onClose }: Props) {
-  const { approveExtraAmount, input, pool, selectedAsset, withdrawOperation } =
-    usePoolForm()
+  const { approveExtraAmount, input, vault, selectedAsset, withdrawOperation } =
+    useVaultForm()
   const slippageBps = useSlippageBps('withdraw')
   const t = useTranslations('hemi-earn.pool.drawer')
   const chainId = selectedAsset.token.chainId
@@ -270,11 +270,11 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
 
   const { data: isCooldownEligible } = useIsCooldownEligible({
     account: address,
-    stakingVault: pool.stakingVault,
+    stakingVault: vault.stakingVault,
   })
-  // Pool-level cooldown duration drives the static "wait N days" copy before there's a request to query.
+  // Vault-level cooldown duration drives the static "wait N days" copy before there's a request to query.
   const { data: cooldownDurationSec } = useCooldownDuration({
-    stakingVault: pool.stakingVault,
+    stakingVault: vault.stakingVault,
   })
   const cooldownRemainingSec = useEarnCooldownRemaining(
     toCooldownSeconds(subgraphRow?.claimableAt),
@@ -284,12 +284,12 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     withdrawOperation?.status ?? WithdrawStatus.APPROVAL_TX_COMPLETED
 
   // Input is in share units — the Router burns shares directly; assetsOutMin comes from the asset preview below.
-  const shares = parseTokenUnits(input, pool.shareToken)
+  const shares = parseTokenUnits(input, vault.shareToken)
   const routerAddress = getHemiEarnRouterAddress()
 
   const { data: { assetOut } = { assetOut: BigInt(0) } } = useSharesToAssets({
     assetAddress: selectedAsset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
     shares,
   })
 
@@ -297,7 +297,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     assetOut > BigInt(0) ? applySlippage(assetOut, slippageBps) : BigInt(0)
 
   const { needsApproval } = useNeedsApproval({
-    address: pool.shareAddress,
+    address: vault.shareAddress,
     amount: shares,
     chainId,
     spender: routerAddress,
@@ -311,12 +311,12 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         WithdrawStatus.APPROVAL_TX_PENDING,
       ].includes(withdrawStatus),
       spender: routerAddress,
-      token: pool.shareToken,
+      token: vault.shareToken,
     })
 
   const { data: quote } = useQuoteRedeem({
     asset: selectedAsset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
     shares,
   })
 
@@ -335,7 +335,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         needsApproval,
         owner: address,
         spender: routerAddress,
-        token: pool.shareToken,
+        token: vault.shareToken,
       }),
       to: routerAddress as Address,
       value: quote?.nativeFee,
@@ -382,7 +382,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     return {
       description: (
         <div className="flex items-center gap-x-2">
-          <TokenLogo size="small" token={pool.shareToken} />
+          <TokenLogo size="small" token={vault.shareToken} />
           <span
             className={`text-sm font-normal ${
               withdrawStatus === WithdrawStatus.APPROVAL_TX_PENDING
@@ -390,7 +390,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
                 : 'text-neutral-500'
             }`}
           >
-            {t('approving', { symbol: pool.shareToken.symbol })}
+            {t('approving', { symbol: vault.shareToken.symbol })}
           </span>
         </div>
       ),
@@ -427,8 +427,10 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     return {
       description: (
         <div className="flex items-center gap-x-2">
-          <TokenLogo size="small" token={pool.shareToken} />
-          <span>{t('withdraw-token', { symbol: pool.shareToken.symbol })}</span>
+          <TokenLogo size="small" token={vault.shareToken} />
+          <span>
+            {t('withdraw-token', { symbol: vault.shareToken.symbol })}
+          </span>
         </div>
       ),
       explorerChainId: chainId,
@@ -464,7 +466,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     return {
       description: (
         <div className="flex items-center gap-x-2">
-          <TokenLogo size="small" token={pool.shareToken} />
+          <TokenLogo size="small" token={vault.shareToken} />
           <span>{t(isComplete ? 'shares-returned' : 'shares-to-recover')}</span>
         </div>
       ),
@@ -495,7 +497,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         <SettleCta
           asset={selectedAsset}
           operation="CLAIM"
-          pool={pool}
+          vault={vault}
           transaction={settledRow}
         />
       )
@@ -506,7 +508,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         <SettleCta
           asset={selectedAsset}
           operation="RECOVER"
-          pool={pool}
+          vault={vault}
           transaction={settledRow}
         />
       )
@@ -573,7 +575,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       onClose={onClose}
       steps={getSteps()}
       subheading={t('withdraw.subheading')}
-      token={pool.shareToken}
+      token={vault.shareToken}
     />
   )
 }

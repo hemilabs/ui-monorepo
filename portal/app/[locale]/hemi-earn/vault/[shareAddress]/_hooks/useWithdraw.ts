@@ -21,7 +21,7 @@ import { getWalletClient } from 'wagmi/actions'
 import { earnPositionsKeyPrefix } from '../../../_fetchers/fetchEarnPositions'
 import { earnTvlQueryKey } from '../../../_hooks/useEarnTvl'
 import { useLocalEarnOperations } from '../../../_hooks/useLocalEarnOperations'
-import { type EarnAsset, type EarnPool } from '../../../types'
+import { type EarnAsset, type EarnVault } from '../../../types'
 import { getUserShareValueQueryKey } from '../_fetchers/fetchUserShareValue'
 import { type WithdrawOperation, WithdrawStatus } from '../_types/operations'
 
@@ -38,7 +38,7 @@ type UseWithdraw = {
   on?: (emitter: EventEmitter<RequestRedeemEvents>) => void
   // Pegged amount leaving totalAssets() on redeem (from useSharesToAssets); 0n while the preview is pending, reconciled by onSettled.
   peggedAmount: bigint
-  pool: EarnPool
+  vault: EarnVault
   // Retry callers pass the prior approval hash (allowance still on-chain, so no new
   // user-signed-approval); carried into the new entry so the drawer keeps the approval step.
   priorApprovalTxHash?: Hash
@@ -60,7 +60,7 @@ export const useWithdraw = function ({
   isInstant,
   on,
   peggedAmount,
-  pool,
+  vault,
   priorApprovalTxHash,
   selectedAsset,
   shares,
@@ -89,7 +89,7 @@ export const useWithdraw = function ({
   const shareBalanceQueryKey = getTokenBalanceQueryKey({
     account: address,
     chainId,
-    tokenAddress: pool.shareAddress,
+    tokenAddress: vault.shareAddress,
   })
 
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(chainId)
@@ -101,17 +101,17 @@ export const useWithdraw = function ({
     chainId,
     owner: address,
     spender: routerAddress,
-    tokenAddress: pool.shareAddress,
+    tokenAddress: vault.shareAddress,
   })
 
   const userShareValueQueryKey = getUserShareValueQueryKey({
     account: address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
   })
 
-  const poolTotalAssetsQueryKey = earnTvlQueryKey({
+  const vaultTotalAssetsQueryKey = earnTvlQueryKey({
     networkType,
-    stakingVault: pool.stakingVault,
+    stakingVault: vault.stakingVault,
   })
 
   return useMutation({
@@ -136,7 +136,7 @@ export const useWithdraw = function ({
         chainId,
         kind: 'REDEEM' as const,
         operator: address,
-        shareAddress: pool.shareAddress,
+        shareAddress: vault.shareAddress,
         slippage,
         startedAt,
       }
@@ -155,7 +155,7 @@ export const useWithdraw = function ({
         receiver: address,
         routerAddress,
         shares,
-        shareToken: pool.shareAddress,
+        shareToken: vault.shareAddress,
         walletClient,
       })
 
@@ -244,7 +244,7 @@ export const useWithdraw = function ({
         })
         updateNativeBalanceAfterFees(receipt)
         // Optimistic bumps for user-side caches only — the Hemi tx burns the user's shares now.
-        // Pool TVL waits for onSettled + the delivery watcher: the Ethereum vault still holds the
+        // Vault TVL waits for onSettled + the delivery watcher: the Ethereum vault still holds the
         // assets until the relay lands, so debiting here would under-report TVL.
         queryClient.setQueryData<{ peggedAmount: bigint; shares: bigint }>(
           userShareValueQueryKey,
@@ -316,7 +316,7 @@ export const useWithdraw = function ({
       queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
       queryClient.invalidateQueries({ queryKey: nativeTokenBalanceQueryKey })
       queryClient.invalidateQueries({
-        queryKey: poolTotalAssetsQueryKey,
+        queryKey: vaultTotalAssetsQueryKey,
       })
       queryClient.invalidateQueries({ queryKey: userShareValueQueryKey })
       // resetQueries (not removeQueries) so the useEarnPositions observer refetches — removeQueries

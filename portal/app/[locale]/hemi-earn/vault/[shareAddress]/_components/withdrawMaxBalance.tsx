@@ -1,7 +1,7 @@
 import { MaxButton } from 'components/setMaxBalance'
 import { formatUnits } from 'viem'
 
-import { usePoolForm } from '../_context/vaultFormContext'
+import { useVaultForm } from '../_context/vaultFormContext'
 import { useUserShareValue } from '../_hooks/useUserShareValue'
 
 type Props = {
@@ -13,9 +13,9 @@ export const WithdrawMaxBalance = function ({
   disabled,
   onSetMaxBalance,
 }: Props) {
-  const { pool } = usePoolForm()
+  const { vault } = useVaultForm()
   const { data, isPending } = useUserShareValue({
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
   })
   const balance = data?.shares
 
@@ -27,7 +27,7 @@ export const WithdrawMaxBalance = function ({
       onClick={
         balance !== undefined
           ? () =>
-              onSetMaxBalance(formatUnits(balance, pool.shareToken.decimals))
+              onSetMaxBalance(formatUnits(balance, vault.shareToken.decimals))
           : undefined
       }
     />

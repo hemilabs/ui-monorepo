@@ -64,7 +64,7 @@ export const VaultNavigation = function ({ vault }: Props) {
         {isDropdownOpen && (
           <div className="absolute left-0 top-full z-20 mt-1">
             <Menu
-              items={vaults.map(p => ({
+              items={vaults.map(vaultOption => ({
                 content: (
                   <button
                     className="-mx-2 -my-1 flex items-center gap-x-2 whitespace-nowrap px-2 py-1 text-left text-sm"
@@ -72,7 +72,7 @@ export const VaultNavigation = function ({ vault }: Props) {
                       setIsDropdownOpen(false)
                       router.push(
                         `/hemi-earn/vault/${
-                          p.shareAddress
+                          vaultOption.shareAddress
                         }${queryStringObjectToString({ networkType })}`,
                       )
                     }}
@@ -80,15 +80,15 @@ export const VaultNavigation = function ({ vault }: Props) {
                   >
                     <TokenLogo
                       size="xSmall"
-                      token={p.shareToken}
+                      token={vaultOption.shareToken}
                       version="L1"
                     />
                     {t('navigation.vault-name', {
-                      tokenSymbol: p.shareToken.symbol,
+                      tokenSymbol: vaultOption.shareToken.symbol,
                     })}
                   </button>
                 ),
-                id: p.shareAddress,
+                id: vaultOption.shareAddress,
               }))}
             />
           </div>

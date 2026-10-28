@@ -28,7 +28,6 @@ type UseDeposit = {
   callbackFee: bigint
   input: string
   on?: (emitter: EventEmitter<RequestDepositEvents>) => void
-  vault: EarnVault
   // Retry callers pass the prior approval hash (allowance still on-chain, so no new
   // user-signed-approval); carried into the new entry so the drawer keeps the approval step.
   priorApprovalTxHash?: Hash
@@ -40,6 +39,7 @@ type UseDeposit = {
   // that exact entry is flagged settled so the old failure doesn't show beside the new attempt.
   supersedesInitiateTxHash?: Hash
   updateDepositOperation?: (payload?: DepositOperation) => void
+  vault: EarnVault
 }
 
 export const useDeposit = function ({

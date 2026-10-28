@@ -15,8 +15,8 @@ import {
 import { findVaultByAsset } from '../../../_utils/vaults'
 import {
   type EarnAsset,
-  type EarnVault,
   type EarnTransaction,
+  type EarnVault,
 } from '../../../types'
 
 import { ClaimFromVaultCta } from './claimFromVault'
@@ -39,8 +39,8 @@ function depositCallToAction({
   vault,
 }: {
   asset: EarnAsset
-  vault: EarnVault
   transaction: EarnTransaction
+  vault: EarnVault
 }) {
   if (canRetryRow(transaction)) {
     return (
@@ -88,8 +88,8 @@ function redeemCallToAction({
   vault,
 }: {
   asset: EarnAsset
-  vault: EarnVault
   transaction: EarnTransaction
+  vault: EarnVault
 }) {
   if (canRetryRow(transaction)) {
     return (
@@ -141,9 +141,9 @@ const resolveDrawerData = function ({
   txId,
   vaults,
 }: {
-  vaults: EarnVault[]
   transactions: EarnTransaction[]
   txId: string
+  vaults: EarnVault[]
 }) {
   const transaction = findTransactionByTxId(transactions, txId)
   if (!transaction) {

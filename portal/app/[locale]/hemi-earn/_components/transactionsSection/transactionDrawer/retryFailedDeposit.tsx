@@ -11,8 +11,8 @@ import {
 import { percentToBps, resolveRetrySlippage } from '../../../_utils/slippage'
 import {
   type EarnAsset,
-  type EarnVault,
   type EarnTransaction,
+  type EarnVault,
 } from '../../../types'
 import { useDeposit } from '../../../vault/[shareAddress]/_hooks/useDeposit'
 import { useDepositShares } from '../../../vault/[shareAddress]/_hooks/useDepositShares'
@@ -23,8 +23,8 @@ import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 type Props = {
   asset: EarnAsset
-  vault: EarnVault
   transaction: EarnTransaction
+  vault: EarnVault
 }
 
 // Retry CTA in the historical deposit drawer; on user-signed-deposit it redirects

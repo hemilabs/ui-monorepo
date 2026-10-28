@@ -13,9 +13,9 @@ import { type EarnAsset, type EarnVault } from '../../../types'
 import { useVaultFormState } from '../_hooks/useVaultFormState'
 
 type VaultFormContextValue = ReturnType<typeof useVaultFormState> & {
-  vault: EarnVault
   selectedAsset: EarnAsset
   setSelectedAsset: (asset: EarnAsset) => void
+  vault: EarnVault
 }
 
 const VaultFormContext = createContext<VaultFormContextValue | undefined>(

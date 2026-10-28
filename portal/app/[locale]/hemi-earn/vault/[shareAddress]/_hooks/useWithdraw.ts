@@ -38,7 +38,6 @@ type UseWithdraw = {
   on?: (emitter: EventEmitter<RequestRedeemEvents>) => void
   // Pegged amount leaving totalAssets() on redeem (from useSharesToAssets); 0n while the preview is pending, reconciled by onSettled.
   peggedAmount: bigint
-  vault: EarnVault
   // Retry callers pass the prior approval hash (allowance still on-chain, so no new
   // user-signed-approval); carried into the new entry so the drawer keeps the approval step.
   priorApprovalTxHash?: Hash
@@ -51,6 +50,7 @@ type UseWithdraw = {
   // that entry is flagged settled so the old failure doesn't show beside the new attempt.
   supersedesInitiateTxHash?: Hash
   updateWithdrawOperation?: (payload?: WithdrawOperation) => void
+  vault: EarnVault
 }
 
 export const useWithdraw = function ({

@@ -29,7 +29,7 @@ const recoverPathStatuses = new Set<string | undefined>([
   'RECOVERED',
 ])
 
-// The cooldown clock sub-step under Unstake. Like the tunnel's wait-step, it stays mounted
+// The cooldown clock sub-step under Withdraw. Like the tunnel's wait-step, it stays mounted
 // across its whole lifecycle so the milestone stays visible after the wait elapses; hidden only
 // when there's no cooldown (whitelist / disabled).
 export function deriveCooldownPostAction({

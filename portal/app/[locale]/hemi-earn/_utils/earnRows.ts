@@ -2,9 +2,9 @@ import { type Token } from 'types/token'
 import { type Address } from 'viem'
 
 import {
-  type EarnVault,
   type EarnPosition,
   type EarnTransaction,
+  type EarnVault,
   type LocalEarnOperation,
 } from '../types'
 

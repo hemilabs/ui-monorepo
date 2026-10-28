@@ -72,7 +72,7 @@ export type EarnAsset = {
   token: EvmToken
 }
 
-// A vault = one Vetro share vault (Ethereum) plus every Hemi deposit asset that settles into it.
+// A share OFT on Hemi plus its Ethereum staking vault and every deposit asset that settles into it.
 export type EarnVault = {
   // null = settled with no value (show '-'); undefined = still pending.
   apy: number | null | undefined

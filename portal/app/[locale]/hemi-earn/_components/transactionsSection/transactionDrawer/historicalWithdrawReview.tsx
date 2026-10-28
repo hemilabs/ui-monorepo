@@ -37,9 +37,9 @@ import {
   needsRecover,
 } from '../../../_utils/transactionPredicates'
 import {
-  type EarnVault,
   type EarnTransaction,
   type EarnTransactionStatusType,
+  type EarnVault,
 } from '../../../types'
 import { deriveCooldownPostAction } from '../../../vault/[shareAddress]/_components/vaultReview/cooldownPostAction'
 import { useEarnCooldownRemaining } from '../../../vault/[shareAddress]/_hooks/useEarnCooldownRemaining'
@@ -53,8 +53,8 @@ import { RetrySlippageTooltip } from './slippageTooltip'
 type Props = {
   callToAction?: ReactNode
   onClose: VoidFunction
-  vault: EarnVault
   transaction: EarnTransaction
+  vault: EarnVault
 }
 
 type Translator = ReturnType<
@@ -62,8 +62,8 @@ type Translator = ReturnType<
 >
 
 type StepStates = {
-  withdraw: ProgressStatusType
   receive: ProgressStatusType
+  withdraw: ProgressStatusType
 }
 
 const stepStatesByStatus: Record<EarnTransactionStatusType, StepStates> = {
@@ -244,12 +244,12 @@ function buildSteps({
 }: {
   cooldownPostAction: ReturnType<typeof deriveCooldownPostAction>
   needsApproval: boolean
-  vault: EarnVault
   receive: ProgressStatusType
   receiveToken: EvmToken | undefined
   settlementTxHash: Hash | undefined
   t: Translator
   transaction: EarnTransaction
+  vault: EarnVault
 }): StepPropsWithoutPosition[] {
   const steps: StepPropsWithoutPosition[] = []
   if (

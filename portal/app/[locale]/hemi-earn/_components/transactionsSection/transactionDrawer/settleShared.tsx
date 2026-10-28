@@ -23,8 +23,8 @@ import {
 import { findVaultByAsset } from '../../../_utils/vaults'
 import {
   type EarnAsset,
-  type EarnVault,
   type EarnTransaction,
+  type EarnVault,
 } from '../../../types'
 
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
@@ -74,10 +74,10 @@ type SettleCtaProps = {
   asset: EarnAsset
   fullWidth?: boolean
   operation: SettleOperation
-  vault: EarnVault
   // In the table the drawer isn't open yet, so sign opens it to watch the settlement mine; skipped in the drawer.
   redirectOnSign?: boolean
   transaction: EarnTransaction
+  vault: EarnVault
 }
 
 // Claim/recover CTA covering both kinds/operations. Delivered-token inversion lives here:

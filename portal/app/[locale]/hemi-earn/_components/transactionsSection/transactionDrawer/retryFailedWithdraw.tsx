@@ -10,8 +10,8 @@ import {
 import { percentToBps, resolveRetrySlippage } from '../../../_utils/slippage'
 import {
   type EarnAsset,
-  type EarnVault,
   type EarnTransaction,
+  type EarnVault,
 } from '../../../types'
 import { useQuoteRedeem } from '../../../vault/[shareAddress]/_hooks/useQuoteRedeem'
 import { useSharesToAssets } from '../../../vault/[shareAddress]/_hooks/useSharesToAssets'
@@ -22,8 +22,8 @@ import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 type Props = {
   asset: EarnAsset
-  vault: EarnVault
   transaction: EarnTransaction
+  vault: EarnVault
 }
 
 // Retry CTA in the historical withdraw drawer; mirrors RetryFailedDeposit, redirecting earnTxId on user-signed-withdraw.

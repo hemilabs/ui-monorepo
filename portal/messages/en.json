@@ -173,7 +173,7 @@
       "pool-name": "{tokenSymbol} pool"
     },
     "operator": {
-      "banner": "Hemi Earn is operated by Vetro Service & Support Corp. Hemi provides this interface only. <link>View Vetro's Terms of Use</link>",
+      "banner": "Hemi Earn is operated by Vetro Service & Support Corp. Hemi provides this interface only. <link>View Vetro's Terms</link>",
       "note": "Operated by Vetro Service & Support Corp. <link>Terms</link>"
     },
     "pool": {

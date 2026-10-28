@@ -96,10 +96,10 @@ export const TokenList = function ({
     )
     .sort(bySymbol)
 
-  const sortedTokens = [
-    // Do not sort 'fetchedSortedTopTokens' again; already sorted by balance in hook.
-    ...(fetchedSortedTopTokens as TokenType[]).concat(restOfTokens),
-  ]
+  // Do not sort 'fetchedSortedTopTokens' again; already sorted by balance in hook.
+  const sortedTokens = (fetchedSortedTopTokens as TokenType[]).concat(
+    restOfTokens,
+  )
 
   function handleSelectToken(token: TokenType) {
     onSelectToken(token)

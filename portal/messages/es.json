@@ -173,10 +173,8 @@
       "pool-name": "fondo {tokenSymbol}"
     },
     "operator": {
-      "banner": "Hemi Earn es operado por Vetro Service & Support Corp. Hemi solo proporciona esta interfaz.",
-      "note": "Operado por Vetro Service & Support Corp.",
-      "terms": "Términos",
-      "view-terms": "Ver los Términos de Vetro"
+      "banner": "Hemi Earn es operado por Vetro Service & Support Corp. Hemi solo proporciona esta interfaz. <link>Ver los Términos de Uso de Vetro</link>",
+      "note": "Operado por Vetro Service & Support Corp. <link>Términos</link>"
     },
     "pool": {
       "apy": "TEA",

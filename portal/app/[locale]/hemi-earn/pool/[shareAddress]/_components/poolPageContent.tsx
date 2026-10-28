@@ -42,15 +42,19 @@ export const PoolPageContent = function ({ shareAddress }: Props) {
     [arePoolsLoaded, networkType, pool, router],
   )
 
-  if (pool) {
-    return (
-      <PageLayout variant="wide">
-        <PoolFormProvider pool={pool}>
-          <div className="md:pb-32">
-            <PoolNavigation pool={pool} />
-            <div className="mt-6">
-              <OperatorBanner />
-            </div>
+  return (
+    <PageLayout variant="wide">
+      <div className="md:pb-32">
+        {pool ? (
+          <PoolNavigation pool={pool} />
+        ) : (
+          <Skeleton className="h-7 w-48 rounded-md" />
+        )}
+        <div className="mt-6">
+          <OperatorBanner />
+        </div>
+        {pool ? (
+          <PoolFormProvider pool={pool}>
             <div className="mt-6 flex flex-col gap-3 md:gap-5 lg:flex-row">
               <div className="order-2 flex flex-col gap-4 md:gap-5 lg:order-1 lg:basis-3/5">
                 <PoolInfoCards pool={pool} />
@@ -68,20 +72,15 @@ export const PoolPageContent = function ({ shareAddress }: Props) {
                 <PoolForm />
               </div>
             </div>
+          </PoolFormProvider>
+        ) : (
+          <div className="mt-6 flex gap-4">
+            <Skeleton className="h-24 rounded-xl" containerClassName="flex-1" />
+            <Skeleton className="h-24 rounded-xl" containerClassName="flex-1" />
           </div>
-        </PoolFormProvider>
-        <EarnFooter />
-      </PageLayout>
-    )
-  }
-
-  return (
-    <PageLayout variant="wide">
-      <Skeleton className="h-7 w-48 rounded-md" />
-      <div className="mt-8 flex gap-4">
-        <Skeleton className="h-24 flex-1 rounded-xl" />
-        <Skeleton className="h-24 flex-1 rounded-xl" />
+        )}
       </div>
+      <EarnFooter />
     </PageLayout>
   )
 }

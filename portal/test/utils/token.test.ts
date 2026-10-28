@@ -34,7 +34,11 @@ describe('utils/token', function () {
       })
     })
 
-    it('should return undefined for a listed symbol on another chain', function () {
+    it('should return undefined for a listed symbol on a known chain that does not list it', function () {
+      expect(getTokenBySymbol('HEMI', 743111)).toBeUndefined()
+    })
+
+    it('should return undefined for an unknown chain', function () {
       expect(getTokenBySymbol('HEMI', 999999)).toBeUndefined()
     })
 

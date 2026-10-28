@@ -268,6 +268,7 @@
       "vault-contract": "Vault contract",
       "your-deposits": "Your deposits"
     },
+    "risk-warning": "Yields are variable and not guaranteed. You may lose some or all of your deposit.",
     "subheading": "Hemi Earn, operated by Vetro, gives you access to yield vaults right from the Hemi portal. Choose a vault and deposit in a few steps. Yields are variable and not guaranteed.",
     "switch-to-start-earning": "You can switch networks to start earning with Hemi.",
     "transactions": {

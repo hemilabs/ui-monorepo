@@ -268,6 +268,7 @@
       "vault-contract": "Contrato do fundo",
       "your-deposits": "Seus depósitos"
     },
+    "risk-warning": "Os rendimentos são variáveis e não são garantidos. Você pode perder parte ou a totalidade do seu depósito.",
     "subheading": "O Hemi Earn, operado pela Vetro, dá a você acesso a fundos de rendimento diretamente pelo portal da Hemi. Escolha um fundo e deposite em poucos passos. Os rendimentos são variáveis e não são garantidos.",
     "switch-to-start-earning": "Você pode mudar de rede para começar a ganhar com a Hemi.",
     "transactions": {

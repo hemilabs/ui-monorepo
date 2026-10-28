@@ -2,6 +2,7 @@ import { Card } from 'components/card'
 import { type FormEvent, type ReactNode } from 'react'
 
 type VaultFormLayoutProps = {
+  aboveSubmit?: ReactNode
   belowForm?: ReactNode
   formContent: ReactNode
   onSubmit: VoidFunction
@@ -9,6 +10,7 @@ type VaultFormLayoutProps = {
 }
 
 export const VaultFormLayout = ({
+  aboveSubmit,
   belowForm,
   formContent,
   onSubmit,
@@ -24,6 +26,7 @@ export const VaultFormLayout = ({
         }}
       >
         <div className="flex flex-col gap-y-4">{formContent}</div>
+        {aboveSubmit && <div className="mt-4">{aboveSubmit}</div>}
         <div className="mt-4 w-full [&>*]:w-full">{submitButton}</div>
       </form>
     </Card>

@@ -5,6 +5,7 @@ import { useTranslations } from 'use-intl'
 import { formatApyDisplay, formatFiatNumber } from 'utils/format'
 
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
+import { RiskWarningTooltip } from '../../../_components/riskWarningTooltip'
 import { type EarnPool } from '../../../types'
 
 type Props = {
@@ -37,7 +38,12 @@ export const PoolInfoCards = function ({ pool }: Props) {
           icon={<ArrowGrowingIcon />}
           isError={pool.apy === null}
           isLoading={pool.apy === undefined}
-          label={t('pool.apy')}
+          label={
+            <div className="flex items-center gap-x-1">
+              {t('pool.apy')}
+              <RiskWarningTooltip />
+            </div>
+          }
           value={
             typeof pool.apy === 'number' ? formatApyDisplay(pool.apy) : null
           }

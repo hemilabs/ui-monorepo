@@ -22,9 +22,7 @@ export const StatCard = ({
   <Card aria-busy={isLoading} shadow="sm">
     <div className="flex w-full flex-col gap-y-2 p-4">
       <div className="flex items-center gap-x-1.5">
-        <span className="body-text-medium flex-1 text-neutral-500">
-          {label}
-        </span>
+        <div className="body-text-medium flex-1 text-neutral-500">{label}</div>
         {icon}
       </div>
       <div className="flex flex-wrap items-end justify-between gap-2">

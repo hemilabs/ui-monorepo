@@ -11,6 +11,7 @@ import {
 
 import { type EarnPool } from '../../types'
 import { RenderEarnFiatBalance } from '../earnFiatBalance'
+import { RiskWarningTooltip } from '../riskWarningTooltip'
 
 import { PoolInfoItem } from './poolInfoItem'
 import { StakedAmount } from './stakedAmount'
@@ -76,7 +77,12 @@ export const PoolInfoBar = function ({ pool }: Props) {
         </div>
         <PoolInfoItem
           isLoading={pool.apy === undefined}
-          label={t('apy')}
+          label={
+            <>
+              {t('apy')}
+              <RiskWarningTooltip />
+            </>
+          }
           value={
             typeof pool.apy === 'number'
               ? formatApyDisplay(pool.apy)

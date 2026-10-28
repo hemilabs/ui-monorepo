@@ -268,6 +268,7 @@
       "staked-balance": "Su saldo invertido",
       "total-deposits": "Depósitos totales"
     },
+    "risk-warning": "Los rendimientos son variables y no están garantizados. Puede perder parte o la totalidad de su depósito.",
     "subheading": "Hemi Earn, operado por Vetro, le da acceso a fondos de rendimiento directamente desde el portal de Hemi. Elija un fondo y deposite en unos pocos pasos. Los rendimientos son variables y no están garantizados.",
     "switch-to-start-earning": "Puede cambiar de red para comenzar a ganar con Hemi.",
     "transactions": {

@@ -4,7 +4,7 @@ import Skeleton from 'react-loading-skeleton'
 type Props = {
   children?: ReactNode
   isLoading?: boolean
-  label: string
+  label: ReactNode
   value?: string
 }
 
@@ -35,7 +35,9 @@ export const PoolInfoItem = function ({
 
   return (
     <div className="flex flex-col gap-y-1">
-      <span className="body-text-normal text-neutral-600">{label}</span>
+      <div className="body-text-normal flex items-center gap-x-1 text-neutral-600">
+        {label}
+      </div>
       {renderValue()}
     </div>
   )

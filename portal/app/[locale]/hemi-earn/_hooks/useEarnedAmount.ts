@@ -7,9 +7,9 @@ import { positionEarnedUsd } from '../_utils/earnedAmount'
 import { inTransitOnlyPositions } from '../_utils/earnRows'
 
 import { useEarnCostBasis } from './useEarnCostBasis'
-import { useEarnVaults } from './useEarnVaults'
 import { useEarnPositions } from './useEarnPositions'
 import { useEarnTokenPrices } from './useEarnTokenPrices'
+import { useEarnVaults } from './useEarnVaults'
 import { useInTransitShares } from './useInTransitShares'
 
 // Total earned = Σ (convertToAssets(shares) − cost basis) per position, priced.

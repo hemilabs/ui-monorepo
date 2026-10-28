@@ -109,7 +109,7 @@ function resolveReceiveProgress({
   row,
   settlement,
   settlementTxHash,
-  unstakeMined,
+  withdrawMined,
 }: {
   cooldownElapsed: boolean
   isFinalized: boolean
@@ -117,7 +117,7 @@ function resolveReceiveProgress({
   row: EarnTransaction | undefined
   settlement: EarnSettlement | undefined
   settlementTxHash: Hash | undefined
-  unstakeMined: boolean
+  withdrawMined: boolean
 }): ProgressStatusType {
   const finalizeInFlight = isFinalizeInFlight(row)
   const matureAwaitingFinalize =
@@ -127,7 +127,7 @@ function resolveReceiveProgress({
     !finalizeInFlight
   return resolveReceiveStatus({
     awaitingClaim: (!!row && needsManualClaim(row)) || matureAwaitingFinalize,
-    crossChainInFlight: unstakeMined && (!needsCooldown || finalizeInFlight),
+    crossChainInFlight: withdrawMined && (!needsCooldown || finalizeInFlight),
     isFinalized,
     settlement,
     settlementTxHash,
@@ -158,7 +158,7 @@ function buildReceiveStep({
   const settlement = claimRecoverSettlement(row?.settlement)
   const settlementTxHash =
     settlement && !settlement.failed ? settlement.txHash : undefined
-  const unstakeMined = withdrawStatus === WithdrawStatus.WITHDRAW_TX_CONFIRMED
+  const withdrawMined = withdrawStatus === WithdrawStatus.WITHDRAW_TX_CONFIRMED
   // Default to cooldown while eligibility loads; cooldownElapsed checks whether the timer finished.
   const needsCooldown = isCooldownEligible !== false
   const cooldownElapsed = cooldownRemainingSec === 0
@@ -178,7 +178,7 @@ function buildReceiveStep({
       row,
       settlement,
       settlementTxHash,
-      unstakeMined,
+      withdrawMined,
     }),
     txHash: deliveryHash,
   }
@@ -242,7 +242,7 @@ const toCooldownSeconds = (claimableAt: EarnTransaction['claimableAt']) =>
     : undefined
 
 export const ReviewWithdraw = function ({ onClose }: Props) {
-  const { approveExtraAmount, input, vault, selectedAsset, withdrawOperation } =
+  const { approveExtraAmount, input, selectedAsset, vault, withdrawOperation } =
     useVaultForm()
   const slippageBps = useSlippageBps('withdraw')
   const t = useTranslations('hemi-earn.vault.drawer')
@@ -405,7 +405,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     }
   }
 
-  const addUnstakeStep = function (): StepPropsWithoutPosition {
+  const addWithdrawStep = function (): StepPropsWithoutPosition {
     const statusMap: Record<WithdrawStatusType, ProgressStatusType> = {
       [WithdrawStatus.APPROVAL_TX_PENDING]: ProgressStatus.NOT_READY,
       [WithdrawStatus.APPROVAL_TX_FAILED]: ProgressStatus.NOT_READY,
@@ -447,7 +447,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
             isCooldownEligible,
             subgraphStatus: subgraphRow?.status,
             t,
-            unstakeMined:
+            withdrawMined:
               withdrawStatus === WithdrawStatus.WITHDRAW_TX_CONFIRMED,
           }),
       status: statusMap[withdrawStatus] ?? ProgressStatus.NOT_READY,
@@ -497,8 +497,8 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         <SettleCta
           asset={selectedAsset}
           operation="CLAIM"
-          vault={vault}
           transaction={settledRow}
+          vault={vault}
         />
       )
     }
@@ -508,8 +508,8 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         <SettleCta
           asset={selectedAsset}
           operation="RECOVER"
-          vault={vault}
           transaction={settledRow}
+          vault={vault}
         />
       )
     }
@@ -525,7 +525,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     if (needsApproval || withdrawOperation?.approvalTxHash) {
       steps.push(addApprovalStep())
     }
-    steps.push(addUnstakeStep())
+    steps.push(addWithdrawStep())
     if (
       (settledRow &&
         (isRecoverPath(settledRow) || isRemoteFailedCancel(settledRow))) ||

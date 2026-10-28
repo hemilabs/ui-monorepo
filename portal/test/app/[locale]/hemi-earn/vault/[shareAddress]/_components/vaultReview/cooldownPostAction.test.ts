@@ -12,7 +12,7 @@ const gatedInputs = {
   cooldownRemainingSec: undefined,
   isCooldownEligible: undefined,
   t,
-  unstakeMined: true,
+  withdrawMined: true,
 }
 
 describe('deriveCooldownPostAction', function () {

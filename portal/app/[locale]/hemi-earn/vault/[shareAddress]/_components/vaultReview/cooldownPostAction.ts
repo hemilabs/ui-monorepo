@@ -21,7 +21,7 @@ export type CooldownInputs = {
   isCooldownEligible: boolean | undefined
   subgraphStatus: string | undefined
   t: ReturnType<typeof useTranslations<'hemi-earn.vault.drawer'>>
-  unstakeMined: boolean
+  withdrawMined: boolean
 }
 
 const recoverPathStatuses = new Set<string | undefined>([
@@ -38,7 +38,7 @@ export function deriveCooldownPostAction({
   isCooldownEligible,
   subgraphStatus,
   t,
-  unstakeMined,
+  withdrawMined,
 }: CooldownInputs): CooldownPostAction | undefined {
   if (isCooldownEligible === false) return undefined
   // Recover path: cooldown was bypassed, shares come straight back — no milestone here (the recover step carries the state).
@@ -62,7 +62,7 @@ export function deriveCooldownPostAction({
 
   const days = secondsToWholeDays(cooldownDurationSec)
 
-  if (!unstakeMined) {
+  if (!withdrawMined) {
     return {
       description: t('wait-cooldown-pending', { days }),
       status: ProgressStatus.NOT_READY,

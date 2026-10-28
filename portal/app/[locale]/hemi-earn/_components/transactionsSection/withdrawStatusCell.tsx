@@ -11,8 +11,8 @@ import { useCooldownDuration } from '../../_hooks/useCooldownDuration'
 import { useEarnVaults } from '../../_hooks/useEarnVaults'
 import { useIsCooldownEligible } from '../../_hooks/useIsCooldownEligible'
 import { findVaultByAsset } from '../../_utils/vaults'
-import { useEarnCooldownRemaining } from '../../vault/[shareAddress]/_hooks/useEarnCooldownRemaining'
 import { type EarnVault, type EarnTransaction } from '../../types'
+import { useEarnCooldownRemaining } from '../../vault/[shareAddress]/_hooks/useEarnCooldownRemaining'
 
 import { StatusBadge } from './statusBadge'
 
@@ -106,8 +106,8 @@ type Props = { transaction: EarnTransaction }
 type ResolvedProps = Props & { vault: EarnVault }
 
 const WithdrawStatusCellResolved = function ({
-  vault,
   transaction,
+  vault,
 }: ResolvedProps) {
   const t = useTranslations('hemi-earn.transactions')
   const { address } = useAccount()
@@ -145,5 +145,5 @@ export const WithdrawStatusCell = function ({ transaction }: Props) {
   if (!vault) {
     return <StatusBadge transaction={transaction} />
   }
-  return <WithdrawStatusCellResolved vault={vault} transaction={transaction} />
+  return <WithdrawStatusCellResolved transaction={transaction} vault={vault} />
 }

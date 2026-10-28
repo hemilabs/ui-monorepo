@@ -8,8 +8,8 @@ import {
   type LocalEarnOperation,
 } from '../types'
 
-import { findVaultByAsset, findVaultByShare } from './vaults'
 import { isEarnRowInFlight } from './transactionPredicates'
+import { findVaultByAsset, findVaultByShare } from './vaults'
 
 // DEPOSIT renders amountIn (asset units) — never amountOut, which is 18-dec shares.
 // REDEEM renders shares until amountOut (the returned asset) lands at fulfillment.

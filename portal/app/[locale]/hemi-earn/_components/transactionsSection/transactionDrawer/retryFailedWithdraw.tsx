@@ -8,15 +8,15 @@ import {
   applySlippage,
 } from '../../../_constants/slippage'
 import { percentToBps, resolveRetrySlippage } from '../../../_utils/slippage'
-import { useQuoteRedeem } from '../../../vault/[shareAddress]/_hooks/useQuoteRedeem'
-import { useSharesToAssets } from '../../../vault/[shareAddress]/_hooks/useSharesToAssets'
-import { useWithdraw } from '../../../vault/[shareAddress]/_hooks/useWithdraw'
-import { type WithdrawOperationRunning } from '../../../vault/[shareAddress]/_types/operations'
 import {
   type EarnAsset,
   type EarnVault,
   type EarnTransaction,
 } from '../../../types'
+import { useQuoteRedeem } from '../../../vault/[shareAddress]/_hooks/useQuoteRedeem'
+import { useSharesToAssets } from '../../../vault/[shareAddress]/_hooks/useSharesToAssets'
+import { useWithdraw } from '../../../vault/[shareAddress]/_hooks/useWithdraw'
+import { type WithdrawOperationRunning } from '../../../vault/[shareAddress]/_types/operations'
 
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
@@ -29,8 +29,8 @@ type Props = {
 // Retry CTA in the historical withdraw drawer; mirrors RetryFailedDeposit, redirecting earnTxId on user-signed-withdraw.
 export const RetryFailedWithdraw = function ({
   asset,
-  vault,
   transaction,
+  vault,
 }: Props) {
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
   const [operationRunning, setOperationRunning] =

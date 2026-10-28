@@ -9,7 +9,7 @@ import { useTotalDeposits } from '../_hooks/useTotalDeposits'
 
 import { FromVaultsBadge } from './fromVaultsBadge'
 
-export const StakedBalance = function () {
+export const YourDepositsCard = function () {
   const { data, isError, isPending } = useTotalDeposits()
   const { status } = useAccount()
   const t = useTranslations('hemi-earn')

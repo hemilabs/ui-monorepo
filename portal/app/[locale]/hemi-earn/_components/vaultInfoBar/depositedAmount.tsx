@@ -12,7 +12,7 @@ type Props = {
   vault: EarnVault
 }
 
-export const StakedAmount = function ({ vault }: Props) {
+export const DepositedAmount = function ({ vault }: Props) {
   const t = useTranslations('hemi-earn.vault-info')
   const { data: positions, isPending } = useEarnPositions()
 

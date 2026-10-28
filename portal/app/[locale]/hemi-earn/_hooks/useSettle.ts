@@ -128,7 +128,7 @@ export const useSettle = function ({
       // so an invalidated-but-cached entry would flash the stale balance.
       queryClient.resetQueries({ queryKey: deliveredBalanceQueryKey })
       queryClient.invalidateQueries({ queryKey: nativeTokenBalanceQueryKey })
-      // resetQueries (not removeQueries) so the useEarnPositions observer refetches the staked-balance card.
+      // resetQueries (not removeQueries) so the useEarnPositions observer refetches the deposits card.
       queryClient.resetQueries({ queryKey: earnPositionsKeyPrefix })
     },
   })

@@ -60,13 +60,13 @@ export const useWithdraw = function ({
   isInstant,
   on,
   peggedAmount,
-  vault,
   priorApprovalTxHash,
   selectedAsset,
   shares,
   slippage,
   supersedesInitiateTxHash,
   updateWithdrawOperation,
+  vault,
 }: UseWithdraw) {
   const { setDrawerQueryString } = useDrawerQueryString()
   const { address } = useAccount()

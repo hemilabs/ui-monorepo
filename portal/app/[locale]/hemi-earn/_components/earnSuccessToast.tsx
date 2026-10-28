@@ -4,8 +4,8 @@ import { type Address, type Hash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useEarnTransactionsQuery } from '../_hooks/useEarnTransactionsQuery'
-import { VaultToast } from '../vault/[shareAddress]/_components/vaultToast'
 import { type EarnTransactionKindType } from '../types'
+import { VaultToast } from '../vault/[shareAddress]/_components/vaultToast'
 
 // Match the <Toast> primitive's 10s auto-close so its close animation isn't cut short.
 const toastMs = 10_000

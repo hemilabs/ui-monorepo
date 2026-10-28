@@ -15,12 +15,12 @@ import { isAddressEqual } from 'viem'
 
 import { useEarnVaults } from '../../../_hooks/useEarnVaults'
 import { useSettle } from '../../../_hooks/useSettle'
-import { findVaultByAsset } from '../../../_utils/vaults'
 import { pickSettleBannerKey } from '../../../_utils/settleUi'
 import {
   needsManualClaim,
   needsRecover,
 } from '../../../_utils/transactionPredicates'
+import { findVaultByAsset } from '../../../_utils/vaults'
 import {
   type EarnAsset,
   type EarnVault,
@@ -86,9 +86,9 @@ export const SettleCta = function ({
   asset,
   fullWidth = true,
   operation,
-  vault,
   redirectOnSign,
   transaction,
+  vault,
 }: SettleCtaProps) {
   const t = useTranslations('hemi-earn.transactions')
   const tCommon = useTranslations('common')
@@ -162,9 +162,9 @@ export const SettleRowCta = function ({
         asset={asset}
         fullWidth={false}
         operation="CLAIM"
-        vault={vault}
         redirectOnSign
         transaction={transaction}
+        vault={vault}
       />
     )
   }
@@ -174,9 +174,9 @@ export const SettleRowCta = function ({
         asset={asset}
         fullWidth={false}
         operation="RECOVER"
-        vault={vault}
         redirectOnSign
         transaction={transaction}
+        vault={vault}
       />
     )
   }

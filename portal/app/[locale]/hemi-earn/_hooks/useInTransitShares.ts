@@ -1,7 +1,7 @@
 import { sumInTransitSharesByShare } from '../_utils/earnRows'
 
-import { useEarnVaults } from './useEarnVaults'
 import { useEarnTransactions } from './useEarnTransactions'
+import { useEarnVaults } from './useEarnVaults'
 
 export const useInTransitShares = function () {
   const { data: transactions = [], isPending: isTransactionsPending } =

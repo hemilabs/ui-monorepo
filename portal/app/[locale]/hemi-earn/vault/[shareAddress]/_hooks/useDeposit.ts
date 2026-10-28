@@ -47,13 +47,13 @@ export const useDeposit = function ({
   callbackFee,
   input,
   on,
-  vault,
   priorApprovalTxHash,
   selectedAsset,
   sharesOutMin,
   slippage,
   supersedesInitiateTxHash,
   updateDepositOperation,
+  vault,
 }: UseDeposit) {
   const amount = parseTokenUnits(input, selectedAsset.token)
   const chainId = selectedAsset.token.chainId

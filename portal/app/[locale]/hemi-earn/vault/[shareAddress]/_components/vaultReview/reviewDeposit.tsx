@@ -122,7 +122,7 @@ function getSharesStepMeta(
 }
 
 export const ReviewDeposit = function ({ onClose }: Props) {
-  const { approveExtraAmount, depositOperation, input, vault, selectedAsset } =
+  const { approveExtraAmount, depositOperation, input, selectedAsset, vault } =
     useVaultForm()
   const slippageBps = useSlippageBps('deposit')
   const { localOperations } = useLocalEarnOperations()
@@ -263,7 +263,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     }
   }
 
-  const addStakeStep = function () {
+  const addDepositStep = function () {
     const statusMap: Record<DepositStatusType, ProgressStatusType> = {
       [DepositStatus.APPROVAL_TX_PENDING]: ProgressStatus.NOT_READY,
       [DepositStatus.APPROVAL_TX_FAILED]: ProgressStatus.NOT_READY,
@@ -377,8 +377,8 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         <SettleCta
           asset={selectedAsset}
           operation="CLAIM"
-          vault={vault}
           transaction={settledRow}
+          vault={vault}
         />
       )
     }
@@ -388,8 +388,8 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         <SettleCta
           asset={selectedAsset}
           operation="RECOVER"
-          vault={vault}
           transaction={settledRow}
+          vault={vault}
         />
       )
     }
@@ -405,7 +405,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     if (depositOperation?.approvalTxHash) {
       steps.push(addApprovalStep())
     }
-    steps.push(addStakeStep())
+    steps.push(addDepositStep())
     steps.push(addGetShareTokensStep())
     return steps
   }

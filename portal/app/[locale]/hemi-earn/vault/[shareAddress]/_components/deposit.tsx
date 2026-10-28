@@ -35,8 +35,8 @@ import { AdvancedSettings } from './advancedSettings'
 import { AssetSelector } from './assetSelector'
 import { VaultFormLayout } from './form'
 import { OperationBelowForm } from './operationBelowForm'
-import { VaultFormContent } from './vaultFormContent'
 import { SubmitDeposit } from './submitDeposit'
+import { VaultFormContent } from './vaultFormContent'
 
 type Props = {
   onSwitchToWithdraw: VoidFunction
@@ -50,11 +50,11 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   const {
     approveExtraAmount,
     input,
-    vault,
     resetStateAfterOperation,
     selectedAsset,
     updateDepositOperation,
     updateInput,
+    vault,
   } = useVaultForm()
 
   const { address, status } = useEvmAccount()

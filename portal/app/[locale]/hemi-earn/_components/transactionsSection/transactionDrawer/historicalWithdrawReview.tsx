@@ -36,13 +36,13 @@ import {
   needsManualClaim,
   needsRecover,
 } from '../../../_utils/transactionPredicates'
-import { deriveCooldownPostAction } from '../../../vault/[shareAddress]/_components/vaultReview/cooldownPostAction'
-import { useEarnCooldownRemaining } from '../../../vault/[shareAddress]/_hooks/useEarnCooldownRemaining'
 import {
   type EarnVault,
   type EarnTransaction,
   type EarnTransactionStatusType,
 } from '../../../types'
+import { deriveCooldownPostAction } from '../../../vault/[shareAddress]/_components/vaultReview/cooldownPostAction'
+import { useEarnCooldownRemaining } from '../../../vault/[shareAddress]/_hooks/useEarnCooldownRemaining'
 import { OperatorNote } from '../../operatorDisclosure'
 
 import { ClaimFromVaultBanner } from './claimFromVault'
@@ -62,53 +62,53 @@ type Translator = ReturnType<
 >
 
 type StepStates = {
-  unstake: ProgressStatusType
+  withdraw: ProgressStatusType
   receive: ProgressStatusType
 }
 
 const stepStatesByStatus: Record<EarnTransactionStatusType, StepStates> = {
   CANCELLED: {
-    // A cancelled redeem isn't a failed unstake — the request landed; shares come back via the recover path.
+    // A cancelled redeem isn't a failed withdraw — the request landed; shares come back via the recover path.
     receive: ProgressStatus.NOT_READY,
-    unstake: ProgressStatus.COMPLETED,
+    withdraw: ProgressStatus.COMPLETED,
   },
   FAILED: {
     receive: ProgressStatus.NOT_READY,
-    unstake: ProgressStatus.FAILED,
+    withdraw: ProgressStatus.FAILED,
   },
   FINALIZED: {
     receive: ProgressStatus.COMPLETED,
-    unstake: ProgressStatus.COMPLETED,
+    withdraw: ProgressStatus.COMPLETED,
   },
   FULFILLED: {
     receive: ProgressStatus.PROGRESS,
-    unstake: ProgressStatus.COMPLETED,
+    withdraw: ProgressStatus.COMPLETED,
   },
   PENDING: {
     receive: ProgressStatus.NOT_READY,
-    unstake: ProgressStatus.COMPLETED,
+    withdraw: ProgressStatus.COMPLETED,
   },
   RECOVERED: {
     receive: ProgressStatus.COMPLETED,
-    unstake: ProgressStatus.COMPLETED,
+    withdraw: ProgressStatus.COMPLETED,
   },
   TX_PENDING: {
     receive: ProgressStatus.NOT_READY,
-    unstake: ProgressStatus.PROGRESS,
+    withdraw: ProgressStatus.PROGRESS,
   },
 }
 
-// FAILED splits by source: local = Hemi tx reverted (unstake FAILED); subgraph =
+// FAILED splits by source: local = Hemi tx reverted (withdraw FAILED); subgraph =
 // Agent failed after a good Hemi tx (failure in the cross-chain step).
 const resolveStepStates = (tx: EarnTransaction): StepStates =>
   tx.status === 'FAILED' && !isLocalEarnTransactionRow(tx)
     ? {
         receive: ProgressStatus.FAILED,
-        unstake: ProgressStatus.COMPLETED,
+        withdraw: ProgressStatus.COMPLETED,
       }
     : stepStatesByStatus[tx.status]
 
-const buildUnstakeStep = (
+const buildWithdrawStep = (
   tx: EarnTransaction,
   shareToken: EvmToken,
   t: Translator,
@@ -120,7 +120,7 @@ const buildUnstakeStep = (
     </div>
   ),
   explorerChainId: hemi.id,
-  status: resolveStepStates(tx).unstake,
+  status: resolveStepStates(tx).withdraw,
   txHash: tx.requestTxHash,
 })
 
@@ -216,16 +216,16 @@ function deriveReceiveStatus({
   finalizeInFlight,
   isCooldownEligible,
   receiveFromStatus,
-  unstakeMined,
+  withdrawMined,
 }: {
   cooldownRemainingSec: number | undefined
   finalizeInFlight: boolean
   isCooldownEligible: boolean | undefined
   receiveFromStatus: ProgressStatusType
-  unstakeMined: boolean
+  withdrawMined: boolean
 }): ProgressStatusType {
   if (receiveFromStatus !== ProgressStatus.NOT_READY) return receiveFromStatus
-  if (!unstakeMined) return receiveFromStatus
+  if (!withdrawMined) return receiveFromStatus
   if (isCooldownEligible === false) return ProgressStatus.PROGRESS
   if (cooldownRemainingSec !== 0) return receiveFromStatus
 
@@ -235,12 +235,12 @@ function deriveReceiveStatus({
 function buildSteps({
   cooldownPostAction,
   needsApproval,
-  vault,
   receive,
   receiveToken,
   settlementTxHash,
   t,
   transaction,
+  vault,
 }: {
   cooldownPostAction: ReturnType<typeof deriveCooldownPostAction>
   needsApproval: boolean
@@ -272,7 +272,7 @@ function buildSteps({
       buildApprovalStep(transaction.approvalTxHash, vault.shareToken, t),
     )
   }
-  const unstakeStep = buildUnstakeStep(transaction, vault.shareToken, t)
+  const withdrawStep = buildWithdrawStep(transaction, vault.shareToken, t)
   // Recover path: shares come back, so the cooldown/receive machinery doesn't apply. A
   // still-PENDING deliberate cancel joins here too, dropping the now-moot countdown + Receive step.
   if (
@@ -280,7 +280,7 @@ function buildSteps({
     isUserCancel(transaction) ||
     isRemoteFailedCancel(transaction)
   ) {
-    steps.push(unstakeStep)
+    steps.push(withdrawStep)
     steps.push(
       buildRecoverStep(transaction, vault.shareToken, t, settlementTxHash),
     )
@@ -288,8 +288,8 @@ function buildSteps({
   }
   steps.push(
     cooldownPostAction
-      ? { ...unstakeStep, postAction: cooldownPostAction }
-      : unstakeStep,
+      ? { ...withdrawStep, postAction: cooldownPostAction }
+      : withdrawStep,
   )
   if (receiveToken) {
     steps.push(
@@ -308,8 +308,8 @@ function buildSteps({
 export const HistoricalWithdrawReview = function ({
   callToAction,
   onClose,
-  vault,
   transaction,
+  vault,
 }: Props) {
   const t = useTranslations('hemi-earn.transactions.drawer')
   // Cooldown copy is shared with the live vault review — reuse the vault.drawer namespace instead of duplicating keys.
@@ -347,8 +347,9 @@ export const HistoricalWithdrawReview = function ({
 
   const { show: remoteFailedReady } = useRemoteFailedState(transaction)
 
-  const { receive: receiveFromStatus, unstake } = resolveStepStates(transaction)
-  const unstakeMined = unstake === ProgressStatus.COMPLETED
+  const { receive: receiveFromStatus, withdraw } =
+    resolveStepStates(transaction)
+  const withdrawMined = withdraw === ProgressStatus.COMPLETED
   // Drop the CANCEL marker so it doesn't pose as the recover step's transaction.
   const settleMarker = claimRecoverSettlement(transaction.settlement)
   const settlementTxHash =
@@ -360,7 +361,7 @@ export const HistoricalWithdrawReview = function ({
     finalizeInFlight,
     isCooldownEligible,
     receiveFromStatus,
-    unstakeMined,
+    withdrawMined,
   })
   // Receive step tracks the remote-failed sub-state (FAILED only when the CTA is surfaced).
   const receive = isRemoteFailed(transaction)
@@ -379,7 +380,7 @@ export const HistoricalWithdrawReview = function ({
     isCooldownEligible,
     subgraphStatus: transaction.status,
     t: tCooldown,
-    unstakeMined,
+    withdrawMined,
   })
 
   const { amount: displayAmount, token: displayToken } = pickDisplay(

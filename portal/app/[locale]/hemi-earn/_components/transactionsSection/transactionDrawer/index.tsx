@@ -2,10 +2,9 @@ import { Drawer } from 'components/drawer'
 import { Suspense, useEffect } from 'react'
 import { isAddressEqual, isHash } from 'viem'
 
-import { useEarnVaults } from '../../../_hooks/useEarnVaults'
 import { useEarnTransactions } from '../../../_hooks/useEarnTransactions'
+import { useEarnVaults } from '../../../_hooks/useEarnVaults'
 import { hashesMatch } from '../../../_utils/hashes'
-import { findVaultByAsset } from '../../../_utils/vaults'
 import {
   canRetryRow,
   isAwaitingFinalize,
@@ -13,6 +12,7 @@ import {
   needsManualClaim,
   needsRecover,
 } from '../../../_utils/transactionPredicates'
+import { findVaultByAsset } from '../../../_utils/vaults'
 import {
   type EarnAsset,
   type EarnVault,
@@ -35,8 +35,8 @@ import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 // FULFILLED/CANCELLED, re-surfacing the same CTA (as "try again").
 function depositCallToAction({
   asset,
-  vault,
   transaction,
+  vault,
 }: {
   asset: EarnAsset
   vault: EarnVault
@@ -46,8 +46,8 @@ function depositCallToAction({
     return (
       <RetryFailedDeposit
         asset={asset}
-        vault={vault}
         transaction={transaction}
+        vault={vault}
       />
     )
   }
@@ -59,8 +59,8 @@ function depositCallToAction({
       <SettleCta
         asset={asset}
         operation="CLAIM"
-        vault={vault}
         transaction={transaction}
+        vault={vault}
       />
     )
   }
@@ -69,8 +69,8 @@ function depositCallToAction({
       <SettleCta
         asset={asset}
         operation="RECOVER"
-        vault={vault}
         transaction={transaction}
+        vault={vault}
       />
     )
   }
@@ -84,8 +84,8 @@ function depositCallToAction({
 // Redeem mirror: claim delivers the asset, recover returns the shares.
 function redeemCallToAction({
   asset,
-  vault,
   transaction,
+  vault,
 }: {
   asset: EarnAsset
   vault: EarnVault
@@ -95,8 +95,8 @@ function redeemCallToAction({
     return (
       <RetryFailedWithdraw
         asset={asset}
-        vault={vault}
         transaction={transaction}
+        vault={vault}
       />
     )
   }
@@ -111,8 +111,8 @@ function redeemCallToAction({
       <SettleCta
         asset={asset}
         operation="CLAIM"
-        vault={vault}
         transaction={transaction}
+        vault={vault}
       />
     )
   }
@@ -121,8 +121,8 @@ function redeemCallToAction({
       <SettleCta
         asset={asset}
         operation="RECOVER"
-        vault={vault}
         transaction={transaction}
+        vault={vault}
       />
     )
   }
@@ -137,9 +137,9 @@ const findTransactionByTxId = (transactions: EarnTransaction[], txId: string) =>
   transactions.find(t => hashesMatch(t.requestTxHash, txId))
 
 const resolveDrawerData = function ({
-  vaults,
   transactions,
   txId,
+  vaults,
 }: {
   vaults: EarnVault[]
   transactions: EarnTransaction[]
@@ -230,8 +230,8 @@ const TransactionDrawerContent = function () {
         })
       : depositCallToAction({
           asset: resolved.asset,
-          vault: resolved.vault,
           transaction,
+          vault: resolved.vault,
         })
 
   return (
@@ -241,8 +241,8 @@ const TransactionDrawerContent = function () {
           <HistoricalWithdrawReview
             callToAction={callToAction}
             onClose={close}
-            vault={resolved.vault}
             transaction={transaction}
+            vault={resolved.vault}
           />
         ) : (
           <HistoricalDepositReview

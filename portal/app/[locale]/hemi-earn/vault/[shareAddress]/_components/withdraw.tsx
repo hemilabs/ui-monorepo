@@ -43,8 +43,8 @@ import { AdvancedSettings } from './advancedSettings'
 import { AssetSelector } from './assetSelector'
 import { VaultFormLayout } from './form'
 import { OperationBelowForm } from './operationBelowForm'
-import { VaultFormContent } from './vaultFormContent'
 import { SubmitWithdraw } from './submitWithdraw'
+import { VaultFormContent } from './vaultFormContent'
 import { WithdrawAvailableBalance } from './withdrawAvailableBalance'
 import { WithdrawMaxBalance } from './withdrawMaxBalance'
 import { WithdrawShareBalance } from './withdrawShareBalance'
@@ -61,12 +61,12 @@ export const Withdraw = function ({
   const {
     approveExtraAmount,
     input,
-    vault,
     resetStateAfterOperation,
     selectedAsset,
     updateAssetInput,
     updateSharesInput,
     updateWithdrawOperation,
+    vault,
     withdrawMode,
   } = useVaultForm()
 

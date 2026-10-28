@@ -23,10 +23,10 @@ export const RetryDeposit = function () {
     approveExtraAmount,
     depositOperation,
     input,
-    vault,
     resetStateAfterOperation,
     selectedAsset,
     updateDepositOperation,
+    vault,
   } = useVaultForm()
   const { setDrawerQueryString } = useDrawerQueryString()
 

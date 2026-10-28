@@ -10,7 +10,7 @@ export const WithdrawAvailableBalance = function ({
 }: {
   token: EvmToken
 }) {
-  const { vault, selectedAsset } = useVaultForm()
+  const { selectedAsset, vault } = useVaultForm()
   const { isConnected } = useAccount()
   const { data, status } = useMaxWithdrawableAsset({
     assetAddress: selectedAsset.address,

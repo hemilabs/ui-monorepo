@@ -9,15 +9,15 @@ import {
   applySlippage,
 } from '../../../_constants/slippage'
 import { percentToBps, resolveRetrySlippage } from '../../../_utils/slippage'
-import { useDeposit } from '../../../vault/[shareAddress]/_hooks/useDeposit'
-import { useDepositShares } from '../../../vault/[shareAddress]/_hooks/useDepositShares'
-import { useQuoteDeposit } from '../../../vault/[shareAddress]/_hooks/useQuoteDeposit'
-import { type DepositOperationRunning } from '../../../vault/[shareAddress]/_types/operations'
 import {
   type EarnAsset,
   type EarnVault,
   type EarnTransaction,
 } from '../../../types'
+import { useDeposit } from '../../../vault/[shareAddress]/_hooks/useDeposit'
+import { useDepositShares } from '../../../vault/[shareAddress]/_hooks/useDepositShares'
+import { useQuoteDeposit } from '../../../vault/[shareAddress]/_hooks/useQuoteDeposit'
+import { type DepositOperationRunning } from '../../../vault/[shareAddress]/_types/operations'
 
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
@@ -31,8 +31,8 @@ type Props = {
 // earnTxId to the new tx so the drawer transitions in place from FAILED to in-flight.
 export const RetryFailedDeposit = function ({
   asset,
-  vault,
   transaction,
+  vault,
 }: Props) {
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
   const [operationRunning, setOperationRunning] =

@@ -21,10 +21,10 @@ export const RetryWithdraw = function () {
   const {
     approveExtraAmount,
     input,
-    vault,
     resetStateAfterOperation,
     selectedAsset,
     updateWithdrawOperation,
+    vault,
     withdrawOperation,
   } = useVaultForm()
 

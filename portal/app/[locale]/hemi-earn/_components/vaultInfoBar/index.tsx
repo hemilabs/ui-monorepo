@@ -13,9 +13,9 @@ import { type EarnVault } from '../../types'
 import { RenderEarnFiatBalance } from '../earnFiatBalance'
 import { RiskWarningTooltip } from '../riskWarningTooltip'
 
-import { VaultInfoItem } from './vaultInfoItem'
-import { StakedAmount } from './stakedAmount'
+import { DepositedAmount } from './depositedAmount'
 import { TokenIconStack } from './tokenIconStack'
+import { VaultInfoItem } from './vaultInfoItem'
 
 type Props = {
   vault: EarnVault
@@ -89,7 +89,7 @@ export const VaultInfoBar = function ({ vault }: Props) {
               : undefined
           }
         />
-        <StakedAmount vault={vault} />
+        <DepositedAmount vault={vault} />
       </div>
       <div className="flex w-full *:flex-1 md:ml-auto md:w-auto md:*:flex-initial">
         <ButtonLink

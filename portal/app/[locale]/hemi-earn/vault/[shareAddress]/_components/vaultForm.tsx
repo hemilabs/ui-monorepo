@@ -21,7 +21,7 @@ const SideDrawer = function () {
 }
 
 export const VaultForm = function () {
-  const { vault, resetSettings, updateSharesInput } = useVaultForm()
+  const { resetSettings, updateSharesInput, vault } = useVaultForm()
   const [activeTab, setActiveTab] = useState<VaultOperation>('deposit')
 
   const switchToDeposit = function () {

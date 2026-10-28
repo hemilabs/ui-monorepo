@@ -6,14 +6,6 @@ import { earnTransactionsKeyPrefix } from '../_fetchers/fetchEarnTransactions'
 import { hashesMatch } from '../_utils/hashes'
 import { isEarnRowTerminal } from '../_utils/transactionPredicates'
 import {
-  DepositStatus,
-  WithdrawStatus,
-  type DepositOperation,
-  type DepositStatusType,
-  type WithdrawOperation,
-  type WithdrawStatusType,
-} from '../vault/[shareAddress]/_types/operations'
-import {
   type EarnTransaction,
   type EarnTransactionStatusType,
   type LocalEarnDepositOperation,
@@ -21,6 +13,14 @@ import {
   isLocalEarnDeposit,
   isLocalEarnWithdraw,
 } from '../types'
+import {
+  DepositStatus,
+  WithdrawStatus,
+  type DepositOperation,
+  type DepositStatusType,
+  type WithdrawOperation,
+  type WithdrawStatusType,
+} from '../vault/[shareAddress]/_types/operations'
 
 import { useEarnTransactionsQuery } from './useEarnTransactionsQuery'
 import { useLocalEarnOperations } from './useLocalEarnOperations'

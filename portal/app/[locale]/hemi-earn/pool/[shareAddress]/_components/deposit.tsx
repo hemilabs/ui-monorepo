@@ -1,6 +1,7 @@
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { TokenInput } from 'components/tokenInput'
+import { WarningBox } from 'components/warningBox'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useState } from 'react'
@@ -194,6 +195,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
 
   return (
     <VaultFormLayout
+      aboveSubmit={<WarningBox subheading={t('hemi-earn.risk-warning')} />}
       belowForm={
         canDeposit && (
           <OperationBelowForm

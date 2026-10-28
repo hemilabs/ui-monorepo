@@ -1,4 +1,5 @@
 import {
+  getTokenBySymbol,
   getTokenPrice,
   isStakeToken,
   isTunnelToken,
@@ -24,6 +25,28 @@ const baseToken = {
 }
 
 describe('utils/token', function () {
+  describe('getTokenBySymbol', function () {
+    it('should return the listed token with that symbol on the chain', function () {
+      expect(getTokenBySymbol('HEMI', 43111)).toMatchObject({
+        address: '0x99e3dE3817F6081B2568208337ef83295b7f591D',
+        chainId: 43111,
+        symbol: 'HEMI',
+      })
+    })
+
+    it('should return undefined for a listed symbol on a known chain that does not list it', function () {
+      expect(getTokenBySymbol('HEMI', 743111)).toBeUndefined()
+    })
+
+    it('should return undefined for an unknown chain', function () {
+      expect(getTokenBySymbol('HEMI', 999999)).toBeUndefined()
+    })
+
+    it('should return undefined for a symbol that is not listed', function () {
+      expect(getTokenBySymbol('NOT-LISTED', 43111)).toBeUndefined()
+    })
+  })
+
   describe('getTokenPrice', function () {
     it('should return the price based in the token symbol', function () {
       const token = { ...baseToken, symbol: 'usdt' }

@@ -6,7 +6,6 @@ import { TokenInput } from 'components/tokenInput'
 import { inputErrors } from 'components/tokenInput/utils'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import messages from 'messages/en.json'
-import { NuqsTestingAdapter } from 'nuqs/adapters/testing'
 import { useArgs } from 'storybook/preview-api'
 import { tokenList } from 'tokenList'
 import type { Token } from 'types/token'
@@ -71,11 +70,9 @@ const meta = {
   decorators: [
     Story => (
       <IntlProvider locale="en" messages={messages}>
-        <NuqsTestingAdapter>
-          <div className="mx-auto w-full lg:max-w-[536px]">
-            <Story />
-          </div>
-        </NuqsTestingAdapter>
+        <div className="mx-auto w-full lg:max-w-[536px]">
+          <Story />
+        </div>
       </IntlProvider>
     ),
   ],

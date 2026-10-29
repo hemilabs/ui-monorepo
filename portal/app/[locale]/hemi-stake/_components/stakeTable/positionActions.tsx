@@ -15,19 +15,19 @@ type Props = {
 }
 
 export function PositionActions({ row }: Props) {
-  const { isTransferredPosition } = usePositionOwnership(row.original)
+  const position = row.original
+  const { isTransferredPosition } = usePositionOwnership(position)
+  const isWithdrawn = position.status === StakingPositionStatus.WITHDRAWN
 
   return (
     <div className="flex w-full flex-row-reverse items-center justify-end gap-x-2 lg:flex-row">
-      <ClaimCta operation={row.original} />
-      {(!isTransferredPosition ||
-        row.original.status === StakingPositionStatus.WITHDRAWN) && (
-        <UnlockCta operation={row.original} />
+      <ClaimCta operation={position} />
+      {(!isTransferredPosition || isWithdrawn) && (
+        <UnlockCta operation={position} />
       )}
-      {!isTransferredPosition &&
-        row.original.status !== StakingPositionStatus.WITHDRAWN && (
-          <ActionCell key={row.original.id} row={row} />
-        )}
+      {!isTransferredPosition && !isWithdrawn && (
+        <ActionCell key={position.id} row={row} />
+      )}
     </div>
   )
 }

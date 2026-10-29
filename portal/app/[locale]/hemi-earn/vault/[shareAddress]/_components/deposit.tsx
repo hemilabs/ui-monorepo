@@ -15,6 +15,7 @@ import { walletIsConnected } from 'utils/wallet'
 import { useAccount as useEvmAccount } from 'wagmi'
 
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
+import { useCanDeposit } from '../../../_hooks/useCanDeposit'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { percentToBps } from '../../../_utils/slippage'
 import { useVaultForm } from '../_context/vaultFormContext'
@@ -58,6 +59,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   } = useVaultForm()
 
   const { address, status } = useEvmAccount()
+  const depositGate = useCanDeposit()
 
   const amount = parseTokenUnits(input, selectedAsset.token)
   const routerAddress = getHemiEarnRouterAddress()
@@ -192,6 +194,21 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     isPreviewLoading,
     validInput,
   })
+
+  if (!depositGate.canDeposit) {
+    return (
+      <VaultFormLayout
+        formContent={
+          <VaultFormContent
+            activeTab="deposit"
+            onSwitchTab={onSwitchToWithdraw}
+          >
+            <WarningBox subheading={t(`hemi-earn.${depositGate.reason}`)} />
+          </VaultFormContent>
+        }
+      />
+    )
+  }
 
   return (
     <VaultFormLayout

@@ -39,9 +39,9 @@ import {
 } from '../_hooks/useTunnelState'
 import { useWithdraw } from '../_hooks/useWithdraw'
 
-import { BitcoinReceivingAddress } from './bitcoinReceivingAddress'
 import { FormContent, TunnelForm } from './form'
 import { HemiBtcFeesSummary } from './hemiBtcFeesSummary'
+import { ReceivingAddress } from './receivingAddress'
 import { SubmitEvmWithdrawal } from './submitEvmWithdrawal'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 import { TunnelProviderToggle } from './tunnelProviderToggle'
@@ -259,15 +259,17 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     <TunnelForm
       belowForm={
         <div className="relative -translate-y-7">
-          <BitcoinReceivingAddress
+          <ReceivingAddress
             address={btcAddress ? formatBtcAddress(btcAddress) : undefined}
             customAddress={customAddress}
             customAddressEnabled={customAddressEnabled}
             disabled={isWithdrawing}
+            editable
             isCheckingAddress={isCheckingAddress}
             isCustomAddressValid={isCustomAddressValid}
             onCustomAddressChange={setCustomAddress}
             onCustomAddressEnabledChange={setCustomAddressEnabled}
+            placeholder={t('tunnel-page.form.custom-address-placeholder')}
             receivingText={t('tunnel-page.form.bitcoin-receiving-address')}
             tooltipText={t(
               'tunnel-page.form.bitcoin-receiving-address-description',

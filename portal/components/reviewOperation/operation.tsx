@@ -6,8 +6,9 @@ import { ComponentProps, ReactNode } from 'react'
 
 type Props = {
   aboveCallToAction?: ReactNode
-  callToAction?: ReactNode
+  belowSubheading?: ReactNode
   bottomSection?: ReactNode
+  callToAction?: ReactNode
   steps: StepPropsWithoutPosition[]
   subheading: string
 } & ComponentProps<typeof DrawerTopSection> &
@@ -19,6 +20,7 @@ type Props = {
 export const Operation = ({
   aboveCallToAction,
   amount,
+  belowSubheading,
   bottomSection,
   callToAction,
   endAdornment,
@@ -33,6 +35,7 @@ export const Operation = ({
       <DrawerTopSection heading={heading} onClose={onClose} />
       <DrawerParagraph>{subheading}</DrawerParagraph>
     </div>
+    {!!belowSubheading && <div>{belowSubheading}</div>}
     <ReviewOperation
       aboveCallToAction={aboveCallToAction}
       amount={

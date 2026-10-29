@@ -1,4 +1,5 @@
 import type { Preview } from '@storybook/react-vite'
+import { NuqsTestingAdapter } from 'nuqs/adapters/testing'
 import { createElement } from 'react'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
@@ -13,6 +14,12 @@ const preview: Preview = {
       createElement(
         SkeletonTheme,
         { baseColor: '#E5E5E5', highlightColor: '#FAFAFA' },
+        createElement(Story),
+      ),
+    (Story, { parameters }) =>
+      createElement(
+        NuqsTestingAdapter,
+        { searchParams: parameters.searchParams },
         createElement(Story),
       ),
   ],

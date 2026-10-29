@@ -22,6 +22,7 @@ import {
   resolveStepExplorerChainId,
 } from '../../../_utils/settleUi'
 import {
+  canRetryRow,
   isLocalEarnTransactionRow,
   isRecoverPath,
   isRemoteFailed,
@@ -33,6 +34,8 @@ import {
   type EarnTransaction,
   type EarnTransactionStatusType,
 } from '../../../types'
+import { OperatorNote } from '../../operatorDisclosure'
+import { RiskWarningBanner } from '../../riskWarningBanner'
 
 import { RemoteFailedBanner } from './remoteFailed'
 import { SettleBanner } from './settleShared'
@@ -50,59 +53,59 @@ type Translator = ReturnType<
 >
 
 type StepStates = {
-  stake: ProgressStatusType
+  deposit: ProgressStatusType
   waitingForShares: ProgressStatusType
 }
 
 const stepStatesByStatus: Record<EarnTransactionStatusType, StepStates> = {
   CANCELLED: {
-    // Request landed (stake done); the cancel/return shows in the terminal step, not a failed stake.
-    stake: ProgressStatus.COMPLETED,
+    // Request landed (deposit done); the cancel/return shows in the terminal step, not a failed deposit.
+    deposit: ProgressStatus.COMPLETED,
     waitingForShares: ProgressStatus.NOT_READY,
   },
   FAILED: {
-    stake: ProgressStatus.FAILED,
+    deposit: ProgressStatus.FAILED,
     waitingForShares: ProgressStatus.NOT_READY,
   },
   FINALIZED: {
-    stake: ProgressStatus.COMPLETED,
+    deposit: ProgressStatus.COMPLETED,
     waitingForShares: ProgressStatus.COMPLETED,
   },
   FULFILLED: {
-    stake: ProgressStatus.COMPLETED,
+    deposit: ProgressStatus.COMPLETED,
     waitingForShares: ProgressStatus.PROGRESS,
   },
   PENDING: {
-    stake: ProgressStatus.COMPLETED,
+    deposit: ProgressStatus.COMPLETED,
     waitingForShares: ProgressStatus.PROGRESS,
   },
   RECOVERED: {
-    stake: ProgressStatus.COMPLETED,
+    deposit: ProgressStatus.COMPLETED,
     waitingForShares: ProgressStatus.COMPLETED,
   },
   TX_PENDING: {
-    stake: ProgressStatus.PROGRESS,
+    deposit: ProgressStatus.PROGRESS,
     waitingForShares: ProgressStatus.NOT_READY,
   },
 }
 
-// FAILED splits by source: local = Hemi tx reverted (stake FAILED); subgraph =
+// FAILED splits by source: local = Hemi tx reverted (deposit FAILED); subgraph =
 // Agent failed after a good Hemi tx (failure in the cross-chain step).
 const resolveStepStates = (tx: EarnTransaction): StepStates =>
   tx.status === 'FAILED' && !isLocalEarnTransactionRow(tx)
     ? {
-        stake: ProgressStatus.COMPLETED,
+        deposit: ProgressStatus.COMPLETED,
         waitingForShares: ProgressStatus.FAILED,
       }
     : stepStatesByStatus[tx.status]
 
-function buildStakeStep(tx: EarnTransaction, token: EvmToken, t: Translator) {
-  const status = resolveStepStates(tx).stake
+function buildDepositStep(tx: EarnTransaction, token: EvmToken, t: Translator) {
+  const status = resolveStepStates(tx).deposit
   return {
     description: (
       <div className="flex items-center gap-x-2">
         <TokenLogo size="small" token={token} />
-        <span>{t('step.stake-token', { symbol: token.symbol })}</span>
+        <span>{t('step.deposit-token', { symbol: token.symbol })}</span>
       </div>
     ),
     explorerChainId: hemi.id,
@@ -244,7 +247,7 @@ export const HistoricalDepositReview = function ({
   if (transaction.approvalTxHash) {
     steps.push(buildApprovalStep(transaction.approvalTxHash, token, t))
   }
-  steps.push(buildStakeStep(transaction, token, t))
+  steps.push(buildDepositStep(transaction, token, t))
   steps.push(
     buildTerminalStep({
       baseStatus: waitingForShares,
@@ -260,11 +263,13 @@ export const HistoricalDepositReview = function ({
     <Operation
       aboveCallToAction={
         <>
+          {canRetryRow(transaction) && <RiskWarningBanner />}
           <SettleBanner transaction={transaction} />
           <RemoteFailedBanner transaction={transaction} />
         </>
       }
       amount={transaction.amountIn}
+      belowSubheading={<OperatorNote />}
       callToAction={callToAction}
       endAdornment={
         <RetrySlippageTooltip

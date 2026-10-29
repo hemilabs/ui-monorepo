@@ -6,6 +6,7 @@ import { type AssetData, getAssetData } from 'hemi-earn-actions/actions'
 import { hemi } from 'hemi-viem'
 import { mainnet } from 'networks/mainnet'
 import { tokenList } from 'tokenList'
+import { type Extensions } from 'types/token'
 import { toChecksumAddress } from 'utils/address'
 import { getPublicClient } from 'utils/chainClients'
 import { type Address, type Chain, isAddressEqual, zeroAddress } from 'viem'
@@ -22,7 +23,7 @@ export type HemiEarnAssetConfig = AssetData & {
 
 // One representative config per share OFT. A share can accept multiple deposit
 // assets (e.g. USDC + USDT → sVUSD), so `share`/`remoteShare` repeat across
-// configs while `asset` does not — consumers that key off the share (pools,
+// configs while `asset` does not — consumers that key off the share (vaults,
 // TVL) must dedupe first or they double-count.
 export const uniqueShareConfigs = (configs: HemiEarnAssetConfig[]) => [
   ...new Map(
@@ -50,29 +51,30 @@ const fetchWhitelistedL1Tokens = async function (chainId: Chain['id']) {
 
 // Hemi-side counterpart of an Ethereum token, via the token list's
 // `bridgeInfo` (standard bridge) or `oft.peers` (LayerZero OFT, e.g. hemiBTC)
-// mapping. Returns `undefined` when the token has no Hemi version (e.g. not
+// mapping. A `bridgeInfo` match wins, as an Ethereum token can be both (e.g.
+// cbBTC). Returns `undefined` when the token has no Hemi version (e.g. not
 // tunneled), so callers skip it.
-const findHemiToken =
-  ({
-    l1ChainId,
-    l2ChainId,
-  }: {
-    l1ChainId: Chain['id']
-    l2ChainId: Chain['id']
-  }) =>
-  (l1Address: Address) =>
-    tokenList.tokens.find(function (token) {
-      if (token.chainId !== l2ChainId) {
-        return false
-      }
-      const hemiTokenL1Address =
-        token.extensions?.bridgeInfo?.[l1ChainId]?.tokenAddress ??
-        token.extensions?.oft?.peers?.[l1ChainId]?.tokenAddress
+const findHemiToken = function ({
+  l1ChainId,
+  l2ChainId,
+}: {
+  l1ChainId: Chain['id']
+  l2ChainId: Chain['id']
+}) {
+  const hemiTokens = tokenList.tokens.filter(t => t.chainId === l2ChainId)
+  return function (l1Address: Address) {
+    const isPair = function (pairs: Extensions['bridgeInfo']) {
+      const tokenAddress = pairs?.[l1ChainId]?.tokenAddress
       return (
-        hemiTokenL1Address !== undefined &&
-        isAddressEqual(hemiTokenL1Address, l1Address)
+        tokenAddress !== undefined && isAddressEqual(tokenAddress, l1Address)
       )
-    })
+    }
+    return (
+      hemiTokens.find(t => isPair(t.extensions?.bridgeInfo)) ??
+      hemiTokens.find(t => isPair(t.extensions?.oft?.peers))
+    )
+  }
+}
 
 // Builds the Hemi Earn asset registry on-chain: each gateway's whitelisted
 // Ethereum tokens → their Hemi counterparts → `Router.assetsData`.
@@ -97,7 +99,7 @@ const fetchHemiEarnAssetConfigs = async function (): Promise<
   // `assetsData` is a mapping getter: it returns a zero-valued struct
   // (`share === zeroAddress`) for tokens the Router doesn't know — drop those.
   // Disabled assets revert `requestDeposit`/`requestRedeem`, so drop them too
-  // rather than surface a pool the user can't actually deposit into.
+  // rather than surface a vault the user can't actually deposit into.
   return configs.filter(
     config =>
       config.enabled !== false && !isAddressEqual(config.share, zeroAddress),

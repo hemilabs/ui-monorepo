@@ -9,7 +9,7 @@ import {
   sumInTransitSharesByShare,
 } from '../../../../../app/[locale]/hemi-earn/_utils/earnRows'
 import {
-  type EarnPool,
+  type EarnVault,
   type EarnPosition,
   type EarnTransaction,
   type LocalEarnOperation,
@@ -79,21 +79,21 @@ describe('earnRows', function () {
     const shareB = '0x00000000000000000000000000000000000000e2' as Address
     const peggedToken = { decimals: 18 } as unknown as EvmToken
     const shareToken = { symbol: 'S' } as unknown as EvmToken
-    const makePool = (shareAddress: Address) =>
+    const makeVault = (shareAddress: Address) =>
       ({
         assets: [],
         peggedToken,
         shareAddress,
         shareToken,
-      }) as unknown as EarnPool
-    const pools = [makePool(shareA), makePool(shareB)]
+      }) as unknown as EarnVault
+    const vaults = [makeVault(shareA), makeVault(shareB)]
 
     it('synthesizes a zero-balance row for an in-transit share with no position', function () {
       expect(
         inTransitOnlyPositions(
           { [shareA.toLowerCase()]: BigInt(5) },
           [],
-          pools,
+          vaults,
         ),
       ).toEqual([
         {
@@ -116,17 +116,17 @@ describe('earnRows', function () {
         inTransitOnlyPositions(
           { [shareA.toLowerCase()]: BigInt(5) },
           [position],
-          pools,
+          vaults,
         ),
       ).toEqual([])
     })
 
-    it('drops an in-transit share that maps to no pool', function () {
+    it('drops an in-transit share that maps to no vault', function () {
       expect(
         inTransitOnlyPositions(
           { [`0x${'f'.repeat(40)}`]: BigInt(5) },
           [],
-          pools,
+          vaults,
         ),
       ).toEqual([])
     })
@@ -198,12 +198,12 @@ describe('earnRows', function () {
   describe('sumInTransitSharesByShare', function () {
     const redeemAsset = '0x00000000000000000000000000000000000000c1' as Address
     const share = '0x00000000000000000000000000000000000000d2' as Address
-    const makePool = (shareAddress: Address, assets: Address[]) =>
+    const makeVault = (shareAddress: Address, assets: Address[]) =>
       ({
         assets: assets.map(address => ({ address })),
         shareAddress,
-      }) as unknown as EarnPool
-    const pools = [makePool(share, [redeemAsset])]
+      }) as unknown as EarnVault
+    const vaults = [makeVault(share, [redeemAsset])]
     const redeem = (
       overrides: Partial<EarnTransaction> = {},
     ): EarnTransaction => ({
@@ -217,14 +217,14 @@ describe('earnRows', function () {
     })
 
     it('sums the amountIn of an in-flight redeem under its share', function () {
-      expect(sumInTransitSharesByShare([redeem()], pools)).toEqual({
+      expect(sumInTransitSharesByShare([redeem()], vaults)).toEqual({
         [share.toLowerCase()]: BigInt('2000000000000000000'),
       })
     })
 
     it('counts a CANCELLED redeem (shares still out, pre-recover)', function () {
       expect(
-        sumInTransitSharesByShare([redeem({ status: 'CANCELLED' })], pools),
+        sumInTransitSharesByShare([redeem({ status: 'CANCELLED' })], vaults),
       ).toEqual({ [share.toLowerCase()]: BigInt('2000000000000000000') })
     })
 
@@ -232,7 +232,7 @@ describe('earnRows', function () {
       expect(
         sumInTransitSharesByShare(
           [redeem({ status: 'RECOVERED' }), redeem({ status: 'FINALIZED' })],
-          pools,
+          vaults,
         ),
       ).toEqual({})
     })
@@ -241,20 +241,20 @@ describe('earnRows', function () {
       expect(
         sumInTransitSharesByShare(
           [redeem({ amountOut: '1900000', status: 'FULFILLED' })],
-          pools,
+          vaults,
         ),
       ).toEqual({})
     })
 
     it('excludes a TX_PENDING redeem (request tx not mined, shares still held)', function () {
       expect(
-        sumInTransitSharesByShare([redeem({ status: 'TX_PENDING' })], pools),
+        sumInTransitSharesByShare([redeem({ status: 'TX_PENDING' })], vaults),
       ).toEqual({})
     })
 
     it('excludes deposits', function () {
       expect(
-        sumInTransitSharesByShare([redeem({ kind: 'DEPOSIT' })], pools),
+        sumInTransitSharesByShare([redeem({ kind: 'DEPOSIT' })], vaults),
       ).toEqual({})
     })
 
@@ -265,16 +265,16 @@ describe('earnRows', function () {
             redeem({ amountIn: '2000000000000000000' }),
             redeem({ amountIn: '1500000000000000000', requestId: '1' }),
           ],
-          pools,
+          vaults,
         ),
       ).toEqual({ [share.toLowerCase()]: BigInt('3500000000000000000') })
     })
 
-    it('ignores a redeem whose asset maps to no pool', function () {
+    it('ignores a redeem whose asset maps to no vault', function () {
       expect(
         sumInTransitSharesByShare(
           [redeem({ asset: `0x${'e'.repeat(40)}` })],
-          pools,
+          vaults,
         ),
       ).toEqual({})
     })

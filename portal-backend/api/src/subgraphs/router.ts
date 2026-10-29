@@ -18,7 +18,7 @@ import {
   getLastIndexedBlock,
   getTotalStaked,
 } from './subgraph.ts'
-import { isInteger } from './utils.ts'
+import { isChainId, isInteger } from './utils.ts'
 
 function parseChainId(
   req: Request<ChainIdPathParams> & ReqData,
@@ -26,7 +26,7 @@ function parseChainId(
   next: NextFunction,
 ) {
   const { chainIdStr } = req.params
-  if (!isInteger(chainIdStr)) {
+  if (!isChainId(chainIdStr)) {
     next('route')
     return
   }

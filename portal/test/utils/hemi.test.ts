@@ -87,7 +87,6 @@ describe('utils/hemi', function () {
       const getVaultIndex = vi.mocked(getVaultIndexByBTCAddress)
       vi.useFakeTimers()
       vi.setSystemTime(new Date('2026-01-01T00:00:00Z'))
-      getVaultIndex.mockClear()
       getVaultIndex.mockResolvedValueOnce(8).mockResolvedValueOnce(9)
 
       const firstResult = await getBitcoinDepositVault(

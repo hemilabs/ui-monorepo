@@ -1,6 +1,8 @@
+import { bitcoinTestnet } from 'btc-wallet/chains'
 import { hemiSepolia } from 'hemi-viem'
 import {
   acknowledgedDeposits,
+  getVaultIndexByBTCAddress,
   getBitcoinWithdrawalGracePeriod,
   getBitcoinVaultStateAddress,
   getTransactionByTxId,
@@ -13,16 +15,20 @@ import {
 import {
   BtcDepositOperation,
   BtcDepositStatus,
+  MessageDirection,
   BtcWithdrawStatus,
   ToBtcWithdrawOperation,
 } from 'types/tunnel'
+import { createBtcApi } from 'utils/btcApi'
 import {
+  confirmBtcDeposit,
+  getBitcoinDepositVault,
   getHemiStatusOfBtcDeposit,
   getHemiStatusOfBtcWithdrawal,
   isValidBtcAddress,
 } from 'utils/hemi'
-import { zeroAddress } from 'viem'
-import { describe, expect, it, vi } from 'vitest'
+import { type PublicClient, zeroAddress } from 'viem'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 // Mock the imported functions
 vi.mock('hemi-viem/actions', () => ({
@@ -35,13 +41,21 @@ vi.mock('hemi-viem/actions', () => ({
   getTransactionByTxId: vi.fn(),
   getTxConfirmations: vi.fn(),
   getVaultByIndex: vi.fn(),
+  getVaultIndexByBTCAddress: vi.fn(),
   isAddressValid: vi.fn(),
   isBitcoinWithdrawalChallenged: vi.fn(),
   isBitcoinWithdrawalFulfilled: vi.fn(),
 }))
 
+vi.mock(import('utils/btcApi'), async function (importOriginal) {
+  const btcApi = await importOriginal()
+  return {
+    ...btcApi,
+    createBtcApi: vi.fn(),
+  }
+})
+
 vi.mocked(getBitcoinVaultStateAddress).mockResolvedValue(zeroAddress)
-vi.mocked(getVaultByIndex).mockResolvedValue(zeroAddress)
 
 const hemiClient: PublicClient = {
   chain: hemiSepolia,
@@ -51,6 +65,9 @@ const hemiClient: PublicClient = {
 const deposit: Omit<BtcDepositOperation, 'status'> = {}
 
 const vault = '0x0000000000000000000000000000000000000456'
+const mappedVaultAddress = '0x0000000000000000000000000000000000000789'
+
+vi.mocked(getVaultByIndex).mockResolvedValue(mappedVaultAddress)
 
 const withdrawal: ToBtcWithdrawOperation = {
   l2ChainId: hemiSepolia.id,
@@ -62,6 +79,102 @@ const withdrawal: ToBtcWithdrawOperation = {
 }
 
 describe('utils/hemi', function () {
+  describe('getBitcoinDepositVault', function () {
+    afterEach(() => vi.useRealTimers())
+
+    it('caches the matching vault and refreshes it after five minutes', async function () {
+      const bitcoinAddress = 'tb1qlookupcustody'
+      const getVaultIndex = vi.mocked(getVaultIndexByBTCAddress)
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-01-01T00:00:00Z'))
+      getVaultIndex.mockResolvedValueOnce(8).mockResolvedValueOnce(9)
+
+      const firstResult = await getBitcoinDepositVault(
+        hemiClient,
+        bitcoinAddress,
+      )
+      await getBitcoinDepositVault(hemiClient, bitcoinAddress)
+
+      expect(getVaultIndex).toHaveBeenCalledTimes(1)
+      expect(firstResult.vaultIndex).toBe(8)
+
+      vi.advanceTimersByTime(5 * 60 * 1000)
+
+      const refreshedResult = await getBitcoinDepositVault(
+        hemiClient,
+        bitcoinAddress,
+      )
+
+      expect(getVaultIndex).toHaveBeenCalledTimes(2)
+      expect(refreshedResult.vaultIndex).toBe(9)
+    })
+  })
+
+  describe('confirmBtcDeposit', function () {
+    it('checks and confirms a deposit against the vault mapped to its BTC address', async function () {
+      const btcDeposit: BtcDepositOperation = {
+        amount: '1000',
+        direction: MessageDirection.L1_TO_L2,
+        from: 'tb1qsender',
+        grossAmount: '1000',
+        l1ChainId: bitcoinTestnet.id,
+        l1Token: 'BTC',
+        l2ChainId: hemiSepolia.id,
+        l2Token: zeroAddress,
+        status: BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
+        to: 'tb1qcustody',
+        transactionHash:
+          '4cabca8f8b711c9d6946d737034545879a964c374a193ef9bb15ec966b826a01',
+      }
+      const vaultIndex = 9
+      const from = '0x0000000000000000000000000000000000000004'
+      const transactionHash =
+        '0x0000000000000000000000000000000000000000000000000000000000000005'
+      const confirmDeposit = vi.fn().mockResolvedValue(transactionHash)
+      const getTransactionReceipt = vi.fn().mockResolvedValue({
+        status: { confirmed: true },
+        txId: btcDeposit.transactionHash,
+        vout: [
+          {
+            scriptpubkeyAddress: btcDeposit.to,
+            scriptpubkeyAsm: '',
+            scriptpubkeyType: 'witness_v0',
+            value: 1000,
+          },
+        ],
+      })
+
+      vi.mocked(getVaultIndexByBTCAddress).mockResolvedValue(vaultIndex)
+      vi.mocked(getTransactionByTxId).mockResolvedValue({ found: true })
+      vi.mocked(acknowledgedDeposits).mockResolvedValue(false)
+      vi.mocked(getTxConfirmations).mockResolvedValue(7)
+      vi.mocked(createBtcApi).mockReturnValue({
+        getTransactionReceipt,
+      } as never)
+
+      await confirmBtcDeposit({
+        deposit: btcDeposit,
+        from,
+        hemiClient,
+        hemiWalletClient: { confirmDeposit } as never,
+      })
+
+      expect(getVaultIndexByBTCAddress).toHaveBeenCalledWith(hemiClient, {
+        btcAddress: btcDeposit.to,
+      })
+      expect(confirmDeposit).toHaveBeenCalledWith({
+        extraInfo: '0x',
+        from,
+        outputIndex: 0n,
+        txId: btcDeposit.transactionHash,
+        vaultIndex,
+      })
+      expect(getBitcoinVaultStateAddress).toHaveBeenCalledWith(hemiClient, {
+        vaultAddress: mappedVaultAddress,
+      })
+    })
+  })
+
   describe('getHemiStatusOfBtcDeposit', function () {
     it(`should return ${BtcDepositStatus.BTC_TX_CONFIRMED} if Hemi is not aware of the bitcoin transaction`, async function () {
       vi.mocked(acknowledgedDeposits).mockResolvedValue(false)

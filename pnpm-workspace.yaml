@@ -22,7 +22,6 @@ minimumReleaseAge: 10080 # 7 days in minutes
 minimumReleaseAgeExclude:
   - '@hemilabs/*'
   - '@vetro-protocol/*'
-  - 'body-parser' # temporary, drop after 2026-10-29 when 2.4.0 matures
   - 'hemi-viem'
   - 'umami-analytics'
 

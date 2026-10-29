@@ -25,7 +25,7 @@ minimumReleaseAgeExclude:
   - 'body-parser' # temporary, drop after 2026-10-29 when 2.4.0 matures
   - 'hemi-viem'
   - 'umami-analytics'
-  - 'viem-erc4626'
+  - 'viem-erc4626' # temporary, drop after 2026-11-03 when 1.2.0 matures
 
 overrides:
   brace-expansion@5: '5.0.8' # CVE-2026-13149 / CVE-2026-14257 DoS fixes

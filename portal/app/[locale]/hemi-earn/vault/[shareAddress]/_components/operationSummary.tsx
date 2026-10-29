@@ -1,0 +1,129 @@
+import { DisplayAmount } from 'components/displayAmount'
+import { TokenLogo } from 'components/tokenLogo'
+import { type ReactNode } from 'react'
+import Skeleton from 'react-loading-skeleton'
+import { type EvmToken } from 'types/token'
+import { useTranslations } from 'use-intl'
+import { formatUnits } from 'viem'
+
+const Row = ({ children, label }: { children: ReactNode; label: string }) => (
+  <div className="flex items-center justify-between text-sm font-medium">
+    <span className="text-neutral-500">{label}</span>
+    {children}
+  </div>
+)
+
+type FeeRowProps = {
+  amount: bigint | undefined
+  isError: boolean
+  label: string
+  token: EvmToken
+}
+
+const FeeRow = function ({ amount, isError, label, token }: FeeRowProps) {
+  if (amount !== undefined) {
+    return (
+      <Row label={label}>
+        <DisplayAmount
+          amount={formatUnits(amount, token.decimals)}
+          showTokenLogo={false}
+          token={token}
+        />
+      </Row>
+    )
+  }
+  if (isError) {
+    return (
+      <Row label={label}>
+        <span className="text-neutral-950">-</span>
+      </Row>
+    )
+  }
+  return (
+    <Row label={label}>
+      <Skeleton className="w-12" />
+    </Row>
+  )
+}
+
+export type TopRowProps = {
+  amount: bigint | undefined
+  label: string
+  token: EvmToken
+}
+
+const TopRow = function ({ amount, label, token }: TopRowProps) {
+  if (amount !== undefined) {
+    return (
+      <Row label={label}>
+        <div className="flex items-center gap-x-1 text-neutral-950">
+          <DisplayAmount
+            amount={formatUnits(amount, token.decimals)}
+            showTokenLogo={false}
+            token={token}
+          />
+          <div className="rounded-full shadow-bs">
+            <TokenLogo size="small" token={token} />
+          </div>
+        </div>
+      </Row>
+    )
+  }
+  return (
+    <Row label={label}>
+      <Skeleton className="w-16" />
+    </Row>
+  )
+}
+
+type Props = {
+  bridgingFee: bigint | undefined
+  ethereumFee: bigint | undefined
+  hemiGasFee: bigint | undefined
+  isFeesError: boolean
+  nativeToken: EvmToken
+  topRow: TopRowProps
+  totalFees: bigint | undefined
+}
+
+export const OperationSummary = function ({
+  bridgingFee,
+  ethereumFee,
+  hemiGasFee,
+  isFeesError,
+  nativeToken,
+  topRow,
+  totalFees,
+}: Props) {
+  const t = useTranslations()
+  return (
+    <div className="flex flex-col gap-y-2.5">
+      <TopRow {...topRow} />
+      <div className="h-px w-full bg-neutral-200" />
+      <FeeRow
+        amount={hemiGasFee}
+        isError={isFeesError}
+        label={t('hemi-earn.vault.form.hemi-network-fee')}
+        token={nativeToken}
+      />
+      <FeeRow
+        amount={bridgingFee}
+        isError={isFeesError}
+        label={t('hemi-earn.vault.form.bridging-fees')}
+        token={nativeToken}
+      />
+      <FeeRow
+        amount={ethereumFee}
+        isError={isFeesError}
+        label={t('hemi-earn.vault.form.ethereum-gas-fee')}
+        token={nativeToken}
+      />
+      <FeeRow
+        amount={totalFees}
+        isError={isFeesError}
+        label={t('common.total')}
+        token={nativeToken}
+      />
+    </div>
+  )
+}

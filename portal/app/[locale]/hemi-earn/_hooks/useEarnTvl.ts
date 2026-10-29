@@ -11,7 +11,7 @@ export const earnTvlQueryKey = ({
 }: {
   networkType: string
   stakingVault: Address
-}) => ['hemi-earn', 'pools', networkType, stakingVault, 'totalAssets']
+}) => ['hemi-earn', 'vaults', networkType, stakingVault, 'totalAssets']
 
 export const earnTvlQueryOptions = ({
   networkType,

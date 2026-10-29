@@ -7,9 +7,9 @@ import { positionEarnedUsd } from '../_utils/earnedAmount'
 import { inTransitOnlyPositions } from '../_utils/earnRows'
 
 import { useEarnCostBasis } from './useEarnCostBasis'
-import { useEarnPools } from './useEarnPools'
 import { useEarnPositions } from './useEarnPositions'
 import { useEarnTokenPrices } from './useEarnTokenPrices'
+import { useEarnVaults } from './useEarnVaults'
 import { useInTransitShares } from './useInTransitShares'
 
 // Total earned = Σ (convertToAssets(shares) − cost basis) per position, priced.
@@ -33,11 +33,11 @@ export const useEarnedAmount = function () {
   } = useEarnCostBasis()
   const { data: inTransitByShare, isPending: isInTransitPending } =
     useInTransitShares()
-  const { data: pools = [] } = useEarnPools()
+  const { data: vaults = [] } = useEarnVaults()
 
   const rows = [
     ...positions,
-    ...inTransitOnlyPositions(inTransitByShare, positions, pools),
+    ...inTransitOnlyPositions(inTransitByShare, positions, vaults),
   ]
 
   const peggedAmountQueries = useQueries({

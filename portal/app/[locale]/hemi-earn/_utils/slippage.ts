@@ -12,7 +12,7 @@ export type SlippageLevel = 'high' | 'low' | 'normal' | 'veryHigh'
 export const clampSlippage = (percent: number) =>
   Number.isNaN(percent) ? 0 : Math.min(Math.max(percent, 0), maxSlippage)
 
-// Retry surfaces outside the pool form have no settings panel, so they replay what the
+// Retry surfaces outside the vault form have no settings panel, so they replay what the
 // failed attempt was signed with; entries predating the field fall back to the default.
 export const resolveRetrySlippage = ({
   fallback,

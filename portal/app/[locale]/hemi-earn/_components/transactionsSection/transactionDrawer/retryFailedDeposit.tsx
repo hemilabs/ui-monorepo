@@ -9,30 +9,30 @@ import {
   applySlippage,
 } from '../../../_constants/slippage'
 import { percentToBps, resolveRetrySlippage } from '../../../_utils/slippage'
-import { useDeposit } from '../../../pool/[shareAddress]/_hooks/useDeposit'
-import { useDepositShares } from '../../../pool/[shareAddress]/_hooks/useDepositShares'
-import { useQuoteDeposit } from '../../../pool/[shareAddress]/_hooks/useQuoteDeposit'
-import { type DepositOperationRunning } from '../../../pool/[shareAddress]/_types/operations'
 import {
   type EarnAsset,
-  type EarnPool,
   type EarnTransaction,
+  type EarnVault,
 } from '../../../types'
+import { useDeposit } from '../../../vault/[shareAddress]/_hooks/useDeposit'
+import { useDepositShares } from '../../../vault/[shareAddress]/_hooks/useDepositShares'
+import { useQuoteDeposit } from '../../../vault/[shareAddress]/_hooks/useQuoteDeposit'
+import { type DepositOperationRunning } from '../../../vault/[shareAddress]/_types/operations'
 
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 type Props = {
   asset: EarnAsset
-  pool: EarnPool
   transaction: EarnTransaction
+  vault: EarnVault
 }
 
 // Retry CTA in the historical deposit drawer; on user-signed-deposit it redirects
 // earnTxId to the new tx so the drawer transitions in place from FAILED to in-flight.
 export const RetryFailedDeposit = function ({
   asset,
-  pool,
   transaction,
+  vault,
 }: Props) {
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
   const [operationRunning, setOperationRunning] =
@@ -45,13 +45,13 @@ export const RetryFailedDeposit = function ({
   const { data: quote } = useQuoteDeposit({
     amount,
     asset: asset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
   })
 
   const { data: shares } = useDepositShares({
     amount,
     asset: asset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
   })
 
   const slippage = resolveRetrySlippage({
@@ -84,13 +84,13 @@ export const RetryFailedDeposit = function ({
         setTxDrawerQueryString(newInitiateTxHash)
       })
     },
-    pool,
     priorApprovalTxHash: transaction.approvalTxHash,
     selectedAsset: asset,
     sharesOutMin,
     slippage,
     // Hide the specific failed row from the table once this retry is signed.
     supersedesInitiateTxHash: transaction.requestTxHash,
+    vault,
   })
 
   const isDepositing = operationRunning === 'depositing'

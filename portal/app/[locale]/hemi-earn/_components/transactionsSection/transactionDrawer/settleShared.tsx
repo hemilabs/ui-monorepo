@@ -13,18 +13,18 @@ import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { isAddressEqual } from 'viem'
 
-import { useEarnPools } from '../../../_hooks/useEarnPools'
+import { useEarnVaults } from '../../../_hooks/useEarnVaults'
 import { useSettle } from '../../../_hooks/useSettle'
-import { findPoolByAsset } from '../../../_utils/pools'
 import { pickSettleBannerKey } from '../../../_utils/settleUi'
 import {
   needsManualClaim,
   needsRecover,
 } from '../../../_utils/transactionPredicates'
+import { findVaultByAsset } from '../../../_utils/vaults'
 import {
   type EarnAsset,
-  type EarnPool,
   type EarnTransaction,
+  type EarnVault,
 } from '../../../types'
 
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
@@ -74,10 +74,10 @@ type SettleCtaProps = {
   asset: EarnAsset
   fullWidth?: boolean
   operation: SettleOperation
-  pool: EarnPool
   // In the table the drawer isn't open yet, so sign opens it to watch the settlement mine; skipped in the drawer.
   redirectOnSign?: boolean
   transaction: EarnTransaction
+  vault: EarnVault
 }
 
 // Claim/recover CTA covering both kinds/operations. Delivered-token inversion lives here:
@@ -86,9 +86,9 @@ export const SettleCta = function ({
   asset,
   fullWidth = true,
   operation,
-  pool,
   redirectOnSign,
   transaction,
+  vault,
 }: SettleCtaProps) {
   const t = useTranslations('hemi-earn.transactions')
   const tCommon = useTranslations('common')
@@ -100,7 +100,7 @@ export const SettleCta = function ({
 
   const { isPending, mutate } = useSettle({
     action,
-    deliveredTokenAddress: deliversShares ? pool.shareAddress : asset.address,
+    deliveredTokenAddress: deliversShares ? vault.shareAddress : asset.address,
     kind: operation,
     on: redirectOnSign
       ? emitter =>
@@ -138,22 +138,22 @@ export const SettleCta = function ({
   )
 }
 
-// Table-row variant: resolves the pool/asset and renders the compact Claim/Recover CTA (retry stays a View→drawer flow).
+// Table-row variant: resolves the vault/asset and renders the compact Claim/Recover CTA (retry stays a View→drawer flow).
 export const SettleRowCta = function ({
   fallback,
   transaction,
 }: {
-  // Shown when the pool/asset can't resolve (still loading or delisted) — keeps the View affordance.
+  // Shown when the vault/asset can't resolve (still loading or delisted) — keeps the View affordance.
   fallback?: ReactNode
   transaction: EarnTransaction
 }) {
-  const { data: pools = [] } = useEarnPools()
-  const pool = findPoolByAsset(pools, transaction.asset)
-  const asset = pool?.assets.find(a =>
+  const { data: vaults = [] } = useEarnVaults()
+  const vault = findVaultByAsset(vaults, transaction.asset)
+  const asset = vault?.assets.find(a =>
     isAddressEqual(a.address, transaction.asset),
   )
 
-  if (!pool || !asset) {
+  if (!vault || !asset) {
     return fallback ?? null
   }
   if (needsManualClaim(transaction)) {
@@ -162,9 +162,9 @@ export const SettleRowCta = function ({
         asset={asset}
         fullWidth={false}
         operation="CLAIM"
-        pool={pool}
         redirectOnSign
         transaction={transaction}
+        vault={vault}
       />
     )
   }
@@ -174,9 +174,9 @@ export const SettleRowCta = function ({
         asset={asset}
         fullWidth={false}
         operation="RECOVER"
-        pool={pool}
         redirectOnSign
         transaction={transaction}
+        vault={vault}
       />
     )
   }

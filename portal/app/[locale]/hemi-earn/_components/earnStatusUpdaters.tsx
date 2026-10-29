@@ -6,7 +6,7 @@ import { EarnSuccessToast } from './earnSuccessToast'
 
 // Layout-mounted so polling, soft-settle/cache invalidation, and the success toasts persist across route changes (one subscription for all).
 export const EarnStatusUpdaters = function () {
-  const t = useTranslations('hemi-earn.pool')
+  const t = useTranslations('hemi-earn.vault')
   useEarnDeliveryWatcher()
   return (
     <>

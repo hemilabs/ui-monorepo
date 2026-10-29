@@ -10,8 +10,8 @@ import {
   isCooldownMature,
   isFinalizeInFlight,
 } from '../../../_utils/transactionPredicates'
-import { useEarnCooldownRemaining } from '../../../pool/[shareAddress]/_hooks/useEarnCooldownRemaining'
 import { type EarnTransaction } from '../../../types'
+import { useEarnCooldownRemaining } from '../../../vault/[shareAddress]/_hooks/useEarnCooldownRemaining'
 
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 

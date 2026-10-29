@@ -176,98 +176,6 @@
       "banner": "Hemi Earn is operated by Vetro Service & Support Corp. Hemi provides this interface only. <link>View Vetro's Terms</link>",
       "note": "Operated by Vetro Service & Support Corp. <link>Terms</link>"
     },
-    "pool": {
-      "apy": "APY",
-      "composition": {
-        "amount": "Amount",
-        "by-protocol": "By protocol",
-        "by-token": "By token",
-        "position": "Position",
-        "protocols-count": "{count, plural, one {# protocol} other {# protocols}}",
-        "reserve-buffer": "Reserve Buffer",
-        "share": "Share",
-        "title": "Composition",
-        "tokens-count": "{count, plural, one {# token} other {# tokens}}",
-        "view-mode": "View mode"
-      },
-      "deposit-successful": "Deposit successful",
-      "drawer": {
-        "approving": "Approving {symbol}",
-        "cooldown-ended": "Cooldown period complete",
-        "deposit": {
-          "heading": "Review deposit",
-          "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
-        },
-        "deposit-token": "Deposit {symbol} into vault",
-        "funds-returned": "Funds returned",
-        "funds-to-recover": "Funds to recover",
-        "get-share-tokens": "Get share tokens",
-        "receive-token": "Receive {symbol}",
-        "shares-returned": "Shares returned",
-        "shares-to-recover": "Shares to recover",
-        "wait-cooldown-countdown": "{days, plural, =0 {Cooldown ends in {hours}h} other {Cooldown ends in #d {hours}h}}",
-        "wait-cooldown-countdown-soon": "Cooldown ends in less than an hour",
-        "wait-cooldown-pending": "Wait for the {days, plural, one {# day} other {# days}} cooldown period",
-        "withdraw": {
-          "heading": "Review withdrawal",
-          "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
-        },
-        "withdraw-token": "Withdraw {symbol} from vault"
-      },
-      "form": {
-        "amount-too-small": "Amount too small",
-        "asset-unavailable": "Asset unavailable",
-        "available": "Available",
-        "bridging-fees": "Bridging fees",
-        "cooldown-warning": "Withdrawing funds takes {days, plural, one {# day} other {# days}} to complete.",
-        "cooldown-warning-fallback": "Withdrawing funds takes several days to complete.",
-        "ethereum-gas-fee": "Ethereum gas fee",
-        "hemi-network-fee": "Hemi network fee",
-        "network-error": "Preview failed — try again",
-        "share-token-available-to-withdraw": "Share token available to withdraw",
-        "withdraw-share-tokens-as": "Withdraw share token as",
-        "withdrawing": "Withdrawing...",
-        "you-will-receive": "You'll receive"
-      },
-      "here-is-your-tx": "Here's your transaction:",
-      "historical-metrics": {
-        "1-week": "1 week",
-        "1-year": "1 year",
-        "apy": "APY",
-        "metric": "Metric",
-        "month": "{count, plural, one {# month} other {# months}}",
-        "period": "Period",
-        "title": "Historical metrics",
-        "vault-deposits": "Vault deposits"
-      },
-      "settings": {
-        "accept-risk": "I understand and accept the risk",
-        "advanced-settings": "Advanced settings",
-        "auto": "Auto",
-        "continue-anyway": "Continue anyway",
-        "high-slippage": "High slippage",
-        "high-slippage-value": "High slippage {value}%",
-        "low-slippage": "Slippage too low",
-        "low-slippage-value": "Low slippage {value}%",
-        "max-slippage": "Max slippage",
-        "slippage-value": "Slippage {value}%",
-        "very-high-slippage": "Very high slippage",
-        "very-high-slippage-value": "Very high slippage {value}%",
-        "warning-description-deposit": "<highlight>Your slippage is set above {threshold}%.</highlight> This increases your exposure to price impact. You may receive significantly fewer shares than quoted.",
-        "warning-description-withdrawal": "<highlight>Your slippage is set above {threshold}%.</highlight> This increases your exposure to price impact. You may receive significantly fewer tokens than quoted.",
-        "warning-title": "High slippage warning"
-      },
-      "total-deposits": "Vault total deposits",
-      "withdraw-successful": "Withdraw successful"
-    },
-    "pool-info": {
-      "apy": "APY",
-      "manage": "Manage",
-      "share-token": "Share token",
-      "total-deposits": "Total deposits",
-      "vault-contract": "Vault contract",
-      "your-deposits": "Your deposits"
-    },
     "risk-warning": "Yields are variable and not guaranteed. You may lose some or all of your deposit.",
     "subheading": "Hemi Earn, operated by Vetro, gives you access to yield vaults right from the Hemi portal. Choose a vault and deposit in a few steps. Yields are variable and not guaranteed.",
     "switch-to-start-earning": "You can switch networks to start earning with Hemi.",
@@ -390,6 +298,98 @@
       "view": "View",
       "withdraw": "Withdraw",
       "withdrawal": "Withdrawal"
+    },
+    "vault": {
+      "apy": "APY",
+      "composition": {
+        "amount": "Amount",
+        "by-protocol": "By protocol",
+        "by-token": "By token",
+        "position": "Position",
+        "protocols-count": "{count, plural, one {# protocol} other {# protocols}}",
+        "reserve-buffer": "Reserve Buffer",
+        "share": "Share",
+        "title": "Composition",
+        "tokens-count": "{count, plural, one {# token} other {# tokens}}",
+        "view-mode": "View mode"
+      },
+      "deposit-successful": "Deposit successful",
+      "drawer": {
+        "approving": "Approving {symbol}",
+        "cooldown-ended": "Cooldown period complete",
+        "deposit": {
+          "heading": "Review deposit",
+          "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
+        },
+        "deposit-token": "Deposit {symbol} into vault",
+        "funds-returned": "Funds returned",
+        "funds-to-recover": "Funds to recover",
+        "get-share-tokens": "Get share tokens",
+        "receive-token": "Receive {symbol}",
+        "shares-returned": "Shares returned",
+        "shares-to-recover": "Shares to recover",
+        "wait-cooldown-countdown": "{days, plural, =0 {Cooldown ends in {hours}h} other {Cooldown ends in #d {hours}h}}",
+        "wait-cooldown-countdown-soon": "Cooldown ends in less than an hour",
+        "wait-cooldown-pending": "Wait for the {days, plural, one {# day} other {# days}} cooldown period",
+        "withdraw": {
+          "heading": "Review withdrawal",
+          "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
+        },
+        "withdraw-token": "Withdraw {symbol} from vault"
+      },
+      "form": {
+        "amount-too-small": "Amount too small",
+        "asset-unavailable": "Asset unavailable",
+        "available": "Available",
+        "bridging-fees": "Bridging fees",
+        "cooldown-warning": "Withdrawing funds takes {days, plural, one {# day} other {# days}} to complete.",
+        "cooldown-warning-fallback": "Withdrawing funds takes several days to complete.",
+        "ethereum-gas-fee": "Ethereum gas fee",
+        "hemi-network-fee": "Hemi network fee",
+        "network-error": "Preview failed — try again",
+        "share-token-available-to-withdraw": "Share token available to withdraw",
+        "withdraw-share-tokens-as": "Withdraw share token as",
+        "withdrawing": "Withdrawing...",
+        "you-will-receive": "You'll receive"
+      },
+      "here-is-your-tx": "Here's your transaction:",
+      "historical-metrics": {
+        "1-week": "1 week",
+        "1-year": "1 year",
+        "apy": "APY",
+        "metric": "Metric",
+        "month": "{count, plural, one {# month} other {# months}}",
+        "period": "Period",
+        "title": "Historical metrics",
+        "vault-deposits": "Vault deposits"
+      },
+      "settings": {
+        "accept-risk": "I understand and accept the risk",
+        "advanced-settings": "Advanced settings",
+        "auto": "Auto",
+        "continue-anyway": "Continue anyway",
+        "high-slippage": "High slippage",
+        "high-slippage-value": "High slippage {value}%",
+        "low-slippage": "Slippage too low",
+        "low-slippage-value": "Low slippage {value}%",
+        "max-slippage": "Max slippage",
+        "slippage-value": "Slippage {value}%",
+        "very-high-slippage": "Very high slippage",
+        "very-high-slippage-value": "Very high slippage {value}%",
+        "warning-description-deposit": "<highlight>Your slippage is set above {threshold}%.</highlight> This increases your exposure to price impact. You may receive significantly fewer shares than quoted.",
+        "warning-description-withdrawal": "<highlight>Your slippage is set above {threshold}%.</highlight> This increases your exposure to price impact. You may receive significantly fewer tokens than quoted.",
+        "warning-title": "High slippage warning"
+      },
+      "total-deposits": "Vault total deposits",
+      "withdraw-successful": "Withdraw successful"
+    },
+    "vault-info": {
+      "apy": "APY",
+      "manage": "Manage",
+      "share-token": "Share token",
+      "total-deposits": "Total deposits",
+      "vault-contract": "Vault contract",
+      "your-deposits": "Your deposits"
     }
   },
   "hemi-stake": {

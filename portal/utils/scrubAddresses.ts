@@ -47,6 +47,19 @@ const scrubString = (value: string) =>
       hexOnlyRegex.test(match) ? match : placeholder,
     )
 
+// Appends a numeric suffix to the key until it does not collide with any used
+// key, so redacting several address keys of an object does not drop entries.
+function getUniqueKey(key: string, usedKeys: Set<string>) {
+  let uniqueKey = key
+  let suffix = 2
+  while (usedKeys.has(uniqueKey)) {
+    uniqueKey = `${key}#${suffix}`
+    suffix += 1
+  }
+  usedKeys.add(uniqueKey)
+  return uniqueKey
+}
+
 function scrubValue(value: unknown, copies: WeakMap<object, unknown>) {
   if (typeof value === 'string') {
     return scrubString(value)
@@ -67,8 +80,22 @@ function scrubValue(value: unknown, copies: WeakMap<object, unknown>) {
     }
     const copy: Record<string, unknown> = {}
     copies.set(object, copy)
-    Object.entries(object).forEach(function ([key, item]) {
-      copy[scrubString(key)] = skippedKeys.includes(key)
+    const entries = Object.entries(object).map(([key, item]) => ({
+      item,
+      key,
+      scrubbedKey: scrubString(key),
+    }))
+    // Keys without addresses are kept as they are, so redacted keys must not
+    // take them.
+    const usedKeys = new Set(
+      entries
+        .filter(({ key, scrubbedKey }) => key === scrubbedKey)
+        .map(({ key }) => key),
+    )
+    entries.forEach(function ({ item, key, scrubbedKey }) {
+      const copyKey =
+        key === scrubbedKey ? key : getUniqueKey(scrubbedKey, usedKeys)
+      copy[copyKey] = skippedKeys.includes(key)
         ? item
         : scrubValue(item, copies)
     })

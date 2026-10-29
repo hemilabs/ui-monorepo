@@ -317,6 +317,55 @@ describe('utils/scrubAddresses', function () {
       ).toEqual({ '<address>': 'owner <address>' })
     })
 
+    it('should keep every entry when several keys are addresses', function () {
+      expect(
+        scrubAddresses({ [checksummedAddress]: 1, [lowercaseAddress]: 2 }),
+      ).toEqual({ '<address>': 1, '<address>#2': 2 })
+    })
+
+    it('should suffix colliding keys that only partially hold an address', function () {
+      expect(
+        scrubAddresses({
+          [`balance_${checksummedAddress}`]: 1,
+          [`balance_${lowercaseAddress}`]: 2,
+          [`balance_${bech32Mainnet}`]: 3,
+        }),
+      ).toEqual({
+        'balance_<address>': 1,
+        'balance_<address>#2': 2,
+        'balance_<address>#3': 3,
+      })
+    })
+
+    it('should not overwrite an existing placeholder key', function () {
+      expect(
+        scrubAddresses(
+          Object.fromEntries([
+            [checksummedAddress, 1],
+            ['<address>', 'x'],
+          ]),
+        ),
+      ).toEqual({ '<address>': 'x', '<address>#2': 1 })
+    })
+
+    it('should scrub nested values under colliding address keys', function () {
+      const result = scrubAddresses({
+        [checksummedAddress]: { owner: lowercaseAddress },
+        [lowercaseAddress]: [bech32Mainnet, { [p2pkhMainnet]: true }],
+      })
+
+      expect(result).toEqual({
+        '<address>': { owner: '<address>' },
+        '<address>#2': ['<address>', { '<address>': true }],
+      })
+      const serialized = JSON.stringify(result)
+      ;[checksummedAddress, lowercaseAddress, bech32Mainnet, p2pkhMainnet]
+        .map(address => address.toLowerCase())
+        .forEach(address =>
+          expect(serialized.toLowerCase()).not.toContain(address),
+        )
+    })
+
     it('should scrub top-level arrays', function () {
       expect(scrubAddresses([checksummedAddress, 'ok', 1])).toEqual([
         '<address>',

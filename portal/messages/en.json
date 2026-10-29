@@ -175,6 +175,7 @@
     },
     "operator": {
       "banner": "Hemi Earn is operated by Vetro Service & Support Corp. Hemi provides this interface only. <link>View Vetro's Terms</link>",
+      "deposits-paused-details": "New deposits into Hemi Earn are currently paused in the Hemi portal. Your existing position is not affected by this pause, and you can still view and withdraw it below. For questions, contact <link>Vetro support</link>.",
       "note": "Operated by Vetro Service & Support Corp. <link>Terms</link>"
     },
     "risk-warning": "Yields are variable and not guaranteed. You may lose some or all of your deposit.",

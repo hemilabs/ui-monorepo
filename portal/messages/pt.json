@@ -175,6 +175,7 @@
     },
     "operator": {
       "banner": "O Hemi Earn é operado pela Vetro Service & Support Corp. A Hemi fornece apenas esta interface. <link>Ver os Termos da Vetro</link>",
+      "deposits-paused-details": "Os depósitos novos no Hemi Earn estão pausados no momento no portal da Hemi. Sua posição atual não é afetada por esta pausa, e você ainda pode visualizá-la e sacá-la abaixo. Em caso de dúvidas, entre em contato com o <link>suporte da Vetro</link>.",
       "note": "Operado pela Vetro Service & Support Corp. <link>Termos</link>"
     },
     "risk-warning": "Os rendimentos são variáveis e não são garantidos. Você pode perder parte ou a totalidade do seu depósito.",

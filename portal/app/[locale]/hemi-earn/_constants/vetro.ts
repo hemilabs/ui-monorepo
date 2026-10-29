@@ -1,2 +1,5 @@
-export const vetroPrivacyPolicyUrl = 'https://vetro.org/privacy-policy'
-export const vetroTermsUrl = 'https://vetro.org/terms-of-use'
+import { hemiEarnLinks } from '@vetro-protocol/earn/hemiEarn'
+
+export const vetroPrivacyPolicyUrl = hemiEarnLinks.privacyPolicyUrl
+export const vetroSupportUrl = hemiEarnLinks.supportUrl
+export const vetroTermsUrl = hemiEarnLinks.termsOfUseUrl

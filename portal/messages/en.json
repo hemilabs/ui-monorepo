@@ -156,6 +156,7 @@
     "view-all-tutorials": "View all tutorials"
   },
   "hemi-earn": {
+    "deposits-paused": "New deposits are currently paused.",
     "footer": {
       "attribution": "Hemi Earn is operated by Vetro Service & Support Corp. Vaults available through Hemi Earn may be operated by Vetro or by third parties. Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. and their affiliates do not operate, manage, custody or guarantee Hemi Earn or any vault and are not parties to your agreement with Vetro. Hemi Earn is not available to U.S. persons or other restricted persons.",
       "vetro-privacy": "Vetro Privacy Policy",
@@ -174,6 +175,7 @@
     },
     "operator": {
       "banner": "Hemi Earn is operated by Vetro Service & Support Corp. Hemi provides this interface only. <link>View Vetro's Terms</link>",
+      "deposits-paused-details": "New deposits into Hemi Earn are currently paused in the Hemi portal. Your existing position is not affected by this pause, and you can still view and withdraw it below. For questions, contact <link>Vetro support</link>.",
       "note": "Operated by Vetro Service & Support Corp. <link>Terms</link>"
     },
     "risk-warning": "Yields are variable and not guaranteed. You may lose some or all of your deposit.",
@@ -208,6 +210,7 @@
           "heading-slippage-deposit": "Your deposit didn't complete",
           "subheading": "The cross-chain step failed. Retry to add more gas and complete the withdrawal, or cancel to return your share tokens to your wallet.",
           "subheading-deposit": "The cross-chain step failed. Retry to add more gas and complete the deposit, or cancel to return your funds to your wallet.",
+          "subheading-paused-deposit": "The cross-chain step failed. New deposits are paused, so return your funds to your wallet for now.",
           "subheading-slippage": "The price moved past your slippage limit before the final step could run, so your share tokens are still held. Return them to your wallet, then try the withdrawal again with a higher slippage tolerance.",
           "subheading-slippage-deposit": "The price moved past your slippage limit before the final step could run, so your funds are still held. Return them to your wallet, then try the deposit again with a higher slippage tolerance."
         },

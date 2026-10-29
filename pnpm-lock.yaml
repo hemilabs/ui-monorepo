@@ -84,8 +84,8 @@ importers:
   packages/hemi-earn-actions:
     dependencies:
       '@vetro-protocol/earn':
-        specifier: 1.0.0
-        version: 1.0.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+        specifier: 1.2.0
+        version: 1.2.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       hemi-viem:
         specifier: 2.9.0
         version: 2.9.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
@@ -267,8 +267,8 @@ importers:
         specifier: 3.13.24
         version: 3.13.24(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@vetro-protocol/earn':
-        specifier: 1.0.0
-        version: 1.0.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+        specifier: 1.2.0
+        version: 1.2.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       '@vetro-protocol/gateway':
         specifier: 1.2.0
         version: 1.2.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
@@ -384,8 +384,8 @@ importers:
         specifier: 2.2.1
         version: 2.2.1(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       viem-erc4626:
-        specifier: 1.0.0
-        version: 1.0.0(viem-erc20@2.2.1(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)))(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+        specifier: 1.2.0
+        version: 1.2.0(viem-erc20@2.2.1(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)))(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       wagmi:
         specifier: 2.15.7
         version: 2.15.7(@tanstack/query-core@5.100.9)(@tanstack/react-query@5.100.9(react@19.2.8))(@types/react@19.2.17)(bufferutil@4.1.0)(encoding@0.1.13)(react@19.2.8)(supports-color@8.1.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))(zod@3.25.76)
@@ -4050,8 +4050,8 @@ packages:
     peerDependencies:
       '@vanilla-extract/css': ^1.0.0
 
-  '@vetro-protocol/earn@1.0.0':
-    resolution: {integrity: sha512-eqmBHBMSvmsTJzMHUEmNs8hA1JzHgFOKptTiOMS29GfSeaBe0fhvTMBBgPvySXEncPW58uxjeOuYuYE4gGnSgQ==}
+  '@vetro-protocol/earn@1.2.0':
+    resolution: {integrity: sha512-f4KiyvKNps2cbkkzrnp0qPnxJWgqPn2vIHTQ3/RhBWGvZyREzJWtv+AxyvfJYxVKoNiUDZjsU2IPLj+htym6mw==}
     engines: {node: '>=20'}
     peerDependencies:
       viem: ^2.x
@@ -9401,8 +9401,9 @@ packages:
     peerDependencies:
       viem: ^2.x
 
-  viem-erc4626@1.0.0:
-    resolution: {integrity: sha512-oGU7CHkwjrl9qbNd84fEIE3d9KP0Y50dkQO17rKCD8txubpO8RciI77+ImQVk+pO1tgZCt+BrhChBfdNi3tOPQ==}
+  viem-erc4626@1.2.0:
+    resolution: {integrity: sha512-oUc8P/Vp/5v7Jr1kAaWs+h8MytiIftgNUfIdqzZac9+mmXwGblMKzPadUuQ3+19Eg8ErEJbDeNWqhuBX+B045g==}
+    engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
       viem: ^2.x
       viem-erc20: ^2.x
@@ -13551,11 +13552,12 @@ snapshots:
     dependencies:
       '@vanilla-extract/css': 1.17.3
 
-  '@vetro-protocol/earn@1.0.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))':
+  '@vetro-protocol/earn@1.2.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))':
     dependencies:
       to-promise-event: 1.0.0
       viem: 2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
-      viem-erc20: 2.1.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+      viem-erc20: 2.2.1(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+      viem-erc4626: 1.2.0(viem-erc20@2.2.1(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)))(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
 
   '@vetro-protocol/gateway@1.2.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))':
     dependencies:
@@ -20220,7 +20222,7 @@ snapshots:
     dependencies:
       viem: 2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
 
-  viem-erc4626@1.0.0(viem-erc20@2.2.1(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)))(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)):
+  viem-erc4626@1.2.0(viem-erc20@2.2.1(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)))(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)):
     dependencies:
       viem: 2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       viem-erc20: 2.2.1(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))

@@ -5,7 +5,7 @@ type VaultFormLayoutProps = {
   aboveSubmit?: ReactNode
   belowForm?: ReactNode
   formContent: ReactNode
-  onSubmit: VoidFunction
+  onSubmit?: VoidFunction
   submitButton?: ReactNode
 }
 
@@ -22,12 +22,14 @@ export const VaultFormLayout = ({
         className="flex flex-col p-4"
         onSubmit={function (e: FormEvent) {
           e.preventDefault()
-          onSubmit()
+          onSubmit?.()
         }}
       >
         <div className="flex flex-col gap-y-4">{formContent}</div>
         {aboveSubmit && <div className="mt-4">{aboveSubmit}</div>}
-        <div className="mt-4 w-full [&>*]:w-full">{submitButton}</div>
+        {submitButton && (
+          <div className="mt-4 w-full [&>*]:w-full">{submitButton}</div>
+        )}
       </form>
     </Card>
     {belowForm && <div className="mt-3">{belowForm}</div>}

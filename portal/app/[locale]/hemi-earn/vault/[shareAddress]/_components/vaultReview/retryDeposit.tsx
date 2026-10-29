@@ -1,11 +1,13 @@
 import { Button } from 'components/button'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
+import { Tooltip } from 'components/tooltip'
 import { type FormEvent, useState } from 'react'
 import { useTranslations } from 'use-intl'
 import { getExtraApprovalAmount } from 'utils/approval'
 import { parseTokenUnits } from 'utils/token'
 
 import { applySlippage } from '../../../../_constants/slippage'
+import { useCanDeposit } from '../../../../_hooks/useCanDeposit'
 import { percentToBps } from '../../../../_utils/slippage'
 import { useVaultForm } from '../../_context/vaultFormContext'
 import { useDeposit } from '../../_hooks/useDeposit'
@@ -31,6 +33,7 @@ export const RetryDeposit = function () {
   const { setDrawerQueryString } = useDrawerQueryString()
 
   const t = useTranslations()
+  const depositGate = useCanDeposit()
 
   const slippage = useSlippage('deposit')
   const slippageBps = percentToBps(slippage)
@@ -92,21 +95,37 @@ export const RetryDeposit = function () {
 
   const handleRetry = function (e: FormEvent) {
     e.preventDefault()
-    if (!quote || !shares || shares <= BigInt(0)) return
+    if (!depositGate.canDeposit || !quote || !shares || shares <= BigInt(0))
+      return
     setOperationRunning('depositing')
     runDeposit()
   }
 
   return (
-    <form className="flex w-full [&>button]:w-full" onSubmit={handleRetry}>
+    <form
+      className="flex w-full *:w-full [&_button]:w-full"
+      onSubmit={handleRetry}
+    >
       <SubmitWhenConnected
         submitButton={
-          <Button
-            disabled={isDepositing || !quote || !shares || shares <= BigInt(0)}
-            size="small"
+          <Tooltip
+            disabled={depositGate.canDeposit}
+            text={depositGate.reason && t(`hemi-earn.${depositGate.reason}`)}
+            variant="simple"
           >
-            {t(isDepositing ? 'common.depositing' : 'common.try-again')}
-          </Button>
+            <Button
+              disabled={
+                !depositGate.canDeposit ||
+                isDepositing ||
+                !quote ||
+                !shares ||
+                shares <= BigInt(0)
+              }
+              size="small"
+            >
+              {t(isDepositing ? 'common.depositing' : 'common.try-again')}
+            </Button>
+          </Tooltip>
         }
         submitButtonSize="small"
       />

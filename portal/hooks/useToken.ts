@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions, queryOptions } from '@tanstack/react-query'
+import { useQuery, queryOptions } from '@tanstack/react-query'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 import { toChecksumAddress } from 'utils/address'
@@ -9,7 +9,6 @@ import { type Address, type Chain, isAddress } from 'viem'
 type Params = {
   address: string | undefined
   chainId: RemoteChain['id']
-  options?: Omit<UseQueryOptions<Token, Error>, 'queryKey' | 'queryFn'>
 }
 
 export const getUseTokenQueryKey = (
@@ -22,20 +21,9 @@ export const getUseTokenQueryKey = (
   chainId,
 ]
 
-export const tokenQueryOptions = ({
-  address,
-  chainId,
-  options = {},
-}: {
-  address: Params['address']
-  chainId: Params['chainId']
-  options?: Omit<UseQueryOptions<Token, Error>, 'queryKey' | 'queryFn'>
-}) =>
-  queryOptions({
-    staleTime: 1000 * 60 * 60 * 24,
-    ...options,
+export const tokenQueryOptions = ({ address, chainId }: Params) =>
+  queryOptions<Token, Error>({
     enabled:
-      (options.enabled ?? true) &&
       !!address &&
       (isAddress(address, { strict: false }) || isNativeAddress(address)),
     async queryFn() {
@@ -50,7 +38,8 @@ export const tokenQueryOptions = ({
       )
     },
     queryKey: getUseTokenQueryKey(address, chainId),
+    staleTime: 1000 * 60 * 60 * 24,
   })
 
-export const useToken = ({ address, chainId, options = {} }: Params) =>
-  useQuery<Token, Error>(tokenQueryOptions({ address, chainId, options }))
+export const useToken = ({ address, chainId }: Params) =>
+  useQuery<Token, Error>(tokenQueryOptions({ address, chainId }))

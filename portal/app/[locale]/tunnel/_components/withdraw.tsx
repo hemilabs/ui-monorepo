@@ -484,11 +484,11 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
             }
             tunnelState={{
               ...state,
-              updateFromToken(from, to) {
+              updateFromToken(from) {
                 if (tunnelsThroughPartners(from)) {
                   setIsPartnersDrawerOpen(true)
                 }
-                state.updateFromToken(from, to)
+                state.updateFromToken(from)
               },
             }}
           />

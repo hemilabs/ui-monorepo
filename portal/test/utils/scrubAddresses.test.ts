@@ -107,6 +107,59 @@ describe('utils/scrubAddresses', function () {
       ).toBe('<address>/<address>/<address>')
     })
 
+    it('should replace a bech32 address that follows a URL-encoded slash', function () {
+      expect(scrubAddresses(`https://x/?path=%2F${bech32Mainnet}`)).toBe(
+        'https://x/?path=%2F<address>',
+      )
+    })
+
+    it('should replace a base58 address that follows a URL-encoded slash', function () {
+      expect(scrubAddresses(`https://x/?path=%2F${p2pkhMainnet}`)).toBe(
+        'https://x/?path=%2F<address>',
+      )
+    })
+
+    it('should replace BTC addresses that follow a lowercase URL-encoded char', function () {
+      expect(
+        scrubAddresses(`path=%2f${bech32Testnet}&to=%3a${p2shMainnet}`),
+      ).toBe('path=%2f<address>&to=%3a<address>')
+    })
+
+    it('should keep the URL-encoded char before a 33 chars base58 address', function () {
+      const shortP2pkh = '1BoatSLRHtKNngkdXEeobR76b53LETtpy'
+      expect(scrubAddresses(`x=%2F${shortP2pkh}&y=%3A${shortP2pkh}`)).toBe(
+        'x=%2F<address>&y=%3A<address>',
+      )
+    })
+
+    it('should replace a base58 address right after a bare percent sign', function () {
+      expect(scrubAddresses('50%1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2')).toBe(
+        '50%<address>',
+      )
+    })
+
+    it('should replace a P2SH address right after a bare percent sign', function () {
+      expect(scrubAddresses(`50%${p2shMainnet}`)).toBe('50%<address>')
+    })
+
+    it('should replace a bech32 address right after a bare percent sign', function () {
+      expect(
+        scrubAddresses('fee 1%bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq'),
+      ).toBe('fee 1%<address>')
+    })
+
+    it('should keep BTC addresses glued to an alphanumeric char', function () {
+      expect(scrubAddresses(`x${bech32Mainnet} x${p2pkhMainnet}`)).toBe(
+        `x${bech32Mainnet} x${p2pkhMainnet}`,
+      )
+    })
+
+    it('should keep BTC addresses after a hex pair with no percent sign', function () {
+      expect(scrubAddresses(`2F${bech32Mainnet} 2F${p2pkhMainnet}`)).toBe(
+        `2F${bech32Mainnet} 2F${p2pkhMainnet}`,
+      )
+    })
+
     it('should keep a 32 hex chars trace id that is valid base58', function () {
       expect(scrubAddresses(`sentry-trace ${traceId}-1`)).toBe(
         `sentry-trace ${traceId}-1`,

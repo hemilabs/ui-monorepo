@@ -6,13 +6,30 @@ const placeholder = '<address>'
 // No lookbehind is needed as "x" is not a hex char.
 const evmAddressRegex = /0x[0-9a-fA-F]{40}(?![0-9a-fA-F])/g
 
+// BTC addresses must start after a non alphanumeric char, or after a
+// percent-encoded char (such as "%2F" in URLs), which is kept in the output.
+// A match may start right after a "%", unless the "%" and the next two chars
+// form an escape that is followed by a full address. In that case the escape
+// is kept and the address after it is redacted.
+const btcStartLookbehind = '(?<=^|[^0-9A-Za-z]|%[0-9A-Fa-f]{2})'
+
+const buildBtcAddressRegex = (body: string, flags: string) =>
+  new RegExp(
+    `${btcStartLookbehind}(?<!%(?=[0-9A-Fa-f]{2}${body}))${body}`,
+    flags,
+  )
+
 // bech32 and bech32m addresses, for mainnet, testnet and regtest
-const bech32AddressRegex =
-  /(?<![0-9A-Za-z])(?:bc|tb|bcrt)1[02-9ac-hj-np-z]{25,87}(?![0-9A-Za-z])/gi
+const bech32AddressRegex = buildBtcAddressRegex(
+  '(?:bc|tb|bcrt)1[02-9ac-hj-np-z]{25,87}(?![0-9A-Za-z])',
+  'gi',
+)
 
 // P2PKH and P2SH addresses, for mainnet (1, 3) and testnet (m, n, 2)
-const base58AddressRegex =
-  /(?<![0-9A-Za-z])[123mn][1-9A-HJ-NP-Za-km-z]{25,34}(?![0-9A-Za-z])/g
+const base58AddressRegex = buildBtcAddressRegex(
+  '[123mn][1-9A-HJ-NP-Za-km-z]{25,34}(?![0-9A-Za-z])',
+  'g',
+)
 
 const hexOnlyRegex = /^[0-9a-f]+$/i
 

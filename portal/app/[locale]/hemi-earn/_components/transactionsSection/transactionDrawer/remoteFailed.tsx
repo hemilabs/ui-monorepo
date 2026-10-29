@@ -144,17 +144,22 @@ export const RemoteFailedBanner = function ({
 }) {
   const t = useTranslations('hemi-earn.transactions.banner')
   const { category, show } = useRemoteFailedState(transaction)
+  const { canDeposit } = useCanDeposit()
 
   if (!show) {
     return null
   }
-  const variant = category === 'slippage' ? '-slippage' : ''
   const suffix = transaction?.kind === 'DEPOSIT' ? '-deposit' : ''
+  const variant = category === 'slippage' ? '-slippage' : ''
+  const subheading =
+    suffix && !canDeposit
+      ? t('remote-failed.subheading-paused-deposit')
+      : t(`remote-failed.subheading${variant}${suffix}`)
   return (
     <div className="px-4 py-6 md:px-6">
       <WarningBox
         heading={t(`remote-failed.heading${variant}${suffix}`)}
-        subheading={t(`remote-failed.subheading${variant}${suffix}`)}
+        subheading={subheading}
       />
     </div>
   )

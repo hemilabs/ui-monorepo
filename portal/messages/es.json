@@ -210,6 +210,7 @@
           "heading-slippage-deposit": "Su depósito no se completó",
           "subheading": "El paso entre redes falló. Reintente para agregar gas y completar el retiro, o cancele para devolver sus share tokens a su billetera.",
           "subheading-deposit": "El paso entre redes falló. Reintente para agregar gas y completar el depósito, o cancele para devolver sus fondos a su billetera.",
+          "subheading-paused-deposit": "El paso entre redes falló. Los depósitos nuevos están pausados, así que devuelva sus fondos a su billetera por ahora.",
           "subheading-slippage": "El precio superó su límite de slippage antes de que el paso final pudiera ejecutarse, por lo que sus share tokens siguen retenidos. Devuélvalos a su billetera y luego intente el retiro de nuevo con una tolerancia de slippage mayor.",
           "subheading-slippage-deposit": "El precio superó su límite de slippage antes de que el paso final pudiera ejecutarse, por lo que sus fondos siguen retenidos. Devuélvalos a su billetera y luego intente el depósito de nuevo con una tolerancia de slippage mayor."
         },

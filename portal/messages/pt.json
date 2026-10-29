@@ -210,6 +210,7 @@
           "heading-slippage-deposit": "Seu depósito não foi concluído",
           "subheading": "A etapa entre redes falhou. Tente novamente para adicionar gas e concluir o saque, ou cancele para devolver seus share tokens à sua carteira.",
           "subheading-deposit": "A etapa entre redes falhou. Tente novamente para adicionar gas e concluir o depósito, ou cancele para devolver seus fundos à sua carteira.",
+          "subheading-paused-deposit": "A etapa entre redes falhou. Os depósitos novos estão pausados, então devolva seus fundos à sua carteira por enquanto.",
           "subheading-slippage": "O preço ultrapassou seu limite de slippage antes que a etapa final pudesse ser executada, então seus share tokens continuam retidos. Devolva-os à sua carteira e tente o saque novamente com uma tolerância de slippage maior.",
           "subheading-slippage-deposit": "O preço ultrapassou seu limite de slippage antes que a etapa final pudesse ser executada, então seus fundos continuam retidos. Devolva-os à sua carteira e tente o depósito novamente com uma tolerância de slippage maior."
         },

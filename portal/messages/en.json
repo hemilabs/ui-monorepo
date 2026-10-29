@@ -210,6 +210,7 @@
           "heading-slippage-deposit": "Your deposit didn't complete",
           "subheading": "The cross-chain step failed. Retry to add more gas and complete the withdrawal, or cancel to return your share tokens to your wallet.",
           "subheading-deposit": "The cross-chain step failed. Retry to add more gas and complete the deposit, or cancel to return your funds to your wallet.",
+          "subheading-paused-deposit": "The cross-chain step failed. New deposits are paused, so return your funds to your wallet for now.",
           "subheading-slippage": "The price moved past your slippage limit before the final step could run, so your share tokens are still held. Return them to your wallet, then try the withdrawal again with a higher slippage tolerance.",
           "subheading-slippage-deposit": "The price moved past your slippage limit before the final step could run, so your funds are still held. Return them to your wallet, then try the deposit again with a higher slippage tolerance."
         },

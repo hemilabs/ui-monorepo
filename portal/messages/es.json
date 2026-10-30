@@ -319,23 +319,29 @@
       "deposit-successful": "Depósito exitoso",
       "drawer": {
         "approving": "Aprobando {symbol}",
+        "confirm-in-wallet": "Confirme en la billetera",
         "cooldown-ended": "Período de espera completado",
         "deposit": {
           "heading": "Revisar depósito",
+          "review": "Está depositando en {vaultName} a través de Hemi Earn, operado por {operator} Sus activos van de su billetera a los contratos inteligentes de Vetro, que los depositan en el fondo y pueden transferirlos entre redes. Los depósitos pueden tardar hasta {duration} en completarse. Los rendimientos son variables y no están garantizados, y podría perder parte o la totalidad de su depósito.",
           "subheading": "Su transacción ha sido enviada y está esperando confirmación en la blockchain."
         },
         "deposit-token": "Depositar {symbol} en el fondo",
         "funds-returned": "Fondos devueltos",
         "funds-to-recover": "Fondos por recuperar",
         "get-share-tokens": "Recibir share tokens",
+        "in-transit": "Su transferencia está en curso entre redes. Esto suele tardar {duration}, pero puede demorar más. Puede cerrar esta página; el estado se actualizará en Mis transacciones de earn.",
         "receive-token": "Recibir {symbol}",
+        "review-fallback": "Revise los detalles a continuación antes de confirmar en su billetera.",
         "shares-returned": "Shares devueltas",
         "shares-to-recover": "Shares por recuperar",
+        "vault-details-and-fees": "Detalles y comisiones del fondo",
         "wait-cooldown-countdown": "{days, plural, =0 {El período de espera termina en {hours}h} other {El período de espera termina en #d {hours}h}}",
         "wait-cooldown-countdown-soon": "El período de espera termina en menos de una hora",
         "wait-cooldown-pending": "El período de espera es de {days, plural, one {# día} other {# días}}",
         "withdraw": {
           "heading": "Revisar retiro",
+          "review": "Está retirando de {vaultName} a través de Hemi Earn, operado por {operator} Los retiros pueden tardar en completarse y pueden estar sujetos a colas o períodos de bloqueo establecidos por el fondo.",
           "subheading": "Su transacción ha sido enviada y está esperando confirmación en la blockchain."
         },
         "withdraw-token": "Retirar {symbol} del fondo"

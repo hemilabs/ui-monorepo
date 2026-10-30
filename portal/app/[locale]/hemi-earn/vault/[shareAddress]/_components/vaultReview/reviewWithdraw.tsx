@@ -15,7 +15,6 @@ import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { getApprovalAmount } from 'utils/approval'
 import { getNativeToken } from 'utils/nativeToken'
-import { parseTokenUnits } from 'utils/token'
 import { type Address, type Hash, formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
@@ -39,7 +38,9 @@ import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactions
 import { useIsCooldownEligible } from '../../../../_hooks/useIsCooldownEligible'
 import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperations'
 import { useRemoteFailedState } from '../../../../_hooks/useRemoteFailedState'
+import { useVaultMetadata } from '../../../../_hooks/useVaultMetadata'
 import { hashesMatch } from '../../../../_utils/hashes'
+import { inTransitPostAction } from '../../../../_utils/inTransit'
 import {
   claimRecoverSettlement,
   enrichWithSettlement,
@@ -62,6 +63,7 @@ import {
 } from '../../../../_utils/transactionPredicates'
 import { type EarnSettlement, type EarnTransaction } from '../../../../types'
 import { useVaultForm } from '../../_context/vaultFormContext'
+import { useAssetsToShares } from '../../_hooks/useAssetsToShares'
 import { useEarnCooldownRemaining } from '../../_hooks/useEarnCooldownRemaining'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
 import { useSharesToAssets } from '../../_hooks/useSharesToAssets'
@@ -71,9 +73,19 @@ import {
   type WithdrawStatusType,
 } from '../../_types/operations'
 import { createFeeEstimateStateOverride } from '../../_utils/feeEstimateStateOverride'
+import {
+  resolveMayNeedApproval,
+  showsReview,
+  unsignedStepStatus,
+} from '../../_utils/reviewState'
+import {
+  deriveWithdrawShares,
+  getTypedAssetAmount,
+} from '../../_utils/withdrawForm'
 
+import { ConfirmWithdraw } from './confirmWithdraw'
 import { deriveCooldownPostAction } from './cooldownPostAction'
-import { RetryWithdraw } from './retryWithdraw'
+import { ReviewIntro } from './reviewIntro'
 
 type Props = {
   onClose: VoidFunction
@@ -242,8 +254,14 @@ const toCooldownSeconds = (claimableAt: EarnTransaction['claimableAt']) =>
     : undefined
 
 export const ReviewWithdraw = function ({ onClose }: Props) {
-  const { approveExtraAmount, input, selectedAsset, vault, withdrawOperation } =
-    useVaultForm()
+  const {
+    approveExtraAmount,
+    input,
+    selectedAsset,
+    vault,
+    withdrawMode,
+    withdrawOperation,
+  } = useVaultForm()
   const slippageBps = useSlippageBps('withdraw')
   const t = useTranslations('hemi-earn.vault.drawer')
   const chainId = selectedAsset.token.chainId
@@ -282,9 +300,25 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
 
   const withdrawStatus =
     withdrawOperation?.status ?? WithdrawStatus.APPROVAL_TX_COMPLETED
+  const hasSigned = withdrawOperation !== undefined
+  const vaultMetadata = useVaultMetadata(vault.stakingVault)
 
-  // Input is in share units — the Router burns shares directly; assetsOutMin comes from the asset preview below.
-  const shares = parseTokenUnits(input, vault.shareToken)
+  const isTokensMode = withdrawMode === 'tokens'
+  const { data: assetsToShares } = useAssetsToShares({
+    amount: getTypedAssetAmount({
+      input,
+      isTokensMode,
+      token: selectedAsset.token,
+    }),
+    assetAddress: selectedAsset.address,
+    shareAddress: vault.shareAddress,
+  })
+  const shares = deriveWithdrawShares({
+    assetShares: assetsToShares?.shares,
+    input,
+    isTokensMode,
+    shareToken: vault.shareToken,
+  })
   const routerAddress = getHemiEarnRouterAddress()
 
   const { data: { assetOut } = { assetOut: BigInt(0) } } = useSharesToAssets({
@@ -296,20 +330,24 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   const assetsOutMin =
     assetOut > BigInt(0) ? applySlippage(assetOut, slippageBps) : BigInt(0)
 
-  const { needsApproval } = useNeedsApproval({
-    address: vault.shareAddress,
-    amount: shares,
-    chainId,
-    spender: routerAddress,
+  const { isAllowanceError, isAllowanceLoading, needsApproval } =
+    useNeedsApproval({
+      address: vault.shareAddress,
+      amount: shares,
+      chainId,
+      spender: routerAddress,
+    })
+
+  const mayNeedApproval = resolveMayNeedApproval({
+    isAllowanceError,
+    isAllowanceLoading,
+    needsApproval,
   })
 
   const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
     useEstimateApproveErc20Fees({
       amount: getApprovalAmount(shares, approveExtraAmount),
-      enabled: [
-        WithdrawStatus.APPROVAL_TX_FAILED,
-        WithdrawStatus.APPROVAL_TX_PENDING,
-      ].includes(withdrawStatus),
+      enabled: mayNeedApproval,
       spender: routerAddress,
       token: vault.shareToken,
     })
@@ -332,7 +370,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       }),
       query: { enabled: !!address && shares > BigInt(0) && !!quote },
       stateOverride: createFeeEstimateStateOverride({
-        needsApproval,
+        needsApproval: mayNeedApproval,
         owner: address,
         spender: routerAddress,
         token: vault.shareToken,
@@ -369,10 +407,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       : undefined
 
   const addApprovalStep = function (): StepPropsWithoutPosition {
-    const showFees = [
-      WithdrawStatus.APPROVAL_TX_FAILED,
-      WithdrawStatus.APPROVAL_TX_PENDING,
-    ].includes(withdrawStatus)
+    const showFees = mayNeedApproval
 
     const statusMap: Partial<Record<WithdrawStatusType, ProgressStatusType>> = {
       [WithdrawStatus.APPROVAL_TX_FAILED]: ProgressStatus.FAILED,
@@ -383,13 +418,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       description: (
         <div className="flex items-center gap-x-2">
           <TokenLogo size="small" token={vault.shareToken} />
-          <span
-            className={`text-sm font-normal ${
-              withdrawStatus === WithdrawStatus.APPROVAL_TX_PENDING
-                ? 'text-orange-600'
-                : 'text-neutral-500'
-            }`}
-          >
+          <span className="text-sm font-normal">
             {t('approving', { symbol: vault.shareToken.symbol })}
           </span>
         </div>
@@ -400,7 +429,9 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         isError: isApprovalGasFeesError,
         show: showFees,
       }),
-      status: statusMap[withdrawStatus] ?? ProgressStatus.COMPLETED,
+      status: hasSigned
+        ? (statusMap[withdrawStatus] ?? ProgressStatus.COMPLETED)
+        : ProgressStatus.READY,
       txHash: withdrawOperation?.approvalTxHash,
     }
   }
@@ -450,7 +481,9 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
             withdrawMined:
               withdrawStatus === WithdrawStatus.WITHDRAW_TX_CONFIRMED,
           }),
-      status: statusMap[withdrawStatus] ?? ProgressStatus.NOT_READY,
+      status: hasSigned
+        ? (statusMap[withdrawStatus] ?? ProgressStatus.NOT_READY)
+        : unsignedStepStatus(mayNeedApproval),
       txHash: withdrawOperation?.transactionHash,
     }
   }
@@ -481,9 +514,27 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     }
   }
 
+  const isAboutToSign = showsReview({
+    canRetry: failedStatuses.includes(withdrawStatus),
+    hasSigned,
+  })
+
+  const getAboveAmount = () =>
+    isAboutToSign ? (
+      <ReviewIntro
+        operation="withdraw"
+        shareAddress={vault.shareAddress}
+        vaultMetadata={vaultMetadata}
+        vaultName={vault.shareToken.symbol}
+      />
+    ) : null
+
+  const getSubheading = () =>
+    isAboutToSign ? undefined : t('withdraw.subheading')
+
   const getCallToAction = function () {
-    if (failedStatuses.includes(withdrawStatus)) {
-      return <RetryWithdraw />
+    if (isAboutToSign) {
+      return <ConfirmWithdraw shares={shares} />
     }
     if (isRemoteFailed(settledRow)) {
       return <RemoteFailedCta transaction={settledRow!} />
@@ -522,7 +573,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
 
   const getSteps = function () {
     const steps: StepPropsWithoutPosition[] = []
-    if (needsApproval || withdrawOperation?.approvalTxHash) {
+    if (mayNeedApproval || withdrawOperation?.approvalTxHash) {
       steps.push(addApprovalStep())
     }
     steps.push(addWithdrawStep())
@@ -554,13 +605,24 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
               settledRow?.settlement,
             ),
           }
-        : receiveStep,
+        : {
+            ...receiveStep,
+            postAction: inTransitPostAction({
+              duration: vaultMetadata?.duration,
+              isCrossing:
+                receiveStep.status === ProgressStatus.PROGRESS &&
+                !!settledRow &&
+                !isAwaitingFinalize(settledRow),
+              t,
+            }),
+          },
     )
     return steps
   }
 
   return (
     <Operation
+      aboveAmount={getAboveAmount()}
       aboveCallToAction={
         <>
           <SettleBanner transaction={settledRow} />
@@ -574,7 +636,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       heading={t('withdraw.heading')}
       onClose={onClose}
       steps={getSteps()}
-      subheading={t('withdraw.subheading')}
+      subheading={getSubheading()}
       token={vault.shareToken}
     />
   )

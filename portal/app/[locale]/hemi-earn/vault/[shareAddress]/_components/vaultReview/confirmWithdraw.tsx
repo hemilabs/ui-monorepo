@@ -3,7 +3,6 @@ import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { type FormEvent, useState } from 'react'
 import { useTranslations } from 'use-intl'
 import { getExtraApprovalAmount } from 'utils/approval'
-import { parseTokenUnits } from 'utils/token'
 
 import { applySlippage } from '../../../../_constants/slippage'
 import { percentToBps } from '../../../../_utils/slippage'
@@ -14,13 +13,28 @@ import { useSlippage } from '../../_hooks/useSlippage'
 import { useWithdraw } from '../../_hooks/useWithdraw'
 import { type WithdrawOperationRunning } from '../../_types/operations'
 
-export const RetryWithdraw = function () {
+const getLabelKey = function ({
+  isApproving,
+  isRetry,
+  isWithdrawing,
+}: {
+  isApproving: boolean
+  isRetry: boolean
+  isWithdrawing: boolean
+}) {
+  if (isApproving) return 'common.approving'
+  if (isWithdrawing) return 'hemi-earn.vault.form.withdrawing'
+  return isRetry
+    ? 'common.try-again'
+    : 'hemi-earn.vault.drawer.confirm-in-wallet'
+}
+
+export const ConfirmWithdraw = function ({ shares }: { shares: bigint }) {
   const [operationRunning, setOperationRunning] =
     useState<WithdrawOperationRunning>('idle')
 
   const {
     approveExtraAmount,
-    input,
     resetStateAfterOperation,
     selectedAsset,
     updateWithdrawOperation,
@@ -31,8 +45,6 @@ export const RetryWithdraw = function () {
   const t = useTranslations()
   const slippage = useSlippage('withdraw')
   const slippageBps = percentToBps(slippage)
-  // Input is in share units — the Router burns shares directly; assetsOutMin comes from the asset preview below.
-  const shares = parseTokenUnits(input, vault.shareToken)
 
   const {
     data: { assetOut, peggedAmount } = {
@@ -60,6 +72,7 @@ export const RetryWithdraw = function () {
     callbackFee: quote?.callbackFee ?? BigInt(0),
     isInstant: quote?.isInstant ?? false,
     on(emitter) {
+      emitter.on('pre-approve', () => setOperationRunning('approving'))
       emitter.on('approve-transaction-reverted', () =>
         setOperationRunning('failed'),
       )
@@ -89,27 +102,30 @@ export const RetryWithdraw = function () {
     vault,
   })
 
+  const isApproving = operationRunning === 'approving'
   const isWithdrawing = operationRunning === 'withdrawing'
 
-  const canRetry = !!quote && shares > BigInt(0) && assetOut > BigInt(0)
+  const canSubmit = !!quote && shares > BigInt(0) && assetOut > BigInt(0)
+  const isRetry = withdrawOperation !== undefined
 
-  const handleRetry = function (e: FormEvent) {
+  const handleSubmit = function (e: FormEvent) {
     e.preventDefault()
-    if (!canRetry) return
+    if (!canSubmit) return
     setOperationRunning('withdrawing')
-    runWithdraw()
+    runWithdraw(undefined, {
+      onError: () => setOperationRunning('idle'),
+    })
   }
 
   return (
-    <form className="flex w-full [&>button]:w-full" onSubmit={handleRetry}>
+    <form className="flex w-full [&>button]:w-full" onSubmit={handleSubmit}>
       <SubmitWhenConnected
         submitButton={
-          <Button disabled={isWithdrawing || !canRetry} size="small">
-            {t(
-              isWithdrawing
-                ? 'hemi-earn.vault.form.withdrawing'
-                : 'common.try-again',
-            )}
+          <Button
+            disabled={isApproving || isWithdrawing || !canSubmit}
+            size="small"
+          >
+            {t(getLabelKey({ isApproving, isRetry, isWithdrawing }))}
           </Button>
         }
         submitButtonSize="small"

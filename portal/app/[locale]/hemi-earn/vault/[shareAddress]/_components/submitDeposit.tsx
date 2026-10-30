@@ -3,15 +3,12 @@ import { Spinner } from 'components/spinner'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useTranslations } from 'use-intl'
 
-import { type DepositOperationRunning } from '../_types/operations'
-
 type Props = {
   canDeposit: boolean
   isAllowanceError: boolean
   isLoading: boolean
   isRunningOperation: boolean
   needsApproval: boolean
-  operationRunning: DepositOperationRunning
   validationError: string | undefined
 }
 
@@ -21,7 +18,6 @@ export const SubmitDeposit = function ({
   isLoading,
   isRunningOperation,
   needsApproval,
-  operationRunning,
   validationError,
 }: Props) {
   const t = useTranslations()
@@ -32,12 +28,6 @@ export const SubmitDeposit = function ({
     }
     if (isAllowanceError) {
       return t('common.allowance-load-failed')
-    }
-    if (operationRunning === 'approving') {
-      return t('common.approving')
-    }
-    if (operationRunning === 'depositing') {
-      return t('common.depositing')
     }
     if (validationError) {
       return validationError

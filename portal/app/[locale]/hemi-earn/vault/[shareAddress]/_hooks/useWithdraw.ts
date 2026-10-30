@@ -25,8 +25,6 @@ import { type EarnAsset, type EarnVault } from '../../../types'
 import { getUserShareValueQueryKey } from '../_fetchers/fetchUserShareValue'
 import { type WithdrawOperation, WithdrawStatus } from '../_types/operations'
 
-import { useDrawerQueryString } from './useDrawerQueryString'
-
 type UseWithdraw = {
   // Allowance to request when approving; defaults to the redeemed shares.
   approvalAmount?: bigint
@@ -68,7 +66,6 @@ export const useWithdraw = function ({
   updateWithdrawOperation,
   vault,
 }: UseWithdraw) {
-  const { setDrawerQueryString } = useDrawerQueryString()
   const { address } = useAccount()
   const chainId = selectedAsset.token.chainId
   const config = useConfig()
@@ -175,7 +172,6 @@ export const useWithdraw = function ({
             status: WithdrawStatus.APPROVAL_TX_PENDING,
           },
         })
-        setDrawerQueryString('withdrawing')
       })
 
       emitter.on('approve-transaction-reverted', function (receipt) {
@@ -220,7 +216,6 @@ export const useWithdraw = function ({
         if (supersedesInitiateTxHash) {
           markSettledByInitiateTxHash(supersedesInitiateTxHash)
         }
-        setDrawerQueryString('withdrawing')
       })
 
       emitter.on('user-signing-withdraw-error', function () {

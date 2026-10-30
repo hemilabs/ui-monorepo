@@ -11,9 +11,12 @@ import { Withdraw } from './withdraw'
 
 const SideDrawer = function () {
   const { drawerMode, setDrawerQueryString } = useDrawerQueryString()
-  const { depositOperation, withdrawOperation } = useVaultForm()
+  const { depositOperation, input, withdrawOperation } = useVaultForm()
 
-  if (!drawerMode || (!depositOperation && !withdrawOperation)) {
+  const hasSomethingToReview =
+    !!depositOperation || !!withdrawOperation || Number(input) > 0
+
+  if (!drawerMode || !hasSomethingToReview) {
     return null
   }
 

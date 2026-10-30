@@ -2,7 +2,6 @@ import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { describe, expect, it } from 'vitest'
 
 import {
-  isOperationInFlight,
   resolveMayNeedApproval,
   showsReview,
   unsignedStepStatus,
@@ -52,28 +51,6 @@ describe('reviewState', function () {
           needsApproval: false,
         }),
       ).toBe(false)
-    })
-  })
-
-  describe('isOperationInFlight', function () {
-    const inFlightStatuses = ['approving', 'signing'] as const
-
-    it('is in flight while the signed operation is still mining', function () {
-      expect(isOperationInFlight({ inFlightStatuses, status: 'signing' })).toBe(
-        true,
-      )
-    })
-
-    it('is done once the operation reached a resting status', function () {
-      expect(isOperationInFlight({ inFlightStatuses, status: 'done' })).toBe(
-        false,
-      )
-    })
-
-    it('is not in flight when there is no operation at all', function () {
-      expect(isOperationInFlight({ inFlightStatuses, status: undefined })).toBe(
-        false,
-      )
     })
   })
 

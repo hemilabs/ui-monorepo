@@ -20,11 +20,3 @@ export const resolveMayNeedApproval = ({
   isAllowanceLoading: boolean
   needsApproval: boolean
 }) => needsApproval || isAllowanceLoading || isAllowanceError
-
-export const isOperationInFlight = <T>({
-  inFlightStatuses,
-  status,
-}: {
-  inFlightStatuses: readonly T[]
-  status: T | undefined
-}) => status !== undefined && inFlightStatuses.includes(status)

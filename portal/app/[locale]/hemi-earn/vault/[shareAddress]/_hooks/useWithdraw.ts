@@ -1,7 +1,11 @@
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  useIsMutating,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { EventEmitter } from 'events'
 import {
   type RequestRedeemEvents,
@@ -14,7 +18,7 @@ import { useUmami } from 'hooks/useUmami'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { maxBigInt } from 'utils/bigint'
 import { unixNowTimestamp } from 'utils/time'
-import { type Hash } from 'viem'
+import { type Address, type Hash } from 'viem'
 import { useAccount, useConfig } from 'wagmi'
 import { getWalletClient } from 'wagmi/actions'
 
@@ -50,6 +54,14 @@ type UseWithdraw = {
   updateWithdrawOperation?: (payload?: WithdrawOperation) => void
   vault: EarnVault
 }
+
+const getWithdrawMutationKey = (shareAddress: Address) => [
+  'hemi-earn-withdraw',
+  shareAddress,
+]
+
+export const useIsWithdrawing = (shareAddress: Address) =>
+  useIsMutating({ mutationKey: getWithdrawMutationKey(shareAddress) }) > 0
 
 export const useWithdraw = function ({
   approvalAmount,
@@ -305,6 +317,7 @@ export const useWithdraw = function ({
 
       return promise
     },
+    mutationKey: getWithdrawMutationKey(vault.shareAddress),
     onSettled() {
       queryClient.invalidateQueries({ queryKey: tokenBalanceQueryKey })
       queryClient.invalidateQueries({ queryKey: shareBalanceQueryKey })

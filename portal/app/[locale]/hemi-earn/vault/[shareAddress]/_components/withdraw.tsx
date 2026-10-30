@@ -19,15 +19,14 @@ import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
 import { useMaxWithdrawableAsset } from '../_hooks/useMaxWithdrawableAsset'
 import { useSlippage } from '../_hooks/useSlippage'
 import { useUserShareValue } from '../_hooks/useUserShareValue'
+import { useIsWithdrawing } from '../_hooks/useWithdraw'
 import { useWithdrawPreview } from '../_hooks/useWithdrawPreview'
-import { WithdrawStatus, type WithdrawStatusType } from '../_types/operations'
 import {
   resolveErrorKey,
   resolvePreviewIssue,
   resolveValidationError,
   resolveZeroNativeBalanceError,
 } from '../_utils/formState'
-import { isOperationInFlight } from '../_utils/reviewState'
 import {
   applyWithdrawSharesGuard,
   computeWithdrawSubmitLoading,
@@ -49,12 +48,6 @@ import { WithdrawAvailableBalance } from './withdrawAvailableBalance'
 import { WithdrawMaxBalance } from './withdrawMaxBalance'
 import { WithdrawShareBalance } from './withdrawShareBalance'
 
-const inFlightStatuses: WithdrawStatusType[] = [
-  WithdrawStatus.APPROVAL_TX_PENDING,
-  WithdrawStatus.APPROVAL_TX_COMPLETED,
-  WithdrawStatus.WITHDRAW_TX_PENDING,
-]
-
 export const Withdraw = function ({
   onSwitchToDeposit,
 }: {
@@ -71,7 +64,6 @@ export const Withdraw = function ({
     updateWithdrawOperation,
     vault,
     withdrawMode,
-    withdrawOperation,
   } = useVaultForm()
 
   const slippage = useSlippage('withdraw')
@@ -201,10 +193,7 @@ export const Withdraw = function ({
   })
 
   const { setDrawerQueryString } = useDrawerQueryString()
-  const isRunningOperation = isOperationInFlight({
-    inFlightStatuses,
-    status: withdrawOperation?.status,
-  })
+  const isRunningOperation = useIsWithdrawing(vault.shareAddress)
 
   const handleWithdraw = function () {
     if (!canWithdraw || !quote || zeroBalanceError || isRunningOperation) {

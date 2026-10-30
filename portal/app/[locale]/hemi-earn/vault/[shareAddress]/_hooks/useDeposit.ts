@@ -1,7 +1,11 @@
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  useIsMutating,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { EventEmitter } from 'events'
 import {
   type RequestDepositEvents,
@@ -14,7 +18,7 @@ import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { maxBigInt } from 'utils/bigint'
 import { unixNowTimestamp } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
-import { type Hash } from 'viem'
+import { type Address, type Hash } from 'viem'
 import { useAccount, useConfig } from 'wagmi'
 import { getWalletClient } from 'wagmi/actions'
 
@@ -41,6 +45,14 @@ type UseDeposit = {
   updateDepositOperation?: (payload?: DepositOperation) => void
   vault: EarnVault
 }
+
+const getDepositMutationKey = (shareAddress: Address) => [
+  'hemi-earn-deposit',
+  shareAddress,
+]
+
+export const useIsDepositing = (shareAddress: Address) =>
+  useIsMutating({ mutationKey: getDepositMutationKey(shareAddress) }) > 0
 
 export const useDeposit = function ({
   approvalAmount,
@@ -263,6 +275,7 @@ export const useDeposit = function ({
 
       return promise
     },
+    mutationKey: getDepositMutationKey(vault.shareAddress),
     onSettled() {
       // Only invalidate Hemi-side state here; the Vetro-side queries move later, when
       // useEarnTransactions sees the terminal status (cross-chain delivery hasn't happened yet).

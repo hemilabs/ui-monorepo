@@ -18,10 +18,10 @@ import { useCanDeposit } from '../../../_hooks/useCanDeposit'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { percentToBps } from '../../../_utils/slippage'
 import { useVaultForm } from '../_context/vaultFormContext'
+import { useIsDepositing } from '../_hooks/useDeposit'
 import { useDepositPreview } from '../_hooks/useDepositPreview'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
 import { useSlippage } from '../_hooks/useSlippage'
-import { DepositStatus, type DepositStatusType } from '../_types/operations'
 import {
   computeIsLoading,
   resolveErrorKey,
@@ -29,7 +29,6 @@ import {
   resolveValidationError,
   resolveZeroNativeBalanceError,
 } from '../_utils/formState'
-import { isOperationInFlight } from '../_utils/reviewState'
 
 import { AdvancedSettings } from './advancedSettings'
 import { AssetSelector } from './assetSelector'
@@ -42,18 +41,11 @@ type Props = {
   onSwitchToWithdraw: VoidFunction
 }
 
-const inFlightStatuses: DepositStatusType[] = [
-  DepositStatus.APPROVAL_TX_PENDING,
-  DepositStatus.APPROVAL_TX_COMPLETED,
-  DepositStatus.DEPOSIT_TX_PENDING,
-]
-
 export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   const t = useTranslations()
 
   const {
     approveExtraAmount,
-    depositOperation,
     input,
     selectedAsset,
     updateDepositOperation,
@@ -130,10 +122,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   })
 
   const { setDrawerQueryString } = useDrawerQueryString()
-  const isRunningOperation = isOperationInFlight({
-    inFlightStatuses,
-    status: depositOperation?.status,
-  })
+  const isRunningOperation = useIsDepositing(vault.shareAddress)
 
   const handleDeposit = function () {
     if (!canDeposit || !quote || zeroBalanceError || isRunningOperation) {

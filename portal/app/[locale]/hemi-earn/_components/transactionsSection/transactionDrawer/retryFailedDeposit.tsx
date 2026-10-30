@@ -1,5 +1,6 @@
 import { Button } from 'components/button'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
+import { Tooltip } from 'components/tooltip'
 import { type FormEvent, useState } from 'react'
 import { useTranslations } from 'use-intl'
 import { formatUnits } from 'viem'
@@ -8,36 +9,38 @@ import {
   defaultDepositSlippage,
   applySlippage,
 } from '../../../_constants/slippage'
+import { useCanDeposit } from '../../../_hooks/useCanDeposit'
 import { percentToBps, resolveRetrySlippage } from '../../../_utils/slippage'
-import { useDeposit } from '../../../pool/[shareAddress]/_hooks/useDeposit'
-import { useDepositShares } from '../../../pool/[shareAddress]/_hooks/useDepositShares'
-import { useQuoteDeposit } from '../../../pool/[shareAddress]/_hooks/useQuoteDeposit'
-import { type DepositOperationRunning } from '../../../pool/[shareAddress]/_types/operations'
 import {
   type EarnAsset,
-  type EarnPool,
   type EarnTransaction,
+  type EarnVault,
 } from '../../../types'
+import { useDeposit } from '../../../vault/[shareAddress]/_hooks/useDeposit'
+import { useDepositShares } from '../../../vault/[shareAddress]/_hooks/useDepositShares'
+import { useQuoteDeposit } from '../../../vault/[shareAddress]/_hooks/useQuoteDeposit'
+import { type DepositOperationRunning } from '../../../vault/[shareAddress]/_types/operations'
 
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 type Props = {
   asset: EarnAsset
-  pool: EarnPool
   transaction: EarnTransaction
+  vault: EarnVault
 }
 
 // Retry CTA in the historical deposit drawer; on user-signed-deposit it redirects
 // earnTxId to the new tx so the drawer transitions in place from FAILED to in-flight.
 export const RetryFailedDeposit = function ({
   asset,
-  pool,
   transaction,
+  vault,
 }: Props) {
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
   const [operationRunning, setOperationRunning] =
     useState<DepositOperationRunning>('idle')
   const t = useTranslations()
+  const depositGate = useCanDeposit()
 
   const amount = BigInt(transaction.amountIn)
   const input = formatUnits(amount, asset.token.decimals)
@@ -45,13 +48,13 @@ export const RetryFailedDeposit = function ({
   const { data: quote } = useQuoteDeposit({
     amount,
     asset: asset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
   })
 
   const { data: shares } = useDepositShares({
     amount,
     asset: asset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
   })
 
   const slippage = resolveRetrySlippage({
@@ -84,34 +87,50 @@ export const RetryFailedDeposit = function ({
         setTxDrawerQueryString(newInitiateTxHash)
       })
     },
-    pool,
     priorApprovalTxHash: transaction.approvalTxHash,
     selectedAsset: asset,
     sharesOutMin,
     slippage,
     // Hide the specific failed row from the table once this retry is signed.
     supersedesInitiateTxHash: transaction.requestTxHash,
+    vault,
   })
 
   const isDepositing = operationRunning === 'depositing'
 
   const handleRetry = function (e: FormEvent) {
     e.preventDefault()
-    if (!quote || !shares || shares <= BigInt(0)) return
+    if (!depositGate.canDeposit || !quote || !shares || shares <= BigInt(0))
+      return
     setOperationRunning('depositing')
     runDeposit()
   }
 
   return (
-    <form className="flex w-full [&>button]:w-full" onSubmit={handleRetry}>
+    <form
+      className="flex w-full *:w-full [&_button]:w-full"
+      onSubmit={handleRetry}
+    >
       <SubmitWhenConnected
         submitButton={
-          <Button
-            disabled={isDepositing || !quote || !shares || shares <= BigInt(0)}
-            size="small"
+          <Tooltip
+            disabled={depositGate.canDeposit}
+            text={depositGate.reason && t(`hemi-earn.${depositGate.reason}`)}
+            variant="simple"
           >
-            {t(isDepositing ? 'common.depositing' : 'common.try-again')}
-          </Button>
+            <Button
+              disabled={
+                !depositGate.canDeposit ||
+                isDepositing ||
+                !quote ||
+                !shares ||
+                shares <= BigInt(0)
+              }
+              size="small"
+            >
+              {t(isDepositing ? 'common.depositing' : 'common.try-again')}
+            </Button>
+          </Tooltip>
         }
         submitButtonSize="small"
       />

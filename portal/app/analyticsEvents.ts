@@ -196,10 +196,6 @@ const analyticsEvents = [
   'nav - dodo',
   'nav - lunarfi',
   'nav - brownfi',
-  // custom Tokens for the tunnel
-  'custom erc20 - cancel',
-  'custom erc20 - open modal',
-  'custom erc20 - save token',
   // save tokens in user's wallet
   'save token wallet - error',
   'save token wallet - init',
@@ -229,9 +225,6 @@ type AnalyticsEventsWithWallet = Extract<
 // These events require an ERC20 address
 type AnalyticsEventsWithERC20 = Extract<
   AnalyticsEvent,
-  | 'custom erc20 - cancel'
-  | 'custom erc20 - open modal'
-  | 'custom erc20 - save token'
   | 'save token wallet - error'
   | 'save token wallet - init'
   | 'save token wallet - ok'

@@ -17,14 +17,12 @@ import { useAccount } from 'wagmi'
 import { Amount } from '../amount'
 import { RewardsDisplay } from '../rewardsDisplay'
 
-import { ActionCell } from './actionCell'
 import { AutoRelockBadge } from './autoRelockBadge'
-import { ClaimCta } from './claimCta'
 import { HeroBanner } from './heroBanner'
 import { LockupTime } from './lockupTime'
 import { NoPositionStaked } from './noPositionStaked'
+import { PositionActions } from './positionActions'
 import { type StakeTableFilterOptions } from './stakeTableFilter'
-import { UnlockCta } from './unlockCta'
 import { VotingPower } from './votingPower'
 
 type StakingColumnsProps = {
@@ -94,15 +92,7 @@ const allStakingColumns = ({
     meta: { width: 150 },
   },
   {
-    cell: ({ row }) => (
-      <div className="flex w-full flex-row-reverse items-center justify-end gap-x-2 lg:flex-row">
-        <ClaimCta operation={row.original} />
-        <UnlockCta operation={row.original} />
-        {row.original.status !== StakingPositionStatus.WITHDRAWN && (
-          <ActionCell key={row.original.id} row={row} />
-        )}
-      </div>
-    ),
+    cell: ({ row }) => <PositionActions row={row} />,
     header: () => <Header text={t('table.action')} />,
     id: 'action',
     meta: { className: 'justify-start lg:justify-end', width: 280 },

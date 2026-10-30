@@ -5,7 +5,7 @@ import { GetStartedLayout } from 'app/[locale]/get-started/layout'
 import { GetStartedPage } from 'app/[locale]/get-started/page'
 import { HemiEarnLayout } from 'app/[locale]/hemi-earn/layout'
 import { HemiEarnPage } from 'app/[locale]/hemi-earn/page'
-import { PoolPage } from 'app/[locale]/hemi-earn/pool/[shareAddress]/page'
+import { VaultPage } from 'app/[locale]/hemi-earn/vault/[shareAddress]/page'
 import { HemiStakeAnalyticsPage } from 'app/[locale]/hemi-stake/analytics/page'
 import { HemiStakeLayout } from 'app/[locale]/hemi-stake/layout'
 import { HemiStakePage } from 'app/[locale]/hemi-stake/page'
@@ -134,7 +134,7 @@ export const App = () => (
             </Route>
             <Route element={<HemiEarnLayout />} path="hemi-earn">
               <Route element={<HemiEarnPage />} index />
-              <Route element={<PoolPage />} path="pool/:shareAddress" />
+              <Route element={<VaultPage />} path="vault/:shareAddress" />
             </Route>
             <Route element={<StakeLayout />} path="stake">
               <Route element={<StakePage />} index />

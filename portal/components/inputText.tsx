@@ -100,11 +100,9 @@ const sizeClasses = {
 
 export const SearchInput = function ({
   onClear,
-  showMagnifyingGlass = true,
   size,
   ...props
 }: Props & {
-  showMagnifyingGlass?: boolean
   size?: Size
 }) {
   const showCloseIcon = (props.value?.toString().length ?? 0) > 0 && !!onClear
@@ -117,20 +115,14 @@ export const SearchInput = function ({
       showCloseIcon={showCloseIcon}
       size={selectedSize}
     >
-      {showMagnifyingGlass && (
-        <div
-          className={`absolute ${sizeClass.iconPosition} top-1/2 -translate-y-1/2 group-hover:[&>svg>path]:fill-neutral-500`}
-        >
-          <MagnifyingGlassIcon size={selectedSize} />
-        </div>
-      )}
+      <div
+        className={`absolute ${sizeClass.iconPosition} top-1/2 -translate-y-1/2 group-hover:[&>svg>path]:fill-neutral-500`}
+      >
+        <MagnifyingGlassIcon size={selectedSize} />
+      </div>
       <input
         {...props}
-        className={`${inputTextStyles} ${sizeClass.typography} ${
-          sizeClass.padding
-        } ${sizeClass.placeholder} ${sharedInputStyles} ${
-          showMagnifyingGlass ? sizeClass.iconLeftPadding : ''
-        } ${showCloseIcon ? 'pr-8' : ''}`}
+        className={`${inputTextStyles} ${sizeClass.typography} ${sizeClass.padding} ${sizeClass.placeholder} ${sharedInputStyles} ${sizeClass.iconLeftPadding} ${showCloseIcon ? 'pr-8' : ''}`}
         disabled={props.disabled}
         type="text"
       />

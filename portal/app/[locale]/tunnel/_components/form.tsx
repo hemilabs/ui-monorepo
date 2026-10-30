@@ -1,14 +1,10 @@
 import { Card } from 'components/card'
-import { CustomTokenDrawer } from 'components/customTokenDrawer'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelector } from 'components/tokenSelector'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
-import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
-import { useHemi } from 'hooks/useHemi'
 import { useTunnelTokens } from 'hooks/useTunnelTokens'
 import { FormEvent, ReactNode } from 'react'
 import { useTranslations } from 'use-intl'
-import { isEvmNetworkId } from 'utils/chain'
 
 import { useTunnelState } from '../_hooks/useTunnelState'
 
@@ -47,17 +43,9 @@ export const FormContent = function ({
     updateToNetwork,
   } = tunnelState
 
-  const [customTokenAddress] = useCustomTokenAddress()
-  const hemi = useHemi()
   const t = useTranslations('tunnel-page')
 
   const fromTokens = useTunnelTokens(fromNetworkId)
-
-  const evmTunneling =
-    isEvmNetworkId(fromNetworkId) && isEvmNetworkId(toNetworkId)
-
-  const l1ChainId = fromNetworkId === hemi.id ? toNetworkId : fromNetworkId
-  const l2ChainId = hemi.id
 
   return (
     <>
@@ -86,7 +74,6 @@ export const FormContent = function ({
             token={fromToken}
             tokenSelector={
               <TokenSelector
-                chainId={fromNetworkId}
                 disabled={isRunningOperation}
                 onSelectToken={updateFromToken}
                 selectedToken={fromToken}
@@ -104,16 +91,6 @@ export const FormContent = function ({
             tokenSelector={<TokenSelectorReadOnly token={toToken} />}
             value={calculateReceiveAmount(fromInput)}
           />
-          {!!customTokenAddress && evmTunneling && (
-            <CustomTokenDrawer
-              customTokenAddress={customTokenAddress}
-              fromNetworkId={fromNetworkId}
-              // @ts-expect-error TS fails to check these, but they are checked above by evmTunneling
-              l1ChainId={l1ChainId}
-              l2ChainId={l2ChainId}
-              onSelectToken={updateFromToken}
-            />
-          )}
         </div>
       )}
     </>

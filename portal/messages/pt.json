@@ -156,110 +156,30 @@
     "view-all-tutorials": "Ver todos os tutoriais"
   },
   "hemi-earn": {
-    "heading": "Obtenha rendimento com Hemi Earn",
+    "deposits-paused": "Os depósitos novos estão pausados no momento.",
+    "footer": {
+      "attribution": "O Hemi Earn é operado pela Vetro Service & Support Corp. Os fundos disponíveis pelo Hemi Earn podem ser operados pela Vetro ou por terceiros. A Hemispheres Service & Support (BVI) Ltd., a Hemi Labs, Inc. e suas afiliadas não operam, administram, custodiam nem garantem o Hemi Earn ou qualquer fundo, e não são partes do seu acordo com a Vetro. O Hemi Earn não está disponível para pessoas dos EUA nem para outras pessoas restritas.",
+      "vetro-privacy": "Política de Privacidade da Vetro",
+      "vetro-terms": "Termos de Uso da Vetro"
+    },
+    "heading": "Obtenha rendimento com seu BTC e suas stablecoins",
     "info": {
-      "earned-amount": "Valor ganho",
-      "from-pools": "{count, plural, one {De # fundo} other {De # fundos}}",
-      "staked-balance": "Seu saldo aplicado"
+      "estimated-earnings": "Seus ganhos estimados",
+      "from-vaults": "{count, plural, one {De # fundo} other {De # fundos}}",
+      "your-deposits": "Seus depósitos"
     },
     "navigation": {
       "back": "Voltar",
       "hemi-earn": "Hemi Earn",
-      "pool-name": "fundo {tokenSymbol}"
+      "vault-name": "fundo {tokenSymbol}"
     },
-    "pool": {
-      "apy": "TEA",
-      "composition": {
-        "amount": "Valor",
-        "by-protocol": "Por protocolo",
-        "by-token": "Por token",
-        "position": "Posição",
-        "protocols-count": "{count, plural, one {# protocolo} other {# protocolos}}",
-        "reserve-buffer": "Reserva de liquidez",
-        "share": "Participação",
-        "title": "Composição",
-        "tokens-count": "{count, plural, one {# token} other {# tokens}}",
-        "view-mode": "Modo de visualização"
-      },
-      "deposit-successful": "Depósito realizado com sucesso",
-      "drawer": {
-        "approving": "Aprovando {symbol}",
-        "cooldown-ended": "Período de espera concluído",
-        "deposit": {
-          "heading": "Revisar depósito de stake",
-          "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
-        },
-        "funds-returned": "Fundos devolvidos",
-        "funds-to-recover": "Fundos a recuperar",
-        "get-share-tokens": "Receber share tokens",
-        "receive-token": "Receber {symbol}",
-        "shares-returned": "Shares devolvidas",
-        "shares-to-recover": "Shares a recuperar",
-        "stake-token": "Fazer stake de {symbol}",
-        "unstake-token": "Fazer unstake de {symbol}",
-        "wait-cooldown-countdown": "{days, plural, =0 {O período de espera termina em {hours}h} other {O período de espera termina em #d {hours}h}}",
-        "wait-cooldown-countdown-soon": "O período de espera termina em menos de uma hora",
-        "wait-cooldown-pending": "O período de espera é de {days, plural, one {# dia} other {# dias}}",
-        "withdraw": {
-          "heading": "Revisar saque de stake",
-          "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
-        }
-      },
-      "form": {
-        "amount-too-small": "Valor muito pequeno",
-        "asset-unavailable": "Ativo indisponível",
-        "available": "Disponível",
-        "bridging-fees": "Taxas de bridge",
-        "cooldown-warning": "Sacar fundos leva {days, plural, one {# dia} other {# dias}} para concluir.",
-        "cooldown-warning-fallback": "Sacar fundos leva alguns dias para concluir.",
-        "ethereum-gas-fee": "Taxa de gás da Ethereum",
-        "hemi-fees": "Taxas de Hemi",
-        "network-error": "Falha no preview — tente de novo",
-        "share-token-available-to-withdraw": "Token de participação disponível para sacar",
-        "withdraw-share-tokens-as": "Sacar token de participação como",
-        "withdrawing": "Sacando...",
-        "you-will-receive": "Você vai receber"
-      },
-      "here-is-your-tx": "Aqui está sua transação:",
-      "historical-metrics": {
-        "1-week": "1 semana",
-        "1-year": "1 ano",
-        "apy": "TEA",
-        "metric": "Métrica",
-        "month": "{count, plural, one {# mês} other {# meses}}",
-        "period": "Período",
-        "pool-deposits": "Depósitos do fundo",
-        "title": "Métricas históricas"
-      },
-      "settings": {
-        "accept-risk": "Entendo e aceito o risco",
-        "advanced-settings": "Configurações avançadas",
-        "auto": "Auto",
-        "continue-anyway": "Continuar mesmo assim",
-        "high-slippage": "Slippage alto",
-        "high-slippage-value": "Slippage alto {value}%",
-        "low-slippage": "Slippage muito baixo",
-        "low-slippage-value": "Slippage baixo {value}%",
-        "max-slippage": "Slippage máximo",
-        "slippage-value": "Slippage {value}%",
-        "very-high-slippage": "Slippage muito alto",
-        "very-high-slippage-value": "Slippage muito alto {value}%",
-        "warning-description-deposit": "<highlight>Seu slippage está definido acima de {threshold}%.</highlight> Isso aumenta sua exposição ao impacto de preço. Você pode receber bem menos shares do que o cotado.",
-        "warning-description-withdrawal": "<highlight>Seu slippage está definido acima de {threshold}%.</highlight> Isso aumenta sua exposição ao impacto de preço. Você pode receber bem menos tokens do que o cotado.",
-        "warning-title": "Aviso de slippage alto"
-      },
-      "total-deposits": "Depósitos totais do fundo",
-      "withdraw-successful": "Saque realizado com sucesso"
+    "operator": {
+      "banner": "O Hemi Earn é operado pela Vetro Service & Support Corp. A Hemi fornece apenas esta interface. <link>Ver os Termos da Vetro</link>",
+      "deposits-paused-details": "Os depósitos novos no Hemi Earn estão pausados no momento no portal da Hemi. Sua posição atual não é afetada por esta pausa, e você ainda pode visualizá-la e sacá-la abaixo. Em caso de dúvidas, entre em contato com o <link>suporte da Vetro</link>.",
+      "note": "Operado pela Vetro Service & Support Corp. <link>Termos</link>"
     },
-    "pool-info": {
-      "apy": "TEA",
-      "manage": "Gerenciar",
-      "pool-contract": "Contrato do fundo",
-      "share-token": "Token de participação",
-      "staked-balance": "Seu saldo aplicado",
-      "total-deposits": "Depósitos totais"
-    },
-    "subheading": "Ganhe rendimento com seus ativos em um clique",
+    "risk-warning": "Os rendimentos são variáveis e não são garantidos. Você pode perder parte ou a totalidade do seu depósito.",
+    "subheading": "O Hemi Earn, operado pela Vetro, dá a você acesso a fundos de rendimento diretamente pelo portal da Hemi. Escolha um fundo e deposite em poucos passos. Os rendimentos são variáveis e não são garantidos.",
     "switch-to-start-earning": "Você pode mudar de rede para começar a ganhar com a Hemi.",
     "transactions": {
       "banner": {
@@ -290,6 +210,7 @@
           "heading-slippage-deposit": "Seu depósito não foi concluído",
           "subheading": "A etapa entre redes falhou. Tente novamente para adicionar gas e concluir o saque, ou cancele para devolver seus share tokens à sua carteira.",
           "subheading-deposit": "A etapa entre redes falhou. Tente novamente para adicionar gas e concluir o depósito, ou cancele para devolver seus fundos à sua carteira.",
+          "subheading-paused-deposit": "A etapa entre redes falhou. Os depósitos novos estão pausados, então devolva seus fundos à sua carteira por enquanto.",
           "subheading-slippage": "O preço ultrapassou seu limite de slippage antes que a etapa final pudesse ser executada, então seus share tokens continuam retidos. Devolva-os à sua carteira e tente o saque novamente com uma tolerância de slippage maior.",
           "subheading-slippage-deposit": "O preço ultrapassou seu limite de slippage antes que a etapa final pudesse ser executada, então seus fundos continuam retidos. Devolva-os à sua carteira e tente o depósito novamente com uma tolerância de slippage maior."
         },
@@ -301,7 +222,7 @@
       "cancel-modal": {
         "cancelling": "Cancelando...",
         "confirm": "Cancelar saque",
-        "description": "Se você cancelar, seus fundos voltam a ficar em stake e saem do período de espera.",
+        "description": "Se você cancelar, seu depósito permanece no fundo e sai do período de espera.",
         "keep": "Manter saque",
         "title": "Cancelar saque"
       },
@@ -321,22 +242,22 @@
       "could-not-load-transactions": "Não foi possível carregar suas transações",
       "deposit": "Depósito",
       "drawer": {
-        "deposit-heading": "Detalhes do depósito de stake",
-        "deposit-subheading": "Revise sua transação de depósito de stake.",
+        "deposit-heading": "Detalhes do depósito",
+        "deposit-subheading": "Revise sua transação de depósito.",
         "step": {
           "approval-needed": "Aprovação necessária",
           "approve-token": "Aprovar {symbol}",
+          "deposit-token": "Depositar {symbol} no fundo",
           "funds-returned": "Fundos devolvidos",
           "funds-to-recover": "Fundos a recuperar",
           "get-share-tokens": "Receber share tokens",
           "receive-token": "Receber {symbol}",
           "shares-returned": "Shares devolvidas",
           "shares-to-recover": "Shares a recuperar",
-          "stake-token": "Fazer stake de {symbol}",
-          "unstake-token": "Sacar {symbol}"
+          "withdraw-token": "Sacar {symbol} do fundo"
         },
-        "withdraw-heading": "Detalhes do saque de stake",
-        "withdraw-subheading": "Revise sua transação de saque de stake."
+        "withdraw-heading": "Detalhes do saque",
+        "withdraw-subheading": "Revise sua transação de saque."
       },
       "nothing-here": "Nada por aqui ainda",
       "nothing-here-subtitle": "Suas transações aparecerão assim que você começar.",
@@ -380,6 +301,98 @@
       "view": "Ver",
       "withdraw": "Sacar",
       "withdrawal": "Saque"
+    },
+    "vault": {
+      "apy": "TEA",
+      "composition": {
+        "amount": "Valor",
+        "by-protocol": "Por protocolo",
+        "by-token": "Por token",
+        "position": "Posição",
+        "protocols-count": "{count, plural, one {# protocolo} other {# protocolos}}",
+        "reserve-buffer": "Reserva de liquidez",
+        "share": "Participação",
+        "title": "Composição",
+        "tokens-count": "{count, plural, one {# token} other {# tokens}}",
+        "view-mode": "Modo de visualização"
+      },
+      "deposit-successful": "Depósito realizado com sucesso",
+      "drawer": {
+        "approving": "Aprovando {symbol}",
+        "cooldown-ended": "Período de espera concluído",
+        "deposit": {
+          "heading": "Revisar depósito",
+          "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
+        },
+        "deposit-token": "Depositar {symbol} no fundo",
+        "funds-returned": "Fundos devolvidos",
+        "funds-to-recover": "Fundos a recuperar",
+        "get-share-tokens": "Receber share tokens",
+        "receive-token": "Receber {symbol}",
+        "shares-returned": "Shares devolvidas",
+        "shares-to-recover": "Shares a recuperar",
+        "wait-cooldown-countdown": "{days, plural, =0 {O período de espera termina em {hours}h} other {O período de espera termina em #d {hours}h}}",
+        "wait-cooldown-countdown-soon": "O período de espera termina em menos de uma hora",
+        "wait-cooldown-pending": "O período de espera é de {days, plural, one {# dia} other {# dias}}",
+        "withdraw": {
+          "heading": "Revisar saque",
+          "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
+        },
+        "withdraw-token": "Sacar {symbol} do fundo"
+      },
+      "form": {
+        "amount-too-small": "Valor muito pequeno",
+        "asset-unavailable": "Ativo indisponível",
+        "available": "Disponível",
+        "bridging-fees": "Taxas de bridge",
+        "cooldown-warning": "Sacar fundos leva {days, plural, one {# dia} other {# dias}} para concluir.",
+        "cooldown-warning-fallback": "Sacar fundos leva alguns dias para concluir.",
+        "ethereum-gas-fee": "Taxa de gás da Ethereum",
+        "hemi-network-fee": "Taxa de rede de Hemi",
+        "network-error": "Falha no preview — tente de novo",
+        "share-token-available-to-withdraw": "Token de participação disponível para sacar",
+        "withdraw-share-tokens-as": "Sacar token de participação como",
+        "withdrawing": "Sacando...",
+        "you-will-receive": "Você vai receber"
+      },
+      "here-is-your-tx": "Aqui está sua transação:",
+      "historical-metrics": {
+        "1-week": "1 semana",
+        "1-year": "1 ano",
+        "apy": "TEA",
+        "metric": "Métrica",
+        "month": "{count, plural, one {# mês} other {# meses}}",
+        "period": "Período",
+        "title": "Métricas históricas",
+        "vault-deposits": "Depósitos do fundo"
+      },
+      "settings": {
+        "accept-risk": "Entendo e aceito o risco",
+        "advanced-settings": "Configurações avançadas",
+        "auto": "Auto",
+        "continue-anyway": "Continuar mesmo assim",
+        "high-slippage": "Slippage alto",
+        "high-slippage-value": "Slippage alto {value}%",
+        "low-slippage": "Slippage muito baixo",
+        "low-slippage-value": "Slippage baixo {value}%",
+        "max-slippage": "Slippage máximo",
+        "slippage-value": "Slippage {value}%",
+        "very-high-slippage": "Slippage muito alto",
+        "very-high-slippage-value": "Slippage muito alto {value}%",
+        "warning-description-deposit": "<highlight>Seu slippage está definido acima de {threshold}%.</highlight> Isso aumenta sua exposição ao impacto de preço. Você pode receber bem menos shares do que o cotado.",
+        "warning-description-withdrawal": "<highlight>Seu slippage está definido acima de {threshold}%.</highlight> Isso aumenta sua exposição ao impacto de preço. Você pode receber bem menos tokens do que o cotado.",
+        "warning-title": "Aviso de slippage alto"
+      },
+      "total-deposits": "Depósitos totais do fundo",
+      "withdraw-successful": "Saque realizado com sucesso"
+    },
+    "vault-info": {
+      "apy": "TEA",
+      "manage": "Gerenciar",
+      "share-token": "Token de participação",
+      "total-deposits": "Depósitos totais",
+      "vault-contract": "Contrato do fundo",
+      "your-deposits": "Seus depósitos"
     }
   },
   "hemi-stake": {
@@ -410,6 +423,11 @@
     "claim-rewards": {
       "heading": "Reclamar recompensas",
       "subheading": "Estamos processando sua solicitação de recompensas. Você pode acompanhar o progresso abaixo."
+    },
+    "claim-rewards-failed": {
+      "description": "Não foi possível reclamar todas as suas recompensas. Abra os detalhes para tentar novamente.",
+      "title": "Falha ao reclamar recompensas",
+      "view-details": "Ver detalhes"
     },
     "claim-rewards-successful": "Recompensas reclamadas com sucesso",
     "drawer": {
@@ -566,6 +584,7 @@
       "burned": "Queimado",
       "claim": "Reclamar",
       "claim-all-rewards": "Reclamar todas as recompensas",
+      "claiming": "Reclamando...",
       "claiming-paused": "A reivindicação de recompensas está pausada",
       "could-not-load-positions": "Não foi possível carregar suas posições",
       "disable-auto-relock": "Desativar rebloqueio automático",
@@ -602,6 +621,7 @@
     "agree-to-terms-and-policy": "Ao utilizar esta aplicação, concorda com os <terms>Termos de Utilização</terms> e a <policy>Política de Privacidade</policy>",
     "bitcoinkit": "Hemi Bitcoin Kit",
     "boost-staking": "Boost staking",
+    "by-vetro": "pela Vetro",
     "data-attribution": "Dados fornecidos por <link>CoinMarketCap.com</link>",
     "dex": {
       "aggregators": "Agregadores",
@@ -617,6 +637,7 @@
       "language": "Idioma",
       "legal-and-privacy": "Legal e Privacidade"
     },
+    "hemi-earn": "Hemi Earn",
     "hemi-stake": "Hemi Stake",
     "network": "Rede",
     "network-status": "Estado da rede",
@@ -677,30 +698,12 @@
     },
     "wallet-balance": "Saldo da carteira"
   },
-  "token-custom-drawer": {
-    "add-contract-to-preview": "Adicione um endereço de contrato para visualizar o token...",
-    "add-this-pair": "Adicionar este par à lista de tokens da Hemi para todos tunelarem",
-    "add-token": "Adicionar token",
-    "add-token-on-chain": "Adicionar o endereço do contrato do token na rede {network}",
-    "address-does-not-match-l2": "Não corresponde ao par L1",
-    "heading": "Tunelar um token ERC-20 existente",
-    "i-am-sure-to-tunnel": "Tenho a certeza de que quero tunelar com este token.",
-    "l1-address-not-configured": "Endereço L1 não configurado no contrato",
-    "layer-token-address": "Endereço do token da Camada {layer}",
-    "make-a-request-to-add": "Se deseja adicionar este par de tokens ERC-20 à lista de tokens aprovados da Hemi, <link>faça um pedido</link>.",
-    "see-on-explorer": "Ver no {explorer}",
-    "subheading": "Precisa de inserir o par de endereços de contrato de Ethereum e Hemi para tunelar com este token.",
-    "this-address-is-not-valid": "Este endereço não é válido",
-    "this-address-is-valid": "Este endereço é válido"
-  },
   "token-selector": {
     "all-tokens": "Todos os tokens",
-    "manually-added-tokens": "Tokens adicionados manualmente",
     "no-results-for": "Nenhum resultado encontrado para <search></search>",
     "search-results": "Resultados da busca",
     "search-tokens": "Pesquisar por nome ou endereço do token...",
     "select-token": "Selecionar token",
-    "validating-token-address": "A validar endereço do token...",
     "your-tokens": "Seus tokens"
   },
   "transaction-history": {

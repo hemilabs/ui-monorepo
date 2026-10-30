@@ -19,8 +19,6 @@ export const isEvmNetwork = (chain: RemoteChain): chain is Chain =>
 export const isL2NetworkId = (chainId: number) =>
   [hemiMainnet.id, hemiTestnet.id].includes(chainId)
 
-export const isL2Network = (chain: Chain) => isL2NetworkId(chain.id)
-
 const getHemiForL1 = (l1ChainId: Chain['id']) =>
   findChainById(l1ChainId)?.testnet ? hemiTestnet : hemiMainnet
 

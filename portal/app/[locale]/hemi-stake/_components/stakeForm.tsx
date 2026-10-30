@@ -1,7 +1,7 @@
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { ToastLoader } from 'components/toast/toastLoader'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {
   CollectAllRewardsDashboardStatus,
@@ -20,6 +20,37 @@ const StakeToast = lazyWithFallback(
   () => import('./stakeToast').then(mod => ({ default: mod.StakeToast })),
   <ToastLoader />,
 )
+
+const ClaimRewardsFailedToast = lazyWithFallback(
+  () =>
+    import('./claimRewardsFailedToast').then(mod => ({
+      default: mod.ClaimRewardsFailedToast,
+    })),
+  <ToastLoader />,
+)
+
+const ClaimRewardsFailedNotice = function () {
+  const { drawerMode } = useDrawerStakingQueryString()
+  const { collectRewardsDashboardOperation } = useStakingDashboard()
+
+  const isDrawerOpen = drawerMode === 'claimingRewards'
+  const hasFailed =
+    collectRewardsDashboardOperation?.status ===
+    CollectAllRewardsDashboardStatus.COLLECT_TX_FAILED
+
+  const [prevHasFailed, setPrevHasFailed] = useState(hasFailed)
+  const [showToast, setShowToast] = useState(false)
+
+  if (hasFailed !== prevHasFailed) {
+    setPrevHasFailed(hasFailed)
+    setShowToast(hasFailed && !isDrawerOpen)
+  }
+  if (showToast && isDrawerOpen) {
+    setShowToast(false)
+  }
+
+  return showToast ? <ClaimRewardsFailedToast /> : null
+}
 
 const SideDrawer = function () {
   const { drawerMode, setDrawerQueryString } = useDrawerStakingQueryString()
@@ -103,6 +134,7 @@ export const StakeForm = function () {
       )}
       <Stake />
       <Suspense>
+        <ClaimRewardsFailedNotice />
         <SideDrawer />
       </Suspense>
     </>

@@ -1,6 +1,6 @@
 import { Balance } from 'components/cryptoBalance'
 import { RenderFiatBalance } from 'components/fiatBalance'
-import { ComponentProps, ComponentType, ReactNode } from 'react'
+import { ComponentProps, ComponentType, ReactNode, useId } from 'react'
 import { Token } from 'types/token'
 import { useTranslations } from 'use-intl'
 
@@ -76,6 +76,11 @@ const FiatPreview = function ({
   )
 }
 
+const getErrorDescribedBy = (
+  errorId: string,
+  errorMessage: string | undefined,
+) => (errorMessage ? errorId : undefined)
+
 const getTextColor = function (value: string, errorKey: string | undefined) {
   if (value === '0' || parseFloat(value) === 0) {
     return 'text-neutral-600 focus:text-neutral-950'
@@ -106,6 +111,7 @@ export const TokenInput = function <T extends Token>({
   value,
 }: Props<T>) {
   const t = useTranslations('tunnel-page')
+  const errorId = useId()
   const BalanceComponent = balanceComponent ?? Balance
   const amount = parseAmountInput(value, token)
   return (
@@ -117,6 +123,7 @@ export const TokenInput = function <T extends Token>({
       <div className="flex items-center justify-between gap-x-2 text-sm">
         <div className="min-w-0 flex-1">
           <input
+            aria-describedby={getErrorDescribedBy(errorId, errorMessage)}
             className={`w-full bg-transparent text-4xl ${getTextColor(
               value,
               errorKey,
@@ -154,7 +161,11 @@ export const TokenInput = function <T extends Token>({
             </div>
           )}
           {errorMessage && (
-            <span className={`${showBalance ? '' : 'ml-auto'} text-rose-500`}>
+            <span
+              className={`${showBalance ? '' : 'ml-auto'} text-rose-500`}
+              id={errorId}
+              role="alert"
+            >
               {errorMessage}
             </span>
           )}

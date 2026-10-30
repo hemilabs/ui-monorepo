@@ -26,7 +26,7 @@ export const RetrySlippageTooltip = function ({
   fallback,
   transaction,
 }: Props) {
-  const t = useTranslations('hemi-earn.pool.settings')
+  const t = useTranslations('hemi-earn.vault.settings')
 
   if (!canRetryRow(transaction)) {
     return null

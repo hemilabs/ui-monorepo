@@ -4,8 +4,8 @@ import { type Address, type Hash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useEarnTransactionsQuery } from '../_hooks/useEarnTransactionsQuery'
-import { PoolToast } from '../pool/[shareAddress]/_components/poolToast'
 import { type EarnTransactionKindType } from '../types'
+import { VaultToast } from '../vault/[shareAddress]/_components/vaultToast'
 
 // Match the <Toast> primitive's 10s auto-close so its close animation isn't cut short.
 const toastMs = 10_000
@@ -90,7 +90,7 @@ export const EarnSuccessToast = function ({ kind, title }: Props) {
   if (!latched) return null
 
   return (
-    <PoolToast
+    <VaultToast
       chainId={hemi.id}
       key={latched.requestTxHash}
       title={title}

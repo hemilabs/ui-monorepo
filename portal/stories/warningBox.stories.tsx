@@ -39,6 +39,15 @@ export const Default: Story = {
   ),
 }
 
+export const WithoutHeading: Story = {
+  parameters: {
+    controls: { disable: true },
+  },
+  render: () => (
+    <WarningBox subheading="Yields are variable and not guaranteed. You may lose some or all of your deposit." />
+  ),
+}
+
 export const WithChildren: Story = {
   parameters: {
     controls: { disable: true },

@@ -35,7 +35,7 @@ const extendWithWhiteList = <
     }
   }
 
-export const normalizeToken = <T extends Token = Token>(token: T) =>
+const normalizeToken = <T extends Token = Token>(token: T) =>
   ({
     ...token,
     address: toChecksumAddress(token.address),

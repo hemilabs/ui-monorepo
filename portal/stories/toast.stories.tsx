@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Toast } from 'components/toast'
 import messages from 'messages/en.json'
-import { NuqsTestingAdapter } from 'nuqs/adapters/testing'
 import { IntlProvider } from 'use-intl'
 
 const meta = {
@@ -57,13 +56,6 @@ export const WithTransaction: Story = {
 }
 
 export const WithGoTo: Story = {
-  decorators: [
-    Story => (
-      <NuqsTestingAdapter>
-        <Story />
-      </NuqsTestingAdapter>
-    ),
-  ],
   parameters: {
     controls: { disable: true },
   },

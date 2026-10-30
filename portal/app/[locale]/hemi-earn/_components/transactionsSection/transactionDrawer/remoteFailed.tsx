@@ -6,6 +6,7 @@ import { type RetryRequestEvents } from 'hemi-earn-actions'
 import { type MouseEvent, type ReactNode } from 'react'
 import { useTranslations } from 'use-intl'
 
+import { useCanDeposit } from '../../../_hooks/useCanDeposit'
 import {
   useCancelRequest,
   useRetryRequest,
@@ -71,6 +72,7 @@ export const RemoteFailedCta = function ({
 }) {
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
   const { category, show } = useRemoteFailedState(transaction)
+  const { canDeposit } = useCanDeposit()
 
   const on = redirectOnSign
     ? (emitter: EventEmitter<RetryRequestEvents>) =>
@@ -83,6 +85,8 @@ export const RemoteFailedCta = function ({
   const cancel = useCancelRequest({ on, transaction })
 
   const marker = remoteFailedSettlement(transaction.settlement)
+  const cancelOnly =
+    category === 'slippage' || (transaction.kind === 'DEPOSIT' && !canDeposit)
   const retryConfig: RecoveryConfig = {
     idleKey: 'retry',
     kind: 'RETRY',
@@ -99,13 +103,10 @@ export const RemoteFailedCta = function ({
       transaction.kind === 'DEPOSIT'
         ? 'status.returning-funds'
         : 'status.returning-share-tokens',
-    primary: category === 'slippage',
+    primary: cancelOnly,
   }
-  // A slippage retry just slips again against the frozen min-out, so offer only Cancel;
-  // for gas/unknown, Retry leads with Cancel as the escape hatch.
-  const configs =
-    category === 'slippage' ? [cancelConfig] : [retryConfig, cancelConfig]
-  const anyPending = configs.some(
+  const configs = cancelOnly ? [cancelConfig] : [retryConfig, cancelConfig]
+  const anyPending = [retryConfig, cancelConfig].some(
     c => c.mutation.isPending || (marker?.kind === c.kind && !marker.failed),
   )
 
@@ -143,17 +144,22 @@ export const RemoteFailedBanner = function ({
 }) {
   const t = useTranslations('hemi-earn.transactions.banner')
   const { category, show } = useRemoteFailedState(transaction)
+  const { canDeposit } = useCanDeposit()
 
   if (!show) {
     return null
   }
-  const variant = category === 'slippage' ? '-slippage' : ''
   const suffix = transaction?.kind === 'DEPOSIT' ? '-deposit' : ''
+  const variant = category === 'slippage' ? '-slippage' : ''
+  const subheading =
+    suffix && !canDeposit
+      ? t('remote-failed.subheading-paused-deposit')
+      : t(`remote-failed.subheading${variant}${suffix}`)
   return (
     <div className="px-4 py-6 md:px-6">
       <WarningBox
         heading={t(`remote-failed.heading${variant}${suffix}`)}
-        subheading={t(`remote-failed.subheading${variant}${suffix}`)}
+        subheading={subheading}
       />
     </div>
   )

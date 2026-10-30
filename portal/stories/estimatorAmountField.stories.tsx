@@ -4,7 +4,6 @@ import { EstimatorAmountField } from 'app/[locale]/hemi-stake/_components/estima
 import { hemi } from 'hemi-viem'
 import { hemiTokenMap } from 'hooks/useHemiToken'
 import messages from 'messages/en.json'
-import { NuqsTestingAdapter } from 'nuqs/adapters/testing'
 import { useArgs } from 'storybook/preview-api'
 import { tokenList } from 'tokenList'
 import { IntlProvider } from 'use-intl'
@@ -34,11 +33,9 @@ const meta = {
     Story => (
       <QueryClientProvider client={queryClient}>
         <IntlProvider locale="en" messages={messages}>
-          <NuqsTestingAdapter>
-            <div className="mx-auto w-full lg:max-w-[536px]">
-              <Story />
-            </div>
-          </NuqsTestingAdapter>
+          <div className="mx-auto w-full lg:max-w-[536px]">
+            <Story />
+          </div>
         </IntlProvider>
       </QueryClientProvider>
     ),

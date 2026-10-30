@@ -25,10 +25,9 @@ export const ReviewOperation = ({
         {amount}
         <div
           className="mt-4 flex flex-col gap-y-8"
-          // use this to prevent layout shift for the gray container
-          // calculate the max height depending on the number of steps
-          // and add 20px for the "total" section
-          style={{ height: `${144 * steps.length + 20}px` }}
+          // reserve the space up front so the gray container does not jump
+          // while the steps resolve
+          style={{ minHeight: `${144 * steps.length + 20}px` }}
         >
           {steps.map((stepProps, index) => (
             <Step key={index} position={index + 1} {...stepProps} />

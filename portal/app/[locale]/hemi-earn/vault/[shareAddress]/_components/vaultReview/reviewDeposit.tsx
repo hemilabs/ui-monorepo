@@ -276,9 +276,11 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         isError: isApprovalGasFeesError,
         show: mayNeedApproval,
       }),
-      status: hasSigned
-        ? (statusMap[depositStatus] ?? ProgressStatus.COMPLETED)
-        : ProgressStatus.READY,
+      status:
+        statusMap[depositStatus] ??
+        (depositOperation?.approvalTxHash === undefined
+          ? ProgressStatus.READY
+          : ProgressStatus.COMPLETED),
       txHash: depositOperation?.approvalTxHash,
     }
   }

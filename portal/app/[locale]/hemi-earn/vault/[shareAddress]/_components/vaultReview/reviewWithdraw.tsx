@@ -433,9 +433,11 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         isError: isApprovalGasFeesError,
         show: showFees,
       }),
-      status: hasSigned
-        ? (statusMap[withdrawStatus] ?? ProgressStatus.COMPLETED)
-        : ProgressStatus.READY,
+      status:
+        statusMap[withdrawStatus] ??
+        (withdrawOperation?.approvalTxHash === undefined
+          ? ProgressStatus.READY
+          : ProgressStatus.COMPLETED),
       txHash: withdrawOperation?.approvalTxHash,
     }
   }

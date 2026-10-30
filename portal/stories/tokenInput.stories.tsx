@@ -54,6 +54,7 @@ const meta = {
       mapping: { none: undefined },
       options: errorKeyOptions,
     },
+    errorMessage: { control: 'text' },
     fiatBalance: { control: false },
     fiatBalanceComponent: { control: false },
     headerAction: { control: false },
@@ -102,6 +103,15 @@ export const Default: Story = {}
 
 export const WithoutBalance: Story = {
   args: { showBalance: false },
+}
+
+export const WithErrorMessage: Story = {
+  args: {
+    errorKey: 'less-than-min-value',
+    errorMessage: 'Minimum stake is 10 HEMI',
+    showBalance: false,
+    value: '1',
+  },
 }
 
 export const WithHeaderAction: Story = {

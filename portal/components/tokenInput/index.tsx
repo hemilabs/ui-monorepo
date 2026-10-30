@@ -1,6 +1,6 @@
 import { Balance } from 'components/cryptoBalance'
 import { RenderFiatBalance } from 'components/fiatBalance'
-import { ComponentProps, ComponentType, ReactNode } from 'react'
+import { ComponentProps, ComponentType, ReactNode, useId } from 'react'
 import { Token } from 'types/token'
 import { useTranslations } from 'use-intl'
 
@@ -13,6 +13,7 @@ type Props<T extends Token> = {
   balanceLabel?: string
   disabled?: boolean
   errorKey: string | undefined
+  errorMessage?: string
   // Overrides the default fiat preview (input × token price). Use when the
   // input unit isn't directly priced and the caller has a pre-converted
   // amount in a priced token (e.g. withdraw input is in svetBTC shares,
@@ -40,6 +41,46 @@ type Props<T extends Token> = {
   value: string
 }
 
+const FiatPreview = function ({
+  amount,
+  fiatBalance,
+  fiatBalanceComponent,
+  token,
+}: {
+  amount: bigint | undefined
+  fiatBalance: { balance: bigint | undefined; token: Token } | undefined
+  fiatBalanceComponent:
+    | ComponentType<ComponentProps<typeof RenderFiatBalance>>
+    | undefined
+  token: Token
+}) {
+  const FiatBalanceComponent = fiatBalanceComponent ?? RenderFiatBalance
+  if (fiatBalance) {
+    return (
+      <FiatBalanceComponent
+        balance={fiatBalance.balance}
+        queryStatus="success"
+        token={fiatBalance.token}
+      />
+    )
+  }
+  if (amount === undefined) {
+    return null
+  }
+  return (
+    <FiatBalanceComponent
+      balance={amount}
+      queryStatus="success"
+      token={token}
+    />
+  )
+}
+
+const getErrorDescribedBy = (
+  errorId: string,
+  errorMessage: string | undefined,
+) => (errorMessage ? errorId : undefined)
+
 const getTextColor = function (value: string, errorKey: string | undefined) {
   if (value === '0' || parseFloat(value) === 0) {
     return 'text-neutral-600 focus:text-neutral-950'
@@ -55,6 +96,7 @@ export const TokenInput = function <T extends Token>({
   balanceLabel,
   disabled = false,
   errorKey,
+  errorMessage,
   fiatBalance,
   fiatBalanceComponent,
   footer,
@@ -69,8 +111,8 @@ export const TokenInput = function <T extends Token>({
   value,
 }: Props<T>) {
   const t = useTranslations('tunnel-page')
+  const errorId = useId()
   const BalanceComponent = balanceComponent ?? Balance
-  const FiatBalanceComponent = fiatBalanceComponent ?? RenderFiatBalance
   const amount = parseAmountInput(value, token)
   return (
     <div className="flex min-h-31 flex-col justify-between rounded-lg border border-solid border-transparent bg-neutral-50 p-4 font-medium text-neutral-500 hover:shadow-bs">
@@ -81,6 +123,7 @@ export const TokenInput = function <T extends Token>({
       <div className="flex items-center justify-between gap-x-2 text-sm">
         <div className="min-w-0 flex-1">
           <input
+            aria-describedby={getErrorDescribedBy(errorId, errorMessage)}
             className={`w-full bg-transparent text-4xl ${getTextColor(
               value,
               errorKey,
@@ -93,24 +136,17 @@ export const TokenInput = function <T extends Token>({
         </div>
         <div className="shrink-0">{tokenSelector}</div>
       </div>
-      {(showBalance || showFiatBalance) && (
+      {(showBalance || showFiatBalance || errorMessage) && (
         <div className="flex items-center gap-x-2 text-sm">
           {showFiatBalance && (
             <div className="flex items-center text-neutral-500">
               <span className="mr-1">$</span>
-              {fiatBalance ? (
-                <FiatBalanceComponent
-                  balance={fiatBalance.balance}
-                  queryStatus="success"
-                  token={fiatBalance.token}
-                />
-              ) : amount !== undefined ? (
-                <FiatBalanceComponent
-                  balance={amount}
-                  queryStatus="success"
-                  token={token}
-                />
-              ) : null}
+              <FiatPreview
+                amount={amount}
+                fiatBalance={fiatBalance}
+                fiatBalanceComponent={fiatBalanceComponent}
+                token={token}
+              />
             </div>
           )}
           {showBalance && (
@@ -123,6 +159,15 @@ export const TokenInput = function <T extends Token>({
               </span>
               {maxBalanceButton}
             </div>
+          )}
+          {errorMessage && (
+            <span
+              className={`${showBalance ? '' : 'ml-auto'} text-rose-500`}
+              id={errorId}
+              role="alert"
+            >
+              {errorMessage}
+            </span>
           )}
         </div>
       )}

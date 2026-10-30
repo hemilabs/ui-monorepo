@@ -266,7 +266,7 @@ export const HistoricalDepositReview = function ({
   steps.push({
     ...terminalStep,
     postAction: inTransitPostAction({
-      duration: vaultMetadata?.duration,
+      duration: vaultMetadata?.typicalDuration,
       isCrossing:
         terminalStep.status === ProgressStatus.PROGRESS &&
         !isRemoteFailed(transaction),

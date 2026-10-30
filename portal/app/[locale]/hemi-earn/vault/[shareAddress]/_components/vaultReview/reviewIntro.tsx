@@ -7,7 +7,7 @@ import { VaultDetailsLink } from './vaultDetailsLink'
 type Props = {
   operation: 'deposit' | 'withdraw'
   shareAddress: Address
-  vaultMetadata: { duration: string; operator: string } | undefined
+  vaultMetadata: { maxDuration: string; operator: string } | undefined
   vaultName: string
 }
 
@@ -23,10 +23,10 @@ export const ReviewIntro = function ({
     if (vaultMetadata === undefined) {
       return t('review-fallback')
     }
-    const { duration, operator } = vaultMetadata
+    const { maxDuration, operator } = vaultMetadata
     return operation === 'withdraw'
       ? t('withdraw.review', { operator, vaultName })
-      : t('deposit.review', { duration, operator, vaultName })
+      : t('deposit.review', { duration: maxDuration, operator, vaultName })
   }
 
   return (

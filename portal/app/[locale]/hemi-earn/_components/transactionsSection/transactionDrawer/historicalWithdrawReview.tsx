@@ -405,7 +405,7 @@ export const HistoricalWithdrawReview = function ({
     needsApproval,
     receive,
     receivePostAction: inTransitPostAction({
-      duration: vaultMetadata?.duration,
+      duration: vaultMetadata?.typicalDuration,
       isCrossing:
         receive === ProgressStatus.PROGRESS &&
         !isAwaitingFinalize(transaction) &&

@@ -608,7 +608,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         : {
             ...receiveStep,
             postAction: inTransitPostAction({
-              duration: vaultMetadata?.duration,
+              duration: vaultMetadata?.typicalDuration,
               isCrossing:
                 receiveStep.status === ProgressStatus.PROGRESS &&
                 !!settledRow &&

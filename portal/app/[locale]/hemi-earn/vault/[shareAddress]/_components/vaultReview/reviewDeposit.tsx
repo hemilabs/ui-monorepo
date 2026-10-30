@@ -367,7 +367,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         txHash: deliveryHash,
       }),
       postAction: inTransitPostAction({
-        duration: vaultMetadata?.duration,
+        duration: vaultMetadata?.typicalDuration,
         isCrossing:
           status === ProgressStatus.PROGRESS && !isRemoteFailed(settledRow),
         t,

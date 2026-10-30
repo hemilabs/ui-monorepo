@@ -16,6 +16,8 @@ import { type Hash } from 'viem'
 
 import { defaultDepositSlippage } from '../../../_constants/slippage'
 import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
+import { useVaultMetadata } from '../../../_hooks/useVaultMetadata'
+import { inTransitPostAction } from '../../../_utils/inTransit'
 import {
   getTerminalDeliveryTxHash,
   remoteFailedStepStatus,
@@ -33,6 +35,7 @@ import {
 import {
   type EarnTransaction,
   type EarnTransactionStatusType,
+  type EarnVault,
 } from '../../../types'
 import { OperatorNote } from '../../operatorDisclosure'
 import { RiskWarningBanner } from '../../riskWarningBanner'
@@ -46,6 +49,7 @@ type Props = {
   onClose: VoidFunction
   token: EvmToken
   transaction: EarnTransaction
+  vault: EarnVault
 }
 
 type Translator = ReturnType<
@@ -208,6 +212,7 @@ export const HistoricalDepositReview = function ({
   onClose,
   token,
   transaction,
+  vault,
 }: Props) {
   const t = useTranslations('hemi-earn.transactions.drawer')
 
@@ -219,6 +224,8 @@ export const HistoricalDepositReview = function ({
   })
 
   const { show: remoteFailedReady } = useRemoteFailedState(transaction)
+  const tVault = useTranslations('hemi-earn.vault.drawer')
+  const vaultMetadata = useVaultMetadata(vault.stakingVault)
 
   const { waitingForShares } = resolveStepStates(transaction)
   // Only a still-mining settlement drives PROGRESS; a failed one keeps the natural (FAILED) status + Retry CTA.
@@ -248,16 +255,24 @@ export const HistoricalDepositReview = function ({
     steps.push(buildApprovalStep(transaction.approvalTxHash, token, t))
   }
   steps.push(buildDepositStep(transaction, token, t))
-  steps.push(
-    buildTerminalStep({
-      baseStatus: waitingForShares,
-      remoteFailedReady,
-      settlementTxHash,
-      t,
-      token,
-      tx: transaction,
+  const terminalStep = buildTerminalStep({
+    baseStatus: waitingForShares,
+    remoteFailedReady,
+    settlementTxHash,
+    t,
+    token,
+    tx: transaction,
+  })
+  steps.push({
+    ...terminalStep,
+    postAction: inTransitPostAction({
+      duration: vaultMetadata?.duration,
+      isCrossing:
+        terminalStep.status === ProgressStatus.PROGRESS &&
+        !isRemoteFailed(transaction),
+      t: tVault,
     }),
-  )
+  })
 
   return (
     <Operation

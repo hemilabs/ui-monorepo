@@ -319,23 +319,29 @@
       "deposit-successful": "Deposit successful",
       "drawer": {
         "approving": "Approving {symbol}",
+        "confirm-in-wallet": "Confirm in wallet",
         "cooldown-ended": "Cooldown period complete",
         "deposit": {
           "heading": "Review deposit",
+          "review": "You're depositing into {vaultName} through Hemi Earn, operated by {operator} Your assets go from your wallet to Vetro's smart contracts, which deposit them into the vault and may bridge them between networks. Deposits can take up to {duration} to complete. Yields are variable and not guaranteed, and you may lose some or all of your deposit.",
           "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
         },
         "deposit-token": "Deposit {symbol} into vault",
         "funds-returned": "Funds returned",
         "funds-to-recover": "Funds to recover",
         "get-share-tokens": "Get share tokens",
+        "in-transit": "Your transfer is in progress between networks. This usually takes {duration} but can take longer. You can close this page; the status will update in My earn transactions.",
         "receive-token": "Receive {symbol}",
+        "review-fallback": "Review the details below before you confirm in your wallet.",
         "shares-returned": "Shares returned",
         "shares-to-recover": "Shares to recover",
+        "vault-details-and-fees": "Vault details and fees",
         "wait-cooldown-countdown": "{days, plural, =0 {Cooldown ends in {hours}h} other {Cooldown ends in #d {hours}h}}",
         "wait-cooldown-countdown-soon": "Cooldown ends in less than an hour",
         "wait-cooldown-pending": "Wait for the {days, plural, one {# day} other {# days}} cooldown period",
         "withdraw": {
           "heading": "Review withdrawal",
+          "review": "You're withdrawing from {vaultName} through Hemi Earn, operated by {operator} Withdrawals can take time to complete and may be subject to queues or lock-up periods set by the vault.",
           "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
         },
         "withdraw-token": "Withdraw {symbol} from vault"

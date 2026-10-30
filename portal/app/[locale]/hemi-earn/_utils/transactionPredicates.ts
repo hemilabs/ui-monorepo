@@ -42,6 +42,9 @@ export const isRemoteFailedCancel = (tx: EarnTransaction | undefined) =>
   isRemoteFailed(tx) &&
   remoteFailedSettlement(tx?.settlement)?.kind === 'CANCEL_REQUEST'
 
+export const isLocalSettlementInFlight = (tx: EarnTransaction | undefined) =>
+  claimRecoverSettlement(tx?.settlement)?.failed === false
+
 // A signed claim/recover reverted while the on-chain status stayed FULFILLED/CANCELLED — surface it as failed, not "needed".
 export const hasFailedSettlement = (tx: EarnTransaction) =>
   claimRecoverSettlement(tx.settlement)?.failed === true

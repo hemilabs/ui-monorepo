@@ -12,12 +12,27 @@ import { percentToBps } from '../../../../_utils/slippage'
 import { useVaultForm } from '../../_context/vaultFormContext'
 import { useDeposit } from '../../_hooks/useDeposit'
 import { useDepositShares } from '../../_hooks/useDepositShares'
-import { useDrawerQueryString } from '../../_hooks/useDrawerQueryString'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
 import { useSlippage } from '../../_hooks/useSlippage'
 import { type DepositOperationRunning } from '../../_types/operations'
 
-export const RetryDeposit = function () {
+const getLabelKey = function ({
+  isApproving,
+  isDepositing,
+  isRetry,
+}: {
+  isApproving: boolean
+  isDepositing: boolean
+  isRetry: boolean
+}) {
+  if (isApproving) return 'common.approving'
+  if (isDepositing) return 'common.depositing'
+  return isRetry
+    ? 'common.try-again'
+    : 'hemi-earn.vault.drawer.confirm-in-wallet'
+}
+
+export const ConfirmDeposit = function () {
   const [operationRunning, setOperationRunning] =
     useState<DepositOperationRunning>('idle')
 
@@ -30,7 +45,6 @@ export const RetryDeposit = function () {
     updateDepositOperation,
     vault,
   } = useVaultForm()
-  const { setDrawerQueryString } = useDrawerQueryString()
 
   const t = useTranslations()
   const depositGate = useCanDeposit()
@@ -57,12 +71,7 @@ export const RetryDeposit = function () {
     callbackFee: quote?.callbackFee ?? BigInt(0),
     input,
     on(emitter) {
-      emitter.on('user-signed-approval', () =>
-        setDrawerQueryString('depositing'),
-      )
-      emitter.on('user-signed-deposit', () =>
-        setDrawerQueryString('depositing'),
-      )
+      emitter.on('pre-approve', () => setOperationRunning('approving'))
       emitter.on('approve-transaction-reverted', () =>
         setOperationRunning('failed'),
       )
@@ -73,6 +82,11 @@ export const RetryDeposit = function () {
         setOperationRunning('failed'),
       )
       emitter.on('user-signing-deposit-error', () =>
+        setOperationRunning('failed'),
+      )
+      emitter.on('quote-failed', () => setOperationRunning('failed'))
+      emitter.on('deposit-failed', () => setOperationRunning('failed'))
+      emitter.on('deposit-failed-validation', () =>
         setOperationRunning('failed'),
       )
       emitter.on('unexpected-error', () => setOperationRunning('failed'))
@@ -91,20 +105,31 @@ export const RetryDeposit = function () {
     vault,
   })
 
+  const isApproving = operationRunning === 'approving'
   const isDepositing = operationRunning === 'depositing'
+  const isRetry = depositOperation !== undefined
 
-  const handleRetry = function (e: FormEvent) {
+  const handleSubmit = function (e: FormEvent) {
     e.preventDefault()
-    if (!depositGate.canDeposit || !quote || !shares || shares <= BigInt(0))
+    if (
+      isApproving ||
+      isDepositing ||
+      !depositGate.canDeposit ||
+      !quote ||
+      !shares ||
+      shares <= BigInt(0)
+    )
       return
     setOperationRunning('depositing')
-    runDeposit()
+    runDeposit(undefined, {
+      onError: () => setOperationRunning('idle'),
+    })
   }
 
   return (
     <form
       className="flex w-full *:w-full [&_button]:w-full"
-      onSubmit={handleRetry}
+      onSubmit={handleSubmit}
     >
       <SubmitWhenConnected
         submitButton={
@@ -116,6 +141,7 @@ export const RetryDeposit = function () {
             <Button
               disabled={
                 !depositGate.canDeposit ||
+                isApproving ||
                 isDepositing ||
                 !quote ||
                 !shares ||
@@ -123,7 +149,7 @@ export const RetryDeposit = function () {
               }
               size="small"
             >
-              {t(isDepositing ? 'common.depositing' : 'common.try-again')}
+              {t(getLabelKey({ isApproving, isDepositing, isRetry }))}
             </Button>
           </Tooltip>
         }

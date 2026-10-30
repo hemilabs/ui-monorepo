@@ -19,6 +19,11 @@ import { defaultRedeemSlippage } from '../../../_constants/slippage'
 import { useCooldownDuration } from '../../../_hooks/useCooldownDuration'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
+import { useVaultMetadata } from '../../../_hooks/useVaultMetadata'
+import {
+  inTransitPostAction,
+  isCrossingNetworks,
+} from '../../../_utils/inTransit'
 import { claimRecoverSettlement } from '../../../_utils/settlement'
 import {
   getTerminalDeliveryTxHash,
@@ -26,9 +31,11 @@ import {
   resolveSettleStepStatus,
 } from '../../../_utils/settleUi'
 import {
+  isAwaitingFinalize,
   isEarnRowTerminal,
   isFinalizeInFlight,
   isLocalEarnTransactionRow,
+  isLocalSettlementInFlight,
   isRecoverPath,
   isRemoteFailed,
   isRemoteFailedCancel,
@@ -236,6 +243,7 @@ function buildSteps({
   cooldownPostAction,
   needsApproval,
   receive,
+  receivePostAction,
   receiveToken,
   settlementTxHash,
   t,
@@ -245,6 +253,7 @@ function buildSteps({
   cooldownPostAction: ReturnType<typeof deriveCooldownPostAction>
   needsApproval: boolean
   receive: ProgressStatusType
+  receivePostAction: ReturnType<typeof inTransitPostAction>
   receiveToken: EvmToken | undefined
   settlementTxHash: Hash | undefined
   t: Translator
@@ -292,15 +301,16 @@ function buildSteps({
       : withdrawStep,
   )
   if (receiveToken) {
-    steps.push(
-      buildReceiveStep({
+    steps.push({
+      ...buildReceiveStep({
         receiveToken,
         settlementTxHash,
         status: receive,
         t,
         tx: transaction,
       }),
-    )
+      postAction: receivePostAction,
+    })
   }
   return steps
 }
@@ -314,6 +324,7 @@ export const HistoricalWithdrawReview = function ({
   const t = useTranslations('hemi-earn.transactions.drawer')
   // Cooldown copy is shared with the live vault review — reuse the vault.drawer namespace instead of duplicating keys.
   const tCooldown = useTranslations('hemi-earn.vault.drawer')
+  const vaultMetadata = useVaultMetadata(vault.stakingVault)
   const { address } = useAccount()
 
   // useToken returns Token | undefined; for the Hemi-side asset it's always an EvmToken.
@@ -397,6 +408,16 @@ export const HistoricalWithdrawReview = function ({
     cooldownPostAction,
     needsApproval,
     receive,
+    receivePostAction: inTransitPostAction({
+      duration: vaultMetadata?.typicalDuration,
+      isCrossing: isCrossingNetworks({
+        isAwaitingCooldown: isAwaitingFinalize(transaction),
+        isRemoteFail: isRemoteFailed(transaction),
+        isSettlingLocally: isLocalSettlementInFlight(transaction),
+        isStepInProgress: receive === ProgressStatus.PROGRESS,
+      }),
+      t: tCooldown,
+    }),
     receiveToken,
     settlementTxHash,
     t,

@@ -319,23 +319,29 @@
       "deposit-successful": "Depósito realizado com sucesso",
       "drawer": {
         "approving": "Aprovando {symbol}",
+        "confirm-in-wallet": "Confirme na carteira",
         "cooldown-ended": "Período de espera concluído",
         "deposit": {
           "heading": "Revisar depósito",
+          "review": "Você está depositando em {vaultName} através do Hemi Earn, operado por {operator} Seus ativos vão da sua carteira para os contratos inteligentes da Vetro, que os depositam no fundo e podem transferi-los entre redes. Os depósitos podem levar até {duration} para serem concluídos. Os rendimentos são variáveis e não garantidos, e você pode perder parte ou todo o seu depósito.",
           "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
         },
         "deposit-token": "Depositar {symbol} no fundo",
         "funds-returned": "Fundos devolvidos",
         "funds-to-recover": "Fundos a recuperar",
         "get-share-tokens": "Receber share tokens",
+        "in-transit": "Sua transferência está em andamento entre redes. Isso costuma levar {duration}, mas pode demorar mais. Você pode fechar esta página; o status será atualizado em Minhas transações de earn.",
         "receive-token": "Receber {symbol}",
+        "review-fallback": "Revise os detalhes abaixo antes de confirmar na sua carteira.",
         "shares-returned": "Shares devolvidas",
         "shares-to-recover": "Shares a recuperar",
+        "vault-details-and-fees": "Detalhes e taxas do fundo",
         "wait-cooldown-countdown": "{days, plural, =0 {O período de espera termina em {hours}h} other {O período de espera termina em #d {hours}h}}",
         "wait-cooldown-countdown-soon": "O período de espera termina em menos de uma hora",
         "wait-cooldown-pending": "O período de espera é de {days, plural, one {# dia} other {# dias}}",
         "withdraw": {
           "heading": "Revisar saque",
+          "review": "Você está sacando de {vaultName} através do Hemi Earn, operado por {operator} Os saques podem levar tempo para serem concluídos e podem estar sujeitos a filas ou períodos de bloqueio definidos pelo fundo.",
           "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
         },
         "withdraw-token": "Sacar {symbol} do fundo"

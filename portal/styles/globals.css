@@ -182,7 +182,7 @@ input[type='range']:active::-moz-range-thumb {
 }
 
 .hoverable-text {
-  @apply text-orange-600 hover:text-orange-700;
+  @apply text-orange-600 [&:not(:disabled)]:hover:text-orange-700;
 }
 
 .toast-position {

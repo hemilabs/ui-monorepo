@@ -20,7 +20,10 @@ import { useCooldownDuration } from '../../../_hooks/useCooldownDuration'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
 import { useVaultMetadata } from '../../../_hooks/useVaultMetadata'
-import { inTransitPostAction } from '../../../_utils/inTransit'
+import {
+  inTransitPostAction,
+  isCrossingNetworks,
+} from '../../../_utils/inTransit'
 import { claimRecoverSettlement } from '../../../_utils/settlement'
 import {
   getTerminalDeliveryTxHash,
@@ -28,10 +31,11 @@ import {
   resolveSettleStepStatus,
 } from '../../../_utils/settleUi'
 import {
-  isEarnRowTerminal,
   isAwaitingFinalize,
+  isEarnRowTerminal,
   isFinalizeInFlight,
   isLocalEarnTransactionRow,
+  isLocalSettlementInFlight,
   isRecoverPath,
   isRemoteFailed,
   isRemoteFailedCancel,
@@ -406,10 +410,12 @@ export const HistoricalWithdrawReview = function ({
     receive,
     receivePostAction: inTransitPostAction({
       duration: vaultMetadata?.typicalDuration,
-      isCrossing:
-        receive === ProgressStatus.PROGRESS &&
-        !isAwaitingFinalize(transaction) &&
-        !isRemoteFailed(transaction),
+      isCrossing: isCrossingNetworks({
+        isAwaitingCooldown: isAwaitingFinalize(transaction),
+        isRemoteFail: isRemoteFailed(transaction),
+        isSettlingLocally: isLocalSettlementInFlight(transaction),
+        isStepInProgress: receive === ProgressStatus.PROGRESS,
+      }),
       t: tCooldown,
     }),
     receiveToken,

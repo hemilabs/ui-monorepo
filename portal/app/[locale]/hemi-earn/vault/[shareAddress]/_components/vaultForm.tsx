@@ -9,14 +9,19 @@ import { Deposit } from './deposit'
 import { VaultReview } from './vaultReview'
 import { Withdraw } from './withdraw'
 
-const SideDrawer = function () {
+const drawerModeByTab = {
+  deposit: 'depositing',
+  withdraw: 'withdrawing',
+} as const
+
+const SideDrawer = function ({ activeTab }: { activeTab: VaultOperation }) {
   const { drawerMode, setDrawerQueryString } = useDrawerQueryString()
   const { depositOperation, input, withdrawOperation } = useVaultForm()
 
   const hasSomethingToReview =
     !!depositOperation || !!withdrawOperation || Number(input) > 0
 
-  if (!drawerMode || !hasSomethingToReview) {
+  if (drawerMode !== drawerModeByTab[activeTab] || !hasSomethingToReview) {
     return null
   }
 
@@ -56,7 +61,7 @@ export const VaultForm = function () {
         <Withdraw onSwitchToDeposit={switchToDeposit} />
       )}
       <Suspense>
-        <SideDrawer />
+        <SideDrawer activeTab={activeTab} />
       </Suspense>
     </>
   )

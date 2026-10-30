@@ -51,6 +51,7 @@ import { WithdrawShareBalance } from './withdrawShareBalance'
 
 const inFlightStatuses: WithdrawStatusType[] = [
   WithdrawStatus.APPROVAL_TX_PENDING,
+  WithdrawStatus.APPROVAL_TX_COMPLETED,
   WithdrawStatus.WITHDRAW_TX_PENDING,
 ]
 

@@ -36,7 +36,10 @@ import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperation
 import { useRemoteFailedState } from '../../../../_hooks/useRemoteFailedState'
 import { useVaultMetadata } from '../../../../_hooks/useVaultMetadata'
 import { hashesMatch } from '../../../../_utils/hashes'
-import { inTransitPostAction } from '../../../../_utils/inTransit'
+import {
+  inTransitPostAction,
+  isCrossingNetworks,
+} from '../../../../_utils/inTransit'
 import {
   enrichWithSettlement,
   findLocalSettlement,
@@ -47,6 +50,7 @@ import {
   resolveStepExplorerChainId,
 } from '../../../../_utils/settleUi'
 import {
+  isLocalSettlementInFlight,
   isRecoverPath,
   isRemoteFailed,
   isRemoteFailedCancel,
@@ -368,8 +372,11 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       }),
       postAction: inTransitPostAction({
         duration: vaultMetadata?.typicalDuration,
-        isCrossing:
-          status === ProgressStatus.PROGRESS && !isRemoteFailed(settledRow),
+        isCrossing: isCrossingNetworks({
+          isRemoteFail: isRemoteFailed(settledRow),
+          isSettlingLocally: isLocalSettlementInFlight(settledRow),
+          isStepInProgress: status === ProgressStatus.PROGRESS,
+        }),
         t,
       }),
       status,

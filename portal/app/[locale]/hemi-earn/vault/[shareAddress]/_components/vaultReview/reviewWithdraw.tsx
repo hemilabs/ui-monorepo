@@ -40,7 +40,10 @@ import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperation
 import { useRemoteFailedState } from '../../../../_hooks/useRemoteFailedState'
 import { useVaultMetadata } from '../../../../_hooks/useVaultMetadata'
 import { hashesMatch } from '../../../../_utils/hashes'
-import { inTransitPostAction } from '../../../../_utils/inTransit'
+import {
+  inTransitPostAction,
+  isCrossingNetworks,
+} from '../../../../_utils/inTransit'
 import {
   claimRecoverSettlement,
   enrichWithSettlement,
@@ -54,6 +57,7 @@ import {
 import {
   isAwaitingFinalize,
   isFinalizeInFlight,
+  isLocalSettlementInFlight,
   isRecoverPath,
   isRemoteFailed,
   isRemoteFailedCancel,
@@ -609,10 +613,14 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
             ...receiveStep,
             postAction: inTransitPostAction({
               duration: vaultMetadata?.typicalDuration,
-              isCrossing:
-                receiveStep.status === ProgressStatus.PROGRESS &&
-                !!settledRow &&
-                !isAwaitingFinalize(settledRow),
+              isCrossing: isCrossingNetworks({
+                isAwaitingCooldown:
+                  !settledRow || isAwaitingFinalize(settledRow),
+                isRemoteFail: isRemoteFailed(settledRow),
+                isSettlingLocally: isLocalSettlementInFlight(settledRow),
+                isStepInProgress:
+                  receiveStep.status === ProgressStatus.PROGRESS,
+              }),
               t,
             }),
           },

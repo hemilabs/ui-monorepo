@@ -17,7 +17,10 @@ import { type Hash } from 'viem'
 import { defaultDepositSlippage } from '../../../_constants/slippage'
 import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
 import { useVaultMetadata } from '../../../_hooks/useVaultMetadata'
-import { inTransitPostAction } from '../../../_utils/inTransit'
+import {
+  inTransitPostAction,
+  isCrossingNetworks,
+} from '../../../_utils/inTransit'
 import {
   getTerminalDeliveryTxHash,
   remoteFailedStepStatus,
@@ -26,6 +29,7 @@ import {
 import {
   canRetryRow,
   isLocalEarnTransactionRow,
+  isLocalSettlementInFlight,
   isRecoverPath,
   isRemoteFailed,
   isRemoteFailedCancel,
@@ -267,9 +271,11 @@ export const HistoricalDepositReview = function ({
     ...terminalStep,
     postAction: inTransitPostAction({
       duration: vaultMetadata?.typicalDuration,
-      isCrossing:
-        terminalStep.status === ProgressStatus.PROGRESS &&
-        !isRemoteFailed(transaction),
+      isCrossing: isCrossingNetworks({
+        isRemoteFail: isRemoteFailed(transaction),
+        isSettlingLocally: isLocalSettlementInFlight(transaction),
+        isStepInProgress: terminalStep.status === ProgressStatus.PROGRESS,
+      }),
       t: tVault,
     }),
   })

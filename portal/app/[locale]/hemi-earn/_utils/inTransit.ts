@@ -1,6 +1,19 @@
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type useTranslations } from 'use-intl'
 
+export const isCrossingNetworks = ({
+  isAwaitingCooldown = false,
+  isRemoteFail,
+  isSettlingLocally,
+  isStepInProgress,
+}: {
+  isAwaitingCooldown?: boolean
+  isRemoteFail: boolean
+  isSettlingLocally: boolean
+  isStepInProgress: boolean
+}) =>
+  isStepInProgress && !isRemoteFail && !isSettlingLocally && !isAwaitingCooldown
+
 export const inTransitPostAction = ({
   duration,
   isCrossing,

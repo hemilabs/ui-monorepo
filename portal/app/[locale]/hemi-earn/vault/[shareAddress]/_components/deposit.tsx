@@ -44,6 +44,7 @@ type Props = {
 
 const inFlightStatuses: DepositStatusType[] = [
   DepositStatus.APPROVAL_TX_PENDING,
+  DepositStatus.APPROVAL_TX_COMPLETED,
   DepositStatus.DEPOSIT_TX_PENDING,
 ]
 

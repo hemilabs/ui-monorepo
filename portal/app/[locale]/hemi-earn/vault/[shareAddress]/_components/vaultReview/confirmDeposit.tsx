@@ -84,6 +84,11 @@ export const ConfirmDeposit = function () {
       emitter.on('user-signing-deposit-error', () =>
         setOperationRunning('failed'),
       )
+      emitter.on('quote-failed', () => setOperationRunning('failed'))
+      emitter.on('deposit-failed', () => setOperationRunning('failed'))
+      emitter.on('deposit-failed-validation', () =>
+        setOperationRunning('failed'),
+      )
       emitter.on('unexpected-error', () => setOperationRunning('failed'))
       emitter.on('deposit-transaction-succeeded', function () {
         setOperationRunning('idle')
@@ -106,7 +111,14 @@ export const ConfirmDeposit = function () {
 
   const handleSubmit = function (e: FormEvent) {
     e.preventDefault()
-    if (!depositGate.canDeposit || !quote || !shares || shares <= BigInt(0))
+    if (
+      isApproving ||
+      isDepositing ||
+      !depositGate.canDeposit ||
+      !quote ||
+      !shares ||
+      shares <= BigInt(0)
+    )
       return
     setOperationRunning('depositing')
     runDeposit(undefined, {

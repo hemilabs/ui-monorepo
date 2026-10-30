@@ -85,6 +85,11 @@ export const ConfirmWithdraw = function ({ shares }: { shares: bigint }) {
       emitter.on('user-signing-withdraw-error', () =>
         setOperationRunning('failed'),
       )
+      emitter.on('quote-failed', () => setOperationRunning('failed'))
+      emitter.on('withdraw-failed', () => setOperationRunning('failed'))
+      emitter.on('withdraw-failed-validation', () =>
+        setOperationRunning('failed'),
+      )
       emitter.on('unexpected-error', () => setOperationRunning('failed'))
       emitter.on('withdraw-transaction-succeeded', function () {
         setOperationRunning('idle')
@@ -110,7 +115,7 @@ export const ConfirmWithdraw = function ({ shares }: { shares: bigint }) {
 
   const handleSubmit = function (e: FormEvent) {
     e.preventDefault()
-    if (!canSubmit) return
+    if (isApproving || isWithdrawing || !canSubmit) return
     setOperationRunning('withdrawing')
     runWithdraw(undefined, {
       onError: () => setOperationRunning('idle'),

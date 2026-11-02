@@ -93,8 +93,8 @@ function enableSentry() {
       graphQL: { document: false, variables: false },
       httpBodies: [],
       httpHeaders: {
-        request: { deny: ['forwarded', '-ip', 'remote-', 'via', '-user'] },
-        response: { deny: ['forwarded', '-ip', 'remote-', 'via', '-user'] },
+        request: { allow: ['referer', 'user-agent'] },
+        response: false,
       },
       queues: false,
       urlQueryParams: { deny: ['forwarded', '-ip', 'remote-', 'via', '-user'] },

@@ -1,16 +1,13 @@
-import { Balance } from 'components/cryptoBalance'
 import { RenderFiatBalance } from 'components/fiatBalance'
 import { ComponentProps, ComponentType, ReactNode, useId } from 'react'
 import { Token } from 'types/token'
-import { useTranslations } from 'use-intl'
 
 import { isInputError, parseAmountInput } from './utils'
 
 type Props<T extends Token> = {
-  balanceComponent?: ComponentType<{
-    token: T
-  }>
-  balanceLabel?: string
+  // Rendered at the right of the fiat row, and replaced by `errorMessage`
+  // when there is one. Holds the balance through `TokenInputBalance`.
+  bottomRight?: ReactNode
   disabled?: boolean
   errorKey: string | undefined
   errorMessage?: string
@@ -32,9 +29,7 @@ type Props<T extends Token> = {
   // Rendered at the right of the label row (e.g. the Hemi Earn settings gear).
   headerAction?: ReactNode
   label: string
-  maxBalanceButton?: ReactNode
   onChange: (value: string) => void
-  showBalance?: boolean
   showFiatBalance?: boolean
   token: T
   tokenSelector: ReactNode
@@ -76,11 +71,6 @@ const FiatPreview = function ({
   )
 }
 
-const getErrorDescribedBy = (
-  errorId: string,
-  errorMessage: string | undefined,
-) => (errorMessage ? errorId : undefined)
-
 const getTextColor = function (value: string, errorKey: string | undefined) {
   if (value === '0' || parseFloat(value) === 0) {
     return 'text-neutral-600 focus:text-neutral-950'
@@ -92,8 +82,7 @@ const getTextColor = function (value: string, errorKey: string | undefined) {
 }
 
 export const TokenInput = function <T extends Token>({
-  balanceComponent,
-  balanceLabel,
+  bottomRight,
   disabled = false,
   errorKey,
   errorMessage,
@@ -102,18 +91,15 @@ export const TokenInput = function <T extends Token>({
   footer,
   headerAction,
   label,
-  maxBalanceButton,
   onChange,
-  showBalance = true,
   showFiatBalance = true,
   token,
   tokenSelector,
   value,
 }: Props<T>) {
-  const t = useTranslations('tunnel-page')
   const errorId = useId()
-  const BalanceComponent = balanceComponent ?? Balance
   const amount = parseAmountInput(value, token)
+  const hasInputError = errorKey !== undefined && isInputError(errorKey)
   return (
     <div className="flex min-h-31 flex-col justify-between rounded-lg border border-solid border-transparent bg-neutral-50 p-4 font-medium text-neutral-500 hover:shadow-bs">
       <div className="flex items-center justify-between gap-x-2">
@@ -123,7 +109,8 @@ export const TokenInput = function <T extends Token>({
       <div className="flex items-center justify-between gap-x-2 text-sm">
         <div className="min-w-0 flex-1">
           <input
-            aria-describedby={getErrorDescribedBy(errorId, errorMessage)}
+            aria-describedby={errorMessage ? errorId : undefined}
+            aria-invalid={hasInputError}
             className={`w-full bg-transparent text-4xl ${getTextColor(
               value,
               errorKey,
@@ -136,7 +123,7 @@ export const TokenInput = function <T extends Token>({
         </div>
         <div className="shrink-0">{tokenSelector}</div>
       </div>
-      {(showBalance || showFiatBalance || errorMessage) && (
+      {(showFiatBalance || bottomRight || errorMessage) && (
         <div className="flex items-center gap-x-2 text-sm">
           {showFiatBalance && (
             <div className="flex items-center text-neutral-500">
@@ -149,26 +136,12 @@ export const TokenInput = function <T extends Token>({
               />
             </div>
           )}
-          {showBalance && (
-            <div className="ml-auto flex items-center justify-end gap-x-2 whitespace-nowrap">
-              <span className="text-neutral-500">
-                {balanceLabel ?? t('form.balance')}:
-              </span>
-              <span className="text-neutral-950">
-                <BalanceComponent token={token} />
-              </span>
-              {maxBalanceButton}
-            </div>
-          )}
-          {errorMessage && (
-            <span
-              className={`${showBalance ? '' : 'ml-auto'} text-rose-500`}
-              id={errorId}
-              role="alert"
-            >
+          <div className="ml-auto">
+            <span aria-live="polite" className="text-rose-500" id={errorId}>
               {errorMessage}
             </span>
-          )}
+            {!errorMessage && bottomRight}
+          </div>
         </div>
       )}
       {footer}

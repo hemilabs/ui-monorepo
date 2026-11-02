@@ -12,6 +12,7 @@
     "approving": "Approving...",
     "approving-token": "Approving {symbol}",
     "apy": "APY",
+    "balance": "Balance",
     "cancel": "Cancel",
     "close": "Close",
     "close-notification": "Close notification",
@@ -703,7 +704,6 @@
   },
   "tunnel-page": {
     "form": {
-      "balance": "Balance",
       "bitcoin-receiving-address": "Receiving Bitcoin address",
       "bitcoin-receiving-address-description": "Withdrawn {symbol} is sent to the address of your connected Bitcoin wallet, or to the custom address you enter.",
       "custom-address": "Custom address",

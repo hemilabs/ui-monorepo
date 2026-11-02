@@ -323,7 +323,7 @@
         "cooldown-ended": "Cooldown period complete",
         "deposit": {
           "heading": "Review deposit",
-          "review": "You're depositing into {vaultName} through Hemi Earn, operated by {operator} Your assets go from your wallet to Vetro's smart contracts, which deposit them into the vault and may bridge them between networks. Deposits can take up to {duration} to complete. Yields are variable and not guaranteed, and you may lose some or all of your deposit.",
+          "review": "You're depositing into {vaultName} through Hemi Earn, operated by Vetro Service & Support Corp. Your assets go from your wallet to Vetro's smart contracts, which deposit them into the vault and may bridge them between networks. Deposits can take up to {duration} to complete. Yields are variable and not guaranteed, and you may lose some or all of your deposit.",
           "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
         },
         "deposit-token": "Deposit {symbol} into vault",
@@ -341,7 +341,7 @@
         "wait-cooldown-pending": "Wait for the {days, plural, one {# day} other {# days}} cooldown period",
         "withdraw": {
           "heading": "Review withdrawal",
-          "review": "You're withdrawing from {vaultName} through Hemi Earn, operated by {operator} Withdrawals can take time to complete and may be subject to queues or lock-up periods set by the vault.",
+          "review": "You're withdrawing from {vaultName} through Hemi Earn, operated by Vetro Service & Support Corp. Withdrawals can take time to complete and may be subject to queues or lock-up periods set by the vault.",
           "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
         },
         "withdraw-token": "Withdraw {symbol} from vault"

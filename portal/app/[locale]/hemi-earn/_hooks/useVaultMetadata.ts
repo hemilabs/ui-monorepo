@@ -18,7 +18,6 @@ export const useVaultMetadata = function (stakingVault: Address) {
               metadata.typicalTransferTime * maxTransferTimeFactor,
               locale,
             ),
-            operator: metadata.operator,
             typicalDuration: formatDuration(
               metadata.typicalTransferTime,
               locale,

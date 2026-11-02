@@ -323,7 +323,7 @@
         "cooldown-ended": "Período de espera completado",
         "deposit": {
           "heading": "Revisar depósito",
-          "review": "Está depositando en {vaultName} a través de Hemi Earn, operado por {operator} Sus activos van de su billetera a los contratos inteligentes de Vetro, que los depositan en el fondo y pueden transferirlos entre redes. Los depósitos pueden tardar hasta {duration} en completarse. Los rendimientos son variables y no están garantizados, y podría perder parte o la totalidad de su depósito.",
+          "review": "Está depositando en {vaultName} a través de Hemi Earn, operado por Vetro Service & Support Corp. Sus activos van de su billetera a los contratos inteligentes de Vetro, que los depositan en el fondo y pueden transferirlos entre redes. Los depósitos pueden tardar hasta {duration} en completarse. Los rendimientos son variables y no están garantizados, y podría perder parte o la totalidad de su depósito.",
           "subheading": "Su transacción ha sido enviada y está esperando confirmación en la blockchain."
         },
         "deposit-token": "Depositar {symbol} en el fondo",
@@ -341,7 +341,7 @@
         "wait-cooldown-pending": "El período de espera es de {days, plural, one {# día} other {# días}}",
         "withdraw": {
           "heading": "Revisar retiro",
-          "review": "Está retirando de {vaultName} a través de Hemi Earn, operado por {operator} Los retiros pueden tardar en completarse y pueden estar sujetos a colas o períodos de bloqueo establecidos por el fondo.",
+          "review": "Está retirando de {vaultName} a través de Hemi Earn, operado por Vetro Service & Support Corp. Los retiros pueden tardar en completarse y pueden estar sujetos a colas o períodos de bloqueo establecidos por el fondo.",
           "subheading": "Su transacción ha sido enviada y está esperando confirmación en la blockchain."
         },
         "withdraw-token": "Retirar {symbol} del fondo"

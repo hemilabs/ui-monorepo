@@ -2,6 +2,7 @@ import { useQueries } from '@tanstack/react-query'
 import Big from 'big.js'
 import { getTokenPrice } from 'utils/token'
 
+import { isVetroApiConfigured } from '../_constants/vetro'
 import { sharesToPeggedOptions } from '../_fetchers/fetchSharesToPegged'
 import { positionEarnedUsd } from '../_utils/earnedAmount'
 import { inTransitOnlyPositions } from '../_utils/earnRows'
@@ -15,6 +16,23 @@ import { useInTransitShares } from './useInTransitShares'
 // Total earned = Σ (convertToAssets(shares) − cost basis) per position, priced.
 // Cost basis (Vetro-parity, unrealized) comes from the earn-cost-basis endpoint;
 // the current value reuses the same shares→pegged→USD path as useTotalDeposits.
+const resolveIsError = ({
+  hasPeggedError,
+  hasRows,
+  isCostBasisError,
+  isPositionsError,
+  isPricesError,
+}: {
+  hasPeggedError: boolean
+  hasRows: boolean
+  isCostBasisError: boolean
+  isPositionsError: boolean
+  isPricesError: boolean
+}) =>
+  isPositionsError ||
+  (hasRows && (isPricesError || isCostBasisError || !isVetroApiConfigured)) ||
+  hasPeggedError
+
 export const useEarnedAmount = function () {
   const {
     data: positions = [],
@@ -74,10 +92,13 @@ export const useEarnedAmount = function () {
     isInTransitPending ||
     (hasRows && (isPricesPending || isCostBasisLoading)) ||
     peggedAmountQueries.some(q => q.isPending && q.isFetching)
-  const isError =
-    isPositionsError ||
-    (hasRows && (isPricesError || isCostBasisError)) ||
-    peggedAmountQueries.some(q => q.isError)
+  const isError = resolveIsError({
+    hasPeggedError: peggedAmountQueries.some(q => q.isError),
+    hasRows,
+    isCostBasisError,
+    isPositionsError,
+    isPricesError,
+  })
 
   return { data: { totalUsd }, isError, isPending }
 }

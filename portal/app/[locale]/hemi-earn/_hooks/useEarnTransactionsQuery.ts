@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useAccount } from 'wagmi'
 
+import { isVetroApiConfigured, vetroApiUrl } from '../_constants/vetro'
 import {
   earnTransactionsKeyPrefix,
   fetchEarnTransactions,
@@ -20,8 +21,9 @@ export const useEarnTransactionsQuery = function () {
   const { localOperations } = useLocalEarnOperations()
 
   return useQuery({
-    enabled: !!address && networkType === 'mainnet',
-    queryFn: () => fetchEarnTransactions({ account: address! }),
+    enabled: isVetroApiConfigured && !!address && networkType === 'mainnet',
+    queryFn: () =>
+      fetchEarnTransactions({ account: address!, apiUrl: vetroApiUrl! }),
     queryKey: [...earnTransactionsKeyPrefix, networkType, address],
     refetchInterval(query) {
       const transactions = (query.state.data ?? []) as EarnTransaction[]
@@ -29,5 +31,6 @@ export const useEarnTransactionsQuery = function () {
         ? 10_000
         : false
     },
+    retry: 2,
   })
 }

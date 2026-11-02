@@ -1,21 +1,23 @@
 import fetchPlusPlus from 'fetch-plus-plus'
-import { hemi } from 'hemi-viem'
 import { type Address } from 'viem'
 
 import { type EarnTransaction } from '../types'
 
 export const earnTransactionsKeyPrefix = ['hemi-earn', 'transactions'] as const
 
-const getEarnRequestsUrl = (account: Address) =>
-  `${import.meta.env.VITE_PORTAL_API_URL}/subgraphs/${hemi.id}/earn-requests/${account}`
-
 export const fetchEarnTransactions = async function ({
   account,
+  apiUrl,
 }: {
   account: Address
+  apiUrl: string
 }): Promise<EarnTransaction[]> {
-  const { requests } = (await fetchPlusPlus(getEarnRequestsUrl(account), {
-    method: 'GET',
-  })) as { requests: EarnTransaction[] }
+  const { requests } = (await fetchPlusPlus(
+    `${apiUrl}/hemi-earn/requests/${account}`,
+    { method: 'GET' },
+  )) as { requests: EarnTransaction[] | undefined }
+  if (requests === undefined) {
+    throw new Error('Hemi Earn requests response is missing requests')
+  }
   return requests
 }

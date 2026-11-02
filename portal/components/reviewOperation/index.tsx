@@ -5,6 +5,7 @@ import { CallToActionContainer } from './callToActionContainer'
 import { Step, type StepPropsWithoutPosition } from './step'
 
 type Props = {
+  aboveAmount?: ReactNode
   aboveCallToAction?: ReactNode
   amount: ReactNode
   bottomSection?: ReactNode
@@ -13,6 +14,7 @@ type Props = {
 }
 
 export const ReviewOperation = ({
+  aboveAmount,
   aboveCallToAction,
   amount,
   bottomSection,
@@ -22,6 +24,7 @@ export const ReviewOperation = ({
   <>
     <div className="skip-parent-padding-x mt-3 flex min-h-0 flex-1 flex-col overflow-y-auto">
       <DrawerSection>
+        {!!aboveAmount && <div className="mb-4">{aboveAmount}</div>}
         {amount}
         <div
           className="mt-4 flex flex-col gap-y-8"

@@ -1,9 +1,11 @@
+import { hemiEarnVaults } from '@vetro-protocol/earn/hemiEarn'
 import { type Address } from 'viem'
 import { describe, expect, it } from 'vitest'
 
 import {
   findVaultByAsset,
   findVaultByShare,
+  findVaultMetadata,
 } from '../../../../../app/[locale]/hemi-earn/_utils/vaults'
 import { type EarnVault } from '../../../../../app/[locale]/hemi-earn/types'
 
@@ -42,6 +44,40 @@ describe('vaults', function () {
 
     it('findVaultByShare returns undefined for an unknown share', function () {
       expect(findVaultByShare(vaults, unknown)).toBeUndefined()
+    })
+  })
+
+  describe('findVaultMetadata', function () {
+    it('returns the entry whose address was asked for, not just any entry', function () {
+      // A `find` that ignored its predicate would still satisfy a per-element equality check.
+      const found = hemiEarnVaults.map(vault =>
+        findVaultMetadata(vault.address),
+      )
+      expect(found.map(vault => vault?.address)).toEqual(
+        hemiEarnVaults.map(vault => vault.address),
+      )
+      expect(new Set(found).size).toBe(hemiEarnVaults.length)
+    })
+
+    it('exposes the operator and transfer time the drawer copy needs', function () {
+      const [{ address, operator, typicalTransferTime }] = hemiEarnVaults
+      expect(findVaultMetadata(address)).toMatchObject({
+        operator,
+        typicalTransferTime,
+      })
+    })
+
+    it('matches regardless of address casing', function () {
+      const [{ address }] = hemiEarnVaults
+      expect(findVaultMetadata(address.toLowerCase() as Address)?.address).toBe(
+        address,
+      )
+    })
+
+    it('returns undefined for an address that is not a staking vault', function () {
+      expect(
+        findVaultMetadata('0x0000000000000000000000000000000000009999'),
+      ).toBeUndefined()
     })
   })
 })

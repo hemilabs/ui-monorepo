@@ -30,7 +30,8 @@ const resolveIsError = ({
   isPricesError: boolean
 }) =>
   isPositionsError ||
-  (hasRows && (isPricesError || isCostBasisError || !isVetroApiConfigured)) ||
+  !isVetroApiConfigured ||
+  (hasRows && (isPricesError || isCostBasisError)) ||
   hasPeggedError
 
 export const useEarnedAmount = function () {

@@ -86,7 +86,20 @@ function enableSentry() {
     beforeBreadcrumb: breadcrumb => scrubAddresses(breadcrumb),
     beforeSend: event => scrubAddresses(event),
     beforeSendSpan: span => scrubAddresses(span),
-    beforeSendTransaction: event => scrubAddresses(event),
+    dataCollection: {
+      cookies: false,
+      databaseQueryData: false,
+      genAI: { inputs: false, outputs: false },
+      graphQL: { document: false, variables: false },
+      httpBodies: [],
+      httpHeaders: {
+        request: { deny: ['forwarded', '-ip', 'remote-', 'via', '-user'] },
+        response: { deny: ['forwarded', '-ip', 'remote-', 'via', '-user'] },
+      },
+      queues: false,
+      urlQueryParams: { deny: ['forwarded', '-ip', 'remote-', 'via', '-user'] },
+      userInfo: false,
+    },
     denyUrls: [
       // Filter all Wallet Connect related urls
       /(https|wss):\/\/.*\.walletconnect\.(com|org)/,

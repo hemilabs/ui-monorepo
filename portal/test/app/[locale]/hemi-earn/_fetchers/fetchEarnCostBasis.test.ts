@@ -17,26 +17,17 @@ describe('fetchEarnCostBasis', function () {
 
     expect(fetch).toHaveBeenCalledWith(
       `https://vetro.test/hemi-earn/cost-basis/${account}`,
-      { method: 'GET' },
+      { cache: 'no-store', method: 'GET' },
     )
   })
 
-  it('lowercases the checksummed share address the API keys by', async function () {
+  it('keeps the checksummed share address the API keys by', async function () {
     vi.mocked(fetch).mockResolvedValue({
       costBasis: { [checksummedShare]: '1010000000000000000' },
     })
 
     expect(await fetchEarnCostBasis({ account, apiUrl })).toEqual({
-      [checksummedShare.toLowerCase()]: '1010000000000000000',
-    })
-  })
-
-  it('leaves a key that is already lowercase alone', async function () {
-    const share = checksummedShare.toLowerCase()
-    vi.mocked(fetch).mockResolvedValue({ costBasis: { [share]: '1' } })
-
-    expect(await fetchEarnCostBasis({ account, apiUrl })).toEqual({
-      [share]: '1',
+      [checksummedShare]: '1010000000000000000',
     })
   })
 
@@ -46,7 +37,7 @@ describe('fetchEarnCostBasis', function () {
     })
 
     expect(await fetchEarnCostBasis({ account, apiUrl })).toEqual({
-      [checksummedShare.toLowerCase()]: '0.5',
+      [checksummedShare]: '0.5',
     })
   })
 

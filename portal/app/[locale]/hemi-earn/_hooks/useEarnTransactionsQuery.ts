@@ -12,9 +12,9 @@ import { type EarnTransaction } from '../types'
 
 import { useLocalEarnOperations } from './useLocalEarnOperations'
 
-// Raw subgraph query shared by useEarnTransactions (merge) and useEarnDeliveryWatcher
-// (side effects); RQ dedupes to one fetch per interval. Polls every 10s while any row
-// is in flight or a local entry isn't indexed yet; stops on the terminals.
+// Raw Vetro /hemi-earn/requests query shared by useEarnTransactions (merge) and
+// useEarnDeliveryWatcher (side effects); RQ dedupes to one fetch per interval. Polls every
+// 10s while any row is in flight or a local entry isn't indexed yet; stops on the terminals.
 export const useEarnTransactionsQuery = function () {
   const [networkType] = useNetworkType()
   const { address } = useAccount()

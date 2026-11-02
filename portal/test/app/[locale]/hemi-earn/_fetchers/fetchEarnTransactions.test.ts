@@ -16,7 +16,7 @@ describe('fetchEarnTransactions', function () {
 
     expect(fetch).toHaveBeenCalledWith(
       `https://vetro.test/hemi-earn/requests/${account}`,
-      { method: 'GET' },
+      { cache: 'no-store', method: 'GET' },
     )
   })
 

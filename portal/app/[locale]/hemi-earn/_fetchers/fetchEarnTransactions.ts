@@ -14,7 +14,7 @@ export const fetchEarnTransactions = async function ({
 }): Promise<EarnTransaction[]> {
   const { requests } = (await fetchPlusPlus(
     `${apiUrl}/hemi-earn/requests/${account}`,
-    { method: 'GET' },
+    { cache: 'no-store', method: 'GET' },
   )) as { requests: EarnTransaction[] | undefined }
   if (requests === undefined) {
     throw new Error('Hemi Earn requests response is missing requests')

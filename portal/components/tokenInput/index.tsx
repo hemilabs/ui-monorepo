@@ -71,14 +71,20 @@ const FiatPreview = function ({
   )
 }
 
+const showsInputError = (value: string, errorKey: string | undefined) =>
+  value !== '0' &&
+  parseFloat(value) !== 0 &&
+  errorKey !== undefined &&
+  isInputError(errorKey)
+
 const getTextColor = function (value: string, errorKey: string | undefined) {
+  if (showsInputError(value, errorKey)) {
+    return 'text-rose-500'
+  }
   if (value === '0' || parseFloat(value) === 0) {
     return 'text-neutral-600 focus:text-neutral-950'
   }
-  if (errorKey === undefined || !isInputError(errorKey)) {
-    return 'text-neutral-950 focus:text-neutral-950'
-  }
-  return 'text-rose-500'
+  return 'text-neutral-950 focus:text-neutral-950'
 }
 
 export const TokenInput = function <T extends Token>({
@@ -99,7 +105,6 @@ export const TokenInput = function <T extends Token>({
 }: Props<T>) {
   const errorId = useId()
   const amount = parseAmountInput(value, token)
-  const hasInputError = errorKey !== undefined && isInputError(errorKey)
   return (
     <div className="flex min-h-31 flex-col justify-between rounded-lg border border-solid border-transparent bg-neutral-50 p-4 font-medium text-neutral-500 hover:shadow-bs">
       <div className="flex items-center justify-between gap-x-2">
@@ -110,7 +115,7 @@ export const TokenInput = function <T extends Token>({
         <div className="min-w-0 flex-1">
           <input
             aria-describedby={errorMessage ? errorId : undefined}
-            aria-invalid={hasInputError}
+            aria-invalid={showsInputError(value, errorKey)}
             className={`w-full bg-transparent text-4xl ${getTextColor(
               value,
               errorKey,

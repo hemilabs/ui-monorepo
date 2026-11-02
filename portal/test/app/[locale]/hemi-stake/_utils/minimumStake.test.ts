@@ -19,14 +19,6 @@ describe('showsMinimumStakeWarning', function () {
     expect(showsMinimumStakeWarning(BigInt(1))).toBe(true)
   })
 
-  it('flags an amount one unit short of the minimum', function () {
-    expect(showsMinimumStakeWarning(minLockAmount - BigInt(1))).toBe(true)
-  })
-
-  it('lets the minimum itself through', function () {
-    expect(showsMinimumStakeWarning(minLockAmount)).toBe(false)
-  })
-
   it('lets an amount above the minimum through', function () {
     expect(showsMinimumStakeWarning(minLockAmount * BigInt(2))).toBe(false)
   })

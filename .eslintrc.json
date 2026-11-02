@@ -1,6 +1,7 @@
 {
   "extends": ["bloq", "prettier"],
   "ignorePatterns": [
+    "packages/*/dist",
     "portal/.next",
     "portal/dist",
     "portal/next-env.d.ts",

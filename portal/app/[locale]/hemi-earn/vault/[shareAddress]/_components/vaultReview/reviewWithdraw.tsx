@@ -617,8 +617,8 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
               duration: vaultMetadata?.typicalDuration,
               isCrossing: isCrossingNetworks({
                 isAwaitingCooldown:
-                  !settledRow || isAwaitingFinalize(settledRow),
-                isRemoteFail: isRemoteFailed(settledRow),
+                  !!settledRow && isAwaitingFinalize(settledRow),
+                isRemoteFail: false,
                 isSettlingLocally: isLocalSettlementInFlight(settledRow),
                 isStepInProgress:
                   receiveStep.status === ProgressStatus.PROGRESS,

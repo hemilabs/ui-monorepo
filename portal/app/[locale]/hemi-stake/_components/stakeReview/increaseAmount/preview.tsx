@@ -3,6 +3,7 @@ import { FeesContainer } from 'components/feesContainer'
 import { CallToActionContainer } from 'components/reviewOperation/callToActionContainer'
 import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { TokenInput } from 'components/tokenInput'
+import { TokenInputBalance } from 'components/tokenInput/balance'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { FormEvent } from 'react'
@@ -61,17 +62,22 @@ export function Preview({
     >
       <div className="flex flex-1 flex-col gap-y-3 overflow-y-auto p-4 md:p-6">
         <TokenInput
-          disabled={isRunningOperation}
-          errorKey={errorKey}
-          label={t('amount')}
-          maxBalanceButton={
-            <SetMaxEvmBalance
-              disabled={isRunningOperation}
-              gas={increaseAmountFees}
-              onSetMaxBalance={onChange}
+          bottomRight={
+            <TokenInputBalance
+              maxButton={
+                <SetMaxEvmBalance
+                  disabled={isRunningOperation}
+                  gas={increaseAmountFees}
+                  onSetMaxBalance={onChange}
+                  token={token}
+                />
+              }
               token={token}
             />
           }
+          disabled={isRunningOperation}
+          errorKey={errorKey}
+          label={t('amount')}
           onChange={onChange}
           showFiatBalance={false}
           token={token}

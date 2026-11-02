@@ -12,6 +12,7 @@
     "approving": "A aprovar...",
     "approving-token": "A aprovar {symbol}",
     "apy": "TEA",
+    "balance": "Saldo",
     "cancel": "Cancelar",
     "close": "Fechar",
     "close-notification": "Fechar a notificação",
@@ -703,7 +704,6 @@
   },
   "tunnel-page": {
     "form": {
-      "balance": "Saldo",
       "bitcoin-receiving-address": "Endereço de receção Bitcoin",
       "bitcoin-receiving-address-description": "O {symbol} retirado é enviado para o endereço da sua carteira Bitcoin conectada, ou para o endereço personalizado que você inserir.",
       "custom-address": "Endereço personalizado",

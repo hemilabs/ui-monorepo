@@ -1,5 +1,6 @@
 import { Card } from 'components/card'
 import { TokenInput } from 'components/tokenInput'
+import { TokenInputBalance } from 'components/tokenInput/balance'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { FormEvent, ReactNode } from 'react'
@@ -41,10 +42,12 @@ export const FormContent = function ({
         </h3>
       </div>
       <TokenInput
+        bottomRight={
+          <TokenInputBalance maxButton={setMaxBalanceButton} token={token} />
+        }
         disabled={isRunningOperation}
         errorKey={errorKey}
         label={t('amount')}
-        maxBalanceButton={setMaxBalanceButton}
         onChange={updateInput}
         token={token}
         tokenSelector={<TokenSelectorReadOnly logoVersion="L1" token={token} />}

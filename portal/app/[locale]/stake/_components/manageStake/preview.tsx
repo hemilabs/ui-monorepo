@@ -1,6 +1,7 @@
 import { CallToActionContainer } from 'components/reviewOperation/callToActionContainer'
 import { Tab, Tabs } from 'components/tabs'
 import { TokenInput } from 'components/tokenInput'
+import { TokenInputBalance } from 'components/tokenInput/balance'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { ComponentType, ReactNode } from 'react'
 import { StakeOperations, StakeToken } from 'types/stake'
@@ -68,11 +69,16 @@ export const Preview = function ({
         )}
         <div className="mb-2 [&>*]:shadow-bs [&>*]:hover:shadow-sm">
           <TokenInput
-            balanceComponent={balanceComponent}
+            bottomRight={
+              <TokenInputBalance
+                balanceComponent={balanceComponent}
+                maxButton={maxBalance}
+                token={token}
+              />
+            }
             disabled={isOperating}
             errorKey={errorKey}
             label={t('amount')}
-            maxBalanceButton={maxBalance}
             onChange={setAmount}
             token={token}
             tokenSelector={<TokenSelectorReadOnly token={token} />}

@@ -12,6 +12,7 @@
     "approving": "Aprobando...",
     "approving-token": "Aprobando {symbol}",
     "apy": "TEA",
+    "balance": "Balance",
     "cancel": "Cancelar",
     "close": "Cerrar",
     "close-notification": "Cerrar la notificación",
@@ -703,7 +704,6 @@
   },
   "tunnel-page": {
     "form": {
-      "balance": "Balance",
       "bitcoin-receiving-address": "Dirección de recepción en Bitcoin",
       "bitcoin-receiving-address-description": "El {symbol} retirado se envía a la dirección de su billetera Bitcoin conectada, o a la dirección personalizada que ingrese.",
       "custom-address": "Dirección personalizada",

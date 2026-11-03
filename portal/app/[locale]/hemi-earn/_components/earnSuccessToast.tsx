@@ -24,7 +24,7 @@ type Props = {
 export const EarnSuccessToast = function ({ kind, title }: Props) {
   const { address } = useAccount()
   const { data } = useEarnTransactionsQuery()
-  const { data: vaults = [] } = useEarnVaults()
+  const { data: vaults, isPending: areVaultsPending } = useEarnVaults()
   const t = useTranslations('hemi-earn.vault')
 
   const seenFinalizedOnMountRef = useRef<Set<string> | null>(null)
@@ -72,7 +72,7 @@ export const EarnSuccessToast = function ({ kind, title }: Props) {
 
   useEffect(
     function latchOnNewClaim() {
-      if (!newClaim?.claimTxHash) return
+      if (!newClaim?.claimTxHash || areVaultsPending) return
       const hash = newClaim.requestTxHash.toLowerCase()
       if (shownRef.current.has(hash)) return
       shownRef.current.add(hash)
@@ -82,7 +82,12 @@ export const EarnSuccessToast = function ({ kind, title }: Props) {
         requestTxHash: newClaim.requestTxHash,
       })
     },
-    [newClaim?.asset, newClaim?.claimTxHash, newClaim?.requestTxHash],
+    [
+      areVaultsPending,
+      newClaim?.asset,
+      newClaim?.claimTxHash,
+      newClaim?.requestTxHash,
+    ],
   )
 
   const latchedKey = latched?.requestTxHash
@@ -97,7 +102,7 @@ export const EarnSuccessToast = function ({ kind, title }: Props) {
 
   if (!latched) return null
 
-  const vault = findVaultByAsset(vaults, latched.asset)
+  const vault = vaults && findVaultByAsset(vaults, latched.asset)
 
   return (
     <VaultToast

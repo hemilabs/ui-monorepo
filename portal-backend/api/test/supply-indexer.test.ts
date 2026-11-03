@@ -4,13 +4,13 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { BadRequestError } from '../src/errors.ts'
 import { createSupplyIndexer } from '../src/supply-indexer.ts'
 
-const { requestHemiEarn } = vi.hoisted(() => ({
-  requestHemiEarn: vi.fn(),
+const { requestHemiSupply } = vi.hoisted(() => ({
+  requestHemiSupply: vi.fn(),
 }))
 
 vi.mock('../src/subgraphs/subgraph.ts', async importOriginal => ({
   ...(await importOriginal<typeof import('../src/subgraphs/subgraph.ts')>()),
-  requestHemiEarn,
+  requestHemiSupply,
 }))
 
 const today = '2026-09-11'
@@ -74,7 +74,7 @@ const createIndexerWithPrices = (prices: Record<string, string>) =>
 
 describe('getSupplyHistory', function () {
   it('weights the merkle balance and adds the correction', async function () {
-    requestHemiEarn.mockResolvedValue({
+    requestHemiSupply.mockResolvedValue({
       data: { DailySupplySnapshot: [row] },
     })
     const { getSupplyHistory } = createIndexer(hemi('7'), 50)
@@ -90,7 +90,7 @@ describe('getSupplyHistory', function () {
   })
 
   it('adds the correction of the range that holds each day', async function () {
-    requestHemiEarn.mockResolvedValue({
+    requestHemiSupply.mockResolvedValue({
       data: {
         DailySupplySnapshot: [
           { ...row, date: '2026-09-04' },
@@ -116,12 +116,12 @@ describe('getSupplyHistory', function () {
     ['6m', 180],
     ['1y', 365],
   ])('asks for the days of the %s period', async function (period, days) {
-    requestHemiEarn.mockResolvedValue({ data: { DailySupplySnapshot: [] } })
+    requestHemiSupply.mockResolvedValue({ data: { DailySupplySnapshot: [] } })
     const { getSupplyHistory } = createIndexer('0', 50)
 
     await getSupplyHistory(period as string)
 
-    const [payload] = requestHemiEarn.mock.calls.at(-1)!
+    const [payload] = requestHemiSupply.mock.calls.at(-1)!
     const { firstDate, lastDate } = payload.variables
     expect(lastDate).toBe(yesterday)
     expect(
@@ -133,7 +133,7 @@ describe('getSupplyHistory', function () {
   })
 
   it('answers the price of the stored history', async function () {
-    requestHemiEarn.mockResolvedValue({
+    requestHemiSupply.mockResolvedValue({
       data: { DailySupplySnapshot: [row] },
     })
     const { getSupplyHistory } = createIndexerWithPrices({
@@ -150,7 +150,7 @@ describe('getSupplyHistory', function () {
     ['the history has no price for', { '2026-09-08': '1' }],
     ['the history is empty for', {}],
   ])('answers a null price for a day %s', async function (_, prices) {
-    requestHemiEarn.mockResolvedValue({
+    requestHemiSupply.mockResolvedValue({
       data: { DailySupplySnapshot: [row] },
     })
     const { getSupplyHistory } = createIndexerWithPrices(prices)
@@ -161,7 +161,7 @@ describe('getSupplyHistory', function () {
   })
 
   it('answers a null price when the history is not stored yet', async function () {
-    requestHemiEarn.mockResolvedValue({
+    requestHemiSupply.mockResolvedValue({
       data: { DailySupplySnapshot: [row] },
     })
     const { getSupplyHistory } = createIndexer('0', 50)
@@ -172,7 +172,7 @@ describe('getSupplyHistory', function () {
   })
 
   it('answers the supply with no price when the cache fails', async function () {
-    requestHemiEarn.mockResolvedValue({
+    requestHemiSupply.mockResolvedValue({
       data: { DailySupplySnapshot: [row] },
     })
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
@@ -193,7 +193,7 @@ describe('getSupplyHistory', function () {
   })
 
   it('reads the history of HEMI', async function () {
-    requestHemiEarn.mockResolvedValue({
+    requestHemiSupply.mockResolvedValue({
       data: { DailySupplySnapshot: [row] },
     })
     const getPriceHistory = vi.fn(async () => null)
@@ -213,13 +213,13 @@ describe('getSupplyHistory', function () {
     const { getSupplyHistory } = createIndexer('0', 50)
 
     await expect(getSupplyHistory('2y')).rejects.toThrow(BadRequestError)
-    expect(requestHemiEarn).not.toHaveBeenCalled()
+    expect(requestHemiSupply).not.toHaveBeenCalled()
   })
 })
 
 describe('getCirculatingSupply', function () {
   it('answers in HEMI, as the live endpoint does', async function () {
-    requestHemiEarn.mockResolvedValue({
+    requestHemiSupply.mockResolvedValue({
       data: { DailySupplySnapshot: [row] },
     })
     const { getCirculatingSupply } = createIndexer(hemi('7'), 50)
@@ -228,7 +228,7 @@ describe('getCirculatingSupply', function () {
   })
 
   it('adds the correction of the snapshot day', async function () {
-    requestHemiEarn.mockResolvedValue({
+    requestHemiSupply.mockResolvedValue({
       data: { DailySupplySnapshot: [row] },
     })
     const { getCirculatingSupply } = createIndexer([
@@ -240,7 +240,7 @@ describe('getCirculatingSupply', function () {
   })
 
   it('keeps the sign when the correction exceeds the supply', async function () {
-    requestHemiEarn.mockResolvedValue({
+    requestHemiSupply.mockResolvedValue({
       data: { DailySupplySnapshot: [row] },
     })
     const { getCirculatingSupply } = createIndexer(hemi('1000'), 50)
@@ -249,7 +249,7 @@ describe('getCirculatingSupply', function () {
   })
 
   it('fails when the indexer has no day that every chain has reached', async function () {
-    requestHemiEarn.mockResolvedValue({ data: { DailySupplySnapshot: [] } })
+    requestHemiSupply.mockResolvedValue({ data: { DailySupplySnapshot: [] } })
     const { getCirculatingSupply } = createIndexer('0', 50)
 
     await expect(getCirculatingSupply()).rejects.toThrow('every chain')

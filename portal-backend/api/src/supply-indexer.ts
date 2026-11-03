@@ -5,7 +5,7 @@ import { UpstreamGraphQLError } from './subgraphs/errors.ts'
 import {
   type GraphResponse,
   checkGraphQLErrors,
-  requestHemiEarn,
+  requestHemiSupply,
 } from './subgraphs/subgraph.ts'
 
 type Correction = {
@@ -79,7 +79,7 @@ function createSupplyIndexer({
     graphQuery: string,
     variables?: Record<string, string>,
   ) {
-    const response = await requestHemiEarn<GraphResponse<T>>({
+    const response = await requestHemiSupply<GraphResponse<T>>({
       query: graphQuery,
       variables,
     })

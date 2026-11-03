@@ -658,11 +658,13 @@ export const getLockStats = function () {
 // Envio HyperIndex uses Bearer-token auth. Header is only added when an
 // API key is configured so local dev against an unauthenticated indexer
 // (Hasura at `localhost:8080`) keeps working.
-export function requestHemiEarn<TResponse>(schema: Schema): Promise<TResponse> {
-  const { apiKey, apiUrl } = subgraphConfig.hemiEarnRequests
+export function requestHemiSupply<TResponse>(
+  schema: Schema,
+): Promise<TResponse> {
+  const { apiKey, apiUrl } = subgraphConfig.hemiSupply
   if (!apiUrl) {
     throw new UpstreamGraphQLError(
-      'hemi-earn-requests indexer URL is not configured (set SUBGRAPH_HEMI_EARN_REQUESTS_API_URL)',
+      'hemi-supply-indexer URL is not configured (set SUBGRAPH_HEMI_SUPPLY_API_URL)',
     )
   }
   const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : undefined

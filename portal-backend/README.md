@@ -24,7 +24,7 @@ $ curl http://localhost:3006/circulating
 "555000000.000000000000000000"
 ```
 
-The balances come from the HEMI supply snapshots of the [hemi-earn-requests-subgraph](../subgraphs/hemi-earn-requests-subgraph), from the newest day every chain has reached.
+The balances come from the HEMI supply snapshots of the [hemi-supply-indexer](../subgraphs/hemi-supply-indexer), from the newest day every chain has reached. This endpoint and [`GET /supply-history/:period`](#get-supply-historyperiod) both need `SUBGRAPH_HEMI_SUPPLY_API_URL` set: without it they fail at request time, they do not degrade.
 
 #### `GET /hemi-stake`
 
@@ -174,26 +174,26 @@ $ curl http://localhost:3006/subgraphs/43111/locks/0x000000000000000000000000000
 
 These environment variables control how the cache works:
 
-| Variable                            | Description                                                                      | Default                            |
-| ----------------------------------- | -------------------------------------------------------------------------------- | ---------------------------------- |
-| BTC_VAULTS_CACHE_MIN                | The time to cache the BTC vaults data in minutes.                                | 1                                  |
-| COIN_MARKET_CAP_IDS                 | Comma separated `SYMBOL:id` pairs with a daily price history.                    | HEMI:38159,BTC:1                   |
-| NODE_ENV                            | Sentry environment. `production` in the Docker images.                           | `development`                      |
-| ORIGINS                             | Comma-separated list of allowed origins. Globs are supported (1).                | `http://localhost:3000`            |
-| PORT                                | The HTTP port the server listens for requests.                                   | 3006                               |
-| REDIS_URL                           | The URL of the Redis database.                                                   | `redis://localhost:6379`           |
-| RPC_URL_HEMI                        | URL of the Hemi RPC node.                                                        | `https://rpc.hemi.network/rpc`     |
-| SENTRY_DSN                          | The Sentry DSN.                                                                  |                                    |
-| SENTRY_LOGGING_LEVELS               | The logging levels to send to Sentry (props of console.log).                     | ["log", "warn", "error"]           |
-| SUBGRAPH_API_KEY                    | The API key needed to query the subgraphs.                                       |                                    |
-| SUBGRAPH_API_URL                    | The base URL of the subgraphs gateway.                                           | `https://gateway.thegraph.com/api` |
-| SUBGRAPH_HEMI_EARN_REQUESTS_API_KEY | Bearer token for the Envio indexer. Only sent when set.                          |                                    |
-| SUBGRAPH_HEMI_EARN_REQUESTS_API_URL | The full GraphQL URL of the Envio indexer that serves the HEMI supply snapshots. |                                    |
-| SUBGRAPH_ORIGIN                     | The `Origin` header sent when querying the subgraphs.                            | `https://app.hemi.xyz`             |
-| SUBGRAPH_VE_HEMI_TESTNET            | Override for the published testnet veHEMI subgraph id.                           |                                    |
-| TVL_DUNE_API_KEY                    | The Dune API key.                                                                |                                    |
-| TVL_DUNE_QUERY_ID                   | The Dune TVL query id.                                                           |                                    |
-| TVL_REVALIDATE_MIN                  | The time the TVL will be considered fresh.                                       | 720                                |
+| Variable                     | Description                                                                      | Default                            |
+| ---------------------------- | -------------------------------------------------------------------------------- | ---------------------------------- |
+| BTC_VAULTS_CACHE_MIN         | The time to cache the BTC vaults data in minutes.                                | 1                                  |
+| COIN_MARKET_CAP_IDS          | Comma separated `SYMBOL:id` pairs with a daily price history.                    | HEMI:38159,BTC:1                   |
+| NODE_ENV                     | Sentry environment. `production` in the Docker images.                           | `development`                      |
+| ORIGINS                      | Comma-separated list of allowed origins. Globs are supported (1).                | `http://localhost:3000`            |
+| PORT                         | The HTTP port the server listens for requests.                                   | 3006                               |
+| REDIS_URL                    | The URL of the Redis database.                                                   | `redis://localhost:6379`           |
+| RPC_URL_HEMI                 | URL of the Hemi RPC node.                                                        | `https://rpc.hemi.network/rpc`     |
+| SENTRY_DSN                   | The Sentry DSN.                                                                  |                                    |
+| SENTRY_LOGGING_LEVELS        | The logging levels to send to Sentry (props of console.log).                     | ["log", "warn", "error"]           |
+| SUBGRAPH_API_KEY             | The API key needed to query the subgraphs.                                       |                                    |
+| SUBGRAPH_API_URL             | The base URL of the subgraphs gateway.                                           | `https://gateway.thegraph.com/api` |
+| SUBGRAPH_HEMI_SUPPLY_API_KEY | Bearer token for the Envio indexer. Only sent when set.                          |                                    |
+| SUBGRAPH_HEMI_SUPPLY_API_URL | The full GraphQL URL of the Envio indexer that serves the HEMI supply snapshots. |                                    |
+| SUBGRAPH_ORIGIN              | The `Origin` header sent when querying the subgraphs.                            | `https://app.hemi.xyz`             |
+| SUBGRAPH_VE_HEMI_TESTNET     | Override for the published testnet veHEMI subgraph id.                           |                                    |
+| TVL_DUNE_API_KEY             | The Dune API key.                                                                |                                    |
+| TVL_DUNE_QUERY_ID            | The Dune TVL query id.                                                           |                                    |
+| TVL_REVALIDATE_MIN           | The time the TVL will be considered fresh.                                       | 720                                |
 
 (1) Only stars (`*`) are supported. I.e. `https://*.hemi.xyz` will match any subdomain or subdomain chain.
 

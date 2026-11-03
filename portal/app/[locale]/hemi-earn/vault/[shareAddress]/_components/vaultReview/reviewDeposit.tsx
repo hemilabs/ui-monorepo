@@ -30,6 +30,7 @@ import {
   SettleBanner,
   SettleCta,
 } from '../../../../_components/transactionsSection/transactionDrawer/settleShared'
+import { TransferDelayedBanner } from '../../../../_components/transferIncomplete'
 import { applySlippage } from '../../../../_constants/slippage'
 import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
 import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperations'
@@ -49,6 +50,7 @@ import {
   remoteFailedStepStatus,
   resolveStepExplorerChainId,
 } from '../../../../_utils/settleUi'
+import { completedSubheading } from '../../../../_utils/successCopy'
 import {
   isLocalSettlementInFlight,
   isRecoverPath,
@@ -134,12 +136,37 @@ function getSharesStepMeta(
   }
 }
 
+const resolveShareTokensStatus = ({
+  depositStatus,
+  meta,
+  remoteFailedReady,
+  row,
+}: {
+  depositStatus: DepositStatusType
+  meta: ReturnType<typeof getSharesStepMeta>
+  remoteFailedReady: boolean
+  row: EarnTransaction | undefined
+}) =>
+  isRemoteFailed(row)
+    ? remoteFailedStepStatus(remoteFailedReady, row?.settlement)
+    : resolveGetSharesStatus({
+        awaitingUserAction: meta.awaitingUserAction,
+        hasSettlementTx: !!meta.settlementTxHash,
+        isComplete: meta.isComplete,
+        isDepositConfirmed:
+          depositStatus === DepositStatus.DEPOSIT_TX_CONFIRMED,
+        isFailed: meta.isFailed,
+        isRecover: meta.isRecover,
+        settlementFailed: meta.settlementFailed,
+      })
+
 export const ReviewDeposit = function ({ onClose }: Props) {
   const { approveExtraAmount, depositOperation, input, selectedAsset, vault } =
     useVaultForm()
   const slippageBps = useSlippageBps('deposit')
   const { localOperations } = useLocalEarnOperations()
   const t = useTranslations('hemi-earn.vault.drawer')
+  const tSuccess = useTranslations('hemi-earn.vault')
   const chainId = selectedAsset.token.chainId
   const chain = useChain(chainId)
   const { address } = useAccount()
@@ -327,32 +354,25 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     }
   }
 
+  const shareTokensMeta = getSharesStepMeta(subgraphRow, settlement)
+  const shareTokensStatus = resolveShareTokensStatus({
+    depositStatus,
+    meta: shareTokensMeta,
+    remoteFailedReady,
+    row: settledRow,
+  })
+  const isCrossing = isCrossingNetworks({
+    isRemoteFail: isRemoteFailed(settledRow),
+    isSettlingLocally: isLocalSettlementInFlight(settledRow),
+    isStepInProgress: shareTokensStatus === ProgressStatus.PROGRESS,
+  })
+
   const addGetShareTokensStep = function () {
     const terminalHash = getTerminalDeliveryTxHash(subgraphRow)
-    const {
-      awaitingUserAction,
-      isComplete,
-      isFailed,
-      isRecover,
-      settlementFailed,
-      settlementTxHash,
-    } = getSharesStepMeta(subgraphRow, settlement)
+    const { isComplete, isRecover, settlementTxHash } = shareTokensMeta
     const deliveryHash = settlementTxHash ?? terminalHash
     // A signed remote-failed cancel returns the funds, so it labels the step like the recover path.
     const isReturningFunds = isRecover || isRemoteFailedCancel(settledRow)
-
-    const status = isRemoteFailed(settledRow)
-      ? remoteFailedStepStatus(remoteFailedReady, settledRow?.settlement)
-      : resolveGetSharesStatus({
-          awaitingUserAction,
-          hasSettlementTx: !!settlementTxHash,
-          isComplete,
-          isDepositConfirmed:
-            depositStatus === DepositStatus.DEPOSIT_TX_CONFIRMED,
-          isFailed,
-          isRecover,
-          settlementFailed,
-        })
 
     return {
       // Recover path returns the asset (labeled with the asset token); "Funds returned" only at RECOVERED.
@@ -374,14 +394,10 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       }),
       postAction: inTransitPostAction({
         duration: vaultMetadata?.typicalDuration,
-        isCrossing: isCrossingNetworks({
-          isRemoteFail: isRemoteFailed(settledRow),
-          isSettlingLocally: isLocalSettlementInFlight(settledRow),
-          isStepInProgress: status === ProgressStatus.PROGRESS,
-        }),
+        isCrossing,
         t,
       }),
-      status,
+      status: shareTokensStatus,
       txHash: deliveryHash,
     }
   }
@@ -396,6 +412,11 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       {canRetryDeposit && <RiskWarningBanner />}
       <SettleBanner transaction={settledRow} />
       <RemoteFailedBanner transaction={settledRow} />
+      <TransferDelayedBanner
+        isCrossing={isCrossing}
+        stakingVault={vault.stakingVault}
+        transaction={settledRow}
+      />
     </>
   )
 
@@ -412,7 +433,16 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     ) : null
 
   const getSubheading = () =>
-    isAboutToSign ? undefined : t('deposit.subheading')
+    isAboutToSign
+      ? undefined
+      : completedSubheading({
+          fallback: t('deposit.subheading'),
+          isCompleted: settledRow?.status === 'FINALIZED',
+          kind: 'DEPOSIT',
+          operator: vaultMetadata?.operator,
+          t: tSuccess,
+          vaultName: vault.shareToken.symbol,
+        })
 
   const getCallToAction = function () {
     if (isAboutToSign) {

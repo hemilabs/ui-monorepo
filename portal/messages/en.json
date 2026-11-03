@@ -195,25 +195,21 @@
           "heading": "We couldn't claim your share tokens automatically",
           "subheading": "Click on 'Claim share tokens' to get your tokens."
         },
+        "contact-support": "Contact Vetro support",
         "recover-funds": {
-          "heading": "Transaction failed",
-          "subheading": "Something went wrong. Use the button below to return your funds to your wallet."
+          "heading": "Transaction failed"
         },
         "recover-shares": {
-          "heading": "Transaction failed",
-          "subheading": "Something went wrong. Use the button below to return your share tokens to your wallet."
+          "heading": "Transaction failed"
         },
         "remote-failed": {
+          "deposits-paused": "New deposits are paused, so return your funds to your wallet for now.",
           "heading": "Your withdrawal is stuck on Ethereum",
           "heading-deposit": "Your deposit is stuck on Ethereum",
           "heading-slippage": "Your withdrawal didn't complete",
-          "heading-slippage-deposit": "Your deposit didn't complete",
-          "subheading": "The cross-chain step failed. Retry to add more gas and complete the withdrawal, or cancel to return your share tokens to your wallet.",
-          "subheading-deposit": "The cross-chain step failed. Retry to add more gas and complete the deposit, or cancel to return your funds to your wallet.",
-          "subheading-paused-deposit": "The cross-chain step failed. New deposits are paused, so return your funds to your wallet for now.",
-          "subheading-slippage": "The price moved past your slippage limit before the final step could run, so your share tokens are still held. Return them to your wallet, then try the withdrawal again with a higher slippage tolerance.",
-          "subheading-slippage-deposit": "The price moved past your slippage limit before the final step could run, so your funds are still held. Return them to your wallet, then try the deposit again with a higher slippage tolerance."
+          "heading-slippage-deposit": "Your deposit didn't complete"
         },
+        "transfer-incomplete": "This transfer hasn't completed yet. Hemi can't access, move or recover assets in Hemi Earn. Please contact Vetro support and include your transaction hash:",
         "withdraw": {
           "heading": "Your withdrawal is ready",
           "subheading": "This usually happens automatically, but you can do it yourself. This transaction runs on Ethereum."
@@ -316,6 +312,8 @@
         "tokens-count": "{count, plural, one {# token} other {# tokens}}",
         "view-mode": "View mode"
       },
+      "deposit-complete": "Your deposit is complete. Your position is held in the {vaultName} vault, operated by {operator}.",
+      "deposit-complete-plain": "Your deposit is complete.",
       "deposit-successful": "Deposit successful",
       "drawer": {
         "approving": "Approving {symbol}",
@@ -361,7 +359,6 @@
         "withdrawing": "Withdrawing...",
         "you-will-receive": "You'll receive"
       },
-      "here-is-your-tx": "Here's your transaction:",
       "historical-metrics": {
         "1-week": "1 week",
         "1-year": "1 year",
@@ -390,6 +387,7 @@
         "warning-title": "High slippage warning"
       },
       "total-deposits": "Vault total deposits",
+      "withdraw-complete": "Your withdrawal is complete. The assets have been returned to your wallet.",
       "withdraw-successful": "Withdraw successful"
     },
     "vault-info": {

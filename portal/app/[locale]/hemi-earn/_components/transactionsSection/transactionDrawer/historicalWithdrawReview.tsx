@@ -22,7 +22,7 @@ import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
 import { useVaultMetadata } from '../../../_hooks/useVaultMetadata'
 import {
   inTransitPostAction,
-  isCrossingNetworks,
+  isRedeemCrossing,
 } from '../../../_utils/inTransit'
 import { claimRecoverSettlement } from '../../../_utils/settlement'
 import {
@@ -30,12 +30,11 @@ import {
   remoteFailedStepStatus,
   resolveSettleStepStatus,
 } from '../../../_utils/settleUi'
+import { completedSubheading } from '../../../_utils/successCopy'
 import {
-  isAwaitingFinalize,
   isEarnRowTerminal,
   isFinalizeInFlight,
   isLocalEarnTransactionRow,
-  isLocalSettlementInFlight,
   isRecoverPath,
   isRemoteFailed,
   isRemoteFailedCancel,
@@ -51,6 +50,7 @@ import {
 import { deriveCooldownPostAction } from '../../../vault/[shareAddress]/_components/vaultReview/cooldownPostAction'
 import { useEarnCooldownRemaining } from '../../../vault/[shareAddress]/_hooks/useEarnCooldownRemaining'
 import { OperatorNote } from '../../operatorDisclosure'
+import { TransferDelayedBanner } from '../../transferIncomplete'
 
 import { ClaimFromVaultBanner } from './claimFromVault'
 import { RemoteFailedBanner } from './remoteFailed'
@@ -324,6 +324,7 @@ export const HistoricalWithdrawReview = function ({
   const t = useTranslations('hemi-earn.transactions.drawer')
   // Cooldown copy is shared with the live vault review — reuse the vault.drawer namespace instead of duplicating keys.
   const tCooldown = useTranslations('hemi-earn.vault.drawer')
+  const tSuccess = useTranslations('hemi-earn.vault')
   const vaultMetadata = useVaultMetadata(vault.stakingVault)
   const { address } = useAccount()
 
@@ -404,18 +405,18 @@ export const HistoricalWithdrawReview = function ({
     return null
   }
 
+  const isCrossing = isRedeemCrossing({
+    receiveStatus: receive,
+    transaction,
+  })
+
   const steps = buildSteps({
     cooldownPostAction,
     needsApproval,
     receive,
     receivePostAction: inTransitPostAction({
       duration: vaultMetadata?.typicalDuration,
-      isCrossing: isCrossingNetworks({
-        isAwaitingCooldown: isAwaitingFinalize(transaction),
-        isRemoteFail: isRemoteFailed(transaction),
-        isSettlingLocally: isLocalSettlementInFlight(transaction),
-        isStepInProgress: receive === ProgressStatus.PROGRESS,
-      }),
+      isCrossing,
       t: tCooldown,
     }),
     receiveToken,
@@ -432,6 +433,11 @@ export const HistoricalWithdrawReview = function ({
           <SettleBanner transaction={transaction} />
           <ClaimFromVaultBanner transaction={transaction} />
           <RemoteFailedBanner transaction={transaction} />
+          <TransferDelayedBanner
+            isCrossing={isCrossing}
+            stakingVault={vault.stakingVault}
+            transaction={transaction}
+          />
         </>
       }
       amount={displayAmount}
@@ -446,7 +452,12 @@ export const HistoricalWithdrawReview = function ({
       heading={t('withdraw-heading')}
       onClose={onClose}
       steps={steps}
-      subheading={t('withdraw-subheading')}
+      subheading={completedSubheading({
+        fallback: t('withdraw-subheading'),
+        isCompleted: transaction.status === 'FINALIZED',
+        kind: 'REDEEM',
+        t: tSuccess,
+      })}
       token={displayToken}
     />
   )

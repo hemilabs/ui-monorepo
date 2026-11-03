@@ -1,6 +1,5 @@
 import { Button } from 'components/button'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
-import { WarningBox } from 'components/warningBox'
 import { type EventEmitter } from 'events'
 import { type RetryRequestEvents } from 'hemi-earn-actions'
 import { type MouseEvent, type ReactNode } from 'react'
@@ -14,6 +13,7 @@ import {
 import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
 import { remoteFailedSettlement } from '../../../_utils/settlement'
 import { type EarnSettlement, type EarnTransaction } from '../../../types'
+import { TransferIncompleteBanner } from '../../transferIncomplete'
 
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
@@ -146,21 +146,17 @@ export const RemoteFailedBanner = function ({
   const { category, show } = useRemoteFailedState(transaction)
   const { canDeposit } = useCanDeposit()
 
-  if (!show) {
+  if (!show || !transaction) {
     return null
   }
-  const suffix = transaction?.kind === 'DEPOSIT' ? '-deposit' : ''
+  const isPausedDeposit = transaction.kind === 'DEPOSIT' && !canDeposit
+  const suffix = transaction.kind === 'DEPOSIT' ? '-deposit' : ''
   const variant = category === 'slippage' ? '-slippage' : ''
-  const subheading =
-    suffix && !canDeposit
-      ? t('remote-failed.subheading-paused-deposit')
-      : t(`remote-failed.subheading${variant}${suffix}`)
   return (
-    <div className="px-4 py-6 md:px-6">
-      <WarningBox
-        heading={t(`remote-failed.heading${variant}${suffix}`)}
-        subheading={subheading}
-      />
-    </div>
+    <TransferIncompleteBanner
+      heading={t(`remote-failed.heading${variant}${suffix}`)}
+      note={isPausedDeposit ? t('remote-failed.deposits-paused') : undefined}
+      requestTxHash={transaction.requestTxHash}
+    />
   )
 }

@@ -195,25 +195,21 @@
           "heading": "Não foi possível receber seus share tokens automaticamente",
           "subheading": "Clique em 'Receber share tokens' para receber seus tokens."
         },
+        "contact-support": "Entrar em contato com o suporte da Vetro",
         "recover-funds": {
-          "heading": "Transação falhou",
-          "subheading": "Algo deu errado. Use o botão abaixo para devolver seus fundos à sua carteira."
+          "heading": "Transação falhou"
         },
         "recover-shares": {
-          "heading": "Transação falhou",
-          "subheading": "Algo deu errado. Use o botão abaixo para devolver seus share tokens à sua carteira."
+          "heading": "Transação falhou"
         },
         "remote-failed": {
+          "deposits-paused": "Os depósitos novos estão pausados, então devolva seus fundos à sua carteira por enquanto.",
           "heading": "Seu saque travou na Ethereum",
           "heading-deposit": "Seu depósito travou na Ethereum",
           "heading-slippage": "Seu saque não foi concluído",
-          "heading-slippage-deposit": "Seu depósito não foi concluído",
-          "subheading": "A etapa entre redes falhou. Tente novamente para adicionar gas e concluir o saque, ou cancele para devolver seus share tokens à sua carteira.",
-          "subheading-deposit": "A etapa entre redes falhou. Tente novamente para adicionar gas e concluir o depósito, ou cancele para devolver seus fundos à sua carteira.",
-          "subheading-paused-deposit": "A etapa entre redes falhou. Os depósitos novos estão pausados, então devolva seus fundos à sua carteira por enquanto.",
-          "subheading-slippage": "O preço ultrapassou seu limite de slippage antes que a etapa final pudesse ser executada, então seus share tokens continuam retidos. Devolva-os à sua carteira e tente o saque novamente com uma tolerância de slippage maior.",
-          "subheading-slippage-deposit": "O preço ultrapassou seu limite de slippage antes que a etapa final pudesse ser executada, então seus fundos continuam retidos. Devolva-os à sua carteira e tente o depósito novamente com uma tolerância de slippage maior."
+          "heading-slippage-deposit": "Seu depósito não foi concluído"
         },
+        "transfer-incomplete": "Esta transferência ainda não foi concluída. A Hemi não pode acessar, mover ou recuperar ativos no Hemi Earn. Entre em contato com o suporte da Vetro e inclua o hash da sua transação:",
         "withdraw": {
           "heading": "Seu saque está pronto",
           "subheading": "Isso normalmente acontece automaticamente, mas você mesmo pode fazer o saque. Esta transação é executada na Ethereum."
@@ -316,6 +312,8 @@
         "tokens-count": "{count, plural, one {# token} other {# tokens}}",
         "view-mode": "Modo de visualização"
       },
+      "deposit-complete": "Seu depósito foi concluído. Sua posição está no fundo {vaultName}, operado por {operator}.",
+      "deposit-complete-plain": "Seu depósito foi concluído.",
       "deposit-successful": "Depósito realizado com sucesso",
       "drawer": {
         "approving": "Aprovando {symbol}",
@@ -361,7 +359,6 @@
         "withdrawing": "Sacando...",
         "you-will-receive": "Você vai receber"
       },
-      "here-is-your-tx": "Aqui está sua transação:",
       "historical-metrics": {
         "1-week": "1 semana",
         "1-year": "1 ano",
@@ -390,6 +387,7 @@
         "warning-title": "Aviso de slippage alto"
       },
       "total-deposits": "Depósitos totais do fundo",
+      "withdraw-complete": "Seu saque foi concluído. Os ativos retornaram à sua carteira.",
       "withdraw-successful": "Saque realizado com sucesso"
     },
     "vault-info": {

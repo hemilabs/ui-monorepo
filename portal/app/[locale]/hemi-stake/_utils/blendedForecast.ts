@@ -79,6 +79,7 @@ const sumWeights = (weights: ClassWeights) =>
 
 type ExistingPosition = {
   amount: bigint
+  delegatedAway?: boolean
   lockEnd: number
   positionClass: PositionClass
 }
@@ -160,6 +161,14 @@ export const getBlendedForecast = function ({
       existing: forLeg(stakedWeights),
       incoming: forLeg([incomingWeights]),
       timestamp: at,
+      votingWeight:
+        stakedWeights.reduce(
+          (total, weights, position) =>
+            staked[position].delegatedAway
+              ? total
+              : total + sumWeights(weights),
+          BigInt(0),
+        ) + sumWeights(incomingWeights),
     }
   })
 
@@ -206,5 +215,9 @@ export const getBlendedForecast = function ({
     },
     existing: existingLeg,
     incoming: incomingLeg,
+    votingWeights: epochs.map(epoch => ({
+      timestamp: epoch.timestamp,
+      weight: epoch.votingWeight,
+    })),
   }
 }

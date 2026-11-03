@@ -374,3 +374,39 @@ describe('getBlendedForecast', function () {
     )
   })
 })
+
+describe('getBlendedForecast voting weights', function () {
+  const run = (delegatedAway: boolean) =>
+    getBlendedForecast({
+      existing: [{ ...anExistingPosition, delegatedAway }],
+      incoming: anIncomingPosition,
+      inputsByClass,
+      now,
+    })
+
+  it('matches the blended weight series when nothing is delegated', function () {
+    const forecast = run(false)
+
+    expect(forecast.votingWeights).toStrictEqual(
+      forecast.blended.payouts.map(({ timestamp, weight }) => ({
+        timestamp,
+        weight,
+      })),
+    )
+  })
+
+  it('drops a delegated position from the votes but not from the payouts', function () {
+    const voting = run(true)
+    const all = run(false)
+
+    expect(voting.votingWeights[0].weight).toBeLessThan(
+      all.votingWeights[0].weight,
+    )
+    expect(voting.blended.payouts[0].payout).toBe(all.blended.payouts[0].payout)
+    expect(voting.blended.yearOneTotal).toBe(all.blended.yearOneTotal)
+  })
+
+  it('still counts the incoming position, which cannot be delegated yet', function () {
+    expect(run(true).votingWeights[0].weight).toBeGreaterThan(BigInt(0))
+  })
+})

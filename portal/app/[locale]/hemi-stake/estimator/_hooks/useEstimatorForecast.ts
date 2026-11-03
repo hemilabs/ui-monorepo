@@ -5,6 +5,7 @@ import { parseTokenUnits } from 'utils/token'
 import { type Address } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { useDelegatedAway } from '../../_hooks/useDelegatedAway'
 import { useEpochSystemState } from '../../_hooks/useEpochSystemState'
 import { useRewardsForecastInputs } from '../../_hooks/useRewardsForecastInputs'
 import { useStakingPositions } from '../../_hooks/useStakingPositions'
@@ -55,9 +56,11 @@ const toStakedPositions = function ({
 const toExistingLegs = (
   positions: StakingPosition[],
   classes: Record<string, PositionClass>,
+  delegatedAway: Record<string, boolean>,
 ) =>
   positions.map(position => ({
     amount: position.amount,
+    delegatedAway: delegatedAway[position.tokenId.toString()] === true,
     lockEnd: toLockEnd(position),
     positionClass: classes[position.tokenId.toString()] ?? alwaysTransferable,
   }))
@@ -102,6 +105,7 @@ export const useEstimatorForecast = function () {
   )
 
   const classes = usePositionClasses(blends ? staked : undefined)
+  const delegatedAway = useDelegatedAway(blends ? staked : undefined)
 
   const amountUnits = parseTokenUnits(amount, token)
   const inputsByClass = forecastInputs.data ?? emptyInputsByClass
@@ -109,7 +113,9 @@ export const useEstimatorForecast = function () {
 
   const { blended, stakedAlone } = useMemo(
     function () {
-      const existing = classes.data ? toExistingLegs(staked, classes.data) : []
+      const existing = classes.data
+        ? toExistingLegs(staked, classes.data, delegatedAway.data ?? {})
+        : []
       const run = (incomingAmount: bigint) =>
         getBlendedForecast({
           existing,
@@ -123,6 +129,7 @@ export const useEstimatorForecast = function () {
     [
       amountUnits,
       classes.data,
+      delegatedAway.data,
       inputsByClass,
       lockDurationInSeconds,
       now,
@@ -130,9 +137,12 @@ export const useEstimatorForecast = function () {
     ],
   )
 
+  const delegationKnown =
+    delegatedAway.data !== undefined || staked.length === 0
+
   const { isError, isLoading, retry } = toLoadState(
     blends
-      ? [systemState, forecastInputs, positions, classes]
+      ? [systemState, forecastInputs, positions, classes, delegatedAway]
       : [systemState, forecastInputs],
   )
 
@@ -155,5 +165,6 @@ export const useEstimatorForecast = function () {
       isLoading,
       needsWallet,
     }),
+    votingWeights: delegationKnown ? blended.votingWeights : undefined,
   }
 }

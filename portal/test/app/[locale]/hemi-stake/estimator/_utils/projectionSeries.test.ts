@@ -67,11 +67,11 @@ describe('toPayoutBars', function () {
 describe('toVotingPowerCurve', function () {
   it('plots the weight, not the payout', function () {
     expect(
-      toVotingPowerCurve({ decimals, payouts: epochs }).map(point => point.y),
+      toVotingPowerCurve({ decimals, weights: epochs }).map(point => point.y),
     ).toEqual([300, 150, 0])
   })
 
   it('is empty without epochs', function () {
-    expect(toVotingPowerCurve({ decimals, payouts: [] })).toEqual([])
+    expect(toVotingPowerCurve({ decimals, weights: [] })).toEqual([])
   })
 })

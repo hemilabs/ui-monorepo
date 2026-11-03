@@ -1,9 +1,13 @@
 import { hemi } from 'hemi-viem'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslations } from 'use-intl'
 import { type Address, type Hash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useEarnTransactionsQuery } from '../_hooks/useEarnTransactionsQuery'
+import { useEarnVaults } from '../_hooks/useEarnVaults'
+import { completedCopy } from '../_utils/successCopy'
+import { findVaultByAsset, findVaultMetadata } from '../_utils/vaults'
 import { type EarnTransactionKindType } from '../types'
 import { VaultToast } from '../vault/[shareAddress]/_components/vaultToast'
 
@@ -20,6 +24,8 @@ type Props = {
 export const EarnSuccessToast = function ({ kind, title }: Props) {
   const { address } = useAccount()
   const { data } = useEarnTransactionsQuery()
+  const { data: vaults = [] } = useEarnVaults()
+  const t = useTranslations('hemi-earn.vault')
 
   const seenFinalizedOnMountRef = useRef<Set<string> | null>(null)
   // Hashes already shown; without this the toast would re-open each poll (newClaim keeps returning the same FINALIZED row).
@@ -59,6 +65,7 @@ export const EarnSuccessToast = function ({ kind, title }: Props) {
   )
 
   const [latched, setLatched] = useState<{
+    asset: Address
     claimTxHash: Hash
     requestTxHash: Hash
   } | null>(null)
@@ -70,11 +77,12 @@ export const EarnSuccessToast = function ({ kind, title }: Props) {
       if (shownRef.current.has(hash)) return
       shownRef.current.add(hash)
       setLatched({
+        asset: newClaim.asset,
         claimTxHash: newClaim.claimTxHash,
         requestTxHash: newClaim.requestTxHash,
       })
     },
-    [newClaim?.claimTxHash, newClaim?.requestTxHash],
+    [newClaim?.asset, newClaim?.claimTxHash, newClaim?.requestTxHash],
   )
 
   const latchedKey = latched?.requestTxHash
@@ -89,9 +97,17 @@ export const EarnSuccessToast = function ({ kind, title }: Props) {
 
   if (!latched) return null
 
+  const vault = findVaultByAsset(vaults, latched.asset)
+
   return (
     <VaultToast
       chainId={hemi.id}
+      description={completedCopy({
+        kind,
+        operator: vault && findVaultMetadata(vault.stakingVault)?.operator,
+        t,
+        vaultName: vault?.shareToken.symbol,
+      })}
       key={latched.requestTxHash}
       title={title}
       transactionHash={latched.claimTxHash}

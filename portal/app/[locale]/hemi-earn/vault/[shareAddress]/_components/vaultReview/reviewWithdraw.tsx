@@ -32,6 +32,7 @@ import {
   SettleBanner,
   SettleCta,
 } from '../../../../_components/transactionsSection/transactionDrawer/settleShared'
+import { TransferDelayedBanner } from '../../../../_components/transferIncomplete'
 import { applySlippage } from '../../../../_constants/slippage'
 import { useCooldownDuration } from '../../../../_hooks/useCooldownDuration'
 import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
@@ -54,6 +55,7 @@ import {
   remoteFailedStepStatus,
   resolveSettleStepStatus,
 } from '../../../../_utils/settleUi'
+import { completedSubheading } from '../../../../_utils/successCopy'
 import {
   isAwaitingFinalize,
   isFinalizeInFlight,
@@ -268,6 +270,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   } = useVaultForm()
   const slippageBps = useSlippageBps('withdraw')
   const t = useTranslations('hemi-earn.vault.drawer')
+  const tSuccess = useTranslations('hemi-earn.vault')
   const chainId = selectedAsset.token.chainId
   const chain = useChain(chainId)
   const { address } = useAccount()
@@ -536,7 +539,14 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     ) : null
 
   const getSubheading = () =>
-    isAboutToSign ? undefined : t('withdraw.subheading')
+    isAboutToSign
+      ? undefined
+      : completedSubheading({
+          fallback: t('withdraw.subheading'),
+          isCompleted: settledRow?.status === 'FINALIZED',
+          kind: 'REDEEM',
+          t: tSuccess,
+        })
 
   const getCallToAction = function () {
     if (isAboutToSign) {
@@ -577,6 +587,22 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     return null
   }
 
+  const receiveStep = buildReceiveStep({
+    chainId,
+    cooldownRemainingSec,
+    isCooldownEligible,
+    receiveToken: selectedAsset.token,
+    row: settledRow,
+    t,
+    withdrawStatus,
+  })
+  const isCrossing = isCrossingNetworks({
+    isAwaitingCooldown: !!settledRow && isAwaitingFinalize(settledRow),
+    isRemoteFail: isRemoteFailed(settledRow),
+    isSettlingLocally: isLocalSettlementInFlight(settledRow),
+    isStepInProgress: receiveStep.status === ProgressStatus.PROGRESS,
+  })
+
   const getSteps = function () {
     const steps: StepPropsWithoutPosition[] = []
     if (mayNeedApproval || withdrawOperation?.approvalTxHash) {
@@ -591,15 +617,6 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       steps.push(addRecoverStep())
       return steps
     }
-    const receiveStep = buildReceiveStep({
-      chainId,
-      cooldownRemainingSec,
-      isCooldownEligible,
-      receiveToken: selectedAsset.token,
-      row: settledRow,
-      t,
-      withdrawStatus,
-    })
     // Remote failure: FAILED only when the CTA is surfaced; in-progress during the grace or
     // while a retry/cancel is being signed/mined.
     steps.push(
@@ -615,14 +632,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
             ...receiveStep,
             postAction: inTransitPostAction({
               duration: vaultMetadata?.typicalDuration,
-              isCrossing: isCrossingNetworks({
-                isAwaitingCooldown:
-                  !!settledRow && isAwaitingFinalize(settledRow),
-                isRemoteFail: false,
-                isSettlingLocally: isLocalSettlementInFlight(settledRow),
-                isStepInProgress:
-                  receiveStep.status === ProgressStatus.PROGRESS,
-              }),
+              isCrossing,
               t,
             }),
           },
@@ -638,6 +648,11 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
           <SettleBanner transaction={settledRow} />
           <ClaimFromVaultBanner transaction={settledRow} />
           <RemoteFailedBanner transaction={settledRow} />
+          <TransferDelayedBanner
+            isCrossing={isCrossing}
+            stakingVault={vault.stakingVault}
+            transaction={settledRow}
+          />
         </>
       }
       amount={withdrawOperation?.amountIn ?? shares.toString()}

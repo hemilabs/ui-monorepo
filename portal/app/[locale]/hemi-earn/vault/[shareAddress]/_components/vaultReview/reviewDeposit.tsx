@@ -11,6 +11,7 @@ import { encodeRequestDeposit } from 'hemi-earn-actions/actions'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useTranslations } from 'use-intl'
 import { getApprovalAmount } from 'utils/approval'
 import { getNativeToken } from 'utils/nativeToken'
@@ -33,7 +34,12 @@ import { applySlippage } from '../../../../_constants/slippage'
 import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
 import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperations'
 import { useRemoteFailedState } from '../../../../_hooks/useRemoteFailedState'
+import { useVaultMetadata } from '../../../../_hooks/useVaultMetadata'
 import { hashesMatch } from '../../../../_utils/hashes'
+import {
+  inTransitPostAction,
+  isCrossingNetworks,
+} from '../../../../_utils/inTransit'
 import {
   enrichWithSettlement,
   findLocalSettlement,
@@ -44,6 +50,7 @@ import {
   resolveStepExplorerChainId,
 } from '../../../../_utils/settleUi'
 import {
+  isLocalSettlementInFlight,
   isRecoverPath,
   isRemoteFailed,
   isRemoteFailedCancel,
@@ -57,8 +64,14 @@ import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
 import { useSlippageBps } from '../../_hooks/useSlippage'
 import { DepositStatus, type DepositStatusType } from '../../_types/operations'
 import { createFeeEstimateStateOverride } from '../../_utils/feeEstimateStateOverride'
+import {
+  resolveMayNeedApproval,
+  showsReview,
+  unsignedStepStatus,
+} from '../../_utils/reviewState'
 
-import { RetryDeposit } from './retryDeposit'
+import { ConfirmDeposit } from './confirmDeposit'
+import { ReviewIntro } from './reviewIntro'
 
 type Props = {
   onClose: VoidFunction
@@ -148,19 +161,30 @@ export const ReviewDeposit = function ({ onClose }: Props) {
 
   const depositStatus =
     depositOperation?.status ?? DepositStatus.APPROVAL_TX_COMPLETED
+  const hasSigned = depositOperation !== undefined
+  const vaultMetadata = useVaultMetadata(vault.stakingVault)
 
   const amount = parseTokenUnits(input, selectedAsset.token)
   const routerAddress = getHemiEarnRouterAddress()
 
-  const needsApproval = [
-    DepositStatus.APPROVAL_TX_FAILED,
-    DepositStatus.APPROVAL_TX_PENDING,
-  ].includes(depositStatus)
+  const { isAllowanceError, isAllowanceLoading, needsApproval } =
+    useNeedsApproval({
+      address: selectedAsset.address,
+      amount,
+      chainId,
+      spender: routerAddress,
+    })
+
+  const mayNeedApproval = resolveMayNeedApproval({
+    isAllowanceError,
+    isAllowanceLoading,
+    needsApproval,
+  })
 
   const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
     useEstimateApproveErc20Fees({
       amount: getApprovalAmount(amount, approveExtraAmount),
-      enabled: needsApproval,
+      enabled: mayNeedApproval,
       spender: routerAddress,
       token: selectedAsset.token,
     })
@@ -195,7 +219,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
           : undefined,
       query: { enabled: !!address && amount > BigInt(0) && !!quote },
       stateOverride: createFeeEstimateStateOverride({
-        needsApproval,
+        needsApproval: mayNeedApproval,
         owner: address,
         spender: routerAddress,
         token: selectedAsset.token,
@@ -241,13 +265,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       description: (
         <div className="flex items-center gap-x-2">
           <TokenLogo size="small" token={selectedAsset.token} />
-          <span
-            className={`text-sm font-normal ${
-              depositStatus === DepositStatus.APPROVAL_TX_PENDING
-                ? 'text-orange-600'
-                : 'text-neutral-500'
-            }`}
-          >
+          <span className="text-sm font-normal">
             {t('approving', { symbol: selectedAsset.token.symbol })}
           </span>
         </div>
@@ -256,9 +274,13 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       fees: getStepFees({
         fee: approvalGasFees,
         isError: isApprovalGasFeesError,
-        show: needsApproval,
+        show: mayNeedApproval,
       }),
-      status: statusMap[depositStatus] ?? ProgressStatus.COMPLETED,
+      status:
+        statusMap[depositStatus] ??
+        (depositOperation?.approvalTxHash === undefined
+          ? ProgressStatus.READY
+          : ProgressStatus.COMPLETED),
       txHash: depositOperation?.approvalTxHash,
     }
   }
@@ -282,7 +304,9 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     // Roll the LayerZero fee into the deposit gas line — it's msg.value on the same requestDeposit tx, not a separate signature.
     const depositLineTotal = depositGasFees + layerZeroFee
 
-    const status = statusMap[depositStatus] ?? ProgressStatus.NOT_READY
+    const status = hasSigned
+      ? (statusMap[depositStatus] ?? ProgressStatus.NOT_READY)
+      : unsignedStepStatus(mayNeedApproval)
     return {
       description: (
         <div className="flex items-center gap-x-2">
@@ -317,6 +341,19 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     // A signed remote-failed cancel returns the funds, so it labels the step like the recover path.
     const isReturningFunds = isRecover || isRemoteFailedCancel(settledRow)
 
+    const status = isRemoteFailed(settledRow)
+      ? remoteFailedStepStatus(remoteFailedReady, settledRow?.settlement)
+      : resolveGetSharesStatus({
+          awaitingUserAction,
+          hasSettlementTx: !!settlementTxHash,
+          isComplete,
+          isDepositConfirmed:
+            depositStatus === DepositStatus.DEPOSIT_TX_CONFIRMED,
+          isFailed,
+          isRecover,
+          settlementFailed,
+        })
+
     return {
       // Recover path returns the asset (labeled with the asset token); "Funds returned" only at RECOVERED.
       description: isReturningFunds ? (
@@ -335,18 +372,16 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         settlement,
         txHash: deliveryHash,
       }),
-      status: isRemoteFailed(settledRow)
-        ? remoteFailedStepStatus(remoteFailedReady, settledRow?.settlement)
-        : resolveGetSharesStatus({
-            awaitingUserAction,
-            hasSettlementTx: !!settlementTxHash,
-            isComplete,
-            isDepositConfirmed:
-              depositStatus === DepositStatus.DEPOSIT_TX_CONFIRMED,
-            isFailed,
-            isRecover,
-            settlementFailed,
-          }),
+      postAction: inTransitPostAction({
+        duration: vaultMetadata?.typicalDuration,
+        isCrossing: isCrossingNetworks({
+          isRemoteFail: isRemoteFailed(settledRow),
+          isSettlingLocally: isLocalSettlementInFlight(settledRow),
+          isStepInProgress: status === ProgressStatus.PROGRESS,
+        }),
+        t,
+      }),
+      status,
       txHash: deliveryHash,
     }
   }
@@ -364,9 +399,24 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     </>
   )
 
+  const isAboutToSign = showsReview({ canRetry: canRetryDeposit, hasSigned })
+
+  const getAboveAmount = () =>
+    isAboutToSign ? (
+      <ReviewIntro
+        operation="deposit"
+        shareAddress={vault.shareAddress}
+        vaultMetadata={vaultMetadata}
+        vaultName={vault.shareToken.symbol}
+      />
+    ) : null
+
+  const getSubheading = () =>
+    isAboutToSign ? undefined : t('deposit.subheading')
+
   const getCallToAction = function () {
-    if (canRetryDeposit) {
-      return <RetryDeposit />
+    if (isAboutToSign) {
+      return <ConfirmDeposit />
     }
     if (settledRow && isRemoteFailed(settledRow)) {
       return <RemoteFailedCta transaction={settledRow} />
@@ -402,7 +452,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
 
   const getSteps = function () {
     const steps: StepPropsWithoutPosition[] = []
-    if (depositOperation?.approvalTxHash) {
+    if (mayNeedApproval || depositOperation?.approvalTxHash) {
       steps.push(addApprovalStep())
     }
     steps.push(addDepositStep())
@@ -412,6 +462,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
 
   return (
     <Operation
+      aboveAmount={getAboveAmount()}
       aboveCallToAction={getAboveCallToAction()}
       amount={depositOperation?.amountIn ?? amount.toString()}
       belowSubheading={<OperatorNote />}
@@ -419,7 +470,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       heading={t('deposit.heading')}
       onClose={onClose}
       steps={getSteps()}
-      subheading={t('deposit.subheading')}
+      subheading={getSubheading()}
       token={selectedAsset.token}
     />
   )

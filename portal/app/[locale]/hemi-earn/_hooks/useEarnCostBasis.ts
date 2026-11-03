@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useAccount } from 'wagmi'
 
+import { isVetroApiConfigured, vetroApiUrl } from '../_constants/vetro'
 import {
   earnCostBasisKeyPrefix,
   fetchEarnCostBasis,
@@ -18,11 +19,13 @@ export const useEarnCostBasis = function () {
   const { localOperations } = useLocalEarnOperations()
 
   return useQuery({
-    enabled: !!address && networkType === 'mainnet',
-    queryFn: () => fetchEarnCostBasis({ account: address! }),
+    enabled: isVetroApiConfigured && !!address && networkType === 'mainnet',
+    queryFn: () =>
+      fetchEarnCostBasis({ account: address!, apiUrl: vetroApiUrl! }),
     queryKey: [...earnCostBasisKeyPrefix, networkType, address],
     refetchInterval: hasInFlightEarnActions({ localOperations, transactions })
       ? 10_000
       : false,
+    retry: 2,
   })
 }

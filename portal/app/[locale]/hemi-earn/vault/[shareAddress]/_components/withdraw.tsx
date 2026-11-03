@@ -3,7 +3,6 @@ import { TokenInput } from 'components/tokenInput'
 import { TokenInputBalance } from 'components/tokenInput/balance'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
-import { useState } from 'react'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { getExtraApprovalAmount } from 'utils/approval'
@@ -17,12 +16,12 @@ import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { percentToBps } from '../../../_utils/slippage'
 import { useVaultForm } from '../_context/vaultFormContext'
 import { useAssetsToShares } from '../_hooks/useAssetsToShares'
+import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
 import { useMaxWithdrawableAsset } from '../_hooks/useMaxWithdrawableAsset'
 import { useSlippage } from '../_hooks/useSlippage'
 import { useUserShareValue } from '../_hooks/useUserShareValue'
-import { useWithdraw } from '../_hooks/useWithdraw'
+import { useIsWithdrawing } from '../_hooks/useWithdraw'
 import { useWithdrawPreview } from '../_hooks/useWithdrawPreview'
-import { type WithdrawOperationRunning } from '../_types/operations'
 import {
   resolveErrorKey,
   resolvePreviewIssue,
@@ -56,13 +55,10 @@ export const Withdraw = function ({
   onSwitchToDeposit: VoidFunction
 }) {
   const t = useTranslations()
-  const [operationRunning, setOperationRunning] =
-    useState<WithdrawOperationRunning>('idle')
 
   const {
     approveExtraAmount,
     input,
-    resetStateAfterOperation,
     selectedAsset,
     updateAssetInput,
     updateSharesInput,
@@ -146,7 +142,6 @@ export const Withdraw = function ({
   const {
     assetOut,
     assetOutRaw,
-    assetsOutMin,
     bridgingFee,
     canWithdraw,
     ethereumFee,
@@ -198,38 +193,16 @@ export const Withdraw = function ({
     stakingVault: vault.stakingVault,
   })
 
-  const { callbackFee = BigInt(0), isInstant = false } = quote ?? {}
-
-  const { isPending: isRunningOperation, mutate: withdrawFn } = useWithdraw({
-    approvalAmount: extraApprovalAmount,
-    assetsOutMin,
-    callbackFee,
-    isInstant,
-    on(emitter) {
-      emitter.on('approve-transaction-succeeded', () =>
-        setOperationRunning('withdrawing'),
-      )
-      emitter.on('withdraw-transaction-succeeded', function () {
-        resetStateAfterOperation()
-      })
-      emitter.on('withdraw-settled', () => setOperationRunning('idle'))
-    },
-    peggedAmount,
-    selectedAsset,
-    shares,
-    slippage,
-    updateWithdrawOperation,
-    vault,
-  })
+  const { setDrawerQueryString } = useDrawerQueryString()
+  const isRunningOperation = useIsWithdrawing(vault.shareAddress)
 
   const handleWithdraw = function () {
-    if (!canWithdraw || !quote || zeroBalanceError) {
+    if (!canWithdraw || !quote || zeroBalanceError || isRunningOperation) {
       return
     }
-    withdrawFn(undefined, {
-      onError: () => setOperationRunning('idle'),
-    })
-    setOperationRunning(needsApproval ? 'approving' : 'withdrawing')
+    // Nothing clears a finished operation, so a fresh review has to start from a clean one.
+    updateWithdrawOperation(undefined)
+    setDrawerQueryString('withdrawing')
   }
 
   const hasQuote = !!quote
@@ -361,7 +334,6 @@ export const Withdraw = function ({
           isLoading={isSubmitLoading}
           isRunningOperation={isRunningOperation}
           needsApproval={needsApproval}
-          operationRunning={operationRunning}
           validationError={effectiveValidationError}
         />
       }

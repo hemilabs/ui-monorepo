@@ -16,12 +16,14 @@ export function SubStep({ description, status }: Props) {
   const isCompleted = status === ProgressStatus.COMPLETED
 
   return (
-    <div className="flex items-center gap-x-3">
+    <div className="flex items-start gap-x-3">
       {isCompleted ? (
-        <OrangeCheckIcon />
+        <div className="shrink-0">
+          <OrangeCheckIcon />
+        </div>
       ) : (
         <div
-          className={`relative flex h-5 w-5 items-center justify-center rounded-full ${
+          className={`relative flex size-5 shrink-0 items-center justify-center rounded-full ${
             isProgress
               ? 'bg-orange-100 text-orange-600'
               : 'bg-neutral-300/50 text-neutral-500'

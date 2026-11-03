@@ -250,6 +250,7 @@ const TransactionDrawerContent = function () {
             onClose={close}
             token={resolved.asset.token}
             transaction={transaction}
+            vault={resolved.vault}
           />
         )}
       </div>

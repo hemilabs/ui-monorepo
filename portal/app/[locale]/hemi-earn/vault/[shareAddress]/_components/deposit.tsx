@@ -5,7 +5,6 @@ import { TokenInputBalance } from 'components/tokenInput/balance'
 import { WarningBox } from 'components/warningBox'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { useTokenBalance } from 'hooks/useBalance'
-import { useState } from 'react'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { getExtraApprovalAmount } from 'utils/approval'
@@ -20,11 +19,10 @@ import { useCanDeposit } from '../../../_hooks/useCanDeposit'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { percentToBps } from '../../../_utils/slippage'
 import { useVaultForm } from '../_context/vaultFormContext'
-import { useDeposit } from '../_hooks/useDeposit'
+import { useIsDepositing } from '../_hooks/useDeposit'
 import { useDepositPreview } from '../_hooks/useDepositPreview'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
 import { useSlippage } from '../_hooks/useSlippage'
-import { type DepositOperationRunning } from '../_types/operations'
 import {
   computeIsLoading,
   resolveErrorKey,
@@ -46,13 +44,10 @@ type Props = {
 
 export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   const t = useTranslations()
-  const [operationRunning, setOperationRunning] =
-    useState<DepositOperationRunning>('idle')
 
   const {
     approveExtraAmount,
     input,
-    resetStateAfterOperation,
     selectedAsset,
     updateDepositOperation,
     updateInput,
@@ -104,7 +99,6 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     needsApproval,
     quote,
     shares,
-    sharesOutMin,
     totalFees,
   } = useDepositPreview({
     account: address,
@@ -129,42 +123,15 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   })
 
   const { setDrawerQueryString } = useDrawerQueryString()
-
-  const { isPending: isRunningOperation, mutate: deposit } = useDeposit({
-    approvalAmount: extraApprovalAmount,
-    callbackFee: quote?.callbackFee ?? BigInt(0),
-    input,
-    on(emitter) {
-      // Open the drawer on first signature — wired here, not in useDeposit, so the hook stays reusable off the vault page (home retry has no drawer).
-      emitter.on('user-signed-approval', () =>
-        setDrawerQueryString('depositing'),
-      )
-      emitter.on('user-signed-deposit', () =>
-        setDrawerQueryString('depositing'),
-      )
-      emitter.on('approve-transaction-succeeded', () =>
-        setOperationRunning('depositing'),
-      )
-      emitter.on('deposit-transaction-succeeded', function () {
-        resetStateAfterOperation()
-      })
-      emitter.on('deposit-settled', () => setOperationRunning('idle'))
-    },
-    selectedAsset,
-    sharesOutMin,
-    slippage,
-    updateDepositOperation,
-    vault,
-  })
+  const isRunningOperation = useIsDepositing(vault.shareAddress)
 
   const handleDeposit = function () {
-    if (!canDeposit || !quote || zeroBalanceError) {
+    if (!canDeposit || !quote || zeroBalanceError || isRunningOperation) {
       return
     }
-    deposit(undefined, {
-      onError: () => setOperationRunning('idle'),
-    })
-    setOperationRunning(needsApproval ? 'approving' : 'depositing')
+    // Nothing clears a finished operation, so a fresh review has to start from a clean one.
+    updateDepositOperation(undefined)
+    setDrawerQueryString('depositing')
   }
 
   const hasQuote = !!quote
@@ -277,7 +244,6 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
           isLoading={isSubmitLoading}
           isRunningOperation={isRunningOperation}
           needsApproval={needsApproval}
-          operationRunning={operationRunning}
           validationError={effectiveValidationError}
         />
       }

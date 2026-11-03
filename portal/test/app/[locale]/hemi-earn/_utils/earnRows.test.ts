@@ -1,5 +1,5 @@
 import { type EvmToken } from 'types/token'
-import { type Address } from 'viem'
+import { getAddress, type Address } from 'viem'
 import { describe, expect, it } from 'vitest'
 
 import {
@@ -90,11 +90,7 @@ describe('earnRows', function () {
 
     it('synthesizes a zero-balance row for an in-transit share with no position', function () {
       expect(
-        inTransitOnlyPositions(
-          { [shareA.toLowerCase()]: BigInt(5) },
-          [],
-          vaults,
-        ),
+        inTransitOnlyPositions({ [getAddress(shareA)]: BigInt(5) }, [], vaults),
       ).toEqual([
         {
           peggedToken,
@@ -114,7 +110,7 @@ describe('earnRows', function () {
       } as unknown as EarnPosition
       expect(
         inTransitOnlyPositions(
-          { [shareA.toLowerCase()]: BigInt(5) },
+          { [getAddress(shareA)]: BigInt(5) },
           [position],
           vaults,
         ),
@@ -124,7 +120,7 @@ describe('earnRows', function () {
     it('drops an in-transit share that maps to no vault', function () {
       expect(
         inTransitOnlyPositions(
-          { [`0x${'f'.repeat(40)}`]: BigInt(5) },
+          { [getAddress(`0x${'f'.repeat(40)}`)]: BigInt(5) },
           [],
           vaults,
         ),
@@ -212,20 +208,22 @@ describe('earnRows', function () {
       amountOut: null,
       asset: redeemAsset,
       kind: 'REDEEM',
-      status: 'PENDING',
+      status: 'CANCELLED',
       ...overrides,
     })
 
-    it('sums the amountIn of an in-flight redeem under its share', function () {
+    it('sums the amountIn of a cancelled redeem under its share', function () {
       expect(sumInTransitSharesByShare([redeem()], vaults)).toEqual({
-        [share.toLowerCase()]: BigInt('2000000000000000000'),
+        [getAddress(share)]: BigInt('2000000000000000000'),
       })
     })
 
-    it('counts a CANCELLED redeem (shares still out, pre-recover)', function () {
+    it('excludes a PENDING redeem, which Vetro already took out of the cost basis', function () {
+      // Regression: adding these back double counted them, so a redeem in
+      // cooldown read as profit (a 100% redeem showed the whole position).
       expect(
-        sumInTransitSharesByShare([redeem({ status: 'CANCELLED' })], vaults),
-      ).toEqual({ [share.toLowerCase()]: BigInt('2000000000000000000') })
+        sumInTransitSharesByShare([redeem({ status: 'PENDING' })], vaults),
+      ).toEqual({})
     })
 
     it('excludes terminal redeems (RECOVERED / FINALIZED)', function () {
@@ -252,13 +250,13 @@ describe('earnRows', function () {
       ).toEqual({})
     })
 
-    it('excludes deposits', function () {
+    it('excludes a cancelled deposit, which returns assets and not shares', function () {
       expect(
         sumInTransitSharesByShare([redeem({ kind: 'DEPOSIT' })], vaults),
       ).toEqual({})
     })
 
-    it('sums multiple in-flight redeems for the same share', function () {
+    it('sums multiple cancelled redeems for the same share', function () {
       expect(
         sumInTransitSharesByShare(
           [
@@ -267,7 +265,7 @@ describe('earnRows', function () {
           ],
           vaults,
         ),
-      ).toEqual({ [share.toLowerCase()]: BigInt('3500000000000000000') })
+      ).toEqual({ [getAddress(share)]: BigInt('3500000000000000000') })
     })
 
     it('ignores a redeem whose asset maps to no vault', function () {

@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { type Hash } from 'viem'
 
+import { isVetroApiConfigured } from '../_constants/vetro'
 import { earnTransactionsKeyPrefix } from '../_fetchers/fetchEarnTransactions'
 import { hashesMatch } from '../_utils/hashes'
 import { isEarnRowTerminal } from '../_utils/transactionPredicates'
@@ -173,7 +174,8 @@ export const useEarnTransactions = function () {
   return {
     data: merged,
     // A poll after a failed load goes back to pending; keep the failure until data arrives.
-    hasLoadError: data === undefined && errorUpdateCount > 0,
+    hasLoadError:
+      !isVetroApiConfigured || (data === undefined && errorUpdateCount > 0),
     // Offline, a first load is paused, not idle; it's still loading.
     isPending: status === 'pending' && fetchStatus !== 'idle',
     reset: () =>

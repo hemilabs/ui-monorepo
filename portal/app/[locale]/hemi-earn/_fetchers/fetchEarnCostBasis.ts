@@ -1,19 +1,21 @@
 import fetchPlusPlus from 'fetch-plus-plus'
-import { hemi } from 'hemi-viem'
 import { type Address } from 'viem'
 
 export const earnCostBasisKeyPrefix = ['hemi-earn', 'cost-basis'] as const
 
-const getEarnCostBasisUrl = (account: Address) =>
-  `${import.meta.env.VITE_PORTAL_API_URL}/subgraphs/${hemi.id}/earn-cost-basis/${account}`
-
 export const fetchEarnCostBasis = async function ({
   account,
+  apiUrl,
 }: {
   account: Address
+  apiUrl: string
 }) {
-  const { costBasis } = (await fetchPlusPlus(getEarnCostBasisUrl(account), {
-    method: 'GET',
-  })) as { costBasis: Record<string, string> }
+  const { costBasis } = (await fetchPlusPlus(
+    `${apiUrl}/hemi-earn/cost-basis/${account}`,
+    { cache: 'no-store', method: 'GET' },
+  )) as { costBasis: Record<string, string> | undefined }
+  if (costBasis === undefined) {
+    throw new Error('Hemi Earn cost basis response is missing costBasis')
+  }
   return costBasis
 }

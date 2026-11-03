@@ -11,7 +11,7 @@ import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { veHemiAbi } from '../../abi.ts'
 import { getVeHemiContractAddress } from '../../constants.ts'
 import type { WithdrawEvents } from '../../types.ts'
-import { validateWithdrawInputs } from '../../utils.ts'
+import { unixNowTimestamp, validateWithdrawInputs } from '../../utils.ts'
 import { getLockedBalance, getOwnerOf } from '../public/veHemi.ts'
 
 const canRunWithdraw = async function ({
@@ -57,7 +57,7 @@ const canRunWithdraw = async function ({
       return { canWithdraw: false, reason: 'no existing lock' }
     }
 
-    const now = BigInt(Math.floor(Date.now() / 1000))
+    const now = unixNowTimestamp()
     if (end > now) {
       return { canWithdraw: false, reason: 'lock not yet expired' }
     }

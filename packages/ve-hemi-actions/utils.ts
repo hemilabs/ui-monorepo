@@ -14,6 +14,8 @@ import {
   SupportedChains,
 } from './constants.ts'
 
+export const unixNowTimestamp = () => BigInt(Math.floor(Date.now() / 1000))
+
 const validateAccount = function (account: Address) {
   if (!isAddress(account)) {
     return 'account is not a valid address'

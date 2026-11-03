@@ -13,6 +13,7 @@ export {
   getLivePositionClass,
   getLockedBalance,
   getPositionVotingPowerDetails,
+  getPositionsDelegatedAway,
   getPositionsVotingPowerSum,
   getTotalVotingPower,
   getTransferableAfter,

@@ -43,7 +43,7 @@ import { useVaultMetadata } from '../../../../_hooks/useVaultMetadata'
 import { hashesMatch } from '../../../../_utils/hashes'
 import {
   inTransitPostAction,
-  isCrossingNetworks,
+  isRedeemCrossing,
 } from '../../../../_utils/inTransit'
 import {
   claimRecoverSettlement,
@@ -59,7 +59,6 @@ import { completedSubheading } from '../../../../_utils/successCopy'
 import {
   isAwaitingFinalize,
   isFinalizeInFlight,
-  isLocalSettlementInFlight,
   isRecoverPath,
   isRemoteFailed,
   isRemoteFailedCancel,
@@ -596,11 +595,9 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     t,
     withdrawStatus,
   })
-  const isCrossing = isCrossingNetworks({
-    isAwaitingCooldown: !!settledRow && isAwaitingFinalize(settledRow),
-    isRemoteFail: isRemoteFailed(settledRow),
-    isSettlingLocally: isLocalSettlementInFlight(settledRow),
-    isStepInProgress: receiveStep.status === ProgressStatus.PROGRESS,
+  const isCrossing = isRedeemCrossing({
+    receiveStatus: receiveStep.status,
+    transaction: settledRow,
   })
 
   const getSteps = function () {

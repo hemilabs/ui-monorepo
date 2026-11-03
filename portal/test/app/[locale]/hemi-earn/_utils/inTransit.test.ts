@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import {
   inTransitPostAction,
   isCrossingNetworks,
+  isOutboundPending,
   isTransferDelayed,
   transferDeadline,
 } from '../../../../../app/[locale]/hemi-earn/_utils/inTransit'
@@ -180,5 +181,41 @@ describe('isTransferDelayed', function () {
         transaction: { ...baseTx, status: 'RECOVERED' },
       }),
     ).toBe(false)
+  })
+})
+
+describe('isOutboundPending', function () {
+  const outbound = {
+    ...baseTx,
+    claimableAt: null,
+    kind: 'REDEEM' as const,
+    processedAt: null,
+    status: 'PENDING' as const,
+  }
+
+  it('is outbound while the Agent has neither received nor processed it', function () {
+    // Regression: a cooldown redeem leaves the receive step NOT_READY on this leg,
+    // so the delay banner never fired for the whole Hemi to Ethereum crossing.
+    expect(isOutboundPending(outbound)).toBe(true)
+  })
+
+  it('is not outbound once the cooldown deadline is known', function () {
+    expect(isOutboundPending({ ...outbound, claimableAt: '1700000000' })).toBe(
+      false,
+    )
+  })
+
+  it('is not outbound once the Agent processed it', function () {
+    expect(isOutboundPending({ ...outbound, processedAt: '1700000000' })).toBe(
+      false,
+    )
+  })
+
+  it('is not outbound on a row that is not PENDING', function () {
+    expect(isOutboundPending({ ...outbound, status: 'FINALIZED' })).toBe(false)
+  })
+
+  it('is not outbound on a local row, which the indexer has not seen', function () {
+    expect(isOutboundPending({ ...outbound, requestId: 'local-1' })).toBe(false)
   })
 })

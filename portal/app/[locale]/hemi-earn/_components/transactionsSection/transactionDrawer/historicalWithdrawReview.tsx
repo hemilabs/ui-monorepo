@@ -22,7 +22,7 @@ import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
 import { useVaultMetadata } from '../../../_hooks/useVaultMetadata'
 import {
   inTransitPostAction,
-  isCrossingNetworks,
+  isRedeemCrossing,
 } from '../../../_utils/inTransit'
 import { claimRecoverSettlement } from '../../../_utils/settlement'
 import {
@@ -32,11 +32,9 @@ import {
 } from '../../../_utils/settleUi'
 import { completedSubheading } from '../../../_utils/successCopy'
 import {
-  isAwaitingFinalize,
   isEarnRowTerminal,
   isFinalizeInFlight,
   isLocalEarnTransactionRow,
-  isLocalSettlementInFlight,
   isRecoverPath,
   isRemoteFailed,
   isRemoteFailedCancel,
@@ -407,11 +405,9 @@ export const HistoricalWithdrawReview = function ({
     return null
   }
 
-  const isCrossing = isCrossingNetworks({
-    isAwaitingCooldown: isAwaitingFinalize(transaction),
-    isRemoteFail: isRemoteFailed(transaction),
-    isSettlingLocally: isLocalSettlementInFlight(transaction),
-    isStepInProgress: receive === ProgressStatus.PROGRESS,
+  const isCrossing = isRedeemCrossing({
+    receiveStatus: receive,
+    transaction,
   })
 
   const steps = buildSteps({

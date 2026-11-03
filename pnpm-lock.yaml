@@ -486,9 +486,6 @@ importers:
       express:
         specifier: 5.1.0
         version: 5.1.0(supports-color@10.2.2)
-      hemi-earn-actions:
-        specifier: workspace:*
-        version: link:../../packages/hemi-earn-actions
       hemi-viem:
         specifier: 2.9.0
         version: 2.9.0(viem@2.28.4(patch_hash=835b96a7abd9f48894a14a851e9b1b428b0e9567c283f70324a9bdf50ddc7305)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))

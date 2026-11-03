@@ -1,5 +1,6 @@
 import { Button, ButtonLink } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
+import { ClipboardIcon } from 'components/icons/clipboard'
 import { type EvmWalletData } from 'hooks/useAllWallets'
 import { QRCodeSVG } from 'qrcode.react'
 import { useCallback, useEffect, useState } from 'react'
@@ -9,7 +10,6 @@ import { useTranslations } from 'use-intl'
 import { useConfig, useConnect } from 'wagmi'
 import { getConnections } from 'wagmi/actions'
 
-import { ClipboardIcon } from './icons/clipboard'
 import { QrcodePlaceholderIcon } from './icons/qrcodePlaceholder'
 import { getWalletConnectUri } from './utils/walletConnect'
 

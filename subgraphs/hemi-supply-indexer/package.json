@@ -1,5 +1,5 @@
 {
-  "name": "hemi-earn-requests-subgraph",
+  "name": "hemi-supply-indexer",
   "version": "1.0.0",
   "scripts": {
     "prebuild": "pnpm run codegen",

@@ -601,7 +601,16 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
-  subgraphs/hemi-earn-requests-subgraph:
+  subgraphs/hemi-stake-operations-subgraph:
+    dependencies:
+      '@graphprotocol/graph-cli':
+        specifier: 0.97.1
+        version: 0.97.1(patch_hash=292989c6ec0108c55f7a64e5fa65246d9cafe745bae932b200ad551bd4105eab)(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@8.1.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
+      '@graphprotocol/graph-ts':
+        specifier: 0.38.1
+        version: 0.38.1
+
+  subgraphs/hemi-supply-indexer:
     dependencies:
       envio:
         specifier: 3.11.0
@@ -622,15 +631,6 @@ importers:
       vitest:
         specifier: 5.0.1
         version: 5.0.1(@opentelemetry/api@1.9.1)(@types/node@24.10.2)(vite@8.3.4(@types/node@24.10.2)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.9.0))
-
-  subgraphs/hemi-stake-operations-subgraph:
-    dependencies:
-      '@graphprotocol/graph-cli':
-        specifier: 0.97.1
-        version: 0.97.1(patch_hash=292989c6ec0108c55f7a64e5fa65246d9cafe745bae932b200ad551bd4105eab)(@types/node@24.10.2)(bufferutil@4.1.0)(supports-color@8.1.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
-      '@graphprotocol/graph-ts':
-        specifier: 0.38.1
-        version: 0.38.1
 
   subgraphs/hemi-tunnel-btc-deposits-subgraph:
     dependencies:

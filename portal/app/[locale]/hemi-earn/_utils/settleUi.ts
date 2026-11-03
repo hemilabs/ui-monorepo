@@ -7,8 +7,9 @@ import { type Chain, type Hash } from 'viem'
 
 import { type EarnSettlement, type EarnTransaction } from '../types'
 
-import { claimRecoverSettlement, remoteFailedSettlement } from './settlement'
+import { remoteFailedSettlement } from './settlement'
 import {
+  isLocalSettlementInFlight,
   isUserCancel,
   needsManualClaim,
   needsRecover,
@@ -50,9 +51,6 @@ export const resolveStepExplorerChainId = ({
       ? mainnet.id
       : fallbackChainId
 
-const isSettlementInFlight = (settlement: EarnSettlement | undefined) =>
-  claimRecoverSettlement(settlement)?.failed === false
-
 // Banner above the settle CTA; undefined unless awaiting an untouched claim/recover.
 // shares/funds follow the same delivered-token inversion as SettleCta.
 export const pickSettleBannerKey = function (
@@ -68,7 +66,7 @@ export const pickSettleBannerKey = function (
   // A deliberate cancel reads neutrally, not as a recover failure (isUserCancel drops at RECOVERED).
   if (isUserCancel(tx)) return 'cancelled'
   // A claim/recover marker means the user already engaged that CTA; no banner while it's in flight.
-  if (isSettlementInFlight(tx.settlement)) return undefined
+  if (isLocalSettlementInFlight(tx)) return undefined
   const operation = needsManualClaim(tx)
     ? 'CLAIM'
     : needsRecover(tx)

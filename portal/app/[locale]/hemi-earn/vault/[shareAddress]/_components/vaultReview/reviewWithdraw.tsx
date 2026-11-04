@@ -73,6 +73,7 @@ import { useEarnCooldownRemaining } from '../../_hooks/useEarnCooldownRemaining'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
 import { useSharesToAssets } from '../../_hooks/useSharesToAssets'
 import { useSlippageBps } from '../../_hooks/useSlippage'
+import { useUserShareValue } from '../../_hooks/useUserShareValue'
 import {
   WithdrawStatus,
   type WithdrawStatusType,
@@ -319,10 +320,14 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     assetAddress: selectedAsset.address,
     shareAddress: vault.shareAddress,
   })
+  const { data: shareValue } = useUserShareValue({
+    shareAddress: vault.shareAddress,
+  })
   const shares = deriveWithdrawShares({
     assetShares: assetsToShares?.shares,
     input,
     isTokensMode,
+    shareBalance: shareValue?.shares,
     shareToken: vault.shareToken,
   })
 

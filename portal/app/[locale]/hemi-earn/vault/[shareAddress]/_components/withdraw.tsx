@@ -84,17 +84,18 @@ export const Withdraw = function ({
       shareAddress: vault.shareAddress,
     })
 
-  const shares = deriveWithdrawShares({
-    assetShares: assetsToShares?.shares,
-    input,
-    isTokensMode,
-    shareToken: vault.shareToken,
-  })
-
   const { data: shareValue, isSuccess: shareValueLoaded } = useUserShareValue({
     shareAddress: vault.shareAddress,
   })
   const shareBalance = shareValue?.shares ?? BigInt(0)
+
+  const shares = deriveWithdrawShares({
+    assetShares: assetsToShares?.shares,
+    input,
+    isTokensMode,
+    shareBalance: shareValue?.shares,
+    shareToken: vault.shareToken,
+  })
 
   const { data: maxWithdrawable, isFetched: maxAssetLoaded } =
     useMaxWithdrawableAsset({

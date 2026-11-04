@@ -1,7 +1,7 @@
+import { type RetryRequestEvents } from '@vetro-protocol/hemi-earn'
 import { Button } from 'components/button'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { type EventEmitter } from 'events'
-import { type RetryRequestEvents } from 'hemi-earn-actions'
 import { type MouseEvent, type ReactNode } from 'react'
 import { useTranslations } from 'use-intl'
 

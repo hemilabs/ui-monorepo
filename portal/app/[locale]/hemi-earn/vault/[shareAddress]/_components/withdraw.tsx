@@ -1,7 +1,7 @@
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
+import { hemiEarnRouterAddress } from '@vetro-protocol/hemi-earn'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
-import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { getExtraApprovalAmount } from 'utils/approval'
@@ -135,7 +135,6 @@ export const Withdraw = function ({
     shareValueLoaded,
   })
 
-  const routerAddress = getHemiEarnRouterAddress()
   const extraApprovalAmount = getExtraApprovalAmount(shares, approveExtraAmount)
 
   const {
@@ -163,7 +162,7 @@ export const Withdraw = function ({
     shares,
     shareToken: vault.shareToken,
     slippageBps,
-    spender: routerAddress,
+    spender: hemiEarnRouterAddress,
     validInput,
   })
 

@@ -1,3 +1,4 @@
+import { hemiEarnRouterAddress } from '@vetro-protocol/hemi-earn'
 import { SparkleIcon } from 'components/icons/sparkleIcon'
 import { Operation } from 'components/reviewOperation/operation'
 import {
@@ -6,7 +7,6 @@ import {
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { TokenLogo } from 'components/tokenLogo'
-import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { type ReactNode } from 'react'
@@ -226,7 +226,7 @@ export const HistoricalDepositReview = function ({
     address: transaction.asset,
     amount: BigInt(transaction.amountIn),
     chainId: token.chainId,
-    spender: getHemiEarnRouterAddress(),
+    spender: hemiEarnRouterAddress,
   })
 
   const { show: remoteFailedReady } = useRemoteFailedState(transaction)

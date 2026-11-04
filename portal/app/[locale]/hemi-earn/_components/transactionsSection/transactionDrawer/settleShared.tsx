@@ -1,13 +1,13 @@
-import { AddTokenToWallet } from 'components/addTokenToWallet'
-import { Button } from 'components/button'
-import { SubmitWhenConnected } from 'components/submitWhenConnected'
-import { WarningBox } from 'components/warningBox'
 import {
   claimDeposit,
   claimRedeem,
   recoverDeposit,
   recoverRedeem,
-} from 'hemi-earn-actions/actions'
+} from '@vetro-protocol/hemi-earn/actions'
+import { AddTokenToWallet } from 'components/addTokenToWallet'
+import { Button } from 'components/button'
+import { SubmitWhenConnected } from 'components/submitWhenConnected'
+import { WarningBox } from 'components/warningBox'
 import { type FormEvent, type ReactNode } from 'react'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'

@@ -3,22 +3,18 @@ import {
   quoteRedeem,
   quoteRedeemFulfillment,
   resolveIsInstant,
-} from 'hemi-earn-actions/actions'
+} from '@vetro-protocol/hemi-earn/actions'
 import { type Address } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { fetchQuoteRedeem } from '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_fetchers/fetchQuoteRedeem'
 
-vi.mock('hemi-earn-actions/actions', () => ({
+vi.mock('@vetro-protocol/hemi-earn/actions', () => ({
   getAgentAddress: vi.fn(),
   getAssetData: vi.fn(),
   quoteRedeem: vi.fn(),
   quoteRedeemFulfillment: vi.fn(),
   resolveIsInstant: vi.fn(),
-}))
-
-vi.mock('hemi-earn-actions', () => ({
-  getHemiEarnRouterAddress: () => '0xRouter',
 }))
 
 vi.mock('utils/chainClients', () => ({
@@ -86,10 +82,12 @@ describe('fetchQuoteRedeem', function () {
     })
 
     expect(quoteRedeemFulfillment).toHaveBeenCalledWith(
-      expect.objectContaining({ agentAddress: '0xAgent', asset: remoteAsset }),
+      expect.anything(),
+      expect.objectContaining({ address: '0xAgent', remoteAsset }),
     )
     expect(resolveIsInstant).toHaveBeenCalledWith(
-      expect.objectContaining({ stakingVault: remoteShare }),
+      expect.anything(),
+      expect.objectContaining({ address: remoteShare }),
     )
   })
 
@@ -106,6 +104,7 @@ describe('fetchQuoteRedeem', function () {
     })
 
     expect(quoteRedeem).toHaveBeenCalledWith(
+      expect.anything(),
       expect.objectContaining({
         callbackFee: BigInt(99),
         isInstant: true,

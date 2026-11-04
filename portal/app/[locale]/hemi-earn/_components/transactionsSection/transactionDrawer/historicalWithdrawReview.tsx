@@ -1,3 +1,4 @@
+import { hemiEarnRouterAddress } from '@vetro-protocol/hemi-earn'
 import { Operation } from 'components/reviewOperation/operation'
 import {
   ProgressStatus,
@@ -5,7 +6,6 @@ import {
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { TokenLogo } from 'components/tokenLogo'
-import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useToken } from 'hooks/useToken'
@@ -339,7 +339,7 @@ export const HistoricalWithdrawReview = function ({
     address: vault.shareAddress,
     amount: BigInt(transaction.amountIn),
     chainId: hemi.id,
-    spender: getHemiEarnRouterAddress(),
+    spender: hemiEarnRouterAddress,
   })
 
   const { data: isCooldownEligible } = useIsCooldownEligible({

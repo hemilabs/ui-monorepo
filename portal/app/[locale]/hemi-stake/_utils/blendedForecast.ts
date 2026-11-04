@@ -201,12 +201,6 @@ export const getBlendedForecast = function ({
   return {
     blended: {
       lockEnd: incomingLockEnd,
-      payouts: epochs.map(epoch => ({
-        epochsAhead: epoch.epochsAhead,
-        payout: epoch.existing.payout + epoch.incoming.payout,
-        timestamp: epoch.timestamp,
-        weight: epoch.existing.weight + epoch.incoming.weight,
-      })),
       yearOneReturnRatio: toFraction(
         blendedTotal,
         stakedAmount + incoming.amount,

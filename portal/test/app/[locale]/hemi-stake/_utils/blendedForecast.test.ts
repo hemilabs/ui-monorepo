@@ -271,9 +271,6 @@ describe('getBlendedForecast', function () {
     expect(blended.yearOneTotal).toBe(
       existing.yearOneTotal + incoming.yearOneTotal,
     )
-    expect(blended.payouts[0].payout).toBe(
-      existing.payouts[0].payout + incoming.payouts[0].payout,
-    )
   })
 
   it('grows the denominator by exactly the incoming weight', function () {
@@ -388,9 +385,9 @@ describe('getBlendedForecast voting weights', function () {
     const forecast = run(false)
 
     expect(forecast.votingWeights).toStrictEqual(
-      forecast.blended.payouts.map(({ timestamp, weight }) => ({
+      forecast.existing.payouts.map(({ timestamp, weight }, epoch) => ({
         timestamp,
-        weight,
+        weight: weight + forecast.incoming.payouts[epoch].weight,
       })),
     )
   })
@@ -402,7 +399,9 @@ describe('getBlendedForecast voting weights', function () {
     expect(voting.votingWeights[0].weight).toBeLessThan(
       all.votingWeights[0].weight,
     )
-    expect(voting.blended.payouts[0].payout).toBe(all.blended.payouts[0].payout)
+    expect(voting.existing.payouts[0].payout).toBe(
+      all.existing.payouts[0].payout,
+    )
     expect(voting.blended.yearOneTotal).toBe(all.blended.yearOneTotal)
   })
 

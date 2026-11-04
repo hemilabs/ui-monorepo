@@ -14,6 +14,7 @@ export const EstimatorOutputs = function () {
     retry,
     stakedReturnRatio,
     unavailable,
+    votingWeights,
   } = useEstimatorForecast()
 
   return (
@@ -31,7 +32,6 @@ export const EstimatorOutputs = function () {
       />
       <div className="min-w-0 md:col-span-2">
         <ProjectionsCard
-          blended={forecast.blended.payouts}
           currentEpoch={currentEpoch}
           existing={forecast.existing.payouts}
           incoming={forecast.incoming.payouts}
@@ -40,6 +40,7 @@ export const EstimatorOutputs = function () {
           isLoading={isLoading}
           lockEnd={forecast.blended.lockEnd}
           onRetry={isError ? retry : undefined}
+          votingWeights={votingWeights}
         />
       </div>
     </div>

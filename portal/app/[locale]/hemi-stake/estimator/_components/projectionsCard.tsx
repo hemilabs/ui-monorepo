@@ -192,7 +192,6 @@ const LegendItem = ({ color, label }: { color: string; label: string }) => (
 )
 
 type Props = {
-  blended: ProjectionEpoch[]
   currentEpoch: number | undefined
   existing: ProjectionEpoch[]
   incoming: ProjectionEpoch[]
@@ -201,10 +200,10 @@ type Props = {
   isLoading: boolean
   lockEnd: number
   onRetry: VoidFunction | undefined
+  votingWeights: { timestamp: number; weight: bigint }[] | undefined
 }
 
 export const ProjectionsCard = function ({
-  blended,
   currentEpoch,
   existing,
   incoming,
@@ -213,6 +212,7 @@ export const ProjectionsCard = function ({
   isLoading,
   lockEnd,
   onRetry,
+  votingWeights,
 }: Props) {
   const [unit, setUnit] = useState<ChartUnit>('hemi')
   const locale = useLocale()
@@ -237,7 +237,7 @@ export const ProjectionsCard = function ({
   const incomingBars = toBars(incoming)
   const votingPower = toVotingPowerCurve({
     decimals: token.decimals,
-    payouts: blended,
+    weights: votingWeights ?? [],
   })
 
   const ticks = getPayoutAxisTicks(incomingBars, axisTickCount)

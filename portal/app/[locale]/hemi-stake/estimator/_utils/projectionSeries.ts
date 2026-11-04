@@ -29,12 +29,12 @@ export const toPayoutBars = ({
 
 export const toVotingPowerCurve = ({
   decimals,
-  payouts,
+  weights,
 }: {
   decimals: number
-  payouts: ProjectionEpoch[]
+  weights: { timestamp: number; weight: bigint }[]
 }) =>
-  payouts.map(({ timestamp, weight }) => ({
+  weights.map(({ timestamp, weight }) => ({
     x: timestamp * 1000,
     y: Number(formatUnits(weight, decimals)),
   }))

@@ -3,6 +3,7 @@ import { isAddress, isAddressEqual, type Address, type Client } from 'viem'
 import { multicall, readContract } from 'viem/actions'
 
 import { veHemiAbi } from '../../abi.ts'
+import { unixNowTimestamp } from '../../utils.ts'
 import { veHemiVoteDelegationAbi } from '../../voteDelegationAbi.ts'
 
 import { getVeHemiContractAddress } from './../../constants.ts'
@@ -150,6 +151,39 @@ const isDelegationActive = (
   now: bigint,
 ) => BigInt(delegation.end) > now
 
+const isDelegatedAway = (
+  delegation: {
+    delegatee: Address
+    end: bigint | number
+  },
+  ownerAddress: Address,
+  now: bigint,
+) =>
+  isDelegationActive(delegation, now) &&
+  !isAddressEqual(delegation.delegatee, ownerAddress)
+
+const fetchDelegations = async function ({
+  client,
+  tokenIds,
+}: {
+  client: Client
+  tokenIds: bigint[]
+}) {
+  const voteDelegationAddress = await memoizedGetVoteDelegationAddress(client)
+  return multicall(client, {
+    allowFailure: false,
+    contracts: tokenIds.map(
+      tokenId =>
+        ({
+          abi: veHemiVoteDelegationAbi,
+          address: voteDelegationAddress,
+          args: [tokenId],
+          functionName: 'delegation',
+        }) as const,
+    ),
+  })
+}
+
 type PositionVotingPowerDetails = {
   delegatee: Address
   isDelegatedAway: boolean
@@ -182,15 +216,43 @@ export const getPositionVotingPowerDetails = async function ({
     functionName: 'delegation',
   })
 
-  const now = BigInt(Math.floor(Date.now() / 1000))
+  const now = unixNowTimestamp()
 
   return {
     delegatee: delegation.delegatee,
-    isDelegatedAway:
-      isDelegationActive(delegation, now) &&
-      !isAddressEqual(delegation.delegatee, ownerAddress),
+    isDelegatedAway: isDelegatedAway(delegation, ownerAddress, now),
     votingPower: delegationToVotingPower(delegation, ownerAddress, now),
   }
+}
+
+export const getPositionsDelegatedAway = async function ({
+  client,
+  ownerAddress,
+  tokenIds,
+}: {
+  client: Client
+  ownerAddress: Address
+  tokenIds: bigint[]
+}) {
+  if (!client.chain) {
+    throw new Error('Client chain is not defined')
+  }
+  if (!isAddress(ownerAddress)) {
+    throw new Error('Invalid owner address')
+  }
+  if (tokenIds.length === 0) {
+    return {} as Record<string, boolean>
+  }
+
+  const now = unixNowTimestamp()
+  const delegations = await fetchDelegations({ client, tokenIds })
+
+  return Object.fromEntries(
+    tokenIds.map((tokenId, index) => [
+      tokenId.toString(),
+      isDelegatedAway(delegations[index], ownerAddress, now),
+    ]),
+  )
 }
 
 export const getPositionsVotingPowerSum = async function ({
@@ -212,28 +274,14 @@ export const getPositionsVotingPowerSum = async function ({
     return BigInt(0)
   }
 
-  const voteDelegationAddress = await memoizedGetVoteDelegationAddress(client)
-  const now = BigInt(Math.floor(Date.now() / 1000))
+  const now = unixNowTimestamp()
+  const delegations = await fetchDelegations({ client, tokenIds })
 
-  const contracts = tokenIds.map(
-    tokenId =>
-      ({
-        abi: veHemiVoteDelegationAbi,
-        address: voteDelegationAddress,
-        args: [tokenId],
-        functionName: 'delegation',
-      }) as const,
+  return delegations.reduce(
+    (sum, delegation) =>
+      sum + delegationToVotingPower(delegation, ownerAddress, now),
+    BigInt(0),
   )
-  const results = await multicall(client, {
-    allowFailure: false,
-    contracts,
-  })
-
-  let sum = BigInt(0)
-  for (let i = 0; i < results.length; i++) {
-    sum += delegationToVotingPower(results[i], ownerAddress, now)
-  }
-  return sum
 }
 
 export const getTotalVotingPower = async function ({

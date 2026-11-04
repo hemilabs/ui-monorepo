@@ -50,13 +50,16 @@ Once it's up, explore the data at the GraphQL playground:
 
 ## Deployment
 
-Envio hosts this indexer; it is not in `.github/workflows/subgraph-deployment.yml`, which only deploys the The Graph subgraphs. Envio deploys from its own GitHub integration, and keeps a limited number of live instances, each one consuming indexing time. A change to `config.yaml` or `schema.graphql` makes a new instance index from the start block again, which is not instant: the snapshots are RPC reads, per day and per chain.
+Envio deploys the indexer on each merge to `main`, also when the indexer did not change. Envio keeps up to 3 live instances of the indexer, and each instance costs more indexing time. For this reason, deployments on merge to `main` are disabled by default. The goal is to keep only one live instance, the production instance, between deployments.
 
-To roll out a change:
+This indexer is not in `.github/workflows/subgraph-deployment.yml`, which only deploys the The Graph subgraphs.
 
-1. In the Envio project settings, enable deployments on push to `main`.
-2. Merge the change. The instance in production keeps serving while the new one indexes.
-3. Disable deployments on push again, so later merges do not spend indexing time.
-4. Wait for the new instance to reach the chain heads, then promote it to production.
-5. Check that `/circulating` and `/supply-history` still answer, and that the portal-backend points at the promoted instance (see its README for the env variable).
-6. Remove the old instance.
+To deploy a change to the indexer:
+
+1. In the [Envio project settings](https://envio.dev/app/hemilabs/hemi-supply-indexer), enable deployments on push to `main`.
+2. Merge the change to `main`.
+3. When Envio starts the new instance, disable deployments on push to `main` again.
+4. Wait for the new instance to index again. The supply snapshots are RPC reads, per day and per chain, so this takes a while.
+5. Promote the new instance to production.
+6. Make sure that the new instance works correctly: `/circulating` and `/supply-history` should answer, and the portal-backend should point at the promoted instance (see its README for the env variable).
+7. Remove the old instance.

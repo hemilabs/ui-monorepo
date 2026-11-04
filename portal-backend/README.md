@@ -187,10 +187,10 @@ These environment variables control how the cache works:
 | SENTRY_LOGGING_LEVELS               | The logging levels to send to Sentry (props of console.log).                     | ["log", "warn", "error"]           |
 | SUBGRAPH_API_KEY                    | The API key needed to query the subgraphs.                                       |                                    |
 | SUBGRAPH_API_URL                    | The base URL of the subgraphs gateway.                                           | `https://gateway.thegraph.com/api` |
+| SUBGRAPH_HEMI_EARN_REQUESTS_API_KEY | Bearer token for the Envio indexer. Only sent when set.                          |                                    |
+| SUBGRAPH_HEMI_EARN_REQUESTS_API_URL | The full GraphQL URL of the Envio indexer that serves the HEMI supply snapshots. |                                    |
 | SUBGRAPH_ORIGIN                     | The `Origin` header sent when querying the subgraphs.                            | `https://app.hemi.xyz`             |
 | SUBGRAPH_VE_HEMI_TESTNET            | Override for the published testnet veHEMI subgraph id.                           |                                    |
-| SUBGRAPH_HEMI_EARN_REQUESTS_API_URL | The full GraphQL URL of the Envio indexer that serves the HEMI supply snapshots. |                                    |
-| SUBGRAPH_HEMI_EARN_REQUESTS_API_KEY | Bearer token for the Envio indexer. Only sent when set.                          |                                    |
 | TVL_DUNE_API_KEY                    | The Dune API key.                                                                |                                    |
 | TVL_DUNE_QUERY_ID                   | The Dune TVL query id.                                                           |                                    |
 | TVL_REVALIDATE_MIN                  | The time the TVL will be considered fresh.                                       | 720                                |

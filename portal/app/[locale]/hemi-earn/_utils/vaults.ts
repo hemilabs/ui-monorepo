@@ -1,4 +1,4 @@
-import { hemiEarnVaults } from '@vetro-protocol/earn/hemiEarn'
+import { hemiEarnVaults } from '@vetro-protocol/hemi-earn'
 import { type Address, isAddressEqual } from 'viem'
 
 import { type EarnVault } from '../types'

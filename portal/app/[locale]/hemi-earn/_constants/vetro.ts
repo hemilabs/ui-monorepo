@@ -1,4 +1,4 @@
-import { hemiEarnLinks } from '@vetro-protocol/earn/hemiEarn'
+import { hemiEarnLinks } from '@vetro-protocol/hemi-earn'
 import { isValidUrl } from 'utils/url'
 
 export const vetroApiUrl = import.meta.env.VITE_VETRO_API_URL

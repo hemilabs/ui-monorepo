@@ -5,7 +5,6 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { useTranslations } from 'use-intl'
-import { isValidUrl } from 'utils/url'
 import { type Address, type Chain } from 'viem'
 
 import {
@@ -23,9 +22,6 @@ export type CompositionItem = {
   share: number
 }
 
-const apiUrl = import.meta.env.VITE_VETRO_API_URL
-const isVetroApiConfigured = apiUrl !== undefined && isValidUrl(apiUrl)
-
 type CompositionQueryOptions = {
   chainId: Chain['id']
   queryClient: QueryClient
@@ -39,10 +35,12 @@ const compositionQueryOptions = ({
   shareAddress,
 }: CompositionQueryOptions) =>
   queryOptions({
-    enabled: isVetroApiConfigured,
-    // `enabled` guarantees the query only runs with a valid api url
     queryFn: () =>
-      fetchComposition({ apiUrl: apiUrl!, queryClient, shareAddress }),
+      fetchComposition({
+        apiUrl: import.meta.env.VITE_VETRO_API_URL,
+        queryClient,
+        shareAddress,
+      }),
     queryKey: ['hemi-earn', 'composition', chainId, shareAddress],
     refetchInterval: 5 * 60 * 1000,
     retry: 2,

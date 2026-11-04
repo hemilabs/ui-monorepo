@@ -168,7 +168,7 @@ The Portal needs a user's full operation history across the three chains of the 
 
 The `subgraphs/` folder holds one subgraph per concern. The tunnel-related ones cover deposits, BTC deposits, withdrawals, and withdrawal proofs and claims; the rest cover Hemi Earn, staking and veHEMI. Every subgraph is deployed once per chain, so mainnet and testnet are separate deployments.
 
-The Portal does not query The Graph directly. Requests go through the backend API (`portal-backend/api`) under `/subgraphs/{chainId}/...`, which keeps API keys server-side and normalizes responses.
+The Portal does not query The Graph directly. Requests go through the backend API (`portal-backend/api`) under `/subgraphs/{chainId}/...`, which keeps API keys server-side and normalizes responses. Hemi Earn is the exception: its history and cost basis come straight from Vetro's API, which owns that indexer.
 
 History itself is assembled in web workers so the UI stays responsive. The workers combine subgraph data with direct RPC reads — a subgraph lags behind the chain head, so recent blocks are still scanned — track how far each chain has been synced, and persist the result locally so a returning user sees their history immediately. Operation status is then refreshed against chain state: whether a withdrawal is provable, claimable or challengeable is always decided by the contracts, never by the cached record.
 

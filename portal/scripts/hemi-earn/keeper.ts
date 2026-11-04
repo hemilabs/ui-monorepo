@@ -210,7 +210,6 @@ async function runCancel({
   log(
     `Agent.cancel(${requestId}) sent — ${branch} branch (tx ${hash.slice(0, 14)}…)`,
   )
-  log('  → Envio: RequestCancellationTriggered → RequestCancelled')
   log('  → Portal: CTAs disappear on next refetch; drawer shows Recover')
 }
 
@@ -263,9 +262,6 @@ async function runRetry({
   if (isAddressEqual(afterTokenIn, zeroAddress)) {
     log(
       `Agent.retry(${requestId}) succeeded — failedRequests cleared (tx ${hash.slice(0, 14)}…)`,
-    )
-    log(
-      '  → Envio: retryCount++, failed=false, status advances (FULFILLED/FINALIZED)',
     )
     log('  → Portal: REMOTE_FAILED CTAs disappear on next refetch')
     return

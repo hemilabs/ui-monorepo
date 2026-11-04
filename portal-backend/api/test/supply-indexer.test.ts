@@ -209,6 +209,19 @@ describe('getSupplyHistory', function () {
     expect(getPriceHistory).toHaveBeenCalledWith('HEMI')
   })
 
+  it('requires a Base read, except before HEMI existed on Base', async function () {
+    requestHemiSupply.mockResolvedValue({
+      data: { DailySupplySnapshot: [row] },
+    })
+    const { getSupplyHistory } = createIndexer('0', 50)
+
+    await getSupplyHistory('1m')
+
+    const [{ query }] = requestHemiSupply.mock.calls[0]
+    expect(query).toContain('baseBlock: { _is_null: false }')
+    expect(query).toContain('date: { _lt: "2025-12-29" }')
+  })
+
   it('rejects a period it does not know', async function () {
     const { getSupplyHistory } = createIndexer('0', 50)
 
@@ -246,6 +259,19 @@ describe('getCirculatingSupply', function () {
     const { getCirculatingSupply } = createIndexer(hemi('1000'), 50)
 
     expect(await getCirculatingSupply()).toBe('-948.000000000000000000')
+  })
+
+  it('requires a Base read, except before HEMI existed on Base', async function () {
+    requestHemiSupply.mockResolvedValue({
+      data: { DailySupplySnapshot: [row] },
+    })
+    const { getCirculatingSupply } = createIndexer('0', 50)
+
+    await getCirculatingSupply()
+
+    const [{ query }] = requestHemiSupply.mock.calls[0]
+    expect(query).toContain('baseBlock: { _is_null: false }')
+    expect(query).toContain('date: { _lt: "2025-12-29" }')
   })
 
   it('fails when the indexer has no day that every chain has reached', async function () {

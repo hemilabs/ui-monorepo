@@ -1,6 +1,6 @@
 # hemi-supply-indexer
 
-A multichain [Envio HyperIndex](https://docs.envio.dev) indexer that takes the HEMI supply snapshots the portal-backend serves on `/circulating` and `/supply-history`. Unlike the other subgraphs in this folder (which use The Graph), this one uses Envio so a single entity can be built from reads on several chains.
+A multichain [Envio HyperIndex](https://docs.envio.dev) indexer that takes the HEMI supply snapshots the portal-backend serves on `/circulating` and `/supply-history`. Unlike the subgraphs in this folder (which use The Graph), this indexer uses Envio so a single entity can be built from reads on several chains.
 
 ## What it indexes
 
@@ -41,7 +41,7 @@ pnpm codegen   # regenerate types from config.yaml + schema.graphql (no Docker)
 pnpm test      # run the handler tests, in memory (no Docker, token or network)
 ```
 
-Envio names the local Docker stack after the `name` in `config.yaml`, so `pnpm stop` only tears down a stack created under the current name. If you still have one from before this indexer was renamed, stop it with `docker compose -p hemi-earn-requests down -v` first, or it keeps holding port 8080.
+Envio names the local Docker stack after the `name` in `config.yaml`, so `pnpm stop` only tears down a stack created under the current name.
 
 Once it's up, explore the data at the GraphQL playground:
 
@@ -51,8 +51,6 @@ Once it's up, explore the data at the GraphQL playground:
 ## Deployment
 
 Envio deploys the indexer on each merge to `main`, also when the indexer did not change. Envio keeps up to 3 live instances of the indexer, and each instance costs more indexing time. For this reason, deployments on merge to `main` are disabled by default. The goal is to keep only one live instance, the production instance, between deployments.
-
-This indexer is not in `.github/workflows/subgraph-deployment.yml`, which only deploys the The Graph subgraphs.
 
 To deploy a change to the indexer:
 

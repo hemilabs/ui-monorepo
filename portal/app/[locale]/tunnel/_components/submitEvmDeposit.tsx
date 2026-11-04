@@ -1,6 +1,7 @@
 import { Button } from 'components/button'
 import { Spinner } from 'components/spinner'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
+import { SubmitWhenNativeBalance } from 'components/submitWhenNativeBalance'
 import { EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { tunnelsThroughPartners } from 'utils/token'
@@ -74,13 +75,18 @@ export const SubmitEvmDeposit = function ({
   return (
     <SubmitWhenConnected
       submitButton={
-        <Button
-          disabled={!canDeposit || isRunningOperation || isAllowanceLoading}
-          size="xLarge"
-          type="submit"
-        >
-          {getOperationButtonText()}
-        </Button>
+        <SubmitWhenNativeBalance
+          chainId={fromToken.chainId}
+          submitButton={
+            <Button
+              disabled={!canDeposit || isRunningOperation || isAllowanceLoading}
+              size="xLarge"
+              type="submit"
+            >
+              {getOperationButtonText()}
+            </Button>
+          }
+        />
       }
     />
   )

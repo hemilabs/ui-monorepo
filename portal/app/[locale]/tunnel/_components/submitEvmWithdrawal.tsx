@@ -1,5 +1,6 @@
 import { Button } from 'components/button'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
+import { SubmitWhenNativeBalance } from 'components/submitWhenNativeBalance'
 import { EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { tunnelsThroughPartners } from 'utils/token'
@@ -36,23 +37,28 @@ export const SubmitEvmWithdrawal = function ({
   return (
     <SubmitWhenConnected
       submitButton={
-        validationError ? (
-          <Button disabled size="xLarge" type="button">
-            {validationError}
-          </Button>
-        ) : (
-          <Button
-            disabled={!canWithdraw || isWithdrawing}
-            size="xLarge"
-            type="submit"
-          >
-            {t(
-              `tunnel-page.submit-button.${
-                isWithdrawing ? 'withdrawing' : 'initiate-withdrawal'
-              }`,
-            )}
-          </Button>
-        )
+        <SubmitWhenNativeBalance
+          chainId={fromToken.chainId}
+          submitButton={
+            validationError ? (
+              <Button disabled size="xLarge" type="button">
+                {validationError}
+              </Button>
+            ) : (
+              <Button
+                disabled={!canWithdraw || isWithdrawing}
+                size="xLarge"
+                type="submit"
+              >
+                {t(
+                  `tunnel-page.submit-button.${
+                    isWithdrawing ? 'withdrawing' : 'initiate-withdrawal'
+                  }`,
+                )}
+              </Button>
+            )
+          }
+        />
       }
     />
   )

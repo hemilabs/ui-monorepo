@@ -8,8 +8,13 @@ import { type StakingOperationRunning } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
 
 import { useStakingDashboard } from './../../../_context/stakingDashboardContext'
+import { isTransientLockFailure } from './../../../_utils/lockupValidationFailure'
 
-export const RetryIncreaseUnlockTime = function () {
+export const RetryIncreaseUnlockTime = function ({
+  onFailedValidation,
+}: {
+  onFailedValidation?: VoidFunction
+}) {
   const [operationRunning, setOperationRunning] =
     useState<StakingOperationRunning>('idle')
 
@@ -35,6 +40,15 @@ export const RetryIncreaseUnlockTime = function () {
       emitter.on('user-signed-increase-unlock-time', () =>
         setOperationRunning('staking'),
       )
+      emitter.on('increase-unlock-time-failed-validation', function (reason) {
+        // Same stale-data case as the main form: refresh via the parent so the
+        // retry does not loop forever, and re-enable this button (#2474). A lock
+        // status that couldn't be read is a hiccup: the button just goes back to idle.
+        if (!isTransientLockFailure(reason)) {
+          onFailedValidation?.()
+        }
+        setOperationRunning('idle')
+      })
       emitter.on('increase-unlock-time-transaction-succeeded', function () {
         resetStateAfterOperation()
       })

@@ -394,7 +394,9 @@
       "withdraw-successful": "Withdraw successful"
     },
     "vault-info": {
+      "curators": "{count, plural, one {Curator} other {Curators}}: {names}",
       "manage": "Manage",
+      "operator": "Vault operator: {operator}",
       "share-token": "Share token",
       "total-deposits": "Total deposits",
       "vault-contract": "Vault contract",

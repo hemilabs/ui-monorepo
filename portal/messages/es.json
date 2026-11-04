@@ -394,7 +394,9 @@
       "withdraw-successful": "Retiro exitoso"
     },
     "vault-info": {
+      "curators": "{count, plural, one {Curador} other {Curadores}}: {names}",
       "manage": "Gestionar",
+      "operator": "Operador del fondo: {operator}",
       "share-token": "Token de participación",
       "total-deposits": "Depósitos totales",
       "vault-contract": "Contrato del fondo",

@@ -42,7 +42,7 @@ export const VaultInfoBar = function ({ vault }: Props) {
               <span className="body-text-medium text-neutral-950">
                 {explorerUrl ? (
                   <ExternalLink
-                    className="hover:text-orange-500"
+                    className="hoverable-text"
                     href={`${explorerUrl}/address/${vault.shareAddress}`}
                   >
                     {formattedAddress}
@@ -56,7 +56,7 @@ export const VaultInfoBar = function ({ vault }: Props) {
           <div className="md:w-24">
             <VaultInfoItem label={t('share-token')}>
               <div className="flex items-center gap-x-1.5">
-                <div className="flex items-center justify-center rounded-full border border-gray-200">
+                <div className="flex items-center justify-center rounded-full border border-neutral-300/55">
                   <TokenLogo
                     size="small"
                     token={vault.shareToken}

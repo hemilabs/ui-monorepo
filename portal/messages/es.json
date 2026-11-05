@@ -399,7 +399,8 @@
       "total-deposits": "Depósitos totales",
       "vault-contract": "Contrato del fondo",
       "your-deposits": "Sus depósitos"
-    }
+    },
+    "vetro-data-disclaimer": "Datos proporcionados por Vetro. Las cifras pueden estar retrasadas y no han sido verificadas por Hemi."
   },
   "hemi-stake": {
     "amount": "Cantidad",

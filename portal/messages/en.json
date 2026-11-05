@@ -399,7 +399,8 @@
       "total-deposits": "Total deposits",
       "vault-contract": "Vault contract",
       "your-deposits": "Your deposits"
-    }
+    },
+    "vetro-data-disclaimer": "Data provided by Vetro. Figures may be delayed and have not been verified by Hemi."
   },
   "hemi-stake": {
     "amount": "Amount",

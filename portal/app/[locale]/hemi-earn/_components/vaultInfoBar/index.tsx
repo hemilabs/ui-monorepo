@@ -31,8 +31,8 @@ export const VaultInfoBar = function ({ vault }: Props) {
   const explorerUrl = chain?.blockExplorers?.default.url
 
   return (
-    <div className="flex w-full flex-col gap-3 rounded-xl bg-white p-4 shadow-sm">
-      <div className="flex w-full flex-col gap-4 md:min-h-11.5 md:flex-row md:items-center md:gap-6">
+    <div className="flex w-full flex-col gap-4 rounded-xl bg-white p-4 shadow-sm md:grid md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-x-6 md:gap-y-3">
+      <div className="flex w-full flex-col gap-4 md:col-start-1 md:row-start-1 md:min-h-11.5 md:flex-row md:items-center md:gap-6">
         <div className="flex h-10 w-full shrink-0 items-center justify-center rounded-lg bg-neutral-100 md:w-19">
           <TokenIconStack tokens={vault.exposureTokens} />
         </div>
@@ -94,17 +94,17 @@ export const VaultInfoBar = function ({ vault }: Props) {
           />
           <DepositedAmount vault={vault} />
         </div>
-        <div className="flex w-full *:flex-1 md:ml-auto md:w-auto md:*:flex-initial">
-          <ButtonLink
-            href={`/hemi-earn/vault/${vault.shareAddress}`}
-            size="small"
-            variant="primary"
-          >
-            {t('manage')}
-          </ButtonLink>
-        </div>
       </div>
-      <div className="min-w-0">
+      <div className="flex w-full *:flex-1 md:col-start-2 md:row-span-2 md:row-start-1 md:w-auto md:*:flex-initial">
+        <ButtonLink
+          href={`/hemi-earn/vault/${vault.shareAddress}`}
+          size="small"
+          variant="primary"
+        >
+          {t('manage')}
+        </ButtonLink>
+      </div>
+      <div className="min-w-0 md:col-start-1 md:row-start-2">
         <VaultDetails stakingVault={vault.stakingVault} truncate />
       </div>
     </div>

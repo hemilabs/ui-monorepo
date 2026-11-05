@@ -1,3 +1,5 @@
+import { hemiEarnRouterAddress } from '@vetro-protocol/hemi-earn'
+import { encodeRequestDeposit } from '@vetro-protocol/hemi-earn/actions'
 import { SparkleIcon } from 'components/icons/sparkleIcon'
 import { Operation } from 'components/reviewOperation/operation'
 import {
@@ -6,8 +8,6 @@ import {
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { TokenLogo } from 'components/tokenLogo'
-import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
-import { encodeRequestDeposit } from 'hemi-earn-actions/actions'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
@@ -192,14 +192,13 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   const vaultMetadata = useVaultMetadata(vault.stakingVault)
 
   const amount = parseTokenUnits(input, selectedAsset.token)
-  const routerAddress = getHemiEarnRouterAddress()
 
   const { isAllowanceError, isAllowanceLoading, needsApproval } =
     useNeedsApproval({
       address: selectedAsset.address,
       amount,
       chainId,
-      spender: routerAddress,
+      spender: hemiEarnRouterAddress,
     })
 
   const mayNeedApproval = resolveMayNeedApproval({
@@ -212,7 +211,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     useEstimateApproveErc20Fees({
       amount: getApprovalAmount(amount, approveExtraAmount),
       enabled: mayNeedApproval,
-      spender: routerAddress,
+      spender: hemiEarnRouterAddress,
       token: selectedAsset.token,
     })
 
@@ -248,10 +247,10 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       stateOverride: createFeeEstimateStateOverride({
         needsApproval: mayNeedApproval,
         owner: address,
-        spender: routerAddress,
+        spender: hemiEarnRouterAddress,
         token: selectedAsset.token,
       }),
-      to: routerAddress,
+      to: hemiEarnRouterAddress,
       value: quote?.nativeFee,
     })
 

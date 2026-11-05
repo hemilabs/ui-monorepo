@@ -1,3 +1,5 @@
+import { hemiEarnRouterAddress } from '@vetro-protocol/hemi-earn'
+import { encodeRequestRedeem } from '@vetro-protocol/hemi-earn/actions'
 import { Operation } from 'components/reviewOperation/operation'
 import {
   ProgressStatus,
@@ -5,8 +7,6 @@ import {
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { TokenLogo } from 'components/tokenLogo'
-import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
-import { encodeRequestRedeem } from 'hemi-earn-actions/actions'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
@@ -73,6 +73,7 @@ import { useEarnCooldownRemaining } from '../../_hooks/useEarnCooldownRemaining'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
 import { useSharesToAssets } from '../../_hooks/useSharesToAssets'
 import { useSlippageBps } from '../../_hooks/useSlippage'
+import { useUserShareValue } from '../../_hooks/useUserShareValue'
 import {
   WithdrawStatus,
   type WithdrawStatusType,
@@ -319,13 +320,16 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     assetAddress: selectedAsset.address,
     shareAddress: vault.shareAddress,
   })
+  const { data: shareValue } = useUserShareValue({
+    shareAddress: vault.shareAddress,
+  })
   const shares = deriveWithdrawShares({
     assetShares: assetsToShares?.shares,
     input,
     isTokensMode,
+    shareBalance: shareValue?.shares,
     shareToken: vault.shareToken,
   })
-  const routerAddress = getHemiEarnRouterAddress()
 
   const { data: { assetOut } = { assetOut: BigInt(0) } } = useSharesToAssets({
     assetAddress: selectedAsset.address,
@@ -341,7 +345,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       address: vault.shareAddress,
       amount: shares,
       chainId,
-      spender: routerAddress,
+      spender: hemiEarnRouterAddress,
     })
 
   const mayNeedApproval = resolveMayNeedApproval({
@@ -354,7 +358,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     useEstimateApproveErc20Fees({
       amount: getApprovalAmount(shares, approveExtraAmount),
       enabled: mayNeedApproval,
-      spender: routerAddress,
+      spender: hemiEarnRouterAddress,
       token: vault.shareToken,
     })
 
@@ -378,10 +382,10 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       stateOverride: createFeeEstimateStateOverride({
         needsApproval: mayNeedApproval,
         owner: address,
-        spender: routerAddress,
+        spender: hemiEarnRouterAddress,
         token: vault.shareToken,
       }),
-      to: routerAddress as Address,
+      to: hemiEarnRouterAddress,
       value: quote?.nativeFee,
     })
 

@@ -89,6 +89,54 @@ describe('deriveWithdrawShares', function () {
       }),
     ).toBe(BigInt(50000000))
   })
+
+  it('snaps to the full balance when within 0.1% of it', function () {
+    expect(
+      deriveWithdrawShares({
+        assetShares: BigInt(9990),
+        input: '1',
+        isTokensMode: true,
+        shareBalance: BigInt(10000),
+        shareToken,
+      }),
+    ).toBe(BigInt(10000))
+  })
+
+  it('does not snap when below 99.9% of the balance', function () {
+    expect(
+      deriveWithdrawShares({
+        assetShares: BigInt(9989),
+        input: '1',
+        isTokensMode: true,
+        shareBalance: BigInt(10000),
+        shareToken,
+      }),
+    ).toBe(BigInt(9989))
+  })
+
+  it('does not snap shares that exceed the balance', function () {
+    expect(
+      deriveWithdrawShares({
+        assetShares: BigInt(10001),
+        input: '1',
+        isTokensMode: true,
+        shareBalance: BigInt(10000),
+        shareToken,
+      }),
+    ).toBe(BigInt(10001))
+  })
+
+  it('does not snap 0n shares against a 0n balance', function () {
+    expect(
+      deriveWithdrawShares({
+        assetShares: BigInt(0),
+        input: '0',
+        isTokensMode: true,
+        shareBalance: BigInt(0),
+        shareToken,
+      }),
+    ).toBe(BigInt(0))
+  })
 })
 
 describe('resolveWithdrawInputValues', function () {

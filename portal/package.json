@@ -39,7 +39,6 @@
     "esplora-client": "1.2.0",
     "eth-rpc-cache": "2.1.0",
     "fetch-plus-plus": "1.0.0",
-    "hemi-earn-actions": "workspace:*",
     "hemi-socials": "2.1.0",
     "hemi-tunnel-actions": "workspace:*",
     "hemi-viem": "2.9.0",

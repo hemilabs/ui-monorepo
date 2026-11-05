@@ -2,18 +2,18 @@ import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { type EventEmitter } from 'events'
 import {
   type CancelRequestEvents,
   type RetryRequestEvents,
-} from 'hemi-earn-actions'
+} from '@vetro-protocol/hemi-earn'
 import {
   cancelRequest,
   getFailedRequest,
   quoteDepositFulfillment,
   quoteRedeemFulfillment,
   retryRequest,
-} from 'hemi-earn-actions/actions'
+} from '@vetro-protocol/hemi-earn/actions'
+import { type EventEmitter } from 'events'
 import { useUmami } from 'hooks/useUmami'
 import { mainnet } from 'networks/mainnet'
 import { maxBigInt } from 'utils/bigint'
@@ -87,9 +87,8 @@ const useRemoteFailedAction = function ({
       const client = getEvmL1PublicClient(mainnet.id)
       const id = BigInt(requestId)
 
-      const failedRequest = await getFailedRequest({
-        agentAddress,
-        client,
+      const failedRequest = await getFailedRequest(client, {
+        address: agentAddress,
         requestId: id,
       })
       // Entry already gone — a keeper retried/cancelled first; nothing to sign, just refresh.
@@ -109,27 +108,23 @@ const useRemoteFailedAction = function ({
       const isDeposit = transaction.kind === 'DEPOSIT'
       const usesShareOft = (isDeposit && isRetry) || (!isDeposit && !isRetry)
       const quote = usesShareOft
-        ? await quoteDepositFulfillment({
-            agentAddress,
-            client,
-            share: remoteShare,
+        ? await quoteDepositFulfillment(client, {
+            address: agentAddress,
+            remoteShare,
           })
-        : await quoteRedeemFulfillment({
-            agentAddress,
-            asset: remoteAsset,
-            client,
+        : await quoteRedeemFulfillment(client, {
+            address: agentAddress,
+            remoteAsset,
           })
       // retry/cancel run with failedRequest.nativeFee + msg.value on-chain, so only top up the shortfall.
       const nativeFee = maxBigInt(BigInt(0), quote - failedRequest.nativeFee)
 
       await ensureConnectedTo(mainnet.id)
 
-      const { emitter, promise } = action({
-        account: address,
-        agentAddress,
+      const { emitter, promise } = action(l1WalletClient!, {
+        address: agentAddress,
         nativeFee,
         requestId: id,
-        walletClient: l1WalletClient!,
       })
 
       const markFailed = function () {
@@ -151,9 +146,8 @@ const useRemoteFailedAction = function ({
       emitter.on('tx-transaction-reverted', async function (receipt) {
         updateNativeBalanceAfterFees(receipt)
 
-        const current = await getFailedRequest({
-          agentAddress,
-          client,
+        const current = await getFailedRequest(client, {
+          address: agentAddress,
           requestId: id,
         }).catch(() => undefined)
         // Benign revert: the entry is gone, so someone else resolved it — don't flag failed.

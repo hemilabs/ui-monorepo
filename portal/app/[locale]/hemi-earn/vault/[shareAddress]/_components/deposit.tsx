@@ -1,8 +1,8 @@
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
+import { hemiEarnRouterAddress } from '@vetro-protocol/hemi-earn'
 import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { TokenInput } from 'components/tokenInput'
 import { WarningBox } from 'components/warningBox'
-import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { useTokenBalance } from 'hooks/useBalance'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
@@ -57,7 +57,6 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   const depositGate = useCanDeposit()
 
   const amount = parseTokenUnits(input, selectedAsset.token)
-  const routerAddress = getHemiEarnRouterAddress()
   const slippage = useSlippage('deposit')
   const slippageBps = percentToBps(slippage)
   const extraApprovalAmount = getExtraApprovalAmount(amount, approveExtraAmount)
@@ -106,7 +105,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     asset: selectedAsset.address,
     shareAddress: vault.shareAddress,
     slippageBps,
-    spender: routerAddress,
+    spender: hemiEarnRouterAddress,
     token: selectedAsset.token,
     validInput,
   })

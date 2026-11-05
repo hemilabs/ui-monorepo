@@ -8,7 +8,6 @@ This monorepo uses pnpm workspaces, and contains the following projects:
 
 - **packages/\***: Contains a comprehensive list of reusable packages.
   - **packages/btc-wallet**: Components for Bitcoin wallet integration (Currently, only Unisat is supported).
-  - **packages/hemi-earn-actions**: Package that contains viem actions for Hemi Earn ERC-4626 vaults.
   - **packages/hemi-tunnel-actions**: Package that contains viem actions to use the Hemi tunnel.
   - **packages/hemi-viem-stake-actions**: Package that contains viem actions to use the Hemi Stake.
   - **packages/ve-hemi-actions**: Package that contains functions needed to interact with the staking contract veHEMI.

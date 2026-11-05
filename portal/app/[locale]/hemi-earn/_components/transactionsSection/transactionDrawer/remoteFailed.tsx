@@ -5,7 +5,7 @@ import { type EventEmitter } from 'events'
 import { type MouseEvent, type ReactNode } from 'react'
 import { useTranslations } from 'use-intl'
 
-import { useCanDeposit } from '../../../_hooks/useCanDeposit'
+import { useCanDepositForTransaction } from '../../../_hooks/useCanDeposit'
 import {
   useCancelRequest,
   useRetryRequest,
@@ -72,7 +72,7 @@ export const RemoteFailedCta = function ({
 }) {
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
   const { category, show } = useRemoteFailedState(transaction)
-  const { canDeposit } = useCanDeposit()
+  const { canDeposit } = useCanDepositForTransaction(transaction)
 
   const on = redirectOnSign
     ? (emitter: EventEmitter<RetryRequestEvents>) =>
@@ -144,18 +144,23 @@ export const RemoteFailedBanner = function ({
 }) {
   const t = useTranslations('hemi-earn.transactions.banner')
   const { category, show } = useRemoteFailedState(transaction)
-  const { canDeposit } = useCanDeposit()
+  const depositGate = useCanDepositForTransaction(transaction)
 
   if (!show || !transaction) {
     return null
   }
-  const isPausedDeposit = transaction.kind === 'DEPOSIT' && !canDeposit
+  const blockedDepositReason =
+    transaction.kind === 'DEPOSIT' ? depositGate.reason : undefined
   const suffix = transaction.kind === 'DEPOSIT' ? '-deposit' : ''
   const variant = category === 'slippage' ? '-slippage' : ''
   return (
     <TransferIncompleteBanner
       heading={t(`remote-failed.heading${variant}${suffix}`)}
-      note={isPausedDeposit ? t('remote-failed.deposits-paused') : undefined}
+      note={
+        blockedDepositReason
+          ? t(`remote-failed.${blockedDepositReason}`)
+          : undefined
+      }
       requestTxHash={transaction.requestTxHash}
     />
   )

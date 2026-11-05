@@ -40,7 +40,7 @@ export const RetryFailedDeposit = function ({
   const [operationRunning, setOperationRunning] =
     useState<DepositOperationRunning>('idle')
   const t = useTranslations()
-  const depositGate = useCanDeposit()
+  const depositGate = useCanDeposit(vault)
 
   const amount = BigInt(transaction.amountIn)
   const input = formatUnits(amount, asset.token.decimals)

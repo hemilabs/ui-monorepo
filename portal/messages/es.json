@@ -209,7 +209,8 @@
           "heading": "Su retiro quedó atascado en Ethereum",
           "heading-deposit": "Su depósito quedó atascado en Ethereum",
           "heading-slippage": "Su retiro no se completó",
-          "heading-slippage-deposit": "Su depósito no se completó"
+          "heading-slippage-deposit": "Su depósito no se completó",
+          "vault-delisted": "Este fondo ya no acepta depósitos, así que devuelva sus fondos a su billetera."
         },
         "transfer-incomplete": "Esta transferencia aún no se ha completado. Hemi no puede acceder a los activos en Hemi Earn, ni moverlos ni recuperarlos. Contacte al soporte de Vetro e incluya el hash de su transacción:",
         "withdraw": {
@@ -393,6 +394,7 @@
       "withdraw-complete": "Su retiro se ha completado. Los activos han vuelto a su billetera.",
       "withdraw-successful": "Retiro exitoso"
     },
+    "vault-delisted": "Este fondo ya no acepta depósitos.",
     "vault-info": {
       "curators": "{count, plural, one {Curador} other {Curadores}}: {names}",
       "manage": "Gestionar",

@@ -47,7 +47,7 @@ export const ConfirmDeposit = function () {
   } = useVaultForm()
 
   const t = useTranslations()
-  const depositGate = useCanDeposit()
+  const depositGate = useCanDeposit(vault)
 
   const slippage = useSlippage('deposit')
   const slippageBps = percentToBps(slippage)

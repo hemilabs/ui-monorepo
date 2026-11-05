@@ -64,6 +64,7 @@ import { useVaultForm } from '../../_context/vaultFormContext'
 import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
 import { useSlippageBps } from '../../_hooks/useSlippage'
+import { useVetroFee } from '../../_hooks/useVetroFee'
 import { DepositStatus, type DepositStatusType } from '../../_types/operations'
 import { createFeeEstimateStateOverride } from '../../_utils/feeEstimateStateOverride'
 import {
@@ -71,6 +72,7 @@ import {
   showsReview,
   unsignedStepStatus,
 } from '../../_utils/reviewState'
+import { VetroFeeRow } from '../vetroFeeRow'
 
 import { ConfirmDeposit } from './confirmDeposit'
 import { ReviewIntro } from './reviewIntro'
@@ -167,9 +169,15 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   const { localOperations } = useLocalEarnOperations()
   const t = useTranslations('hemi-earn.vault.drawer')
   const tSuccess = useTranslations('hemi-earn.vault')
+  const tForm = useTranslations('hemi-earn.vault.form')
   const chainId = selectedAsset.token.chainId
   const chain = useChain(chainId)
   const { address } = useAccount()
+  const { data: vetroFee, isError: isVetroFeeError } = useVetroFee({
+    asset: selectedAsset.address,
+    operation: 'deposit',
+    shareAddress: vault.shareAddress,
+  })
 
   // Shared subscription with the layout watcher; lets the get-share-tokens step sync to the subgraph status.
   const { data: subgraphRows = [] } = useEarnTransactionsQuery()
@@ -431,6 +439,15 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       />
     ) : null
 
+  const getBelowAmount = () =>
+    isAboutToSign ? (
+      <VetroFeeRow
+        isError={isVetroFeeError}
+        label={tForm('vetro-deposit-fee')}
+        percentage={vetroFee}
+      />
+    ) : null
+
   const getSubheading = () =>
     isAboutToSign
       ? undefined
@@ -494,6 +511,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       aboveAmount={getAboveAmount()}
       aboveCallToAction={getAboveCallToAction()}
       amount={depositOperation?.amountIn ?? amount.toString()}
+      belowAmount={getBelowAmount()}
       belowSubheading={<OperatorNote />}
       callToAction={getCallToAction()}
       heading={t('deposit.heading')}

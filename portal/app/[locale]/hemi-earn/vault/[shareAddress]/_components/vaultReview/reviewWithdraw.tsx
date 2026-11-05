@@ -74,6 +74,7 @@ import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
 import { useSharesToAssets } from '../../_hooks/useSharesToAssets'
 import { useSlippageBps } from '../../_hooks/useSlippage'
 import { useUserShareValue } from '../../_hooks/useUserShareValue'
+import { useVetroFee } from '../../_hooks/useVetroFee'
 import {
   WithdrawStatus,
   type WithdrawStatusType,
@@ -88,6 +89,7 @@ import {
   deriveWithdrawShares,
   getTypedAssetAmount,
 } from '../../_utils/withdrawForm'
+import { VetroFeeRow } from '../vetroFeeRow'
 
 import { ConfirmWithdraw } from './confirmWithdraw'
 import { deriveCooldownPostAction } from './cooldownPostAction'
@@ -271,9 +273,15 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   const slippageBps = useSlippageBps('withdraw')
   const t = useTranslations('hemi-earn.vault.drawer')
   const tSuccess = useTranslations('hemi-earn.vault')
+  const tForm = useTranslations('hemi-earn.vault.form')
   const chainId = selectedAsset.token.chainId
   const chain = useChain(chainId)
   const { address } = useAccount()
+  const { data: vetroFee, isError: isVetroFeeError } = useVetroFee({
+    asset: selectedAsset.address,
+    operation: 'withdraw',
+    shareAddress: vault.shareAddress,
+  })
 
   // Shared subscription with the layout watcher; lets the receive step sync to the subgraph status.
   const { data: subgraphRows = [] } = useEarnTransactionsQuery()
@@ -541,6 +549,15 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       />
     ) : null
 
+  const getBelowAmount = () =>
+    isAboutToSign ? (
+      <VetroFeeRow
+        isError={isVetroFeeError}
+        label={tForm('vetro-withdrawal-fee')}
+        percentage={vetroFee}
+      />
+    ) : null
+
   const getSubheading = () =>
     isAboutToSign
       ? undefined
@@ -657,6 +674,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         </>
       }
       amount={withdrawOperation?.amountIn ?? shares.toString()}
+      belowAmount={getBelowAmount()}
       belowSubheading={<OperatorNote />}
       callToAction={getCallToAction()}
       heading={t('withdraw.heading')}

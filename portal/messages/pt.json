@@ -356,6 +356,8 @@
         "hemi-network-fee": "Taxa de rede de Hemi",
         "network-error": "Falha no preview — tente de novo",
         "share-token-available-to-withdraw": "Token de participação disponível para sacar",
+        "vetro-deposit-fee": "Taxa de depósito da Vetro",
+        "vetro-withdrawal-fee": "Taxa de saque da Vetro",
         "withdraw-share-tokens-as": "Sacar token de participação como",
         "withdrawing": "Sacando...",
         "you-will-receive": "Você vai receber"

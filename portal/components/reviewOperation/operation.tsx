@@ -7,6 +7,7 @@ import { ComponentProps, ReactNode } from 'react'
 type Props = {
   aboveAmount?: ReactNode
   aboveCallToAction?: ReactNode
+  belowAmount?: ReactNode
   belowSubheading?: ReactNode
   bottomSection?: ReactNode
   callToAction?: ReactNode
@@ -22,6 +23,7 @@ export const Operation = ({
   aboveAmount,
   aboveCallToAction,
   amount,
+  belowAmount,
   belowSubheading,
   bottomSection,
   callToAction,
@@ -46,6 +48,7 @@ export const Operation = ({
       amount={
         <Amount endAdornment={endAdornment} token={token} value={amount} />
       }
+      belowAmount={belowAmount}
       bottomSection={bottomSection}
       callToAction={callToAction}
       steps={steps}

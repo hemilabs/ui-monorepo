@@ -356,6 +356,8 @@
         "hemi-network-fee": "Hemi network fee",
         "network-error": "Preview failed — try again",
         "share-token-available-to-withdraw": "Share token available to withdraw",
+        "vetro-deposit-fee": "Vetro deposit fee",
+        "vetro-withdrawal-fee": "Vetro withdrawal fee",
         "withdraw-share-tokens-as": "Withdraw share token as",
         "withdrawing": "Withdrawing...",
         "you-will-receive": "You'll receive"

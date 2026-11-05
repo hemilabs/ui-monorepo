@@ -22,6 +22,7 @@ import { useIsDepositing } from '../_hooks/useDeposit'
 import { useDepositPreview } from '../_hooks/useDepositPreview'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
 import { useSlippage } from '../_hooks/useSlippage'
+import { useVetroFee } from '../_hooks/useVetroFee'
 import {
   computeIsLoading,
   resolveErrorKey,
@@ -110,6 +111,12 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     validInput,
   })
 
+  const { data: vetroFee, isError: isVetroFeeError } = useVetroFee({
+    asset: selectedAsset.address,
+    operation: 'deposit',
+    shareAddress: vault.shareAddress,
+  })
+
   const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
   const { data: nativeTokenBalance, isLoading: isNativeBalancePending } =
     useNativeBalance(selectedAsset.token.chainId)
@@ -196,6 +203,11 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
               token: vault.shareToken,
             }}
             totalFees={totalFees}
+            vetroFee={{
+              isError: isVetroFeeError,
+              label: t('hemi-earn.vault.form.vetro-deposit-fee'),
+              percentage: vetroFee,
+            }}
           />
         )
       }

@@ -4,8 +4,8 @@ import { StatCard } from 'components/statCard'
 import { useTranslations } from 'use-intl'
 import { formatApyDisplay, formatFiatNumber } from 'utils/format'
 
+import { ApySourceLabel } from '../../../_components/apySourceLabel'
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
-import { RiskWarningTooltip } from '../../../_components/riskWarningTooltip'
 import { type EarnVault } from '../../../types'
 
 type Props = {
@@ -40,8 +40,7 @@ export const VaultInfoCards = function ({ vault }: Props) {
           isLoading={vault.apy === undefined}
           label={
             <div className="flex items-center gap-x-1">
-              {t('vault.apy')}
-              <RiskWarningTooltip />
+              <ApySourceLabel stakingVault={vault.stakingVault} />
             </div>
           }
           value={

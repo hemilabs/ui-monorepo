@@ -19,6 +19,7 @@ import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
 import { useMaxWithdrawableAsset } from '../_hooks/useMaxWithdrawableAsset'
 import { useSlippage } from '../_hooks/useSlippage'
 import { useUserShareValue } from '../_hooks/useUserShareValue'
+import { useVetroFee } from '../_hooks/useVetroFee'
 import { useIsWithdrawing } from '../_hooks/useWithdraw'
 import { useWithdrawPreview } from '../_hooks/useWithdrawPreview'
 import {
@@ -167,6 +168,12 @@ export const Withdraw = function ({
     validInput,
   })
 
+  const { data: vetroFee, isError: isVetroFeeError } = useVetroFee({
+    asset: selectedAsset.address,
+    operation: 'withdraw',
+    shareAddress: vault.shareAddress,
+  })
+
   const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
   const { data: nativeTokenBalance, isLoading: isNativeBalancePending } =
     useNativeBalance(selectedAsset.token.chainId)
@@ -266,6 +273,11 @@ export const Withdraw = function ({
               token: selectedAsset.token,
             }}
             totalFees={totalFees}
+            vetroFee={{
+              isError: isVetroFeeError,
+              label: t('hemi-earn.vault.form.vetro-withdrawal-fee'),
+              percentage: vetroFee,
+            }}
           />
         )
       }

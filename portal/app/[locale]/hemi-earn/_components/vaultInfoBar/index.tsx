@@ -10,8 +10,8 @@ import {
 } from 'utils/format'
 
 import { type EarnVault } from '../../types'
+import { ApySourceLabel } from '../apySourceLabel'
 import { RenderEarnFiatBalance } from '../earnFiatBalance'
-import { RiskWarningTooltip } from '../riskWarningTooltip'
 
 import { DepositedAmount } from './depositedAmount'
 import { TokenIconStack } from './tokenIconStack'
@@ -77,12 +77,7 @@ export const VaultInfoBar = function ({ vault }: Props) {
         </div>
         <VaultInfoItem
           isLoading={vault.apy === undefined}
-          label={
-            <>
-              {t('apy')}
-              <RiskWarningTooltip />
-            </>
-          }
+          label={<ApySourceLabel stakingVault={vault.stakingVault} />}
           value={
             typeof vault.apy === 'number'
               ? formatApyDisplay(vault.apy)

@@ -6,6 +6,7 @@ import { queryStringObjectToString } from 'utils/url'
 import { type Address } from 'viem'
 
 import { OperatorBanner } from '../../../_components/operatorDisclosure'
+import { VetroDataDisclaimer } from '../../../_components/vetroDataDisclaimer'
 import { useEarnVaults } from '../../../_hooks/useEarnVaults'
 import { findVaultByShare } from '../../../_utils/vaults'
 import { VaultFormProvider } from '../_context/vaultFormContext'
@@ -64,6 +65,7 @@ export const VaultPageContent = function ({ shareAddress }: Props) {
                 chainId={vault.shareToken.chainId}
                 shareAddress={vault.shareAddress}
               />
+              <VetroDataDisclaimer />
             </div>
             <div className="order-1 lg:sticky lg:top-4 lg:order-2 lg:basis-2/5 lg:self-start">
               <VaultForm />

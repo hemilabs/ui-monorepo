@@ -2,7 +2,7 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { Header } from 'components/table/_components/header'
 import { useMemo } from 'react'
 import { useTranslations } from 'use-intl'
-import { formatFiatNumber, formatPercentage } from 'utils/format'
+import { formatPercentage } from 'utils/format'
 
 import { type CompositionItem } from '../../_hooks/useComposition'
 
@@ -29,16 +29,6 @@ export const useGetCompositionColumns = function () {
           header: () => <Header text={t('position')} />,
           id: 'position',
           meta: { width: 200 },
-        },
-        {
-          cell: ({ row }) => (
-            <span className="text-sm font-medium text-neutral-500">
-              ${formatFiatNumber(row.original.amount)}
-            </span>
-          ),
-          header: () => <Header text={t('amount')} />,
-          id: 'amount',
-          meta: { className: 'justify-end', width: 120 },
         },
         {
           cell: ({ row }) => (

@@ -156,6 +156,8 @@
     "view-all-tutorials": "Ver todos os tutoriais"
   },
   "hemi-earn": {
+    "apy-provided-by-vetro": "TEA · fornecida pela Vetro",
+    "apy-source": "A TEA é uma estimativa variável fornecida pela Vetro, com base no desempenho recente do fundo. Não é uma promessa nem uma previsão de rendimentos futuros e pode mudar a qualquer momento. Os rendimentos são mostrados {fees, select, included {após} other {antes de}} taxas.",
     "deposits-paused": "Os depósitos novos estão pausados no momento.",
     "footer": {
       "attribution": "O Hemi Earn é operado pela Vetro Service & Support Corp. Os fundos disponíveis pelo Hemi Earn podem ser operados pela Vetro ou por terceiros. A Hemispheres Service & Support (BVI) Ltd., a Hemi Labs, Inc. e suas afiliadas não operam, administram, custodiam nem garantem o Hemi Earn ou qualquer fundo, e não são partes do seu acordo com a Vetro. O Hemi Earn não está disponível para pessoas dos EUA nem para outras pessoas restritas.",
@@ -299,15 +301,14 @@
       "withdrawal": "Saque"
     },
     "vault": {
-      "apy": "TEA",
       "composition": {
-        "amount": "Valor",
         "by-protocol": "Por protocolo",
         "by-token": "Por token",
         "position": "Posição",
         "protocols-count": "{count, plural, one {# protocolo} other {# protocolos}}",
         "reserve-buffer": "Reserva de liquidez",
         "share": "Participação",
+        "subtitle": "Ativos mantidos nas estratégias subjacentes do fundo, conforme informado pela Vetro.",
         "title": "Composição",
         "tokens-count": "{count, plural, one {# token} other {# tokens}}",
         "view-mode": "Modo de visualização"
@@ -355,6 +356,8 @@
         "hemi-network-fee": "Taxa de rede de Hemi",
         "network-error": "Falha no preview — tente de novo",
         "share-token-available-to-withdraw": "Token de participação disponível para sacar",
+        "vetro-deposit-fee": "Taxa de depósito da Vetro",
+        "vetro-withdrawal-fee": "Taxa de saque da Vetro",
         "withdraw-share-tokens-as": "Sacar token de participação como",
         "withdrawing": "Sacando...",
         "you-will-receive": "Você vai receber"
@@ -391,13 +394,13 @@
       "withdraw-successful": "Saque realizado com sucesso"
     },
     "vault-info": {
-      "apy": "TEA",
       "manage": "Gerenciar",
       "share-token": "Token de participação",
       "total-deposits": "Depósitos totais",
       "vault-contract": "Contrato do fundo",
       "your-deposits": "Seus depósitos"
-    }
+    },
+    "vetro-data-disclaimer": "Dados fornecidos pela Vetro. Os valores podem estar atrasados e não foram verificados pela Hemi."
   },
   "hemi-stake": {
     "amount": "Quantidade",

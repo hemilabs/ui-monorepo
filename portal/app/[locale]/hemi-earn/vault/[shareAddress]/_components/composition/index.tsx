@@ -90,6 +90,7 @@ export const Composition = function ({ chainId, shareAddress }: Props) {
               value={viewMode}
             />
           </div>
+          <p className="body-text-caption text-neutral-500">{t('subtitle')}</p>
         </div>
         <div className="flex flex-col gap-4 lg:flex-row">
           <div className="lg:basis-3/5">

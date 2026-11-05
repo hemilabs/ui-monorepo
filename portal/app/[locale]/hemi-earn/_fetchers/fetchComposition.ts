@@ -1,8 +1,6 @@
 import { type QueryClient } from '@tanstack/react-query'
-import { gateways } from '@vetro-protocol/gateway'
 import fetch from 'fetch-plus-plus'
 import { tokenQueryOptions } from 'hooks/useToken'
-import { tokenPricesQueryOptions } from 'hooks/useTokenPrices'
 import { mainnet } from 'networks/mainnet'
 import { type Token } from 'types/token'
 import { type Address, formatUnits, isAddressEqual } from 'viem'
@@ -10,7 +8,7 @@ import { type Address, formatUnits, isAddressEqual } from 'viem'
 import { gatewayForShareQueryOptions } from '../_hooks/gatewayForShare'
 
 // Amounts are in erc20 minimal units; latestPrice is in the gateway's peg unit
-// (e.g. BTC for the vetBTC gateway), so USD = latestPrice × pegPrice.
+// (e.g. BTC for the vetBTC gateway).
 type TreasuryToken = {
   activeStrategies: { name: string; totalDebt: string }[]
   latestPrice: string
@@ -31,7 +29,6 @@ export type CompositionData = {
 const toCompositionData = function (
   treasury: TreasuryToken[],
   tokens: Token[],
-  pegPrice: number,
 ): CompositionData {
   const data: CompositionData = []
 
@@ -49,19 +46,18 @@ const toCompositionData = function (
     if (token === undefined) {
       continue
     }
-    const price =
-      Number(formatUnits(BigInt(latestPrice), priceDecimals)) * pegPrice
-    const toUsd = (value: string) =>
+    const price = Number(formatUnits(BigInt(latestPrice), priceDecimals))
+    const toPegUnit = (value: string) =>
       Number(formatUnits(BigInt(value), token.decimals)) * price
 
     data.push({
       strategies: activeStrategies.map(strategy => ({
-        amount: toUsd(strategy.totalDebt),
+        amount: toPegUnit(strategy.totalDebt),
         name: strategy.name,
       })),
       symbol: token.symbol,
-      totalDebt: toUsd(totalDebt),
-      withdrawable: toUsd(withdrawable),
+      totalDebt: toPegUnit(totalDebt),
+      withdrawable: toPegUnit(withdrawable),
     })
   }
 
@@ -130,13 +126,6 @@ export const fetchComposition = async function ({
   const gatewayAddress = await queryClient.ensureQueryData(
     gatewayForShareQueryOptions(shareAddress),
   )
-  // Oracles are in the gateway's peg unit, so one peg-symbol price covers every token (USD peg = identity).
-  const pegBaseSymbol = gateways.find(gateway =>
-    isAddressEqual(gateway.address, gatewayAddress),
-  )?.pegBaseSymbol
-  if (pegBaseSymbol === undefined) {
-    throw new Error(`No peg base symbol for gateway ${gatewayAddress}`)
-  }
 
   const treasury = (await fetch(
     `${apiUrl}/analytics/treasury/${gatewayAddress}`,
@@ -147,18 +136,13 @@ export const fetchComposition = async function ({
     ...new Set(treasury.map(token => token.tokenAddress)),
   ]
 
-  const [tokens, prices] = await Promise.all([
-    Promise.all(
-      uniqueAddresses.map(address =>
-        queryClient.ensureQueryData(
-          tokenQueryOptions({ address, chainId: mainnet.id }),
-        ),
+  const tokens = await Promise.all(
+    uniqueAddresses.map(address =>
+      queryClient.ensureQueryData(
+        tokenQueryOptions({ address, chainId: mainnet.id }),
       ),
     ),
-    queryClient.ensureQueryData(tokenPricesQueryOptions()),
-  ])
-  // The feed quotes prices in USD, so the USD peg itself is 1
-  const pegPrice = Number({ USD: '1', ...prices }[pegBaseSymbol] ?? '0')
+  )
 
-  return toCompositionData(treasury, tokens, pegPrice)
+  return toCompositionData(treasury, tokens)
 }

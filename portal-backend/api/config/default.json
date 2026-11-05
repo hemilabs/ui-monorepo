@@ -17,7 +17,7 @@
   "subgraph": {
     "apiKey": "",
     "apiUrl": "https://gateway.thegraph.com/api",
-    "hemiEarnRequests": {
+    "hemiSupply": {
       "apiKey": "",
       "apiUrl": ""
     },

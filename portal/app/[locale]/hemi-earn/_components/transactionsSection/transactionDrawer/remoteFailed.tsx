@@ -72,7 +72,8 @@ export const RemoteFailedCta = function ({
 }) {
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
   const { category, show } = useRemoteFailedState(transaction)
-  const { canDeposit } = useCanDepositForTransaction(transaction)
+  const { canDeposit, isPending: isDepositGatePending } =
+    useCanDepositForTransaction(transaction)
 
   const on = redirectOnSign
     ? (emitter: EventEmitter<RetryRequestEvents>) =>
@@ -110,7 +111,7 @@ export const RemoteFailedCta = function ({
     c => c.mutation.isPending || (marker?.kind === c.kind && !marker.failed),
   )
 
-  if (!show) {
+  if (!show || isDepositGatePending) {
     return <>{fallback}</>
   }
 

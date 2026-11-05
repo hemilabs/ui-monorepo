@@ -13,11 +13,17 @@ export const useCanDeposit = (vault: EarnVault | undefined) =>
     isListed: vault?.isListed ?? true,
   })
 
+// Until the vault list loads, a deposit's vault can't be checked, so isPending
+// tells callers to hold any deposit action instead of assuming it is listed.
 export const useCanDepositForTransaction = function (
   transaction: EarnTransaction | undefined,
 ) {
-  const { data: vaults = [] } = useEarnVaults()
-  return useCanDeposit(
+  const { data: vaults = [], isPending: areVaultsPending } = useEarnVaults()
+  const depositGate = useCanDeposit(
     transaction ? findVaultByAsset(vaults, transaction.asset) : undefined,
   )
+  return {
+    ...depositGate,
+    isPending: transaction?.kind === 'DEPOSIT' && areVaultsPending,
+  }
 }

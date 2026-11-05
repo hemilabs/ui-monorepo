@@ -156,6 +156,8 @@
     "view-all-tutorials": "View all tutorials"
   },
   "hemi-earn": {
+    "apy-provided-by-vetro": "APY · provided by Vetro",
+    "apy-source": "APY is a variable estimate provided by Vetro based on the vault's recent performance. It is not a promise or forecast of future returns and can change at any time. Returns are shown {fees, select, included {after} other {before}} fees.",
     "deposits-paused": "New deposits are currently paused.",
     "footer": {
       "attribution": "Hemi Earn is operated by Vetro Service & Support Corp. Vaults available through Hemi Earn may be operated by Vetro or by third parties. Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. and their affiliates do not operate, manage, custody or guarantee Hemi Earn or any vault and are not parties to your agreement with Vetro. Hemi Earn is not available to U.S. persons or other restricted persons.",
@@ -299,7 +301,6 @@
       "withdrawal": "Withdrawal"
     },
     "vault": {
-      "apy": "APY",
       "composition": {
         "amount": "Amount",
         "by-protocol": "By protocol",
@@ -391,7 +392,6 @@
       "withdraw-successful": "Withdraw successful"
     },
     "vault-info": {
-      "apy": "APY",
       "manage": "Manage",
       "share-token": "Share token",
       "total-deposits": "Total deposits",

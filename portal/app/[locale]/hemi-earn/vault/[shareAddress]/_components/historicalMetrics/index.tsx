@@ -9,7 +9,7 @@ import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { type Address } from 'viem'
 
-import { RiskWarningTooltip } from '../../../../_components/riskWarningTooltip'
+import { ApySourceLabel } from '../../../../_components/apySourceLabel'
 import { HistoricalMetricsIcon } from '../../../../_icons/historicalMetricsIcon'
 import { type MetricPeriod, type MetricType } from '../../../../types'
 import { useHistoricalMetrics } from '../../_hooks/useHistoricalMetrics'
@@ -79,9 +79,13 @@ export const HistoricalMetrics = function ({
           <HistoricalMetricsIcon />
         </div>
         <div className="mt-3 flex items-center justify-between">
-          <div className="flex shrink-0 items-center gap-x-1.5">
-            <h2 className="text-neutral-950">{renderHeadline()}</h2>
-            {metricType === 'apy' && <RiskWarningTooltip />}
+          <div className="flex min-w-0 items-center gap-x-1.5">
+            <h2 className="shrink-0 text-neutral-950">{renderHeadline()}</h2>
+            {metricType === 'apy' && (
+              <div className="body-text-normal flex min-w-0 items-center gap-x-1 text-neutral-600">
+                <ApySourceLabel stakingVault={stakingVault} />
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden items-center gap-3 lg:flex">

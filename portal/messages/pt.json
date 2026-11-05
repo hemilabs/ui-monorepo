@@ -156,6 +156,8 @@
     "view-all-tutorials": "Ver todos os tutoriais"
   },
   "hemi-earn": {
+    "apy-provided-by-vetro": "TEA · fornecida por Vetro",
+    "apy-source": "A TEA é uma estimativa variável fornecida pela Vetro, com base no desempenho recente do fundo. Não é uma promessa nem uma previsão de rendimentos futuros e pode mudar a qualquer momento. Os rendimentos são mostrados {fees, select, included {após} other {antes de}} taxas.",
     "deposits-paused": "Os depósitos novos estão pausados no momento.",
     "footer": {
       "attribution": "O Hemi Earn é operado pela Vetro Service & Support Corp. Os fundos disponíveis pelo Hemi Earn podem ser operados pela Vetro ou por terceiros. A Hemispheres Service & Support (BVI) Ltd., a Hemi Labs, Inc. e suas afiliadas não operam, administram, custodiam nem garantem o Hemi Earn ou qualquer fundo, e não são partes do seu acordo com a Vetro. O Hemi Earn não está disponível para pessoas dos EUA nem para outras pessoas restritas.",
@@ -299,7 +301,6 @@
       "withdrawal": "Saque"
     },
     "vault": {
-      "apy": "TEA",
       "composition": {
         "amount": "Valor",
         "by-protocol": "Por protocolo",
@@ -391,7 +392,6 @@
       "withdraw-successful": "Saque realizado com sucesso"
     },
     "vault-info": {
-      "apy": "TEA",
       "manage": "Gerenciar",
       "share-token": "Token de participação",
       "total-deposits": "Depósitos totais",

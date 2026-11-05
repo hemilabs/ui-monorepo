@@ -17,7 +17,7 @@ export const VaultInfoCards = function ({ vault }: Props) {
   const t = useTranslations('hemi-earn')
 
   return (
-    <div className="flex w-full flex-col gap-3">
+    <div className="flex w-full flex-col gap-4 md:gap-5">
       <div className="flex w-full flex-col items-stretch gap-4 sm:flex-row md:gap-5">
         <div className="flex-1">
           <StatCard

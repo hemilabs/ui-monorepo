@@ -34,7 +34,12 @@ export const VaultDetails = function ({
 
   return (
     <Tooltip text={text} variant="simple">
-      <p className="body-text-normal truncate text-neutral-600">{text}</p>
+      <button
+        className="body-text-normal w-full truncate text-left text-neutral-600"
+        type="button"
+      >
+        {text}
+      </button>
     </Tooltip>
   )
 }

@@ -302,13 +302,13 @@
     },
     "vault": {
       "composition": {
-        "amount": "Amount",
         "by-protocol": "By protocol",
         "by-token": "By token",
         "position": "Position",
         "protocols-count": "{count, plural, one {# protocol} other {# protocols}}",
         "reserve-buffer": "Reserve Buffer",
         "share": "Share",
+        "subtitle": "Assets held across the vault's underlying strategies, as reported by Vetro.",
         "title": "Composition",
         "tokens-count": "{count, plural, one {# token} other {# tokens}}",
         "view-mode": "View mode"

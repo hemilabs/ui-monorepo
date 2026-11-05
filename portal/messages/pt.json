@@ -302,13 +302,13 @@
     },
     "vault": {
       "composition": {
-        "amount": "Valor",
         "by-protocol": "Por protocolo",
         "by-token": "Por token",
         "position": "Posição",
         "protocols-count": "{count, plural, one {# protocolo} other {# protocolos}}",
         "reserve-buffer": "Reserva de liquidez",
         "share": "Participação",
+        "subtitle": "Ativos mantidos nas estratégias subjacentes do fundo, conforme informado pela Vetro.",
         "title": "Composição",
         "tokens-count": "{count, plural, one {# token} other {# tokens}}",
         "view-mode": "Modo de visualização"

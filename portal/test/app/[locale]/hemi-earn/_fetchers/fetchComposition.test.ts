@@ -7,7 +7,6 @@ import {
 import { gatewayForShareQueryOptions } from 'app/[locale]/hemi-earn/_hooks/gatewayForShare'
 import fetch from 'fetch-plus-plus'
 import { tokenQueryOptions } from 'hooks/useToken'
-import { tokenPricesQueryOptions } from 'hooks/useTokenPrices'
 import { mainnet } from 'networks/mainnet'
 import { type Token } from 'types/token'
 import { type Address } from 'viem'
@@ -29,7 +28,7 @@ vi.mock('fetch-plus-plus', () => ({ default: vi.fn() }))
 const shareAddress = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' as Address
 
 const apiUrl = 'https://vetro.test'
-// Real gateway configs, so the peg-base lookup exercises the production data.
+// Real gateway addresses, so the treasury URL matches the production shape.
 const btcGateway = gateways.find(g => g.pegBaseSymbol === 'BTC')!.address
 const usdGateway = gateways.find(g => g.pegBaseSymbol === 'USD')!.address
 
@@ -51,11 +50,9 @@ const makeToken = (
 
 const seedQueryClient = function ({
   gateway,
-  prices,
   tokens,
 }: {
   gateway: Address
-  prices: Record<string, string>
   tokens: Token[]
 }) {
   const queryClient = createTestQueryClient()
@@ -63,7 +60,6 @@ const seedQueryClient = function ({
     gatewayForShareQueryOptions(shareAddress).queryKey,
     gateway,
   )
-  queryClient.setQueryData(tokenPricesQueryOptions().queryKey, prices)
   tokens.forEach(token =>
     queryClient.setQueryData(
       tokenQueryOptions({ address: token.address, chainId: mainnet.id })
@@ -76,10 +72,9 @@ const seedQueryClient = function ({
 
 describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
   describe('fetchComposition', function () {
-    it('prices each token and strategy via the peg', async function () {
+    it('values each token and strategy in the gateway peg unit', async function () {
       const queryClient = seedQueryClient({
         gateway: btcGateway,
-        prices: { BTC: '100000' },
         tokens: [makeToken(tokenA, 8, 'WBTC'), makeToken(tokenB, 18, 'cbBTC')],
       })
       vi.mocked(fetch).mockResolvedValue([
@@ -118,18 +113,18 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
       expect(result).toEqual([
         {
           strategies: [
-            { amount: 100_000, name: 'Strategy A1' },
-            { amount: 50_000, name: 'Strategy A2' },
+            { amount: 1, name: 'Strategy A1' },
+            { amount: 0.5, name: 'Strategy A2' },
           ],
           symbol: 'WBTC',
-          totalDebt: 150_000,
-          withdrawable: 175_000,
+          totalDebt: 1.5,
+          withdrawable: 1.75,
         },
         {
-          strategies: [{ amount: 100_000, name: 'Strategy B1' }],
+          strategies: [{ amount: 1, name: 'Strategy B1' }],
           symbol: 'cbBTC',
-          totalDebt: 100_000,
-          withdrawable: 100_000,
+          totalDebt: 1,
+          withdrawable: 1,
         },
       ])
       expect(fetch).toHaveBeenCalledWith(
@@ -137,17 +132,16 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
       )
     })
 
-    it('treats USD pegs as the identity, without a feed entry', async function () {
+    it('scales by the token decimals and by the price decimals', async function () {
       const queryClient = seedQueryClient({
         gateway: usdGateway,
-        prices: {},
         tokens: [makeToken(tokenA, 6, 'satUSD')],
       })
       vi.mocked(fetch).mockResolvedValue([
         {
-          // 1.0 tokens at an oracle price of 1.0 USD
+          // 1.0 tokens at an oracle price of 2.5, so neither factor can be dropped silently
           activeStrategies: [{ name: 'Strategy', totalDebt: '1000000' }],
-          latestPrice: '100000000',
+          latestPrice: '250000000',
           priceDecimals: 8,
           tokenAddress: tokenA,
           totalDebt: '1000000',
@@ -163,25 +157,12 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
 
       expect(result).toEqual([
         {
-          strategies: [{ amount: 1, name: 'Strategy' }],
+          strategies: [{ amount: 2.5, name: 'Strategy' }],
           symbol: 'satUSD',
-          totalDebt: 1,
-          withdrawable: 1,
+          totalDebt: 2.5,
+          withdrawable: 2.5,
         },
       ])
-    })
-
-    it('rejects when the gateway has no peg configuration', async function () {
-      const queryClient = seedQueryClient({
-        gateway: '0x00000000000000000000000000000000000000aa' as Address,
-        prices: {},
-        tokens: [],
-      })
-
-      await expect(
-        fetchComposition({ apiUrl, queryClient, shareAddress }),
-      ).rejects.toThrow(/No peg base symbol for gateway/)
-      expect(fetch).not.toHaveBeenCalled()
     })
   })
 

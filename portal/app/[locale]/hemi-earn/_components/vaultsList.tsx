@@ -1,13 +1,8 @@
-import Skeleton from 'react-loading-skeleton'
-
 import { useEarnVaults } from '../_hooks/useEarnVaults'
 import { getListedVaults } from '../_utils/vaults'
 
 import { VaultInfoBar } from './vaultInfoBar'
-
-const VaultInfoBarSkeleton = () => (
-  <Skeleton className="h-64 w-full rounded-xl md:h-26" />
-)
+import { VaultInfoBarSkeleton } from './vaultInfoBarSkeleton'
 
 export const VaultsList = function () {
   const { data: vaults = [], isPending } = useEarnVaults()

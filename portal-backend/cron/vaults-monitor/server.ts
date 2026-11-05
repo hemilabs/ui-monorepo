@@ -1,5 +1,4 @@
 import safeAsyncFn from 'safe-async-fn'
-import startInterval from 'startinterval2'
 
 import { checkVaults } from './src/check-vaults.ts'
 import { config } from './src/config.ts'
@@ -19,9 +18,9 @@ async function run() {
   }
 }
 
+run()
+
 const vaultsMonitoringMin = config.get('vaultsMonitoringMin')
 if (vaultsMonitoringMin > 0) {
-  startInterval(run, vaultsMonitoringMin * 60 * 1000)
-} else {
-  run()
+  setInterval(run, vaultsMonitoringMin * 60 * 1000)
 }

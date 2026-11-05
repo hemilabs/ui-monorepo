@@ -100,6 +100,8 @@ Run tests with the following command:
 pnpm test
 ```
 
+This runs the unit tests (`*.test.ts`, in Node) and the integration tests (`*.test.tsx`, in Chromium). To run only one of them, use `pnpm test:unit` or `pnpm test:integration`. Before it runs, `test:integration` installs Chromium with Playwright.
+
 ## Local sandbox for Hemi Earn
 
 To test the Hemi Earn UI end-to-end against a controlled Anvil fork, see [`scripts/hemi-earn/README.md`](./scripts/hemi-earn/README.md). The sandbox deploys the required mocks and funds a test account so the UI can be exercised without external tooling.

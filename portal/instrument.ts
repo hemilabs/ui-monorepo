@@ -6,6 +6,7 @@ import {
   useLocation,
   useNavigationType,
 } from 'react-router'
+import { scrubAddresses } from 'utils/scrubAddresses'
 
 const unsupportedWalletErrors = [
   '@polkadot/keyring requires direct dependencies',
@@ -79,6 +80,26 @@ function enableSentry() {
   const filterKey = import.meta.env.VITE_SENTRY_FILTER_KEY_ID
 
   Sentry.init({
+    // User addresses must not leave the browser. They show up in API URLs,
+    // breadcrumbs, spans and error messages, and denyUrls does not help here,
+    // as it only filters by the URL of the stack frames.
+    beforeBreadcrumb: breadcrumb => scrubAddresses(breadcrumb),
+    beforeSend: event => scrubAddresses(event),
+    beforeSendSpan: span => scrubAddresses(span),
+    dataCollection: {
+      cookies: false,
+      databaseQueryData: false,
+      genAI: { inputs: false, outputs: false },
+      graphQL: { document: false, variables: false },
+      httpBodies: [],
+      httpHeaders: {
+        request: { allow: ['referer', 'user-agent'] },
+        response: false,
+      },
+      queues: false,
+      urlQueryParams: { deny: ['forwarded', '-ip', 'remote-', 'via', '-user'] },
+      userInfo: false,
+    },
     denyUrls: [
       // Filter all Wallet Connect related urls
       /(https|wss):\/\/.*\.walletconnect\.(com|org)/,

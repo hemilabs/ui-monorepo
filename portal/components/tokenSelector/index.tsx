@@ -6,7 +6,6 @@ import { useUmami } from 'hooks/useUmami'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { screenBreakpoints } from 'styles'
-import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 
 import { Chevron } from '../icons/chevron'
@@ -39,7 +38,6 @@ const TokenList = lazyWithFallback(
 )
 
 type Props = {
-  chainId: RemoteChain['id']
   disabled: boolean
   onSelectToken: (token: Token) => void
   selectedToken: Token
@@ -47,7 +45,6 @@ type Props = {
 }
 
 export const TokenSelector = function ({
-  chainId,
   disabled,
   onSelectToken,
   selectedToken,
@@ -81,9 +78,8 @@ export const TokenSelector = function ({
           <Chevron.Bottom className="ml-auto flex-shrink-0 [&>path]:fill-neutral-500 [&>path]:group-enabled/token-selector:group-hover/token-selector:fill-neutral-950" />
         )}
       </button>
-      {showTokenSelector && typeof chainId === 'number' && (
+      {showTokenSelector && (
         <TokenList
-          chainId={chainId}
           closeModal={closeModal}
           onSelectToken={handleSelection}
           tokens={tokens}

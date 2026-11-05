@@ -5,7 +5,7 @@ import { type Address, type Chain, type Hash } from 'viem'
 import {
   type DepositOperation,
   type WithdrawOperation,
-} from './pool/[shareAddress]/_types/operations'
+} from './vault/[shareAddress]/_types/operations'
 
 export type MetricDataPoint = { x: number; y: number }
 export type MetricPeriod = '1w' | '1m' | '3m' | '1y'
@@ -72,8 +72,8 @@ export type EarnAsset = {
   token: EvmToken
 }
 
-// A pool = one Vetro share vault (Ethereum) plus every Hemi deposit asset that settles into it.
-export type EarnPool = {
+// A share OFT on Hemi plus its Ethereum staking vault and every deposit asset that settles into it.
+export type EarnVault = {
   // null = settled with no value (show '-'); undefined = still pending.
   apy: number | null | undefined
   assets: EarnAsset[]

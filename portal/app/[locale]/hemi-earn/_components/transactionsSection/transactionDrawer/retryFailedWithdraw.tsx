@@ -8,29 +8,29 @@ import {
   applySlippage,
 } from '../../../_constants/slippage'
 import { percentToBps, resolveRetrySlippage } from '../../../_utils/slippage'
-import { useQuoteRedeem } from '../../../pool/[shareAddress]/_hooks/useQuoteRedeem'
-import { useSharesToAssets } from '../../../pool/[shareAddress]/_hooks/useSharesToAssets'
-import { useWithdraw } from '../../../pool/[shareAddress]/_hooks/useWithdraw'
-import { type WithdrawOperationRunning } from '../../../pool/[shareAddress]/_types/operations'
 import {
   type EarnAsset,
-  type EarnPool,
   type EarnTransaction,
+  type EarnVault,
 } from '../../../types'
+import { useQuoteRedeem } from '../../../vault/[shareAddress]/_hooks/useQuoteRedeem'
+import { useSharesToAssets } from '../../../vault/[shareAddress]/_hooks/useSharesToAssets'
+import { useWithdraw } from '../../../vault/[shareAddress]/_hooks/useWithdraw'
+import { type WithdrawOperationRunning } from '../../../vault/[shareAddress]/_types/operations'
 
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 type Props = {
   asset: EarnAsset
-  pool: EarnPool
   transaction: EarnTransaction
+  vault: EarnVault
 }
 
 // Retry CTA in the historical withdraw drawer; mirrors RetryFailedDeposit, redirecting earnTxId on user-signed-withdraw.
 export const RetryFailedWithdraw = function ({
   asset,
-  pool,
   transaction,
+  vault,
 }: Props) {
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
   const [operationRunning, setOperationRunning] =
@@ -47,7 +47,7 @@ export const RetryFailedWithdraw = function ({
     },
   } = useSharesToAssets({
     assetAddress: asset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
     shares,
   })
 
@@ -63,7 +63,7 @@ export const RetryFailedWithdraw = function ({
 
   const { data: quote } = useQuoteRedeem({
     asset: asset.address,
-    shareAddress: pool.shareAddress,
+    shareAddress: vault.shareAddress,
     shares,
   })
 
@@ -90,13 +90,13 @@ export const RetryFailedWithdraw = function ({
       })
     },
     peggedAmount,
-    pool,
     priorApprovalTxHash: transaction.approvalTxHash,
     selectedAsset: asset,
     shares,
     slippage,
     // Hide the specific failed row from the table once this retry is signed.
     supersedesInitiateTxHash: transaction.requestTxHash,
+    vault,
   })
 
   const isWithdrawing = operationRunning === 'withdrawing'

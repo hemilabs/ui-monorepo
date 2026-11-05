@@ -8,11 +8,11 @@ import {
 import { useAccount } from 'wagmi'
 
 import { useCooldownDuration } from '../../_hooks/useCooldownDuration'
-import { useEarnPools } from '../../_hooks/useEarnPools'
+import { useEarnVaults } from '../../_hooks/useEarnVaults'
 import { useIsCooldownEligible } from '../../_hooks/useIsCooldownEligible'
-import { findPoolByAsset } from '../../_utils/pools'
-import { useEarnCooldownRemaining } from '../../pool/[shareAddress]/_hooks/useEarnCooldownRemaining'
-import { type EarnPool, type EarnTransaction } from '../../types'
+import { findVaultByAsset } from '../../_utils/vaults'
+import { type EarnTransaction, type EarnVault } from '../../types'
+import { useEarnCooldownRemaining } from '../../vault/[shareAddress]/_hooks/useEarnCooldownRemaining'
 
 import { StatusBadge } from './statusBadge'
 
@@ -103,22 +103,22 @@ function deriveCooldownText({
 }
 
 type Props = { transaction: EarnTransaction }
-type ResolvedProps = Props & { pool: EarnPool }
+type ResolvedProps = Props & { vault: EarnVault }
 
 const WithdrawStatusCellResolved = function ({
-  pool,
   transaction,
+  vault,
 }: ResolvedProps) {
   const t = useTranslations('hemi-earn.transactions')
   const { address } = useAccount()
 
   const { data: isCooldownEligible } = useIsCooldownEligible({
     account: address,
-    stakingVault: pool.stakingVault,
+    stakingVault: vault.stakingVault,
   })
 
   const { data: cooldownDurationSec } = useCooldownDuration({
-    stakingVault: pool.stakingVault,
+    stakingVault: vault.stakingVault,
   })
 
   const claimableAt = transaction.claimableAt ?? null
@@ -140,10 +140,10 @@ const WithdrawStatusCellResolved = function ({
 }
 
 export const WithdrawStatusCell = function ({ transaction }: Props) {
-  const { data: pools = [] } = useEarnPools()
-  const pool = findPoolByAsset(pools, transaction.asset)
-  if (!pool) {
+  const { data: vaults = [] } = useEarnVaults()
+  const vault = findVaultByAsset(vaults, transaction.asset)
+  if (!vault) {
     return <StatusBadge transaction={transaction} />
   }
-  return <WithdrawStatusCellResolved pool={pool} transaction={transaction} />
+  return <WithdrawStatusCellResolved transaction={transaction} vault={vault} />
 }

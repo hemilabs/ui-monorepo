@@ -255,14 +255,14 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
                 setExtendedErc20Approval(false)
                 state.updateFromNetwork(payload)
               },
-              updateFromToken(from, to) {
+              updateFromToken(from) {
                 if (isNativeToken(from)) {
                   setExtendedErc20Approval(false)
                 }
                 if (tunnelsThroughPartners(from)) {
                   setIsPartnersDrawerOpen(true)
                 }
-                state.updateFromToken(from, to)
+                state.updateFromToken(from)
               },
             }}
           />

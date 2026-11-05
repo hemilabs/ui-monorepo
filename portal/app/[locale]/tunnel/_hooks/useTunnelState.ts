@@ -205,10 +205,7 @@ type TunnelFunctionEvents = {
     ? () => void
     : (payload: Extract<Actions, { type: K }>['payload']) => void
 } & {
-  updateFromToken: (
-    fromToken: TunnelState['fromToken'],
-    toToken?: TunnelState['toToken'],
-  ) => void
+  updateFromToken: (fromToken: TunnelState['fromToken']) => void
 }
 
 export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
@@ -361,14 +358,7 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
       [dispatch, getTunnelToken, state.toNetworkId],
     ),
     updateFromToken: useCallback(
-      function (fromToken, toToken) {
-        // if token is defined use that one. This is needed for the scenarios where
-        // the token is not saved yet in the custom list
-        if (toToken) {
-          dispatch({ payload: { fromToken, toToken }, type: 'updateFromToken' })
-          return
-        }
-
+      function (fromToken) {
         // if the selected token can't be tunneled to the target chain
         // we need to first update the target network
         // just grab the first available network that's enabled

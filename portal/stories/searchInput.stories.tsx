@@ -11,7 +11,6 @@ const meta = {
   args: {
     disabled: false,
     placeholder: 'Search tokens',
-    showMagnifyingGlass: true,
     size: 's',
     value: '',
   },
@@ -20,7 +19,6 @@ const meta = {
     onChange: { control: false },
     onClear: { control: false },
     placeholder: { control: 'text' },
-    showMagnifyingGlass: { control: 'boolean' },
     size: { control: 'inline-radio', options: sizes },
     value: { control: 'text' },
   },

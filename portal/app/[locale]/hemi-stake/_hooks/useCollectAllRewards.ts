@@ -1,7 +1,11 @@
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  useIsMutating,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { EventEmitter } from 'events'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useHemi } from 'hooks/useHemi'
@@ -16,9 +20,18 @@ import type { ClaimFromEvents } from 've-hemi-epoch-rewards'
 import { claimFrom } from 've-hemi-epoch-rewards/actions'
 import { useAccount } from 'wagmi'
 
+import { markClaimWindowAsClaimed } from '../_utils/claimableRewards'
+
 import { useClaimablePositions } from './useClaimablePositions'
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
-import { getEpochClaimableRewardsQueryKeyPrefix } from './useEpochClaimableRewards'
+import {
+  getEpochClaimableRewardsQueryKeyPrefix,
+  type useEpochClaimableRewards,
+} from './useEpochClaimableRewards'
+
+type ClaimWindows = NonNullable<
+  ReturnType<typeof useEpochClaimableRewards>['data']
+>
 
 type UseCollectRewards = {
   completedSteps?: CollectAllRewardsStep[]
@@ -28,6 +41,12 @@ type UseCollectRewards = {
     payload?: CollectAllRewardsDashboardOperation,
   ) => void
 }
+
+// Shared by every claim run, so any of them can tell whether another one is in progress
+const collectRewardsMutationKey = ['hemi-stake-collect-rewards']
+
+export const useIsCollectingRewards = () =>
+  useIsMutating({ mutationKey: collectRewardsMutationKey }) > 0
 
 /**
  * Claims everything the positions are owed, one position after the other, in as many
@@ -63,13 +82,27 @@ export const useCollectRewards = function ({
 
   const { hemiWalletClient } = useHemiWalletClient()
 
+  const markWindowAsClaimed = async function (
+    step: Pick<CollectAllRewardsStep, 'fromEpoch' | 'toEpoch' | 'tokenId'>,
+  ) {
+    const queryKey = [
+      ...getEpochClaimableRewardsQueryKeyPrefix({
+        chainId: hemi.id,
+        tokenId: step.tokenId,
+      }),
+      address,
+    ]
+    await queryClient.cancelQueries({ queryKey })
+    queryClient.setQueriesData<ClaimWindows>({ queryKey }, windows =>
+      windows ? markClaimWindowAsClaimed(windows, step) : windows,
+    )
+  }
+
   return useMutation({
     mutationFn: async function runCollectRewards() {
       if (!address) {
         throw new Error('No account connected')
       }
-
-      await ensureConnectedTo(hemi.id)
 
       const transactions = [...positions]
         .sort((a, b) => (a.tokenId < b.tokenId ? -1 : 1))
@@ -108,6 +141,14 @@ export const useCollectRewards = function ({
         status: undefined,
         steps,
       })
+
+      await ensureConnectedTo(hemi.id).catch(function (error) {
+        updateCollectRewardsDashboardOperation({
+          status: CollectAllRewardsDashboardStatus.COLLECT_TX_FAILED,
+        })
+        throw error
+      })
+
       setDrawerQueryString('claimingRewards')
 
       // Sequential on purpose: every window is a signature, and a wallet asked for
@@ -126,8 +167,13 @@ export const useCollectRewards = function ({
           walletClient: hemiWalletClient!,
         })
 
+        emitter.on('pre-claim-from', function () {
+          setDrawerQueryString('claimingRewards')
+        })
+
         emitter.on('user-signed-claim-from', function (transactionHash) {
           track?.('hemi stake - signed collect rewards')
+          setDrawerQueryString('claimingRewards')
           updateStep(index, {
             status: CollectAllRewardsDashboardStatus.COLLECT_TX_PENDING,
             transactionHash,
@@ -140,6 +186,7 @@ export const useCollectRewards = function ({
 
         emitter.on('user-signing-claim-from-error', function () {
           track?.('hemi stake - signing collect rewards error')
+          setDrawerQueryString('claimingRewards')
           failed = true
           updateStep(index, {
             status: CollectAllRewardsDashboardStatus.COLLECT_TX_FAILED,
@@ -170,6 +217,7 @@ export const useCollectRewards = function ({
           updateCollectRewardsDashboardOperation({
             transactionHash: receipt.transactionHash,
           })
+          markWindowAsClaimed(transaction)
         })
 
         emitter.on('claim-from-transaction-reverted', function (receipt) {
@@ -207,6 +255,7 @@ export const useCollectRewards = function ({
         status: CollectAllRewardsDashboardStatus.COLLECT_TX_CONFIRMED,
       })
     },
+    mutationKey: collectRewardsMutationKey,
     onSettled() {
       // Invalidate in the background. Returning these would hold the mutation open and
       // leave the UI out of sync until every balance is re-read.

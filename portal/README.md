@@ -48,6 +48,7 @@ VITE_ENABLE_ANALYTICS=<true|false> # Enable Analytics with Umami
 VITE_ANALYTICS_URL=<url> # Umami analytics URL
 VITE_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
 # These env variables are required for enabling the following features
+VITE_DISABLE_HEMI_EARN_DEPOSITS=<true|false> # Pause new Hemi Earn deposits. Unset means deposits are open
 VITE_ENABLE_HEMI_EARN_PAGE=<true|false> # Enable the Hemi Earn page
 VITE_ENABLE_SAFE_WALLET=<true|false> # Enable the Safe connector, needed to run the Portal as a Safe App
 VITE_ENABLE_STAKE_GOVERNANCE_TESTNET=<true|false> # Enable stake governance on Testnet, for local development
@@ -65,7 +66,7 @@ VITE_BTC_INPUTS_SIZE=105 # Assumed size in vbytes of a single transaction input,
 VITE_BTC_OUTPUTS_SIZE=25 # Assumed size in vbytes of a single transaction output, used to estimate bitcoin fees
 # Backend API URL
 VITE_PORTAL_API_URL=<url> # To get the token prices, user points, TVL and more
-VITE_VETRO_API_URL=<url> # Vetro API URL; powers the Hemi Earn page (variable-stake APY and user rewards)
+VITE_VETRO_API_URL=<url> # Vetro API URL; powers the Hemi Earn page (variable-stake APY, user rewards, transaction history and cost basis)
 # Use it to enable wallet connect
 VITE_WALLET_CONNECT_PROJECT_ID=<wallet-connect-id>
 # Sitemap

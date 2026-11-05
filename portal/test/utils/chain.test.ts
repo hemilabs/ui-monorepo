@@ -4,7 +4,6 @@ import {
   getL1StandardBridgeAddress,
   getL2BridgeAddress,
   isBtcNetworkId,
-  isL2Network,
   isEvmNetwork,
 } from 'utils/chain'
 import { mainnet, sepolia } from 'viem/chains'
@@ -27,15 +26,6 @@ describe('utils/chain', function () {
 
     it('should return true if the chain is evm compatible', function () {
       expect(isEvmNetwork(sepolia)).toBe(true)
-    })
-  })
-  describe('isL2Network()', function () {
-    it('should return false if the chain is an L1', function () {
-      expect(isL2Network(sepolia)).toBe(false)
-    })
-
-    it('should return true if the chain is hemi', function () {
-      expect(isL2Network(hemiSepolia)).toBe(true)
     })
   })
   describe('getL1StandardBridgeAddress()', function () {

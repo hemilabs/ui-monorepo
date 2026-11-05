@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { TokenPricePill } from 'components/tokenPricePill'
 import messages from 'messages/en.json'
-import { NuqsTestingAdapter } from 'nuqs/adapters/testing'
 import { tokenList } from 'tokenList'
 import { IntlProvider } from 'use-intl'
 
@@ -30,9 +29,7 @@ const meta = {
   decorators: [
     Story => (
       <IntlProvider locale="en" messages={messages}>
-        <NuqsTestingAdapter>
-          <Story />
-        </NuqsTestingAdapter>
+        <Story />
       </IntlProvider>
     ),
   ],

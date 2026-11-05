@@ -9,7 +9,7 @@ import { type Address, isAddressEqual } from 'viem'
 
 import { gatewayForRemoteShareQueryOptions } from '../_hooks/gatewayForRemoteShare'
 import { vaultAssetQueryOptions } from '../_hooks/vaultAsset'
-import { type EarnAsset, type EarnPool } from '../types'
+import { type EarnAsset, type EarnVault } from '../types'
 
 import {
   hemiEarnAssetConfigsQueryOptions,
@@ -17,7 +17,7 @@ import {
 } from './fetchHemiEarnAssetConfigs'
 
 export type ShareSkeleton = Pick<
-  EarnPool,
+  EarnVault,
   'assets' | 'peggedToken' | 'shareAddress' | 'shareToken' | 'stakingVault'
 >
 
@@ -49,7 +49,7 @@ export const fetchHemiEarnShares = async function (
     }
   }
 
-  // A share accepts several deposit assets, so configs repeat it — one skeleton per unique share to avoid duplicate pools.
+  // A share accepts several deposit assets, so configs repeat it — one skeleton per unique share to avoid duplicate vaults.
   const skeletons = await Promise.all(
     uniqueShareConfigs(configs).map(async function ({
       remoteShare,

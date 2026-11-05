@@ -1,3 +1,4 @@
+import { hemiEarnRouterAddress } from '@vetro-protocol/hemi-earn'
 import { SparkleIcon } from 'components/icons/sparkleIcon'
 import { Operation } from 'components/reviewOperation/operation'
 import {
@@ -6,7 +7,6 @@ import {
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { TokenLogo } from 'components/tokenLogo'
-import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { type ReactNode } from 'react'
@@ -16,13 +16,21 @@ import { type Hash } from 'viem'
 
 import { defaultDepositSlippage } from '../../../_constants/slippage'
 import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
+import { useVaultMetadata } from '../../../_hooks/useVaultMetadata'
+import {
+  inTransitPostAction,
+  isCrossingNetworks,
+} from '../../../_utils/inTransit'
 import {
   getTerminalDeliveryTxHash,
   remoteFailedStepStatus,
   resolveStepExplorerChainId,
 } from '../../../_utils/settleUi'
+import { completedSubheading } from '../../../_utils/successCopy'
 import {
+  canRetryRow,
   isLocalEarnTransactionRow,
+  isLocalSettlementInFlight,
   isRecoverPath,
   isRemoteFailed,
   isRemoteFailedCancel,
@@ -32,7 +40,11 @@ import {
 import {
   type EarnTransaction,
   type EarnTransactionStatusType,
+  type EarnVault,
 } from '../../../types'
+import { OperatorNote } from '../../operatorDisclosure'
+import { RiskWarningBanner } from '../../riskWarningBanner'
+import { TransferDelayedBanner } from '../../transferIncomplete'
 
 import { RemoteFailedBanner } from './remoteFailed'
 import { SettleBanner } from './settleShared'
@@ -43,6 +55,7 @@ type Props = {
   onClose: VoidFunction
   token: EvmToken
   transaction: EarnTransaction
+  vault: EarnVault
 }
 
 type Translator = ReturnType<
@@ -50,59 +63,59 @@ type Translator = ReturnType<
 >
 
 type StepStates = {
-  stake: ProgressStatusType
+  deposit: ProgressStatusType
   waitingForShares: ProgressStatusType
 }
 
 const stepStatesByStatus: Record<EarnTransactionStatusType, StepStates> = {
   CANCELLED: {
-    // Request landed (stake done); the cancel/return shows in the terminal step, not a failed stake.
-    stake: ProgressStatus.COMPLETED,
+    // Request landed (deposit done); the cancel/return shows in the terminal step, not a failed deposit.
+    deposit: ProgressStatus.COMPLETED,
     waitingForShares: ProgressStatus.NOT_READY,
   },
   FAILED: {
-    stake: ProgressStatus.FAILED,
+    deposit: ProgressStatus.FAILED,
     waitingForShares: ProgressStatus.NOT_READY,
   },
   FINALIZED: {
-    stake: ProgressStatus.COMPLETED,
+    deposit: ProgressStatus.COMPLETED,
     waitingForShares: ProgressStatus.COMPLETED,
   },
   FULFILLED: {
-    stake: ProgressStatus.COMPLETED,
+    deposit: ProgressStatus.COMPLETED,
     waitingForShares: ProgressStatus.PROGRESS,
   },
   PENDING: {
-    stake: ProgressStatus.COMPLETED,
+    deposit: ProgressStatus.COMPLETED,
     waitingForShares: ProgressStatus.PROGRESS,
   },
   RECOVERED: {
-    stake: ProgressStatus.COMPLETED,
+    deposit: ProgressStatus.COMPLETED,
     waitingForShares: ProgressStatus.COMPLETED,
   },
   TX_PENDING: {
-    stake: ProgressStatus.PROGRESS,
+    deposit: ProgressStatus.PROGRESS,
     waitingForShares: ProgressStatus.NOT_READY,
   },
 }
 
-// FAILED splits by source: local = Hemi tx reverted (stake FAILED); subgraph =
+// FAILED splits by source: local = Hemi tx reverted (deposit FAILED); subgraph =
 // Agent failed after a good Hemi tx (failure in the cross-chain step).
 const resolveStepStates = (tx: EarnTransaction): StepStates =>
   tx.status === 'FAILED' && !isLocalEarnTransactionRow(tx)
     ? {
-        stake: ProgressStatus.COMPLETED,
+        deposit: ProgressStatus.COMPLETED,
         waitingForShares: ProgressStatus.FAILED,
       }
     : stepStatesByStatus[tx.status]
 
-function buildStakeStep(tx: EarnTransaction, token: EvmToken, t: Translator) {
-  const status = resolveStepStates(tx).stake
+function buildDepositStep(tx: EarnTransaction, token: EvmToken, t: Translator) {
+  const status = resolveStepStates(tx).deposit
   return {
     description: (
       <div className="flex items-center gap-x-2">
         <TokenLogo size="small" token={token} />
-        <span>{t('step.stake-token', { symbol: token.symbol })}</span>
+        <span>{t('step.deposit-token', { symbol: token.symbol })}</span>
       </div>
     ),
     explorerChainId: hemi.id,
@@ -205,6 +218,7 @@ export const HistoricalDepositReview = function ({
   onClose,
   token,
   transaction,
+  vault,
 }: Props) {
   const t = useTranslations('hemi-earn.transactions.drawer')
 
@@ -212,10 +226,13 @@ export const HistoricalDepositReview = function ({
     address: transaction.asset,
     amount: BigInt(transaction.amountIn),
     chainId: token.chainId,
-    spender: getHemiEarnRouterAddress(),
+    spender: hemiEarnRouterAddress,
   })
 
   const { show: remoteFailedReady } = useRemoteFailedState(transaction)
+  const tVault = useTranslations('hemi-earn.vault.drawer')
+  const tSuccess = useTranslations('hemi-earn.vault')
+  const vaultMetadata = useVaultMetadata(vault.stakingVault)
 
   const { waitingForShares } = resolveStepStates(transaction)
   // Only a still-mining settlement drives PROGRESS; a failed one keeps the natural (FAILED) status + Retry CTA.
@@ -244,27 +261,45 @@ export const HistoricalDepositReview = function ({
   if (transaction.approvalTxHash) {
     steps.push(buildApprovalStep(transaction.approvalTxHash, token, t))
   }
-  steps.push(buildStakeStep(transaction, token, t))
-  steps.push(
-    buildTerminalStep({
-      baseStatus: waitingForShares,
-      remoteFailedReady,
-      settlementTxHash,
-      t,
-      token,
-      tx: transaction,
+  steps.push(buildDepositStep(transaction, token, t))
+  const terminalStep = buildTerminalStep({
+    baseStatus: waitingForShares,
+    remoteFailedReady,
+    settlementTxHash,
+    t,
+    token,
+    tx: transaction,
+  })
+  const isCrossing = isCrossingNetworks({
+    isRemoteFail: isRemoteFailed(transaction),
+    isSettlingLocally: isLocalSettlementInFlight(transaction),
+    isStepInProgress: terminalStep.status === ProgressStatus.PROGRESS,
+  })
+  steps.push({
+    ...terminalStep,
+    postAction: inTransitPostAction({
+      duration: vaultMetadata?.typicalDuration,
+      isCrossing,
+      t: tVault,
     }),
-  )
+  })
 
   return (
     <Operation
       aboveCallToAction={
         <>
+          {canRetryRow(transaction) && <RiskWarningBanner />}
           <SettleBanner transaction={transaction} />
           <RemoteFailedBanner transaction={transaction} />
+          <TransferDelayedBanner
+            isCrossing={isCrossing}
+            stakingVault={vault.stakingVault}
+            transaction={transaction}
+          />
         </>
       }
       amount={transaction.amountIn}
+      belowSubheading={<OperatorNote />}
       callToAction={callToAction}
       endAdornment={
         <RetrySlippageTooltip
@@ -275,7 +310,14 @@ export const HistoricalDepositReview = function ({
       heading={t('deposit-heading')}
       onClose={onClose}
       steps={steps}
-      subheading={t('deposit-subheading')}
+      subheading={completedSubheading({
+        fallback: t('deposit-subheading'),
+        isCompleted: transaction.status === 'FINALIZED',
+        kind: 'DEPOSIT',
+        operator: vaultMetadata?.operator,
+        t: tSuccess,
+        vaultName: vault.shareToken.symbol,
+      })}
       token={token}
     />
   )

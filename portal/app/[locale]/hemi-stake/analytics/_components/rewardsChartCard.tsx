@@ -14,7 +14,7 @@ import { RewardsChart } from './rewardsChart'
 
 export const RewardsChartCard = function () {
   const t = useTranslations('hemi-stake.analytics')
-  const [period, setPeriod] = useState<RewardsPeriod>('1m')
+  const [period, setPeriod] = useState<RewardsPeriod>('3m')
   const {
     data: series,
     fetchStatus,

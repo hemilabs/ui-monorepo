@@ -80,3 +80,23 @@ export const getClaimTransactions = (
   windows
     .filter(({ rewards }) => rewards.some(({ amount }) => amount > BigInt(0)))
     .map(({ fromEpoch, toEpoch }) => ({ fromEpoch, source, toEpoch }))
+
+/**
+ * The windows after one of them has been claimed: its rewards are zeroed, so it
+ * no longer counts as claimable. Lets the cache reflect a confirmed claim
+ * without waiting for a re-read.
+ */
+export const markClaimWindowAsClaimed = <
+  T extends { fromEpoch: number; rewards: ClaimableReward[]; toEpoch: number },
+>(
+  windows: T[],
+  claimed: Pick<ClaimTransaction, 'fromEpoch' | 'toEpoch'>,
+) =>
+  windows.map(window =>
+    window.fromEpoch === claimed.fromEpoch && window.toEpoch === claimed.toEpoch
+      ? {
+          ...window,
+          rewards: window.rewards.map(r => ({ ...r, amount: BigInt(0) })),
+        }
+      : window,
+  )

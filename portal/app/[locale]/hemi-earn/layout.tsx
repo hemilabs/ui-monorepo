@@ -8,13 +8,14 @@ import { isAddress } from 'viem'
 
 import { NotFound } from '../not-found'
 
+import { EarnFooter } from './_components/earnFooter'
 import { EarnStatusUpdaters } from './_components/earnStatusUpdaters'
 import { TopSection } from './_components/topSection'
 import { LocalEarnOperationsProvider } from './_context/localEarnOperationsContext'
 
 export const HemiEarnLayout = function () {
   const [networkType] = useNetworkType()
-  const pool = useMatch('/:locale/hemi-earn/pool/:shareAddress')
+  const vault = useMatch('/:locale/hemi-earn/vault/:shareAddress')
   const t = useTranslations('hemi-earn')
 
   if (!featureFlags.enableHemiEarnPage) {
@@ -23,7 +24,7 @@ export const HemiEarnLayout = function () {
 
   // Checked up here rather than in the page: below this point the layout has
   // already mounted the delivery watcher, and a 404 has no business polling.
-  if (pool && !isAddress(pool.params.shareAddress ?? '')) {
+  if (vault && !isAddress(vault.params.shareAddress ?? '')) {
     return <NotFound />
   }
 
@@ -39,7 +40,12 @@ export const HemiEarnLayout = function () {
   return (
     <LocalEarnOperationsProvider>
       <EarnStatusUpdaters />
-      <Outlet />
+      <div className="mx-auto flex min-h-full flex-col px-4 lg:px-12 lg:pb-12">
+        <div className="flex-1 md:pb-32">
+          <Outlet />
+        </div>
+        <EarnFooter />
+      </div>
     </LocalEarnOperationsProvider>
   )
 }

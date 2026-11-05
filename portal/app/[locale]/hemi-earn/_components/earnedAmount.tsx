@@ -18,7 +18,7 @@ export const EarnedAmount = function () {
       icon={<ArrowGrowingIcon />}
       isError={isError || isDisconnected}
       isLoading={isPending}
-      label={t('info.earned-amount')}
+      label={t('info.estimated-earnings')}
       value={<>${formatFiatNumber(data?.totalUsd ?? 0)}</>}
     />
   )

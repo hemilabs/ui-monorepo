@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query'
-import { getAgentAddress } from 'hemi-earn-actions/actions'
+import { getAgentAddress } from '@vetro-protocol/hemi-earn/actions'
 import { getPublicClient } from 'utils/chainClients'
 import { hemi } from 'viem/chains'
 

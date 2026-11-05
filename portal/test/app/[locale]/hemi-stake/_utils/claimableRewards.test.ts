@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest'
 import {
   getClaimTransactions,
   getClaimWindows,
+  markClaimWindowAsClaimed,
   mergeClaimableRewards,
 } from '../../../../../app/[locale]/hemi-stake/_utils/claimableRewards'
 
@@ -211,5 +212,63 @@ describe('getClaimTransactions', function () {
     expect(transactions).toEqual([
       { fromEpoch: 3386, source: RewardSource.EPOCH, toEpoch: 3401 },
     ])
+  })
+})
+
+describe('markClaimWindowAsClaimed', function () {
+  const windows = [
+    { fromEpoch: 1, rewards: [reward(hemi, BigInt(5))], toEpoch: 10 },
+    {
+      fromEpoch: 11,
+      rewards: [reward(hemi, BigInt(3)), reward(usdc, BigInt(7))],
+      toEpoch: 20,
+    },
+  ]
+
+  it('zeroes every reward of the claimed window', function () {
+    const result = markClaimWindowAsClaimed(windows, {
+      fromEpoch: 11,
+      toEpoch: 20,
+    })
+
+    expect(result[1].rewards).toEqual([
+      reward(hemi, BigInt(0)),
+      reward(usdc, BigInt(0)),
+    ])
+  })
+
+  it('leaves the other windows untouched', function () {
+    const result = markClaimWindowAsClaimed(windows, {
+      fromEpoch: 11,
+      toEpoch: 20,
+    })
+
+    expect(result[0]).toBe(windows[0])
+  })
+
+  it('drops the claimed window from the claim transactions', function () {
+    const result = markClaimWindowAsClaimed(windows, {
+      fromEpoch: 1,
+      toEpoch: 10,
+    })
+
+    expect(getClaimTransactions(result)).toEqual([
+      { fromEpoch: 11, source: RewardSource.EPOCH, toEpoch: 20 },
+    ])
+  })
+
+  it('returns the windows unchanged when none matches', function () {
+    const result = markClaimWindowAsClaimed(windows, {
+      fromEpoch: 1,
+      toEpoch: 20,
+    })
+
+    expect(result).toEqual(windows)
+  })
+
+  it('does not mutate the input', function () {
+    markClaimWindowAsClaimed(windows, { fromEpoch: 1, toEpoch: 10 })
+
+    expect(windows[0].rewards[0].amount).toBe(BigInt(5))
   })
 })

@@ -1,15 +1,15 @@
 import { type Token } from 'types/token'
-import { type Address } from 'viem'
+import { getAddress, type Address } from 'viem'
 
 import {
-  type EarnPool,
   type EarnPosition,
   type EarnTransaction,
+  type EarnVault,
   type LocalEarnOperation,
 } from '../types'
 
-import { findPoolByAsset, findPoolByShare } from './pools'
-import { isEarnRowInFlight } from './transactionPredicates'
+import { isEarnRowInFlight, needsRecover } from './transactionPredicates'
+import { findVaultByAsset, findVaultByShare } from './vaults'
 
 // DEPOSIT renders amountIn (asset units) — never amountOut, which is 18-dec shares.
 // REDEEM renders shares until amountOut (the returned asset) lands at fulfillment.
@@ -24,23 +24,18 @@ export const pickEarnRowAmount = (
       }
     : { rawAmount: transaction.amountIn, token: assetToken }
 
-// Shares an in-flight redeem locked in the Router: gone from the wallet, but the cost
-// basis hasn't disposed them yet, so the earned card adds them back to stay consistent.
+// Shares of a cancelled redeem, waiting for the user to recover them: already out of the
+// wallet, yet still in the cost basis, which Vetro only disposes on PENDING or once
+// processed. The earned card adds them back so both sides cover the same shares.
 export const sumInTransitSharesByShare = (
   transactions: EarnTransaction[],
-  pools: EarnPool[],
+  vaults: EarnVault[],
 ) =>
   transactions.reduce<Record<string, bigint>>(function (acc, tx) {
-    if (
-      tx.kind !== 'REDEEM' ||
-      tx.status === 'TX_PENDING' ||
-      tx.amountOut !== null ||
-      !isEarnRowInFlight(tx)
-    )
-      return acc
-    const shareAddress = findPoolByAsset(pools, tx.asset)?.shareAddress
+    if (tx.kind !== 'REDEEM' || !needsRecover(tx)) return acc
+    const shareAddress = findVaultByAsset(vaults, tx.asset)?.shareAddress
     if (!shareAddress) return acc
-    const key = shareAddress.toLowerCase()
+    const key = getAddress(shareAddress)
     acc[key] = (acc[key] ?? BigInt(0)) + BigInt(tx.amountIn)
     return acc
   }, {})
@@ -51,17 +46,17 @@ export const sumInTransitSharesByShare = (
 export const inTransitOnlyPositions = function (
   inTransitByShare: Record<string, bigint>,
   positions: EarnPosition[],
-  pools: EarnPool[],
+  vaults: EarnVault[],
 ) {
-  const held = new Set(positions.map(p => p.shareAddress.toLowerCase()))
+  const held = new Set(positions.map(p => getAddress(p.shareAddress)))
   return Object.keys(inTransitByShare)
-    .filter(share => !held.has(share))
-    .map(share => findPoolByShare(pools, share as Address))
-    .filter((pool): pool is EarnPool => pool !== undefined)
-    .map(pool => ({
-      peggedToken: pool.peggedToken,
-      shareAddress: pool.shareAddress,
-      shareToken: pool.shareToken,
+    .filter(share => !held.has(getAddress(share as Address)))
+    .map(share => findVaultByShare(vaults, share as Address))
+    .filter((vault): vault is EarnVault => vault !== undefined)
+    .map(vault => ({
+      peggedToken: vault.peggedToken,
+      shareAddress: vault.shareAddress,
+      shareToken: vault.shareToken,
       yourDeposit: BigInt(0),
     }))
 }

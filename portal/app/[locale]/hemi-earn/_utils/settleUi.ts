@@ -7,8 +7,9 @@ import { type Chain, type Hash } from 'viem'
 
 import { type EarnSettlement, type EarnTransaction } from '../types'
 
-import { claimRecoverSettlement, remoteFailedSettlement } from './settlement'
+import { remoteFailedSettlement } from './settlement'
 import {
+  isLocalSettlementInFlight,
   isUserCancel,
   needsManualClaim,
   needsRecover,
@@ -64,8 +65,8 @@ export const pickSettleBannerKey = function (
   if (!tx) return undefined
   // A deliberate cancel reads neutrally, not as a recover failure (isUserCancel drops at RECOVERED).
   if (isUserCancel(tx)) return 'cancelled'
-  // A claim/recover marker means the user already engaged that CTA; don't also show the banner.
-  if (claimRecoverSettlement(tx.settlement)) return undefined
+  // A claim/recover marker means the user already engaged that CTA; no banner while it's in flight.
+  if (isLocalSettlementInFlight(tx)) return undefined
   const operation = needsManualClaim(tx)
     ? 'CLAIM'
     : needsRecover(tx)

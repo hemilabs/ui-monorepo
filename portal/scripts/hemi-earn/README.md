@@ -104,7 +104,7 @@ pnpm --filter portal sandbox:hemi-earn -- mint \
 
 ## Slow mining
 
-Slow-block mining is useful for reproducing intermediate UI states (pending tx spinners, cross-chain step indicators) without racing against Anvil's default instant mining. The `mining` subcommand toggles Anvil's `anvil_setIntervalMining` at runtime — on-chain state and Envio indexing are preserved, no restart needed.
+Slow-block mining is useful for reproducing intermediate UI states (pending tx spinners, cross-chain step indicators) without racing against Anvil's default instant mining. The `mining` subcommand toggles Anvil's `anvil_setIntervalMining` at runtime — on-chain state is preserved, no restart needed.
 
 ```bash
 pnpm --filter portal sandbox:hemi-earn -- mining --seconds 6   # a block every 6s

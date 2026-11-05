@@ -183,6 +183,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
         <div className="relative -translate-y-7">
           <ReceivingAddress
             address={evmAddress ? formatEvmAddress(evmAddress) : undefined}
+            editable={false}
             receivingText={t('tunnel-page.form.hemi-receiving-address')}
             tooltipText={t(
               'tunnel-page.form.hemi-receiving-address-description',

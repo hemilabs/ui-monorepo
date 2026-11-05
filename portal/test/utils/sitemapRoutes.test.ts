@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest'
 // Named on purpose: the previous generator walked the tree and excluded things
 // with `!baseRoute.endsWith('demos')`, which is how `[shareAddress]` slipped in.
 const excluded: Record<string, string> = {
-  '/hemi-earn/pool/[shareAddress]': 'dynamic, one URL per pool address',
+  '/hemi-earn/vault/[shareAddress]': 'dynamic, one URL per vault address',
 }
 
 const localeDir = path.join(import.meta.dirname, '../../app/[locale]')

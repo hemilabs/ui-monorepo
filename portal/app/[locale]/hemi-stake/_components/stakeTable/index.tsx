@@ -6,10 +6,7 @@ import { Header } from 'components/table/_components/header'
 import { TableCard } from 'components/table/tableCard'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import {
-  type StakingPosition,
-  StakingPositionStatus,
-} from 'types/stakingDashboard'
+import { type StakingPosition } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
@@ -17,13 +14,11 @@ import { useAccount } from 'wagmi'
 import { Amount } from '../amount'
 import { RewardsDisplay } from '../rewardsDisplay'
 
-import { ActionCell } from './actionCell'
-import { ClaimCta } from './claimCta'
 import { HeroBanner } from './heroBanner'
 import { LockupTime } from './lockupTime'
 import { NoPositionStaked } from './noPositionStaked'
+import { PositionActions } from './positionActions'
 import { type StakeTableFilterOptions } from './stakeTableFilter'
-import { UnlockCta } from './unlockCta'
 import { VotingPower } from './votingPower'
 
 type StakingColumnsProps = {
@@ -86,15 +81,7 @@ const stakingColumns = ({
     meta: { width: 95 },
   },
   {
-    cell: ({ row }) => (
-      <div className="flex w-full flex-row-reverse items-center justify-end gap-x-2 lg:flex-row">
-        <ClaimCta operation={row.original} />
-        <UnlockCta operation={row.original} />
-        {row.original.status !== StakingPositionStatus.WITHDRAWN && (
-          <ActionCell key={row.original.id} row={row} />
-        )}
-      </div>
-    ),
+    cell: ({ row }) => <PositionActions row={row} />,
     header: () => <Header text={t('table.action')} />,
     id: 'action',
     meta: { className: 'justify-start lg:justify-end', width: 280 },

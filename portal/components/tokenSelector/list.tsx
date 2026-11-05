@@ -2,17 +2,13 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import { DatabaseIcon } from 'components/icons/databaseIcon'
 import { MultiTokensIcon } from 'components/icons/multiTokensIcon'
 import { useHasScrolled } from 'hooks/useHasScrolled'
-import { useUserTokenList } from 'hooks/useUserTokenList'
 import { type ReactElement, useRef } from 'react'
 import { Token as TokenType } from 'types/token'
 import { useTranslations } from 'use-intl'
-import { isCustomToken } from 'utils/token'
-import { type Chain } from 'viem'
 
 import { Token } from './token'
 
 type Props = {
-  chainId: Chain['id']
   onSelectToken: (token: TokenType) => void
   tokens: TokenType[]
 }
@@ -22,27 +18,6 @@ type RenderHeaderProps = {
   hasTokens?: boolean
   height: number
   virtualItemStart: number
-}
-
-function CustomTokensHeader({
-  height,
-  offset,
-  virtualItemStart,
-}: RenderHeaderProps) {
-  const t = useTranslations('token-selector')
-  return (
-    <li
-      className="absolute left-0 top-0 w-full"
-      style={{
-        height,
-        transform: `translateY(${virtualItemStart + offset}px)`,
-      }}
-    >
-      <h6 className="px-4 py-3 pb-1.5 text-sm font-medium text-neutral-500 md:px-6">
-        {t('manually-added-tokens')}
-      </h6>
-    </li>
-  )
 }
 
 function YourTokensHeader({
@@ -133,7 +108,6 @@ const shouldRenderHeader = ({
 }) => !alreadyRendered && isFirst && !isSearchActive && condition
 
 export const List = function ({
-  chainId,
   isSearchActive,
   onSelectToken,
   tokens,
@@ -143,10 +117,9 @@ export const List = function ({
 }) {
   const parentRef = useRef<HTMLDivElement>(null)
 
-  const { userTokenList } = useUserTokenList(chainId)
   const { hasScrolled, onScroll } = useHasScrolled()
 
-  const combinedTokens = [...yourTokens, ...tokens, ...userTokenList]
+  const combinedTokens = [...yourTokens, ...tokens]
 
   const rowVirtualizer = useVirtualizer({
     count: combinedTokens.length,
@@ -155,7 +128,6 @@ export const List = function ({
     overscan: 5,
   })
 
-  const customTokensHeaderHeight = 40
   const allTokensHeaderHeight = 64
   const yourTokensHeaderHeight = 40
 
@@ -166,7 +138,6 @@ export const List = function ({
 
     let hasAddedYourTokensHeader = false
     let hasAddedAllTokensHeader = false
-    let hasAddedCustomTokensHeader = false
 
     // Function to calculate the offset based on the headers that have been added
     // This is used to adjust the position of the tokens after the headers
@@ -174,23 +145,15 @@ export const List = function ({
       [
         hasAddedYourTokensHeader && yourTokensHeaderHeight,
         hasAddedAllTokensHeader && allTokensHeaderHeight,
-        hasAddedCustomTokensHeader && customTokensHeaderHeight,
       ].reduce((acc: number, val) => acc + (val || 0), 0)
 
     for (let rowIndex = 0; rowIndex < virtualItems.length; rowIndex++) {
       const virtualItem = virtualItems[rowIndex]
       const token = combinedTokens[virtualItem.index]
 
-      const isCustom = isCustomToken(userTokenList, token)
       const isFirstYourTokens = rowIndex === 0
       const isFirstAllTokens = virtualItem.index === yourTokens.length
 
-      const shouldRenderCustomHeader = shouldRenderHeader({
-        alreadyRendered: hasAddedCustomTokensHeader,
-        condition: isCustom,
-        isFirst: true, // custom tokens are always the last section
-        isSearchActive: false, // custom tokens are not affected by search
-      })
       const shouldRenderYourTokensHeader = shouldRenderHeader({
         alreadyRendered: hasAddedYourTokensHeader,
         condition: hasYourTokens,
@@ -202,18 +165,6 @@ export const List = function ({
         isFirst: isFirstAllTokens,
         isSearchActive,
       })
-
-      if (shouldRenderCustomHeader) {
-        rows.push(
-          <CustomTokensHeader
-            height={customTokensHeaderHeight}
-            key="manually_added"
-            offset={getOffset()}
-            virtualItemStart={virtualItem.start}
-          />,
-        )
-        hasAddedCustomTokensHeader = true
-      }
 
       if (shouldRenderYourTokensHeader) {
         rows.push(

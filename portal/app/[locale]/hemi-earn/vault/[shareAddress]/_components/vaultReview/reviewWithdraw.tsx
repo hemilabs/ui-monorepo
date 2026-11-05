@@ -273,7 +273,6 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   const slippageBps = useSlippageBps('withdraw')
   const t = useTranslations('hemi-earn.vault.drawer')
   const tSuccess = useTranslations('hemi-earn.vault')
-  const tForm = useTranslations('hemi-earn.vault.form')
   const chainId = selectedAsset.token.chainId
   const chain = useChain(chainId)
   const { address } = useAccount()
@@ -553,7 +552,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     isAboutToSign ? (
       <VetroFeeRow
         isError={isVetroFeeError}
-        label={tForm('vetro-withdrawal-fee')}
+        label={tSuccess('form.vetro-withdrawal-fee')}
         percentage={vetroFee}
       />
     ) : null

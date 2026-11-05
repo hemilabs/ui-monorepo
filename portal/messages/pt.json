@@ -156,7 +156,7 @@
     "view-all-tutorials": "Ver todos os tutoriais"
   },
   "hemi-earn": {
-    "apy-provided-by-vetro": "TEA · fornecida por Vetro",
+    "apy-provided-by-vetro": "TEA · fornecida pela Vetro",
     "apy-source": "A TEA é uma estimativa variável fornecida pela Vetro, com base no desempenho recente do fundo. Não é uma promessa nem uma previsão de rendimentos futuros e pode mudar a qualquer momento. Os rendimentos são mostrados {fees, select, included {após} other {antes de}} taxas.",
     "deposits-paused": "Os depósitos novos estão pausados no momento.",
     "footer": {

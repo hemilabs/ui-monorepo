@@ -1,4 +1,4 @@
-import { type QueryClient, type UseQueryOptions } from '@tanstack/react-query'
+import { type QueryClient, queryOptions } from '@tanstack/react-query'
 import { getMintFee, getRedeemFee } from '@vetro-protocol/gateway/actions'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient } from 'utils/chainClients'
@@ -12,16 +12,13 @@ import { type VaultOperation } from '../_types/operations'
 export type VetroFeeParams = {
   asset: Address
   operation: VaultOperation
-  queryClient: QueryClient
   shareAddress: Address
 }
 
-export async function fetchVetroFee({
-  asset,
-  operation,
-  queryClient,
-  shareAddress,
-}: VetroFeeParams) {
+export async function fetchVetroFee(
+  queryClient: QueryClient,
+  { asset, operation, shareAddress }: VetroFeeParams,
+) {
   const [gateway, assetData] = await Promise.all([
     queryClient.ensureQueryData(gatewayForShareQueryOptions(shareAddress)),
     queryClient.ensureQueryData(assetDataQueryOptions(asset)),
@@ -41,10 +38,9 @@ const getVetroFeeQueryKey = ({
 }: VetroFeeParams) =>
   ['hemi-earn', 'vetro-fee', shareAddress, asset, operation] as const
 
-export const vetroFeeQueryOptions = (
-  params: VetroFeeParams,
-): UseQueryOptions<number> => ({
-  queryFn: () => fetchVetroFee(params),
-  queryKey: getVetroFeeQueryKey(params),
-  staleTime: 1000 * 60 * 5,
-})
+export const vetroFeeQueryOptions = (params: VetroFeeParams) =>
+  queryOptions({
+    queryFn: ({ client }) => fetchVetroFee(client, params),
+    queryKey: getVetroFeeQueryKey(params),
+    staleTime: 1000 * 60 * 5,
+  })

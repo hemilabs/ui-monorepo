@@ -169,7 +169,6 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   const { localOperations } = useLocalEarnOperations()
   const t = useTranslations('hemi-earn.vault.drawer')
   const tSuccess = useTranslations('hemi-earn.vault')
-  const tForm = useTranslations('hemi-earn.vault.form')
   const chainId = selectedAsset.token.chainId
   const chain = useChain(chainId)
   const { address } = useAccount()
@@ -443,7 +442,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     isAboutToSign ? (
       <VetroFeeRow
         isError={isVetroFeeError}
-        label={tForm('vetro-deposit-fee')}
+        label={tSuccess('form.vetro-deposit-fee')}
         percentage={vetroFee}
       />
     ) : null

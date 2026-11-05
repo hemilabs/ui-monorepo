@@ -32,7 +32,8 @@ export const HistoricalMetrics = function ({
 }: Props) {
   const t = useTranslations('hemi-earn.vault.historical-metrics')
   const [period, setPeriod] = useState<MetricPeriod>('1w')
-  const [selectedMetricType, setMetricType] = useState<MetricType>('deposits')
+  const [selectedMetricType, setSelectedMetricType] =
+    useState<MetricType>('deposits')
   const metricType = isListed ? selectedMetricType : 'deposits'
 
   const { data, isError, isPending } = useHistoricalMetrics({
@@ -103,7 +104,7 @@ export const HistoricalMetrics = function ({
             {isListed && (
               <SegmentedControl
                 label={t('metric')}
-                onChange={setMetricType}
+                onChange={setSelectedMetricType}
                 options={metricTypeOptions}
                 value={metricType}
               />

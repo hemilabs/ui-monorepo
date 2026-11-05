@@ -30,7 +30,7 @@ const SideDrawer = function ({ activeTab }: { activeTab: VaultOperation }) {
 
 export const VaultForm = function () {
   const { resetSettings, updateSharesInput, vault } = useVaultForm()
-  const [selectedTab, setActiveTab] = useState<VaultOperation>(
+  const [selectedTab, setSelectedTab] = useState<VaultOperation>(
     vault.isListed ? 'deposit' : 'withdraw',
   )
   const activeTab = vault.isListed ? selectedTab : 'withdraw'
@@ -38,13 +38,13 @@ export const VaultForm = function () {
   const switchToDeposit = function () {
     updateSharesInput('0')
     resetSettings()
-    setActiveTab('deposit')
+    setSelectedTab('deposit')
   }
 
   const switchToWithdraw = function () {
     updateSharesInput('0')
     resetSettings()
-    setActiveTab('withdraw')
+    setSelectedTab('withdraw')
   }
 
   if (!vault.shareToken) {

@@ -7,6 +7,7 @@ import {
   type EarnVault,
 } from '../types'
 
+import { computeCooldownRemaining } from './cooldown'
 import { isCooldownMature, needsManualClaim } from './transactionPredicates'
 
 export const findVaultByAsset = (vaults: EarnVault[], asset: Address) =>
@@ -42,7 +43,13 @@ export const getVaultDetails = ({
 const isClaimableWithdrawal = (tx: EarnTransaction, nowSec: number) =>
   tx.kind === 'REDEEM' &&
   (needsManualClaim(tx) ||
-    isCooldownMature(tx, Math.max(Number(tx.claimableAt) - nowSec, 0)))
+    isCooldownMature(
+      tx,
+      computeCooldownRemaining(
+        tx.claimableAt ? BigInt(tx.claimableAt) : undefined,
+        nowSec,
+      ),
+    ))
 
 // A delisted vault stays reachable only while the wallet still has something to
 // withdraw or claim from it.

@@ -20,13 +20,12 @@ export const ReviewIntro = function ({
   const t = useTranslations('hemi-earn.vault.drawer')
 
   const getText = function () {
-    if (vaultMetadata === undefined) {
-      return t('review-fallback')
+    if (operation === 'withdraw') {
+      return t('withdraw.review', { vaultName })
     }
-    const { maxDuration } = vaultMetadata
-    return operation === 'withdraw'
-      ? t('withdraw.review', { vaultName })
-      : t('deposit.review', { duration: maxDuration, vaultName })
+    return vaultMetadata === undefined
+      ? t('review-fallback')
+      : t('deposit.review', { duration: vaultMetadata.maxDuration, vaultName })
   }
 
   return (

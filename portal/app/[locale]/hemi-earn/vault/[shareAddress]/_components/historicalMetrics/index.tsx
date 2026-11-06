@@ -18,19 +18,23 @@ import { HeadlineValue } from './headlineValue'
 import { HistoricalMetricsChart } from './historicalMetricsChart'
 
 type Props = {
+  isListed: boolean
   peggedToken: EvmToken
   shareToken: EvmToken
   stakingVault: Address
 }
 
 export const HistoricalMetrics = function ({
+  isListed,
   peggedToken,
   shareToken,
   stakingVault,
 }: Props) {
   const t = useTranslations('hemi-earn.vault.historical-metrics')
   const [period, setPeriod] = useState<MetricPeriod>('1w')
-  const [metricType, setMetricType] = useState<MetricType>('deposits')
+  const [selectedMetricType, setSelectedMetricType] =
+    useState<MetricType>('deposits')
+  const metricType = isListed ? selectedMetricType : 'deposits'
 
   const { data, isError, isPending } = useHistoricalMetrics({
     metricType,
@@ -95,14 +99,16 @@ export const HistoricalMetrics = function ({
                 options={periodOptions}
                 value={period}
               />
-              <div className="h-3 w-0.5 bg-neutral-200" />
+              {isListed && <div className="h-3 w-0.5 bg-neutral-200" />}
             </div>
-            <SegmentedControl
-              label={t('metric')}
-              onChange={setMetricType}
-              options={metricTypeOptions}
-              value={metricType}
-            />
+            {isListed && (
+              <SegmentedControl
+                label={t('metric')}
+                onChange={setSelectedMetricType}
+                options={metricTypeOptions}
+                value={metricType}
+              />
+            )}
           </div>
         </div>
         <div className="mt-8">

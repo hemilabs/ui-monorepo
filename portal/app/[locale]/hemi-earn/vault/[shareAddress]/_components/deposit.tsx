@@ -55,7 +55,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   } = useVaultForm()
 
   const { address, status } = useEvmAccount()
-  const depositGate = useCanDeposit()
+  const depositGate = useCanDeposit(vault)
 
   const amount = parseTokenUnits(input, selectedAsset.token)
   const slippage = useSlippage('deposit')

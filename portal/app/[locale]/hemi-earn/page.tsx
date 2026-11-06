@@ -1,16 +1,16 @@
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { type ReactNode } from 'react'
-import Skeleton from 'react-loading-skeleton'
 
 import { InfoCards } from './_components/infoCards'
 import { OperatorBanner } from './_components/operatorDisclosure'
 import { TopSection } from './_components/topSection'
 import { TransactionsSection } from './_components/transactionsSection'
+import { VaultInfoBarSkeleton } from './_components/vaultInfoBarSkeleton'
 import { useHemiEarnShares } from './_hooks/useHemiEarnShares'
 
 const VaultsListSkeleton = () => (
   <div className="mt-6 flex w-full flex-col gap-4">
-    <Skeleton className="h-58 w-full rounded-xl md:h-19.5" />
+    <VaultInfoBarSkeleton />
   </div>
 )
 

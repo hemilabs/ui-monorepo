@@ -209,7 +209,8 @@
           "heading": "Your withdrawal is stuck on Ethereum",
           "heading-deposit": "Your deposit is stuck on Ethereum",
           "heading-slippage": "Your withdrawal didn't complete",
-          "heading-slippage-deposit": "Your deposit didn't complete"
+          "heading-slippage-deposit": "Your deposit didn't complete",
+          "vault-delisted": "This vault no longer accepts deposits, so return your funds to your wallet."
         },
         "transfer-incomplete": "This transfer hasn't completed yet. Hemi can't access, move or recover assets in Hemi Earn. Please contact Vetro support and include your transaction hash:",
         "withdraw": {
@@ -393,8 +394,11 @@
       "withdraw-complete": "Your withdrawal is complete. The assets have been returned to your wallet.",
       "withdraw-successful": "Withdraw successful"
     },
+    "vault-delisted": "This vault no longer accepts deposits.",
     "vault-info": {
+      "curators": "{count, plural, one {Curator} other {Curators}}: {names}",
       "manage": "Manage",
+      "operator": "Vault operator: {operator}",
       "share-token": "Share token",
       "total-deposits": "Total deposits",
       "vault-contract": "Vault contract",

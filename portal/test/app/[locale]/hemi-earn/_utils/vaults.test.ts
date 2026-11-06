@@ -1,13 +1,18 @@
 import { hemiEarnVaults } from '@vetro-protocol/hemi-earn'
-import { type Address } from 'viem'
+import { type Address, getAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
 
 import {
+  canAccessVault,
   findVaultByAsset,
   findVaultByShare,
   findVaultMetadata,
+  getListedVaults,
+  getVaultDetails,
 } from '../../../../../app/[locale]/hemi-earn/_utils/vaults'
 import { type EarnVault } from '../../../../../app/[locale]/hemi-earn/types'
+
+import { baseTx } from './fixtures'
 
 describe('vaults', function () {
   describe('findVaultByAsset / findVaultByShare', function () {
@@ -78,6 +83,192 @@ describe('vaults', function () {
       expect(
         findVaultMetadata('0x0000000000000000000000000000000000009999'),
       ).toBeUndefined()
+    })
+  })
+
+  describe('getListedVaults', function () {
+    const delisted = {
+      shareAddress: '0x000000000000000000000000000000000000dddd',
+      stakingVault: '0x0000000000000000000000000000000000009999',
+    } as EarnVault
+    const listed = hemiEarnVaults.map(
+      ({ address }, index) =>
+        ({
+          shareAddress: `0x${String(index + 1).padStart(40, '0')}`,
+          stakingVault: address,
+        }) as EarnVault,
+    )
+
+    it('keeps only listed vaults, in hemiEarnVaults order', function () {
+      const result = getListedVaults([delisted, ...[...listed].reverse()])
+      expect(result.map(vault => vault.stakingVault)).toEqual(
+        hemiEarnVaults.map(vault => vault.address),
+      )
+    })
+
+    it('returns an empty list when no vault is listed', function () {
+      expect(getListedVaults([delisted])).toEqual([])
+    })
+  })
+
+  describe('getVaultDetails', function () {
+    const operator = 'Operator Corp.'
+
+    it('joins curators with a comma and counts them', function () {
+      expect(getVaultDetails({ curators: ['A', 'B', 'C'], operator })).toEqual({
+        curators: { count: 3, names: 'A, B, C' },
+        operator,
+      })
+    })
+
+    it('counts a single curator', function () {
+      expect(getVaultDetails({ curators: ['A'], operator })).toEqual({
+        curators: { count: 1, names: 'A' },
+        operator,
+      })
+    })
+
+    it('omits curators when they are not set', function () {
+      expect(getVaultDetails({ operator })).toEqual({
+        curators: undefined,
+        operator,
+      })
+    })
+
+    it('omits curators when the list is empty', function () {
+      expect(getVaultDetails({ curators: [], operator })).toEqual({
+        curators: undefined,
+        operator,
+      })
+    })
+  })
+
+  describe('canAccessVault', function () {
+    const shareAddress = '0x000000000000000000000000000000000000aaaa'
+    const asset = '0x0000000000000000000000000000000000001111'
+    const otherAsset = '0x0000000000000000000000000000000000002222'
+    const nowSec = 1_000
+
+    const makeVault = (isListed: boolean) =>
+      ({
+        assets: [{ address: asset }],
+        isListed,
+        shareAddress,
+      }) as EarnVault
+
+    const noActivity = {
+      inTransitByShare: {},
+      nowSec,
+      positions: [],
+      transactions: [],
+    }
+
+    it('allows a listed vault without any activity', function () {
+      expect(canAccessVault({ ...noActivity, vault: makeVault(true) })).toBe(
+        true,
+      )
+    })
+
+    it('denies a delisted vault without any activity', function () {
+      expect(canAccessVault({ ...noActivity, vault: makeVault(false) })).toBe(
+        false,
+      )
+    })
+
+    it('allows a delisted vault when the wallet holds its shares', function () {
+      expect(
+        canAccessVault({
+          ...noActivity,
+          positions: [{ shareAddress, yourDeposit: BigInt(1) }],
+          vault: makeVault(false),
+        }),
+      ).toBe(true)
+    })
+
+    it('denies a delisted vault when the position is empty', function () {
+      expect(
+        canAccessVault({
+          ...noActivity,
+          positions: [{ shareAddress, yourDeposit: BigInt(0) }],
+          vault: makeVault(false),
+        }),
+      ).toBe(false)
+    })
+
+    it('allows a delisted vault with shares in transit', function () {
+      expect(
+        canAccessVault({
+          ...noActivity,
+          inTransitByShare: { [getAddress(shareAddress)]: BigInt(1) },
+          vault: makeVault(false),
+        }),
+      ).toBe(true)
+    })
+
+    it('allows a delisted vault with a withdrawal to claim', function () {
+      expect(
+        canAccessVault({
+          ...noActivity,
+          transactions: [
+            { ...baseTx, asset, kind: 'REDEEM', status: 'FULFILLED' },
+          ],
+          vault: makeVault(false),
+        }),
+      ).toBe(true)
+    })
+
+    it('allows a delisted vault whose withdrawal cooldown has elapsed', function () {
+      expect(
+        canAccessVault({
+          ...noActivity,
+          transactions: [
+            {
+              ...baseTx,
+              asset,
+              claimableAt: String(nowSec),
+              kind: 'REDEEM',
+              status: 'PENDING',
+            },
+          ],
+          vault: makeVault(false),
+        }),
+      ).toBe(true)
+    })
+
+    it('denies a delisted vault whose withdrawal cooldown is still running', function () {
+      expect(
+        canAccessVault({
+          ...noActivity,
+          transactions: [
+            {
+              ...baseTx,
+              asset,
+              claimableAt: String(nowSec + 1),
+              kind: 'REDEEM',
+              status: 'PENDING',
+            },
+          ],
+          vault: makeVault(false),
+        }),
+      ).toBe(false)
+    })
+
+    it('ignores claimable withdrawals and deposits of other vaults', function () {
+      expect(
+        canAccessVault({
+          ...noActivity,
+          transactions: [
+            {
+              ...baseTx,
+              asset: otherAsset,
+              kind: 'REDEEM',
+              status: 'FULFILLED',
+            },
+            { ...baseTx, asset, kind: 'DEPOSIT', status: 'FULFILLED' },
+          ],
+          vault: makeVault(false),
+        }),
+      ).toBe(false)
     })
   })
 })

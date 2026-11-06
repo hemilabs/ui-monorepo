@@ -209,7 +209,8 @@
           "heading": "Seu saque travou na Ethereum",
           "heading-deposit": "Seu depósito travou na Ethereum",
           "heading-slippage": "Seu saque não foi concluído",
-          "heading-slippage-deposit": "Seu depósito não foi concluído"
+          "heading-slippage-deposit": "Seu depósito não foi concluído",
+          "vault-delisted": "Este fundo não aceita mais depósitos, então devolva seus fundos à sua carteira."
         },
         "transfer-incomplete": "Esta transferência ainda não foi concluída. A Hemi não pode acessar, mover ou recuperar ativos no Hemi Earn. Entre em contato com o suporte da Vetro e inclua o hash da sua transação:",
         "withdraw": {
@@ -393,8 +394,11 @@
       "withdraw-complete": "Seu saque foi concluído. Os ativos retornaram à sua carteira.",
       "withdraw-successful": "Saque realizado com sucesso"
     },
+    "vault-delisted": "Este fundo não aceita mais depósitos.",
     "vault-info": {
+      "curators": "{count, plural, one {Curador} other {Curadores}}: {names}",
       "manage": "Gerenciar",
+      "operator": "Operador do fundo: {operator}",
       "share-token": "Token de participação",
       "total-deposits": "Depósitos totais",
       "vault-contract": "Contrato do fundo",

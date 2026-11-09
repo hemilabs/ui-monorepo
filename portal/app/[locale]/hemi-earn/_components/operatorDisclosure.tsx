@@ -26,11 +26,11 @@ const supportLink = (chunks: ReactNode) => (
 
 export const OperatorBanner = function () {
   const t = useTranslations('hemi-earn.operator')
-  const { canDeposit } = useCanDeposit(undefined)
+  const { reason } = useCanDeposit(undefined)
 
   return (
     <Banner>
-      {!canDeposit && (
+      {reason === 'deposits-paused' && (
         <p className="mb-3">
           {t.rich('deposits-paused-details', { link: supportLink })}
         </p>

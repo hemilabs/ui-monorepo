@@ -21,8 +21,8 @@ FROM node:24.22.1-alpine3.24
 # Patch vulnerabilities
 RUN apk update
 RUN apk add --upgrade openssl=3.5.9-r0
-# https://scout.docker.com/v/CVE-2026-85091
-RUN apk add --upgrade zlib=1.3.2-r1
+# https://scout.docker.com/v/CVE-2026-4738
+RUN apk add --upgrade zlib=1.4-r0
 RUN corepack enable
 # npm is unused at runtime (the app uses pnpm); removing it shrinks the image
 # and eliminates its transitive vulnerabilities (e.g. sigstore).

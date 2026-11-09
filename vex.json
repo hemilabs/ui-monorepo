@@ -46,8 +46,21 @@
       "vulnerability": {
         "name": "CVE-2023-54404"
       }
+    },
+    {
+      "justification": "vulnerable_code_not_in_execute_path",
+      "products": [
+        {
+          "@id": "pkg:apk/alpine/musl@1.2.6-r3?os_name=alpine&os_version=3.24"
+        }
+      ],
+      "status": "not_affected",
+      "timestamp": "2026-11-09T00:00:00.000Z",
+      "vulnerability": {
+        "name": "CVE-2026-107891"
+      }
     }
   ],
-  "timestamp": "2026-10-26T00:00:00.000Z",
+  "timestamp": "2026-11-09T00:00:00.000Z",
   "version": 1
 }

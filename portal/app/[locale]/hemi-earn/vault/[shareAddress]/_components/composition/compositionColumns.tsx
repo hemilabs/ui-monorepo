@@ -1,14 +1,19 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { Header } from 'components/table/_components/header'
 import { useMemo } from 'react'
+import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { formatPercentage } from 'utils/format'
 
+import { RenderEarnFiatBalance } from '../../../../_components/earnFiatBalance'
 import { type CompositionItem } from '../../_hooks/useComposition'
 
 export type CompositionItemWithColor = CompositionItem & { color: string }
 
-export const useGetCompositionColumns = function () {
+// Vetro returns shares as fractions; formatPercentage expects a percentage.
+export const shareToPercentage = (share: number) => share * 100
+
+export const useGetCompositionColumns = function (peggedToken: EvmToken) {
   const t = useTranslations('hemi-earn.vault.composition')
 
   return useMemo(
@@ -32,8 +37,23 @@ export const useGetCompositionColumns = function () {
         },
         {
           cell: ({ row }) => (
+            <span className="text-sm font-medium text-neutral-500">
+              $
+              <RenderEarnFiatBalance
+                balance={row.original.amount}
+                queryStatus="success"
+                token={peggedToken}
+              />
+            </span>
+          ),
+          header: () => <Header text={t('amount')} />,
+          id: 'amount',
+          meta: { className: 'justify-end', width: 120 },
+        },
+        {
+          cell: ({ row }) => (
             <span className="text-sm font-medium text-neutral-950">
-              {formatPercentage(row.original.share)}
+              {formatPercentage(shareToPercentage(row.original.share))}
             </span>
           ),
           header: () => <Header text={t('share')} />,
@@ -41,6 +61,6 @@ export const useGetCompositionColumns = function () {
           meta: { className: 'justify-end', width: 80 },
         },
       ] satisfies ColumnDef<CompositionItemWithColor>[],
-    [t],
+    [peggedToken, t],
   )
 }

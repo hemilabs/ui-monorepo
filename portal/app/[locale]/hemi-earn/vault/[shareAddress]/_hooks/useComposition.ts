@@ -15,8 +15,9 @@ import {
 
 export type CompositionViewMode = 'token' | 'protocol'
 
+// amount is in the pegged token's base units; share is a fraction (0-1), as returned by Vetro.
 export type CompositionItem = {
-  amount: number
+  amount: bigint
   isReserveBuffer: boolean
   name: string
   share: number
@@ -25,36 +26,36 @@ export type CompositionItem = {
 type CompositionQueryOptions = {
   chainId: Chain['id']
   queryClient: QueryClient
-  shareAddress: Address
+  stakingVault: Address
 }
 
 // Cache is grouping-agnostic; viewMode only drives the select below, so it's out of the query key.
 const compositionQueryOptions = ({
   chainId,
   queryClient,
-  shareAddress,
+  stakingVault,
 }: CompositionQueryOptions) =>
   queryOptions({
     queryFn: () =>
       fetchComposition({
         apiUrl: import.meta.env.VITE_VETRO_API_URL,
         queryClient,
-        shareAddress,
+        stakingVault,
       }),
-    queryKey: ['hemi-earn', 'composition', chainId, shareAddress],
+    queryKey: ['hemi-earn', 'composition', chainId, stakingVault],
     refetchInterval: 5 * 60 * 1000,
     retry: 2,
   })
 
 type UseComposition = {
   chainId: Chain['id']
-  shareAddress: Address
+  stakingVault: Address
   viewMode: CompositionViewMode
 }
 
 export const useComposition = function ({
   chainId,
-  shareAddress,
+  stakingVault,
   viewMode,
 }: UseComposition) {
   const queryClient = useQueryClient()
@@ -64,9 +65,9 @@ export const useComposition = function ({
     ...compositionQueryOptions({
       chainId,
       queryClient,
-      shareAddress,
+      stakingVault,
     }),
-    // Cache is locale-free and ungrouped; translation + grouping + share % happen here at render time.
+    // Cache is locale-free and ungrouped; translation + grouping happen here at render time.
     select: (data: CompositionData): CompositionItem[] =>
       toCompositionItems({
         data,

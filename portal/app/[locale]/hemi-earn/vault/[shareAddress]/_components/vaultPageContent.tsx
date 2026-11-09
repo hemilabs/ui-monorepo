@@ -56,7 +56,8 @@ export const VaultPageContent = function ({ shareAddress }: Props) {
               />
               <Composition
                 chainId={vault.shareToken.chainId}
-                shareAddress={vault.shareAddress}
+                peggedToken={vault.peggedToken}
+                stakingVault={vault.stakingVault}
               />
               <VetroDataDisclaimer />
             </div>

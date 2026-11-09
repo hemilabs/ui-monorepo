@@ -303,6 +303,7 @@
     },
     "vault": {
       "composition": {
+        "amount": "Monto",
         "by-protocol": "Por protocolo",
         "by-token": "Por token",
         "position": "Posición",

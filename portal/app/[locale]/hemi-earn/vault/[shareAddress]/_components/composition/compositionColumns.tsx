@@ -58,7 +58,7 @@ export const useGetCompositionColumns = function (peggedToken: EvmToken) {
           ),
           header: () => <Header text={t('share')} />,
           id: 'share',
-          meta: { className: 'justify-end', width: 80 },
+          meta: { className: 'justify-end', width: 112 },
         },
       ] satisfies ColumnDef<CompositionItemWithColor>[],
     [peggedToken, t],

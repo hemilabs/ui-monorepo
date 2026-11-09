@@ -20,7 +20,7 @@ export const useCanDeposit = function (vault: EarnVault | undefined) {
     isSanctioned: !!isSanctioned,
     isScreening: !!address && isSanctioned === undefined && !isError,
     restrictedLocation: isRestrictedLocation(),
-    screeningFailed: isError && isSanctioned === undefined,
+    screeningFailed: isError,
   })
 }
 

@@ -152,6 +152,7 @@ export const RemoteFailedBanner = function ({
   transaction: EarnTransaction | undefined
 }) {
   const t = useTranslations('hemi-earn.transactions.banner')
+  const tCommon = useTranslations('common')
   const { category, show } = useRemoteFailedState(transaction)
   const { reason } = useCanDepositForTransaction(transaction)
 
@@ -159,18 +160,16 @@ export const RemoteFailedBanner = function ({
     return null
   }
   const blockedDepositReason =
-    transaction.kind === 'DEPOSIT' && reason !== 'screening-unavailable'
-      ? reason
-      : undefined
+    transaction.kind === 'DEPOSIT' ? reason : undefined
   const suffix = transaction.kind === 'DEPOSIT' ? '-deposit' : ''
   const variant = category === 'slippage' ? '-slippage' : ''
   return (
     <TransferIncompleteBanner
       heading={t(`remote-failed.heading${variant}${suffix}`)}
       note={
-        blockedDepositReason
-          ? t(`remote-failed.${blockedDepositReason}`)
-          : undefined
+        blockedDepositReason === 'screening-unavailable'
+          ? tCommon('unexpected-error')
+          : blockedDepositReason && t(`remote-failed.${blockedDepositReason}`)
       }
       requestTxHash={transaction.requestTxHash}
     />

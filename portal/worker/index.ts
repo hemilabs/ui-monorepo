@@ -1,4 +1,11 @@
+import {
+  isRestrictedCountry,
+  parseRestrictions,
+  restrictedLocationMetaName,
+} from 'utils/restrictions'
 import { buildSecurityHeaders, safeAppOrigin } from 'utils/securityHeaders'
+
+const vetroApiUrl = import.meta.env.VITE_VETRO_API_URL
 
 const securityHeadersConfig = {
   analyticsEnabled: import.meta.env.VITE_ENABLE_ANALYTICS === 'true',
@@ -13,7 +20,7 @@ const securityHeadersConfig = {
   isDev: import.meta.env.DEV,
   portalApiUrl: import.meta.env.VITE_PORTAL_API_URL,
   sentryDsn: import.meta.env.VITE_SENTRY_DSN,
-  vetroApiUrl: import.meta.env.VITE_VETRO_API_URL,
+  vetroApiUrl,
 }
 
 const safeAppHeadersByPath: Record<string, Record<string, string>> = {
@@ -27,9 +34,100 @@ const generateNonce = function () {
   return btoa(String.fromCharCode(...bytes))
 }
 
+const countriesTtlMs = 1000 * 60 * 10
+const countriesRetryMs = 1000 * 30
+const countriesTimeoutMs = 3000
+
+const countriesCache: {
+  attemptedAt: number
+  countries: string[] | undefined
+  fetchedAt: number
+  inFlight: Promise<string[] | undefined> | undefined
+} = {
+  attemptedAt: 0,
+  countries: undefined,
+  fetchedAt: 0,
+  inFlight: undefined,
+}
+
+const reportRestrictionsFailure = function (why: string, error?: unknown) {
+  // eslint-disable-next-line no-console
+  console.error(`Restrictions unavailable, ${why}`, error ?? '')
+  return undefined
+}
+
+const fetchRestrictions = async function () {
+  countriesCache.attemptedAt = Date.now()
+
+  try {
+    const response = await fetch(`${vetroApiUrl}/restrictions`, {
+      signal: AbortSignal.timeout(countriesTimeoutMs),
+    })
+    if (!response.ok) {
+      return reportRestrictionsFailure(`the API returned ${response.status}`)
+    }
+
+    const countries = parseRestrictions(await response.json())
+    if (countries === undefined) {
+      return reportRestrictionsFailure('the payload is not a usable pair')
+    }
+
+    countriesCache.countries = countries
+    countriesCache.fetchedAt = Date.now()
+    return countries
+  } catch (error) {
+    return reportRestrictionsFailure('the request failed', error)
+  }
+}
+
+const refreshRestrictions = function () {
+  countriesCache.inFlight ??= fetchRestrictions().finally(function () {
+    countriesCache.inFlight = undefined
+  })
+  return countriesCache.inFlight
+}
+
+const resolveRestrictions = async function (ctx: ExecutionContext) {
+  const { attemptedAt, countries, fetchedAt, inFlight } = countriesCache
+  const now = Date.now()
+
+  if (countries !== undefined && now - fetchedAt < countriesTtlMs) {
+    return countries
+  }
+  if (inFlight !== undefined) {
+    return countries ?? inFlight
+  }
+  if (now - attemptedAt < countriesRetryMs) {
+    return countries
+  }
+  if (countries !== undefined) {
+    ctx.waitUntil(refreshRestrictions())
+    return countries
+  }
+  return refreshRestrictions()
+}
+
+const isHtmlResponse = (response: Response) =>
+  !!response.headers.get('content-type')?.includes('text/html')
+
+const isNavigation = (request: Request) =>
+  request.headers.get('sec-fetch-mode') === 'navigate' ||
+  !!request.headers.get('accept')?.includes('text/html')
+
+const assetRequest = function (request: Request) {
+  if (!isNavigation(request)) {
+    return request
+  }
+
+  const headers = new Headers(request.headers)
+  headers.delete('if-modified-since')
+  headers.delete('if-none-match')
+  return new Request(request, { headers })
+}
+
 export default {
-  async fetch(request, env) {
-    const response = await env.ASSETS.fetch(request).catch(
+  async fetch(request, env, ctx) {
+    const response = await env.ASSETS.fetch(assetRequest(request)).catch(
       () => new Response('Internal Server Error', { status: 500 }),
     )
 
@@ -49,6 +147,32 @@ export default {
       ).forEach(([name, value]) => withSecurityHeaders.headers.set(name, value))
     }
 
-    return withSecurityHeaders
+    if (
+      withSecurityHeaders.status !== 200 ||
+      !isHtmlResponse(withSecurityHeaders)
+    ) {
+      return withSecurityHeaders
+    }
+
+    withSecurityHeaders.headers.set('Cache-Control', 'private, no-cache')
+    withSecurityHeaders.headers.delete('ETag')
+
+    const restricted =
+      !securityHeadersConfig.isDev &&
+      isRestrictedCountry({
+        cf: request.cf,
+        countries: await resolveRestrictions(ctx),
+      })
+
+    return new HTMLRewriter()
+      .on('head', {
+        element(head) {
+          head.append(
+            `<meta name="${restrictedLocationMetaName}" content="${restricted}" />`,
+            { html: true },
+          )
+        },
+      })
+      .transform(withSecurityHeaders)
   },
 } satisfies ExportedHandler<Env>

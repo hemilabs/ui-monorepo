@@ -1,6 +1,7 @@
 import { Table } from 'components/table'
 import { ComponentProps } from 'react'
 import Skeleton from 'react-loading-skeleton'
+import { type EvmToken } from 'types/token'
 
 import {
   type CompositionItemWithColor,
@@ -22,14 +23,16 @@ type Props = {
   data: CompositionItemWithColor[]
   isPending: boolean
   onHoveredIndexChange: (index: number | null) => void
+  peggedToken: EvmToken
 }
 
 export const CompositionTable = function ({
   data,
   isPending,
   onHoveredIndexChange,
+  peggedToken,
 }: Props) {
-  const columns = useGetCompositionColumns()
+  const columns = useGetCompositionColumns(peggedToken)
 
   if (isPending) {
     return (
@@ -45,6 +48,7 @@ export const CompositionTable = function ({
                 <Skeleton className="h-3 w-1" />
                 <Skeleton className="w-20" />
               </div>
+              <Skeleton className="w-12" />
               <Skeleton className="ml-4 w-10" />
             </div>
           ))}

@@ -8,6 +8,7 @@ import { parseTokenUnits } from 'utils/token'
 
 import { applySlippage } from '../../../../_constants/slippage'
 import { useCanDeposit } from '../../../../_hooks/useCanDeposit'
+import { useRefreshTermsStep } from '../../../../_hooks/useRefreshTermsStep'
 import { percentToBps } from '../../../../_utils/slippage'
 import { useVaultForm } from '../../_context/vaultFormContext'
 import { useDeposit } from '../../_hooks/useDeposit'
@@ -48,6 +49,7 @@ export const ConfirmDeposit = function () {
 
   const t = useTranslations()
   const depositGate = useCanDeposit(vault)
+  const refreshTermsStep = useRefreshTermsStep()
 
   const slippage = useSlippage('deposit')
   const slippageBps = percentToBps(slippage)
@@ -109,7 +111,7 @@ export const ConfirmDeposit = function () {
   const isDepositing = operationRunning === 'depositing'
   const isRetry = depositOperation !== undefined
 
-  const handleSubmit = function (e: FormEvent) {
+  const handleSubmit = async function (e: FormEvent) {
     e.preventDefault()
     if (
       isApproving ||
@@ -120,7 +122,12 @@ export const ConfirmDeposit = function () {
       shares <= BigInt(0)
     )
       return
+
     setOperationRunning('depositing')
+    if ((await refreshTermsStep()) !== 'accepted') {
+      setOperationRunning('idle')
+      return
+    }
     runDeposit(undefined, {
       onError: () => setOperationRunning('idle'),
     })

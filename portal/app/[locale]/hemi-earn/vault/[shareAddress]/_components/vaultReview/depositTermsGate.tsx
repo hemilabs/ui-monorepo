@@ -5,7 +5,9 @@ import { useAccount } from 'wagmi'
 import { hemiEarnTermsKeyPrefix } from '../../../../_fetchers/fetchHemiEarnTerms'
 import { hemiEarnTermsAcceptanceKeyPrefix } from '../../../../_fetchers/fetchHemiEarnTermsAcceptance'
 import { useTermsStep } from '../../../../_hooks/useTermsStep'
+import { showsTermsStep } from '../../../../_utils/termsGate'
 import { useVaultForm } from '../../_context/vaultFormContext'
+import { useIsDepositing } from '../../_hooks/useDeposit'
 import { DepositStatus } from '../../_types/operations'
 import { canRetryDeposit, showsReview } from '../../_utils/reviewState'
 
@@ -18,8 +20,9 @@ export const DepositTermsGate = function ({
   onClose: VoidFunction
 }) {
   const { address } = useAccount()
-  const { depositOperation } = useVaultForm()
+  const { depositOperation, vault } = useVaultForm()
   const queryClient = useQueryClient()
+  const isDepositing = useIsDepositing(vault.shareAddress)
   const { isError, step, terms } = useTermsStep()
 
   const isAboutToSign = showsReview({
@@ -42,7 +45,10 @@ export const DepositTermsGate = function ({
     [isAboutToSign, queryClient],
   )
 
-  if (address && isAboutToSign && step !== 'accepted') {
+  if (
+    !isDepositing &&
+    showsTermsStep({ isStartingDeposit: !!address && isAboutToSign, step })
+  ) {
     return (
       <AcceptTerms
         isError={isError}

@@ -1,7 +1,10 @@
 import {
+  type TermsStep,
   classifyAcceptanceFailure,
   isSmartContractAccount,
+  isStartingRetry,
   resolveTermsStep,
+  showsTermsStep,
 } from 'app/[locale]/hemi-earn/_utils/termsGate'
 import { type Hex } from 'viem'
 import { describe, expect, it } from 'vitest'
@@ -109,5 +112,79 @@ describe('termsGate', function () {
         classifyAcceptanceFailure({ isUserRejection: false, status }),
       ).toBe('unexpected')
     })
+  })
+
+  describe('showsTermsStep', function () {
+    it.each([
+      ['never accepted', 'first-acceptance'],
+      ['accepted an older version', 're-acceptance'],
+      ['a wallet that cannot sign', 'cannot-sign'],
+      ['a step that is not known yet', undefined],
+    ])('stops a starting deposit on %s', function (_name, step) {
+      expect(
+        showsTermsStep({
+          isStartingDeposit: true,
+          step: step as TermsStep | undefined,
+        }),
+      ).toBe(true)
+    })
+
+    it('lets a starting deposit through once accepted', function () {
+      expect(
+        showsTermsStep({ isStartingDeposit: true, step: 'accepted' }),
+      ).toBe(false)
+    })
+
+    it.each([
+      ['accepted', 'accepted'],
+      ['pending', undefined],
+      ['first-acceptance', 'first-acceptance'],
+    ])(
+      'stays out of the way while no deposit starts, step %s',
+      function (_name, step) {
+        expect(
+          showsTermsStep({
+            isStartingDeposit: false,
+            step: step as TermsStep | undefined,
+          }),
+        ).toBe(false)
+      },
+    )
+  })
+
+  describe('isStartingRetry', function () {
+    const retrying = {
+      canRetry: true,
+      hasAskedForTerms: false,
+      isTermsError: false,
+    }
+
+    it('waits for the user to press retry', function () {
+      expect(isStartingRetry(retrying)).toBe(false)
+    })
+
+    it('starts once the user pressed retry', function () {
+      expect(isStartingRetry({ ...retrying, hasAskedForTerms: true })).toBe(
+        true,
+      )
+    })
+
+    // The retry button is disabled while the terms are unknown, so without this
+    // the failed read would never surface the generic error #2592 asks for.
+    it('starts on a failed terms read, with no press', function () {
+      expect(isStartingRetry({ ...retrying, isTermsError: true })).toBe(true)
+    })
+
+    it.each([
+      ['the user pressed retry', { hasAskedForTerms: true }],
+      ['the terms read failed', { isTermsError: true }],
+    ])(
+      'never starts on a row that cannot retry, even if %s',
+      function (_name, extra) {
+        expect(
+          isStartingRetry({ ...retrying, ...extra, canRetry: false }),
+        ).toBe(false)
+      },
+    )
   })
 })

@@ -56,3 +56,21 @@ export const resolveTermsStep = function ({
   }
   return 're-acceptance'
 }
+
+export const showsTermsStep = ({
+  isStartingDeposit,
+  step,
+}: {
+  isStartingDeposit: boolean
+  step: TermsStep | undefined
+}) => isStartingDeposit && step !== 'accepted'
+
+export const isStartingRetry = ({
+  canRetry,
+  hasAskedForTerms,
+  isTermsError,
+}: {
+  canRetry: boolean
+  hasAskedForTerms: boolean
+  isTermsError: boolean
+}) => canRetry && (hasAskedForTerms || isTermsError)

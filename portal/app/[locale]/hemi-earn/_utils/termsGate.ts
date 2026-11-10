@@ -18,10 +18,10 @@ export type AcceptanceFailure =
   | 'unexpected'
 
 export const classifyAcceptanceFailure = function ({
-  hasSignature,
+  isUserRejection,
   status,
 }: {
-  hasSignature: boolean
+  isUserRejection: boolean
   status: number | undefined
 }): AcceptanceFailure {
   if (status === 409) {
@@ -30,7 +30,7 @@ export const classifyAcceptanceFailure = function ({
   if (status === 401 || status === 422) {
     return 'invalid-signature'
   }
-  if (status === undefined && !hasSignature) {
+  if (isUserRejection) {
     return 'not-signed'
   }
   return 'unexpected'

@@ -17,21 +17,19 @@ export const useTermsStep = function () {
     isSuccess: isCodeKnown,
   } = useBytecode({ address, chainId: hemi.id })
 
-  if (terms && acceptedVersion !== undefined && isCodeKnown) {
-    return {
-      isError: false,
-      step: resolveTermsStep({
-        acceptedVersion,
-        hasContractCode: isSmartContractAccount(code),
-        termsVersion: terms.termsVersion,
-      }),
-      terms,
-    }
+  const isError = isAcceptanceError || isCodeError || isTermsError
+
+  if (isError || !terms || acceptedVersion === undefined || !isCodeKnown) {
+    return { isError, step: undefined, terms }
   }
 
   return {
-    isError: isAcceptanceError || isCodeError || isTermsError,
-    step: undefined,
+    isError,
+    step: resolveTermsStep({
+      acceptedVersion,
+      hasContractCode: isSmartContractAccount(code),
+      termsVersion: terms.termsVersion,
+    }),
     terms,
   }
 }

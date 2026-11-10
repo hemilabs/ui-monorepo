@@ -14,6 +14,5 @@ export const useHemiEarnTerms = function () {
     queryFn: () => fetchHemiEarnTerms(import.meta.env.VITE_VETRO_API_URL),
     queryKey: [...hemiEarnTermsKeyPrefix, networkType],
     retry: 2,
-    staleTime: 5 * 60 * 1000,
   })
 }

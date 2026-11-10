@@ -20,6 +20,5 @@ export const useHemiEarnTermsAcceptance = function () {
       }),
     queryKey: [...hemiEarnTermsAcceptanceKeyPrefix, networkType, address],
     retry: 2,
-    staleTime: 5 * 60 * 1000,
   })
 }

@@ -69,39 +69,45 @@ describe('termsGate', function () {
 
   describe('classifyAcceptanceFailure', function () {
     it.each([true, false])(
-      'reports a 409 as changed terms, having signed: %s',
-      function (hasSignature) {
-        expect(classifyAcceptanceFailure({ hasSignature, status: 409 })).toBe(
-          'terms-changed',
-        )
+      'reports a 409 as changed terms, user rejection: %s',
+      function (isUserRejection) {
+        expect(
+          classifyAcceptanceFailure({ isUserRejection, status: 409 }),
+        ).toBe('terms-changed')
       },
     )
 
     it.each([401, 422])(
       'reports a %i as a signature the API turned down',
       function (status) {
-        expect(classifyAcceptanceFailure({ hasSignature: true, status })).toBe(
-          'invalid-signature',
-        )
+        expect(
+          classifyAcceptanceFailure({ isUserRejection: false, status }),
+        ).toBe('invalid-signature')
       },
     )
 
-    it('reports a failure before any signature as not signed', function () {
+    it('stays quiet only when the user dismissed the wallet', function () {
       expect(
-        classifyAcceptanceFailure({ hasSignature: false, status: undefined }),
+        classifyAcceptanceFailure({
+          isUserRejection: true,
+          status: undefined,
+        }),
       ).toBe('not-signed')
     })
 
-    it('reports a transport failure after signing as unexpected, so the signature is reused', function () {
+    it('reports a signing failure that is not a rejection as unexpected', function () {
       expect(
-        classifyAcceptanceFailure({ hasSignature: true, status: undefined }),
+        classifyAcceptanceFailure({
+          isUserRejection: false,
+          status: undefined,
+        }),
       ).toBe('unexpected')
     })
 
     it.each([400, 413, 500])('reports a %i as unexpected', function (status) {
-      expect(classifyAcceptanceFailure({ hasSignature: true, status })).toBe(
-        'unexpected',
-      )
+      expect(
+        classifyAcceptanceFailure({ isUserRejection: false, status }),
+      ).toBe('unexpected')
     })
   })
 })

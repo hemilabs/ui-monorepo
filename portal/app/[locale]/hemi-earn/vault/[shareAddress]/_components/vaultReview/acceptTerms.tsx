@@ -50,14 +50,15 @@ type FormProps = {
 
 const TermsForm = function ({ onClose, step, terms }: FormProps) {
   const [consentedTo, setConsentedTo] = useState<string | undefined>(undefined)
-  const { failure, isPending, mutate } = useAcceptHemiEarnTerms(terms)
+  const { failure, isPending, mutate, termsChanged } =
+    useAcceptHemiEarnTerms(terms)
   const requestClose = useDrawerAnimatedClose() ?? onClose
   const t = useTranslations('hemi-earn.terms')
   const tCommon = useTranslations('common')
 
   const accepted = consentedTo === terms.termsVersion
   const hasFailed = failure === 'invalid-signature' || failure === 'unexpected'
-  const isReAcceptance = step === 're-acceptance'
+  const isReAcceptance = step === 're-acceptance' || termsChanged
 
   const updatedTermsLink = (chunks: ReactNode) => (
     <ExternalLink className={linkClassName} href={terms.termsUrl}>

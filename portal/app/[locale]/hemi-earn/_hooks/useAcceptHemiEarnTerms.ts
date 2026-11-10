@@ -2,7 +2,12 @@ import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { hemi } from 'hemi-viem'
 import { useRef, useState } from 'react'
-import { type Address, type Hex } from 'viem'
+import {
+  type Address,
+  BaseError,
+  type Hex,
+  UserRejectedRequestError,
+} from 'viem'
 import { useAccount, useConfig } from 'wagmi'
 import { getWalletClient } from 'wagmi/actions'
 
@@ -32,6 +37,9 @@ export const useAcceptHemiEarnTerms = function (terms: HemiEarnTerms) {
   const [failure, setFailure] = useState<AcceptanceFailure | undefined>(
     undefined,
   )
+  // Sticky: the retry clears the failure, but the Terms stay the ones the
+  // wallet has not read yet, so the view must not fall back to the handoff.
+  const [termsChanged, setTermsChanged] = useState(false)
   const signed = useRef<Signed | undefined>(undefined)
 
   const mutation = useMutation({
@@ -85,15 +93,18 @@ export const useAcceptHemiEarnTerms = function (terms: HemiEarnTerms) {
         termsVersion: terms.termsVersion,
       })
     },
-    onError(error: { status?: number }) {
+    onError(error: Error & { status?: number }) {
       const nextFailure = classifyAcceptanceFailure({
-        hasSignature: signed.current !== undefined,
+        isUserRejection:
+          error instanceof BaseError &&
+          !!error.walk(cause => cause instanceof UserRejectedRequestError),
         status: error.status,
       })
       if (nextFailure !== 'unexpected') {
         signed.current = undefined
       }
       if (nextFailure === 'terms-changed') {
+        setTermsChanged(true)
         queryClient.invalidateQueries({ queryKey: hemiEarnTermsKeyPrefix })
       }
       setFailure(nextFailure)
@@ -103,11 +114,12 @@ export const useAcceptHemiEarnTerms = function (terms: HemiEarnTerms) {
     },
     onSuccess() {
       signed.current = undefined
+      setTermsChanged(false)
       return queryClient.invalidateQueries({
         queryKey: hemiEarnTermsAcceptanceKeyPrefix,
       })
     },
   })
 
-  return { ...mutation, failure }
+  return { ...mutation, failure, termsChanged }
 }

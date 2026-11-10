@@ -2,7 +2,7 @@ import { Drawer } from 'components/drawer'
 
 import { useDrawerQueryString } from '../../_hooks/useDrawerQueryString'
 
-import { ReviewDeposit } from './reviewDeposit'
+import { DepositTermsGate } from './depositTermsGate'
 import { ReviewWithdraw } from './reviewWithdraw'
 
 type Props = {
@@ -14,7 +14,7 @@ export const VaultReview = function ({ closeDrawer }: Props) {
 
   const renderContent = function () {
     if (drawerMode === 'depositing') {
-      return <ReviewDeposit onClose={closeDrawer} />
+      return <DepositTermsGate onClose={closeDrawer} />
     }
     if (drawerMode === 'withdrawing') {
       return <ReviewWithdraw onClose={closeDrawer} />

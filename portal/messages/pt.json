@@ -183,6 +183,29 @@
     "risk-warning": "Os rendimentos são variáveis e não são garantidos. Você pode perder parte ou a totalidade do seu depósito.",
     "subheading": "O Hemi Earn, operado pela Vetro, dá a você acesso a fundos de rendimento diretamente pelo portal da Hemi. Escolha um fundo e deposite em poucos passos. Os rendimentos são variáveis e não são garantidos.",
     "switch-to-start-earning": "Você pode mudar de rede para começar a ganhar com a Hemi.",
+    "terms": {
+      "agree-and-continue": "Concordar e continuar",
+      "cannot-sign": "Sua carteira não oferece suporte à assinatura necessária para aceitar os Termos da Vetro. Para depositar no Hemi Earn, conecte uma carteira que ofereça suporte à assinatura de mensagens.",
+      "checkbox": "Li e concordo com os Termos de Uso da Vetro, incluindo os Termos do Hemi Earn, e com sua Política de Privacidade. Entendo que o Hemi Earn é operado pela Vetro Service & Support Corp., que meu acordo é exclusivamente com a Vetro, e que a Hemispheres Service & Support (BVI) Ltd., a Hemi Labs, Inc. e suas afiliadas não são partes dele e não têm obrigações comigo em relação ao Hemi Earn. Confirmo que não sou uma pessoa dos EUA nem uma Pessoa Restrita segundo os Termos da Vetro.",
+      "handoff": {
+        "before-you-continue": "Antes de continuar, observe:",
+        "body": "O Hemi Earn é um serviço de terceiros operado pela Vetro Service & Support Corp., uma empresa do Panamá. Quando você usa o Hemi Earn, seu acordo é com a Vetro, não com a Hemi. A Hemispheres Service & Support (BVI) Ltd., a Hemi Labs, Inc. e suas afiliadas fornecem apenas esta interface. Elas não operam, administram, custodiam nem garantem o Hemi Earn ou qualquer fundo, e não são partes do seu acordo com a Vetro.",
+        "bullets": {
+          "assets": "Seus ativos são enviados da sua carteira para contratos inteligentes operados pela Vetro, que os depositam no fundo que você escolher e podem transferi-los entre redes. Alguns fundos são operados por terceiros, não pela Vetro. O operador de cada fundo é exibido na página dele.",
+          "not-available": "O Hemi Earn não está disponível para pessoas dos EUA nem para outras pessoas restritas.",
+          "withdrawals": "Os saques podem atrasar ou estar sujeitos a filas ou períodos de bloqueio.",
+          "yields": "Os rendimentos são variáveis e não são garantidos. Você pode perder parte ou todo o seu depósito, inclusive por falhas de contratos inteligentes, pontes, operadores de fundos, estratégias, stablecoins ou mercados."
+        },
+        "privacy-policy": "Política de Privacidade da Vetro",
+        "terms-of-use": "Termos de Uso da Vetro",
+        "title": "Você está entrando no Hemi Earn, operado pela Vetro"
+      },
+      "re-acceptance": {
+        "body": "Para fazer novos depósitos no Hemi Earn, revise e aceite os Termos de Uso atualizados da Vetro. Você pode sacar sua posição atual a qualquer momento sem aceitá-los. <link>Ver os Termos atualizados</link>",
+        "title": "A Vetro atualizou seus Termos"
+      },
+      "signing-note": "Em seguida, sua carteira pedirá que você assine uma mensagem confirmando seu acordo. Assinar é gratuito e não envia uma transação."
+    },
     "transactions": {
       "banner": {
         "cancelled": {

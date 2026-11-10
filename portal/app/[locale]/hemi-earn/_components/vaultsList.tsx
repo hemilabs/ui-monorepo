@@ -5,17 +5,19 @@ import { VaultInfoBar } from './vaultInfoBar'
 import { VaultInfoBarSkeleton } from './vaultInfoBarSkeleton'
 
 export const VaultsList = function () {
-  const { data: vaults = [], isPending } = useEarnVaults()
-  const listedVaults = getListedVaults(vaults)
+  const { data: vaults, isError } = useEarnVaults()
 
-  if (!isPending) {
+  if (vaults) {
     return (
       <div className="flex flex-col gap-4">
-        {listedVaults.map(vault => (
+        {getListedVaults(vaults).map(vault => (
           <VaultInfoBar key={vault.shareAddress} vault={vault} />
         ))}
       </div>
     )
+  }
+  if (isError) {
+    return null
   }
 
   return (

@@ -10,6 +10,7 @@ import {
   applySlippage,
 } from '../../../_constants/slippage'
 import { useCanDeposit } from '../../../_hooks/useCanDeposit'
+import { useRefreshTermsStep } from '../../../_hooks/useRefreshTermsStep'
 import { percentToBps, resolveRetrySlippage } from '../../../_utils/slippage'
 import { type TermsStep } from '../../../_utils/termsGate'
 import {
@@ -46,6 +47,7 @@ export const RetryFailedDeposit = function ({
     useState<DepositOperationRunning>('idle')
   const t = useTranslations()
   const depositGate = useCanDeposit(vault)
+  const refreshTermsStep = useRefreshTermsStep()
 
   const amount = BigInt(transaction.amountIn)
   const input = formatUnits(amount, asset.token.decimals)
@@ -103,15 +105,27 @@ export const RetryFailedDeposit = function ({
 
   const isDepositing = operationRunning === 'depositing'
 
-  const handleRetry = function (e: FormEvent) {
+  const handleRetry = async function (e: FormEvent) {
     e.preventDefault()
-    if (!depositGate.canDeposit || !quote || !shares || shares <= BigInt(0))
+    if (
+      isDepositing ||
+      !depositGate.canDeposit ||
+      !quote ||
+      !shares ||
+      shares <= BigInt(0)
+    )
       return
     if (termsStep !== 'accepted') {
       onTermsRequired()
       return
     }
+
     setOperationRunning('depositing')
+    if ((await refreshTermsStep()) !== 'accepted') {
+      setOperationRunning('idle')
+      onTermsRequired()
+      return
+    }
     runDeposit()
   }
 

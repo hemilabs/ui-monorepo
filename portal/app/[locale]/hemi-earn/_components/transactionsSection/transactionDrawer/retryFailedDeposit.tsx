@@ -11,6 +11,7 @@ import {
 } from '../../../_constants/slippage'
 import { useCanDeposit } from '../../../_hooks/useCanDeposit'
 import { percentToBps, resolveRetrySlippage } from '../../../_utils/slippage'
+import { type TermsStep } from '../../../_utils/termsGate'
 import {
   type EarnAsset,
   type EarnTransaction,
@@ -25,6 +26,8 @@ import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 type Props = {
   asset: EarnAsset
+  onTermsRequired: VoidFunction
+  termsStep: TermsStep | undefined
   transaction: EarnTransaction
   vault: EarnVault
 }
@@ -33,6 +36,8 @@ type Props = {
 // earnTxId to the new tx so the drawer transitions in place from FAILED to in-flight.
 export const RetryFailedDeposit = function ({
   asset,
+  onTermsRequired,
+  termsStep,
   transaction,
   vault,
 }: Props) {
@@ -102,6 +107,10 @@ export const RetryFailedDeposit = function ({
     e.preventDefault()
     if (!depositGate.canDeposit || !quote || !shares || shares <= BigInt(0))
       return
+    if (termsStep !== 'accepted') {
+      onTermsRequired()
+      return
+    }
     setOperationRunning('depositing')
     runDeposit()
   }
@@ -122,6 +131,7 @@ export const RetryFailedDeposit = function ({
               disabled={
                 !depositGate.canDeposit ||
                 isDepositing ||
+                termsStep === undefined ||
                 !quote ||
                 !shares ||
                 shares <= BigInt(0)

@@ -21,6 +21,7 @@ import {
   type EarnVault,
 } from '../../../types'
 import { AcceptTerms } from '../../../vault/[shareAddress]/_components/vaultReview/acceptTerms'
+import { useIsDepositing } from '../../../vault/[shareAddress]/_hooks/useDeposit'
 
 import { HistoricalDepositReview } from './historicalDepositReview'
 import { RemoteFailedCta } from './remoteFailed'
@@ -95,6 +96,7 @@ export const DepositDrawerBody = function ({
 }: Props) {
   const [askedForTerms, setAskedForTerms] = useState(false)
   const queryClient = useQueryClient()
+  const isDepositing = useIsDepositing(vault.shareAddress)
   const { isError, step, terms } = useTermsStep()
 
   const canRetry = canRetryRow(transaction)
@@ -118,7 +120,7 @@ export const DepositDrawerBody = function ({
     isTermsError: isError,
   })
 
-  if (showsTermsStep({ isStartingDeposit, step })) {
+  if (!isDepositing && showsTermsStep({ isStartingDeposit, step })) {
     return (
       <AcceptTerms
         isError={isError}

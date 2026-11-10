@@ -27,23 +27,19 @@ export const useTermsStep = function () {
   const isError = isAcceptanceError || isCodeError || isTermsError
   const isReading = isAcceptanceFetching || isTermsFetching
 
-  if (
-    isError ||
-    isReading ||
-    !terms ||
-    acceptedVersion === undefined ||
-    !isCodeKnown
-  ) {
+  if (isError || !terms || acceptedVersion === undefined || !isCodeKnown) {
     return { isError, step: undefined, terms }
   }
 
-  return {
-    isError,
-    step: resolveTermsStep({
-      acceptedVersion,
-      hasContractCode: isSmartContractAccount(code),
-      termsVersion: terms.termsVersion,
-    }),
-    terms,
+  const step = resolveTermsStep({
+    acceptedVersion,
+    hasContractCode: isSmartContractAccount(code),
+    termsVersion: terms.termsVersion,
+  })
+
+  if (step === 'accepted' && isReading) {
+    return { isError, step: undefined, terms }
   }
+
+  return { isError, step, terms }
 }

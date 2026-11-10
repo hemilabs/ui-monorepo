@@ -53,7 +53,7 @@ export const useAcceptHemiEarnTerms = function (terms: HemiEarnTerms) {
 
       await ensureConnectedTo(hemi.id)
 
-      async function signAcceptance(): Promise<Signed> {
+      async function signAcceptance() {
         const walletClient = await getWalletClient(config, { chainId: hemi.id })
         const issuedAt = Math.floor(Date.now() / 1000)
         const signature = await walletClient.signTypedData({

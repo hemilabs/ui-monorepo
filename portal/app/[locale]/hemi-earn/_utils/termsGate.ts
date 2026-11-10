@@ -23,7 +23,7 @@ export const classifyAcceptanceFailure = function ({
 }: {
   isUserRejection: boolean
   status: number | undefined
-}): AcceptanceFailure {
+}) {
   if (status === 409) {
     return 'terms-changed'
   }

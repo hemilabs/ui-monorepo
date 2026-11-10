@@ -197,9 +197,6 @@ const analyticsEvents = [
   // earn rewards card
   'earn rewards - open link',
   'earn rewards - close',
-  // hemi stake launch card
-  'hemi stake card - open',
-  'hemi stake card - close',
 ] as const
 
 type AnalyticsEvents = typeof analyticsEvents

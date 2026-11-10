@@ -1,6 +1,7 @@
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { hemi } from 'hemi-viem'
+import { useUmami } from 'hooks/useUmami'
 import { useRef, useState } from 'react'
 import {
   type Address,
@@ -34,6 +35,7 @@ export const useAcceptHemiEarnTerms = function (terms: HemiEarnTerms) {
   const config = useConfig()
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
+  const { track } = useUmami()
   const [failure, setFailure] = useState<AcceptanceFailure | undefined>(
     undefined,
   )
@@ -68,6 +70,7 @@ export const useAcceptHemiEarnTerms = function (terms: HemiEarnTerms) {
           primaryType: terms.primaryType,
           types: terms.types,
         })
+        track?.('hemi earn - terms signed')
         return {
           account,
           issuedAt,
@@ -100,6 +103,9 @@ export const useAcceptHemiEarnTerms = function (terms: HemiEarnTerms) {
           !!error.walk(cause => cause instanceof UserRejectedRequestError),
         status: error.status,
       })
+      if (nextFailure === 'not-signed') {
+        track?.('hemi earn - terms rejected')
+      }
       if (nextFailure !== 'unexpected') {
         signed.current = undefined
       }

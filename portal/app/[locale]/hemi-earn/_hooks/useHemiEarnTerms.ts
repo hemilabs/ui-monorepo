@@ -13,6 +13,7 @@ export const useHemiEarnTerms = function () {
     enabled: networkType === 'mainnet',
     queryFn: () => fetchHemiEarnTerms(import.meta.env.VITE_VETRO_API_URL),
     queryKey: [...hemiEarnTermsKeyPrefix, networkType],
+    refetchOnWindowFocus: false,
     retry: 2,
   })
 }

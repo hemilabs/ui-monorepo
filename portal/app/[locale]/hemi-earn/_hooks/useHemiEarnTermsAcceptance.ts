@@ -19,6 +19,7 @@ export const useHemiEarnTermsAcceptance = function () {
         apiUrl: import.meta.env.VITE_VETRO_API_URL,
       }),
     queryKey: [...hemiEarnTermsAcceptanceKeyPrefix, networkType, address],
+    refetchOnWindowFocus: false,
     retry: 2,
   })
 }

@@ -1,5 +1,9 @@
+import { useQueryClient } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import { useAccount } from 'wagmi'
 
+import { hemiEarnTermsKeyPrefix } from '../../../../_fetchers/fetchHemiEarnTerms'
+import { hemiEarnTermsAcceptanceKeyPrefix } from '../../../../_fetchers/fetchHemiEarnTermsAcceptance'
 import { useTermsStep } from '../../../../_hooks/useTermsStep'
 import { useVaultForm } from '../../_context/vaultFormContext'
 import { DepositStatus } from '../../_types/operations'
@@ -15,6 +19,7 @@ export const DepositTermsGate = function ({
 }) {
   const { address } = useAccount()
   const { depositOperation } = useVaultForm()
+  const queryClient = useQueryClient()
   const { isError, step, terms } = useTermsStep()
 
   const isAboutToSign = showsReview({
@@ -23,6 +28,19 @@ export const DepositTermsGate = function ({
     ),
     hasSigned: depositOperation !== undefined,
   })
+
+  useEffect(
+    function refreshTermsBeforeSigning() {
+      if (!isAboutToSign) {
+        return
+      }
+      queryClient.invalidateQueries({ queryKey: hemiEarnTermsKeyPrefix })
+      queryClient.invalidateQueries({
+        queryKey: hemiEarnTermsAcceptanceKeyPrefix,
+      })
+    },
+    [isAboutToSign, queryClient],
+  )
 
   if (address && isAboutToSign && step !== 'accepted') {
     return (

@@ -4,11 +4,11 @@ The Portal is a Web3 app that allows users to interact with Hemi, an L2 that int
 
 ## Structure
 
-The Portal is a Vite app. `main.tsx` is the entry, `app.tsx` at the root holds the react-router route table, and the build produces a static bundle served by the Cloudflare Worker.
+The Portal is a Vite app. `main.tsx` is the entry, the react-router route table is plain data in [utils/routes.ts](./utils/routes.ts) that `app.tsx` at the root turns into the `<Route>` tree (and the sitemap is derived from), and the build produces a static bundle served by the Cloudflare Worker.
 
 Some relevant folders are:
 
-- [/app](./app/) folder, which holds the pages and their co-located `_components`/`_hooks`/`_utils`. The `[locale]` folder name is historical and does not drive routing; `app.tsx` does.
+- [/app](./app/) folder, which holds the pages and their co-located `_components`/`_hooks`/`_utils`. The `[locale]` folder name is historical and does not drive routing; `utils/routes.ts` does.
 - [/components](./components/) folder, which contains reusable components to the entire app that are not tied to a specific page.
 - [/hooks](./hooks/) folder, which contains reusable hooks to the entire app that are not tied to a specific page.
 - [/messages/](./messages/) folder, which contain a file per locale with all the translated resources.

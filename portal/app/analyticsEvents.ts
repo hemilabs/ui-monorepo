@@ -59,6 +59,8 @@ const analyticsEvents = [
   'hemi earn - return shares failed',
   'hemi earn - return shares started',
   'hemi earn - return shares success',
+  'hemi earn - terms rejected',
+  'hemi earn - terms signed',
   'hemi earn - withdraw failed',
   'hemi earn - withdraw started',
   'hemi earn - withdraw success',

@@ -66,7 +66,7 @@ VITE_BTC_INPUTS_SIZE=105 # Assumed size in vbytes of a single transaction input,
 VITE_BTC_OUTPUTS_SIZE=25 # Assumed size in vbytes of a single transaction output, used to estimate bitcoin fees
 # Backend API URL
 VITE_PORTAL_API_URL=<url> # To get the token prices, user points, TVL and more
-VITE_VETRO_API_URL=<url> # Vetro API URL; powers the Hemi Earn page (variable-stake APY, user rewards, transaction history and cost basis)
+VITE_VETRO_API_URL=<url> # Vetro API URL; powers the Hemi Earn page (variable-stake APY, user rewards, transaction history, cost basis and Terms acceptance)
 # Use it to enable wallet connect
 VITE_WALLET_CONNECT_PROJECT_ID=<wallet-connect-id>
 # Sitemap

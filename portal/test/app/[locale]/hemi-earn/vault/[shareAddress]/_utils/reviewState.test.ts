@@ -1,13 +1,33 @@
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { describe, expect, it } from 'vitest'
 
+import { DepositStatus } from '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_types/operations'
 import {
+  canRetryDeposit,
   resolveMayNeedApproval,
   showsReview,
   unsignedStepStatus,
 } from '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_utils/reviewState'
 
 describe('reviewState', function () {
+  describe('canRetryDeposit', function () {
+    it.each([
+      ['an approval that reverted', DepositStatus.APPROVAL_TX_FAILED],
+      ['a deposit that reverted', DepositStatus.DEPOSIT_TX_FAILED],
+    ])('allows retrying %s', function (_name, status) {
+      expect(canRetryDeposit(status)).toBe(true)
+    })
+
+    it.each([
+      ['an approval still pending', DepositStatus.APPROVAL_TX_PENDING],
+      ['an approval that landed', DepositStatus.APPROVAL_TX_COMPLETED],
+      ['a deposit still pending', DepositStatus.DEPOSIT_TX_PENDING],
+      ['a deposit that confirmed', DepositStatus.DEPOSIT_TX_CONFIRMED],
+    ])('does not allow retrying %s', function (_name, status) {
+      expect(canRetryDeposit(status)).toBe(false)
+    })
+  })
+
   describe('showsReview', function () {
     it('shows the review before anything is signed', function () {
       expect(showsReview({ canRetry: false, hasSigned: false })).toBe(true)

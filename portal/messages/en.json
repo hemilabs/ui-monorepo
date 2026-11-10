@@ -183,6 +183,29 @@
     "risk-warning": "Yields are variable and not guaranteed. You may lose some or all of your deposit.",
     "subheading": "Hemi Earn, operated by Vetro, gives you access to yield vaults right from the Hemi portal. Choose a vault and deposit in a few steps. Yields are variable and not guaranteed.",
     "switch-to-start-earning": "You can switch networks to start earning with Hemi.",
+    "terms": {
+      "agree-and-continue": "Agree and continue",
+      "cannot-sign": "Your wallet doesn't support the signature needed to accept Vetro's Terms. To deposit into Hemi Earn, please connect a wallet that supports message signing.",
+      "checkbox": "I have read and agree to Vetro's Terms of Use, including the Hemi Earn Terms, and its Privacy Policy. I understand that Hemi Earn is operated by Vetro Service & Support Corp., that my agreement is solely with Vetro, and that Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. and their affiliates are not parties to it and have no obligations to me in respect of Hemi Earn. I confirm that I am not a U.S. person or otherwise a Restricted Person under Vetro's Terms.",
+      "handoff": {
+        "before-you-continue": "Before you continue, please note:",
+        "body": "Hemi Earn is a third-party service operated by Vetro Service & Support Corp., a Panama company. When you use Hemi Earn, your agreement is with Vetro, not with Hemi. Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. and their affiliates provide this interface only. They do not operate, manage, custody or guarantee Hemi Earn or any vault, and they are not parties to your agreement with Vetro.",
+        "bullets": {
+          "assets": "Your assets are sent from your wallet to smart contracts operated by Vetro, which deposit them into the vault you choose and may bridge them between networks. Some vaults are operated by third parties, not Vetro. Each vault's operator is shown on its page.",
+          "not-available": "Hemi Earn is not available to U.S. persons or other restricted persons.",
+          "withdrawals": "Withdrawals may be delayed or subject to queues or lock-up periods.",
+          "yields": "Yields are variable and not guaranteed. You could lose some or all of your deposit, including through failures of smart contracts, bridges, vault operators, strategies, stablecoins or markets."
+        },
+        "privacy-policy": "Vetro Privacy Policy",
+        "terms-of-use": "Vetro Terms of Use",
+        "title": "You're entering Hemi Earn, operated by Vetro"
+      },
+      "re-acceptance": {
+        "body": "To make new deposits into Hemi Earn, please review and accept Vetro's updated Terms of Use. You can withdraw your existing position at any time without accepting. <link>View updated Terms</link>",
+        "title": "Vetro has updated its Terms"
+      },
+      "signing-note": "Next, your wallet will ask you to sign a message confirming your agreement. Signing is free and does not send a transaction."
+    },
     "transactions": {
       "banner": {
         "cancelled": {

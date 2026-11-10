@@ -68,6 +68,7 @@ import { useVetroFee } from '../../_hooks/useVetroFee'
 import { DepositStatus, type DepositStatusType } from '../../_types/operations'
 import { createFeeEstimateStateOverride } from '../../_utils/feeEstimateStateOverride'
 import {
+  canRetryDeposit,
   resolveMayNeedApproval,
   showsReview,
   unsignedStepStatus,
@@ -408,14 +409,11 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     }
   }
 
-  const canRetryDeposit = [
-    DepositStatus.APPROVAL_TX_FAILED,
-    DepositStatus.DEPOSIT_TX_FAILED,
-  ].includes(depositStatus)
+  const isRetryable = canRetryDeposit(depositStatus)
 
   const getAboveCallToAction = () => (
     <>
-      {canRetryDeposit && <RiskWarningBanner />}
+      {isRetryable && <RiskWarningBanner />}
       <SettleBanner transaction={settledRow} />
       <RemoteFailedBanner transaction={settledRow} />
       <TransferDelayedBanner
@@ -426,7 +424,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     </>
   )
 
-  const isAboutToSign = showsReview({ canRetry: canRetryDeposit, hasSigned })
+  const isAboutToSign = showsReview({ canRetry: isRetryable, hasSigned })
 
   const getAboveAmount = () =>
     isAboutToSign ? (

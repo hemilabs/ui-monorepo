@@ -30,7 +30,6 @@ const dynamicallyReferencedKeys = [
   'hemi-stake.analytics.non-circulating',
   'hemi-stake.analytics.staked',
   'hemi-stake.form.lockup-increment-warning',
-  'metadata.title',
 ]
 
 type SourceFile = {

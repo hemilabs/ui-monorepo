@@ -10,7 +10,7 @@
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
     "test": "pnpm run test:unit && pnpm run test:integration",
-    "pretest:integration": "playwright install ${CI:+--with-deps} chromium --only-shell",
+    "pretest:integration": "playwright install chromium --only-shell",
     "test:integration": "vitest run --project integration",
     "test:unit": "vitest run --project unit",
     "typecheck": "tsc -p tsconfig.build.json && tsc -p worker/tsconfig.json",

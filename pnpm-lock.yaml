@@ -242,8 +242,8 @@ importers:
         specifier: 1.2.0
         version: 1.2.0(viem@2.28.4(patch_hash=835b96a7abd9f48894a14a851e9b1b428b0e9567c283f70324a9bdf50ddc7305)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       '@vetro-protocol/hemi-earn':
-        specifier: 1.0.0
-        version: 1.0.0(viem@2.28.4(patch_hash=835b96a7abd9f48894a14a851e9b1b428b0e9567c283f70324a9bdf50ddc7305)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+        specifier: 1.1.0
+        version: 1.1.0(viem@2.28.4(patch_hash=835b96a7abd9f48894a14a851e9b1b428b0e9567c283f70324a9bdf50ddc7305)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       '@vetro-protocol/treasury':
         specifier: 1.0.0
         version: 1.0.0(viem@2.28.4(patch_hash=835b96a7abd9f48894a14a851e9b1b428b0e9567c283f70324a9bdf50ddc7305)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
@@ -3894,8 +3894,8 @@ packages:
     peerDependencies:
       viem: ^2.x
 
-  '@vetro-protocol/hemi-earn@1.0.0':
-    resolution: {integrity: sha512-0+Iwxmt06lqKBkuRIyjYYZKKFxNVe3BdfWHwkOgXyV5OyOBRdjBB5tLQgh9KuewfbZQhJPaY6DzK0J92TlC2/g==}
+  '@vetro-protocol/hemi-earn@1.1.0':
+    resolution: {integrity: sha512-WIbiMVf0me++UNAbVr4gzDycdCiYeIwbvz6SzUlsbZafSscOQQo4C2f1c2WLt+/sph0uRNVxOM8ZQ5W5rSBTVA==}
     engines: {node: '>=20'}
     peerDependencies:
       viem: ^2.x
@@ -13111,7 +13111,7 @@ snapshots:
       viem: 2.28.4(patch_hash=835b96a7abd9f48894a14a851e9b1b428b0e9567c283f70324a9bdf50ddc7305)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       viem-erc20: 2.1.0(viem@2.28.4(patch_hash=835b96a7abd9f48894a14a851e9b1b428b0e9567c283f70324a9bdf50ddc7305)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
 
-  '@vetro-protocol/hemi-earn@1.0.0(viem@2.28.4(patch_hash=835b96a7abd9f48894a14a851e9b1b428b0e9567c283f70324a9bdf50ddc7305)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))':
+  '@vetro-protocol/hemi-earn@1.1.0(viem@2.28.4(patch_hash=835b96a7abd9f48894a14a851e9b1b428b0e9567c283f70324a9bdf50ddc7305)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))':
     dependencies:
       '@vetro-protocol/earn': 1.2.1(viem@2.28.4(patch_hash=835b96a7abd9f48894a14a851e9b1b428b0e9567c283f70324a9bdf50ddc7305)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       to-promise-event: 1.0.0

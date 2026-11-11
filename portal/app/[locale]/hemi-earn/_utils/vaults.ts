@@ -19,9 +19,13 @@ export const findVaultByShare = (vaults: EarnVault[], shareAddress: Address) =>
 export const findVaultMetadata = (stakingVault: Address) =>
   hemiEarnVaults.find(vault => isAddressEqual(vault.address, stakingVault))
 
-// Only the vaults Vetro lists, in the order Vetro lists them.
+export const isVaultListed = (stakingVault: Address) =>
+  findVaultMetadata(stakingVault)?.delisted === false
+
+// Only the vaults Vetro still offers, in the order Vetro lists them.
 export const getListedVaults = (vaults: EarnVault[]) =>
   hemiEarnVaults
+    .filter(metadata => !metadata.delisted)
     .map(metadata =>
       vaults.find(vault =>
         isAddressEqual(vault.stakingVault, metadata.address),

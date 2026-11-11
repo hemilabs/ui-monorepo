@@ -1,6 +1,6 @@
 import { hemiEarnVaults } from '@vetro-protocol/hemi-earn'
 import { type Address, getAddress } from 'viem'
-import { describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
 import {
   canAccessVault,
@@ -9,6 +9,7 @@ import {
   findVaultMetadata,
   getListedVaults,
   getVaultDetails,
+  isVaultListed,
 } from '../../../../../app/[locale]/hemi-earn/_utils/vaults'
 import { type EarnVault } from '../../../../../app/[locale]/hemi-earn/types'
 
@@ -86,8 +87,21 @@ describe('vaults', function () {
     })
   })
 
+  describe('isVaultListed', function () {
+    it('is true for a vault Vetro still offers', function () {
+      const [{ address }] = hemiEarnVaults
+      expect(isVaultListed(address)).toBe(true)
+    })
+
+    it('is false for an address that is not a staking vault', function () {
+      expect(isVaultListed('0x0000000000000000000000000000000000009999')).toBe(
+        false,
+      )
+    })
+  })
+
   describe('getListedVaults', function () {
-    const delisted = {
+    const unknown = {
       shareAddress: '0x000000000000000000000000000000000000dddd',
       stakingVault: '0x0000000000000000000000000000000000009999',
     } as EarnVault
@@ -100,14 +114,60 @@ describe('vaults', function () {
     )
 
     it('keeps only listed vaults, in hemiEarnVaults order', function () {
-      const result = getListedVaults([delisted, ...[...listed].reverse()])
+      const result = getListedVaults([unknown, ...[...listed].reverse()])
       expect(result.map(vault => vault.stakingVault)).toEqual(
         hemiEarnVaults.map(vault => vault.address),
       )
     })
 
     it('returns an empty list when no vault is listed', function () {
-      expect(getListedVaults([delisted])).toEqual([])
+      expect(getListedVaults([unknown])).toEqual([])
+    })
+  })
+
+  describe('when Vetro delists a vault', function () {
+    const stillOffered = '0x0000000000000000000000000000000000001001' as Address
+    const noLongerOffered =
+      '0x0000000000000000000000000000000000001002' as Address
+
+    const vaultsModule = '../../../../../app/[locale]/hemi-earn/_utils/vaults'
+    let subject: typeof import('../../../../../app/[locale]/hemi-earn/_utils/vaults')
+
+    beforeAll(async function () {
+      vi.resetModules()
+      vi.doMock('@vetro-protocol/hemi-earn', () => ({
+        hemiEarnVaults: [
+          { address: stillOffered, delisted: false },
+          { address: noLongerOffered, delisted: true },
+        ],
+      }))
+      subject = await import(vaultsModule)
+    })
+
+    afterAll(function () {
+      vi.doUnmock('@vetro-protocol/hemi-earn')
+      vi.resetModules()
+    })
+
+    it('stops counting it as listed', function () {
+      expect(subject.isVaultListed(noLongerOffered)).toBe(false)
+      expect(subject.isVaultListed(stillOffered)).toBe(true)
+    })
+
+    it('keeps its metadata, which the withdrawal copy needs', function () {
+      expect(subject.findVaultMetadata(noLongerOffered)?.address).toBe(
+        noLongerOffered,
+      )
+    })
+
+    it('drops it from the offered list', function () {
+      const asVault = (stakingVault: Address) =>
+        ({ shareAddress: stakingVault, stakingVault }) as EarnVault
+      expect(
+        subject
+          .getListedVaults([asVault(noLongerOffered), asVault(stillOffered)])
+          .map(vault => vault.stakingVault),
+      ).toEqual([stillOffered])
     })
   })
 

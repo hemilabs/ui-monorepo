@@ -26,7 +26,7 @@ const supportLink = (chunks: ReactNode) => (
 
 export const OperatorBanner = function () {
   const t = useTranslations('hemi-earn.operator')
-  const { canDeposit } = useCanDeposit()
+  const { canDeposit } = useCanDeposit(undefined)
 
   return (
     <Banner>

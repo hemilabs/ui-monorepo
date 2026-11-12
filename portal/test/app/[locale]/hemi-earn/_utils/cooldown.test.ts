@@ -1,5 +1,6 @@
-import { computeCooldownRemaining } from 'app/[locale]/hemi-earn/vault/[shareAddress]/_hooks/useEarnCooldownRemaining'
 import { describe, expect, it } from 'vitest'
+
+import { computeCooldownRemaining } from '../../../../../app/[locale]/hemi-earn/_utils/cooldown'
 
 const now = 1_781_534_321
 

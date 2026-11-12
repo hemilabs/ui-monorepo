@@ -1,6 +1,7 @@
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { useNetworkType } from 'hooks/useNetworkType'
 
+import { isVaultListed } from '../_utils/vaults'
 import { type EarnVault } from '../types'
 
 import { earnApyQueryOptions, selectApyValue } from './useEarnApy'
@@ -30,6 +31,7 @@ export const useEarnVaults = function () {
       address: a.address,
       chainId: a.token.chainId,
     })),
+    isListed: isVaultListed(share.stakingVault),
     peggedToken: share.peggedToken,
     shareAddress: share.shareAddress,
     shareToken: share.shareToken,

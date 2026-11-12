@@ -30,3 +30,5 @@ subgraphs/*/logs/
 subgraphs/*/tests/.bin/
 subgraphs/*/tests/.latest.json
 *.tsbuildinfo
+portal/.vitest
+portal/test/**/__screenshots__

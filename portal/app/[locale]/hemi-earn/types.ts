@@ -78,6 +78,8 @@ export type EarnVault = {
   apy: number | null | undefined
   assets: EarnAsset[]
   exposureTokens: { address: Address; chainId: EvmToken['chainId'] }[]
+  // Not delisted in Vetro's hemiEarnVaults; a delisted vault is withdraw-only.
+  isListed: boolean
   peggedToken: EvmToken
   shareAddress: Address
   shareToken: EvmToken

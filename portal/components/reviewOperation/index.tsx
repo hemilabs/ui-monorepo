@@ -8,6 +8,7 @@ type Props = {
   aboveAmount?: ReactNode
   aboveCallToAction?: ReactNode
   amount: ReactNode
+  belowAmount?: ReactNode
   bottomSection?: ReactNode
   callToAction?: ReactNode
   steps: StepPropsWithoutPosition[]
@@ -17,6 +18,7 @@ export const ReviewOperation = ({
   aboveAmount,
   aboveCallToAction,
   amount,
+  belowAmount,
   bottomSection,
   callToAction,
   steps,
@@ -26,6 +28,7 @@ export const ReviewOperation = ({
       <DrawerSection>
         {!!aboveAmount && <div className="mb-4">{aboveAmount}</div>}
         {amount}
+        {!!belowAmount && <div className="mt-2">{belowAmount}</div>}
         <div
           className="mt-4 flex flex-col gap-y-8"
           // reserve the space up front so the gray container does not jump

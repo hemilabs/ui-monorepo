@@ -9,7 +9,7 @@ import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { type Address } from 'viem'
 
-import { RiskWarningTooltip } from '../../../../_components/riskWarningTooltip'
+import { ApySourceLabel } from '../../../../_components/apySourceLabel'
 import { HistoricalMetricsIcon } from '../../../../_icons/historicalMetricsIcon'
 import { type MetricPeriod, type MetricType } from '../../../../types'
 import { useHistoricalMetrics } from '../../_hooks/useHistoricalMetrics'
@@ -18,19 +18,23 @@ import { HeadlineValue } from './headlineValue'
 import { HistoricalMetricsChart } from './historicalMetricsChart'
 
 type Props = {
+  isListed: boolean
   peggedToken: EvmToken
   shareToken: EvmToken
   stakingVault: Address
 }
 
 export const HistoricalMetrics = function ({
+  isListed,
   peggedToken,
   shareToken,
   stakingVault,
 }: Props) {
   const t = useTranslations('hemi-earn.vault.historical-metrics')
   const [period, setPeriod] = useState<MetricPeriod>('1w')
-  const [metricType, setMetricType] = useState<MetricType>('deposits')
+  const [selectedMetricType, setSelectedMetricType] =
+    useState<MetricType>('deposits')
+  const metricType = isListed ? selectedMetricType : 'deposits'
 
   const { data, isError, isPending } = useHistoricalMetrics({
     metricType,
@@ -79,9 +83,13 @@ export const HistoricalMetrics = function ({
           <HistoricalMetricsIcon />
         </div>
         <div className="mt-3 flex items-center justify-between">
-          <div className="flex shrink-0 items-center gap-x-1.5">
-            <h2 className="text-neutral-950">{renderHeadline()}</h2>
-            {metricType === 'apy' && <RiskWarningTooltip />}
+          <div className="flex min-w-0 items-center gap-x-1.5">
+            <h2 className="shrink-0 text-neutral-950">{renderHeadline()}</h2>
+            {metricType === 'apy' && (
+              <div className="body-text-normal flex min-w-0 items-center gap-x-1 text-neutral-600">
+                <ApySourceLabel stakingVault={stakingVault} />
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden items-center gap-3 lg:flex">
@@ -91,14 +99,16 @@ export const HistoricalMetrics = function ({
                 options={periodOptions}
                 value={period}
               />
-              <div className="h-3 w-0.5 bg-neutral-200" />
+              {isListed && <div className="h-3 w-0.5 bg-neutral-200" />}
             </div>
-            <SegmentedControl
-              label={t('metric')}
-              onChange={setMetricType}
-              options={metricTypeOptions}
-              value={metricType}
-            />
+            {isListed && (
+              <SegmentedControl
+                label={t('metric')}
+                onChange={setSelectedMetricType}
+                options={metricTypeOptions}
+                value={metricType}
+              />
+            )}
           </div>
         </div>
         <div className="mt-8">

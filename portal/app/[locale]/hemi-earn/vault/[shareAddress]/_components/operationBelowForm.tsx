@@ -3,6 +3,7 @@ import { type Address } from 'viem'
 
 import { CooldownWarning } from './cooldownWarning'
 import { OperationSummary, type TopRowProps } from './operationSummary'
+import { type VetroFeeRowProps } from './vetroFeeRow'
 
 type Props = {
   account: Address | undefined
@@ -15,6 +16,7 @@ type Props = {
   stakingVault: Address
   topRow: TopRowProps
   totalFees: bigint | undefined
+  vetroFee: VetroFeeRowProps
 }
 
 export const OperationBelowForm = ({
@@ -28,6 +30,7 @@ export const OperationBelowForm = ({
   stakingVault,
   topRow,
   totalFees,
+  vetroFee,
 }: Props) => (
   <div className="flex flex-col gap-y-4">
     <div className="px-4">
@@ -39,6 +42,7 @@ export const OperationBelowForm = ({
         nativeToken={nativeToken}
         topRow={topRow}
         totalFees={totalFees}
+        vetroFee={vetroFee}
       />
     </div>
     {account && isCooldownEligible && (

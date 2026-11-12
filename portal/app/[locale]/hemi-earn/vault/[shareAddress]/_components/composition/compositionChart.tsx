@@ -2,7 +2,10 @@ import Skeleton from 'react-loading-skeleton'
 import { formatPercentage } from 'utils/format'
 import { VictoryPie } from 'victory'
 
-import { type CompositionItemWithColor } from './compositionColumns'
+import {
+  type CompositionItemWithColor,
+  shareToPercentage,
+} from './compositionColumns'
 
 const chartSize = 216
 const innerRadius = 78
@@ -58,7 +61,7 @@ export const CompositionChart = function ({
         </svg>
         {hoveredItem !== null && (
           <span className="pointer-events-none absolute text-mid-md font-semibold text-orange-500">
-            {formatPercentage(hoveredItem.share)}
+            {formatPercentage(shareToPercentage(hoveredItem.share))}
           </span>
         )}
       </div>

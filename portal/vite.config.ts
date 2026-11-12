@@ -135,6 +135,31 @@ export default defineConfig(function ({ mode }) {
       })),
       tsconfigPaths: true,
     },
+    server: {
+      proxy: {
+        '/portal-api': {
+          changeOrigin: true,
+          // See the note in '/vetro-api'.
+          configure: proxy =>
+            proxy.on('proxyReq', proxyReq =>
+              proxyReq.removeHeader('cf-connecting-ip'),
+            ),
+          rewrite: path => path.replace(/^\/portal-api/, ''),
+          target: 'https://portal-api.hemi.xyz',
+        },
+        '/vetro-api': {
+          changeOrigin: true,
+          // miniflare adds CF-Connecting-IP, and Cloudflare rejects proxied
+          // requests that carry it (error 1000).
+          configure: proxy =>
+            proxy.on('proxyReq', proxyReq =>
+              proxyReq.removeHeader('cf-connecting-ip'),
+            ),
+          rewrite: path => path.replace(/^\/vetro-api/, ''),
+          target: 'https://api.vetro.org',
+        },
+      },
+    },
     worker: {
       // Worker bundles get their own plugin pipeline, the top-level `plugins`
       // above do not apply to them.

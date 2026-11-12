@@ -156,6 +156,8 @@
     "view-all-tutorials": "Ver todos los tutoriales"
   },
   "hemi-earn": {
+    "apy-provided-by-vetro": "TEA · proporcionada por Vetro",
+    "apy-source": "La TEA es una estimación variable proporcionada por Vetro, basada en el rendimiento reciente del fondo. No es una promesa ni un pronóstico de rendimientos futuros y puede cambiar en cualquier momento. Los rendimientos se muestran {fees, select, included {después de} other {antes de}} tarifas.",
     "deposits-paused": "Los depósitos nuevos están pausados en este momento.",
     "footer": {
       "attribution": "Hemi Earn es operado por Vetro Service & Support Corp. Los fondos disponibles a través de Hemi Earn pueden ser operados por Vetro o por terceros. Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. y sus afiliadas no operan, administran, custodian ni garantizan Hemi Earn ni ningún fondo, y no son parte de su acuerdo con Vetro. Hemi Earn no está disponible para personas de EE. UU. ni para otras personas restringidas.",
@@ -181,6 +183,29 @@
     "risk-warning": "Los rendimientos son variables y no están garantizados. Puede perder parte o la totalidad de su depósito.",
     "subheading": "Hemi Earn, operado por Vetro, le da acceso a fondos de rendimiento directamente desde el portal de Hemi. Elija un fondo y deposite en unos pocos pasos. Los rendimientos son variables y no están garantizados.",
     "switch-to-start-earning": "Puede cambiar de red para comenzar a ganar con Hemi.",
+    "terms": {
+      "agree-and-continue": "Aceptar y continuar",
+      "cannot-sign": "Su billetera no admite la firma necesaria para aceptar los Términos de Vetro. Para depositar en Hemi Earn, conecte una billetera que admita la firma de mensajes.",
+      "checkbox": "He leído y acepto los Términos de Uso de Vetro, incluidos los Términos de Hemi Earn, y su Política de Privacidad. Entiendo que Hemi Earn es operado por Vetro Service & Support Corp., que mi acuerdo es únicamente con Vetro, y que Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. y sus afiliadas no son parte de él ni tienen obligaciones conmigo respecto de Hemi Earn. Confirmo que no soy una persona de EE. UU. ni una Persona Restringida según los Términos de Vetro.",
+      "handoff": {
+        "before-you-continue": "Antes de continuar, tenga en cuenta lo siguiente:",
+        "body": "Hemi Earn es un servicio de terceros operado por Vetro Service & Support Corp., una empresa de Panamá. Cuando usa Hemi Earn, su acuerdo es con Vetro, no con Hemi. Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. y sus afiliadas solo proporcionan esta interfaz. No operan, administran, custodian ni garantizan Hemi Earn ni ningún fondo, y no son parte de su acuerdo con Vetro.",
+        "bullets": {
+          "assets": "Sus activos se envían de su billetera a contratos inteligentes operados por Vetro, que los depositan en el fondo que elija y pueden transferirlos entre redes. Algunos fondos son operados por terceros, no por Vetro. El operador de cada fondo se muestra en su página.",
+          "not-available": "Hemi Earn no está disponible para personas de EE. UU. ni para otras personas restringidas.",
+          "withdrawals": "Los retiros pueden demorarse o estar sujetos a colas o períodos de bloqueo.",
+          "yields": "Los rendimientos son variables y no están garantizados. Podría perder parte o la totalidad de su depósito, incluso por fallas de contratos inteligentes, puentes, operadores de fondos, estrategias, stablecoins o mercados."
+        },
+        "privacy-policy": "Política de Privacidad de Vetro",
+        "terms-of-use": "Términos de Uso de Vetro",
+        "title": "Está entrando en Hemi Earn, operado por Vetro"
+      },
+      "re-acceptance": {
+        "body": "Para hacer nuevos depósitos en Hemi Earn, revise y acepte los Términos de Uso actualizados de Vetro. Puede retirar su posición actual en cualquier momento sin aceptarlos. <link>Ver los Términos actualizados</link>",
+        "title": "Vetro actualizó sus Términos"
+      },
+      "signing-note": "A continuación, su billetera le pedirá que firme un mensaje confirmando su acuerdo. Firmar es gratis y no envía una transacción."
+    },
     "transactions": {
       "banner": {
         "cancelled": {
@@ -207,7 +232,8 @@
           "heading": "Su retiro quedó atascado en Ethereum",
           "heading-deposit": "Su depósito quedó atascado en Ethereum",
           "heading-slippage": "Su retiro no se completó",
-          "heading-slippage-deposit": "Su depósito no se completó"
+          "heading-slippage-deposit": "Su depósito no se completó",
+          "vault-delisted": "Este fondo ya no acepta depósitos, así que devuelva sus fondos a su billetera."
         },
         "transfer-incomplete": "Esta transferencia aún no se ha completado. Hemi no puede acceder a los activos en Hemi Earn, ni moverlos ni recuperarlos. Contacte al soporte de Vetro e incluya el hash de su transacción:",
         "withdraw": {
@@ -299,7 +325,6 @@
       "withdrawal": "Retiro"
     },
     "vault": {
-      "apy": "TEA",
       "composition": {
         "amount": "Monto",
         "by-protocol": "Por protocolo",
@@ -308,6 +333,7 @@
         "protocols-count": "{count, plural, one {# protocolo} other {# protocolos}}",
         "reserve-buffer": "Reserva de liquidez",
         "share": "Participación",
+        "subtitle": "Activos mantenidos en las estrategias subyacentes del fondo, según lo informado por Vetro.",
         "title": "Composición",
         "tokens-count": "{count, plural, one {# token} other {# tokens}}",
         "view-mode": "Modo de vista"
@@ -355,6 +381,8 @@
         "hemi-network-fee": "Tarifa de red de Hemi",
         "network-error": "Error al previsualizar — reintente",
         "share-token-available-to-withdraw": "Token de participación disponible para retirar",
+        "vetro-deposit-fee": "Tarifa de depósito de Vetro",
+        "vetro-withdrawal-fee": "Tarifa de retiro de Vetro",
         "withdraw-share-tokens-as": "Retirar token de participación como",
         "withdrawing": "Retirando...",
         "you-will-receive": "Recibirá"
@@ -390,14 +418,17 @@
       "withdraw-complete": "Su retiro se ha completado. Los activos han vuelto a su billetera.",
       "withdraw-successful": "Retiro exitoso"
     },
+    "vault-delisted": "Este fondo ya no acepta depósitos.",
     "vault-info": {
-      "apy": "TEA",
+      "curators": "{count, plural, one {Curador} other {Curadores}}: {names}",
       "manage": "Gestionar",
+      "operator": "Operador del fondo: {operator}",
       "share-token": "Token de participación",
       "total-deposits": "Depósitos totales",
       "vault-contract": "Contrato del fondo",
       "your-deposits": "Sus depósitos"
-    }
+    },
+    "vetro-data-disclaimer": "Datos proporcionados por Vetro. Las cifras pueden estar retrasadas y no han sido verificadas por Hemi."
   },
   "hemi-stake": {
     "amount": "Cantidad",
@@ -518,10 +549,6 @@
       "headline": "Toda una economía.<break></break><highlight>Una</highlight> llave.",
       "live-on": "disponible el 19 de septiembre",
       "subtitle": "Haga stake de Hemi para recibir parte de cada pago y acceder a los próximos lanzamientos."
-    },
-    "launch-card": {
-      "is-live": "<name></name> ya está disponible",
-      "live-on": "Disponible el 19 de septiembre"
     },
     "lockup-period": "Período de bloqueo",
     "perks": {

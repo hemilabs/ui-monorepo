@@ -64,13 +64,16 @@ import { useVaultForm } from '../../_context/vaultFormContext'
 import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
 import { useSlippageBps } from '../../_hooks/useSlippage'
+import { useVetroFee } from '../../_hooks/useVetroFee'
 import { DepositStatus, type DepositStatusType } from '../../_types/operations'
 import { createFeeEstimateStateOverride } from '../../_utils/feeEstimateStateOverride'
 import {
+  canRetryDeposit,
   resolveMayNeedApproval,
   showsReview,
   unsignedStepStatus,
 } from '../../_utils/reviewState'
+import { VetroFeeRow } from '../vetroFeeRow'
 
 import { ConfirmDeposit } from './confirmDeposit'
 import { ReviewIntro } from './reviewIntro'
@@ -170,6 +173,11 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   const chainId = selectedAsset.token.chainId
   const chain = useChain(chainId)
   const { address } = useAccount()
+  const { data: vetroFee, isError: isVetroFeeError } = useVetroFee({
+    asset: selectedAsset.address,
+    operation: 'deposit',
+    shareAddress: vault.shareAddress,
+  })
 
   // Shared subscription with the layout watcher; lets the get-share-tokens step sync to the subgraph status.
   const { data: subgraphRows = [] } = useEarnTransactionsQuery()
@@ -401,14 +409,11 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     }
   }
 
-  const canRetryDeposit = [
-    DepositStatus.APPROVAL_TX_FAILED,
-    DepositStatus.DEPOSIT_TX_FAILED,
-  ].includes(depositStatus)
+  const isRetryable = canRetryDeposit(depositStatus)
 
   const getAboveCallToAction = () => (
     <>
-      {canRetryDeposit && <RiskWarningBanner />}
+      {isRetryable && <RiskWarningBanner />}
       <SettleBanner transaction={settledRow} />
       <RemoteFailedBanner transaction={settledRow} />
       <TransferDelayedBanner
@@ -419,7 +424,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     </>
   )
 
-  const isAboutToSign = showsReview({ canRetry: canRetryDeposit, hasSigned })
+  const isAboutToSign = showsReview({ canRetry: isRetryable, hasSigned })
 
   const getAboveAmount = () =>
     isAboutToSign ? (
@@ -428,6 +433,15 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         shareAddress={vault.shareAddress}
         vaultMetadata={vaultMetadata}
         vaultName={vault.shareToken.symbol}
+      />
+    ) : null
+
+  const getBelowAmount = () =>
+    isAboutToSign ? (
+      <VetroFeeRow
+        isError={isVetroFeeError}
+        label={tSuccess('form.vetro-deposit-fee')}
+        percentage={vetroFee}
       />
     ) : null
 
@@ -494,6 +508,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       aboveAmount={getAboveAmount()}
       aboveCallToAction={getAboveCallToAction()}
       amount={depositOperation?.amountIn ?? amount.toString()}
+      belowAmount={getBelowAmount()}
       belowSubheading={<OperatorNote />}
       callToAction={getCallToAction()}
       heading={t('deposit.heading')}

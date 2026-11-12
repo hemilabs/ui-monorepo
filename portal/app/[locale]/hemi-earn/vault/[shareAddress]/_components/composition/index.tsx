@@ -3,6 +3,7 @@ import { CompositionIcon } from 'components/icons/compositionIcon'
 import { SegmentedControl } from 'components/segmentedControl'
 import { useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
+import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { type Address, type Chain } from 'viem'
 
@@ -28,17 +29,22 @@ const compositionColors = [
 
 type Props = {
   chainId: Chain['id']
-  shareAddress: Address
+  peggedToken: EvmToken
+  stakingVault: Address
 }
 
-export const Composition = function ({ chainId, shareAddress }: Props) {
+export const Composition = function ({
+  chainId,
+  peggedToken,
+  stakingVault,
+}: Props) {
   const t = useTranslations('hemi-earn.vault.composition')
   const [viewMode, setViewMode] = useState<CompositionViewMode>('token')
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   const { data, isError, isPending } = useComposition({
     chainId,
-    shareAddress,
+    stakingVault,
     viewMode,
   })
 
@@ -90,6 +96,7 @@ export const Composition = function ({ chainId, shareAddress }: Props) {
               value={viewMode}
             />
           </div>
+          <p className="body-text-caption text-neutral-500">{t('subtitle')}</p>
         </div>
         <div className="flex flex-col gap-4 lg:flex-row">
           <div className="lg:basis-3/5">
@@ -97,6 +104,7 @@ export const Composition = function ({ chainId, shareAddress }: Props) {
               data={dataWithColors}
               isPending={isPending}
               onHoveredIndexChange={setHoveredIndex}
+              peggedToken={peggedToken}
             />
           </div>
           <div className="lg:basis-2/5">

@@ -16,6 +16,7 @@ export const useVaultMetadata = function (stakingVault: Address) {
       const maxTransferSeconds =
         metadata.typicalTransferTime * maxTransferTimeFactor
       return {
+        apyIncludesFees: metadata.apyIncludesFees,
         maxDuration: formatDuration(maxTransferSeconds, locale),
         maxTransferSeconds,
         operator: metadata.operator,

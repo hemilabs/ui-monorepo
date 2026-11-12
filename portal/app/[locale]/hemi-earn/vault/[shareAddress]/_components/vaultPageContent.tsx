@@ -3,12 +3,11 @@ import { useRouter } from 'i18n/navigation'
 import { useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { queryStringObjectToString } from 'utils/url'
-import { type Address } from 'viem'
 
 import { OperatorBanner } from '../../../_components/operatorDisclosure'
-import { useEarnVaults } from '../../../_hooks/useEarnVaults'
-import { findVaultByShare } from '../../../_utils/vaults'
+import { VetroDataDisclaimer } from '../../../_components/vetroDataDisclaimer'
 import { VaultFormProvider } from '../_context/vaultFormContext'
+import { useAccessibleVault } from '../_hooks/useAccessibleVault'
 
 import { Composition } from './composition'
 import { HistoricalMetrics } from './historicalMetrics'
@@ -23,21 +22,15 @@ type Props = {
 export const VaultPageContent = function ({ shareAddress }: Props) {
   const router = useRouter()
   const [networkType] = useNetworkType()
-  const { data: vaults } = useEarnVaults()
-
-  const vault = vaults
-    ? findVaultByShare(vaults, shareAddress as Address)
-    : undefined
-
-  const areVaultsLoaded = vaults !== undefined
+  const { shouldRedirect, vault } = useAccessibleVault(shareAddress)
 
   useEffect(
-    function redirectIfNotFound() {
-      if (areVaultsLoaded && !vault) {
+    function redirectIfNotAccessible() {
+      if (shouldRedirect) {
         router.push(`/hemi-earn${queryStringObjectToString({ networkType })}`)
       }
     },
-    [areVaultsLoaded, networkType, vault, router],
+    [networkType, router, shouldRedirect],
   )
 
   return (
@@ -56,14 +49,17 @@ export const VaultPageContent = function ({ shareAddress }: Props) {
             <div className="order-2 flex flex-col gap-4 md:gap-5 lg:order-1 lg:basis-3/5">
               <VaultInfoCards vault={vault} />
               <HistoricalMetrics
+                isListed={vault.isListed}
                 peggedToken={vault.peggedToken}
                 shareToken={vault.shareToken}
                 stakingVault={vault.stakingVault}
               />
               <Composition
                 chainId={vault.shareToken.chainId}
-                shareAddress={vault.shareAddress}
+                peggedToken={vault.peggedToken}
+                stakingVault={vault.stakingVault}
               />
+              <VetroDataDisclaimer />
             </div>
             <div className="order-1 lg:sticky lg:top-4 lg:order-2 lg:basis-2/5 lg:self-start">
               <VaultForm />

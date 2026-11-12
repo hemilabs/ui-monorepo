@@ -19,10 +19,15 @@ export const useEarnCostBasis = function () {
 
   return useQuery({
     enabled: !!address && networkType === 'mainnet',
-    queryFn: () => fetchEarnCostBasis({ account: address! }),
+    queryFn: () =>
+      fetchEarnCostBasis({
+        account: address!,
+        apiUrl: import.meta.env.VITE_VETRO_API_URL,
+      }),
     queryKey: [...earnCostBasisKeyPrefix, networkType, address],
     refetchInterval: hasInFlightEarnActions({ localOperations, transactions })
       ? 10_000
       : false,
+    retry: 2,
   })
 }

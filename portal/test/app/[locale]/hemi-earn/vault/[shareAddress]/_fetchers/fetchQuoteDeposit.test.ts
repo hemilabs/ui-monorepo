@@ -2,13 +2,13 @@ import { previewDeposit } from '@vetro-protocol/gateway/actions'
 import {
   quoteDeposit,
   quoteDepositFulfillment,
-} from 'hemi-earn-actions/actions'
+} from '@vetro-protocol/hemi-earn/actions'
 import { type Address } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { fetchQuoteDeposit } from '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_fetchers/fetchQuoteDeposit'
 
-vi.mock('hemi-earn-actions/actions', () => ({
+vi.mock('@vetro-protocol/hemi-earn/actions', () => ({
   getAgentAddress: vi.fn(),
   getAssetData: vi.fn(),
   quoteDeposit: vi.fn(),
@@ -17,10 +17,6 @@ vi.mock('hemi-earn-actions/actions', () => ({
 
 vi.mock('@vetro-protocol/gateway/actions', () => ({
   previewDeposit: vi.fn(),
-}))
-
-vi.mock('hemi-earn-actions', () => ({
-  getHemiEarnRouterAddress: () => '0xRouter',
 }))
 
 vi.mock('utils/chainClients', () => ({
@@ -105,7 +101,8 @@ describe('fetchQuoteDeposit', function () {
     })
 
     expect(quoteDepositFulfillment).toHaveBeenCalledWith(
-      expect.objectContaining({ agentAddress: '0xAgent', share: remoteShare }),
+      expect.anything(),
+      expect.objectContaining({ address: '0xAgent', remoteShare }),
     )
   })
 
@@ -120,6 +117,7 @@ describe('fetchQuoteDeposit', function () {
     })
 
     expect(quoteDeposit).toHaveBeenCalledWith(
+      expect.anything(),
       expect.objectContaining({
         assets: BigInt(1000),
         callbackFee: BigInt(99),

@@ -3,12 +3,10 @@ import type { NextFunction, Request, Response } from 'express'
 import type { Address } from 'viem'
 import { hemi, hemiSepolia, mainnet, sepolia } from 'viem/chains'
 
-import { getEarnCostBasis } from '../hemi-earn/costBasis.ts'
 import { toJsonMiddleware } from '../to-middleware.ts'
 import type { ChainIdPathParams, ReqData } from '../types.ts'
 
 import { getBtcDepositOnHemi } from './route-handlers/get-btc-deposit-on-hemi.ts'
-import { getEarnRequestsHandler } from './route-handlers/get-earn-requests.ts'
 import { getLockedPositionsHandler } from './route-handlers/get-locked-positions.ts'
 import { getWithdrawalProofAndClaimHandler } from './route-handlers/get-withdrawal-proof-and-claim.ts'
 import {
@@ -56,18 +54,6 @@ function validateChainIsHemi(
     req.data.chainId &&
     [hemi.id, hemiSepolia.id].includes(req.data.chainId)
   ) {
-    next()
-  } else {
-    next('route')
-  }
-}
-
-function validateChainIsHemiMainnet(
-  req: Request & ReqData,
-  res: Response,
-  next: NextFunction,
-) {
-  if (req.data.chainId === hemi.id) {
     next()
   } else {
     next('route')
@@ -152,11 +138,6 @@ function parseQueryParams(
 // strings: coerce chainId to a number and wrap the result in its envelope.
 const getStaked = (chainIdStr: string) =>
   getTotalStaked(Number(chainIdStr)).then(staked => ({ staked }))
-
-const getCostBasis = (_: string, address: Address) =>
-  getEarnCostBasis({ address }).then(costBasis => ({
-    costBasis,
-  }))
 
 export function createSubgraphsRouter() {
   // eslint-disable-next-line new-cap -- express.Router is a factory, not a constructor
@@ -252,26 +233,6 @@ export function createSubgraphsRouter() {
     validateAddress,
     validateChainIsHemi,
     getLockedPositionsHandler,
-  )
-
-  router.get(
-    '/:chainIdStr/earn-requests/:address',
-    parseChainId,
-    validateAddress,
-    validateChainIsHemiMainnet,
-    getEarnRequestsHandler,
-  )
-
-  router.get(
-    '/:chainIdStr/earn-cost-basis/:address',
-    parseChainId,
-    validateAddress,
-    validateChainIsHemiMainnet,
-    toJsonMiddleware(getCostBasis, {
-      maxAge: 30 * 1000,
-      resolver: (chainIdStr, address) =>
-        `${chainIdStr}-${String(address).toLowerCase()}`,
-    }),
   )
 
   return router

@@ -1,3 +1,4 @@
+import { hemiEarnRouterAddress } from '@vetro-protocol/hemi-earn'
 import { SparkleIcon } from 'components/icons/sparkleIcon'
 import { Operation } from 'components/reviewOperation/operation'
 import {
@@ -6,7 +7,6 @@ import {
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { TokenLogo } from 'components/tokenLogo'
-import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { type ReactNode } from 'react'
@@ -16,14 +16,21 @@ import { type Hash } from 'viem'
 
 import { defaultDepositSlippage } from '../../../_constants/slippage'
 import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
+import { useVaultMetadata } from '../../../_hooks/useVaultMetadata'
+import {
+  inTransitPostAction,
+  isCrossingNetworks,
+} from '../../../_utils/inTransit'
 import {
   getTerminalDeliveryTxHash,
   remoteFailedStepStatus,
   resolveStepExplorerChainId,
 } from '../../../_utils/settleUi'
+import { completedSubheading } from '../../../_utils/successCopy'
 import {
   canRetryRow,
   isLocalEarnTransactionRow,
+  isLocalSettlementInFlight,
   isRecoverPath,
   isRemoteFailed,
   isRemoteFailedCancel,
@@ -33,9 +40,11 @@ import {
 import {
   type EarnTransaction,
   type EarnTransactionStatusType,
+  type EarnVault,
 } from '../../../types'
 import { OperatorNote } from '../../operatorDisclosure'
 import { RiskWarningBanner } from '../../riskWarningBanner'
+import { TransferDelayedBanner } from '../../transferIncomplete'
 
 import { RemoteFailedBanner } from './remoteFailed'
 import { SettleBanner } from './settleShared'
@@ -46,6 +55,7 @@ type Props = {
   onClose: VoidFunction
   token: EvmToken
   transaction: EarnTransaction
+  vault: EarnVault
 }
 
 type Translator = ReturnType<
@@ -208,6 +218,7 @@ export const HistoricalDepositReview = function ({
   onClose,
   token,
   transaction,
+  vault,
 }: Props) {
   const t = useTranslations('hemi-earn.transactions.drawer')
 
@@ -215,10 +226,13 @@ export const HistoricalDepositReview = function ({
     address: transaction.asset,
     amount: BigInt(transaction.amountIn),
     chainId: token.chainId,
-    spender: getHemiEarnRouterAddress(),
+    spender: hemiEarnRouterAddress,
   })
 
   const { show: remoteFailedReady } = useRemoteFailedState(transaction)
+  const tVault = useTranslations('hemi-earn.vault.drawer')
+  const tSuccess = useTranslations('hemi-earn.vault')
+  const vaultMetadata = useVaultMetadata(vault.stakingVault)
 
   const { waitingForShares } = resolveStepStates(transaction)
   // Only a still-mining settlement drives PROGRESS; a failed one keeps the natural (FAILED) status + Retry CTA.
@@ -248,16 +262,27 @@ export const HistoricalDepositReview = function ({
     steps.push(buildApprovalStep(transaction.approvalTxHash, token, t))
   }
   steps.push(buildDepositStep(transaction, token, t))
-  steps.push(
-    buildTerminalStep({
-      baseStatus: waitingForShares,
-      remoteFailedReady,
-      settlementTxHash,
-      t,
-      token,
-      tx: transaction,
+  const terminalStep = buildTerminalStep({
+    baseStatus: waitingForShares,
+    remoteFailedReady,
+    settlementTxHash,
+    t,
+    token,
+    tx: transaction,
+  })
+  const isCrossing = isCrossingNetworks({
+    isRemoteFail: isRemoteFailed(transaction),
+    isSettlingLocally: isLocalSettlementInFlight(transaction),
+    isStepInProgress: terminalStep.status === ProgressStatus.PROGRESS,
+  })
+  steps.push({
+    ...terminalStep,
+    postAction: inTransitPostAction({
+      duration: vaultMetadata?.typicalDuration,
+      isCrossing,
+      t: tVault,
     }),
-  )
+  })
 
   return (
     <Operation
@@ -266,6 +291,11 @@ export const HistoricalDepositReview = function ({
           {canRetryRow(transaction) && <RiskWarningBanner />}
           <SettleBanner transaction={transaction} />
           <RemoteFailedBanner transaction={transaction} />
+          <TransferDelayedBanner
+            isCrossing={isCrossing}
+            stakingVault={vault.stakingVault}
+            transaction={transaction}
+          />
         </>
       }
       amount={transaction.amountIn}
@@ -280,7 +310,14 @@ export const HistoricalDepositReview = function ({
       heading={t('deposit-heading')}
       onClose={onClose}
       steps={steps}
-      subheading={t('deposit-subheading')}
+      subheading={completedSubheading({
+        fallback: t('deposit-subheading'),
+        isCompleted: transaction.status === 'FINALIZED',
+        kind: 'DEPOSIT',
+        operator: vaultMetadata?.operator,
+        t: tSuccess,
+        vaultName: vault.shareToken.symbol,
+      })}
       token={token}
     />
   )

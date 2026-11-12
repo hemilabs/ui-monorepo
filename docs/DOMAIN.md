@@ -169,9 +169,9 @@ Before this system, the `ve-hemi-rewards` contract (`0x0d85B6676d499c05FE06fcB6A
 
 The Portal needs a user's full operation history across the three chains of the active network type — Hemi, the EVM L1 and Bitcoin — and rebuilding it by scanning blocks over RPC is slow and rate-limited. Subgraphs (The Graph) index the relevant events so history can be queried in bulk.
 
-The `subgraphs/` folder holds one subgraph per concern. The tunnel-related ones cover deposits, BTC deposits, withdrawals, and withdrawal proofs and claims; the rest cover Hemi Earn, staking and veHEMI. Every subgraph is deployed once per chain, so mainnet and testnet are separate deployments.
+The `subgraphs/` folder holds one subgraph per concern. The tunnel-related ones cover deposits, BTC deposits, withdrawals, and withdrawal proofs and claims; the rest cover staking and veHEMI. Each of these is deployed once per chain, so mainnet and testnet are separate deployments. The folder also holds `hemi-supply-indexer`, which is not a subgraph: it runs on Envio, reads HEMI balances across four chains in one mainnet-only deployment, and feeds the supply endpoints rather than a user's history.
 
-The Portal does not query The Graph directly. Requests go through the backend API (`portal-backend/api`) under `/subgraphs/{chainId}/...`, which keeps API keys server-side and normalizes responses.
+The Portal does not query The Graph directly. Requests go through the backend API (`portal-backend/api`) under `/subgraphs/{chainId}/...`, which keeps API keys server-side and normalizes responses. Hemi Earn is the exception: its history and cost basis come straight from Vetro's API, which owns that indexer.
 
 History itself is assembled in web workers so the UI stays responsive. The workers combine subgraph data with direct RPC reads — a subgraph lags behind the chain head, so recent blocks are still scanned — track how far each chain has been synced, and persist the result locally so a returning user sees their history immediately. Operation status is then refreshed against chain state: whether a withdrawal is provable, claimable or challengeable is always decided by the contracts, never by the cached record.
 

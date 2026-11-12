@@ -5,7 +5,7 @@ import { UpstreamGraphQLError } from './subgraphs/errors.ts'
 import {
   type GraphResponse,
   checkGraphQLErrors,
-  requestHemiEarn,
+  requestHemiSupply,
 } from './subgraphs/subgraph.ts'
 
 type Correction = {
@@ -40,6 +40,8 @@ type SupplyRow = {
   opBalances: string | null
   totalSupply: string | null
 }
+
+const hemiOnBaseFrom = '2025-12-29'
 
 const fields = `
   baseOpBalances
@@ -79,7 +81,7 @@ function createSupplyIndexer({
     graphQuery: string,
     variables?: Record<string, string>,
   ) {
-    const response = await requestHemiEarn<GraphResponse<T>>({
+    const response = await requestHemiSupply<GraphResponse<T>>({
       query: graphQuery,
       variables,
     })
@@ -121,6 +123,10 @@ function createSupplyIndexer({
       `query GetLatestSupplySnapshots {
         DailySupplySnapshot(
           where: {
+            _or: [
+              { baseBlock: { _is_null: false } }
+              { date: { _lt: "${hemiOnBaseFrom}" } }
+            ]
             bnbBlock: { _is_null: false }
             ethBlock: { _is_null: false }
             hemiBlock: { _is_null: false }
@@ -152,6 +158,10 @@ function createSupplyIndexer({
         `query GetDailySupplySnapshots($firstDate: String!, $lastDate: String!) {
           DailySupplySnapshot(
             where: {
+              _or: [
+                { baseBlock: { _is_null: false } }
+                { date: { _lt: "${hemiOnBaseFrom}" } }
+              ]
               bnbBlock: { _is_null: false }
               date: { _gte: $firstDate, _lte: $lastDate }
               ethBlock: { _is_null: false }

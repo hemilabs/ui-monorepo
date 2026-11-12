@@ -156,6 +156,8 @@
     "view-all-tutorials": "Ver todos os tutoriais"
   },
   "hemi-earn": {
+    "apy-provided-by-vetro": "TEA · fornecida pela Vetro",
+    "apy-source": "A TEA é uma estimativa variável fornecida pela Vetro, com base no desempenho recente do fundo. Não é uma promessa nem uma previsão de rendimentos futuros e pode mudar a qualquer momento. Os rendimentos são mostrados {fees, select, included {após} other {antes de}} taxas.",
     "deposits-paused": "Os depósitos novos estão pausados no momento.",
     "footer": {
       "attribution": "O Hemi Earn é operado pela Vetro Service & Support Corp. Os fundos disponíveis pelo Hemi Earn podem ser operados pela Vetro ou por terceiros. A Hemispheres Service & Support (BVI) Ltd., a Hemi Labs, Inc. e suas afiliadas não operam, administram, custodiam nem garantem o Hemi Earn ou qualquer fundo, e não são partes do seu acordo com a Vetro. O Hemi Earn não está disponível para pessoas dos EUA nem para outras pessoas restritas.",
@@ -181,6 +183,29 @@
     "risk-warning": "Os rendimentos são variáveis e não são garantidos. Você pode perder parte ou a totalidade do seu depósito.",
     "subheading": "O Hemi Earn, operado pela Vetro, dá a você acesso a fundos de rendimento diretamente pelo portal da Hemi. Escolha um fundo e deposite em poucos passos. Os rendimentos são variáveis e não são garantidos.",
     "switch-to-start-earning": "Você pode mudar de rede para começar a ganhar com a Hemi.",
+    "terms": {
+      "agree-and-continue": "Concordar e continuar",
+      "cannot-sign": "Sua carteira não oferece suporte à assinatura necessária para aceitar os Termos da Vetro. Para depositar no Hemi Earn, conecte uma carteira que ofereça suporte à assinatura de mensagens.",
+      "checkbox": "Li e concordo com os Termos de Uso da Vetro, incluindo os Termos do Hemi Earn, e com sua Política de Privacidade. Entendo que o Hemi Earn é operado pela Vetro Service & Support Corp., que meu acordo é exclusivamente com a Vetro, e que a Hemispheres Service & Support (BVI) Ltd., a Hemi Labs, Inc. e suas afiliadas não são partes dele e não têm obrigações comigo em relação ao Hemi Earn. Confirmo que não sou uma pessoa dos EUA nem uma Pessoa Restrita segundo os Termos da Vetro.",
+      "handoff": {
+        "before-you-continue": "Antes de continuar, observe:",
+        "body": "O Hemi Earn é um serviço de terceiros operado pela Vetro Service & Support Corp., uma empresa do Panamá. Quando você usa o Hemi Earn, seu acordo é com a Vetro, não com a Hemi. A Hemispheres Service & Support (BVI) Ltd., a Hemi Labs, Inc. e suas afiliadas fornecem apenas esta interface. Elas não operam, administram, custodiam nem garantem o Hemi Earn ou qualquer fundo, e não são partes do seu acordo com a Vetro.",
+        "bullets": {
+          "assets": "Seus ativos são enviados da sua carteira para contratos inteligentes operados pela Vetro, que os depositam no fundo que você escolher e podem transferi-los entre redes. Alguns fundos são operados por terceiros, não pela Vetro. O operador de cada fundo é exibido na página dele.",
+          "not-available": "O Hemi Earn não está disponível para pessoas dos EUA nem para outras pessoas restritas.",
+          "withdrawals": "Os saques podem atrasar ou estar sujeitos a filas ou períodos de bloqueio.",
+          "yields": "Os rendimentos são variáveis e não são garantidos. Você pode perder parte ou todo o seu depósito, inclusive por falhas de contratos inteligentes, pontes, operadores de fundos, estratégias, stablecoins ou mercados."
+        },
+        "privacy-policy": "Política de Privacidade da Vetro",
+        "terms-of-use": "Termos de Uso da Vetro",
+        "title": "Você está entrando no Hemi Earn, operado pela Vetro"
+      },
+      "re-acceptance": {
+        "body": "Para fazer novos depósitos no Hemi Earn, revise e aceite os Termos de Uso atualizados da Vetro. Você pode sacar sua posição atual a qualquer momento sem aceitá-los. <link>Ver os Termos atualizados</link>",
+        "title": "A Vetro atualizou seus Termos"
+      },
+      "signing-note": "Em seguida, sua carteira pedirá que você assine uma mensagem confirmando seu acordo. Assinar é gratuito e não envia uma transação."
+    },
     "transactions": {
       "banner": {
         "cancelled": {
@@ -195,25 +220,22 @@
           "heading": "Não foi possível receber seus share tokens automaticamente",
           "subheading": "Clique em 'Receber share tokens' para receber seus tokens."
         },
+        "contact-support": "Entrar em contato com o suporte da Vetro",
         "recover-funds": {
-          "heading": "Transação falhou",
-          "subheading": "Algo deu errado. Use o botão abaixo para devolver seus fundos à sua carteira."
+          "heading": "Transação falhou"
         },
         "recover-shares": {
-          "heading": "Transação falhou",
-          "subheading": "Algo deu errado. Use o botão abaixo para devolver seus share tokens à sua carteira."
+          "heading": "Transação falhou"
         },
         "remote-failed": {
+          "deposits-paused": "Os depósitos novos estão pausados, então devolva seus fundos à sua carteira por enquanto.",
           "heading": "Seu saque travou na Ethereum",
           "heading-deposit": "Seu depósito travou na Ethereum",
           "heading-slippage": "Seu saque não foi concluído",
           "heading-slippage-deposit": "Seu depósito não foi concluído",
-          "subheading": "A etapa entre redes falhou. Tente novamente para adicionar gas e concluir o saque, ou cancele para devolver seus share tokens à sua carteira.",
-          "subheading-deposit": "A etapa entre redes falhou. Tente novamente para adicionar gas e concluir o depósito, ou cancele para devolver seus fundos à sua carteira.",
-          "subheading-paused-deposit": "A etapa entre redes falhou. Os depósitos novos estão pausados, então devolva seus fundos à sua carteira por enquanto.",
-          "subheading-slippage": "O preço ultrapassou seu limite de slippage antes que a etapa final pudesse ser executada, então seus share tokens continuam retidos. Devolva-os à sua carteira e tente o saque novamente com uma tolerância de slippage maior.",
-          "subheading-slippage-deposit": "O preço ultrapassou seu limite de slippage antes que a etapa final pudesse ser executada, então seus fundos continuam retidos. Devolva-os à sua carteira e tente o depósito novamente com uma tolerância de slippage maior."
+          "vault-delisted": "Este fundo não aceita mais depósitos, então devolva seus fundos à sua carteira."
         },
+        "transfer-incomplete": "Esta transferência ainda não foi concluída. A Hemi não pode acessar, mover ou recuperar ativos no Hemi Earn. Entre em contato com o suporte da Vetro e inclua o hash da sua transação:",
         "withdraw": {
           "heading": "Seu saque está pronto",
           "subheading": "Isso normalmente acontece automaticamente, mas você mesmo pode fazer o saque. Esta transação é executada na Ethereum."
@@ -303,7 +325,6 @@
       "withdrawal": "Saque"
     },
     "vault": {
-      "apy": "TEA",
       "composition": {
         "amount": "Valor",
         "by-protocol": "Por protocolo",
@@ -312,30 +333,39 @@
         "protocols-count": "{count, plural, one {# protocolo} other {# protocolos}}",
         "reserve-buffer": "Reserva de liquidez",
         "share": "Participação",
+        "subtitle": "Ativos mantidos nas estratégias subjacentes do fundo, conforme informado pela Vetro.",
         "title": "Composição",
         "tokens-count": "{count, plural, one {# token} other {# tokens}}",
         "view-mode": "Modo de visualização"
       },
+      "deposit-complete": "Seu depósito foi concluído. Sua posição está no fundo {vaultName}, operado por {operator}.",
+      "deposit-complete-plain": "Seu depósito foi concluído.",
       "deposit-successful": "Depósito realizado com sucesso",
       "drawer": {
         "approving": "Aprovando {symbol}",
+        "confirm-in-wallet": "Confirme na carteira",
         "cooldown-ended": "Período de espera concluído",
         "deposit": {
           "heading": "Revisar depósito",
+          "review": "Você está depositando em {vaultName} através do Hemi Earn, operado pela Vetro Service & Support Corp. Seus ativos vão da sua carteira para os contratos inteligentes da Vetro, que os depositam no fundo e podem transferi-los entre redes. Os depósitos podem levar até {duration} para serem concluídos. Os rendimentos são variáveis e não garantidos, e você pode perder parte ou todo o seu depósito.",
           "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
         },
         "deposit-token": "Depositar {symbol} no fundo",
         "funds-returned": "Fundos devolvidos",
         "funds-to-recover": "Fundos a recuperar",
         "get-share-tokens": "Receber share tokens",
+        "in-transit": "Sua transferência está em andamento entre redes. Isso costuma levar {duration}, mas pode demorar mais. Você pode fechar esta página; o status será atualizado em Minhas transações de earn.",
         "receive-token": "Receber {symbol}",
+        "review-fallback": "Revise os detalhes abaixo antes de confirmar na sua carteira.",
         "shares-returned": "Shares devolvidas",
         "shares-to-recover": "Shares a recuperar",
+        "vault-details-and-fees": "Detalhes e taxas do fundo",
         "wait-cooldown-countdown": "{days, plural, =0 {O período de espera termina em {hours}h} other {O período de espera termina em #d {hours}h}}",
         "wait-cooldown-countdown-soon": "O período de espera termina em menos de uma hora",
         "wait-cooldown-pending": "O período de espera é de {days, plural, one {# dia} other {# dias}}",
         "withdraw": {
           "heading": "Revisar saque",
+          "review": "Você está sacando de {vaultName} através do Hemi Earn, operado pela Vetro Service & Support Corp. Os saques podem levar tempo para serem concluídos e podem estar sujeitos a filas ou períodos de bloqueio definidos pelo fundo.",
           "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
         },
         "withdraw-token": "Sacar {symbol} do fundo"
@@ -351,11 +381,12 @@
         "hemi-network-fee": "Taxa de rede de Hemi",
         "network-error": "Falha no preview — tente de novo",
         "share-token-available-to-withdraw": "Token de participação disponível para sacar",
+        "vetro-deposit-fee": "Taxa de depósito da Vetro",
+        "vetro-withdrawal-fee": "Taxa de saque da Vetro",
         "withdraw-share-tokens-as": "Sacar token de participação como",
         "withdrawing": "Sacando...",
         "you-will-receive": "Você vai receber"
       },
-      "here-is-your-tx": "Aqui está sua transação:",
       "historical-metrics": {
         "1-week": "1 semana",
         "1-year": "1 ano",
@@ -384,16 +415,20 @@
         "warning-title": "Aviso de slippage alto"
       },
       "total-deposits": "Depósitos totais do fundo",
+      "withdraw-complete": "Seu saque foi concluído. Os ativos retornaram à sua carteira.",
       "withdraw-successful": "Saque realizado com sucesso"
     },
+    "vault-delisted": "Este fundo não aceita mais depósitos.",
     "vault-info": {
-      "apy": "TEA",
+      "curators": "{count, plural, one {Curador} other {Curadores}}: {names}",
       "manage": "Gerenciar",
+      "operator": "Operador do fundo: {operator}",
       "share-token": "Token de participação",
       "total-deposits": "Depósitos totais",
       "vault-contract": "Contrato do fundo",
       "your-deposits": "Seus depósitos"
-    }
+    },
+    "vetro-data-disclaimer": "Dados fornecidos pela Vetro. Os valores podem estar atrasados e não foram verificados pela Hemi."
   },
   "hemi-stake": {
     "amount": "Quantidade",
@@ -536,10 +571,6 @@
       "headline": "Uma economia inteira.<break></break><highlight>Uma</highlight> chave.",
       "live-on": "disponível em 19 de setembro",
       "subtitle": "Faça stake de Hemi para receber parte de cada pagamento e acessar os próximos lançamentos."
-    },
-    "launch-card": {
-      "is-live": "<name></name> já está no ar",
-      "live-on": "Disponível em 19 de setembro"
     },
     "lockup-period": "Período de bloqueio",
     "perks": {

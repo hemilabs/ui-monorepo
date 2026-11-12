@@ -8,15 +8,15 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@sentry/node": "10.53.1",
+    "@sentry/node": "11.9.0",
     "post-message-to-slack": "1.0.0",
     "safe-async-fn": "1.0.0",
-    "startinterval2": "1.0.1",
     "tiny-fetch-json": "2.0.1"
   },
   "devDependencies": {
-    "@sentry/core": "10.53.1",
+    "@sentry/core": "11.9.0",
     "@tsconfig/node24": "24.0.3",
+    "@types/node": "24.10.2",
     "typescript": "5.8.3"
   },
   "engines": {

@@ -6,7 +6,8 @@ import { IntlProvider } from 'use-intl'
 const meta = {
   args: {
     autoCloseMs: 0,
-    description: 'Your deposit was received.',
+    description:
+      'Your deposit is complete. Your position is held in the sVUSD vault, operated by Vetro Service & Support Corp.',
     title: 'Deposit successful',
     variant: 'success',
   },
@@ -45,8 +46,8 @@ export const WithTransaction: Story = {
   render: () => (
     <Toast
       autoCloseMs={0}
-      description="Here's your transaction:"
-      title="Deposit successful"
+      description="Your withdrawal is complete. The assets have been returned to your wallet."
+      title="Withdraw successful"
       tx={{
         href: 'https://explorer.hemi.xyz/tx/0x1234abcd5678ef90',
         label: '0x1234…ef90',

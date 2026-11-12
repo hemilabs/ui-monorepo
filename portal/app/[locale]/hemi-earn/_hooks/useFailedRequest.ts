@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { getFailedRequest } from 'hemi-earn-actions/actions'
+import { getFailedRequest } from '@vetro-protocol/hemi-earn/actions'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { type Address, isAddressEqual, zeroAddress } from 'viem'
@@ -34,9 +34,8 @@ export const useFailedRequest = function (
       const agentAddress = await queryClient.ensureQueryData(
         agentAddressQueryOptions(),
       )
-      return getFailedRequest({
-        agentAddress,
-        client: getEvmL1PublicClient(mainnet.id),
+      return getFailedRequest(getEvmL1PublicClient(mainnet.id), {
+        address: agentAddress,
         requestId: BigInt(requestId),
       })
     },

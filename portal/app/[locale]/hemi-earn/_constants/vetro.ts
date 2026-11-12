@@ -1,4 +1,4 @@
-import { hemiEarnLinks } from '@vetro-protocol/earn/hemiEarn'
+import { hemiEarnLinks } from '@vetro-protocol/hemi-earn'
 
 export const vetroPrivacyPolicyUrl = hemiEarnLinks.privacyPolicyUrl
 export const vetroSupportUrl = hemiEarnLinks.supportUrl

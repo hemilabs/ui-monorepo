@@ -1,15 +1,16 @@
 {
   "extends": ["bloq", "prettier"],
   "ignorePatterns": [
+    "packages/*/dist",
     "portal/.next",
     "portal/dist",
     "portal/next-env.d.ts",
     "portal/out",
     "portal/storybook-static",
     "subgraphs/**/*.ts",
-    "!subgraphs/hemi-earn-requests-subgraph/src/**/*.ts",
-    "!subgraphs/hemi-earn-requests-subgraph/tests/**/*.ts",
-    "!subgraphs/hemi-earn-requests-subgraph/*.config.ts"
+    "!subgraphs/hemi-supply-indexer/src/**/*.ts",
+    "!subgraphs/hemi-supply-indexer/tests/**/*.ts",
+    "!subgraphs/hemi-supply-indexer/*.config.ts"
   ],
   "overrides": [
     {
@@ -110,7 +111,7 @@
     },
     {
       "extends": ["bloq/node", "bloq/typescript", "prettier"],
-      "files": ["subgraphs/hemi-earn-requests-subgraph/{src,tests}/**/*.ts"],
+      "files": ["subgraphs/hemi-supply-indexer/{src,tests}/**/*.ts"],
       "rules": {
         "arrow-body-style": ["warn", "as-needed"],
         "node/no-unsupported-features/es-syntax": [
@@ -122,14 +123,14 @@
       }
     },
     {
-      "files": ["subgraphs/hemi-earn-requests-subgraph/tests/**/*.ts"],
+      "files": ["subgraphs/hemi-supply-indexer/tests/**/*.ts"],
       "rules": {
         "node/no-unpublished-import": ["error", { "allowModules": ["vitest"] }]
       }
     },
     {
       "extends": ["bloq/node", "bloq/typescript", "prettier"],
-      "files": ["subgraphs/hemi-earn-requests-subgraph/*.config.ts"],
+      "files": ["subgraphs/hemi-supply-indexer/*.config.ts"],
       "rules": {
         "node/no-missing-import": "off",
         "node/no-unpublished-import": "off",

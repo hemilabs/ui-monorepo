@@ -59,6 +59,8 @@ const analyticsEvents = [
   'hemi earn - return shares failed',
   'hemi earn - return shares started',
   'hemi earn - return shares success',
+  'hemi earn - terms rejected',
+  'hemi earn - terms signed',
   'hemi earn - withdraw failed',
   'hemi earn - withdraw started',
   'hemi earn - withdraw success',
@@ -203,9 +205,6 @@ const analyticsEvents = [
   // earn rewards card
   'earn rewards - open link',
   'earn rewards - close',
-  // hemi stake launch card
-  'hemi stake card - open',
-  'hemi stake card - close',
 ] as const
 
 type AnalyticsEvents = typeof analyticsEvents

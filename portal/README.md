@@ -4,11 +4,11 @@ The Portal is a Web3 app that allows users to interact with Hemi, an L2 that int
 
 ## Structure
 
-The Portal is a Vite app. `main.tsx` is the entry, `app.tsx` at the root holds the react-router route table, and the build produces a static bundle served by the Cloudflare Worker.
+The Portal is a Vite app. `main.tsx` is the entry, the react-router route table is plain data in [utils/routes.ts](./utils/routes.ts) that `app.tsx` at the root turns into the `<Route>` tree (and the sitemap is derived from), and the build produces a static bundle served by the Cloudflare Worker.
 
 Some relevant folders are:
 
-- [/app](./app/) folder, which holds the pages and their co-located `_components`/`_hooks`/`_utils`. The `[locale]` folder name is historical and does not drive routing; `app.tsx` does.
+- [/app](./app/) folder, which holds the pages and their co-located `_components`/`_hooks`/`_utils`. The `[locale]` folder name is historical and does not drive routing; `utils/routes.ts` does.
 - [/components](./components/) folder, which contains reusable components to the entire app that are not tied to a specific page.
 - [/hooks](./hooks/) folder, which contains reusable hooks to the entire app that are not tied to a specific page.
 - [/messages/](./messages/) folder, which contain a file per locale with all the translated resources.
@@ -66,7 +66,7 @@ VITE_BTC_INPUTS_SIZE=105 # Assumed size in vbytes of a single transaction input,
 VITE_BTC_OUTPUTS_SIZE=25 # Assumed size in vbytes of a single transaction output, used to estimate bitcoin fees
 # Backend API URL
 VITE_PORTAL_API_URL=<url> # To get the token prices, user points, TVL and more
-VITE_VETRO_API_URL=<url> # Vetro API URL; powers the Hemi Earn page (variable-stake APY and user rewards)
+VITE_VETRO_API_URL=<url> # Vetro API URL; powers the Hemi Earn page (variable-stake APY, user rewards, transaction history, cost basis and Terms acceptance)
 # Use it to enable wallet connect
 VITE_WALLET_CONNECT_PROJECT_ID=<wallet-connect-id>
 # Sitemap
@@ -99,6 +99,8 @@ Run tests with the following command:
 ```sh
 pnpm test
 ```
+
+This runs the unit tests (`*.test.ts`, in Node) and the integration tests (`*.test.tsx`, in Chromium). To run only one of them, use `pnpm test:unit` or `pnpm test:integration`. Before it runs, `test:integration` installs Chromium with Playwright.
 
 ## Local sandbox for Hemi Earn
 

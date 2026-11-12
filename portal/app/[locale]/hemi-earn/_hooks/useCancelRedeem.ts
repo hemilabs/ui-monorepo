@@ -2,9 +2,9 @@ import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { type CancelRedeemEvents } from '@vetro-protocol/hemi-earn'
+import { cancelRedeem } from '@vetro-protocol/hemi-earn/actions'
 import { type EventEmitter } from 'events'
-import { type CancelRedeemEvents } from 'hemi-earn-actions'
-import { cancelRedeem } from 'hemi-earn-actions/actions'
 import { hemi } from 'hemi-viem'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUmami } from 'hooks/useUmami'
@@ -42,10 +42,8 @@ export const useCancelRedeem = function ({ on, transaction }: UseCancelRedeem) {
 
       await ensureConnectedTo(hemi.id)
 
-      const { emitter, promise } = cancelRedeem({
-        account: address,
+      const { emitter, promise } = cancelRedeem(hemiWalletClient!, {
         requestId: BigInt(requestId),
-        walletClient: hemiWalletClient!,
       })
 
       // Flag failed on revert so the modal resets for a retry; left pending on success so the row reads as cancelling until terminal.

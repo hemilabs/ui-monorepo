@@ -36,7 +36,7 @@
     "@wagmi/core": "2.17.3",
     "big.js": "7.0.1",
     "btc-wallet": "workspace:*",
-    "camelcase-keys": "10.0.0",
+    "camelcase-keys": "10.0.3",
     "crypto-shortener": "1.2.0",
     "debug": "4.4.0",
     "esplora-client": "1.2.0",

@@ -6,12 +6,12 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query'
-import { EventEmitter } from 'events'
 import {
   type RequestDepositEvents,
-  getHemiEarnRouterAddress,
-} from 'hemi-earn-actions'
-import { requestDeposit } from 'hemi-earn-actions/actions'
+  hemiEarnRouterAddress,
+} from '@vetro-protocol/hemi-earn'
+import { requestDeposit } from '@vetro-protocol/hemi-earn/actions'
+import { EventEmitter } from 'events'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useUmami } from 'hooks/useUmami'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
@@ -69,7 +69,6 @@ export const useDeposit = function ({
 }: UseDeposit) {
   const amount = parseTokenUnits(input, selectedAsset.token)
   const chainId = selectedAsset.token.chainId
-  const routerAddress = getHemiEarnRouterAddress()
 
   const { address } = useAccount()
   const config = useConfig()
@@ -93,7 +92,7 @@ export const useDeposit = function ({
   const allowanceQueryKey = buildAllowanceQueryKey({
     chainId,
     owner: address,
-    spender: routerAddress,
+    spender: hemiEarnRouterAddress,
     tokenAddress: selectedAsset.address,
   })
 
@@ -125,17 +124,14 @@ export const useDeposit = function ({
       // Approval hash for this attempt; seeded from priorApprovalTxHash for retries, overwritten if a fresh approval is signed.
       let observedApprovalTxHash: Hash | undefined = priorApprovalTxHash
 
-      const { emitter, promise } = requestDeposit({
-        account: address,
+      const { emitter, promise } = requestDeposit(walletClient, {
         amount,
         approvalAmount,
         asset: selectedAsset.address,
         callbackFee,
         operator: address,
         receiver: address,
-        routerAddress,
         sharesOutMin,
-        walletClient,
       })
 
       emitter.on('user-signed-approval', function (approvalTxHash) {

@@ -1,3 +1,4 @@
+import { hemiEarnRouterAddress } from '@vetro-protocol/hemi-earn'
 import { SparkleIcon } from 'components/icons/sparkleIcon'
 import { Operation } from 'components/reviewOperation/operation'
 import {
@@ -6,7 +7,6 @@ import {
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { TokenLogo } from 'components/tokenLogo'
-import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { type ReactNode } from 'react'
@@ -26,6 +26,7 @@ import {
   remoteFailedStepStatus,
   resolveStepExplorerChainId,
 } from '../../../_utils/settleUi'
+import { completedSubheading } from '../../../_utils/successCopy'
 import {
   canRetryRow,
   isLocalEarnTransactionRow,
@@ -43,6 +44,7 @@ import {
 } from '../../../types'
 import { OperatorNote } from '../../operatorDisclosure'
 import { RiskWarningBanner } from '../../riskWarningBanner'
+import { TransferDelayedBanner } from '../../transferIncomplete'
 
 import { RemoteFailedBanner } from './remoteFailed'
 import { SettleBanner } from './settleShared'
@@ -224,11 +226,12 @@ export const HistoricalDepositReview = function ({
     address: transaction.asset,
     amount: BigInt(transaction.amountIn),
     chainId: token.chainId,
-    spender: getHemiEarnRouterAddress(),
+    spender: hemiEarnRouterAddress,
   })
 
   const { show: remoteFailedReady } = useRemoteFailedState(transaction)
   const tVault = useTranslations('hemi-earn.vault.drawer')
+  const tSuccess = useTranslations('hemi-earn.vault')
   const vaultMetadata = useVaultMetadata(vault.stakingVault)
 
   const { waitingForShares } = resolveStepStates(transaction)
@@ -267,15 +270,16 @@ export const HistoricalDepositReview = function ({
     token,
     tx: transaction,
   })
+  const isCrossing = isCrossingNetworks({
+    isRemoteFail: isRemoteFailed(transaction),
+    isSettlingLocally: isLocalSettlementInFlight(transaction),
+    isStepInProgress: terminalStep.status === ProgressStatus.PROGRESS,
+  })
   steps.push({
     ...terminalStep,
     postAction: inTransitPostAction({
       duration: vaultMetadata?.typicalDuration,
-      isCrossing: isCrossingNetworks({
-        isRemoteFail: isRemoteFailed(transaction),
-        isSettlingLocally: isLocalSettlementInFlight(transaction),
-        isStepInProgress: terminalStep.status === ProgressStatus.PROGRESS,
-      }),
+      isCrossing,
       t: tVault,
     }),
   })
@@ -287,6 +291,11 @@ export const HistoricalDepositReview = function ({
           {canRetryRow(transaction) && <RiskWarningBanner />}
           <SettleBanner transaction={transaction} />
           <RemoteFailedBanner transaction={transaction} />
+          <TransferDelayedBanner
+            isCrossing={isCrossing}
+            stakingVault={vault.stakingVault}
+            transaction={transaction}
+          />
         </>
       }
       amount={transaction.amountIn}
@@ -301,7 +310,14 @@ export const HistoricalDepositReview = function ({
       heading={t('deposit-heading')}
       onClose={onClose}
       steps={steps}
-      subheading={t('deposit-subheading')}
+      subheading={completedSubheading({
+        fallback: t('deposit-subheading'),
+        isCompleted: transaction.status === 'FINALIZED',
+        kind: 'DEPOSIT',
+        operator: vaultMetadata?.operator,
+        t: tSuccess,
+        vaultName: vault.shareToken.symbol,
+      })}
       token={token}
     />
   )

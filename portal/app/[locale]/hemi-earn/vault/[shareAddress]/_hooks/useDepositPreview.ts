@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { encodeRequestDeposit } from 'hemi-earn-actions/actions'
+import { encodeRequestDeposit } from '@vetro-protocol/hemi-earn/actions'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'

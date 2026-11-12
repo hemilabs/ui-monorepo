@@ -1,6 +1,5 @@
 allowBuilds:
   bufferutil: false # optional native ws speedup; ws falls back to pure JS
-  core-js: false # only a sponsor-banner postinstall, no functional payload
   esbuild: true # platform binary used by vitest (via vite) for test transforms
   keccak: false # has a pure-JS fallback; the native addon is never loaded in the browser bundle
   sharp: true # libvips bindings required by Next.js production image optimization

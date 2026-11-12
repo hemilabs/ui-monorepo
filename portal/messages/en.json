@@ -158,6 +158,8 @@
     "view-all-tutorials": "View all tutorials"
   },
   "hemi-earn": {
+    "apy-provided-by-vetro": "APY · provided by Vetro",
+    "apy-source": "APY is a variable estimate provided by Vetro based on the vault's recent performance. It is not a promise or forecast of future returns and can change at any time. Returns are shown {fees, select, included {after} other {before}} fees.",
     "deposits-paused": "New deposits are currently paused.",
     "footer": {
       "attribution": "Hemi Earn is operated by Vetro Service & Support Corp. Vaults available through Hemi Earn may be operated by Vetro or by third parties. Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. and their affiliates do not operate, manage, custody or guarantee Hemi Earn or any vault and are not parties to your agreement with Vetro. Hemi Earn is not available to U.S. persons or other restricted persons.",
@@ -183,6 +185,29 @@
     "risk-warning": "Yields are variable and not guaranteed. You may lose some or all of your deposit.",
     "subheading": "Hemi Earn, operated by Vetro, gives you access to yield vaults right from the Hemi portal. Choose a vault and deposit in a few steps. Yields are variable and not guaranteed.",
     "switch-to-start-earning": "You can switch networks to start earning with Hemi.",
+    "terms": {
+      "agree-and-continue": "Agree and continue",
+      "cannot-sign": "Your wallet doesn't support the signature needed to accept Vetro's Terms. To deposit into Hemi Earn, please connect a wallet that supports message signing.",
+      "checkbox": "I have read and agree to Vetro's Terms of Use, including the Hemi Earn Terms, and its Privacy Policy. I understand that Hemi Earn is operated by Vetro Service & Support Corp., that my agreement is solely with Vetro, and that Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. and their affiliates are not parties to it and have no obligations to me in respect of Hemi Earn. I confirm that I am not a U.S. person or otherwise a Restricted Person under Vetro's Terms.",
+      "handoff": {
+        "before-you-continue": "Before you continue, please note:",
+        "body": "Hemi Earn is a third-party service operated by Vetro Service & Support Corp., a Panama company. When you use Hemi Earn, your agreement is with Vetro, not with Hemi. Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. and their affiliates provide this interface only. They do not operate, manage, custody or guarantee Hemi Earn or any vault, and they are not parties to your agreement with Vetro.",
+        "bullets": {
+          "assets": "Your assets are sent from your wallet to smart contracts operated by Vetro, which deposit them into the vault you choose and may bridge them between networks. Some vaults are operated by third parties, not Vetro. Each vault's operator is shown on its page.",
+          "not-available": "Hemi Earn is not available to U.S. persons or other restricted persons.",
+          "withdrawals": "Withdrawals may be delayed or subject to queues or lock-up periods.",
+          "yields": "Yields are variable and not guaranteed. You could lose some or all of your deposit, including through failures of smart contracts, bridges, vault operators, strategies, stablecoins or markets."
+        },
+        "privacy-policy": "Vetro Privacy Policy",
+        "terms-of-use": "Vetro Terms of Use",
+        "title": "You're entering Hemi Earn, operated by Vetro"
+      },
+      "re-acceptance": {
+        "body": "To make new deposits into Hemi Earn, please review and accept Vetro's updated Terms of Use. You can withdraw your existing position at any time without accepting. <link>View updated Terms</link>",
+        "title": "Vetro has updated its Terms"
+      },
+      "signing-note": "Next, your wallet will ask you to sign a message confirming your agreement. Signing is free and does not send a transaction."
+    },
     "transactions": {
       "banner": {
         "cancelled": {
@@ -197,25 +222,22 @@
           "heading": "We couldn't claim your share tokens automatically",
           "subheading": "Click on 'Claim share tokens' to get your tokens."
         },
+        "contact-support": "Contact Vetro support",
         "recover-funds": {
-          "heading": "Transaction failed",
-          "subheading": "Something went wrong. Use the button below to return your funds to your wallet."
+          "heading": "Transaction failed"
         },
         "recover-shares": {
-          "heading": "Transaction failed",
-          "subheading": "Something went wrong. Use the button below to return your share tokens to your wallet."
+          "heading": "Transaction failed"
         },
         "remote-failed": {
+          "deposits-paused": "New deposits are paused, so return your funds to your wallet for now.",
           "heading": "Your withdrawal is stuck on Ethereum",
           "heading-deposit": "Your deposit is stuck on Ethereum",
           "heading-slippage": "Your withdrawal didn't complete",
           "heading-slippage-deposit": "Your deposit didn't complete",
-          "subheading": "The cross-chain step failed. Retry to add more gas and complete the withdrawal, or cancel to return your share tokens to your wallet.",
-          "subheading-deposit": "The cross-chain step failed. Retry to add more gas and complete the deposit, or cancel to return your funds to your wallet.",
-          "subheading-paused-deposit": "The cross-chain step failed. New deposits are paused, so return your funds to your wallet for now.",
-          "subheading-slippage": "The price moved past your slippage limit before the final step could run, so your share tokens are still held. Return them to your wallet, then try the withdrawal again with a higher slippage tolerance.",
-          "subheading-slippage-deposit": "The price moved past your slippage limit before the final step could run, so your funds are still held. Return them to your wallet, then try the deposit again with a higher slippage tolerance."
+          "vault-delisted": "This vault no longer accepts deposits, so return your funds to your wallet."
         },
+        "transfer-incomplete": "This transfer hasn't completed yet. Hemi can't access, move or recover assets in Hemi Earn. Please contact Vetro support and include your transaction hash:",
         "withdraw": {
           "heading": "Your withdrawal is ready",
           "subheading": "This usually happens automatically, but you can do it yourself. This transaction runs on Ethereum."
@@ -313,10 +335,13 @@
         "protocols-count": "{count, plural, one {# protocol} other {# protocols}}",
         "reserve-buffer": "Reserve Buffer",
         "share": "Share",
+        "subtitle": "Assets held across the vault's underlying strategies, as reported by Vetro.",
         "title": "Composition",
         "tokens-count": "{count, plural, one {# token} other {# tokens}}",
         "view-mode": "View mode"
       },
+      "deposit-complete": "Your deposit is complete. Your position is held in the {vaultName} vault, operated by {operator}.",
+      "deposit-complete-plain": "Your deposit is complete.",
       "deposit-successful": "Deposit successful",
       "drawer": {
         "approving": "Approving {symbol}",
@@ -358,11 +383,12 @@
         "hemi-network-fee": "Hemi network fee",
         "network-error": "Preview failed — try again",
         "share-token-available-to-withdraw": "Share token available to withdraw",
+        "vetro-deposit-fee": "Vetro deposit fee",
+        "vetro-withdrawal-fee": "Vetro withdrawal fee",
         "withdraw-share-tokens-as": "Withdraw share token as",
         "withdrawing": "Withdrawing...",
         "you-will-receive": "You'll receive"
       },
-      "here-is-your-tx": "Here's your transaction:",
       "historical-metrics": {
         "1-week": "1 week",
         "1-year": "1 year",
@@ -390,15 +416,20 @@
         "warning-title": "High slippage warning"
       },
       "total-deposits": "Vault total deposits",
+      "withdraw-complete": "Your withdrawal is complete. The assets have been returned to your wallet.",
       "withdraw-successful": "Withdraw successful"
     },
+    "vault-delisted": "This vault no longer accepts deposits.",
     "vault-info": {
+      "curators": "{count, plural, one {Curator} other {Curators}}: {names}",
       "manage": "Manage",
+      "operator": "Vault operator: {operator}",
       "share-token": "Share token",
       "total-deposits": "Total deposits",
       "vault-contract": "Vault contract",
       "your-deposits": "Your deposits"
-    }
+    },
+    "vetro-data-disclaimer": "Data provided by Vetro. Figures may be delayed and have not been verified by Hemi."
   },
   "hemi-stake": {
     "amount": "Amount",
@@ -531,10 +562,6 @@
       "headline": "A whole economy.<break></break><highlight>One</highlight> key.",
       "live-on": "live 19 September",
       "subtitle": "Stake Hemi for a share of every payout and access to what launches next."
-    },
-    "launch-card": {
-      "is-live": "<name></name> is live",
-      "live-on": "Live 19 September"
     },
     "lockup-period": "Lockup period",
     "perks": {

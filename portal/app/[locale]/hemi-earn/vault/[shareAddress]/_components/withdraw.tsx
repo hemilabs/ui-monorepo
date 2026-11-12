@@ -1,8 +1,8 @@
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
+import { hemiEarnRouterAddress } from '@vetro-protocol/hemi-earn'
 import { TokenInput } from 'components/tokenInput'
 import { TokenInputBalance } from 'components/tokenInput/balance'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
-import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { getExtraApprovalAmount } from 'utils/approval'
@@ -20,6 +20,7 @@ import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
 import { useMaxWithdrawableAsset } from '../_hooks/useMaxWithdrawableAsset'
 import { useSlippage } from '../_hooks/useSlippage'
 import { useUserShareValue } from '../_hooks/useUserShareValue'
+import { useVetroFee } from '../_hooks/useVetroFee'
 import { useIsWithdrawing } from '../_hooks/useWithdraw'
 import { useWithdrawPreview } from '../_hooks/useWithdrawPreview'
 import {
@@ -85,17 +86,18 @@ export const Withdraw = function ({
       shareAddress: vault.shareAddress,
     })
 
-  const shares = deriveWithdrawShares({
-    assetShares: assetsToShares?.shares,
-    input,
-    isTokensMode,
-    shareToken: vault.shareToken,
-  })
-
   const { data: shareValue, isSuccess: shareValueLoaded } = useUserShareValue({
     shareAddress: vault.shareAddress,
   })
   const shareBalance = shareValue?.shares ?? BigInt(0)
+
+  const shares = deriveWithdrawShares({
+    assetShares: assetsToShares?.shares,
+    input,
+    isTokensMode,
+    shareBalance: shareValue?.shares,
+    shareToken: vault.shareToken,
+  })
 
   const { data: maxWithdrawable, isFetched: maxAssetLoaded } =
     useMaxWithdrawableAsset({
@@ -136,7 +138,6 @@ export const Withdraw = function ({
     shareValueLoaded,
   })
 
-  const routerAddress = getHemiEarnRouterAddress()
   const extraApprovalAmount = getExtraApprovalAmount(shares, approveExtraAmount)
 
   const {
@@ -164,8 +165,14 @@ export const Withdraw = function ({
     shares,
     shareToken: vault.shareToken,
     slippageBps,
-    spender: routerAddress,
+    spender: hemiEarnRouterAddress,
     validInput,
+  })
+
+  const { data: vetroFee, isError: isVetroFeeError } = useVetroFee({
+    asset: selectedAsset.address,
+    operation: 'withdraw',
+    shareAddress: vault.shareAddress,
   })
 
   const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
@@ -267,6 +274,11 @@ export const Withdraw = function ({
               token: selectedAsset.token,
             }}
             totalFees={totalFees}
+            vetroFee={{
+              isError: isVetroFeeError,
+              label: t('hemi-earn.vault.form.vetro-withdrawal-fee'),
+              percentage: vetroFee,
+            }}
           />
         )
       }

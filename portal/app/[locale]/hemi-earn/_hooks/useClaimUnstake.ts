@@ -2,13 +2,13 @@ import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { type EventEmitter } from 'events'
-import { type ClaimUnstakeEvents } from 'hemi-earn-actions'
+import { type ClaimUnstakeEvents } from '@vetro-protocol/hemi-earn'
 import {
   claimUnstake,
   getUnstakeRequest,
   quoteRedeemFulfillment,
-} from 'hemi-earn-actions/actions'
+} from '@vetro-protocol/hemi-earn/actions'
+import { type EventEmitter } from 'events'
 import { useUmami } from 'hooks/useUmami'
 import { mainnet } from 'networks/mainnet'
 import { maxBigInt } from 'utils/bigint'
@@ -53,9 +53,8 @@ export const useClaimUnstake = function ({ on, transaction }: UseClaimUnstake) {
       const client = getEvmL1PublicClient(mainnet.id)
       const id = BigInt(requestId)
 
-      const unstakeRequest = await getUnstakeRequest({
-        agentAddress,
-        client,
+      const unstakeRequest = await getUnstakeRequest(client, {
+        address: agentAddress,
         requestId: id,
       })
       if (isAddressEqual(unstakeRequest.share, zeroAddress)) {
@@ -64,21 +63,18 @@ export const useClaimUnstake = function ({ on, transaction }: UseClaimUnstake) {
         })
       }
 
-      const quote = await quoteRedeemFulfillment({
-        agentAddress,
-        asset: unstakeRequest.asset,
-        client,
+      const quote = await quoteRedeemFulfillment(client, {
+        address: agentAddress,
+        remoteAsset: unstakeRequest.asset,
       })
       const nativeFee = maxBigInt(BigInt(0), quote - unstakeRequest.nativeFee)
 
       await ensureConnectedTo(mainnet.id)
 
-      const { emitter, promise } = claimUnstake({
-        account: address,
-        agentAddress,
+      const { emitter, promise } = claimUnstake(l1WalletClient!, {
+        address: agentAddress,
         nativeFee,
         requestId: id,
-        walletClient: l1WalletClient!,
       })
 
       const markFailed = function () {
@@ -100,9 +96,8 @@ export const useClaimUnstake = function ({ on, transaction }: UseClaimUnstake) {
       emitter.on('tx-transaction-reverted', async function (receipt) {
         updateNativeBalanceAfterFees(receipt)
 
-        const current = await getUnstakeRequest({
-          agentAddress,
-          client,
+        const current = await getUnstakeRequest(client, {
+          address: agentAddress,
           requestId: id,
         }).catch(() => undefined)
         if (!current || !isAddressEqual(current.share, zeroAddress)) {

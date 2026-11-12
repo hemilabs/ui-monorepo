@@ -1,3 +1,5 @@
+import { hemiEarnRouterAddress } from '@vetro-protocol/hemi-earn'
+import { encodeRequestRedeem } from '@vetro-protocol/hemi-earn/actions'
 import { Operation } from 'components/reviewOperation/operation'
 import {
   ProgressStatus,
@@ -5,8 +7,6 @@ import {
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { TokenLogo } from 'components/tokenLogo'
-import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
-import { encodeRequestRedeem } from 'hemi-earn-actions/actions'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
@@ -32,6 +32,7 @@ import {
   SettleBanner,
   SettleCta,
 } from '../../../../_components/transactionsSection/transactionDrawer/settleShared'
+import { TransferDelayedBanner } from '../../../../_components/transferIncomplete'
 import { applySlippage } from '../../../../_constants/slippage'
 import { useCooldownDuration } from '../../../../_hooks/useCooldownDuration'
 import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
@@ -42,7 +43,7 @@ import { useVaultMetadata } from '../../../../_hooks/useVaultMetadata'
 import { hashesMatch } from '../../../../_utils/hashes'
 import {
   inTransitPostAction,
-  isCrossingNetworks,
+  isRedeemCrossing,
 } from '../../../../_utils/inTransit'
 import {
   claimRecoverSettlement,
@@ -54,10 +55,10 @@ import {
   remoteFailedStepStatus,
   resolveSettleStepStatus,
 } from '../../../../_utils/settleUi'
+import { completedSubheading } from '../../../../_utils/successCopy'
 import {
   isAwaitingFinalize,
   isFinalizeInFlight,
-  isLocalSettlementInFlight,
   isRecoverPath,
   isRemoteFailed,
   isRemoteFailedCancel,
@@ -72,6 +73,8 @@ import { useEarnCooldownRemaining } from '../../_hooks/useEarnCooldownRemaining'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
 import { useSharesToAssets } from '../../_hooks/useSharesToAssets'
 import { useSlippageBps } from '../../_hooks/useSlippage'
+import { useUserShareValue } from '../../_hooks/useUserShareValue'
+import { useVetroFee } from '../../_hooks/useVetroFee'
 import {
   WithdrawStatus,
   type WithdrawStatusType,
@@ -86,6 +89,7 @@ import {
   deriveWithdrawShares,
   getTypedAssetAmount,
 } from '../../_utils/withdrawForm'
+import { VetroFeeRow } from '../vetroFeeRow'
 
 import { ConfirmWithdraw } from './confirmWithdraw'
 import { deriveCooldownPostAction } from './cooldownPostAction'
@@ -268,9 +272,15 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   } = useVaultForm()
   const slippageBps = useSlippageBps('withdraw')
   const t = useTranslations('hemi-earn.vault.drawer')
+  const tSuccess = useTranslations('hemi-earn.vault')
   const chainId = selectedAsset.token.chainId
   const chain = useChain(chainId)
   const { address } = useAccount()
+  const { data: vetroFee, isError: isVetroFeeError } = useVetroFee({
+    asset: selectedAsset.address,
+    operation: 'withdraw',
+    shareAddress: vault.shareAddress,
+  })
 
   // Shared subscription with the layout watcher; lets the receive step sync to the subgraph status.
   const { data: subgraphRows = [] } = useEarnTransactionsQuery()
@@ -317,13 +327,16 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     assetAddress: selectedAsset.address,
     shareAddress: vault.shareAddress,
   })
+  const { data: shareValue } = useUserShareValue({
+    shareAddress: vault.shareAddress,
+  })
   const shares = deriveWithdrawShares({
     assetShares: assetsToShares?.shares,
     input,
     isTokensMode,
+    shareBalance: shareValue?.shares,
     shareToken: vault.shareToken,
   })
-  const routerAddress = getHemiEarnRouterAddress()
 
   const { data: { assetOut } = { assetOut: BigInt(0) } } = useSharesToAssets({
     assetAddress: selectedAsset.address,
@@ -339,7 +352,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       address: vault.shareAddress,
       amount: shares,
       chainId,
-      spender: routerAddress,
+      spender: hemiEarnRouterAddress,
     })
 
   const mayNeedApproval = resolveMayNeedApproval({
@@ -352,7 +365,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     useEstimateApproveErc20Fees({
       amount: getApprovalAmount(shares, approveExtraAmount),
       enabled: mayNeedApproval,
-      spender: routerAddress,
+      spender: hemiEarnRouterAddress,
       token: vault.shareToken,
     })
 
@@ -376,10 +389,10 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       stateOverride: createFeeEstimateStateOverride({
         needsApproval: mayNeedApproval,
         owner: address,
-        spender: routerAddress,
+        spender: hemiEarnRouterAddress,
         token: vault.shareToken,
       }),
-      to: routerAddress as Address,
+      to: hemiEarnRouterAddress,
       value: quote?.nativeFee,
     })
 
@@ -535,8 +548,24 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       />
     ) : null
 
+  const getBelowAmount = () =>
+    isAboutToSign ? (
+      <VetroFeeRow
+        isError={isVetroFeeError}
+        label={tSuccess('form.vetro-withdrawal-fee')}
+        percentage={vetroFee}
+      />
+    ) : null
+
   const getSubheading = () =>
-    isAboutToSign ? undefined : t('withdraw.subheading')
+    isAboutToSign
+      ? undefined
+      : completedSubheading({
+          fallback: t('withdraw.subheading'),
+          isCompleted: settledRow?.status === 'FINALIZED',
+          kind: 'REDEEM',
+          t: tSuccess,
+        })
 
   const getCallToAction = function () {
     if (isAboutToSign) {
@@ -577,6 +606,20 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     return null
   }
 
+  const receiveStep = buildReceiveStep({
+    chainId,
+    cooldownRemainingSec,
+    isCooldownEligible,
+    receiveToken: selectedAsset.token,
+    row: settledRow,
+    t,
+    withdrawStatus,
+  })
+  const isCrossing = isRedeemCrossing({
+    receiveStatus: receiveStep.status,
+    transaction: settledRow,
+  })
+
   const getSteps = function () {
     const steps: StepPropsWithoutPosition[] = []
     if (mayNeedApproval || withdrawOperation?.approvalTxHash) {
@@ -591,15 +634,6 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       steps.push(addRecoverStep())
       return steps
     }
-    const receiveStep = buildReceiveStep({
-      chainId,
-      cooldownRemainingSec,
-      isCooldownEligible,
-      receiveToken: selectedAsset.token,
-      row: settledRow,
-      t,
-      withdrawStatus,
-    })
     // Remote failure: FAILED only when the CTA is surfaced; in-progress during the grace or
     // while a retry/cancel is being signed/mined.
     steps.push(
@@ -615,14 +649,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
             ...receiveStep,
             postAction: inTransitPostAction({
               duration: vaultMetadata?.typicalDuration,
-              isCrossing: isCrossingNetworks({
-                isAwaitingCooldown:
-                  !!settledRow && isAwaitingFinalize(settledRow),
-                isRemoteFail: false,
-                isSettlingLocally: isLocalSettlementInFlight(settledRow),
-                isStepInProgress:
-                  receiveStep.status === ProgressStatus.PROGRESS,
-              }),
+              isCrossing,
               t,
             }),
           },
@@ -638,9 +665,15 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
           <SettleBanner transaction={settledRow} />
           <ClaimFromVaultBanner transaction={settledRow} />
           <RemoteFailedBanner transaction={settledRow} />
+          <TransferDelayedBanner
+            isCrossing={isCrossing}
+            stakingVault={vault.stakingVault}
+            transaction={settledRow}
+          />
         </>
       }
       amount={withdrawOperation?.amountIn ?? shares.toString()}
+      belowAmount={getBelowAmount()}
       belowSubheading={<OperatorNote />}
       callToAction={getCallToAction()}
       heading={t('withdraw.heading')}

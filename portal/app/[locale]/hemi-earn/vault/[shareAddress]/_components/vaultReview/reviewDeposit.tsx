@@ -1,3 +1,5 @@
+import { hemiEarnRouterAddress } from '@vetro-protocol/hemi-earn'
+import { encodeRequestDeposit } from '@vetro-protocol/hemi-earn/actions'
 import { SparkleIcon } from 'components/icons/sparkleIcon'
 import { Operation } from 'components/reviewOperation/operation'
 import {
@@ -6,8 +8,6 @@ import {
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { TokenLogo } from 'components/tokenLogo'
-import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
-import { encodeRequestDeposit } from 'hemi-earn-actions/actions'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
@@ -30,6 +30,7 @@ import {
   SettleBanner,
   SettleCta,
 } from '../../../../_components/transactionsSection/transactionDrawer/settleShared'
+import { TransferDelayedBanner } from '../../../../_components/transferIncomplete'
 import { applySlippage } from '../../../../_constants/slippage'
 import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
 import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperations'
@@ -49,6 +50,7 @@ import {
   remoteFailedStepStatus,
   resolveStepExplorerChainId,
 } from '../../../../_utils/settleUi'
+import { completedSubheading } from '../../../../_utils/successCopy'
 import {
   isLocalSettlementInFlight,
   isRecoverPath,
@@ -62,13 +64,16 @@ import { useVaultForm } from '../../_context/vaultFormContext'
 import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
 import { useSlippageBps } from '../../_hooks/useSlippage'
+import { useVetroFee } from '../../_hooks/useVetroFee'
 import { DepositStatus, type DepositStatusType } from '../../_types/operations'
 import { createFeeEstimateStateOverride } from '../../_utils/feeEstimateStateOverride'
 import {
+  canRetryDeposit,
   resolveMayNeedApproval,
   showsReview,
   unsignedStepStatus,
 } from '../../_utils/reviewState'
+import { VetroFeeRow } from '../vetroFeeRow'
 
 import { ConfirmDeposit } from './confirmDeposit'
 import { ReviewIntro } from './reviewIntro'
@@ -134,15 +139,45 @@ function getSharesStepMeta(
   }
 }
 
+const resolveShareTokensStatus = ({
+  depositStatus,
+  meta,
+  remoteFailedReady,
+  row,
+}: {
+  depositStatus: DepositStatusType
+  meta: ReturnType<typeof getSharesStepMeta>
+  remoteFailedReady: boolean
+  row: EarnTransaction | undefined
+}) =>
+  isRemoteFailed(row)
+    ? remoteFailedStepStatus(remoteFailedReady, row?.settlement)
+    : resolveGetSharesStatus({
+        awaitingUserAction: meta.awaitingUserAction,
+        hasSettlementTx: !!meta.settlementTxHash,
+        isComplete: meta.isComplete,
+        isDepositConfirmed:
+          depositStatus === DepositStatus.DEPOSIT_TX_CONFIRMED,
+        isFailed: meta.isFailed,
+        isRecover: meta.isRecover,
+        settlementFailed: meta.settlementFailed,
+      })
+
 export const ReviewDeposit = function ({ onClose }: Props) {
   const { approveExtraAmount, depositOperation, input, selectedAsset, vault } =
     useVaultForm()
   const slippageBps = useSlippageBps('deposit')
   const { localOperations } = useLocalEarnOperations()
   const t = useTranslations('hemi-earn.vault.drawer')
+  const tSuccess = useTranslations('hemi-earn.vault')
   const chainId = selectedAsset.token.chainId
   const chain = useChain(chainId)
   const { address } = useAccount()
+  const { data: vetroFee, isError: isVetroFeeError } = useVetroFee({
+    asset: selectedAsset.address,
+    operation: 'deposit',
+    shareAddress: vault.shareAddress,
+  })
 
   // Shared subscription with the layout watcher; lets the get-share-tokens step sync to the subgraph status.
   const { data: subgraphRows = [] } = useEarnTransactionsQuery()
@@ -165,14 +200,13 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   const vaultMetadata = useVaultMetadata(vault.stakingVault)
 
   const amount = parseTokenUnits(input, selectedAsset.token)
-  const routerAddress = getHemiEarnRouterAddress()
 
   const { isAllowanceError, isAllowanceLoading, needsApproval } =
     useNeedsApproval({
       address: selectedAsset.address,
       amount,
       chainId,
-      spender: routerAddress,
+      spender: hemiEarnRouterAddress,
     })
 
   const mayNeedApproval = resolveMayNeedApproval({
@@ -185,7 +219,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     useEstimateApproveErc20Fees({
       amount: getApprovalAmount(amount, approveExtraAmount),
       enabled: mayNeedApproval,
-      spender: routerAddress,
+      spender: hemiEarnRouterAddress,
       token: selectedAsset.token,
     })
 
@@ -221,10 +255,10 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       stateOverride: createFeeEstimateStateOverride({
         needsApproval: mayNeedApproval,
         owner: address,
-        spender: routerAddress,
+        spender: hemiEarnRouterAddress,
         token: selectedAsset.token,
       }),
-      to: routerAddress,
+      to: hemiEarnRouterAddress,
       value: quote?.nativeFee,
     })
 
@@ -327,32 +361,25 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     }
   }
 
+  const shareTokensMeta = getSharesStepMeta(subgraphRow, settlement)
+  const shareTokensStatus = resolveShareTokensStatus({
+    depositStatus,
+    meta: shareTokensMeta,
+    remoteFailedReady,
+    row: settledRow,
+  })
+  const isCrossing = isCrossingNetworks({
+    isRemoteFail: isRemoteFailed(settledRow),
+    isSettlingLocally: isLocalSettlementInFlight(settledRow),
+    isStepInProgress: shareTokensStatus === ProgressStatus.PROGRESS,
+  })
+
   const addGetShareTokensStep = function () {
     const terminalHash = getTerminalDeliveryTxHash(subgraphRow)
-    const {
-      awaitingUserAction,
-      isComplete,
-      isFailed,
-      isRecover,
-      settlementFailed,
-      settlementTxHash,
-    } = getSharesStepMeta(subgraphRow, settlement)
+    const { isComplete, isRecover, settlementTxHash } = shareTokensMeta
     const deliveryHash = settlementTxHash ?? terminalHash
     // A signed remote-failed cancel returns the funds, so it labels the step like the recover path.
     const isReturningFunds = isRecover || isRemoteFailedCancel(settledRow)
-
-    const status = isRemoteFailed(settledRow)
-      ? remoteFailedStepStatus(remoteFailedReady, settledRow?.settlement)
-      : resolveGetSharesStatus({
-          awaitingUserAction,
-          hasSettlementTx: !!settlementTxHash,
-          isComplete,
-          isDepositConfirmed:
-            depositStatus === DepositStatus.DEPOSIT_TX_CONFIRMED,
-          isFailed,
-          isRecover,
-          settlementFailed,
-        })
 
     return {
       // Recover path returns the asset (labeled with the asset token); "Funds returned" only at RECOVERED.
@@ -374,32 +401,30 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       }),
       postAction: inTransitPostAction({
         duration: vaultMetadata?.typicalDuration,
-        isCrossing: isCrossingNetworks({
-          isRemoteFail: isRemoteFailed(settledRow),
-          isSettlingLocally: isLocalSettlementInFlight(settledRow),
-          isStepInProgress: status === ProgressStatus.PROGRESS,
-        }),
+        isCrossing,
         t,
       }),
-      status,
+      status: shareTokensStatus,
       txHash: deliveryHash,
     }
   }
 
-  const canRetryDeposit = [
-    DepositStatus.APPROVAL_TX_FAILED,
-    DepositStatus.DEPOSIT_TX_FAILED,
-  ].includes(depositStatus)
+  const isRetryable = canRetryDeposit(depositStatus)
 
   const getAboveCallToAction = () => (
     <>
-      {canRetryDeposit && <RiskWarningBanner />}
+      {isRetryable && <RiskWarningBanner />}
       <SettleBanner transaction={settledRow} />
       <RemoteFailedBanner transaction={settledRow} />
+      <TransferDelayedBanner
+        isCrossing={isCrossing}
+        stakingVault={vault.stakingVault}
+        transaction={settledRow}
+      />
     </>
   )
 
-  const isAboutToSign = showsReview({ canRetry: canRetryDeposit, hasSigned })
+  const isAboutToSign = showsReview({ canRetry: isRetryable, hasSigned })
 
   const getAboveAmount = () =>
     isAboutToSign ? (
@@ -411,8 +436,26 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       />
     ) : null
 
+  const getBelowAmount = () =>
+    isAboutToSign ? (
+      <VetroFeeRow
+        isError={isVetroFeeError}
+        label={tSuccess('form.vetro-deposit-fee')}
+        percentage={vetroFee}
+      />
+    ) : null
+
   const getSubheading = () =>
-    isAboutToSign ? undefined : t('deposit.subheading')
+    isAboutToSign
+      ? undefined
+      : completedSubheading({
+          fallback: t('deposit.subheading'),
+          isCompleted: settledRow?.status === 'FINALIZED',
+          kind: 'DEPOSIT',
+          operator: vaultMetadata?.operator,
+          t: tSuccess,
+          vaultName: vault.shareToken.symbol,
+        })
 
   const getCallToAction = function () {
     if (isAboutToSign) {
@@ -465,6 +508,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       aboveAmount={getAboveAmount()}
       aboveCallToAction={getAboveCallToAction()}
       amount={depositOperation?.amountIn ?? amount.toString()}
+      belowAmount={getBelowAmount()}
       belowSubheading={<OperatorNote />}
       callToAction={getCallToAction()}
       heading={t('deposit.heading')}

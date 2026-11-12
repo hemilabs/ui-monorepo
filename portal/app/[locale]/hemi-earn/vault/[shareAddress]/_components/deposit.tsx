@@ -1,9 +1,9 @@
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
+import { hemiEarnRouterAddress } from '@vetro-protocol/hemi-earn'
 import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { TokenInput } from 'components/tokenInput'
 import { TokenInputBalance } from 'components/tokenInput/balance'
 import { WarningBox } from 'components/warningBox'
-import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { useTokenBalance } from 'hooks/useBalance'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
@@ -23,6 +23,7 @@ import { useIsDepositing } from '../_hooks/useDeposit'
 import { useDepositPreview } from '../_hooks/useDepositPreview'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
 import { useSlippage } from '../_hooks/useSlippage'
+import { useVetroFee } from '../_hooks/useVetroFee'
 import {
   computeIsLoading,
   resolveErrorKey,
@@ -55,10 +56,9 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   } = useVaultForm()
 
   const { address, status } = useEvmAccount()
-  const depositGate = useCanDeposit()
+  const depositGate = useCanDeposit(vault)
 
   const amount = parseTokenUnits(input, selectedAsset.token)
-  const routerAddress = getHemiEarnRouterAddress()
   const slippage = useSlippage('deposit')
   const slippageBps = percentToBps(slippage)
   const extraApprovalAmount = getExtraApprovalAmount(amount, approveExtraAmount)
@@ -107,9 +107,15 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     asset: selectedAsset.address,
     shareAddress: vault.shareAddress,
     slippageBps,
-    spender: routerAddress,
+    spender: hemiEarnRouterAddress,
     token: selectedAsset.token,
     validInput,
+  })
+
+  const { data: vetroFee, isError: isVetroFeeError } = useVetroFee({
+    asset: selectedAsset.address,
+    operation: 'deposit',
+    shareAddress: vault.shareAddress,
   })
 
   const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
@@ -198,6 +204,11 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
               token: vault.shareToken,
             }}
             totalFees={totalFees}
+            vetroFee={{
+              isError: isVetroFeeError,
+              label: t('hemi-earn.vault.form.vetro-deposit-fee'),
+              percentage: vetroFee,
+            }}
           />
         )
       }

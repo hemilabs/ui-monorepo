@@ -12,18 +12,16 @@ export const useVaultMetadata = function (stakingVault: Address) {
   return useMemo(
     function () {
       const metadata = findVaultMetadata(stakingVault)
-      return metadata
-        ? {
-            maxDuration: formatDuration(
-              metadata.typicalTransferTime * maxTransferTimeFactor,
-              locale,
-            ),
-            typicalDuration: formatDuration(
-              metadata.typicalTransferTime,
-              locale,
-            ),
-          }
-        : undefined
+      if (!metadata) return undefined
+      const maxTransferSeconds =
+        metadata.typicalTransferTime * maxTransferTimeFactor
+      return {
+        apyIncludesFees: metadata.apyIncludesFees,
+        maxDuration: formatDuration(maxTransferSeconds, locale),
+        maxTransferSeconds,
+        operator: metadata.operator,
+        typicalDuration: formatDuration(metadata.typicalTransferTime, locale),
+      }
     },
     [locale, stakingVault],
   )

@@ -1,13 +1,19 @@
-import { hemiEarnVaults } from '@vetro-protocol/earn/hemiEarn'
-import { type Address } from 'viem'
-import { describe, expect, it } from 'vitest'
+import { hemiEarnVaults } from '@vetro-protocol/hemi-earn'
+import { type Address, getAddress } from 'viem'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
 import {
+  canAccessVault,
   findVaultByAsset,
   findVaultByShare,
   findVaultMetadata,
+  getListedVaults,
+  getVaultDetails,
+  isVaultListed,
 } from '../../../../../app/[locale]/hemi-earn/_utils/vaults'
 import { type EarnVault } from '../../../../../app/[locale]/hemi-earn/types'
+
+import { baseTx } from './fixtures'
 
 describe('vaults', function () {
   describe('findVaultByAsset / findVaultByShare', function () {
@@ -78,6 +84,251 @@ describe('vaults', function () {
       expect(
         findVaultMetadata('0x0000000000000000000000000000000000009999'),
       ).toBeUndefined()
+    })
+  })
+
+  describe('isVaultListed', function () {
+    it('is true for a vault Vetro still offers', function () {
+      const [{ address }] = hemiEarnVaults
+      expect(isVaultListed(address)).toBe(true)
+    })
+
+    it('is false for an address that is not a staking vault', function () {
+      expect(isVaultListed('0x0000000000000000000000000000000000009999')).toBe(
+        false,
+      )
+    })
+  })
+
+  describe('getListedVaults', function () {
+    const unknown = {
+      shareAddress: '0x000000000000000000000000000000000000dddd',
+      stakingVault: '0x0000000000000000000000000000000000009999',
+    } as EarnVault
+    const listed = hemiEarnVaults.map(
+      ({ address }, index) =>
+        ({
+          shareAddress: `0x${String(index + 1).padStart(40, '0')}`,
+          stakingVault: address,
+        }) as EarnVault,
+    )
+
+    it('keeps only listed vaults, in hemiEarnVaults order', function () {
+      const result = getListedVaults([unknown, ...[...listed].reverse()])
+      expect(result.map(vault => vault.stakingVault)).toEqual(
+        hemiEarnVaults.map(vault => vault.address),
+      )
+    })
+
+    it('returns an empty list when no vault is listed', function () {
+      expect(getListedVaults([unknown])).toEqual([])
+    })
+  })
+
+  describe('when Vetro delists a vault', function () {
+    const stillOffered = '0x0000000000000000000000000000000000001001' as Address
+    const noLongerOffered =
+      '0x0000000000000000000000000000000000001002' as Address
+
+    const vaultsModule = '../../../../../app/[locale]/hemi-earn/_utils/vaults'
+    let subject: typeof import('../../../../../app/[locale]/hemi-earn/_utils/vaults')
+
+    beforeAll(async function () {
+      vi.resetModules()
+      vi.doMock('@vetro-protocol/hemi-earn', () => ({
+        hemiEarnVaults: [
+          { address: stillOffered, delisted: false },
+          { address: noLongerOffered, delisted: true },
+        ],
+      }))
+      subject = await import(vaultsModule)
+    })
+
+    afterAll(function () {
+      vi.doUnmock('@vetro-protocol/hemi-earn')
+      vi.resetModules()
+    })
+
+    it('stops counting it as listed', function () {
+      expect(subject.isVaultListed(noLongerOffered)).toBe(false)
+      expect(subject.isVaultListed(stillOffered)).toBe(true)
+    })
+
+    it('keeps its metadata, which the withdrawal copy needs', function () {
+      expect(subject.findVaultMetadata(noLongerOffered)?.address).toBe(
+        noLongerOffered,
+      )
+    })
+
+    it('drops it from the offered list', function () {
+      const asVault = (stakingVault: Address) =>
+        ({ shareAddress: stakingVault, stakingVault }) as EarnVault
+      expect(
+        subject
+          .getListedVaults([asVault(noLongerOffered), asVault(stillOffered)])
+          .map(vault => vault.stakingVault),
+      ).toEqual([stillOffered])
+    })
+  })
+
+  describe('getVaultDetails', function () {
+    const operator = 'Operator Corp.'
+
+    it('joins curators with a comma and counts them', function () {
+      expect(getVaultDetails({ curators: ['A', 'B', 'C'], operator })).toEqual({
+        curators: { count: 3, names: 'A, B, C' },
+        operator,
+      })
+    })
+
+    it('counts a single curator', function () {
+      expect(getVaultDetails({ curators: ['A'], operator })).toEqual({
+        curators: { count: 1, names: 'A' },
+        operator,
+      })
+    })
+
+    it('omits curators when they are not set', function () {
+      expect(getVaultDetails({ operator })).toEqual({
+        curators: undefined,
+        operator,
+      })
+    })
+
+    it('omits curators when the list is empty', function () {
+      expect(getVaultDetails({ curators: [], operator })).toEqual({
+        curators: undefined,
+        operator,
+      })
+    })
+  })
+
+  describe('canAccessVault', function () {
+    const shareAddress = '0x000000000000000000000000000000000000aaaa'
+    const asset = '0x0000000000000000000000000000000000001111'
+    const otherAsset = '0x0000000000000000000000000000000000002222'
+    const nowSec = 1_000
+
+    const makeVault = (isListed: boolean) =>
+      ({
+        assets: [{ address: asset }],
+        isListed,
+        shareAddress,
+      }) as EarnVault
+
+    const noActivity = {
+      inTransitByShare: {},
+      nowSec,
+      positions: [],
+      transactions: [],
+    }
+
+    it('allows a listed vault without any activity', function () {
+      expect(canAccessVault({ ...noActivity, vault: makeVault(true) })).toBe(
+        true,
+      )
+    })
+
+    it('denies a delisted vault without any activity', function () {
+      expect(canAccessVault({ ...noActivity, vault: makeVault(false) })).toBe(
+        false,
+      )
+    })
+
+    it('allows a delisted vault when the wallet holds its shares', function () {
+      expect(
+        canAccessVault({
+          ...noActivity,
+          positions: [{ shareAddress, yourDeposit: BigInt(1) }],
+          vault: makeVault(false),
+        }),
+      ).toBe(true)
+    })
+
+    it('denies a delisted vault when the position is empty', function () {
+      expect(
+        canAccessVault({
+          ...noActivity,
+          positions: [{ shareAddress, yourDeposit: BigInt(0) }],
+          vault: makeVault(false),
+        }),
+      ).toBe(false)
+    })
+
+    it('allows a delisted vault with shares in transit', function () {
+      expect(
+        canAccessVault({
+          ...noActivity,
+          inTransitByShare: { [getAddress(shareAddress)]: BigInt(1) },
+          vault: makeVault(false),
+        }),
+      ).toBe(true)
+    })
+
+    it('allows a delisted vault with a withdrawal to claim', function () {
+      expect(
+        canAccessVault({
+          ...noActivity,
+          transactions: [
+            { ...baseTx, asset, kind: 'REDEEM', status: 'FULFILLED' },
+          ],
+          vault: makeVault(false),
+        }),
+      ).toBe(true)
+    })
+
+    it('allows a delisted vault whose withdrawal cooldown has elapsed', function () {
+      expect(
+        canAccessVault({
+          ...noActivity,
+          transactions: [
+            {
+              ...baseTx,
+              asset,
+              claimableAt: String(nowSec),
+              kind: 'REDEEM',
+              status: 'PENDING',
+            },
+          ],
+          vault: makeVault(false),
+        }),
+      ).toBe(true)
+    })
+
+    it('denies a delisted vault whose withdrawal cooldown is still running', function () {
+      expect(
+        canAccessVault({
+          ...noActivity,
+          transactions: [
+            {
+              ...baseTx,
+              asset,
+              claimableAt: String(nowSec + 1),
+              kind: 'REDEEM',
+              status: 'PENDING',
+            },
+          ],
+          vault: makeVault(false),
+        }),
+      ).toBe(false)
+    })
+
+    it('ignores claimable withdrawals and deposits of other vaults', function () {
+      expect(
+        canAccessVault({
+          ...noActivity,
+          transactions: [
+            {
+              ...baseTx,
+              asset: otherAsset,
+              kind: 'REDEEM',
+              status: 'FULFILLED',
+            },
+            { ...baseTx, asset, kind: 'DEPOSIT', status: 'FULFILLED' },
+          ],
+          vault: makeVault(false),
+        }),
+      ).toBe(false)
     })
   })
 })

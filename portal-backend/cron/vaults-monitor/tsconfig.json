@@ -6,5 +6,5 @@
     "strict": true
   },
   "extends": "@tsconfig/node24/tsconfig.json",
-  "include": ["declarations.d.ts", "server.ts", "src/**/*.ts"]
+  "include": ["server.ts", "src/**/*.ts"]
 }

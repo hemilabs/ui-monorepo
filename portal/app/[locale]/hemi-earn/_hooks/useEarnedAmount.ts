@@ -3,7 +3,6 @@ import Big from 'big.js'
 import { getTokenPrice } from 'utils/token'
 import { getAddress } from 'viem'
 
-import { isVetroApiConfigured } from '../_constants/vetro'
 import { sharesToPeggedOptions } from '../_fetchers/fetchSharesToPegged'
 import { positionEarnedUsd } from '../_utils/earnedAmount'
 import { inTransitOnlyPositions } from '../_utils/earnRows'
@@ -13,24 +12,6 @@ import { useEarnPositions } from './useEarnPositions'
 import { useEarnTokenPrices } from './useEarnTokenPrices'
 import { useEarnVaults } from './useEarnVaults'
 import { useInTransitShares } from './useInTransitShares'
-
-const resolveIsError = ({
-  hasPeggedError,
-  hasRows,
-  isCostBasisError,
-  isPositionsError,
-  isPricesError,
-}: {
-  hasPeggedError: boolean
-  hasRows: boolean
-  isCostBasisError: boolean
-  isPositionsError: boolean
-  isPricesError: boolean
-}) =>
-  isPositionsError ||
-  !isVetroApiConfigured ||
-  (hasRows && (isPricesError || isCostBasisError)) ||
-  hasPeggedError
 
 // Total earned = Σ (convertToAssets(shares) − cost basis) per position, priced. The cost
 // basis (unrealized) comes from Vetro's /hemi-earn/cost-basis; the current value reuses
@@ -93,13 +74,10 @@ export const useEarnedAmount = function () {
     isInTransitPending ||
     (hasRows && (isPricesPending || isCostBasisLoading)) ||
     peggedAmountQueries.some(q => q.isPending && q.isFetching)
-  const isError = resolveIsError({
-    hasPeggedError: peggedAmountQueries.some(q => q.isError),
-    hasRows,
-    isCostBasisError,
-    isPositionsError,
-    isPricesError,
-  })
+  const isError =
+    isPositionsError ||
+    (hasRows && (isPricesError || isCostBasisError)) ||
+    peggedAmountQueries.some(q => q.isError)
 
   return { data: { totalUsd }, isError, isPending }
 }

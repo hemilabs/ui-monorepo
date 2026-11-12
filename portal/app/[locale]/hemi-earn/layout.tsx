@@ -1,6 +1,7 @@
 import { featureFlags } from 'app/featureFlags'
 import { PageLayout } from 'components/pageLayout'
 import { TestnetDisabled } from 'components/testnetDisabled'
+import { useDocumentTitle } from 'hooks/useDocumentTitle'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { Outlet, useMatch } from 'react-router'
 import { useTranslations } from 'use-intl'
@@ -16,7 +17,9 @@ import { LocalEarnOperationsProvider } from './_context/localEarnOperationsConte
 export const HemiEarnLayout = function () {
   const [networkType] = useNetworkType()
   const vault = useMatch('/:locale/hemi-earn/vault/:shareAddress')
-  const t = useTranslations('hemi-earn')
+  const t = useTranslations()
+
+  useDocumentTitle(`${t('navbar.hemi-earn')} | ${t('metadata.title')}`)
 
   if (!featureFlags.enableHemiEarnPage) {
     return <NotFound />
@@ -32,7 +35,7 @@ export const HemiEarnLayout = function () {
     return (
       <PageLayout variant="wide">
         <TopSection />
-        <TestnetDisabled subtitle={t('switch-to-start-earning')} />
+        <TestnetDisabled subtitle={t('hemi-earn.switch-to-start-earning')} />
       </PageLayout>
     )
   }

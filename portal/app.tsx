@@ -22,6 +22,7 @@ import { UntranslatedError500 } from 'components/error500'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { preferredLocale } from 'i18n/routing'
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v8'
+import { type ReactElement } from 'react'
 import {
   BrowserRouter,
   Navigate,
@@ -30,6 +31,7 @@ import {
   useLocation,
 } from 'react-router'
 import { landingPage } from 'utils/landingPage'
+import { type RouteDefinition, type RouteId, routes } from 'utils/routes'
 
 // Without this the route tree never reaches Sentry, and every transaction is
 // named after the raw pathname instead of the pattern it matched.
@@ -91,6 +93,46 @@ const ToEcosystem = function () {
   )
 }
 
+// A Record, so a route added to utils/routes.ts without an element fails typecheck.
+const elements: Record<RouteId, ReactElement> = {
+  demosRedirect: <ToEcosystem />,
+  ecosystemLayout: <EcosystemLayout />,
+  ecosystemPage: <EcosystemPage />,
+  getStartedLayout: <GetStartedLayout />,
+  getStartedPage: <GetStartedPage />,
+  hemiEarnLayout: <HemiEarnLayout />,
+  hemiEarnPage: <HemiEarnPage />,
+  hemiStakeAnalyticsPage: <HemiStakeAnalyticsPage />,
+  hemiStakeEstimatorPage: <HemiStakeEstimatorPage />,
+  hemiStakeLayout: <HemiStakeLayout />,
+  hemiStakePage: <HemiStakePage />,
+  hemiStakeRedirect: <ToHemiStake />,
+  landingRedirect: <ToLandingPage />,
+  localeLayout: <LocaleLayout />,
+  notFound: <NotFound />,
+  rootRedirect: <ToPreferredLocale path={landingPage} />,
+  stakeDashboardPage: <StakeDashboardPage />,
+  stakeLayout: <StakeLayout />,
+  stakePage: <StakePage />,
+  stakeRedirect: <ToPreferredLocale path="/stake/dashboard" />,
+  stakingDashboardRedirect: <ToPreferredLocale path="/hemi-stake" />,
+  transactionHistoryPage: <TransactionHistoryPage />,
+  tunnelLayout: <TunnelLayout />,
+  tunnelPage: <TunnelPage />,
+  vaultPage: <VaultPage />,
+}
+
+const renderRoutes = (definitions: readonly RouteDefinition[]) =>
+  definitions.map(({ children, id, index, path }) =>
+    index ? (
+      <Route element={elements[id as RouteId]} index key={id} />
+    ) : (
+      <Route element={elements[id as RouteId]} key={id} path={path}>
+        {children && renderRoutes(children)}
+      </Route>
+    ),
+  )
+
 export const App = () => (
   // Outermost on purpose: anything thrown above this, including reading the
   // browser language, would take the whole page down with nothing to show.
@@ -107,49 +149,7 @@ export const App = () => (
   >
     <BrowserRouter>
       <NuqsAdapter>
-        <SentryRoutes>
-          <Route element={<ToPreferredLocale path={landingPage} />} path="/" />
-          <Route
-            element={<ToPreferredLocale path="/stake/dashboard" />}
-            path="/stake"
-          />
-          <Route
-            element={<ToPreferredLocale path="/hemi-stake" />}
-            path="/staking-dashboard"
-          />
-          <Route element={<LocaleLayout />} path="/:locale">
-            <Route element={<ToLandingPage />} index />
-            <Route element={<TunnelLayout />} path="tunnel">
-              <Route element={<TunnelPage />} index />
-              <Route
-                element={<TransactionHistoryPage />}
-                path="transaction-history"
-              />
-            </Route>
-            <Route element={<EcosystemLayout />} path="ecosystem">
-              <Route element={<EcosystemPage />} index />
-            </Route>
-            <Route element={<ToEcosystem />} path="demos" />
-            <Route element={<GetStartedLayout />} path="get-started">
-              <Route element={<GetStartedPage />} index />
-            </Route>
-            <Route element={<HemiEarnLayout />} path="hemi-earn">
-              <Route element={<HemiEarnPage />} index />
-              <Route element={<VaultPage />} path="vault/:shareAddress" />
-            </Route>
-            <Route element={<StakeLayout />} path="stake">
-              <Route element={<StakePage />} index />
-              <Route element={<StakeDashboardPage />} path="dashboard" />
-            </Route>
-            <Route element={<HemiStakeLayout />} path="hemi-stake">
-              <Route element={<HemiStakePage />} index />
-              <Route element={<HemiStakeAnalyticsPage />} path="analytics" />
-              <Route element={<HemiStakeEstimatorPage />} path="estimator" />
-            </Route>
-            <Route element={<ToHemiStake />} path="staking-dashboard" />
-            <Route element={<NotFound />} path="*" />
-          </Route>
-        </SentryRoutes>
+        <SentryRoutes>{renderRoutes(routes)}</SentryRoutes>
       </NuqsAdapter>
     </BrowserRouter>
   </ErrorBoundary>

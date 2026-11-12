@@ -1,14 +1,36 @@
-const contentRoutes = [
-  '/ecosystem',
-  '/get-started',
-  '/hemi-stake',
-  '/hemi-stake/analytics',
-  '/hemi-stake/estimator',
-  '/stake',
-  '/stake/dashboard',
-  '/tunnel',
-  '/tunnel/transaction-history',
-] as const
+import { type RouteDefinition, routes } from './routes.ts'
 
-export const sitemapRoutes = (includeHemiEarn: boolean) =>
-  [...contentRoutes, ...(includeHemiEarn ? ['/hemi-earn'] : [])].sort()
+type FeatureFlag = NonNullable<RouteDefinition['featureFlag']>
+
+const join = (parent: string, path: string) =>
+  [parent, path].filter(Boolean).join('/')
+
+const collect = (
+  definitions: readonly RouteDefinition[],
+  parent: string,
+  flags: Record<FeatureFlag, boolean>,
+): string[] =>
+  definitions
+    .filter(
+      ({ featureFlag, redirect }) =>
+        !redirect && (!featureFlag || flags[featureFlag]),
+    )
+    .flatMap(({ children, index, path = '' }) =>
+      children
+        ? collect(children, join(parent, path), flags)
+        : [index ? parent : join(parent, path)],
+    )
+
+export const sitemapRoutes = function (
+  includeHemiEarn: boolean,
+  definitions: readonly RouteDefinition[] = routes,
+) {
+  const locale = definitions.find(({ path }) => path === '/:locale')
+  return [
+    ...new Set(
+      collect(locale?.children ?? [], '', { hemiEarn: includeHemiEarn })
+        .filter(path => path && !/[:*]/.test(path))
+        .map(path => `/${path}`),
+    ),
+  ].sort()
+}

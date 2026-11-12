@@ -6,12 +6,12 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query'
-import { EventEmitter } from 'events'
 import {
   type RequestRedeemEvents,
-  getHemiEarnRouterAddress,
-} from 'hemi-earn-actions'
-import { requestRedeem } from 'hemi-earn-actions/actions'
+  hemiEarnRouterAddress,
+} from '@vetro-protocol/hemi-earn'
+import { requestRedeem } from '@vetro-protocol/hemi-earn/actions'
+import { EventEmitter } from 'events'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
@@ -85,7 +85,6 @@ export const useWithdraw = function ({
   const queryClient = useQueryClient()
   const [networkType] = useNetworkType()
   const { track } = useUmami()
-  const routerAddress = getHemiEarnRouterAddress()
   const { markSettledByInitiateTxHash, upsertLocalOperation } =
     useLocalEarnOperations()
 
@@ -109,7 +108,7 @@ export const useWithdraw = function ({
   const allowanceQueryKey = buildAllowanceQueryKey({
     chainId,
     owner: address,
-    spender: routerAddress,
+    spender: hemiEarnRouterAddress,
     tokenAddress: vault.shareAddress,
   })
 
@@ -153,8 +152,7 @@ export const useWithdraw = function ({
       // Approval hash for this attempt; seeded from priorApprovalTxHash for retries, overwritten if a fresh approval is signed.
       let observedApprovalTxHash: Hash | undefined = priorApprovalTxHash
 
-      const { emitter, promise } = requestRedeem({
-        account: address,
+      const { emitter, promise } = requestRedeem(walletClient, {
         approvalAmount,
         asset: selectedAsset.address,
         assetsOutMin,
@@ -162,10 +160,7 @@ export const useWithdraw = function ({
         isInstant,
         operator: address,
         receiver: address,
-        routerAddress,
         shares,
-        shareToken: vault.shareAddress,
-        walletClient,
       })
 
       emitter.on('user-signed-approval', function (approvalTxHash) {

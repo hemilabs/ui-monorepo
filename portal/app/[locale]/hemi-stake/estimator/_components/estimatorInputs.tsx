@@ -14,6 +14,8 @@ import { LockupPicker } from '../../_components/lockup/lockupPicker'
 import { useEstimator, type EstimatorScope } from '../_context/estimatorContext'
 import { useNeedsWallet } from '../_hooks/useNeedsWallet'
 
+import { GoToStake } from './goToStake'
+
 export const EstimatorInputs = function () {
   const t = useTranslations('hemi-stake.estimator')
   const tCommon = useTranslations('common')
@@ -65,6 +67,9 @@ export const EstimatorInputs = function () {
                 updateInputDays={updateInputDays}
                 updateLockupDays={updateLockupDays}
               />
+            </div>
+            <div className="[&>*]:w-full">
+              <GoToStake />
             </div>
           </div>
           {needsWallet && (

@@ -257,8 +257,8 @@ importers:
         specifier: workspace:*
         version: link:../packages/btc-wallet
       camelcase-keys:
-        specifier: 10.0.0
-        version: 10.0.0
+        specifier: 10.0.3
+        version: 10.0.3
       crypto-shortener:
         specifier: 1.2.0
         version: 1.2.0
@@ -4556,17 +4556,17 @@ packages:
     resolution: {integrity: sha512-QOSvevhslijgYwRx6Rv7zKdMF8lbRmx+uQGx2+vDc+KI/eBnsy9kit5aj23AgGu3pa4t9AgwbnXWqS+iOY+2aA==}
     engines: {node: '>= 6'}
 
-  camelcase-keys@10.0.0:
-    resolution: {integrity: sha512-dzb1nrmD6llsF6eMZWSpQjVfe1FX4WOkR7HPdX1sMxM5u+1MlnbXodNJ/E6NRArYgMtcwMhiqqemGp/QJV/vrw==}
+  camelcase-keys@10.0.3:
+    resolution: {integrity: sha512-+WSfgt7e6uZSWfEO9xdFmWEf/bwvA6lJY2mmj4U+N1MHY6h01jQUlZ2dyxnaL4dumg/cxXyRci1fKUtGQfX5+g==}
     engines: {node: '>=20'}
 
   camelcase@5.3.1:
     resolution: {integrity: sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==}
     engines: {node: '>=6'}
 
-  camelcase@8.0.0:
-    resolution: {integrity: sha512-8WB3Jcas3swSvjIeA2yvCJ+Miyz5l1ZmB6HFb9R1317dt9LCQoswg/BGrmAmkWVEszSrrg4RwmO46qIm2OEnSA==}
-    engines: {node: '>=16'}
+  camelcase@9.0.0:
+    resolution: {integrity: sha512-TO9xmyXTZ9HUHI8M1OnvExxYB0eYVS/1e5s7IDMTAoIcwUd+aNcFODs6Xk83mobk0velyHFQgA1yIrvYc6wclw==}
+    engines: {node: '>=20'}
 
   caniuse-lite@1.0.30001815:
     resolution: {integrity: sha512-uDybUEyfgbyJJ93J1vikTylBX31AkdVYeVPeffMQpf8XN7hSfr0oZOn4VFOIMNvtU5+rHvC5Udg2TgtJKHm23Q==}
@@ -6909,9 +6909,9 @@ packages:
   main-event@1.0.4:
     resolution: {integrity: sha512-sKazUjIy2Jalv5lkQ446iOcrx8Q7TkaCuk6xfnzg5uUqMusMLDMPmRDmSNE2kjSVpSTJo4j1bQZusS+Ib7Bvrg==}
 
-  map-obj@5.0.2:
-    resolution: {integrity: sha512-K6K2NgKnTXimT3779/4KxSvobxOtMmx1LBZ3NwRxT/MDIR3Br/fQ4Q+WCX5QxjyUR8zg5+RV9Tbf2c5pAWTD2A==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+  map-obj@6.0.0:
+    resolution: {integrity: sha512-PwDvwt/tK70+luLw5k9ySLtzLAzwf7tZTY9GBj63Y010nHRPjwHcQTpTd5JwQqITC2ty7prtxBo71iwyYY0TAg==}
+    engines: {node: '>=20'}
 
   markdown-it@14.1.0:
     resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
@@ -8751,10 +8751,6 @@ packages:
   type-fest@0.21.3:
     resolution: {integrity: sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w==}
     engines: {node: '>=10'}
-
-  type-fest@4.41.0:
-    resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
-    engines: {node: '>=16'}
 
   type-fest@5.7.0:
     resolution: {integrity: sha512-1URUxUqfHFM1c+zfSPsa3gnkO7Aq21qyH75SIduNYz4SzY964rn1X2vCMQaHSHhktiw+0kPa2iyb6PUpXqB6Vg==}
@@ -14347,16 +14343,16 @@ snapshots:
 
   camelcase-css@2.0.1: {}
 
-  camelcase-keys@10.0.0:
+  camelcase-keys@10.0.3:
     dependencies:
-      camelcase: 8.0.0
-      map-obj: 5.0.2
+      camelcase: 9.0.0
+      map-obj: 6.0.0
       quick-lru: 7.3.0
-      type-fest: 4.41.0
+      type-fest: 5.7.0
 
   camelcase@5.3.1: {}
 
-  camelcase@8.0.0: {}
+  camelcase@9.0.0: {}
 
   caniuse-lite@1.0.30001815: {}
 
@@ -17165,7 +17161,7 @@ snapshots:
 
   main-event@1.0.4: {}
 
-  map-obj@5.0.2: {}
+  map-obj@6.0.0: {}
 
   markdown-it@14.1.0:
     dependencies:
@@ -19279,8 +19275,6 @@ snapshots:
   type-fest@0.20.2: {}
 
   type-fest@0.21.3: {}
-
-  type-fest@4.41.0: {}
 
   type-fest@5.7.0:
     dependencies:

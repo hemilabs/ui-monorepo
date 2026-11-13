@@ -19,11 +19,14 @@ export const useCanDepositForTransaction = function (
   transaction: EarnTransaction | undefined,
 ) {
   const { data: vaults = [], isPending: areVaultsPending } = useEarnVaults()
-  const depositGate = useCanDeposit(
-    transaction ? findVaultByAsset(vaults, transaction.asset) : undefined,
-  )
+  const isDeposit = transaction?.kind === 'DEPOSIT'
+  const vault = transaction
+    ? findVaultByAsset(vaults, transaction.asset)
+    : undefined
+  const depositGate = useCanDeposit(vault)
   return {
     ...depositGate,
-    isPending: transaction?.kind === 'DEPOSIT' && areVaultsPending,
+    canDeposit: depositGate.canDeposit && !(isDeposit && vault === undefined),
+    isPending: isDeposit && areVaultsPending,
   }
 }

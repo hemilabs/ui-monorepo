@@ -118,7 +118,9 @@ const TopUpForecastCard = function ({
     return null
   }
 
-  const chart = <TopUpChart forecast={forecast} isPending={isPending} />
+  const chart = (
+    <TopUpChart forecast={forecast} isPending={isPending && !isError} />
+  )
   const footer = (
     <div className="body-text-caption flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-500">
       <LegendItem

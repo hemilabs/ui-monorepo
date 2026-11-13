@@ -4,7 +4,7 @@ import { type Ref } from 'react'
 import { useTranslations } from 'use-intl'
 
 import { GearIcon } from '../../../../_icons/gearIcon'
-import { type SlippageLevel } from '../../../../_utils/slippage'
+import { type SlippageLevel, slippageStyles } from '../../../../_utils/slippage'
 
 type Props = {
   disabled?: boolean
@@ -15,26 +15,12 @@ type Props = {
   slippage: number | undefined
 }
 
-const labelStyles: Record<SlippageLevel, string> = {
-  high: 'text-amber-500',
-  low: 'text-amber-500',
-  normal: 'text-neutral-500',
-  veryHigh: 'text-rose-500',
-}
-
 const labelKeys = {
   high: 'high-slippage-value',
   low: 'low-slippage-value',
   normal: 'slippage-value',
   veryHigh: 'very-high-slippage-value',
 } as const satisfies Record<SlippageLevel, string>
-
-const badgeStyles: Record<SlippageLevel, string> = {
-  high: 'bg-amber-50 text-amber-500',
-  low: 'bg-amber-50 text-amber-500',
-  normal: '',
-  veryHigh: 'bg-rose-50 text-rose-500',
-}
 
 export const SettingsTrigger = function ({
   disabled,
@@ -50,7 +36,7 @@ export const SettingsTrigger = function ({
     <div className="flex shrink-0 items-center gap-x-2">
       {slippage !== undefined && (
         <span
-          className={`whitespace-nowrap text-xs font-medium ${labelStyles[level]}`}
+          className={`whitespace-nowrap text-xs font-medium ${slippageStyles[level].label}`}
         >
           {t(labelKeys[level], { value: slippage })}
         </span>
@@ -69,7 +55,7 @@ export const SettingsTrigger = function ({
         <GearIcon className="text-neutral-500" />
         {level !== 'normal' && (
           <span
-            className={`absolute bottom-0.5 right-0.5 flex size-2 items-center justify-center rounded-full ${badgeStyles[level]}`}
+            className={`absolute bottom-0.5 right-0.5 flex size-2 items-center justify-center rounded-full ${slippageStyles[level].badge}`}
           >
             <WarningIcon className="size-1.5" />
           </span>

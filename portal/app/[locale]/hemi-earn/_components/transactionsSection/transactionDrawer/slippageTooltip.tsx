@@ -5,7 +5,7 @@ import { useTranslations } from 'use-intl'
 import {
   getSlippageLevel,
   resolveRetrySlippage,
-  type SlippageLevel,
+  slippageStyles,
 } from '../../../_utils/slippage'
 import { canRetryRow } from '../../../_utils/transactionPredicates'
 import { type EarnTransaction } from '../../../types'
@@ -13,13 +13,6 @@ import { type EarnTransaction } from '../../../types'
 type Props = {
   fallback: number
   transaction: EarnTransaction
-}
-
-const iconStyles: Record<SlippageLevel, string> = {
-  high: '[&>g>path]:fill-amber-500',
-  low: '[&>g>path]:fill-amber-500',
-  normal: '[&>g>path]:fill-neutral-500',
-  veryHigh: '[&>g>path]:fill-rose-500',
 }
 
 export const RetrySlippageTooltip = function ({
@@ -46,7 +39,7 @@ export const RetrySlippageTooltip = function ({
         className="flex rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400"
         type="button"
       >
-        <InfoIcon aria-hidden className={iconStyles[level]} />
+        <InfoIcon aria-hidden className={slippageStyles[level].icon} />
       </button>
     </Tooltip>
   )

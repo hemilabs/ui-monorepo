@@ -31,7 +31,7 @@
     "@tanstack/react-virtual": "3.13.24",
     "@vetro-protocol/earn": "1.2.1",
     "@vetro-protocol/gateway": "1.2.0",
-    "@vetro-protocol/hemi-earn": "1.1.0",
+    "@vetro-protocol/hemi-earn": "1.2.0",
     "@vetro-protocol/treasury": "1.0.0",
     "@wagmi/core": "2.17.3",
     "big.js": "7.0.1",

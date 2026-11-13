@@ -326,8 +326,8 @@ importers:
         specifier: 8.3.0
         version: 8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       smart-round:
-        specifier: 3.0.0
-        version: 3.0.0
+        specifier: 3.0.1
+        version: 3.0.1
       umami-analytics:
         specifier: 2.0.0
         version: 2.0.0(react@19.2.8)
@@ -8331,8 +8331,8 @@ packages:
     resolution: {integrity: sha512-stxByr12oeeOyY2BlviTNQlYV5xOj47GirPr4yA1hE9JCtxfQN0+tVbkxwCtYDQWhEKWFHsEK48ORg5jrouCAg==}
     engines: {node: '>=20'}
 
-  smart-round@3.0.0:
-    resolution: {integrity: sha512-CHvLqd9YbWYPncTHYJBT1gUoys7WLXbJVcbpVv6gAono1iHaD4NH/db89KMVYn4TthtrDzOAsxG8xcaR8AxQjQ==}
+  smart-round@3.0.1:
+    resolution: {integrity: sha512-yF7DT7JvD2OqZEyDFPomHC8ZCRhD27KYfAQE6XwRW2KMe2sGYFGE3c9bJO6Qv72lY/5O/MlJZj5hl2opbuAKJQ==}
 
   smol-toml@1.6.1:
     resolution: {integrity: sha512-dWUG8F5sIIARXih1DTaQAX4SsiTXhInKf1buxdY9DIg4ZYPZK5nGM1VRIYmEbDbsHt7USo99xSLFu5Q1IqTmsg==}
@@ -18825,7 +18825,7 @@ snapshots:
       ansi-styles: 6.2.3
       is-fullwidth-code-point: 5.1.0
 
-  smart-round@3.0.0:
+  smart-round@3.0.1:
     dependencies:
       big.js: 7.0.1
 

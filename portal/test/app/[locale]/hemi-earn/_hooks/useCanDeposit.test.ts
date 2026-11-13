@@ -1,8 +1,11 @@
 import { useCanDepositForTransaction } from 'app/[locale]/hemi-earn/_hooks/useCanDeposit'
 import { useEarnVaults } from 'app/[locale]/hemi-earn/_hooks/useEarnVaults'
+import { useIsSanctioned } from 'app/[locale]/hemi-earn/_hooks/useIsSanctioned'
+import { isRestrictedLocation } from 'app/[locale]/hemi-earn/_utils/restrictedLocation'
 import { featureFlags } from 'app/featureFlags'
 import { type Address } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { useAccount } from 'wagmi'
 
 import { baseTx } from '../_utils/fixtures'
 
@@ -12,6 +15,13 @@ vi.mock('app/featureFlags', () => ({
 vi.mock('app/[locale]/hemi-earn/_hooks/useEarnVaults', () => ({
   useEarnVaults: vi.fn(),
 }))
+vi.mock('app/[locale]/hemi-earn/_hooks/useIsSanctioned', () => ({
+  useIsSanctioned: vi.fn(),
+}))
+vi.mock('app/[locale]/hemi-earn/_utils/restrictedLocation', () => ({
+  isRestrictedLocation: vi.fn(),
+}))
+vi.mock('wagmi', () => ({ useAccount: vi.fn() }))
 
 const asset = '0x1111111111111111111111111111111111111111' as Address
 const otherAsset = '0x2222222222222222222222222222222222222222' as Address
@@ -30,6 +40,9 @@ const mockVaults = (data: unknown, isPending = false) =>
 describe('useCanDepositForTransaction', function () {
   beforeEach(function () {
     featureFlags.disableHemiEarnDeposits = false
+    vi.mocked(isRestrictedLocation).mockReturnValue(false)
+    vi.mocked(useAccount).mockReturnValue({ address: undefined })
+    vi.mocked(useIsSanctioned).mockReturnValue({ data: false, isError: false })
   })
 
   it('allows a deposit whose vault is listed', function () {
@@ -37,6 +50,7 @@ describe('useCanDepositForTransaction', function () {
 
     expect(useCanDepositForTransaction(deposit)).toStrictEqual({
       canDeposit: true,
+      isChecking: false,
       isPending: false,
       reason: undefined,
     })
@@ -47,6 +61,7 @@ describe('useCanDepositForTransaction', function () {
 
     expect(useCanDepositForTransaction(deposit)).toStrictEqual({
       canDeposit: false,
+      isChecking: false,
       isPending: false,
       reason: 'vault-delisted',
     })
@@ -62,6 +77,7 @@ describe('useCanDepositForTransaction', function () {
 
     expect(useCanDepositForTransaction(deposit)).toStrictEqual({
       canDeposit: false,
+      isChecking: false,
       isPending: false,
       reason: undefined,
     })
@@ -73,6 +89,7 @@ describe('useCanDepositForTransaction', function () {
 
     expect(useCanDepositForTransaction(deposit)).toStrictEqual({
       canDeposit: false,
+      isChecking: false,
       isPending: false,
       reason: 'deposits-paused',
     })
@@ -83,6 +100,7 @@ describe('useCanDepositForTransaction', function () {
 
     expect(useCanDepositForTransaction(redeem)).toStrictEqual({
       canDeposit: true,
+      isChecking: false,
       isPending: false,
       reason: undefined,
     })

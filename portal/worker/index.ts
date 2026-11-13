@@ -1,3 +1,7 @@
+import {
+  isRestrictedCountry,
+  restrictedLocationMetaName,
+} from 'utils/restrictions'
 import { buildSecurityHeaders, safeAppOrigin } from 'utils/securityHeaders'
 
 const securityHeadersConfig = {
@@ -27,9 +31,27 @@ const generateNonce = function () {
   return btoa(String.fromCharCode(...bytes))
 }
 
+const isHtmlResponse = (response: Response) =>
+  !!response.headers.get('content-type')?.includes('text/html')
+
+const isNavigation = (request: Request) =>
+  request.headers.get('sec-fetch-mode') === 'navigate' ||
+  !!request.headers.get('accept')?.includes('text/html')
+
+const assetRequest = function (request: Request) {
+  if (!isNavigation(request)) {
+    return request
+  }
+
+  const headers = new Headers(request.headers)
+  headers.delete('if-modified-since')
+  headers.delete('if-none-match')
+  return new Request(request, { headers })
+}
+
 export default {
   async fetch(request, env) {
-    const response = await env.ASSETS.fetch(request).catch(
+    const response = await env.ASSETS.fetch(assetRequest(request)).catch(
       () => new Response('Internal Server Error', { status: 500 }),
     )
 
@@ -49,6 +71,28 @@ export default {
       ).forEach(([name, value]) => withSecurityHeaders.headers.set(name, value))
     }
 
-    return withSecurityHeaders
+    if (
+      withSecurityHeaders.status !== 200 ||
+      !isHtmlResponse(withSecurityHeaders)
+    ) {
+      return withSecurityHeaders
+    }
+
+    withSecurityHeaders.headers.set('Cache-Control', 'private, no-cache')
+    withSecurityHeaders.headers.delete('ETag')
+
+    const restricted =
+      !securityHeadersConfig.isDev && isRestrictedCountry(request.cf)
+
+    return new HTMLRewriter()
+      .on('head', {
+        element(head) {
+          head.append(
+            `<meta name="${restrictedLocationMetaName}" content="${restricted}" />`,
+            { html: true },
+          )
+        },
+      })
+      .transform(withSecurityHeaders)
   },
 } satisfies ExportedHandler<Env>

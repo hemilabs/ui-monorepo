@@ -158,6 +158,16 @@
   "hemi-earn": {
     "apy-provided-by-vetro": "TEA · fornecida pela Vetro",
     "apy-source": "A TEA é uma estimativa variável fornecida pela Vetro, com base no desempenho recente do fundo. Não é uma promessa nem uma previsão de rendimentos futuros e pode mudar a qualquer momento. Os rendimentos são mostrados {fees, select, included {após} other {antes de}} taxas.",
+    "blocked": {
+      "restricted-location": {
+        "body": "O Hemi Earn é operado pela Vetro Service & Support Corp. e não é oferecido a pessoas nos Estados Unidos nem em outras jurisdições restritas. Se você já tem uma posição, ainda pode sacá-la.",
+        "heading": "O Hemi Earn não está disponível na sua localização"
+      },
+      "sanctioned-wallet": {
+        "body": "Esta carteira não cumpre os requisitos de elegibilidade da Vetro para o Hemi Earn. Qualquer posição existente ainda pode ser sacada. Em caso de dúvidas, entre em contato com o <link>suporte da Vetro</link>.",
+        "heading": "Esta carteira não pode depositar no Hemi Earn"
+      }
+    },
     "deposits-paused": "Os depósitos novos estão pausados no momento.",
     "footer": {
       "attribution": "O Hemi Earn é operado pela Vetro Service & Support Corp. Os fundos disponíveis pelo Hemi Earn podem ser operados pela Vetro ou por terceiros. A Hemispheres Service & Support (BVI) Ltd., a Hemi Labs, Inc. e suas afiliadas não operam, administram, custodiam nem garantem o Hemi Earn ou qualquer fundo, e não são partes do seu acordo com a Vetro. O Hemi Earn não está disponível para pessoas dos EUA nem para outras pessoas restritas.",
@@ -180,7 +190,9 @@
       "deposits-paused-details": "Os depósitos novos no Hemi Earn estão pausados no momento no portal da Hemi. Sua posição atual não é afetada por esta pausa, e você ainda pode visualizá-la e sacá-la abaixo. Em caso de dúvidas, entre em contato com o <link>suporte da Vetro</link>.",
       "note": "Operado pela Vetro Service & Support Corp. <link>Termos</link>"
     },
+    "restricted-location": "O Hemi Earn não está disponível na sua localização.",
     "risk-warning": "Os rendimentos são variáveis e não são garantidos. Você pode perder parte ou a totalidade do seu depósito.",
+    "sanctioned-wallet": "Esta carteira não pode depositar no Hemi Earn.",
     "subheading": "O Hemi Earn, operado pela Vetro, dá a você acesso a fundos de rendimento diretamente pelo portal da Hemi. Escolha um fundo e deposite em poucos passos. Os rendimentos são variáveis e não são garantidos.",
     "switch-to-start-earning": "Você pode mudar de rede para começar a ganhar com a Hemi.",
     "terms": {
@@ -233,6 +245,8 @@
           "heading-deposit": "Seu depósito travou na Ethereum",
           "heading-slippage": "Seu saque não foi concluído",
           "heading-slippage-deposit": "Seu depósito não foi concluído",
+          "restricted-location": "O Hemi Earn não está disponível na sua localização, então devolva seus fundos à sua carteira.",
+          "sanctioned-wallet": "Esta carteira não pode depositar no Hemi Earn, então devolva seus fundos à sua carteira.",
           "vault-delisted": "Este fundo não aceita mais depósitos, então devolva seus fundos à sua carteira."
         },
         "transfer-incomplete": "Esta transferência ainda não foi concluída. A Hemi não pode acessar, mover ou recuperar ativos no Hemi Earn. Entre em contato com o suporte da Vetro e inclua o hash da sua transação:",

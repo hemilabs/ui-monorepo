@@ -13,6 +13,8 @@ import { useTranslations } from 'use-intl'
 
 import { SubmitStake } from '../../submitStake'
 
+import { TopUpPayouts } from './topUpPayouts'
+
 type Props = {
   errorKey: string | undefined
   gas: {
@@ -86,6 +88,7 @@ export function Preview({
           }
           value={input}
         />
+        <TopUpPayouts />
         {validInput && (
           <FeesContainer compact>
             <EvmFeesSummary gas={gas} />

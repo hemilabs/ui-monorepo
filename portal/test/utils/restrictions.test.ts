@@ -25,15 +25,12 @@ describe('isRestrictedCountry', function () {
     expect(isRestrictedCountry(undefined)).toBe(true)
   })
 
-  it('restricts when the edge reports no country', function () {
-    expect(isRestrictedCountry({})).toBe(true)
-  })
-
   it.each([
-    ['Tor', 'T1'],
-    ['an unplaceable request', 'XX'],
-  ])('restricts %s', function (_name, country) {
-    expect(isRestrictedCountry({ country })).toBe(true)
+    ['the edge reports no country', {}],
+    ['Tor', { country: 'T1' }],
+    ['an unplaceable request', { country: 'XX' }],
+  ])('allows %s', function (_name, cf) {
+    expect(isRestrictedCountry(cf)).toBe(false)
   })
 })
 

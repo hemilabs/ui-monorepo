@@ -7,6 +7,38 @@ import {
 
 export type SlippageLevel = 'high' | 'low' | 'normal' | 'veryHigh'
 
+// Classes must stay literal so Tailwind picks them up. InfoIcon hardcodes its
+// fill, so icon targets the path.
+export const slippageStyles = {
+  high: {
+    badge: 'bg-amber-50 text-amber-500',
+    icon: '[&>g>path]:fill-amber-500',
+    label: 'text-amber-500',
+    value: 'text-amber-500',
+  },
+  low: {
+    badge: 'bg-amber-50 text-amber-500',
+    icon: '[&>g>path]:fill-amber-500',
+    label: 'text-amber-500',
+    value: 'text-amber-500',
+  },
+  normal: {
+    badge: '',
+    icon: '[&>g>path]:fill-neutral-500',
+    label: 'text-neutral-500',
+    value: 'text-neutral-900',
+  },
+  veryHigh: {
+    badge: 'bg-rose-50 text-rose-500',
+    icon: '[&>g>path]:fill-rose-500',
+    label: 'text-rose-500',
+    value: 'text-rose-500',
+  },
+} as const satisfies Record<
+  SlippageLevel,
+  { badge: string; icon: string; label: string; value: string }
+>
+
 // applySlippage throws outside the bps range and runs during render, NaN included,
 // since it would reach BigInt() and throw there.
 export const clampSlippage = (percent: number) =>

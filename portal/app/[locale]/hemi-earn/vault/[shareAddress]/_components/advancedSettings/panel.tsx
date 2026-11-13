@@ -3,7 +3,7 @@ import { WarningIcon } from 'components/icons/warningIcon'
 import { type KeyboardEvent } from 'react'
 import { useTranslations } from 'use-intl'
 
-import { type SlippageLevel } from '../../../../_utils/slippage'
+import { type SlippageLevel, slippageStyles } from '../../../../_utils/slippage'
 import { type VaultOperation } from '../../_types/operations'
 
 type Props = {
@@ -16,13 +16,6 @@ type Props = {
   onDraftChange: (value: string) => void
   onEnter: VoidFunction
   operation: VaultOperation
-}
-
-const levelStyles: Record<SlippageLevel, string> = {
-  high: 'text-amber-500',
-  low: 'text-amber-500',
-  normal: 'text-neutral-900',
-  veryHigh: 'text-rose-500',
 }
 
 const warningKeys = {
@@ -56,7 +49,7 @@ export const SettingsPanel = function ({
   }
 
   const isAuto = draft === ''
-  const valueStyle = isAuto ? 'text-neutral-500' : levelStyles[level]
+  const valueStyle = isAuto ? 'text-neutral-500' : slippageStyles[level].value
 
   return (
     <div className="flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-y-1 rounded-lg bg-white p-1 shadow-xl">
@@ -100,7 +93,7 @@ export const SettingsPanel = function ({
       </div>
       {level !== 'normal' && (
         <div
-          className={`flex items-center gap-x-1 px-3 py-1 ${levelStyles[level]}`}
+          className={`flex items-center gap-x-1 px-3 py-1 ${slippageStyles[level].value}`}
         >
           <WarningIcon />
           <span className="body-text-medium">{t(warningKeys[level])}</span>

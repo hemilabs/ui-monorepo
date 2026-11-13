@@ -164,6 +164,47 @@ describe('getBlendedForecast', function () {
     expect(blended.yearOneReturnRatio).toBe(alone.yearOneReturnRatio)
   })
 
+  it('treats the incoming amount as transferable by default', function () {
+    const { incoming } = getBlendedForecast({
+      existing: [],
+      incoming: anIncomingPosition,
+      inputsByClass: {
+        ...inputsByClass,
+        transferable: { baseline: BigInt(0), weight: transferableWeight },
+      },
+      now,
+    })
+
+    expect(incoming.yearOneTotal).toBe(BigInt(0))
+  })
+
+  it('weighs the incoming amount in the class it inherits', function () {
+    const transferableAfter = getEpochEnd({ epochsAhead: 40, now })
+    const { incoming } = getBlendedForecast({
+      existing: [],
+      incoming: {
+        ...anIncomingPosition,
+        positionClass: { forfeitable: true, transferableAfter },
+      },
+      inputsByClass: {
+        ...inputsByClass,
+        transferable: { baseline: BigInt(0), weight: transferableWeight },
+      },
+      now,
+    })
+
+    const at = getEpochEnd({ epochsAhead: 0, now })
+    const own = getWeightAt({
+      amount: anIncomingPosition.amount,
+      at,
+      lockEnd: transferableAfter,
+    })
+
+    expect(incoming.payouts[0].payout).toBe(
+      (ownBaseline * own) / (ownWeight + own),
+    )
+  })
+
   it('still pays a position that has not reached the transferable class', function () {
     const transferableAfter = getEpochEnd({ epochsAhead: 40, now })
     const { existing } = getBlendedForecast({

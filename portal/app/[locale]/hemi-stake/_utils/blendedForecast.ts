@@ -94,6 +94,7 @@ export const getBlendedForecast = function ({
   incoming: {
     amount: bigint
     lockDurationInSeconds: number
+    positionClass?: PositionClass
   }
   inputsByClass: InputsByClass
   now: number
@@ -119,7 +120,7 @@ export const getBlendedForecast = function ({
       amount: incoming.amount,
       at,
       lockEnd: incomingLockEnd,
-      positionClass: alwaysTransferable,
+      positionClass: incoming.positionClass ?? alwaysTransferable,
     })
 
     // The denominators are frozen at the settled epoch, where they already

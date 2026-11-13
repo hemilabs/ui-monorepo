@@ -16,15 +16,12 @@ const unplaceableCountries = ['T1', 'XX']
 export const restrictedLocationMetaName = 'hemi-earn-restricted'
 
 export const isRestrictedLocationMeta = (content: string | null | undefined) =>
-  content === 'true'
+  content !== 'false'
 
 export const isRestrictedCountry = function (
   cf: { country?: string } | undefined,
 ) {
-  if (cf === undefined) {
-    return false
-  }
-  const country = cf.country?.toUpperCase()
+  const country = cf?.country?.toUpperCase()
   if (country === undefined || unplaceableCountries.includes(country)) {
     return true
   }

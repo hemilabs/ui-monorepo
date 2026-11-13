@@ -21,8 +21,8 @@ describe('isRestrictedCountry', function () {
     expect(isRestrictedCountry({ country: 'us' })).toBe(true)
   })
 
-  it('allows a request that never crossed the edge', function () {
-    expect(isRestrictedCountry(undefined)).toBe(false)
+  it('restricts a request that never crossed the edge', function () {
+    expect(isRestrictedCountry(undefined)).toBe(true)
   })
 
   it('restricts when the edge reports no country', function () {
@@ -38,16 +38,18 @@ describe('isRestrictedCountry', function () {
 })
 
 describe('isRestrictedLocationMeta', function () {
-  it('restricts on the exact value the worker writes', function () {
-    expect(isRestrictedLocationMeta('true')).toBe(true)
+  it('does not restrict on the exact value the worker writes', function () {
+    expect(isRestrictedLocationMeta('false')).toBe(false)
   })
 
+  // An absent tag means no worker in front of the document, so there is no
+  // verdict and the gate has to assume the worst.
   it.each([
-    ['false', 'false'],
+    ['true', 'true'],
     ['an absent attribute', null],
     ['an absent tag', undefined],
-    ['anything else', 'TRUE'],
-  ])('does not restrict on %s', function (_name, content) {
-    expect(isRestrictedLocationMeta(content)).toBe(false)
+    ['anything else', 'FALSE'],
+  ])('restricts on %s', function (_name, content) {
+    expect(isRestrictedLocationMeta(content)).toBe(true)
   })
 })

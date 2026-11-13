@@ -20,5 +20,6 @@ export const isSanctionedQueryOptions = (account: Address | undefined) =>
     queryFn: () => fetchIsSanctioned(account),
     queryKey: getIsSanctionedQueryKey(account),
     retry: 1,
+    retryOnMount: false,
     staleTime: 1000 * 60 * 60,
   })

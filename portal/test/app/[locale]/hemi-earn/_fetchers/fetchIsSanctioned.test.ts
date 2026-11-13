@@ -47,6 +47,10 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchIsSanctioned', function () {
     )
   })
 
+  it('leaves the retry to the blocked state', function () {
+    expect(isSanctionedQueryOptions(account).retryOnMount).toBe(false)
+  })
+
   it('stays disabled until a wallet is connected', function () {
     expect(isSanctionedQueryOptions(undefined).enabled).toBe(false)
     expect(isSanctionedQueryOptions(account).enabled).toBe(true)

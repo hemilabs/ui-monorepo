@@ -21,6 +21,7 @@ import {
 import { getTokenPrice } from 'utils/token'
 
 import {
+  LegendItem,
   PayoutsChart,
   stackedBelowColor,
   payoutsColor,
@@ -183,13 +184,6 @@ const UnitToggle = function ({
     />
   )
 }
-
-const LegendItem = ({ color, label }: { color: string; label: string }) => (
-  <div className="flex items-center gap-x-1.5">
-    <span className="size-2 rounded-sm" style={{ backgroundColor: color }} />
-    <span>{label}</span>
-  </div>
-)
 
 type Props = {
   currentEpoch: number | undefined

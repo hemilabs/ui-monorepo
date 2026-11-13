@@ -22,6 +22,7 @@ type Props = {
   lockupDays: number
   nextPayout: bigint
   nextPayoutAt: number
+  tooltipId: string
   yearOneReturnRatio: number
   yearOneTotal: bigint
 }
@@ -34,6 +35,7 @@ export const PayoutHeadline = function ({
   lockupDays,
   nextPayout,
   nextPayoutAt,
+  tooltipId,
   yearOneReturnRatio,
   yearOneTotal,
 }: Props) {
@@ -56,7 +58,7 @@ export const PayoutHeadline = function ({
         <span className="flex items-center gap-x-1 text-sm font-medium text-neutral-700">
           {t('apy', { percentage: formatApyFromRatio(yearOneReturnRatio) })}
           <Tooltip
-            id="estimated-payouts-apy"
+            id={tooltipId}
             text={
               <div className="flex flex-col gap-y-2">
                 <span>{tStake('apy-estimate')}</span>

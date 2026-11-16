@@ -17,7 +17,7 @@
     "graph:auth": "graph auth",
     "prepare": "pnpm run codegen",
     "remove-local": "graph remove --node http://localhost:8020/ $(jq -r .name package.json)",
-    "test": "graph test"
+    "test": "graph test -v 0.6.0"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.97.1",

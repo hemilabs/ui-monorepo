@@ -8,6 +8,7 @@ import { useAccount } from 'wagmi'
 import { SubmitStake } from '../../_components/submitStake'
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { type useStakeSubmission } from '../../_hooks/useStakeSubmission'
+import { useStakingPositions } from '../../_hooks/useStakingPositions'
 import { useEstimator } from '../_context/estimatorContext'
 
 type Props = {
@@ -21,6 +22,8 @@ export const StakeFromEstimator = function ({ submission }: Props) {
   const t = useTranslations()
   const token = useHemiToken()
   const { status } = useAccount()
+
+  useStakingPositions()
 
   const {
     canStake,

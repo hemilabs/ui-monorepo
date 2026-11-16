@@ -146,9 +146,7 @@ export function Lockup({
         />
       </div>
       {minLocked && (
-        <div className="mt-5">
-          <WarningMessage>{t('form.lockup-extend-warning')}</WarningMessage>
-        </div>
+        <WarningMessage>{t('form.lockup-extend-warning')}</WarningMessage>
       )}
     </>
   )

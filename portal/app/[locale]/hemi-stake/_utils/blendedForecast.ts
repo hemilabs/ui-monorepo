@@ -82,6 +82,7 @@ type ExistingPosition = {
   delegatedAway?: boolean
   lockEnd: number
   positionClass: PositionClass
+  settledLockEnd?: number
 }
 
 export const getBlendedForecast = function ({
@@ -108,7 +109,11 @@ export const getBlendedForecast = function ({
   })
 
   const atSettled = staked.map(position =>
-    getClassWeights({ ...position, at: settledAt }),
+    getClassWeights({
+      ...position,
+      at: settledAt,
+      lockEnd: position.settledLockEnd ?? position.lockEnd,
+    }),
   )
 
   const epochs = Array.from({ length: epochsPerYear }, function (_, index) {

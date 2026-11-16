@@ -494,6 +494,7 @@
     },
     "estimated-payouts": {
       "added-amount": "{symbol} adicionado",
+      "added-time": "Tempo adicional",
       "advanced-estimator": "Estimador avançado",
       "after-unlock": "após o desbloqueio",
       "apy": "{percentage} TEA",

@@ -67,7 +67,7 @@ type Story = StoryObj<typeof RenderFiatBalance>
 export const Default: Story = {}
 
 export const WithCustomFormatter: Story = {
-  args: { customFormatter: formatFiatAmount },
+  args: { customFormatter: amount => formatFiatAmount(amount, 'en') },
 }
 
 export const Zero: Story = {

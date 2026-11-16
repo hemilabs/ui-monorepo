@@ -79,7 +79,7 @@ export const PayoutHeadline = function ({
         <div className="rounded-full bg-orange-600 px-2.5 py-1 text-xxs font-medium text-white">
           <RenderFiatBalance
             balance={yearOneTotal}
-            customFormatter={formatFiatAmount}
+            customFormatter={amount => formatFiatAmount(amount, locale)}
             queryStatus="success"
             token={token}
           />
@@ -89,7 +89,7 @@ export const PayoutHeadline = function ({
             amount: () => (
               <RenderFiatBalance
                 balance={nextPayout}
-                customFormatter={formatFiatAmount}
+                customFormatter={amount => formatFiatAmount(amount, locale)}
                 queryStatus="success"
                 token={token}
               />

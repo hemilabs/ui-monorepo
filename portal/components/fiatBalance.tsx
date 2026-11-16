@@ -22,14 +22,14 @@ type Props<T extends Token = Token> = {
 
 const RenderFiatBalanceUnsafe = function ({
   balance,
-  customFormatter = formatFiatNumber,
+  customFormatter,
   fetchStatus,
   queryStatus,
   token,
   usePrices = useTokenPrices,
 }: Props & {
   balance: bigint | undefined
-  customFormatter?: (amount: string, locale: string) => string
+  customFormatter?: (amount: string) => string
   fetchStatus?: FetchStatus
   queryStatus: QueryStatus
   // The price feed to read from. Defaults to the app-wide portal feed;
@@ -38,6 +38,8 @@ const RenderFiatBalanceUnsafe = function ({
   usePrices?: typeof useTokenPrices
 }) {
   const locale = useLocale()
+  const format =
+    customFormatter ?? ((amount: string) => formatFiatNumber(amount, locale))
   const {
     data: pricesData,
     fetchStatus: pricesFetchStatus,
@@ -51,12 +53,7 @@ const RenderFiatBalanceUnsafe = function ({
     const price = getTokenPrice(token, pricesData)
 
     return (
-      <>
-        {customFormatter(
-          Big(stringBalance).times(price).toFixed(token.decimals),
-          locale,
-        )}
-      </>
+      <>{format(Big(stringBalance).times(price).toFixed(token.decimals))}</>
     )
   }
 

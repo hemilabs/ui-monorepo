@@ -103,7 +103,7 @@ const formatYAxis = function ({
   if (metricType === 'apy') {
     return precision === 'full'
       ? formatPercentage(value, locale)
-      : `${Math.round(value)}%`
+      : `${new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(value)}%`
   }
   const { number, suffix } = formatCompactFiatParts(value, locale)
   return `${number}${suffix} ${peggedToken.symbol}`

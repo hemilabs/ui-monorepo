@@ -9,6 +9,7 @@ import {
   formatEvmAddress,
   formatEvmHash,
   formatFiatAmount,
+  formatFullAmount,
   formatFutureTime,
   formatNumber,
   formatPastTime,
@@ -17,6 +18,7 @@ import {
   formatShortDateWithYear,
   formatTokenPrice,
   formatTVL,
+  formatWholePercentage,
   roundNumber,
   smallestFormattedNumber,
 } from 'utils/format'
@@ -551,6 +553,42 @@ describe('utils/format', function () {
     it('should follow the locale separators', function () {
       expect(formatPercentage(87.5, 'es')).toBe('87,50%')
       expect(formatPercentage(1234.5, 'pt')).toBe('1.234,50%')
+    })
+  })
+
+  describe('formatWholePercentage', function () {
+    it('should round to a whole number', function () {
+      expect(formatWholePercentage(15.3, 'en')).toBe('15%')
+      expect(formatWholePercentage(23.6, 'en')).toBe('24%')
+    })
+
+    it('should follow the locale separators', function () {
+      expect(formatWholePercentage(1500, 'en')).toBe('1,500%')
+      expect(formatWholePercentage(1500, 'es')).toBe('1500%')
+      expect(formatWholePercentage(1500, 'pt')).toBe('1.500%')
+    })
+  })
+
+  describe('formatFullAmount', function () {
+    it('should keep every decimal up to the token decimals', function () {
+      expect(formatFullAmount('0.123456789012345678', 18, 'en')).toBe(
+        '0.123456789012345678',
+      )
+    })
+
+    it('should not round a string beyond float precision', function () {
+      expect(formatFullAmount('12345678901234567.89', 18, 'en')).toBe(
+        '12,345,678,901,234,567.89',
+      )
+    })
+
+    it('should cap the decimals at the token decimals', function () {
+      expect(formatFullAmount('1.123456789', 6, 'en')).toBe('1.123457')
+    })
+
+    it('should follow the locale separators, grouping 4-digit numbers too', function () {
+      expect(formatFullAmount('1234.5', 18, 'es')).toBe('1.234,5')
+      expect(formatFullAmount('1234.5', 18, 'pt')).toBe('1.234,5')
     })
   })
   describe('formatTokenPrice', function () {

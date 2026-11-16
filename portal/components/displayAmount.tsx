@@ -5,6 +5,7 @@ import { ComponentProps, ComponentType, Fragment, ReactNode } from 'react'
 import { Token } from 'types/token'
 import { useLocale } from 'use-intl'
 import {
+  formatFullAmount,
   formatNumber,
   roundNumber,
   smallestFormattedNumber,
@@ -60,13 +61,7 @@ export const DisplayAmount = function ({
             {showTokenLogo && (
               <TokenLogo size="small" token={token} version={logoVersion} />
             )}
-            <span>{`${new Intl.NumberFormat(locale, {
-              maximumFractionDigits: token.decimals,
-              useGrouping: true,
-            }).format(
-              // @ts-expect-error NumberFormat.format accept strings, typings are wrong. See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/format#parameters
-              amount,
-            )} ${token.symbol}`}</span>
+            <span>{`${formatFullAmount(amount, token.decimals, locale)} ${token.symbol}`}</span>
           </div>
         ) : null
       }

@@ -53,6 +53,22 @@ export const formatFiatAmount = function (
 export const formatPercentage = (value: number | string, locale: string) =>
   `${percentageRounder(value, { locale, shouldFormat: true })}%`
 
+export const formatWholePercentage = (value: number, locale: string) =>
+  `${new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(value)}%`
+
+export const formatFullAmount = (
+  amount: string,
+  decimals: number,
+  locale: string,
+) =>
+  new Intl.NumberFormat(locale, {
+    maximumFractionDigits: decimals,
+    useGrouping: true,
+  }).format(
+    // @ts-expect-error NumberFormat.format accept strings, typings are wrong. See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/format#parameters
+    amount,
+  )
+
 export const formatApyDisplay = function (apy: number, locale: string) {
   if (apy !== 0 && apy > -0.01 && apy < 0.01) {
     return `< ${formatPercentage(apy > 0 ? 0.01 : -0.01, locale)}`

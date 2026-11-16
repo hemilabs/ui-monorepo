@@ -55,12 +55,10 @@ export const getExtendForecast = function ({
   const current = forecastUntil(settledLockEnd)
   const extended = forecastUntil(lockEnd)
 
-  const addedPayouts = extended.payouts.map((epoch, index) => ({
-    ...epoch,
-    payout: epoch.payout - current.payouts[index].payout,
-    weight: epoch.weight - current.payouts[index].weight,
+  const addedPayouts = extended.payouts.map(({ payout, timestamp }, index) => ({
+    payout: payout - current.payouts[index].payout,
+    timestamp,
   }))
-  const addedTotal = sumPayouts(addedPayouts)
 
   return {
     blended: {
@@ -72,8 +70,7 @@ export const getExtendForecast = function ({
     existing: current,
     incoming: {
       payouts: addedPayouts,
-      yearOneReturnRatio: toFraction(addedTotal, position.amount),
-      yearOneTotal: addedTotal,
+      yearOneTotal: sumPayouts(addedPayouts),
     },
     nextPayout: extended.payouts[0].payout,
     paysInFirstYear: extended.yearOneTotal > BigInt(0),

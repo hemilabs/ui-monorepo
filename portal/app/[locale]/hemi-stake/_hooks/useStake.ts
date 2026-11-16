@@ -222,7 +222,8 @@ export const useStake = function ({
         // staked
         queryClient.setQueryData(
           hemiBalanceQueryKey,
-          (old: bigint) => old - amount,
+          (old: bigint | undefined) =>
+            old === undefined ? undefined : old - amount,
         )
 
         track?.('hemi stake - lock creation success')

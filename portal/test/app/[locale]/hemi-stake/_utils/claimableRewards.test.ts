@@ -242,8 +242,8 @@ describe('getClaimTransactions', function () {
 
 describe('sortClaimsByValue', function () {
   const tokens = [
-    { address: hemi, symbol: 'HEMI' },
-    { address: usdc, symbol: 'USDC' },
+    { address: hemi, decimals: 18, symbol: 'HEMI' },
+    { address: usdc, decimals: 18, symbol: 'USDC' },
   ]
 
   const claim = (

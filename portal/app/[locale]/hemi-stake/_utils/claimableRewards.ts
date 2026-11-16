@@ -6,7 +6,7 @@ import {
   type RewardSourceType,
 } from 'types/stakingDashboard'
 import { type EvmToken } from 'types/token'
-import { getTokenPrice } from 'utils/token'
+import { calculateUsdValue } from 'utils/prices'
 import { getClaimSpan } from 've-hemi-epoch-rewards'
 import { formatUnits, isAddressEqual, type Address } from 'viem'
 
@@ -103,25 +103,25 @@ const getClaimValue = function ({
   rewards: ClaimableReward[]
   tokens: EvmToken[]
 }) {
-  const toUnits = (reward: ClaimableReward) =>
-    Big(formatUnits(reward.amount, reward.decimals))
-
   if (!prices) {
     return rewards
       .filter(reward => isAddressEqual(reward.token, hemiTokenAddress))
-      .reduce((total, reward) => total.plus(toUnits(reward)), Big(0))
+      .reduce(
+        (total, reward) =>
+          total.plus(formatUnits(reward.amount, reward.decimals)),
+        Big(0),
+      )
   }
 
   // A reward token without a known price (or token metadata) counts as $0. This
   // undervalues the windows that pay it, so they may be claimed later than they
   // should.
   // TODO improve the valuation of reward tokens that have no price.
-  return rewards.reduce(function (total, reward) {
+  const withBalance = rewards.flatMap(function (reward) {
     const token = findRewardToken(tokens, reward.token)
-    return token
-      ? total.plus(toUnits(reward).times(getTokenPrice(token, prices)))
-      : total
-  }, Big(0))
+    return token ? [{ ...token, balance: reward.amount }] : []
+  })
+  return Big(calculateUsdValue(withBalance, prices))
 }
 
 /**

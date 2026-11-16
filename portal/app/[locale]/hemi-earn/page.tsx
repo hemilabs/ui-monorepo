@@ -25,11 +25,6 @@ const VaultsSection = lazyWithFallback(
   <VaultsListSkeleton />,
 )
 
-// Shows an error card with a retry button in place of the data section if the
-// share registry can't be resolved. Loading is not gated here: each child
-// component (InfoCards, VaultsSection) handles its own skeleton state, and the
-// underlying `useHemiEarnShares` query is a single shared subscription via
-// react-query so concurrent mounts don't fan out.
 const TokensGate = function ({ children }: { children: ReactNode }) {
   const { isError, refetch } = useHemiEarnShares()
   const t = useTranslations('hemi-earn')

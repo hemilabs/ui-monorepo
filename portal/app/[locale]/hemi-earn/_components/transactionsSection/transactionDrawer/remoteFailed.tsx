@@ -11,6 +11,7 @@ import {
   useRetryRequest,
 } from '../../../_hooks/useRemoteFailedActions'
 import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
+import { resolveRecoveryActions } from '../../../_utils/recoveryActions'
 import { remoteFailedSettlement } from '../../../_utils/settlement'
 import { type EarnSettlement, type EarnTransaction } from '../../../types'
 import { TransferIncompleteBanner } from '../../transferIncomplete'
@@ -72,8 +73,11 @@ export const RemoteFailedCta = function ({
 }) {
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
   const { category, show } = useRemoteFailedState(transaction)
-  const { canDeposit, isPending: isDepositGatePending } =
-    useCanDepositForTransaction(transaction)
+  const {
+    canDeposit,
+    isPending: isDepositGatePending,
+    reason,
+  } = useCanDepositForTransaction(transaction)
 
   const on = redirectOnSign
     ? (emitter: EventEmitter<RetryRequestEvents>) =>
@@ -86,8 +90,12 @@ export const RemoteFailedCta = function ({
   const cancel = useCancelRequest({ on, transaction })
 
   const marker = remoteFailedSettlement(transaction.settlement)
-  const cancelOnly =
-    category === 'slippage' || (transaction.kind === 'DEPOSIT' && !canDeposit)
+  const { cancelOnly, retryBlocked } = resolveRecoveryActions({
+    canDeposit,
+    category,
+    isDeposit: transaction.kind === 'DEPOSIT',
+    reason,
+  })
   const retryConfig: RecoveryConfig = {
     idleKey: 'retry',
     kind: 'RETRY',
@@ -126,7 +134,7 @@ export const RemoteFailedCta = function ({
           {configs.map(config => (
             <RecoveryButton
               config={config}
-              disabled={anyPending}
+              disabled={anyPending || (config.kind === 'RETRY' && retryBlocked)}
               key={config.kind}
               marker={marker}
             />
@@ -144,23 +152,24 @@ export const RemoteFailedBanner = function ({
   transaction: EarnTransaction | undefined
 }) {
   const t = useTranslations('hemi-earn.transactions.banner')
+  const tCommon = useTranslations('common')
   const { category, show } = useRemoteFailedState(transaction)
-  const depositGate = useCanDepositForTransaction(transaction)
+  const { reason } = useCanDepositForTransaction(transaction)
 
   if (!show || !transaction) {
     return null
   }
   const blockedDepositReason =
-    transaction.kind === 'DEPOSIT' ? depositGate.reason : undefined
+    transaction.kind === 'DEPOSIT' ? reason : undefined
   const suffix = transaction.kind === 'DEPOSIT' ? '-deposit' : ''
   const variant = category === 'slippage' ? '-slippage' : ''
   return (
     <TransferIncompleteBanner
       heading={t(`remote-failed.heading${variant}${suffix}`)}
       note={
-        blockedDepositReason
-          ? t(`remote-failed.${blockedDepositReason}`)
-          : undefined
+        blockedDepositReason === 'screening-unavailable'
+          ? tCommon('unexpected-error')
+          : blockedDepositReason && t(`remote-failed.${blockedDepositReason}`)
       }
       requestTxHash={transaction.requestTxHash}
     />

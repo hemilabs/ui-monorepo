@@ -34,6 +34,7 @@ import {
 
 import { AdvancedSettings } from './advancedSettings'
 import { AssetSelector } from './assetSelector'
+import { DepositBlocked } from './depositBlocked'
 import { VaultFormLayout } from './form'
 import { OperationBelowForm } from './operationBelowForm'
 import { SubmitDeposit } from './submitDeposit'
@@ -132,7 +133,13 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   const isRunningOperation = useIsDepositing(vault.shareAddress)
 
   const handleDeposit = function () {
-    if (!canDeposit || !quote || zeroBalanceError || isRunningOperation) {
+    if (
+      !depositGate.canDeposit ||
+      !canDeposit ||
+      !quote ||
+      zeroBalanceError ||
+      isRunningOperation
+    ) {
       return
     }
     // Nothing clears a finished operation, so a fresh review has to start from a clean one.
@@ -161,15 +168,16 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     tokenBalanceLoaded,
     errorKey,
   )
-  const isSubmitLoading = computeIsLoading({
-    balanceLoaded: tokenBalanceLoaded,
-    isAllowanceLoading,
-    isNativeBalancePending,
-    isPreviewLoading,
-    validInput,
-  })
+  const isSubmitLoading =
+    computeIsLoading({
+      balanceLoaded: tokenBalanceLoaded,
+      isAllowanceLoading,
+      isNativeBalancePending,
+      isPreviewLoading,
+      validInput,
+    }) || depositGate.isChecking
 
-  if (!depositGate.canDeposit) {
+  if (depositGate.reason !== undefined) {
     return (
       <VaultFormLayout
         formContent={
@@ -177,7 +185,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
             activeTab="deposit"
             onSwitchTab={onSwitchToWithdraw}
           >
-            <WarningBox subheading={t(`hemi-earn.${depositGate.reason}`)} />
+            <DepositBlocked reason={depositGate.reason} />
           </VaultFormContent>
         }
       />

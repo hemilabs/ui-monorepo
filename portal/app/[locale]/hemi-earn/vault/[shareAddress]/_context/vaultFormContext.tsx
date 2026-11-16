@@ -2,7 +2,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -32,13 +31,6 @@ export function VaultFormProvider({
   const state = useVaultFormState()
   const [selectedAssetAddress, setSelectedAssetAddress] = useState(
     () => vault.assets[0].address,
-  )
-
-  useEffect(
-    function resetSelectionOnVaultChange() {
-      setSelectedAssetAddress(vault.assets[0].address)
-    },
-    [vault.shareAddress, vault.assets],
   )
 
   const selectedAsset = useMemo(

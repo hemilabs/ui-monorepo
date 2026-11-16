@@ -13,7 +13,7 @@ Some relevant folders are:
 - [/hooks](./hooks/) folder, which contains reusable hooks to the entire app that are not tied to a specific page.
 - [/messages/](./messages/) folder, which contain a file per locale with all the translated resources.
 - [/public](./public/) folder, which is served verbatim at the site root.
-- [worker/index.ts](./worker/index.ts), the Cloudflare Worker that serves the built assets and sets the security headers on every response.
+- [worker/index.ts](./worker/index.ts), the Cloudflare Worker that serves the built assets, sets the security headers on every response, and stamps a meta tag telling the app whether the visitor is in a country Hemi Earn cannot serve.
 - [/test](./test/) folder, which contains some tests for different portal files. These tests are for plain Typescript functions, and not for components.
 - [/types](./types/) folder, which contains many reusable Typescript types across the entire app
 - [/utils](./utils/) folder, which contains most of the logic that is not tied to UI.

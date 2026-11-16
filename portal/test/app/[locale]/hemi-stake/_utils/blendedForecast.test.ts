@@ -339,6 +339,35 @@ describe('getBlendedForecast', function () {
     )
   })
 
+  it('grows the denominator by only what an extension adds', function () {
+    const settledLockEnd = anExistingPosition.lockEnd
+    const extended = { ...anExistingPosition, lockEnd: now + 3 * oneYear }
+
+    const { existing } = getBlendedForecast({
+      existing: [{ ...extended, settledLockEnd }],
+      incoming: noIncoming,
+      inputsByClass,
+      now,
+    })
+
+    const at = getEpochEnd({ epochsAhead: 0, now })
+    const settledWeight = getWeightAt({
+      amount: extended.amount,
+      at,
+      lockEnd: settledLockEnd,
+    })
+    const extendedWeight = getWeightAt({
+      amount: extended.amount,
+      at,
+      lockEnd: extended.lockEnd,
+    })
+
+    expect(existing.payouts[0].payout).toBe(
+      (transferableBaseline * extendedWeight) /
+        (transferableWeight + extendedWeight - settledWeight),
+    )
+  })
+
   it('keeps an expired position out of the rate', function () {
     const expired = {
       ...anExistingPosition,

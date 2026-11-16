@@ -5,7 +5,7 @@ import { VaultInfoBar } from './vaultInfoBar'
 import { VaultInfoBarSkeleton } from './vaultInfoBarSkeleton'
 
 export const VaultsList = function () {
-  const { data: vaults, isError } = useEarnVaults()
+  const { data: vaults } = useEarnVaults()
 
   if (vaults) {
     return (
@@ -15,9 +15,6 @@ export const VaultsList = function () {
         ))}
       </div>
     )
-  }
-  if (isError) {
-    return null
   }
 
   return (

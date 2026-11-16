@@ -1,3 +1,4 @@
+import { hemiEarnAgentAddress } from '@vetro-protocol/hemi-earn'
 import {
   getAssetData,
   quoteRedeem,
@@ -10,7 +11,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fetchQuoteRedeem } from '../../../../../../../app/[locale]/hemi-earn/vault/[shareAddress]/_fetchers/fetchQuoteRedeem'
 
 vi.mock('@vetro-protocol/hemi-earn/actions', () => ({
-  getAgentAddress: vi.fn(),
   getAssetData: vi.fn(),
   quoteRedeem: vi.fn(),
   quoteRedeemFulfillment: vi.fn(),
@@ -28,13 +28,11 @@ const shareAddress = '0x2222222222222222222222222222222222222222' as Address
 const remoteAsset = '0x3333333333333333333333333333333333333333' as Address
 const remoteShare = '0x4444444444444444444444444444444444444444' as Address
 
-// Fake query client that resolves the agent-address and share-config lookups
-// the fetcher threads through the cache, branching on the query's key.
+// Fake query client that resolves the share-config lookup the fetcher threads
+// through the cache, branching on the query's key.
 const createQueryClient = () => ({
   ensureQueryData: vi.fn(function ({ queryKey }) {
     switch (queryKey[1]) {
-      case 'agent-address':
-        return Promise.resolve('0xAgent')
       case 'share-config':
         return Promise.resolve({ asset, remoteShare, share: shareAddress })
       default:
@@ -83,7 +81,7 @@ describe('fetchQuoteRedeem', function () {
 
     expect(quoteRedeemFulfillment).toHaveBeenCalledWith(
       expect.anything(),
-      expect.objectContaining({ address: '0xAgent', remoteAsset }),
+      expect.objectContaining({ address: hemiEarnAgentAddress, remoteAsset }),
     )
     expect(resolveIsInstant).toHaveBeenCalledWith(
       expect.anything(),

@@ -2,7 +2,10 @@ import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { type ClaimUnstakeEvents } from '@vetro-protocol/hemi-earn'
+import {
+  type ClaimUnstakeEvents,
+  hemiEarnAgentAddress as agentAddress,
+} from '@vetro-protocol/hemi-earn'
 import {
   claimUnstake,
   getUnstakeRequest,
@@ -19,7 +22,6 @@ import { useAccount, useWalletClient } from 'wagmi'
 import { earnTransactionsKeyPrefix } from '../_fetchers/fetchEarnTransactions'
 import { type EarnTransaction } from '../types'
 
-import { agentAddressQueryOptions } from './useHemiEarnAgentAddress'
 import { useLocalEarnOperations } from './useLocalEarnOperations'
 
 type UseClaimUnstake = {
@@ -47,9 +49,6 @@ export const useClaimUnstake = function ({ on, transaction }: UseClaimUnstake) {
         throw new Error('No account connected')
       }
 
-      const agentAddress = await queryClient.ensureQueryData(
-        agentAddressQueryOptions(),
-      )
       const client = getEvmL1PublicClient(mainnet.id)
       const id = BigInt(requestId)
 

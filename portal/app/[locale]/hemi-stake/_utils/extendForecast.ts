@@ -1,6 +1,5 @@
 import { toFraction } from 'utils/bigint'
 import { secondsToWholeDays } from 'utils/time'
-import { snapToEpoch } from 've-hemi-actions'
 
 import { getBlendedForecast } from './blendedForecast'
 import { daysToSeconds } from './lockCreationTimes'
@@ -41,7 +40,7 @@ export const getExtendForecast = function ({
   now: number
   position: ExtendedPosition
 }) {
-  const settledLockEnd = snapToEpoch(position.lockEnd)
+  const settledLockEnd = position.lockEnd
   const lockEnd = Math.max(extendedLockEnd, settledLockEnd)
 
   const forecastUntil = (until: number) =>

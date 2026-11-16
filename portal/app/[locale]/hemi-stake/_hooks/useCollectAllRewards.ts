@@ -10,6 +10,8 @@ import { EventEmitter } from 'events'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
+import { hemiTokenMap, useHemiToken } from 'hooks/useHemiToken'
+import { useTokenPrices } from 'hooks/useTokenPrices'
 import { useUmami } from 'hooks/useUmami'
 import {
   CollectAllRewardsDashboardStatus,
@@ -20,7 +22,10 @@ import type { ClaimFromEvents } from 've-hemi-epoch-rewards'
 import { claimFrom } from 've-hemi-epoch-rewards/actions'
 import { useAccount } from 'wagmi'
 
-import { markClaimWindowAsClaimed } from '../_utils/claimableRewards'
+import {
+  markClaimWindowAsClaimed,
+  sortClaimsByValue,
+} from '../_utils/claimableRewards'
 
 import { useClaimablePositions } from './useClaimablePositions'
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
@@ -28,6 +33,7 @@ import {
   getEpochClaimableRewardsQueryKeyPrefix,
   type useEpochClaimableRewards,
 } from './useEpochClaimableRewards'
+import { useRewardTokens } from './useRewardTokens'
 
 type ClaimWindows = NonNullable<
   ReturnType<typeof useEpochClaimableRewards>['data']
@@ -49,13 +55,13 @@ export const useIsCollectingRewards = () =>
   useIsMutating({ mutationKey: collectRewardsMutationKey }) > 0
 
 /**
- * Claims everything the positions are owed, one position after the other, in as many
- * transactions as it takes.
+ * Claims everything the positions are owed, in as many transactions as it takes.
  *
  * A claim is bounded by epoch x reward token pairs, so a position with a long history
  * cannot be settled in one call. The plan is known before the first signature - it comes
  * from the same windows the claimable figures were quoted over - and every window is
- * reported as its own step so the drawer can follow the whole walk.
+ * reported as its own step so the drawer can follow the whole walk. Windows are sent
+ * most valuable first, across every position.
  *
  * The walk stops at the first window the holder does not sign or that reverts. What the
  * earlier windows paid is already theirs, and a retry re-plans over what is left.
@@ -73,6 +79,9 @@ export const useCollectRewards = function ({
   const queryClient = useQueryClient()
   const hemi = useHemi()
   const { positions, rewards } = useClaimablePositions(tokenIds)
+  const { data: prices } = useTokenPrices()
+  const hemiToken = useHemiToken()
+  const { tokens: rewardTokens } = useRewardTokens()
 
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     hemi.id,
@@ -104,23 +113,28 @@ export const useCollectRewards = function ({
         throw new Error('No account connected')
       }
 
-      const transactions = [...positions]
-        .sort((a, b) => (a.tokenId < b.tokenId ? -1 : 1))
-        .flatMap(position =>
-          position.transactions.map(transaction => ({
-            ...transaction,
-            tokenId: position.tokenId,
-          })),
-        )
-        .filter(
-          transaction =>
-            !completedSteps.some(
-              step =>
-                step.tokenId === transaction.tokenId &&
-                step.fromEpoch === transaction.fromEpoch &&
-                step.toEpoch === transaction.toEpoch,
-            ),
-        )
+      const transactions = sortClaimsByValue({
+        claims: positions
+          .flatMap(position =>
+            position.transactions.map(transaction => ({
+              ...transaction,
+              tokenId: position.tokenId,
+            })),
+          )
+          .filter(
+            transaction =>
+              !completedSteps.some(
+                step =>
+                  step.tokenId === transaction.tokenId &&
+                  step.fromEpoch === transaction.fromEpoch &&
+                  step.toEpoch === transaction.toEpoch,
+              ),
+          ),
+        hemiTokenAddress: hemiTokenMap[hemi.id],
+        prices,
+        // HEMI is listed first so it is priced before the reward tokens load
+        tokens: [hemiToken, ...rewardTokens],
+      }).map(({ rewards: _rewards, ...transaction }) => transaction)
 
       let steps: CollectAllRewardsStep[] = [...completedSteps, ...transactions]
 

@@ -494,6 +494,7 @@
     },
     "estimated-payouts": {
       "added-amount": "Added {symbol}",
+      "added-time": "Added time",
       "advanced-estimator": "Advanced estimator",
       "after-unlock": "after unlock",
       "apy": "{percentage} APY",

@@ -4,6 +4,7 @@ import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpd
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   type CancelRequestEvents,
+  hemiEarnAgentAddress as agentAddress,
   type RetryRequestEvents,
 } from '@vetro-protocol/hemi-earn'
 import {
@@ -26,7 +27,6 @@ import { type EarnSettlement, type EarnTransaction } from '../types'
 
 import { assetDataQueryOptions } from './useAssetData'
 import { getFailedRequestQueryKey } from './useFailedRequest'
-import { agentAddressQueryOptions } from './useHemiEarnAgentAddress'
 import { useLocalEarnOperations } from './useLocalEarnOperations'
 
 type RemoteFailedKind = Extract<
@@ -81,9 +81,6 @@ const useRemoteFailedAction = function ({
         throw new Error('No account connected')
       }
 
-      const agentAddress = await queryClient.ensureQueryData(
-        agentAddressQueryOptions(),
-      )
       const client = getEvmL1PublicClient(mainnet.id)
       const id = BigInt(requestId)
 

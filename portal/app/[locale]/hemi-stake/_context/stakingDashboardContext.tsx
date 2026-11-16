@@ -1,6 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react'
 
-import { useStakePrefill } from '../_hooks/useStakePrefill'
 import {
   useStakingDashboardState,
   type StakingDashboardStake,
@@ -19,7 +18,7 @@ export function StakingDashboardProvider({
 }: {
   children: ReactNode
 }) {
-  const state = useStakingDashboardState(useStakePrefill())
+  const state = useStakingDashboardState()
   const value = state as StakingDashboardContextValue
 
   return (

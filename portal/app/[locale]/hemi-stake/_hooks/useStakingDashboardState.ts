@@ -122,18 +122,12 @@ type StakingDashboardFunctionEvents = {
     : (payload: Extract<Actions, { type: K }>['payload']) => void
 }
 
-export type StakingDashboardSeed = Partial<
-  Pick<StakingDashboardState, 'input' | 'inputDays' | 'lockupDays'>
->
-
-export const useStakingDashboardState = function (
-  seed?: StakingDashboardSeed,
-): StakingDashboardState & StakingDashboardFunctionEvents {
+export const useStakingDashboardState = function (): StakingDashboardState &
+  StakingDashboardFunctionEvents {
   const [state, dispatch] = useReducer(reducer, {
     input: '0',
     inputDays: twoYears.toString(),
     lockupDays: twoYears,
-    ...seed,
   } as StakingDashboardState)
 
   const updateCollectRewardsDashboardOperation = useCallback(function (

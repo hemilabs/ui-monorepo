@@ -23,6 +23,19 @@ import {
 export const payoutsColor = '#FF600A'
 export const stackedBelowColor = '#FFD1A5'
 
+export const LegendItem = ({
+  color,
+  label,
+}: {
+  color: string
+  label: string
+}) => (
+  <div className="flex items-center gap-x-1.5">
+    <span className="size-2 rounded-sm" style={{ backgroundColor: color }} />
+    <span>{label}</span>
+  </div>
+)
+
 const chartColors = {
   neutral200: '#E5E5E5',
   neutral400: '#A3A3A3',

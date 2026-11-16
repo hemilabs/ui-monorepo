@@ -493,6 +493,7 @@
       "unlock-token": "Unlock {symbol}"
     },
     "estimated-payouts": {
+      "added-amount": "Added {symbol}",
       "advanced-estimator": "Advanced estimator",
       "after-unlock": "after unlock",
       "apy": "{percentage} APY",
@@ -504,6 +505,7 @@
       "next-payout-line": "next payout <amount></amount> · epoch {epoch}, settles {date}",
       "not-funded": "Rewards for this epoch have not been funded yet.",
       "starting-from-epoch": "Payouts per epoch · starting from epoch <epoch></epoch>",
+      "this-lockup": "This lockup",
       "title": "Estimated payouts",
       "unlocks-on": "Unlocks {date}"
     },

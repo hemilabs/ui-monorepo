@@ -2,7 +2,7 @@ import { type StakingPosition } from 'types/stakingDashboard'
 import { getTransferableAfter } from 've-hemi-actions/actions'
 import { type Client } from 'viem'
 
-import { alwaysTransferable } from '../../_utils/rewardClass'
+import { alwaysTransferable } from '../_utils/rewardClass'
 
 export const fetchPositionClasses = async function (
   client: Client,

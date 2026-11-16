@@ -2,7 +2,6 @@ import { ButtonLink } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTokenPrices } from 'hooks/useTokenPrices'
-import Skeleton from 'react-loading-skeleton'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatShortDate } from 'utils/format'
 import { unixNowTimestamp } from 'utils/time'
@@ -33,9 +32,7 @@ import { PayoutsChart } from '../payoutsChart'
 
 import { PayoutHeadline } from './payoutHeadline'
 import { PayoutPlaceholder } from './payoutPlaceholder'
-
-const sectionLabelClassName =
-  'text-xxs font-medium uppercase tracking-widest text-neutral-500'
+import { PayoutsCard } from './payoutsCard'
 
 const buildForecast = function ({
   amount,
@@ -108,9 +105,8 @@ export const EstimatedPayouts = function () {
   })
 
   return (
-    <div className="flex w-full flex-col gap-y-4 rounded-lg border border-solid border-transparent bg-neutral-50 p-4 ring-1 ring-transparent hover:shadow-bs">
-      <div className="flex items-center justify-between gap-x-2">
-        <span className={sectionLabelClassName}>{t('title')}</span>
+    <PayoutsCard
+      action={
         <div className="group">
           <ButtonLink
             href="/hemi-stake/estimator"
@@ -121,42 +117,8 @@ export const EstimatedPayouts = function () {
             <Chevron.Right className="[&>path]:fill-neutral-500 group-hover:[&>path]:fill-neutral-950" />
           </ButtonLink>
         </div>
-      </div>
-      <div className="min-h-24.5">
-        {hasForecast && systemState !== undefined ? (
-          <PayoutHeadline
-            carriedFrom={forecastInputs?.transferable.carriedFrom}
-            currentEpoch={systemState.currentEpoch}
-            input={input}
-            lockEnd={forecast.lockEnd}
-            lockupDays={lockupDays}
-            nextPayout={forecast.payouts[0].payout}
-            nextPayoutAt={forecast.payouts[0].timestamp}
-            yearOneReturnRatio={forecast.yearOneReturnRatio}
-            yearOneTotal={forecast.yearOneTotal}
-          />
-        ) : (
-          <PayoutPlaceholder
-            hasError={hasError}
-            hasValidLockup={hasValidLockup}
-            isPending={isPending}
-            lockEnd={forecast.lockEnd}
-            meetsMinimumAmount={forecast.meetsMinimumAmount}
-            onRetry={retry}
-          />
-        )}
-      </div>
-      <div className="flex w-full flex-col gap-y-1.5">
-        <span className={sectionLabelClassName}>
-          {t.rich('starting-from-epoch', {
-            epoch: () =>
-              systemState === undefined ? (
-                <Skeleton className="w-8" />
-              ) : (
-                systemState.currentEpoch
-              ),
-          })}
-        </span>
+      }
+      chart={
         <PayoutsChart
           afterUnlockLabel={t('after-unlock')}
           formatDate={value => formatShortDate(new Date(value), locale)}
@@ -171,7 +133,33 @@ export const EstimatedPayouts = function () {
           ticks={getPayoutAxisTicks(chartSeries)}
           unlockX={getUnlockMarkerX(chartSeries)}
         />
-      </div>
-    </div>
+      }
+      currentEpoch={systemState?.currentEpoch}
+      headline={
+        hasForecast && systemState !== undefined ? (
+          <PayoutHeadline
+            carriedFrom={forecastInputs?.transferable.carriedFrom}
+            currentEpoch={systemState.currentEpoch}
+            input={input}
+            lockEnd={forecast.lockEnd}
+            lockupDays={lockupDays}
+            nextPayout={forecast.payouts[0].payout}
+            nextPayoutAt={forecast.payouts[0].timestamp}
+            tooltipId="estimated-payouts-apy"
+            yearOneReturnRatio={forecast.yearOneReturnRatio}
+            yearOneTotal={forecast.yearOneTotal}
+          />
+        ) : (
+          <PayoutPlaceholder
+            hasError={hasError}
+            hasValidLockup={hasValidLockup}
+            isPending={isPending}
+            lockEnd={forecast.lockEnd}
+            meetsMinimumAmount={forecast.meetsMinimumAmount}
+            onRetry={retry}
+          />
+        )
+      }
+    />
   )
 }

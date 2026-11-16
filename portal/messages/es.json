@@ -493,6 +493,7 @@
       "unlock-token": "Desbloquear {symbol}"
     },
     "estimated-payouts": {
+      "added-amount": "{symbol} agregado",
       "advanced-estimator": "Estimador avanzado",
       "after-unlock": "después del desbloqueo",
       "apy": "{percentage} TEA",
@@ -504,6 +505,7 @@
       "next-payout-line": "próximo pago <amount></amount> · época {epoch}, se liquida el {date}",
       "not-funded": "Las recompensas de esta época aún no han sido financiadas.",
       "starting-from-epoch": "Pagos por época · a partir de la época <epoch></epoch>",
+      "this-lockup": "Este bloqueo",
       "title": "Pagos estimados",
       "unlocks-on": "Se desbloquea el {date}"
     },

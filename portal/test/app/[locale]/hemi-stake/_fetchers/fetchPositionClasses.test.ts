@@ -1,4 +1,4 @@
-import { fetchPositionClasses } from 'app/[locale]/hemi-stake/estimator/_fetchers/fetchPositionClasses'
+import { fetchPositionClasses } from 'app/[locale]/hemi-stake/_fetchers/fetchPositionClasses'
 import { getTransferableAfter } from 've-hemi-actions/actions'
 import { describe, expect, it, vi } from 'vitest'
 

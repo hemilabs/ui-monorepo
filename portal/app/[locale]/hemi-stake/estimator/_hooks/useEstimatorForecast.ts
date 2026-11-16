@@ -6,7 +6,9 @@ import { type Address } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useDelegatedAway } from '../../_hooks/useDelegatedAway'
+import { useEpochAnchoredNow } from '../../_hooks/useEpochAnchoredNow'
 import { useEpochSystemState } from '../../_hooks/useEpochSystemState'
+import { usePositionClasses } from '../../_hooks/usePositionClasses'
 import { useRewardsForecastInputs } from '../../_hooks/useRewardsForecastInputs'
 import { useStakingPositions } from '../../_hooks/useStakingPositions'
 import { getBlendedForecast } from '../../_utils/blendedForecast'
@@ -22,9 +24,7 @@ import { useEstimator } from '../_context/estimatorContext'
 import { canForecast } from '../_utils/canForecast'
 import { isForecastUnavailable } from '../_utils/isForecastUnavailable'
 
-import { useEpochAnchoredNow } from './useEpochAnchoredNow'
 import { useNeedsWallet } from './useNeedsWallet'
-import { usePositionClasses } from './usePositionClasses'
 
 const toLockEnd = (position: StakingPosition) =>
   getLockEnd({

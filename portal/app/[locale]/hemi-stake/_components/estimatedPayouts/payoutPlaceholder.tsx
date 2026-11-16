@@ -39,9 +39,6 @@ export const PayoutPlaceholder = function ({
         </span>
       )
     }
-    if (!hasValidLockup) {
-      return null
-    }
     if (hasError) {
       return (
         <div className="flex flex-col items-start gap-y-2">
@@ -56,6 +53,9 @@ export const PayoutPlaceholder = function ({
           </Button>
         </div>
       )
+    }
+    if (!hasValidLockup) {
+      return null
     }
     if (isPending) {
       return <Skeleton className="h-6 w-40" />

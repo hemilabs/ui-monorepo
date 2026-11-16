@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { unixNowTimestamp } from 'utils/time'
 
 import { getExtendedLockEnd, getExtendForecast } from '../_utils/extendForecast'
 import { earnsAnotherEpoch } from '../_utils/topUpForecast'
@@ -15,7 +16,10 @@ export const useExtendForecast = function ({
   const { inputsByClass, lockEnd, now, position, positionClass, ...rest } =
     usePositionForecastInputs(tokenId)
 
-  const extendedLockEnd = getExtendedLockEnd({ lockupDays, now })
+  const extendedLockEnd = getExtendedLockEnd({
+    lockupDays,
+    now: Number(unixNowTimestamp()),
+  })
   const isExtension = lockEnd !== undefined && extendedLockEnd > lockEnd
 
   const forecast = useMemo(
@@ -31,17 +35,17 @@ export const useExtendForecast = function ({
       }
 
       return getExtendForecast({
+        extendedLockEnd,
         inputsByClass,
-        lockupDays,
         now,
         position: { amount: position.amount, lockEnd, positionClass },
       })
     },
     [
+      extendedLockEnd,
       inputsByClass,
       isExtension,
       lockEnd,
-      lockupDays,
       now,
       position,
       positionClass,

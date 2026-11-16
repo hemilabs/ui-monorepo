@@ -31,6 +31,8 @@ const aPosition = {
   positionClass: alwaysTransferable,
 }
 
+const extendTo = (lockupDays: number) => getExtendedLockEnd({ lockupDays, now })
+
 describe('getExtendedLockEnd', function () {
   it('snaps the chosen lockup to an epoch', function () {
     const lockEnd = getExtendedLockEnd({ lockupDays: 100, now })
@@ -42,8 +44,8 @@ describe('getExtendedLockEnd', function () {
 describe('getExtendForecast', function () {
   it('adds nothing when the lockup does not pass the current lock end', function () {
     const { blended, existing, incoming } = getExtendForecast({
+      extendedLockEnd: extendTo(30),
       inputsByClass,
-      lockupDays: 30,
       now,
       position: aPosition,
     })
@@ -55,8 +57,8 @@ describe('getExtendForecast', function () {
 
   it('raises the rate without changing the amount', function () {
     const { blended, existing, totalAmount } = getExtendForecast({
+      extendedLockEnd: extendTo(twoYears),
       inputsByClass,
-      lockupDays: twoYears,
       now,
       position: aPosition,
     })
@@ -69,8 +71,8 @@ describe('getExtendForecast', function () {
 
   it('keeps paying the extension after the current lock end', function () {
     const { existing, incoming } = getExtendForecast({
+      extendedLockEnd: extendTo(twoYears),
       inputsByClass,
-      lockupDays: twoYears,
       now,
       position: aPosition,
     })
@@ -82,8 +84,8 @@ describe('getExtendForecast', function () {
   it('stops paying at the extended lock end', function () {
     const lockupDays = (30 * SixDaysSeconds) / (24 * 60 * 60)
     const { blended, incoming } = getExtendForecast({
+      extendedLockEnd: extendTo(lockupDays),
       inputsByClass,
-      lockupDays,
       now,
       position: aPosition,
     })
@@ -95,8 +97,8 @@ describe('getExtendForecast', function () {
 
   it('never adds a negative payout', function () {
     const { incoming } = getExtendForecast({
+      extendedLockEnd: extendTo(twoYears),
       inputsByClass,
-      lockupDays: twoYears,
       now,
       position: aPosition,
     })
@@ -115,11 +117,11 @@ describe('getExtendForecast', function () {
       },
     }
     const { incoming } = getExtendForecast({
+      extendedLockEnd: extendTo(twoYears),
       inputsByClass: {
         ...inputsByClass,
         transferable: { baseline: BigInt(0), weight: transferableWeight },
       },
-      lockupDays: twoYears,
       now,
       position,
     })

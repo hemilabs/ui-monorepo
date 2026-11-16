@@ -31,21 +31,18 @@ export const getExtendedLockEnd = ({
   })
 
 export const getExtendForecast = function ({
+  extendedLockEnd,
   inputsByClass,
-  lockupDays,
   now,
   position,
 }: {
+  extendedLockEnd: number
   inputsByClass: InputsByClass
-  lockupDays: number
   now: number
   position: ExtendedPosition
 }) {
   const settledLockEnd = snapToEpoch(position.lockEnd)
-  const lockEnd = Math.max(
-    getExtendedLockEnd({ lockupDays, now }),
-    settledLockEnd,
-  )
+  const lockEnd = Math.max(extendedLockEnd, settledLockEnd)
 
   const forecastUntil = (until: number) =>
     getBlendedForecast({

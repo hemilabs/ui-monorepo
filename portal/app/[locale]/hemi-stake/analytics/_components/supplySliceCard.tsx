@@ -49,7 +49,7 @@ export const SupplySliceCard = function ({
           <Badge size="small" variant="secondary">
             <span>
               {t('share-of-supply', {
-                share: formatPercentage(data.share * 100),
+                share: formatPercentage(data.share * 100, locale),
               })}
             </span>
             <span aria-hidden>·</span>

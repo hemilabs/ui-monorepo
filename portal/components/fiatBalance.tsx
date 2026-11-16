@@ -7,6 +7,7 @@ import { useTokenPrices } from 'hooks/useTokenPrices'
 import { ComponentProps } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
+import { useLocale } from 'use-intl'
 import { formatFiatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/nativeToken'
 import { isDataUnavailable } from 'utils/queryStatus'
@@ -28,7 +29,7 @@ const RenderFiatBalanceUnsafe = function ({
   usePrices = useTokenPrices,
 }: Props & {
   balance: bigint | undefined
-  customFormatter?: (amount: string) => string
+  customFormatter?: (amount: string, locale: string) => string
   fetchStatus?: FetchStatus
   queryStatus: QueryStatus
   // The price feed to read from. Defaults to the app-wide portal feed;
@@ -36,6 +37,7 @@ const RenderFiatBalanceUnsafe = function ({
   // oracle-merged `useEarnTokenPrices`) inject their own hook.
   usePrices?: typeof useTokenPrices
 }) {
+  const locale = useLocale()
   const {
     data: pricesData,
     fetchStatus: pricesFetchStatus,
@@ -52,6 +54,7 @@ const RenderFiatBalanceUnsafe = function ({
       <>
         {customFormatter(
           Big(stringBalance).times(price).toFixed(token.decimals),
+          locale,
         )}
       </>
     )

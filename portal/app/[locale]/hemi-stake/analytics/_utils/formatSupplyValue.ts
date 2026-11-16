@@ -26,8 +26,8 @@ export const formatSupplyValue = function ({
 
   if (precision === 'full') {
     return unit === 'usd'
-      ? `${sign}$${formatFiatNumber(amount)}`
-      : `${sign}${formatNumber(amount)} ${symbol}`
+      ? `${sign}$${formatFiatNumber(amount, locale)}`
+      : `${sign}${formatNumber(amount, locale)} ${symbol}`
   }
 
   const { number, suffix } = formatCompactFiatParts(amount, locale)

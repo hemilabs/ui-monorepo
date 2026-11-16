@@ -1,6 +1,6 @@
 import { ArrowGrowingIcon } from 'components/icons/arrowGrowingIcon'
 import { StatCard } from 'components/statCard'
-import { useTranslations } from 'use-intl'
+import { useLocale, useTranslations } from 'use-intl'
 import { formatFiatNumber } from 'utils/format'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
@@ -10,6 +10,7 @@ import { useEarnedAmount } from '../_hooks/useEarnedAmount'
 export const EarnedAmount = function () {
   const { data, isError, isPending } = useEarnedAmount()
   const { status } = useAccount()
+  const locale = useLocale()
   const t = useTranslations('hemi-earn')
   const isDisconnected = !walletIsConnected(status)
 
@@ -19,7 +20,7 @@ export const EarnedAmount = function () {
       isError={isError || isDisconnected}
       isLoading={isPending}
       label={t('info.estimated-earnings')}
-      value={<>${formatFiatNumber(data?.totalUsd ?? 0)}</>}
+      value={<>${formatFiatNumber(data?.totalUsd ?? 0, locale)}</>}
     />
   )
 }

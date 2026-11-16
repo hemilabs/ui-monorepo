@@ -24,33 +24,40 @@ const tokenPriceRounder = smartRound(6, 2, 6)
 export const formatEvmHash = (txHash: Hash) =>
   shorten(txHash, { length: 4, prefixes: ['0x'] })
 
-export const formatNumber = (value: number | string, locale?: string) =>
+export const roundNumber = (value: number | string) =>
+  cryptoRounder(value, { roundingMode: 'round-down' })
+
+export const formatNumber = (value: number | string, locale: string) =>
   cryptoRounder(value, {
     locale,
     roundingMode: 'round-down',
     shouldFormat: true,
   })
 
+// Kept unformatted so it can be used in comparisons
 export const smallestFormattedNumber = `0.${'0'.repeat(cryptoDecimals - 1)}1`
 
-export const formatFiatNumber = (value: number | string) =>
-  fiatRounder(value, { shouldFormat: true })
+export const formatFiatNumber = (value: number | string, locale: string) =>
+  fiatRounder(value, { locale, shouldFormat: true })
 
-export const formatFiatAmount = function (amount: number | string) {
+export const formatFiatAmount = function (
+  amount: number | string,
+  locale: string,
+) {
   const value = Big(amount)
   return value.gt(0) && value.lt(0.01)
-    ? `< $0.01`
-    : `$${formatFiatNumber(amount)}`
+    ? `< $${formatFiatNumber(0.01, locale)}`
+    : `$${formatFiatNumber(amount, locale)}`
 }
 
-export const formatPercentage = (value: number | string) =>
-  `${percentageRounder(value, { shouldFormat: true })}%`
+export const formatPercentage = (value: number | string, locale: string) =>
+  `${percentageRounder(value, { locale, shouldFormat: true })}%`
 
-export const formatApyDisplay = function (apy: number) {
+export const formatApyDisplay = function (apy: number, locale: string) {
   if (apy !== 0 && apy > -0.01 && apy < 0.01) {
-    return apy > 0 ? '< 0.01%' : '< -0.01%'
+    return `< ${formatPercentage(apy > 0 ? 0.01 : -0.01, locale)}`
   }
-  return formatPercentage(apy)
+  return formatPercentage(apy, locale)
 }
 
 // Shared function to format relative time based on thresholds
@@ -107,18 +114,6 @@ export const formatFutureTime = (seconds: number, locale: string) =>
     seconds,
   })
 
-const formatFiatNumberTVL = (value: number | string) =>
-  fiatRounderTVL(value, { shouldFormat: true })
-
-export const formatTVL = function (amount: number | string) {
-  if (Big(amount).lt(100_000)) {
-    // for less than 100k, return "< $100k"
-    return `< $100K`
-  }
-  // For the rest, show the full format
-  return `$${formatFiatNumberTVL(amount)}`
-}
-
 // When `maximumFractionDigits` is undefined, the Intl compact notation default
 // is used (it rounds based on significant digits, eg. "420M", "1.2B").
 // Compact notation defaults to "min2" grouping, which drops the separator on
@@ -141,6 +136,16 @@ export const formatCompactFiat = (
   locale: string,
   maximumFractionDigits?: number,
 ) => `$${compactFiatFormatter(locale, maximumFractionDigits).format(value)}`
+
+const formatFiatNumberTVL = (value: number | string, locale: string) =>
+  fiatRounderTVL(value, { locale, shouldFormat: true })
+
+export const formatTVL = function (amount: number | string, locale: string) {
+  if (Big(amount).lt(100_000)) {
+    return `< ${formatCompactFiat(100_000, locale)}`
+  }
+  return `$${formatFiatNumberTVL(amount, locale)}`
+}
 
 // Same as formatCompactFiat, but splits the numeric part from the K/M/B
 // suffix so callers can style them differently (eg. dim the suffix).

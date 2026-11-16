@@ -17,6 +17,7 @@ import {
   formatShortDateWithYear,
   formatTokenPrice,
   formatTVL,
+  roundNumber,
   smallestFormattedNumber,
 } from 'utils/format'
 import { describe, expect, it } from 'vitest'
@@ -186,79 +187,95 @@ describe('utils/format', function () {
 
   describe('formatApyDisplay', function () {
     it('flags a tiny positive apy instead of rounding it to zero', function () {
-      expect(formatApyDisplay(0.005)).toBe('< 0.01%')
+      expect(formatApyDisplay(0.005, 'en')).toBe('< 0.01%')
     })
 
     it('flags a tiny negative apy the same way', function () {
-      expect(formatApyDisplay(-0.005)).toBe('< -0.01%')
+      expect(formatApyDisplay(-0.005, 'en')).toBe('< -0.01%')
     })
 
     it('reads zero as zero, not as less than a hundredth', function () {
-      expect(formatApyDisplay(0)).toBe('0.00%')
+      expect(formatApyDisplay(0, 'en')).toBe('0.00%')
     })
 
     it('formats a negative apy beyond the threshold', function () {
-      expect(formatApyDisplay(-5.25)).toBe('-5.25%')
+      expect(formatApyDisplay(-5.25, 'en')).toBe('-5.25%')
     })
 
     it('formats the threshold itself', function () {
-      expect(formatApyDisplay(0.01)).toBe('0.01%')
+      expect(formatApyDisplay(0.01, 'en')).toBe('0.01%')
     })
 
     it('formats a larger apy', function () {
-      expect(formatApyDisplay(5.25)).toBe('5.25%')
+      expect(formatApyDisplay(5.25, 'en')).toBe('5.25%')
+    })
+
+    it('follows the locale separators, also in the threshold labels', function () {
+      expect(formatApyDisplay(5.25, 'es')).toBe('5,25%')
+      expect(formatApyDisplay(0.005, 'es')).toBe('< 0,01%')
+      expect(formatApyDisplay(-0.005, 'pt')).toBe('< -0,01%')
     })
   })
 
   describe('formatFiatAmount', function () {
     it('shows two decimals', function () {
-      expect(formatFiatAmount(12.345)).toBe('$12.35')
+      expect(formatFiatAmount(12.345, 'en')).toBe('$12.35')
     })
 
     it('flags anything under a cent instead of rounding it to zero', function () {
-      expect(formatFiatAmount(0.0049)).toBe('< $0.01')
+      expect(formatFiatAmount(0.0049, 'en')).toBe('< $0.01')
     })
 
     it('shows a cent as a cent', function () {
-      expect(formatFiatAmount(0.01)).toBe('$0.01')
+      expect(formatFiatAmount(0.01, 'en')).toBe('$0.01')
     })
 
     it('reads zero as zero, not as less than a cent', function () {
-      expect(formatFiatAmount(0)).toBe('$0.00')
+      expect(formatFiatAmount(0, 'en')).toBe('$0.00')
     })
 
     it('groups thousands', function () {
-      expect(formatFiatAmount('1234567')).toBe('$1,234,567.00')
+      expect(formatFiatAmount('1234567', 'en')).toBe('$1,234,567.00')
+    })
+
+    it('follows the locale separators, also in the threshold label', function () {
+      expect(formatFiatAmount('1234567', 'es')).toBe('$1.234.567,00')
+      expect(formatFiatAmount(0.0049, 'pt')).toBe('< $0,01')
     })
   })
 
   describe('formatTVL', function () {
     it('should format a number less than one hundred thousand correctly', function () {
-      expect(formatTVL(99_999)).toBe('< $100K')
+      expect(formatTVL(99_999, 'en')).toBe('< $100K')
     })
 
     it('should format a number equal to one hundred thousand correctly', function () {
-      expect(formatTVL(100_000)).toBe('$100,000')
+      expect(formatTVL(100_000, 'en')).toBe('$100,000')
     })
 
     it('should format a number greater than one hundred thousand correctly', function () {
-      expect(formatTVL(2500000)).toBe('$2,500,000')
+      expect(formatTVL(2500000, 'en')).toBe('$2,500,000')
     })
 
     it('should format a string number less than one hundred thousand correctly', function () {
-      expect(formatTVL('99999')).toBe('< $100K')
+      expect(formatTVL('99999', 'en')).toBe('< $100K')
     })
 
     it('should format a string number equal to one hundred thousand correctly', function () {
-      expect(formatTVL('100000')).toBe('$100,000')
+      expect(formatTVL('100000', 'en')).toBe('$100,000')
     })
 
     it('should format a string number greater than one hundred thousand correctly', function () {
-      expect(formatTVL('2500000')).toBe('$2,500,000')
+      expect(formatTVL('2500000', 'en')).toBe('$2,500,000')
     })
 
     it('should format a string number greater than one hundred thousand without decimals', function () {
-      expect(formatTVL('2500000.13')).toBe('$2,500,000')
+      expect(formatTVL('2500000.13', 'en')).toBe('$2,500,000')
+    })
+
+    it('should follow the locale, also in the threshold label', function () {
+      expect(formatTVL(2500000, 'es')).toBe('$2.500.000')
+      expect(formatTVL(99_999, 'pt')).toBe('< $100\u00a0mil')
     })
   })
 
@@ -447,8 +464,8 @@ describe('utils/format', function () {
   })
 
   describe('formatNumber', function () {
-    it('should default to the en locale separators', function () {
-      expect(formatNumber(1234567)).toBe('1,234,567')
+    it('should use the en locale separators', function () {
+      expect(formatNumber(1234567, 'en')).toBe('1,234,567')
     })
 
     it('should follow the locale separators', function () {
@@ -459,66 +476,81 @@ describe('utils/format', function () {
     })
 
     it('should round an amount below six decimals down to zero', function () {
-      expect(formatNumber('0.00000012')).toBe('0.000000')
+      expect(formatNumber('0.00000012', 'en')).toBe('0.000000')
+    })
+  })
+
+  describe('roundNumber', function () {
+    it('should round down to six significant digits without formatting', function () {
+      expect(roundNumber('1234.5678')).toBe('1234.56')
+    })
+
+    it('should keep an amount that needs no rounding intact', function () {
+      expect(roundNumber('0.5')).toBe('0.5')
     })
   })
 
   describe('smallestFormattedNumber', function () {
     it('should be the smallest amount formatNumber keeps intact', function () {
-      expect(formatNumber(smallestFormattedNumber)).toBe(
+      expect(formatNumber(smallestFormattedNumber, 'en')).toBe(
         smallestFormattedNumber,
       )
     })
 
     it('should be the last step before formatNumber loses every digit', function () {
       const below = Big(smallestFormattedNumber).div(10).toFixed()
-      expect(formatNumber(below)).not.toMatch(/[1-9]/)
+      expect(formatNumber(below, 'en')).not.toMatch(/[1-9]/)
     })
   })
 
   describe('formatPercentage', function () {
     it('should format integer percentage correctly', function () {
-      expect(formatPercentage(50)).toBe('50.00%')
+      expect(formatPercentage(50, 'en')).toBe('50.00%')
     })
 
     it('should format decimal percentage correctly', function () {
-      expect(formatPercentage(25.5)).toBe('25.50%')
+      expect(formatPercentage(25.5, 'en')).toBe('25.50%')
     })
 
     it('should format percentage with many decimals correctly', function () {
-      expect(formatPercentage(33.333333)).toBe('33.33%')
+      expect(formatPercentage(33.333333, 'en')).toBe('33.33%')
     })
 
     it('should format zero percentage correctly', function () {
-      expect(formatPercentage(0)).toBe('0.00%')
+      expect(formatPercentage(0, 'en')).toBe('0.00%')
     })
 
     it('should format percentage greater than 100 correctly', function () {
-      expect(formatPercentage(150)).toBe('150.00%')
+      expect(formatPercentage(150, 'en')).toBe('150.00%')
     })
 
     it('should format negative percentage correctly', function () {
-      expect(formatPercentage(-25.5)).toBe('-25.50%')
+      expect(formatPercentage(-25.5, 'en')).toBe('-25.50%')
     })
 
     it('should format string percentage correctly', function () {
-      expect(formatPercentage('75')).toBe('75.00%')
+      expect(formatPercentage('75', 'en')).toBe('75.00%')
     })
 
     it('should format string decimal percentage correctly', function () {
-      expect(formatPercentage('12.34')).toBe('12.34%')
+      expect(formatPercentage('12.34', 'en')).toBe('12.34%')
     })
 
     it('should format very small percentage correctly', function () {
-      expect(formatPercentage(0.001)).toBe('0.00%')
+      expect(formatPercentage(0.001, 'en')).toBe('0.00%')
     })
 
     it('should format small decimal percentage correctly', function () {
-      expect(formatPercentage(0.01)).toBe('0.01%')
+      expect(formatPercentage(0.01, 'en')).toBe('0.01%')
     })
 
     it('should format percentage with high precision correctly', function () {
-      expect(formatPercentage(99.999999)).toBe('100.00%')
+      expect(formatPercentage(99.999999, 'en')).toBe('100.00%')
+    })
+
+    it('should follow the locale separators', function () {
+      expect(formatPercentage(87.5, 'es')).toBe('87,50%')
+      expect(formatPercentage(1234.5, 'pt')).toBe('1.234,50%')
     })
   })
   describe('formatTokenPrice', function () {

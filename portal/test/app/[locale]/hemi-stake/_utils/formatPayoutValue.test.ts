@@ -4,7 +4,7 @@ import {
 } from 'app/[locale]/hemi-stake/_utils/formatPayoutValue'
 import { describe, expect, it } from 'vitest'
 
-const hemi = { symbol: 'HEMI' }
+const hemi = { locale: 'en', symbol: 'HEMI' }
 
 describe('formatPayoutValue', function () {
   it('compacts the axis label so it fits the gutter', function () {
@@ -17,6 +17,12 @@ describe('formatPayoutValue', function () {
 
   it('compacts millions too', function () {
     expect(formatPayoutValue({ ...hemi, value: 2_500_000 })).toBe('2.5M HEMI')
+  })
+
+  it('follows the locale separators', function () {
+    expect(formatPayoutValue({ ...hemi, locale: 'es', value: 0.0293 })).toBe(
+      '0,03 HEMI',
+    )
   })
 })
 
@@ -43,5 +49,11 @@ describe('formatPayoutDetail', function () {
     expect(formatPayoutDetail({ ...hemi, price: 0.00627, value: 0.5 })).toBe(
       '0.5 HEMI · < $0.01',
     )
+  })
+
+  it('follows the locale separators in both halves', function () {
+    expect(
+      formatPayoutDetail({ ...hemi, locale: 'pt', price: 0.0065, value: 1764 }),
+    ).toBe('1.764 HEMI · $11,47')
   })
 })

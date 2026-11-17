@@ -3,7 +3,6 @@ import { CheckMark } from 'components/icons/checkMark'
 import { ClipboardIcon } from 'components/icons/clipboard'
 import { Tooltip } from 'components/tooltip'
 import { useCopyToClipboard } from 'hooks/useCopyToClipboard'
-import { useId } from 'react'
 import { useTranslations } from 'use-intl'
 
 type Props = {
@@ -13,7 +12,6 @@ type Props = {
 
 export const CopyButton = function ({ onCopy, text }: Props) {
   const { copied, copy } = useCopyToClipboard()
-  const id = useId()
   const t = useTranslations('common')
   const label = t(copied ? 'copied' : 'copy')
 
@@ -25,7 +23,7 @@ export const CopyButton = function ({ onCopy, text }: Props) {
     })
 
   return (
-    <Tooltip id={id} text={label} trigger={['hover', 'focus']} variant="simple">
+    <Tooltip text={label} trigger={['hover', 'focus']} variant="simple">
       <ButtonIcon
         aria-label={label}
         aria-live="polite"

@@ -92,6 +92,7 @@ export function ConnectWalletAccordion<T extends WalletItem>({
   return (
     <div className="rounded-lg bg-white shadow-sm">
       <button
+        aria-expanded={isOpen}
         className="group flex w-full cursor-pointer items-center gap-x-2 p-4 hover:bg-connect-wallet-hovered"
         onClick={handleClick}
       >
@@ -115,6 +116,7 @@ export function ConnectWalletAccordion<T extends WalletItem>({
         className={`overflow-hidden transition-all duration-300 ease-in-out ${
           isOpen ? 'max-h-120' : 'max-h-0'
         }`}
+        inert={!isOpen}
       >
         <div
           className={`relative overflow-hidden ${

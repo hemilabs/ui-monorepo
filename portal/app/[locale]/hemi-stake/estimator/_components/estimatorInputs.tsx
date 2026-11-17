@@ -92,7 +92,7 @@ export const EstimatorInputs = function () {
           </div>
         </div>
       </Card>
-      {submission.canStake && !needsWallet && (
+      {submission.canStake && (
         <FeesContainer>
           <EvmFeesSummary gas={submission.gas} />
         </FeesContainer>

@@ -22,13 +22,13 @@ const collect = (
     )
 
 export const sitemapRoutes = function (
-  includeHemiEarn: boolean,
+  flags: Record<FeatureFlag, boolean>,
   definitions: readonly RouteDefinition[] = routes,
 ) {
   const locale = definitions.find(({ path }) => path === '/:locale')
   return [
     ...new Set(
-      collect(locale?.children ?? [], '', { hemiEarn: includeHemiEarn })
+      collect(locale?.children ?? [], '', flags)
         .filter(path => path && !/[:*]/.test(path))
         .map(path => `/${path}`),
     ),

@@ -60,7 +60,10 @@ export default defineConfig(function ({ mode }) {
     plugins.push(
       sitemap({
         baseUrl: env.PORTAL_SITE_URL,
-        includeHemiEarn: env.VITE_ENABLE_HEMI_EARN_PAGE === 'true',
+        flags: {
+          hemiEarn: env.VITE_ENABLE_HEMI_EARN_PAGE === 'true',
+          hemiStakeCalculator: env.VITE_ENABLE_HEMI_STAKE_CALCULATOR === 'true',
+        },
       }),
     )
   }

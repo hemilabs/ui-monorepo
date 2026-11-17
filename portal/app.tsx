@@ -18,6 +18,7 @@ import { StakePage } from 'app/[locale]/stake/page'
 import { TunnelLayout } from 'app/[locale]/tunnel/layout'
 import { TunnelPage } from 'app/[locale]/tunnel/page'
 import { TransactionHistoryPage } from 'app/[locale]/tunnel/transaction-history/page'
+import { featureFlags } from 'app/featureFlags'
 import { UntranslatedError500 } from 'components/error500'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { preferredLocale } from 'i18n/routing'
@@ -122,16 +123,26 @@ const elements: Record<RouteId, ReactElement> = {
   vaultPage: <VaultPage />,
 }
 
+const getEnabledFlags = (): Record<
+  NonNullable<RouteDefinition['featureFlag']>,
+  boolean
+> => ({
+  hemiEarn: featureFlags.enableHemiEarnPage,
+  hemiStakeCalculator: featureFlags.enableHemiStakeCalculator,
+})
+
 const renderRoutes = (definitions: readonly RouteDefinition[]) =>
-  definitions.map(({ children, id, index, path }) =>
-    index ? (
-      <Route element={elements[id as RouteId]} index key={id} />
-    ) : (
-      <Route element={elements[id as RouteId]} key={id} path={path}>
-        {children && renderRoutes(children)}
-      </Route>
-    ),
-  )
+  definitions
+    .filter(({ featureFlag }) => !featureFlag || getEnabledFlags()[featureFlag])
+    .map(({ children, id, index, path }) =>
+      index ? (
+        <Route element={elements[id as RouteId]} index key={id} />
+      ) : (
+        <Route element={elements[id as RouteId]} key={id} path={path}>
+          {children && renderRoutes(children)}
+        </Route>
+      ),
+    )
 
 export const App = () => (
   // Outermost on purpose: anything thrown above this, including reading the

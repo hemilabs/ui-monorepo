@@ -1,4 +1,3 @@
-import { featureFlags } from 'app/featureFlags'
 import { PageLayout } from 'components/pageLayout'
 import { TestnetDisabled } from 'components/testnetDisabled'
 import { useDocumentTitle } from 'hooks/useDocumentTitle'
@@ -20,10 +19,6 @@ export const HemiEarnLayout = function () {
   const t = useTranslations()
 
   useDocumentTitle(`${t('navbar.hemi-earn')} | ${t('metadata.title')}`)
-
-  if (!featureFlags.enableHemiEarnPage) {
-    return <NotFound />
-  }
 
   // Checked up here rather than in the page: below this point the layout has
   // already mounted the delivery watcher, and a 404 has no business polling.

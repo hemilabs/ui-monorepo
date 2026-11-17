@@ -1,4 +1,5 @@
 import { App } from 'app'
+import { featureFlags } from 'app/featureFlags'
 import { describe, expect, it, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
 
@@ -13,6 +14,9 @@ const { layout, page } = await vi.hoisted(async function () {
   }
 })
 
+vi.mock('app/featureFlags', () => ({
+  featureFlags: { enableHemiEarnPage: true, enableHemiStakeCalculator: true },
+}))
 vi.mock('i18n/routing', () => ({ preferredLocale: () => 'en' }))
 vi.mock('components/errorBoundary', () => ({
   ErrorBoundary: ({ children }) => children,
@@ -80,6 +84,23 @@ describe('App', function () {
     const screen = await renderAt(url)
     await expect.element(screen.getByText(text)).toBeVisible()
   })
+
+  it.each([
+    ['enableHemiEarnPage', '/en/hemi-earn'],
+    ['enableHemiEarnPage', '/en/hemi-earn/vault/0x123'],
+    ['enableHemiStakeCalculator', '/en/hemi-stake/estimator'],
+  ] as const)(
+    'should render not found when %s is off at %s',
+    async function (flag, url) {
+      featureFlags[flag] = false
+      try {
+        const screen = await renderAt(url)
+        await expect.element(screen.getByText('not found page')).toBeVisible()
+      } finally {
+        featureFlags[flag] = true
+      }
+    },
+  )
 
   it.each([
     ['/', '/en/hemi-stake', 'hemi stake page'],

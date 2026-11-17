@@ -50,6 +50,7 @@ VITE_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
 # These env variables are required for enabling the following features
 VITE_DISABLE_HEMI_EARN_DEPOSITS=<true|false> # Pause new Hemi Earn deposits. Unset means deposits are open
 VITE_ENABLE_HEMI_EARN_PAGE=<true|false> # Enable the Hemi Earn page
+VITE_ENABLE_HEMI_STAKE_CALCULATOR=<true|false> # Enable the Hemi Stake calculator
 VITE_ENABLE_SAFE_WALLET=<true|false> # Enable the Safe connector, needed to run the Portal as a Safe App
 VITE_ENABLE_STAKE_GOVERNANCE_TESTNET=<true|false> # Enable stake governance on Testnet, for local development
 VITE_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development

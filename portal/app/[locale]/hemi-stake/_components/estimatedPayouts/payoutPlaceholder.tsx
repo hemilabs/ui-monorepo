@@ -33,7 +33,10 @@ export const PayoutPlaceholder = function ({
       return (
         <span className="text-xs text-neutral-400">
           {t('enter-minimum-amount', {
-            amount: formatNumber(formatUnits(minLockAmount, token.decimals)),
+            amount: formatNumber(
+              formatUnits(minLockAmount, token.decimals),
+              locale,
+            ),
             symbol: token.symbol,
           })}
         </span>

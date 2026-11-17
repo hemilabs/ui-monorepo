@@ -1,4 +1,5 @@
 import Skeleton from 'react-loading-skeleton'
+import { useLocale } from 'use-intl'
 import { formatPercentage } from 'utils/format'
 
 export type VetroFeeRowProps = {
@@ -12,10 +13,13 @@ export const VetroFeeRow = function ({
   label,
   percentage,
 }: VetroFeeRowProps) {
+  const locale = useLocale()
   const renderValue = function () {
     if (percentage !== undefined) {
       return (
-        <span className="text-neutral-950">{formatPercentage(percentage)}</span>
+        <span className="text-neutral-950">
+          {formatPercentage(percentage, locale)}
+        </span>
       )
     }
     if (isError) {

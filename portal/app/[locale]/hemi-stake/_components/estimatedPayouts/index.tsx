@@ -157,13 +157,14 @@ export const EstimatedPayouts = function () {
             point.afterUnlock
               ? t('after-unlock')
               : formatPayoutDetail({
+                  locale,
                   price,
                   symbol: token.symbol,
                   value: point.y,
                 })
           }
           formatValue={value =>
-            formatPayoutValue({ symbol: token.symbol, value })
+            formatPayoutValue({ locale, symbol: token.symbol, value })
           }
           isPending={isPending && !hasError && forecast.meetsMinimumAmount}
           series={chartSeries}

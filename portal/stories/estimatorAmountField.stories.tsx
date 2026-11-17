@@ -3,10 +3,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { EstimatorAmountField } from 'app/[locale]/hemi-stake/_components/estimator/estimatorAmountField'
 import { hemi } from 'hemi-viem'
 import { hemiTokenMap } from 'hooks/useHemiToken'
-import messages from 'messages/en.json'
 import { useArgs } from 'storybook/preview-api'
 import { tokenList } from 'tokenList'
-import { IntlProvider } from 'use-intl'
 import { sanitizeAmount } from 'utils/form'
 import { parseUnits } from 'viem'
 
@@ -32,11 +30,9 @@ const meta = {
   decorators: [
     Story => (
       <QueryClientProvider client={queryClient}>
-        <IntlProvider locale="en" messages={messages}>
-          <div className="mx-auto w-full lg:max-w-[536px]">
-            <Story />
-          </div>
-        </IntlProvider>
+        <div className="mx-auto w-full lg:max-w-[536px]">
+          <Story />
+        </div>
       </QueryClientProvider>
     ),
   ],

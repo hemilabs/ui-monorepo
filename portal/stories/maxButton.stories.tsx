@@ -1,8 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { MaxButton } from 'components/setMaxBalance'
-import messages from 'messages/en.json'
 import { fn } from 'storybook/test'
-import { IntlProvider } from 'use-intl'
 
 const meta = {
   args: {
@@ -14,13 +12,6 @@ const meta = {
     onClick: { control: false },
   },
   component: MaxButton,
-  decorators: [
-    Story => (
-      <IntlProvider locale="en" messages={messages}>
-        <Story />
-      </IntlProvider>
-    ),
-  ],
   parameters: {
     layout: 'centered',
   },

@@ -88,7 +88,7 @@ export const VaultInfoBar = function ({ vault }: Props) {
             label={<ApySourceLabel stakingVault={vault.stakingVault} />}
             value={
               typeof vault.apy === 'number'
-                ? formatApyDisplay(vault.apy)
+                ? formatApyDisplay(vault.apy, locale)
                 : undefined
             }
           />

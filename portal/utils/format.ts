@@ -54,7 +54,11 @@ export const formatPercentage = (value: number | string, locale: string) =>
   `${percentageRounder(value, { locale, shouldFormat: true })}%`
 
 export const formatWholePercentage = (value: number, locale: string) =>
-  `${new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(value)}%`
+  `${new Intl.NumberFormat(locale, {
+    maximumFractionDigits: 0,
+    // Avoid "-0%" for small negative values that round to zero
+    signDisplay: 'negative',
+  }).format(value)}%`
 
 export const formatFullAmount = (
   amount: string,

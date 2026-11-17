@@ -567,6 +567,11 @@ describe('utils/format', function () {
       expect(formatWholePercentage(1500, 'es')).toBe('1500%')
       expect(formatWholePercentage(1500, 'pt')).toBe('1.500%')
     })
+
+    it('should not show a sign for a negative value that rounds to zero', function () {
+      expect(formatWholePercentage(-0.4, 'en')).toBe('0%')
+      expect(formatWholePercentage(-0.6, 'en')).toBe('-1%')
+    })
   })
 
   describe('formatFullAmount', function () {

@@ -37,7 +37,7 @@ const renderAccordion = (
 ) =>
   render(
     <IntlProvider locale="en" messages={en}>
-      <ConnectWalletAccordion<Wallet>
+      <ConnectWalletAccordion
         event="evm connect"
         getWalletState={wallet => ({
           showCheck: wallet.installed,

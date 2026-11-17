@@ -82,8 +82,12 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   const { btcAddress, btcWalletStatus, evmWalletStatus } = useAccounts()
   const fromChain = useChain(fromNetworkId)!
 
-  const { isPending: isLoadingMinWithdrawalSats, minWithdrawalFormattedSats } =
-    useMinWithdrawalSats(fromToken)
+  const {
+    isError: isMinWithdrawalSatsError,
+    minWithdrawalFormattedSats,
+    minWithdrawalSats,
+  } = useMinWithdrawalSats(fromToken)
+  const isMinWithdrawalSatsLoaded = minWithdrawalSats !== undefined
   const { data: bitcoinBalance, isSuccess: balanceLoaded } = useTokenBalance(
     fromToken.chainId,
     fromToken.address,
@@ -207,7 +211,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   })
 
   const canWithdraw = [
-    !isLoadingMinWithdrawalSats,
+    isMinWithdrawalSatsLoaded,
     amountValidation.canSubmit,
     canSubmitAddress,
   ].every(Boolean)
@@ -306,7 +310,11 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
           btcWalletRequired={btcWalletRequired}
           disabled={disableForm}
           text={getSubmitText()}
-          validationError={amountValidation.error ?? addressError}
+          validationError={
+            !isMinWithdrawalSatsLoaded && isMinWithdrawalSatsError
+              ? t('tunnel-page.submit-button.min-withdrawal-load-failed')
+              : (amountValidation.error ?? addressError)
+          }
         />
       }
     />

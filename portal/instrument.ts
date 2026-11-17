@@ -7,17 +7,29 @@ import {
   useNavigationType,
 } from 'react-router'
 import { scrubAddresses } from 'utils/scrubAddresses'
+import { isWalletNoise } from 'utils/sentry'
 
 const unsupportedWalletErrors = [
   '@polkadot/keyring requires direct dependencies',
+  '[binance-w3w] callback id',
   "Backpack couldn't override `window.ethereum`.",
   'Cannot redefine property: ethereum',
   // Nightly wallet
   'Cannot set property ethereum of #<Window> which has only a getter',
+  // Rabby
+  "'ethereum.chainId' is deprecated",
+  "'ethereum.selectedAddress' is deprecated",
+  // Injected scripts that cannot compile wasm under the portal's CSP
+  'failed to asynchronously prepare wasm',
+  // MetaMask-based extensions logging to the console
+  'ObjectMultiplex - malformed chunk',
+  'ObjectMultiplex - orphaned data',
   'sendRequest() -> core.crypto.encode()',
   'shouldSetPelagusForCurrentProvider is not a function',
   'shouldSetTallyForCurrentProvider is not a function',
+  'StreamMiddleware - Unknown response id',
   'Talisman extension has not been configured yet',
+  'WavesKeeper global variable is deprecated',
 ]
 
 const walletConnectErrors = [
@@ -84,7 +96,10 @@ function enableSentry() {
     // breadcrumbs, spans and error messages, and denyUrls does not help here,
     // as it only filters by the URL of the stack frames.
     beforeBreadcrumb: breadcrumb => scrubAddresses(breadcrumb),
-    beforeSend: event => scrubAddresses(event),
+    // Wallet and extension noise that is not ours to fix is dropped before
+    // it uses quota.
+    beforeSend: (event, hint) =>
+      isWalletNoise(event, hint) ? null : scrubAddresses(event),
     beforeSendSpan: span => scrubAddresses(span),
     dataCollection: {
       cookies: false,

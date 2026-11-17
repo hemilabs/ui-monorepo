@@ -1,13 +1,18 @@
 import { RewardSource, type ClaimableReward } from 'types/stakingDashboard'
 import { type Address } from 'viem'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import {
   getClaimTransactions,
   getClaimWindows,
   markClaimWindowAsClaimed,
   mergeClaimableRewards,
+  sortClaimsByValue,
 } from '../../../../../app/[locale]/hemi-stake/_utils/claimableRewards'
+
+vi.mock('utils/chainClients', () => ({
+  getPublicClient: vi.fn(),
+}))
 
 const hemi: Address = '0x1111111111111111111111111111111111111111'
 const usdc: Address = '0x2222222222222222222222222222222222222222'
@@ -166,7 +171,12 @@ describe('getClaimTransactions', function () {
     ])
 
     expect(transactions).toEqual([
-      { fromEpoch: 64, source: RewardSource.EPOCH, toEpoch: 100 },
+      {
+        fromEpoch: 64,
+        rewards: [reward(hemi, BigInt(9))],
+        source: RewardSource.EPOCH,
+        toEpoch: 100,
+      },
     ])
   })
 
@@ -198,8 +208,18 @@ describe('getClaimTransactions', function () {
     ])
 
     expect(transactions).toEqual([
-      { fromEpoch: 3338, source: RewardSource.EPOCH, toEpoch: 3385 },
-      { fromEpoch: 3386, source: RewardSource.EPOCH, toEpoch: 3401 },
+      {
+        fromEpoch: 3338,
+        rewards: [reward(hemi, BigInt(405))],
+        source: RewardSource.EPOCH,
+        toEpoch: 3385,
+      },
+      {
+        fromEpoch: 3386,
+        rewards: [reward(hemi, BigInt(723))],
+        source: RewardSource.EPOCH,
+        toEpoch: 3401,
+      },
     ])
   })
 
@@ -210,7 +230,102 @@ describe('getClaimTransactions', function () {
     ])
 
     expect(transactions).toEqual([
-      { fromEpoch: 3386, source: RewardSource.EPOCH, toEpoch: 3401 },
+      {
+        fromEpoch: 3386,
+        rewards: [reward(hemi, BigInt(723))],
+        source: RewardSource.EPOCH,
+        toEpoch: 3401,
+      },
+    ])
+  })
+})
+
+describe('sortClaimsByValue', function () {
+  const tokens = [
+    { address: hemi, decimals: 18, symbol: 'HEMI' },
+    { address: usdc, decimals: 18, symbol: 'USDC' },
+  ]
+
+  const claim = (
+    tokenId: number,
+    fromEpoch: number,
+    rewards: ClaimableReward[],
+  ) => ({ fromEpoch, rewards, tokenId: BigInt(tokenId) })
+
+  const order = (claims: { fromEpoch: number; tokenId: bigint }[]) =>
+    claims.map(({ fromEpoch, tokenId }) => [Number(tokenId), fromEpoch])
+
+  it('should send the most valuable window first, across positions', function () {
+    const sorted = sortClaimsByValue({
+      claims: [
+        claim(1, 0, [reward(hemi, BigInt(1))]),
+        claim(1, 64, [reward(usdc, BigInt(1))]),
+        claim(2, 0, [reward(hemi, BigInt(1)), reward(usdc, BigInt(1))]),
+      ],
+      hemiTokenAddress: hemi,
+      prices: { HEMI: '0.1', USDC: '1' },
+      tokens,
+    })
+
+    expect(order(sorted)).toEqual([
+      [2, 0],
+      [1, 64],
+      [1, 0],
+    ])
+  })
+
+  it('should rank by the HEMI amount when prices are not loaded', function () {
+    const sorted = sortClaimsByValue({
+      claims: [
+        claim(1, 0, [reward(usdc, BigInt(1000))]),
+        claim(1, 64, [reward(hemi, BigInt(2))]),
+        claim(2, 0, [reward(hemi, BigInt(5))]),
+      ],
+      hemiTokenAddress: hemi,
+      prices: undefined,
+      tokens,
+    })
+
+    expect(order(sorted)).toEqual([
+      [2, 0],
+      [1, 64],
+      [1, 0],
+    ])
+  })
+
+  it('should count a reward token without a price as worth nothing', function () {
+    const sorted = sortClaimsByValue({
+      claims: [
+        claim(1, 0, [reward(usdc, BigInt(1000))]),
+        claim(1, 64, [reward(hemi, BigInt(1))]),
+      ],
+      hemiTokenAddress: hemi,
+      prices: { HEMI: '0.1' },
+      tokens,
+    })
+
+    expect(order(sorted)).toEqual([
+      [1, 64],
+      [1, 0],
+    ])
+  })
+
+  it('should break ties by position, then by epoch', function () {
+    const sorted = sortClaimsByValue({
+      claims: [
+        claim(2, 0, [reward(hemi, BigInt(1))]),
+        claim(1, 64, [reward(hemi, BigInt(1))]),
+        claim(1, 0, [reward(hemi, BigInt(1))]),
+      ],
+      hemiTokenAddress: hemi,
+      prices: { HEMI: '0.1' },
+      tokens,
+    })
+
+    expect(order(sorted)).toEqual([
+      [1, 0],
+      [1, 64],
+      [2, 0],
     ])
   })
 })
@@ -253,7 +368,12 @@ describe('markClaimWindowAsClaimed', function () {
     })
 
     expect(getClaimTransactions(result)).toEqual([
-      { fromEpoch: 11, source: RewardSource.EPOCH, toEpoch: 20 },
+      {
+        fromEpoch: 11,
+        rewards: [reward(hemi, BigInt(3)), reward(usdc, BigInt(7))],
+        source: RewardSource.EPOCH,
+        toEpoch: 20,
+      },
     ])
   })
 

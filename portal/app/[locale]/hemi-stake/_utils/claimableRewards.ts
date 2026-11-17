@@ -1,11 +1,16 @@
+import Big from 'big.js'
 import {
   RewardSource,
   type ClaimableReward,
   type ClaimTransaction,
   type RewardSourceType,
 } from 'types/stakingDashboard'
+import { type EvmToken } from 'types/token'
+import { calculateUsdValue } from 'utils/prices'
 import { getClaimSpan } from 've-hemi-epoch-rewards'
-import { type Address } from 'viem'
+import { formatUnits, isAddressEqual, type Address } from 'viem'
+
+import { findRewardToken } from './rewardToken'
 
 /**
  * One row per reward token, adding up what every source owes for it.
@@ -67,7 +72,8 @@ export const getClaimWindows = function ({
  *
  * Windows owing nothing are left out: the holder is never asked to sign for an epoch
  * range that pays them zero, and a retry after a partial claim only re-sends what is
- * still outstanding.
+ * still outstanding. Each transaction keeps what its window pays, so the claim can be
+ * ordered by value.
  */
 export const getClaimTransactions = (
   windows: {
@@ -76,10 +82,93 @@ export const getClaimTransactions = (
     toEpoch: number
   }[],
   source: RewardSourceType = RewardSource.EPOCH,
-): ClaimTransaction[] =>
+): (ClaimTransaction & { rewards: ClaimableReward[] })[] =>
   windows
     .filter(({ rewards }) => rewards.some(({ amount }) => amount > BigInt(0)))
-    .map(({ fromEpoch, toEpoch }) => ({ fromEpoch, source, toEpoch }))
+    .map(({ fromEpoch, rewards, toEpoch }) => ({
+      fromEpoch,
+      rewards,
+      source,
+      toEpoch,
+    }))
+
+const getClaimValue = function ({
+  hemiTokenAddress,
+  prices,
+  rewards,
+  tokens,
+}: {
+  hemiTokenAddress: Address
+  prices: Record<string, string> | undefined
+  rewards: ClaimableReward[]
+  tokens: EvmToken[]
+}) {
+  if (!prices) {
+    return rewards
+      .filter(reward => isAddressEqual(reward.token, hemiTokenAddress))
+      .reduce(
+        (total, reward) =>
+          total.plus(formatUnits(reward.amount, reward.decimals)),
+        Big(0),
+      )
+  }
+
+  // A reward token without a known price (or token metadata) counts as $0. This
+  // undervalues the windows that pay it, so they may be claimed later than they
+  // should.
+  // TODO improve the valuation of reward tokens that have no price.
+  const withBalance = rewards.flatMap(function (reward) {
+    const token = findRewardToken(tokens, reward.token)
+    return token ? [{ ...token, balance: reward.amount }] : []
+  })
+  return Big(calculateUsdValue(withBalance, prices))
+}
+
+/**
+ * The claims in the order they should be sent: the most valuable window first.
+ *
+ * A claim run stops at the first transaction that is rejected or reverts, so sending the
+ * valuable windows first keeps a partial run from paying gas for the small ones only.
+ * Every window is ranked on its own, across positions; the contract tracks claims per
+ * epoch, so windows can be claimed in any order.
+ *
+ * Windows are valued in USD across every reward token. Without prices, they are ranked
+ * by their HEMI amount instead. Ties keep the position order, then the epoch order.
+ */
+export const sortClaimsByValue = <
+  T extends { fromEpoch: number; rewards: ClaimableReward[]; tokenId: bigint },
+>({
+  claims,
+  hemiTokenAddress,
+  prices,
+  tokens,
+}: {
+  claims: T[]
+  hemiTokenAddress: Address
+  prices: Record<string, string> | undefined
+  tokens: EvmToken[]
+}) =>
+  claims
+    .map(claim => ({
+      claim,
+      value: getClaimValue({
+        hemiTokenAddress,
+        prices,
+        rewards: claim.rewards,
+        tokens,
+      }),
+    }))
+    .sort(function (a, b) {
+      const byValue = b.value.cmp(a.value)
+      if (byValue !== 0) {
+        return byValue
+      }
+      if (a.claim.tokenId !== b.claim.tokenId) {
+        return a.claim.tokenId < b.claim.tokenId ? -1 : 1
+      }
+      return a.claim.fromEpoch - b.claim.fromEpoch
+    })
+    .map(({ claim }) => claim)
 
 /**
  * The windows after one of them has been claimed: its rewards are zeroed, so it

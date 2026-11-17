@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import { Tab, Tabs } from 'components/tabs'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathname } from 'i18n/navigation'
@@ -12,14 +13,16 @@ type StakeTab = {
   shortLabel?: 'estimator-short'
 }
 
+const estimatorTab: StakeTab = {
+  href: '/hemi-stake/estimator',
+  label: 'estimator',
+  shortLabel: 'estimator-short',
+}
+
 const tabs: StakeTab[] = [
   { href: '/hemi-stake', label: 'stake' },
   { href: '/hemi-stake/analytics', label: 'analytics' },
-  {
-    href: '/hemi-stake/estimator',
-    label: 'estimator',
-    shortLabel: 'estimator-short',
-  },
+  ...(featureFlags.enableHemiStakeCalculator ? [estimatorTab] : []),
 ]
 
 const HemiStakeTabsImpl = function () {

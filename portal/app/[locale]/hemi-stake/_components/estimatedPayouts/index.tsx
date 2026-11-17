@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import { ButtonLink } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
 import { useHemiToken } from 'hooks/useHemiToken'
@@ -107,16 +108,18 @@ export const EstimatedPayouts = function () {
   return (
     <PayoutsCard
       action={
-        <div className="group">
-          <ButtonLink
-            href="/hemi-stake/estimator"
-            size="xSmall"
-            variant="tertiary"
-          >
-            {t('advanced-estimator')}
-            <Chevron.Right className="[&>path]:fill-neutral-500 group-hover:[&>path]:fill-neutral-950" />
-          </ButtonLink>
-        </div>
+        featureFlags.enableHemiStakeCalculator && (
+          <div className="group">
+            <ButtonLink
+              href="/hemi-stake/estimator"
+              size="xSmall"
+              variant="tertiary"
+            >
+              {t('advanced-estimator')}
+              <Chevron.Right className="[&>path]:fill-neutral-500 group-hover:[&>path]:fill-neutral-950" />
+            </ButtonLink>
+          </div>
+        )
       }
       chart={
         <PayoutsChart

@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv, type PluginOption } from 'vite'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
+import { getRouteFlags } from './app/routeFlags.ts'
 import { sitemap } from './plugins/sitemap.ts'
 
 const polyfills = () => nodePolyfills({ include: ['http', 'https', 'util'] })
@@ -60,10 +61,7 @@ export default defineConfig(function ({ mode }) {
     plugins.push(
       sitemap({
         baseUrl: env.PORTAL_SITE_URL,
-        flags: {
-          hemiEarn: env.VITE_ENABLE_HEMI_EARN_PAGE === 'true',
-          hemiStakeCalculator: env.VITE_ENABLE_HEMI_STAKE_CALCULATOR === 'true',
-        },
+        flags: getRouteFlags(env),
       }),
     )
   }

@@ -1,41 +1,30 @@
 import { ButtonIcon } from 'components/button'
 import { CheckMark } from 'components/icons/checkMark'
 import { ClipboardIcon } from 'components/icons/clipboard'
-import { useEffect, useState } from 'react'
+import { useCopyToClipboard } from 'hooks/useCopyToClipboard'
 import { useTranslations } from 'use-intl'
 
-const copiedFeedbackMs = 3000
-
 type Props = {
+  onCopy?: VoidFunction
   text: string
 }
 
-export const CopyButton = function ({ text }: Props) {
-  const [copied, setCopied] = useState(false)
+export const CopyButton = function ({ onCopy, text }: Props) {
+  const { copied, copy } = useCopyToClipboard()
   const t = useTranslations('common')
 
-  useEffect(
-    function restoreCopied() {
-      if (!copied) {
-        return undefined
+  const onClick = () =>
+    copy(text).then(function (success) {
+      if (success) {
+        onCopy?.()
       }
-      const timeoutId = setTimeout(() => setCopied(false), copiedFeedbackMs)
-      return () => clearTimeout(timeoutId)
-    },
-    [copied],
-  )
-
-  const copy = () =>
-    Promise.resolve()
-      .then(() => window.navigator.clipboard.writeText(text))
-      .then(() => setCopied(true))
-      .catch(() => setCopied(false))
+    })
 
   return (
     <ButtonIcon
       aria-label={t(copied ? 'copied' : 'copy')}
       aria-live="polite"
-      onClick={copy}
+      onClick={onClick}
       size="xxSmall"
       type="button"
       variant="tertiary"

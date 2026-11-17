@@ -1,69 +1,26 @@
+import { CopyButton } from 'components/copyButton'
 import { ExternalLink } from 'components/externalLink'
-import { CheckMark } from 'components/icons/checkMark'
-import { Tooltip } from 'components/tooltip'
-import { ComponentProps, useEffect, useState } from 'react'
-import { useTranslations } from 'use-intl'
+import { ComponentProps } from 'react'
 
-import { Clipboard } from './icons/clipboard'
-
-export const ConfigurationUrl = function ({
+export const ConfigurationUrl = ({
   clickableLink = true,
   href,
   ...props
-}: ComponentProps<'a'> & { clickableLink?: boolean }) {
-  const [copied, setCopied] = useState(false)
-  const t = useTranslations('common')
-
-  useEffect(
-    function restoreCopied() {
-      if (!copied) {
-        return undefined
-      }
-      const timeoutId = setTimeout(() => setCopied(false), 3000)
-      return () => clearTimeout(timeoutId)
-    },
-    [copied, setCopied],
-  )
-
-  const onClick = function () {
-    setCopied(true)
-    window.navigator.clipboard.writeText(href!)
-  }
-
-  return (
-    <>
-      {clickableLink ? (
-        <ExternalLink
-          className="hoverable-text body-text-medium mr-auto overflow-hidden text-ellipsis whitespace-nowrap md:basis-auto"
-          href={href}
-          {...props}
-        >
-          {href}
-        </ExternalLink>
-      ) : (
-        <span className="body-text-normal overflow-hidden text-ellipsis whitespace-nowrap text-neutral-500">
-          {href}
-        </span>
-      )}
-      <Tooltip
-        id={`copy-${href}`}
-        text={
-          <span className="flex items-center gap-x-1">
-            <span>{t(`${copied ? 'copied' : 'copy'}`)}</span>
-            {copied && <CheckMark className="[&>path]:fill-emerald-500" />}
-          </span>
-        }
-        trigger={['hover', 'focus']}
-        variant="simple"
+}: ComponentProps<'a'> & { clickableLink?: boolean }) => (
+  <>
+    {clickableLink ? (
+      <ExternalLink
+        className="hoverable-text body-text-medium mr-auto overflow-hidden text-ellipsis whitespace-nowrap md:basis-auto"
+        href={href}
+        {...props}
       >
-        <button
-          className="flex cursor-pointer"
-          onClick={href ? onClick : undefined}
-          type="button"
-        >
-          <Clipboard />
-        </button>
-      </Tooltip>
-    </>
-  )
-}
+        {href}
+      </ExternalLink>
+    ) : (
+      <span className="body-text-normal overflow-hidden text-ellipsis whitespace-nowrap text-neutral-500">
+        {href}
+      </span>
+    )}
+    {href && <CopyButton text={href} />}
+  </>
+)

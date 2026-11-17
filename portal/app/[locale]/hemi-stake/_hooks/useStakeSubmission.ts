@@ -14,7 +14,7 @@ import { type Address, formatUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
 import { useStakingDashboard } from '../_context/stakingDashboardContext'
-import { daysToSeconds } from '../_utils/lockCreationTimes'
+import { wholeDaysToSeconds } from '../_utils/lockCreationTimes'
 import { getStakeValidation } from '../_utils/stakeValidation'
 
 import { useEstimateCreateLockFees } from './useEstimateCreateLockFees'
@@ -41,7 +41,7 @@ const useStakeGas = function ({
   const { fees: createLockGasFees, isError: isCreateLockFeesError } =
     useEstimateCreateLockFees({
       amount,
-      lockDurationInSeconds: BigInt(daysToSeconds(lockupDays)),
+      lockDurationInSeconds: wholeDaysToSeconds(lockupDays),
       token,
     })
 

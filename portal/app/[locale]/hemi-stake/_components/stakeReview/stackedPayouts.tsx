@@ -115,9 +115,11 @@ const StackedChart = function ({
       }}
       formatDate={value => formatShortDate(new Date(value), locale)}
       formatDetail={value =>
-        formatPayoutDetail({ price, symbol: token.symbol, value })
+        formatPayoutDetail({ locale, price, symbol: token.symbol, value })
       }
-      formatValue={value => formatPayoutValue({ symbol: token.symbol, value })}
+      formatValue={value =>
+        formatPayoutValue({ locale, symbol: token.symbol, value })
+      }
       isPending={isPending}
       series={series}
       ticks={getPayoutAxisTicks(series)}

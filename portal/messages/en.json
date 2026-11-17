@@ -170,6 +170,7 @@
         "heading": "This wallet can't deposit into Hemi Earn"
       }
     },
+    "could-not-load-vaults": "We couldn't load the vaults",
     "deposits-paused": "New deposits are currently paused.",
     "footer": {
       "attribution": "Hemi Earn is operated by Vetro Service & Support Corp. Vaults available through Hemi Earn may be operated by Vetro or by third parties. Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. and their affiliates do not operate, manage, custody or guarantee Hemi Earn or any vault and are not parties to your agreement with Vetro. Hemi Earn is not available to U.S. persons or other restricted persons.",
@@ -472,7 +473,8 @@
     "apy-estimate": "Note: hemiStake launched recently, so projected APY is high. The reward pool is shared, so as more HEMI is staked APY will decrease.",
     "claim-rewards": {
       "heading": "Claim rewards",
-      "subheading": "We’re processing your reward claim. You can follow the progress below."
+      "subheading": "We’re processing your reward claim. You can follow the progress below.",
+      "subheading-by-value": "We’re processing your reward claims, starting with the highest-value ones. You can follow the progress below."
     },
     "claim-rewards-failed": {
       "description": "Not all of your rewards could be claimed. Open the details to try again.",
@@ -483,9 +485,9 @@
     "drawer": {
       "approving": "Approving {symbol}",
       "claim-position-rewards": "Claim rewards from position #{tokenId}",
-      "claim-position-rewards-step": "Claim rewards from position #{tokenId}, epochs {fromEpoch}-{toEpoch} ({step} of {total})",
+      "claim-position-rewards-epochs": "Claim rewards from position #{tokenId}, epochs {fromEpoch}-{toEpoch}",
       "claim-rewards": "Claim rewards",
-      "claim-rewards-step": "Claim rewards, epochs {fromEpoch}-{toEpoch} ({step} of {total})",
+      "claim-rewards-epochs": "Claim rewards, epochs {fromEpoch}-{toEpoch}",
       "increase-amount": {
         "heading": "Add ${symbol} to this lockup",
         "subheading": "Deposit additional ${symbol} into your existing lockup to increase your staked amount and governance power."

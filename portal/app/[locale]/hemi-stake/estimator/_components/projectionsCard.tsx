@@ -239,11 +239,11 @@ export const ProjectionsCard = function ({
   const formatPayout = (value: number) =>
     activeUnit === 'usd'
       ? formatCompactFiat(value, locale, 2)
-      : formatPayoutValue({ symbol: token.symbol, value })
+      : formatPayoutValue({ locale, symbol: token.symbol, value })
   const formatDetail = (value: number) =>
     activeUnit === 'usd'
-      ? formatFiatAmount(value)
-      : formatPayoutDetail({ price, symbol: token.symbol, value })
+      ? formatFiatAmount(value, locale)
+      : formatPayoutDetail({ locale, price, symbol: token.symbol, value })
   const formatWeight = function (value: number) {
     const { number, suffix } = formatCompactFiatParts(value, locale)
     return `${number}${suffix}`

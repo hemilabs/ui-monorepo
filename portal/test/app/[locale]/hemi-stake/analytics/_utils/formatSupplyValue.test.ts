@@ -34,4 +34,25 @@ describe('formatSupplyValue', function () {
       formatSupplyValue({ locale, symbol, unit: 'hemi', value: 999 }),
     ).toBe('999 HEMI')
   })
+
+  it('should follow the locale with full precision', function () {
+    expect(
+      formatSupplyValue({
+        locale: 'es',
+        precision: 'full',
+        symbol,
+        unit: 'usd',
+        value: -1234.5,
+      }),
+    ).toBe('-$1.234,50')
+    expect(
+      formatSupplyValue({
+        locale: 'pt',
+        precision: 'full',
+        symbol,
+        unit: 'hemi',
+        value: 1234.5,
+      }),
+    ).toBe('1.234,5 HEMI')
+  })
 })

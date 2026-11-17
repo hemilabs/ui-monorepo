@@ -1,15 +1,21 @@
 import type { Preview } from '@storybook/react-vite'
+import messages from 'messages/en.json'
 import { NuqsTestingAdapter } from 'nuqs/adapters/testing'
 import { createElement } from 'react'
 import { SkeletonTheme } from 'react-loading-skeleton'
+import { IntlProvider } from 'use-intl'
 
 import 'react-loading-skeleton/dist/skeleton.css'
 import 'styles/globals.css'
 
 const preview: Preview = {
-  // Mirrors the SkeletonTheme in app/[locale]/layout.tsx, so skeleton-based
-  // components like ButtonLoader render with the same colors.
   decorators: [
+    Story =>
+      createElement(
+        IntlProvider,
+        { locale: 'en', messages },
+        createElement(Story),
+      ),
     Story =>
       createElement(
         SkeletonTheme,

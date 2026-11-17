@@ -2,12 +2,14 @@ import { useTotalSupply } from '@hemilabs/react-hooks/useTotalSupply'
 import { RenderFiatBalance } from 'components/fiatBalance'
 import { type StakeToken } from 'types/stake'
 import { type EvmToken } from 'types/token'
+import { useLocale } from 'use-intl'
 import { formatTVL } from 'utils/format'
 import { isNativeAddress } from 'utils/nativeToken'
 import { getWrappedEther } from 'utils/token'
 import { type Address } from 'viem'
 
 const TokenTvl = function ({ token }: { token: EvmToken }) {
+  const locale = useLocale()
   const { data: supply, status } = useTotalSupply({
     address: token.address as Address,
     chainId: token.chainId,
@@ -15,7 +17,7 @@ const TokenTvl = function ({ token }: { token: EvmToken }) {
   return (
     <RenderFiatBalance
       balance={supply}
-      customFormatter={formatTVL}
+      customFormatter={amount => formatTVL(amount, locale)}
       queryStatus={status}
       token={token}
     />

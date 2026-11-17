@@ -123,10 +123,10 @@ export const EstimatedPayouts = function () {
           afterUnlockLabel={t('after-unlock')}
           formatDate={value => formatShortDate(new Date(value), locale)}
           formatDetail={value =>
-            formatPayoutDetail({ price, symbol: token.symbol, value })
+            formatPayoutDetail({ locale, price, symbol: token.symbol, value })
           }
           formatValue={value =>
-            formatPayoutValue({ symbol: token.symbol, value })
+            formatPayoutValue({ locale, symbol: token.symbol, value })
           }
           isPending={isPending && !hasError && forecast.meetsMinimumAmount}
           series={chartSeries}

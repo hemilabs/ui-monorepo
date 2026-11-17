@@ -44,7 +44,7 @@ const chartColors = {
 }
 
 const defaultChartHeight = 132
-const chartPadding = { bottom: 24, left: 64, right: 20, top: 8 }
+const chartPadding = { bottom: 24, left: 80, right: 20, top: 8 }
 
 const defaultWidths: ChartWidths = {
   breakpoints: [

@@ -6,11 +6,9 @@ import { TokenInput } from 'components/tokenInput'
 import { TokenInputBalance } from 'components/tokenInput/balance'
 import { inputErrors } from 'components/tokenInput/utils'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
-import messages from 'messages/en.json'
 import { useArgs } from 'storybook/preview-api'
 import { tokenList } from 'tokenList'
 import type { Token } from 'types/token'
-import { IntlProvider } from 'use-intl'
 import { parseUnits } from 'viem'
 
 const hemiTokenAddress = '0x99e3dE3817F6081B2568208337ef83295b7f591D'
@@ -66,11 +64,9 @@ const meta = {
   component: TokenInput,
   decorators: [
     Story => (
-      <IntlProvider locale="en" messages={messages}>
-        <div className="mx-auto w-full lg:max-w-[536px]">
-          <Story />
-        </div>
-      </IntlProvider>
+      <div className="mx-auto w-full lg:max-w-[536px]">
+        <Story />
+      </div>
     ),
   ],
   render: function Render(args) {

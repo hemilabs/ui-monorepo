@@ -18,7 +18,7 @@ export const HeadlineValue = function ({
   const locale = useLocale()
 
   if (metricType === 'apy') {
-    return <>{formatPercentage(value)}</>
+    return <>{formatPercentage(value, locale)}</>
   }
   const { number, suffix } = formatCompactFiatParts(value, locale)
   return (

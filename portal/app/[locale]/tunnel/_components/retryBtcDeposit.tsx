@@ -52,7 +52,7 @@ export const RetryBtcDeposit = function ({ deposit }: Props) {
       hemiAddress: address!,
       l1ChainId: deposit.l1ChainId,
       l2ChainId: deposit.l2ChainId,
-      satoshis: Number(deposit.amount),
+      satoshis: Number(deposit.grossAmount),
     })
     track?.('btc - dep started')
   }

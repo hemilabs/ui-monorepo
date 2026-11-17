@@ -73,20 +73,13 @@ export const HighSlippageModal = function ({
             )}
           </p>
         </div>
-        <label
-          className="flex cursor-pointer items-center gap-x-2 bg-neutral-50 px-6 py-3"
-          htmlFor="accept-slippage-risk"
-        >
-          <Checkbox
-            checked={accepted}
-            id="accept-slippage-risk"
-            onChange={setAccepted}
-            ref={checkboxRef}
-          />
-          <span className="body-text-medium text-neutral-950">
-            {t('accept-risk')}
-          </span>
-        </label>
+        <Checkbox
+          checked={accepted}
+          className="body-text-medium items-center bg-neutral-50 px-6 py-3"
+          label={t('accept-risk')}
+          onChange={setAccepted}
+          ref={checkboxRef}
+        />
         <div className="flex gap-x-3 p-6 [&>button]:flex-1">
           <Button
             onClick={onClose}

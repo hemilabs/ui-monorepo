@@ -5,12 +5,11 @@ import { type Account } from 'btc-wallet/unisat'
 import { BtcWalletLogo } from 'components/connectWallets/btcWalletLogo'
 import { EvmWalletLogo } from 'components/connectWallets/evmWalletLogo'
 import { ProfileIcon } from 'components/connectWallets/icons/profile'
-import { Tooltip } from 'components/tooltip'
+import { CopyButton } from 'components/copyButton'
 import { useConnectedToUnsupportedBtcChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
-import { ReactNode, useState } from 'react'
-import { useTranslations } from 'use-intl'
+import { ReactNode } from 'react'
 import { formatBtcAddress, formatEvmAddress } from 'utils/format'
 import { type Address } from 'viem'
 import { useAccount } from 'wagmi'
@@ -60,21 +59,7 @@ const ConnectedWallet = function ({
   copyEvent: 'btc copy' | 'evm copy'
   formattedAddress: string
 }) {
-  const t = useTranslations('common')
   const { track } = useUmami()
-  const [copied, setCopied] = useState(false)
-
-  const copyAddress = function () {
-    // if this function is called, the user is connected and therefore it is defined
-    // as well as the connector
-    navigator.clipboard.writeText(address!)
-    track?.(copyEvent, { wallet: connectorName! })
-
-    // This is to control the tooltip visibility
-    // When the address is copied, we need to keep the tooltip visible for a few seconds
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
 
   return (
     <div className="group/connected-wallet relative flex h-8 items-center rounded-lg py-2 text-sm font-medium text-neutral-950">
@@ -88,20 +73,15 @@ const ConnectedWallet = function ({
           )}
         </div>
 
-        <Tooltip
-          id="copy-address"
-          text={copied ? t('copied') : t('copy')}
-          trigger={copied ? [] : ['hover']}
-          variant="simple"
-          visible={copied ? true : undefined}
-        >
-          <span
-            className="cursor-pointer text-sm"
-            onClick={address ? copyAddress : undefined}
-          >
-            {formattedAddress}
-          </span>
-        </Tooltip>
+        <div className="flex items-center gap-x-1">
+          <span className="text-sm">{formattedAddress}</span>
+          {address && (
+            <CopyButton
+              onCopy={() => track?.(copyEvent, { wallet: connectorName! })}
+              text={address}
+            />
+          )}
+        </div>
       </div>
     </div>
   )

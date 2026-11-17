@@ -354,6 +354,9 @@ export function Table<TData>({
   })
 
   const table = useReactTable({
+    // The table does not paginate. Resetting the page index on every new data
+    // reference updates state, so an unstable `data` would re-render forever.
+    autoResetPageIndex: false,
     columns: columnsWithSkeleton,
     data: safeData,
     getCoreRowModel: getCoreRowModel(),

@@ -29,15 +29,10 @@ type Story = StoryObj<StoryProps>
 // Writing back through useArgs keeps the `checked` control and the rendered state
 // in sync — local state would ignore the control after the first render.
 export const Default: Story = {
-  render: function Render({ checked, className, label }) {
+  render: function Render(args) {
     const [, updateArgs] = useArgs<StoryProps>()
     return (
-      <Checkbox
-        checked={checked}
-        className={className}
-        label={label}
-        onChange={value => updateArgs({ checked: value })}
-      />
+      <Checkbox {...args} onChange={value => updateArgs({ checked: value })} />
     )
   },
 }

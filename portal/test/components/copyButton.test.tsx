@@ -32,6 +32,22 @@ describe('CopyButton', function () {
     expect(onCopy).toHaveBeenCalledOnce()
   })
 
+  it('shows a tooltip with the copy state on hover', async function () {
+    vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined)
+    const screen = await renderCopyButton()
+    const button = screen.getByRole('button', { name: 'Copy' })
+
+    await button.hover()
+
+    await expect.element(screen.getByRole('tooltip')).toHaveTextContent('Copy')
+
+    await button.click()
+
+    await expect
+      .element(screen.getByRole('tooltip'))
+      .toHaveTextContent('Copied')
+  })
+
   it('does not show the copied state or call onCopy when the copy fails', async function () {
     const writeText = vi
       .spyOn(navigator.clipboard, 'writeText')

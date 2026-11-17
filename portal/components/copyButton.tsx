@@ -1,7 +1,9 @@
 import { ButtonIcon } from 'components/button'
 import { CheckMark } from 'components/icons/checkMark'
 import { ClipboardIcon } from 'components/icons/clipboard'
+import { Tooltip } from 'components/tooltip'
 import { useCopyToClipboard } from 'hooks/useCopyToClipboard'
+import { useId } from 'react'
 import { useTranslations } from 'use-intl'
 
 type Props = {
@@ -11,7 +13,9 @@ type Props = {
 
 export const CopyButton = function ({ onCopy, text }: Props) {
   const { copied, copy } = useCopyToClipboard()
+  const id = useId()
   const t = useTranslations('common')
+  const label = t(copied ? 'copied' : 'copy')
 
   const onClick = () =>
     copy(text).then(function (success) {
@@ -21,19 +25,21 @@ export const CopyButton = function ({ onCopy, text }: Props) {
     })
 
   return (
-    <ButtonIcon
-      aria-label={t(copied ? 'copied' : 'copy')}
-      aria-live="polite"
-      onClick={onClick}
-      size="xxSmall"
-      type="button"
-      variant="tertiary"
-    >
-      {copied ? (
-        <CheckMark className="[&>path]:fill-emerald-500" />
-      ) : (
-        <ClipboardIcon />
-      )}
-    </ButtonIcon>
+    <Tooltip id={id} text={label} trigger={['hover', 'focus']} variant="simple">
+      <ButtonIcon
+        aria-label={label}
+        aria-live="polite"
+        onClick={onClick}
+        size="xxSmall"
+        type="button"
+        variant="tertiary"
+      >
+        {copied ? (
+          <CheckMark className="[&>path]:fill-emerald-500" />
+        ) : (
+          <ClipboardIcon />
+        )}
+      </ButtonIcon>
+    </Tooltip>
   )
 }

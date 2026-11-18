@@ -82,7 +82,7 @@ const toLoadState = function (
 }
 
 export const useEstimatorForecast = function () {
-  const { amount, lockupDays, scope } = useEstimator()
+  const { amount, autoRelock, lockupDays, scope } = useEstimator()
   const { address } = useAccount()
   const token = useHemiToken()
   const needsWallet = useNeedsWallet()
@@ -117,7 +117,11 @@ export const useEstimatorForecast = function () {
       const run = (incomingAmount: bigint) =>
         getBlendedForecast({
           existing,
-          incoming: { amount: incomingAmount, lockDurationInSeconds },
+          incoming: {
+            amount: incomingAmount,
+            autoRelock,
+            lockDurationInSeconds,
+          },
           inputsByClass,
           now,
         })
@@ -126,6 +130,7 @@ export const useEstimatorForecast = function () {
     },
     [
       amountUnits,
+      autoRelock,
       classes.data,
       delegatedAway.data,
       inputsByClass,

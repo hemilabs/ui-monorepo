@@ -192,7 +192,7 @@ type Props = {
   isBlended: boolean
   isError: boolean
   isLoading: boolean
-  lockEnd: number
+  lockEnd: number | undefined
   onRetry: VoidFunction | undefined
   votingWeights: { timestamp: number; weight: bigint }[] | undefined
 }
@@ -267,9 +267,12 @@ export const ProjectionsCard = function ({
       total: t('estimated-payouts.title'),
     },
     locale,
-    unlocksOn: t('estimated-payouts.unlocks-on', {
-      date: formatShortDateWithYear(new Date(lockEnd * 1000), locale),
-    }),
+    unlocksOn:
+      lockEnd === undefined
+        ? t('estimated-payouts.countdown-paused')
+        : t('estimated-payouts.unlocks-on', {
+            date: formatShortDateWithYear(new Date(lockEnd * 1000), locale),
+          }),
     votingPower,
   })
 

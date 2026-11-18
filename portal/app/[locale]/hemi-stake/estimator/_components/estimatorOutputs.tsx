@@ -1,3 +1,4 @@
+import { useEstimator } from '../_context/estimatorContext'
 import { useEstimatorForecast } from '../_hooks/useEstimatorForecast'
 
 import { ApyCard } from './apyCard'
@@ -5,6 +6,7 @@ import { PayoutsCard } from './payoutsCard'
 import { ProjectionsCard } from './projectionsCard'
 
 export const EstimatorOutputs = function () {
+  const { autoRelock } = useEstimator()
   const {
     currentEpoch,
     forecast,
@@ -38,7 +40,7 @@ export const EstimatorOutputs = function () {
           isBlended={isBlended}
           isError={unavailable}
           isLoading={isLoading}
-          lockEnd={forecast.blended.lockEnd}
+          lockEnd={autoRelock ? undefined : forecast.blended.lockEnd}
           onRetry={isError ? retry : undefined}
           votingWeights={votingWeights}
         />

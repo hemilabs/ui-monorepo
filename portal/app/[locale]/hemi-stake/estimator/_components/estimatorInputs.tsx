@@ -27,17 +27,19 @@ export const EstimatorInputs = function () {
   const { data: balance } = useTokenBalance(token.chainId, token.address)
   const {
     amount,
+    autoRelock,
     inputDays,
     lockupDays,
     scope,
     updateAmount,
+    updateAutoRelock,
     updateInputDays,
     updateLockupDays,
     updateScope,
   } = useEstimator()
 
   const submission = useStakeSubmission({
-    autoRelock: false,
+    autoRelock,
     input: amount,
     lockupDays,
   })
@@ -72,8 +74,11 @@ export const EstimatorInputs = function () {
               <div className="flex flex-col gap-y-3 rounded-lg bg-neutral-50 px-4 py-3">
                 <LockupPicker
                   amount={parseTokenUnits(amount, token)}
+                  autoRelock={autoRelock}
+                  disabled={submission.isRunningOperation}
                   inputDays={inputDays}
                   lockupDays={lockupDays}
+                  updateAutoRelock={updateAutoRelock}
                   updateInputDays={updateInputDays}
                   updateLockupDays={updateLockupDays}
                 />

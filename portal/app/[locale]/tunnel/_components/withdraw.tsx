@@ -5,6 +5,7 @@ import { FeesContainer } from 'components/feesContainer'
 import { WarningIcon } from 'components/icons/warningIcon'
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { SetMaxEvmBalance } from 'components/setMaxBalance'
+import { Spinner } from 'components/spinner'
 import { useAccounts } from 'hooks/useAccounts'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
@@ -82,8 +83,14 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   const { btcAddress, btcWalletStatus, evmWalletStatus } = useAccounts()
   const fromChain = useChain(fromNetworkId)!
 
-  const { isPending: isLoadingMinWithdrawalSats, minWithdrawalFormattedSats } =
-    useMinWithdrawalSats(fromToken)
+  const {
+    isError: isMinWithdrawalSatsError,
+    minWithdrawalFormattedSats,
+    minWithdrawalSats,
+  } = useMinWithdrawalSats(fromToken)
+  const isMinWithdrawalSatsLoaded = minWithdrawalSats !== undefined
+  const isMinWithdrawalSatsLoading =
+    !isMinWithdrawalSatsLoaded && !isMinWithdrawalSatsError
   const { data: bitcoinBalance, isSuccess: balanceLoaded } = useTokenBalance(
     fromToken.chainId,
     fromToken.address,
@@ -207,7 +214,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   })
 
   const canWithdraw = [
-    !isLoadingMinWithdrawalSats,
+    isMinWithdrawalSatsLoaded,
     amountValidation.canSubmit,
     canSubmitAddress,
   ].every(Boolean)
@@ -229,10 +236,23 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   }
 
   const getSubmitText = function () {
+    if (isMinWithdrawalSatsLoading) {
+      return <Spinner size={'small'} />
+    }
     if (isWithdrawing) {
       return t('tunnel-page.submit-button.withdrawing')
     }
     return t('tunnel-page.submit-button.initiate-withdrawal')
+  }
+
+  const getValidationError = function () {
+    if (isMinWithdrawalSatsLoading) {
+      return undefined
+    }
+    if (!isMinWithdrawalSatsLoaded) {
+      return t('tunnel-page.submit-button.min-withdrawal-load-failed')
+    }
+    return amountValidation.error ?? addressError
   }
 
   function renderFees() {
@@ -306,7 +326,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
           btcWalletRequired={btcWalletRequired}
           disabled={disableForm}
           text={getSubmitText()}
-          validationError={amountValidation.error ?? addressError}
+          validationError={getValidationError()}
         />
       }
     />

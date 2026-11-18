@@ -798,6 +798,8 @@
       "enter-a-custom-address": "Enter a custom address",
       "initiate-withdrawal": "Initiate Withdrawal",
       "input-a-correct-custom-address": "Input a correct custom address",
+      "min-deposit-load-failed": "Failed to load minimum deposit",
+      "min-withdrawal-load-failed": "Failed to load minimum withdrawal",
       "prove-withdrawal": "Prove withdrawal",
       "proving-withdrawal": "Proving...",
       "try-again": "Try again",

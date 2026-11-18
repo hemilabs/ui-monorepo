@@ -798,6 +798,8 @@
       "enter-a-custom-address": "Insira um endereço personalizado",
       "initiate-withdrawal": "Iniciar Retirada",
       "input-a-correct-custom-address": "Insira um endereço personalizado correto",
+      "min-deposit-load-failed": "Falha ao carregar o depósito mínimo",
+      "min-withdrawal-load-failed": "Falha ao carregar a retirada mínima",
       "prove-withdrawal": "Provar retirada",
       "proving-withdrawal": "A provar...",
       "try-again": "Tentar novamente",

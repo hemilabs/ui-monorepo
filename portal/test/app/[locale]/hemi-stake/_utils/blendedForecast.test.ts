@@ -4,6 +4,7 @@ import {
 } from 'app/[locale]/hemi-stake/_utils/blendedForecast'
 import {
   getEpochEnd,
+  getRelockedWeight,
   getWeightAt,
 } from 'app/[locale]/hemi-stake/_utils/lockEpochs'
 import { alwaysTransferable } from 'app/[locale]/hemi-stake/_utils/rewardClass'
@@ -439,6 +440,95 @@ describe('getBlendedForecast', function () {
     expect(withIncoming.existing.yearOneTotal).toBeLessThan(
       withoutIncoming.existing.yearOneTotal,
     )
+  })
+})
+
+describe('getBlendedForecast with auto-relock', function () {
+  const relockedIncoming = { ...anIncomingPosition, autoRelock: true }
+  const relockedExisting = { ...anExistingPosition, autoRelock: true }
+
+  it('matches the single position forecast with auto-relock when nothing is staked yet', function () {
+    const { incoming } = getBlendedForecast({
+      existing: [],
+      incoming: relockedIncoming,
+      inputsByClass,
+      now,
+    })
+    const alone = getRewardsForecast({
+      amount: anIncomingPosition.amount,
+      autoRelock: true,
+      inputsByClass,
+      lockDurationInSeconds: anIncomingPosition.lockDurationInSeconds,
+      now,
+    })
+
+    expect(incoming.payouts.map(({ payout }) => payout)).toEqual(
+      alone.payouts.map(({ payout }) => payout),
+    )
+  })
+
+  it('holds the incoming weight through every epoch, past the lock end', function () {
+    const { incoming } = getBlendedForecast({
+      existing: [],
+      incoming: { ...relockedIncoming, lockDurationInSeconds: 30 * 86400 },
+      inputsByClass,
+      now,
+    })
+
+    incoming.payouts.forEach(function ({ payout, weight }) {
+      expect(weight).toBe(incoming.payouts[0].weight)
+      expect(payout).toBeGreaterThan(BigInt(0))
+    })
+  })
+
+  it('holds an existing relocked position at the weight the contract keeps', function () {
+    const { existing } = getBlendedForecast({
+      existing: [relockedExisting],
+      incoming: noIncoming,
+      inputsByClass,
+      now,
+    })
+    const held = getRelockedWeight({
+      amount: anExistingPosition.amount,
+      lockEnd: anExistingPosition.lockEnd,
+      now,
+    })
+
+    existing.payouts.forEach(({ weight }) => expect(weight).toBe(held))
+  })
+
+  it('leaves the denominator alone for an existing relocked position', function () {
+    const { incoming } = getBlendedForecast({
+      existing: [relockedExisting],
+      incoming: anIncomingPosition,
+      inputsByClass,
+      now,
+    })
+    const { incoming: alone } = getBlendedForecast({
+      existing: [],
+      incoming: anIncomingPosition,
+      inputsByClass,
+      now,
+    })
+
+    expect(incoming.payouts).toEqual(alone.payouts)
+  })
+
+  it('leaves the decaying forecast alone when it is off', function () {
+    const decaying = {
+      existing: [anExistingPosition],
+      incoming: anIncomingPosition,
+      inputsByClass,
+      now,
+    }
+
+    expect(
+      getBlendedForecast({
+        ...decaying,
+        existing: [{ ...anExistingPosition, autoRelock: false }],
+        incoming: { ...anIncomingPosition, autoRelock: false },
+      }),
+    ).toEqual(getBlendedForecast(decaying))
   })
 })
 

@@ -27,6 +27,7 @@ import { prependPosition } from '../_utils/positionsCache'
 
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
 import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
+import { invalidateRewardsForecastInputs } from './useRewardsForecastInputs'
 import { getStakingPositionsQueryKey } from './useStakingPositions'
 import { getTotalVotingPowerQueryKey } from './useTotalVotingPower'
 
@@ -225,6 +226,8 @@ export const useStake = function ({
           (old: bigint | undefined) =>
             old === undefined ? undefined : old - amount,
         )
+
+        invalidateRewardsForecastInputs(queryClient, token.chainId)
 
         track?.('hemi stake - lock creation success')
       })

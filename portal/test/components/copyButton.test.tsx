@@ -15,6 +15,10 @@ const renderCopyButton = (onCopy = vi.fn()) =>
     </IntlProvider>,
   )
 
+const nextFrame = () => new Promise(requestAnimationFrame)
+
+const nextFrames = () => nextFrame().then(nextFrame)
+
 describe('CopyButton', function () {
   it('copies the text, shows the copied state and calls onCopy', async function () {
     const writeText = vi
@@ -46,6 +50,33 @@ describe('CopyButton', function () {
     await expect
       .element(screen.getByRole('tooltip'))
       .toHaveTextContent('Copied')
+  })
+
+  it('goes back to the copy state after 3 seconds', async function () {
+    vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined)
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+
+    try {
+      const screen = await renderCopyButton()
+
+      await screen.getByRole('button', { name: 'Copy' }).click()
+      await expect
+        .element(screen.getByRole('button', { name: 'Copied' }))
+        .toBeVisible()
+
+      vi.advanceTimersByTime(2999)
+      await nextFrames()
+      expect(
+        screen.getByRole('button', { name: 'Copied' }).query(),
+      ).not.toBeNull()
+
+      vi.advanceTimersByTime(1)
+      await expect
+        .element(screen.getByRole('button', { name: 'Copy' }))
+        .toBeVisible()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('does not show the copied state or call onCopy when the copy fails', async function () {

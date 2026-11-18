@@ -9,6 +9,7 @@ import { parseTokenUnits } from 'utils/token'
 import { applySlippage } from '../../../../_constants/slippage'
 import { useCanDeposit } from '../../../../_hooks/useCanDeposit'
 import { useRefreshTermsStep } from '../../../../_hooks/useRefreshTermsStep'
+import { depositBlockMessageKey } from '../../../../_utils/depositGate'
 import { percentToBps } from '../../../../_utils/slippage'
 import { useVaultForm } from '../../_context/vaultFormContext'
 import { useDeposit } from '../../_hooks/useDeposit'
@@ -142,7 +143,10 @@ export const ConfirmDeposit = function () {
         submitButton={
           <Tooltip
             disabled={depositGate.canDeposit}
-            text={depositGate.reason && t(`hemi-earn.${depositGate.reason}`)}
+            text={
+              depositGate.reason &&
+              t(depositBlockMessageKey(depositGate.reason))
+            }
             variant="simple"
           >
             <Button

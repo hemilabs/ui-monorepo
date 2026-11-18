@@ -1,7 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { CopyButton } from 'components/copyButton'
-import messages from 'messages/en.json'
-import { IntlProvider } from 'use-intl'
 
 const meta = {
   args: {
@@ -11,13 +9,6 @@ const meta = {
     text: { control: 'text' },
   },
   component: CopyButton,
-  decorators: [
-    Story => (
-      <IntlProvider locale="en" messages={messages}>
-        <Story />
-      </IntlProvider>
-    ),
-  ],
   title: 'Components/CopyButton',
 } satisfies Meta<typeof CopyButton>
 

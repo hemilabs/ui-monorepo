@@ -19,6 +19,7 @@ import { useAccount } from 'wagmi'
 
 import { updatePosition } from '../_utils/positionsCache'
 
+import { getDelegatedAwayQueryKeyPrefix } from './useDelegatedAway'
 import { getPositionDelegationDetailsQueryKey } from './usePositionDelegationDetails'
 import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
 import { getStakingPositionsQueryKey } from './useStakingPositions'
@@ -178,6 +179,12 @@ export const useIncreaseAmount = function ({
           })
           queryClient.invalidateQueries({
             queryKey: getPositionsVotingPowerSumQueryKeyPrefix({
+              chainId: token.chainId,
+              ownerAddress: address,
+            }),
+          })
+          queryClient.invalidateQueries({
+            queryKey: getDelegatedAwayQueryKeyPrefix({
               chainId: token.chainId,
               ownerAddress: address,
             }),

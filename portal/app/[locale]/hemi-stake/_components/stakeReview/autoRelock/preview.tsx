@@ -6,6 +6,7 @@ import { CallToActionContainer } from 'components/reviewOperation/callToActionCo
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
+import { useTokenPrices } from 'hooks/useTokenPrices'
 import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type Token } from 'types/token'
@@ -15,12 +16,16 @@ import {
   formatShortDate,
   formatShortDateWithYear,
 } from 'utils/format'
+import { getTokenPrice } from 'utils/token'
 import { formatUnits } from 'viem'
 
 import { useAutoRelockInputs } from '../../../_hooks/useAutoRelockInputs'
 import { getAutoRelockComparison } from '../../../_utils/autoRelockComparison'
 import { formatApyFromRatio } from '../../../_utils/formatApyFromRatio'
-import { formatPayoutValue } from '../../../_utils/formatPayoutValue'
+import {
+  formatPayoutDetail,
+  formatPayoutValue,
+} from '../../../_utils/formatPayoutValue'
 import { getUnlockInfo } from '../../../_utils/lockCreationTimes'
 import { getPositionWeights } from '../../../_utils/lockEpochs'
 import { getPayoutAxisTicks } from '../../../_utils/payoutsChartData'
@@ -28,8 +33,15 @@ import {
   alwaysTransferable,
   emptyInputsByClass,
 } from '../../../_utils/rewardClass'
-import { PayoutsChart } from '../../estimatedPayouts/payoutsChart'
+import { toPrice } from '../../../_utils/toPrice'
 import { VotingPowerEquivalence } from '../../lockup'
+import {
+  LegendItem,
+  PayoutsChart,
+  payoutsColor,
+  stackedBelowColor,
+} from '../../payoutsChart'
+import { drawerWidths } from '../stackedPayouts'
 
 const cardClassName =
   'flex w-full flex-col gap-y-3 rounded-lg bg-neutral-50 p-4'
@@ -54,19 +66,6 @@ const ChangeRow = ({
       <Arrow />
       <span className="font-medium">{to}</span>
     </div>
-  </div>
-)
-
-const LegendItem = ({
-  label,
-  swatchClassName,
-}: {
-  label: string
-  swatchClassName: string
-}) => (
-  <div className="flex items-center gap-x-1.5">
-    <span className={`size-2 rounded-sm ${swatchClassName}`} />
-    <span className="text-xxs text-neutral-500">{label}</span>
   </div>
 )
 
@@ -138,6 +137,7 @@ export const Preview = function ({
   const t = useTranslations('hemi-stake')
   const tDrawer = useTranslations('hemi-stake.drawer.auto-relock')
   const token = useHemiToken()
+  const { data: prices } = useTokenPrices()
   const { hasError, inputsByClass, positionClass, retry, weight } =
     useAutoRelockInputs({ tokenId, transferable })
 
@@ -180,18 +180,20 @@ export const Preview = function ({
   })
   const frozenVotingPower = formatUnits(relockedWeight, token.decimals)
   const staysCaption = tDrawer('stays-at', {
-    votingPower: formatNumber(frozenVotingPower),
+    votingPower: formatNumber(frozenVotingPower, locale),
   })
 
   const [votingPowerFrom, votingPowerTo] = autoRelock
     ? [staysCaption, decaysCaption]
     : [decaysCaption, staysCaption]
-  const [legendBase, legendDelta] = autoRelock
+  const [legendBase, legendTotal] = autoRelock
     ? [tDrawer('legend-after-disabling'), tDrawer('legend-today')]
     : [tDrawer('legend-today'), tDrawer('legend-with-auto-relock')]
+  const legendDelta = tDrawer('legend-added-by-auto-relock')
+  const price = toPrice(getTokenPrice(token, prices))
 
   const toApy = (ratio: number) =>
-    hasForecast ? formatApyFromRatio(ratio) : '-'
+    hasForecast ? formatApyFromRatio(ratio, locale) : '-'
 
   const toTotal = (amount: bigint) => (
     <DisplayAmount amount={formatUnits(amount, token.decimals)} token={token} />
@@ -252,31 +254,34 @@ export const Preview = function ({
                 </span>
               </div>
               <PayoutsChart
-                deltaSeries={delta}
+                afterUnlockLabel={t('estimated-payouts.after-unlock')}
+                below={{
+                  label: legendBase,
+                  points: base,
+                  seriesLabel: legendDelta,
+                  totalLabel: legendTotal,
+                }}
                 formatDate={value => formatShortDate(new Date(value), locale)}
-                formatDetail={point =>
-                  formatPayoutValue({ symbol: token.symbol, value: point.y })
-                }
-                formatTooltipDate={value =>
-                  formatShortDateWithYear(new Date(value), locale)
+                formatDetail={value =>
+                  formatPayoutDetail({
+                    locale,
+                    price,
+                    symbol: token.symbol,
+                    value,
+                  })
                 }
                 formatValue={value =>
-                  formatPayoutValue({ symbol: token.symbol, value })
+                  formatPayoutValue({ locale, symbol: token.symbol, value })
                 }
                 isPending={false}
-                series={base}
-                ticks={getPayoutAxisTicks(base)}
+                series={delta}
+                ticks={getPayoutAxisTicks(delta)}
                 unlockX={undefined}
+                widths={drawerWidths}
               />
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                <LegendItem
-                  label={legendBase}
-                  swatchClassName="bg-orange-500"
-                />
-                <LegendItem
-                  label={legendDelta}
-                  swatchClassName="bg-orange-200"
-                />
+              <div className="body-text-caption flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-500">
+                <LegendItem color={stackedBelowColor} label={legendBase} />
+                <LegendItem color={payoutsColor} label={legendDelta} />
               </div>
             </>
           ) : (

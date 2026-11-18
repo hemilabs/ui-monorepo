@@ -1,6 +1,7 @@
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { hemiEarnRouterAddress } from '@vetro-protocol/hemi-earn'
 import { TokenInput } from 'components/tokenInput'
+import { TokenInputBalance } from 'components/tokenInput/balance'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
@@ -284,7 +285,18 @@ export const Withdraw = function ({
       formContent={
         <VaultFormContent activeTab="withdraw" onSwitchTab={onSwitchToDeposit}>
           <TokenInput
-            balanceComponent={WithdrawShareBalance}
+            bottomRight={
+              <TokenInputBalance
+                balanceComponent={WithdrawShareBalance}
+                maxButton={
+                  <WithdrawMaxBalance
+                    disabled={isRunningOperation}
+                    onSetMaxBalance={updateSharesInput}
+                  />
+                }
+                token={vault.shareToken}
+              />
+            }
             disabled={isRunningOperation}
             errorKey={sharesErrorKey}
             fiatBalance={{
@@ -300,20 +312,19 @@ export const Withdraw = function ({
               />
             }
             label={t('hemi-earn.vault.form.share-token-available-to-withdraw')}
-            maxBalanceButton={
-              <WithdrawMaxBalance
-                disabled={isRunningOperation}
-                onSetMaxBalance={updateSharesInput}
-              />
-            }
             onChange={updateSharesInput}
             token={vault.shareToken}
             tokenSelector={<TokenSelectorReadOnly token={vault.shareToken} />}
             value={sharesValue}
           />
           <TokenInput
-            balanceComponent={WithdrawAvailableBalance}
-            balanceLabel={t('hemi-earn.vault.form.available')}
+            bottomRight={
+              <TokenInputBalance
+                balanceComponent={WithdrawAvailableBalance}
+                label={t('hemi-earn.vault.form.available')}
+                token={selectedAsset.token}
+              />
+            }
             disabled={isRunningOperation}
             errorKey={assetErrorKey}
             fiatBalanceComponent={RenderEarnFiatBalance}

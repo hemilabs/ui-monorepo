@@ -2,8 +2,9 @@ import { Button, ButtonLink } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
 import { ClipboardIcon } from 'components/icons/clipboard'
 import { type EvmWalletData } from 'hooks/useAllWallets'
+import { useCopyToClipboard } from 'hooks/useCopyToClipboard'
 import { QRCodeSVG } from 'qrcode.react'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { isMobile, isAndroid, isIOS } from 'react-device-detect'
 import Skeleton from 'react-loading-skeleton'
 import { useTranslations } from 'use-intl'
@@ -64,38 +65,14 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
   const t = useTranslations('connect-wallets')
   const tCommon = useTranslations('common')
   const [uri, setUri] = useState('')
-  const [copied, setCopied] = useState(false)
+  const { copied, copy } = useCopyToClipboard()
   const config = useConfig()
   const { connect, connectors, reset } = useConnect()
 
   const downloadUrl = getWalletDownloadUrl(wallet)
   const copyLabel = copied ? tCommon('copied') : t('copy-link')
 
-  const copyUri = useCallback(
-    function copyUri() {
-      if (!uri) {
-        return
-      }
-      window.navigator.clipboard
-        .writeText(uri)
-        .then(() => setCopied(true))
-        .catch(function () {
-          // Don't show confirmation on error.
-        })
-    },
-    [uri],
-  )
-
-  useEffect(
-    function resetCopied() {
-      if (!copied) {
-        return undefined
-      }
-      const timeoutId = window.setTimeout(() => setCopied(false), 3000)
-      return () => window.clearTimeout(timeoutId)
-    },
-    [copied],
-  )
+  const copyUri = () => copy(uri)
 
   useEffect(
     // This function generates the WalletConnect URI when the component mounts

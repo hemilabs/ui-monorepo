@@ -8,13 +8,15 @@ type LockupErrorMessage = {
   values: Record<string, number>
 }
 
+type LockupProps = {
+  minLocked?: number
+  value: number
+}
+
 export const getLockupErrorMessage = function ({
   minLocked = minDays,
   value,
-}: {
-  minLocked?: number
-  value: number
-}): LockupErrorMessage | undefined {
+}: LockupProps): LockupErrorMessage | undefined {
   if (Number.isNaN(value) || value < minLocked) {
     return { key: 'hemi-stake.form.min-days', values: { days: minLocked } }
   }
@@ -29,3 +31,6 @@ export const getLockupErrorMessage = function ({
 
   return undefined
 }
+
+export const isValidLockup = (props: LockupProps) =>
+  getLockupErrorMessage(props) === undefined

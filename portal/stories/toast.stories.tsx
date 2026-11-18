@@ -1,7 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Toast } from 'components/toast'
-import messages from 'messages/en.json'
-import { IntlProvider } from 'use-intl'
 
 const meta = {
   args: {
@@ -23,13 +21,6 @@ const meta = {
     },
   },
   component: Toast,
-  decorators: [
-    Story => (
-      <IntlProvider locale="en" messages={messages}>
-        <Story />
-      </IntlProvider>
-    ),
-  ],
   title: 'Components/Toast',
 } satisfies Meta<typeof Toast>
 

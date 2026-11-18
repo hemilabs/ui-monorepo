@@ -35,14 +35,14 @@ export const PayoutPlaceholder = function ({
       return (
         <span className="text-xs text-neutral-400">
           {t('enter-minimum-amount', {
-            amount: formatNumber(formatUnits(minLockAmount, token.decimals)),
+            amount: formatNumber(
+              formatUnits(minLockAmount, token.decimals),
+              locale,
+            ),
             symbol: token.symbol,
           })}
         </span>
       )
-    }
-    if (!hasValidLockup) {
-      return null
     }
     if (hasError) {
       return (
@@ -58,6 +58,9 @@ export const PayoutPlaceholder = function ({
           </Button>
         </div>
       )
+    }
+    if (!hasValidLockup) {
+      return null
     }
     if (isPending) {
       return <Skeleton className="h-6 w-40" />

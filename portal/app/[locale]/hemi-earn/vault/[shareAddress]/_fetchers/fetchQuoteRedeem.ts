@@ -1,4 +1,5 @@
 import { type QueryClient, type UseQueryOptions } from '@tanstack/react-query'
+import { hemiEarnAgentAddress } from '@vetro-protocol/hemi-earn'
 import {
   getAssetData,
   quoteRedeem,
@@ -11,7 +12,6 @@ import { getEvmL1PublicClient, getPublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 
 import { shareConfigQueryOptions } from '../../../_fetchers/fetchHemiEarnAssetConfigs'
-import { agentAddressQueryOptions } from '../../../_hooks/useHemiEarnAgentAddress'
 
 export type QuoteRedeem = {
   callbackFee: bigint
@@ -41,16 +41,15 @@ export async function fetchQuoteRedeem({
   const { remoteShare } = await queryClient.ensureQueryData(
     shareConfigQueryOptions(shareAddress),
   )
-  const [isInstant, assetData, agentAddress] = await Promise.all([
+  const [isInstant, assetData] = await Promise.all([
     resolveIsInstant(ethereumClient, {
       address: remoteShare,
       caller: account,
     }),
     getAssetData(hemiClient, { asset }),
-    queryClient.ensureQueryData(agentAddressQueryOptions()),
   ])
   const callbackFee = await quoteRedeemFulfillment(ethereumClient, {
-    address: agentAddress,
+    address: hemiEarnAgentAddress,
     remoteAsset: assetData.remoteAsset,
   })
   const nativeFee = await quoteRedeem(hemiClient, {

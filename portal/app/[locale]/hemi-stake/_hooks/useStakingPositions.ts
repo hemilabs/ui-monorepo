@@ -18,7 +18,7 @@ export const getStakingPositionsQueryKey = ({
 export const useStakingPositions = function (
   options: Omit<
     UseQueryOptions<StakingPosition[]>,
-    'enabled' | 'queryFn' | 'queryKey'
+    'queryFn' | 'queryKey'
   > = {},
 ) {
   const { address: ownerAddress } = useAccount()
@@ -26,7 +26,8 @@ export const useStakingPositions = function (
   const hemiClient = useHemiClient()
 
   return useQuery({
-    enabled: !!ownerAddress,
+    ...options,
+    enabled: !!ownerAddress && (options.enabled ?? true),
     queryFn: () =>
       fetchStakingPositions({
         address: ownerAddress!,
@@ -37,6 +38,5 @@ export const useStakingPositions = function (
       address: ownerAddress,
       chainId: hemi.id,
     }),
-    ...options,
   })
 }

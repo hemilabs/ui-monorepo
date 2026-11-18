@@ -101,19 +101,14 @@ const TermsForm = function ({ onClose, step, terms }: FormProps) {
     <Panel
       footer={
         <>
-          <label
-            className="flex cursor-pointer items-start gap-x-2"
-            htmlFor="accept-vetro-terms"
-          >
-            <Checkbox
-              checked={accepted}
-              id="accept-vetro-terms"
-              onChange={checked =>
-                setConsentedTo(checked ? terms.termsVersion : undefined)
-              }
-            />
-            <span className="text-sm text-neutral-950">{t('checkbox')}</span>
-          </label>
+          <Checkbox
+            checked={accepted}
+            className="items-start text-sm"
+            label={t('checkbox')}
+            onChange={checked =>
+              setConsentedTo(checked ? terms.termsVersion : undefined)
+            }
+          />
           {hasFailed && (
             <p className="text-sm text-rose-500">
               {tCommon('unexpected-error')}

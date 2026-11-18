@@ -1,5 +1,6 @@
 import { Card } from 'components/card'
 import { TokenInput } from 'components/tokenInput'
+import { TokenInputBalance } from 'components/tokenInput/balance'
 import { TokenSelector } from 'components/tokenSelector'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { useTunnelTokens } from 'hooks/useTunnelTokens'
@@ -66,10 +67,15 @@ export const FormContent = function ({
       {(!provider || providerType === 'native') && (
         <div className="mb-3 flex flex-col gap-y-1.5">
           <TokenInput
+            bottomRight={
+              <TokenInputBalance
+                maxButton={setMaxBalanceButton}
+                token={fromToken}
+              />
+            }
             disabled={isRunningOperation}
             errorKey={errorKey}
             label={t('form.send')}
-            maxBalanceButton={setMaxBalanceButton}
             onChange={updateFromInput}
             token={fromToken}
             tokenSelector={
@@ -83,6 +89,7 @@ export const FormContent = function ({
             value={fromInput}
           />
           <TokenInput
+            bottomRight={<TokenInputBalance token={toToken} />}
             disabled={isRunningOperation}
             errorKey={errorKey}
             label={t('form.receive')}

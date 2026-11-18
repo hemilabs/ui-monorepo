@@ -1,8 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { hemi } from 'hemi-viem'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { useRef } from 'react'
-import { useAccount, useBytecode } from 'wagmi'
+import { useAccount, useBytecode, useConfig } from 'wagmi'
+import { getAccount } from 'wagmi/actions'
 
 import { isSmartContractAccount, resolveTermsStep } from '../_utils/termsGate'
 
@@ -14,8 +14,7 @@ export const useRefreshTermsStep = function () {
   const [networkType] = useNetworkType()
   const queryClient = useQueryClient()
   const { data: code } = useBytecode({ address, chainId: hemi.id })
-  const connected = useRef(address)
-  connected.current = address
+  const config = useConfig()
 
   return async function refreshTermsStep() {
     const account = address
@@ -26,7 +25,7 @@ export const useRefreshTermsStep = function () {
       ),
     ])
 
-    if (connected.current !== account) {
+    if (getAccount(config).address !== account) {
       return undefined
     }
 

@@ -135,6 +135,8 @@ if (error) {
 return 'Loading...'
 ```
 
+The data-first pattern does not apply to gates: hooks that decide whether an action is allowed (pause, eligibility, terms, sanctions, location). React Query keeps cached data when a refetch fails, so a gate that trusts `data` first can allow the action on a stale verdict. Gates fail closed: check the error first, and treat loading, error, unresolved and missing input as blocked.
+
 - When creating reusable hooks that internally use `useQuery` or `useMutation`, if the output of these functions is to be returned, don't rename them - just return its return value and let consumers do the rename, if needed.
 
 Example:
@@ -164,9 +166,11 @@ Furthermore, consider the [code structure](./portal/README.md#structure), which 
 - Routing is wired with react-router. The route table is plain data in `utils/routes.ts`, and `app.tsx` at the portal root builds the `<Route>` tree from it, mapping each route id to its element. Pages still live below the `app` folder, but a folder holding a `page.tsx` is not a route on its own: it only becomes reachable once it is added to `utils/routes.ts` and given an element in `app.tsx`. The sitemap is derived from the same table. Redirects set `redirect: true` and are left out of the sitemap; every other route is listed. A route id ends in `Redirect` exactly when it is a redirect, and a test enforces it.
 - When creating a new component, hook, or function utility, prefer co-locating these new files in their `_components`, `_hooks` or `_utils` that belong to the page where it is being used. This means that each page will have their own folders for these types of files.
   If the component/hook/util is generic enough, they can be created in/moved to their respective folder `components`/`hooks`/`utils` in the root of the portal project.
+- Enforce a gate where the action runs, not by hiding UI. Every entry point to a gated action goes through the same gate: the main form, its confirm step, retries of failed operations (local and remote) in the transaction drawer and history, and direct URL access. For Hemi Earn deposits, that gate is `useCanDeposit` (resolved by `resolveDepositGate` in `hemi-earn/_utils/depositGate.ts`); add new deposit blockers there instead of in a single component.
 - When adding new functions to either `utils` or `_utils`, if they contain logic, add tests in the `test` folder. If the function is only code that calls an external source, tests may be skipped.
 - A base component in `components` with interaction logic gets integration tests in the `test` folder. Important components outside `components` can also get them when their interaction logic is worth testing. A `.tsx` test under `test` runs in a real browser (Chromium, with Vitest Browser Mode); a `.ts` test runs in Node. Test behavior (values, roles, focus, callbacks), not class names or styles. Tailwind is not loaded.
 - **ALL strings that are visible to users MUST be translated** depending on the locale. The exceptions are numbers in isolation (when they are rendered on their own and not as a part of a string), and if a string consists of a word that is not translated in any language (For example: "Testnet"). Another exception is temporary texts of pages or sections that are behind a feature flag. This means that when a string rendered to the user is added, its translations to all supported languages must be added to the corresponding files in the [messages](./portal/messages) folder. **Never use hardcoded strings in components - always use the translation functions.**
+- Numbers visible to users (amounts, fiat values, percentages, chart labels and tooltips) must be formatted with the active locale from `useLocale()`, using the helpers in `utils/format`. Never omit the locale or hardcode one (e.g. `'en'`, `'en-US'`, `defaultLocale`).
 - When adding translations, follow this pattern:
   - Use `useTranslations('section-name')` hook to get the translation function
   - Add translation keys in a logical hierarchy within the appropriate section

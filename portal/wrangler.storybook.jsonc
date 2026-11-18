@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "hemi-portal-storybook",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": false,
+  "preview_urls": true,
+  "assets": {
+    "directory": "./storybook-static",
+    "not_found_handling": "single-page-application",
+  },
+}

@@ -3,7 +3,7 @@ import { Badge } from 'components/badge'
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
 import { type EvmToken } from 'types/token'
-import { useTranslations } from 'use-intl'
+import { useLocale, useTranslations } from 'use-intl'
 import { formatNumber } from 'utils/format'
 import { formatUnits } from 'viem'
 
@@ -20,32 +20,35 @@ type VaultRowProps = {
   shareToken: EvmToken
 }
 
-const VaultRow = ({
+const VaultRow = function ({
   peggedAmount,
   peggedAmountStatus,
   peggedToken,
   shareAmount,
   shareToken,
-}: VaultRowProps) => (
-  <div className="flex items-center gap-x-1 sm:min-w-52">
-    <TokenLogo size="small" token={shareToken} />
-    <span className="mr-auto text-sm font-medium text-white">
-      {shareToken.symbol}
-    </span>
-    <span className="text-sm font-medium text-white">
-      $
-      <RenderEarnFiatBalance
-        balance={peggedAmount}
-        queryStatus={peggedAmountStatus}
-        token={peggedToken}
-      />
-    </span>
-    <span className="text-sm font-medium text-neutral-400">
-      ({formatNumber(formatUnits(shareAmount, shareToken.decimals))}{' '}
-      {shareToken.symbol})
-    </span>
-  </div>
-)
+}: VaultRowProps) {
+  const locale = useLocale()
+  return (
+    <div className="flex items-center gap-x-1 sm:min-w-52">
+      <TokenLogo size="small" token={shareToken} />
+      <span className="mr-auto text-sm font-medium text-white">
+        {shareToken.symbol}
+      </span>
+      <span className="text-sm font-medium text-white">
+        $
+        <RenderEarnFiatBalance
+          balance={peggedAmount}
+          queryStatus={peggedAmountStatus}
+          token={peggedToken}
+        />
+      </span>
+      <span className="text-sm font-medium text-neutral-400">
+        ({formatNumber(formatUnits(shareAmount, shareToken.decimals), locale)}{' '}
+        {shareToken.symbol})
+      </span>
+    </div>
+  )
+}
 
 export const FromVaultsBadge = function () {
   const t = useTranslations('hemi-earn.info')

@@ -1,10 +1,9 @@
-import {
-  MaxLockDurationSeconds,
-  minLockAmount,
-  SixDaysSeconds,
-} from 've-hemi-actions'
+import { toFraction } from 'utils/bigint'
+import { minLockAmount } from 've-hemi-actions'
 
 import {
+  capAtMaxLock,
+  epochsPerYear,
   getEpochEnd,
   getLockEnd,
   getRelockedWeight,
@@ -16,18 +15,6 @@ import {
   type InputsByClass,
   type PositionClass,
 } from './rewardClass'
-
-const epochsPerYear = MaxLockDurationSeconds / (4 * SixDaysSeconds)
-
-const toFraction = function (numerator: bigint, denominator: bigint) {
-  if (denominator === BigInt(0)) {
-    return 0
-  }
-  return Number(numerator) / Number(denominator)
-}
-
-const capAtMaxLock = (lockDurationInSeconds: number) =>
-  Math.min(lockDurationInSeconds, MaxLockDurationSeconds)
 
 export const getEpochPayout = function ({
   baseline,

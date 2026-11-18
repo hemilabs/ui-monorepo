@@ -23,6 +23,7 @@ type Props = {
   lockupDays: number
   nextPayout: bigint
   nextPayoutAt: number
+  tooltipId: string
   yearOneReturnRatio: number
   yearOneTotal: bigint
 }
@@ -36,6 +37,7 @@ export const PayoutHeadline = function ({
   lockupDays,
   nextPayout,
   nextPayoutAt,
+  tooltipId,
   yearOneReturnRatio,
   yearOneTotal,
 }: Props) {
@@ -56,9 +58,11 @@ export const PayoutHeadline = function ({
         <span className="text-sm text-neutral-500">{t('first-year')}</span>
         <span className="hidden text-sm text-neutral-500 sm:inline">·</span>
         <span className="flex items-center gap-x-1 text-sm font-medium text-neutral-700">
-          {t('apy', { percentage: formatApyFromRatio(yearOneReturnRatio) })}
+          {t('apy', {
+            percentage: formatApyFromRatio(yearOneReturnRatio, locale),
+          })}
           <Tooltip
-            id="estimated-payouts-apy"
+            id={tooltipId}
             text={
               <div className="flex flex-col gap-y-2">
                 <span>{tStake('apy-estimate')}</span>
@@ -79,7 +83,7 @@ export const PayoutHeadline = function ({
         <div className="rounded-full bg-orange-600 px-2.5 py-1 text-xxs font-medium text-white">
           <RenderFiatBalance
             balance={yearOneTotal}
-            customFormatter={formatFiatAmount}
+            customFormatter={amount => formatFiatAmount(amount, locale)}
             queryStatus="success"
             token={token}
           />
@@ -89,7 +93,7 @@ export const PayoutHeadline = function ({
             amount: () => (
               <RenderFiatBalance
                 balance={nextPayout}
-                customFormatter={formatFiatAmount}
+                customFormatter={amount => formatFiatAmount(amount, locale)}
                 queryStatus="success"
                 token={token}
               />
@@ -102,7 +106,7 @@ export const PayoutHeadline = function ({
       <div className="flex flex-col text-xxs text-neutral-400 sm:flex-row sm:items-baseline sm:gap-x-1">
         <span>
           {t('locked-summary', {
-            amount: formatNumber(input),
+            amount: formatNumber(input, locale),
             days: lockupDays,
             symbol: token.symbol,
           })}

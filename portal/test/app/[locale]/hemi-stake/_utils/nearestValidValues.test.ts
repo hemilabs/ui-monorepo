@@ -40,6 +40,14 @@ describe('getNearestValidValues', function () {
     })
   })
 
+  it('brackets a value that already sits on a step', function () {
+    const onAStep = minDays + step * 3
+    expect(getNearestValidValues({ value: onAStep })).toEqual({
+      maxValue: onAStep + step,
+      minValue: onAStep,
+    })
+  })
+
   it('suggests the lock minimum for a value below the global floor', function () {
     expect(
       getNearestValidValues({ minLocked: lockMinimum, value: minDays - 1 }),

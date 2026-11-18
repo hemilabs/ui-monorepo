@@ -1,4 +1,5 @@
 import {
+  capAtMaxLock,
   getEpochEnd,
   getPositionWeights,
   getLockEnd,
@@ -299,6 +300,18 @@ describe('getPositionWeights', function () {
 
     expect(weights({ autoRelock: false, fromChain, now: midEpoch })).toEqual(
       fromChain,
+    )
+  })
+})
+
+describe('capAtMaxLock', function () {
+  it('leaves a duration the contract accepts alone', function () {
+    expect(capAtMaxLock(SixDaysSeconds * 10)).toBe(SixDaysSeconds * 10)
+  })
+
+  it('caps a duration longer than the maximum lock', function () {
+    expect(capAtMaxLock(MaxLockDurationSeconds + SixDaysSeconds)).toBe(
+      MaxLockDurationSeconds,
     )
   })
 })

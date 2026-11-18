@@ -2,6 +2,7 @@ import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { hemiEarnRouterAddress } from '@vetro-protocol/hemi-earn'
 import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { TokenInput } from 'components/tokenInput'
+import { TokenInputBalance } from 'components/tokenInput/balance'
 import { WarningBox } from 'components/warningBox'
 import { useTokenBalance } from 'hooks/useBalance'
 import { type EvmToken } from 'types/token'
@@ -33,6 +34,7 @@ import {
 
 import { AdvancedSettings } from './advancedSettings'
 import { AssetSelector } from './assetSelector'
+import { DepositBlocked } from './depositBlocked'
 import { VaultFormLayout } from './form'
 import { OperationBelowForm } from './operationBelowForm'
 import { SubmitDeposit } from './submitDeposit'
@@ -131,7 +133,13 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   const isRunningOperation = useIsDepositing(vault.shareAddress)
 
   const handleDeposit = function () {
-    if (!canDeposit || !quote || zeroBalanceError || isRunningOperation) {
+    if (
+      !depositGate.canDeposit ||
+      !canDeposit ||
+      !quote ||
+      zeroBalanceError ||
+      isRunningOperation
+    ) {
       return
     }
     // Nothing clears a finished operation, so a fresh review has to start from a clean one.
@@ -160,15 +168,16 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     tokenBalanceLoaded,
     errorKey,
   )
-  const isSubmitLoading = computeIsLoading({
-    balanceLoaded: tokenBalanceLoaded,
-    isAllowanceLoading,
-    isNativeBalancePending,
-    isPreviewLoading,
-    validInput,
-  })
+  const isSubmitLoading =
+    computeIsLoading({
+      balanceLoaded: tokenBalanceLoaded,
+      isAllowanceLoading,
+      isNativeBalancePending,
+      isPreviewLoading,
+      validInput,
+    }) || depositGate.isChecking
 
-  if (!depositGate.canDeposit) {
+  if (depositGate.reason !== undefined) {
     return (
       <VaultFormLayout
         formContent={
@@ -176,7 +185,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
             activeTab="deposit"
             onSwitchTab={onSwitchToWithdraw}
           >
-            <WarningBox subheading={t(`hemi-earn.${depositGate.reason}`)} />
+            <DepositBlocked reason={depositGate.reason} />
           </VaultFormContent>
         }
       />
@@ -214,6 +223,19 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
       formContent={
         <VaultFormContent activeTab="deposit" onSwitchTab={onSwitchToWithdraw}>
           <TokenInput
+            bottomRight={
+              <TokenInputBalance
+                maxButton={
+                  <SetMaxEvmBalance
+                    disabled={isRunningOperation}
+                    gas={depositGasFees + layerZeroFee}
+                    onSetMaxBalance={updateInput}
+                    token={selectedAsset.token}
+                  />
+                }
+                token={selectedAsset.token}
+              />
+            }
             disabled={isRunningOperation}
             errorKey={displayedErrorKey}
             fiatBalanceComponent={RenderEarnFiatBalance}
@@ -224,14 +246,6 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
               />
             }
             label={t('common.deposit')}
-            maxBalanceButton={
-              <SetMaxEvmBalance
-                disabled={isRunningOperation}
-                gas={depositGasFees + layerZeroFee}
-                onSetMaxBalance={updateInput}
-                token={selectedAsset.token}
-              />
-            }
             onChange={updateInput}
             token={selectedAsset.token}
             tokenSelector={

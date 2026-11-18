@@ -13,7 +13,7 @@ Some relevant folders are:
 - [/hooks](./hooks/) folder, which contains reusable hooks to the entire app that are not tied to a specific page.
 - [/messages/](./messages/) folder, which contain a file per locale with all the translated resources.
 - [/public](./public/) folder, which is served verbatim at the site root.
-- [worker/index.ts](./worker/index.ts), the Cloudflare Worker that serves the built assets and sets the security headers on every response.
+- [worker/index.ts](./worker/index.ts), the Cloudflare Worker that serves the built assets, sets the security headers on every response, and stamps a meta tag telling the app whether the visitor is in a country Hemi Earn cannot serve.
 - [/test](./test/) folder, which contains some tests for different portal files. These tests are for plain Typescript functions, and not for components.
 - [/types](./types/) folder, which contains many reusable Typescript types across the entire app
 - [/utils](./utils/) folder, which contains most of the logic that is not tied to UI.
@@ -50,6 +50,7 @@ VITE_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
 # These env variables are required for enabling the following features
 VITE_DISABLE_HEMI_EARN_DEPOSITS=<true|false> # Pause new Hemi Earn deposits. Unset means deposits are open
 VITE_ENABLE_HEMI_EARN_PAGE=<true|false> # Enable the Hemi Earn page
+VITE_ENABLE_HEMI_STAKE_CALCULATOR=<true|false> # Enable the Hemi Stake calculator
 VITE_ENABLE_SAFE_WALLET=<true|false> # Enable the Safe connector, needed to run the Portal as a Safe App
 VITE_ENABLE_STAKE_GOVERNANCE_TESTNET=<true|false> # Enable stake governance on Testnet, for local development
 VITE_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development
@@ -123,3 +124,10 @@ pnpm exec wrangler dev
 ```
 
 The build is what points wrangler at the directory holding the assets, so the commands that serve or deploy them need it. Without `dist/` they fail with a complaint about a missing `directory` property. `wrangler types` runs either way.
+
+The Storybook is deployed to Cloudflare as a separate Worker, `hemi-portal-storybook`, configured in `wrangler.storybook.jsonc`. Build and deploy it with:
+
+```sh
+pnpm storybook:build
+pnpm exec wrangler deploy -c wrangler.storybook.jsonc
+```

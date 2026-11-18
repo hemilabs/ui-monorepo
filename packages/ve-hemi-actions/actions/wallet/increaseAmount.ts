@@ -12,7 +12,7 @@ import { balanceOf } from 'viem-erc20/actions'
 import { veHemiAbi } from '../../abi.ts'
 import { getVeHemiContractAddress } from '../../constants.ts'
 import type { IncreaseAmountEvents } from '../../types.ts'
-import { validateIncreaseAmountInputs } from '../../utils.ts'
+import { unixNowTimestamp, validateIncreaseAmountInputs } from '../../utils.ts'
 import {
   getAutoRelockStatus,
   memoizedGetHemiTokenAddress,
@@ -68,7 +68,7 @@ const canIncreaseAmount = async function ({
     const [{ effectiveLockEnd }] = await getAutoRelockStatus(walletClient, [
       tokenId,
     ])
-    const now = BigInt(Math.floor(Date.now() / 1000))
+    const now = unixNowTimestamp()
     if (effectiveLockEnd <= now) {
       return { canIncrease: false, reason: 'lock already expired' }
     }

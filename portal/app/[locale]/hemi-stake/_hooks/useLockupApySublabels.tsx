@@ -1,5 +1,5 @@
 import Skeleton from 'react-loading-skeleton'
-import { useTranslations } from 'use-intl'
+import { useLocale, useTranslations } from 'use-intl'
 import { unixNowTimestamp } from 'utils/time'
 
 import { formatApyFromRatio } from '../_utils/formatApyFromRatio'
@@ -13,6 +13,7 @@ export const useLockupApySublabels = function (
   amount: bigint,
   autoRelock?: boolean,
 ) {
+  const locale = useLocale()
   const t = useTranslations('hemi-stake.form')
   const { isError: isSystemStateError } = useEpochSystemState()
   const { data: forecastInputs, isError: isForecastError } =
@@ -27,7 +28,9 @@ export const useLockupApySublabels = function (
 
   const toSublabel = function (ratio: number) {
     if (forecastInputs?.transferable.baseline !== undefined) {
-      return t('approximate', { percentage: formatApyFromRatio(ratio) })
+      return t('approximate', {
+        percentage: formatApyFromRatio(ratio, locale),
+      })
     }
     if (forecastInputs !== undefined || isForecastError || isSystemStateError) {
       return undefined

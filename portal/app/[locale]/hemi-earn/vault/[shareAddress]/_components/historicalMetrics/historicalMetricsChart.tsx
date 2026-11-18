@@ -8,6 +8,7 @@ import {
   formatDate,
   formatPercentage,
   formatShortDate,
+  formatWholePercentage,
 } from 'utils/format'
 import { secondsPerDay } from 'utils/time'
 import {
@@ -102,8 +103,8 @@ const formatYAxis = function ({
 }) {
   if (metricType === 'apy') {
     return precision === 'full'
-      ? formatPercentage(value)
-      : `${Math.round(value)}%`
+      ? formatPercentage(value, locale)
+      : formatWholePercentage(value, locale)
   }
   const { number, suffix } = formatCompactFiatParts(value, locale)
   return `${number}${suffix} ${peggedToken.symbol}`

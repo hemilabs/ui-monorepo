@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'use-intl'
 import { formatPercentage } from 'utils/format'
 import { isDataUnavailable } from 'utils/queryStatus'
 
+import { type ChartUnit } from '../../_utils/chartUnit'
 import { useSupplySlice } from '../_hooks/useSupplyStat'
 import { formatSupplyValue } from '../_utils/formatSupplyValue'
 import { sliceColors } from '../_utils/sliceColors'
@@ -12,7 +13,6 @@ import {
   sliceLabels,
   type SupplyPeriod,
   type SupplySlice,
-  type SupplyUnit,
 } from '../_utils/supplyHistory'
 
 import { ChangeIndicator } from './changeIndicator'
@@ -21,7 +21,7 @@ type Props = {
   period: SupplyPeriod
   slice: SupplySlice
   symbol: string
-  unit: SupplyUnit
+  unit: ChartUnit
 }
 
 export const SupplySliceCard = function ({
@@ -49,7 +49,7 @@ export const SupplySliceCard = function ({
           <Badge size="small" variant="secondary">
             <span>
               {t('share-of-supply', {
-                share: formatPercentage(data.share * 100),
+                share: formatPercentage(data.share * 100, locale),
               })}
             </span>
             <span aria-hidden>·</span>

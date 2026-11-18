@@ -18,7 +18,9 @@ export {
   getLockedBalance,
   getPositionVotingPowerDetails,
   getPositionWeight,
+  getPositionsDelegatedAway,
   getPositionsVotingPowerSum,
   getTotalVotingPower,
+  getTransferableAfter,
 } from './public/veHemi.ts'
 export { getTotalLocked } from './public/getTotalLocked.ts'

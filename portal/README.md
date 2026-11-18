@@ -120,3 +120,10 @@ pnpm exec wrangler dev
 ```
 
 The build is what points wrangler at the directory holding the assets, so the commands that serve or deploy them need it. Without `dist/` they fail with a complaint about a missing `directory` property. `wrangler types` runs either way.
+
+The Storybook is deployed to Cloudflare as a separate Worker, `hemi-portal-storybook`, configured in `wrangler.storybook.jsonc`. Build and deploy it with:
+
+```sh
+pnpm storybook:build
+pnpm exec wrangler deploy -c wrangler.storybook.jsonc
+```

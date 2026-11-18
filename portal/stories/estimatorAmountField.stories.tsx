@@ -63,6 +63,10 @@ export const WithoutWallet: Story = {
   args: { balance: undefined },
 }
 
+export const BelowMinimum: Story = {
+  args: { value: '1' },
+}
+
 export const CustomAmount: Story = {
   args: { value: '1234.5' },
 }

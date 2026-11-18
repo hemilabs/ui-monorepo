@@ -2,6 +2,7 @@ import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { hemiEarnRouterAddress } from '@vetro-protocol/hemi-earn'
 import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { TokenInput } from 'components/tokenInput'
+import { TokenInputBalance } from 'components/tokenInput/balance'
 import { WarningBox } from 'components/warningBox'
 import { useTokenBalance } from 'hooks/useBalance'
 import { type EvmToken } from 'types/token'
@@ -222,6 +223,19 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
       formContent={
         <VaultFormContent activeTab="deposit" onSwitchTab={onSwitchToWithdraw}>
           <TokenInput
+            bottomRight={
+              <TokenInputBalance
+                maxButton={
+                  <SetMaxEvmBalance
+                    disabled={isRunningOperation}
+                    gas={depositGasFees + layerZeroFee}
+                    onSetMaxBalance={updateInput}
+                    token={selectedAsset.token}
+                  />
+                }
+                token={selectedAsset.token}
+              />
+            }
             disabled={isRunningOperation}
             errorKey={displayedErrorKey}
             fiatBalanceComponent={RenderEarnFiatBalance}
@@ -232,14 +246,6 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
               />
             }
             label={t('common.deposit')}
-            maxBalanceButton={
-              <SetMaxEvmBalance
-                disabled={isRunningOperation}
-                gas={depositGasFees + layerZeroFee}
-                onSetMaxBalance={updateInput}
-                token={selectedAsset.token}
-              />
-            }
             onChange={updateInput}
             token={selectedAsset.token}
             tokenSelector={

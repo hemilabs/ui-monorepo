@@ -1,7 +1,7 @@
 import { formatCompactFiatParts } from 'utils/format'
 import { formatUnits } from 'viem'
 
-const presetAmounts = [1_000, 10_000, 100_000, 1_000_000]
+const presetAmounts = [1_000, 10_000, 100_000]
 
 // Anything smaller compacts to a label reading "0", which would offer a chip
 // that says nothing and fills the field with dust.

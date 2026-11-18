@@ -9,7 +9,14 @@ import {
   VictoryVoronoiContainer,
 } from 'victory'
 
-import { useChartWidth } from '../_hooks/useChartWidth'
+import {
+  ChartTooltipLabel,
+  getTooltipHeight,
+  tooltipWidth,
+} from '../../_components/chartTooltipLabel'
+import { useChartWidth } from '../../_hooks/useChartWidth'
+import { type ChartPoint } from '../../_utils/chartPoint'
+import { type ChartUnit } from '../../_utils/chartUnit'
 import {
   chartHeight,
   chartPadding,
@@ -23,18 +30,11 @@ import {
   getPeriodDurationMs,
   sliceLabels,
   stackOrder,
-  type ChartPoint,
   type SupplyPeriod,
   type SupplySlice,
-  type SupplyUnit,
 } from '../_utils/supplyHistory'
 
 import { ChartPlaceholder } from './chartPlaceholder'
-import {
-  ChartTooltipLabel,
-  getTooltipHeight,
-  tooltipWidth,
-} from './chartTooltipLabel'
 
 const tooltipHeight = getTooltipHeight({
   hasNote: false,
@@ -113,7 +113,7 @@ type Props = {
   period: SupplyPeriod
   series: Record<SupplySlice, ChartPoint[]> | undefined
   symbol: string
-  unit: SupplyUnit
+  unit: ChartUnit
 }
 
 export const SupplyChart = function ({

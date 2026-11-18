@@ -11,7 +11,10 @@ import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { veHemiAbi } from '../../abi.ts'
 import { getVeHemiContractAddress, snapToEpoch } from '../../constants.ts'
 import type { IncreaseUnlockTimeEvents } from '../../types.ts'
-import { validateIncreaseUnlockTimeInputs } from '../../utils.ts'
+import {
+  unixNowTimestamp,
+  validateIncreaseUnlockTimeInputs,
+} from '../../utils.ts'
 import { getLockedBalance } from '../public/veHemi.ts'
 
 const canIncreaseUnlockTime = async function ({
@@ -48,7 +51,7 @@ const canIncreaseUnlockTime = async function ({
   try {
     // Check if lock exists and is not expired
     const { amount, end } = await getLockedBalance(walletClient, tokenId)
-    const now = BigInt(Math.floor(Date.now() / 1000))
+    const now = unixNowTimestamp()
 
     if (amount <= 0) {
       return { canIncrease: false, reason: 'no existing lock' }

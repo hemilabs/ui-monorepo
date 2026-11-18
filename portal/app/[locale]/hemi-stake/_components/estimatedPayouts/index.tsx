@@ -1,6 +1,8 @@
+import { featureFlags } from 'app/featureFlags'
+import { ButtonLink } from 'components/button'
+import { Chevron } from 'components/icons/chevron'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTokenPrices } from 'hooks/useTokenPrices'
-import Skeleton from 'react-loading-skeleton'
 import { useLocale, useTranslations } from 'use-intl'
 import { formatShortDate } from 'utils/format'
 import { unixNowTimestamp } from 'utils/time'
@@ -14,49 +16,43 @@ import {
   formatPayoutValue,
 } from '../../_utils/formatPayoutValue'
 import { wholeDaysToSeconds } from '../../_utils/lockCreationTimes'
+import { isValidLockup } from '../../_utils/lockupError'
 import {
   getPayoutAxisTicks,
   getUnlockMarkerX,
   toPayoutSeries,
+  toZeroedSeries,
 } from '../../_utils/payoutsChartData'
+import {
+  emptyInputsByClass,
+  type InputsByClass,
+} from '../../_utils/rewardClass'
 import { getRewardsForecast } from '../../_utils/stakeRewardsForecast'
-import { isValidLockup } from '../lockup'
+import { toPrice } from '../../_utils/toPrice'
+import { PayoutsChart } from '../payoutsChart'
 
 import { PayoutHeadline } from './payoutHeadline'
 import { PayoutPlaceholder } from './payoutPlaceholder'
-import { PayoutsChart } from './payoutsChart'
-
-const sectionLabelClassName =
-  'text-xxs font-medium uppercase tracking-widest text-neutral-500'
-
-const toPrice = function (value: string | undefined) {
-  const price = Number(value)
-  return value !== undefined && Number.isFinite(price) && price > 0
-    ? price
-    : undefined
-}
+import { PayoutsCard } from './payoutsCard'
 
 const buildForecast = function ({
   amount,
-  baseline,
   decimals,
   hasValidLockup,
+  inputsByClass,
   lockupDays,
-  weight,
 }: {
   amount: bigint
-  baseline: bigint
   decimals: number
   hasValidLockup: boolean
+  inputsByClass: InputsByClass
   lockupDays: number
-  weight: bigint
 }) {
   const forecast = getRewardsForecast({
     amount,
+    inputsByClass,
     lockDurationInSeconds: Number(wholeDaysToSeconds(lockupDays)),
     now: Number(unixNowTimestamp()),
-    transferableClassBaseline: baseline,
-    transferableClassWeight: weight,
   })
   const series = toPayoutSeries({
     decimals,
@@ -64,12 +60,12 @@ const buildForecast = function ({
     payouts: forecast.payouts,
   })
   const hasForecast =
-    baseline > BigInt(0) && forecast.meetsMinimumAmount && hasValidLockup
+    (inputsByClass.transferable.baseline ?? BigInt(0)) > BigInt(0) &&
+    forecast.meetsMinimumAmount &&
+    hasValidLockup
 
   return {
-    chartSeries: hasForecast
-      ? series
-      : series.map(point => ({ ...point, afterUnlock: false, y: 0 })),
+    chartSeries: hasForecast ? series : toZeroedSeries(series),
     forecast,
     hasForecast,
   }
@@ -94,8 +90,7 @@ export const EstimatedPayouts = function () {
   const { data: prices } = useTokenPrices()
 
   const amount = parseTokenUnits(input, token)
-  const baseline = forecastInputs?.transferableClassBaseline ?? BigInt(0)
-  const weight = forecastInputs?.transferableClassWeight ?? BigInt(0)
+  const inputsByClass = forecastInputs ?? emptyInputsByClass
 
   const hasValidLockup = isValidLockup({ value: lockupDays })
   const hasError = isSystemStateError || isForecastError
@@ -104,28 +99,56 @@ export const EstimatedPayouts = function () {
 
   const { chartSeries, forecast, hasForecast } = buildForecast({
     amount,
-    baseline,
     decimals: token.decimals,
     hasValidLockup,
+    inputsByClass,
     lockupDays,
-    weight,
   })
 
   return (
-    <div className="flex w-full flex-col gap-y-4 rounded-lg border border-solid border-transparent bg-neutral-50 p-4 ring-1 ring-transparent hover:shadow-bs">
-      {/* TODO #2368 bring back the advanced estimator button on this row, with
-          its `advanced-estimator` label, once that page exists */}
-      <span className={sectionLabelClassName}>{t('title')}</span>
-      <div className="min-h-24.5">
-        {hasForecast && systemState !== undefined ? (
+    <PayoutsCard
+      action={
+        featureFlags.enableHemiStakeCalculator && (
+          <div className="group">
+            <ButtonLink
+              href="/hemi-stake/estimator"
+              size="xSmall"
+              variant="tertiary"
+            >
+              {t('advanced-estimator')}
+              <Chevron.Right className="[&>path]:fill-neutral-500 group-hover:[&>path]:fill-neutral-950" />
+            </ButtonLink>
+          </div>
+        )
+      }
+      chart={
+        <PayoutsChart
+          afterUnlockLabel={t('after-unlock')}
+          formatDate={value => formatShortDate(new Date(value), locale)}
+          formatDetail={value =>
+            formatPayoutDetail({ locale, price, symbol: token.symbol, value })
+          }
+          formatValue={value =>
+            formatPayoutValue({ locale, symbol: token.symbol, value })
+          }
+          isPending={isPending && !hasError && forecast.meetsMinimumAmount}
+          series={chartSeries}
+          ticks={getPayoutAxisTicks(chartSeries)}
+          unlockX={getUnlockMarkerX(chartSeries)}
+        />
+      }
+      currentEpoch={systemState?.currentEpoch}
+      headline={
+        hasForecast && systemState !== undefined ? (
           <PayoutHeadline
-            carriedFrom={forecastInputs?.carriedFrom}
+            carriedFrom={forecastInputs?.transferable.carriedFrom}
             currentEpoch={systemState.currentEpoch}
             input={input}
             lockEnd={forecast.lockEnd}
             lockupDays={lockupDays}
             nextPayout={forecast.payouts[0].payout}
             nextPayoutAt={forecast.payouts[0].timestamp}
+            tooltipId="estimated-payouts-apy"
             yearOneReturnRatio={forecast.yearOneReturnRatio}
             yearOneTotal={forecast.yearOneTotal}
           />
@@ -138,40 +161,8 @@ export const EstimatedPayouts = function () {
             meetsMinimumAmount={forecast.meetsMinimumAmount}
             onRetry={retry}
           />
-        )}
-      </div>
-      <div className="flex w-full flex-col gap-y-1.5">
-        <span className={sectionLabelClassName}>
-          {t.rich('starting-from-epoch', {
-            epoch: () =>
-              systemState === undefined ? (
-                <Skeleton className="w-8" />
-              ) : (
-                systemState.currentEpoch
-              ),
-          })}
-        </span>
-        <PayoutsChart
-          formatDate={value => formatShortDate(new Date(value), locale)}
-          formatDetail={point =>
-            point.afterUnlock
-              ? t('after-unlock')
-              : formatPayoutDetail({
-                  locale,
-                  price,
-                  symbol: token.symbol,
-                  value: point.y,
-                })
-          }
-          formatValue={value =>
-            formatPayoutValue({ locale, symbol: token.symbol, value })
-          }
-          isPending={isPending && !hasError && forecast.meetsMinimumAmount}
-          series={chartSeries}
-          ticks={getPayoutAxisTicks(chartSeries)}
-          unlockX={getUnlockMarkerX(chartSeries)}
-        />
-      </div>
-    </div>
+        )
+      }
+    />
   )
 }

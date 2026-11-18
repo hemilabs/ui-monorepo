@@ -3,7 +3,7 @@
 // app.tsx maps every id to its element.
 export type RouteDefinition = {
   children?: readonly RouteDefinition[]
-  featureFlag?: 'hemiEarn'
+  featureFlag?: 'hemiEarn' | 'hemiStakeCalculator'
   id: string
   index?: true
   path?: string
@@ -61,6 +61,11 @@ export const routes = [
         children: [
           { id: 'hemiStakePage', index: true },
           { id: 'hemiStakeAnalyticsPage', path: 'analytics' },
+          {
+            featureFlag: 'hemiStakeCalculator',
+            id: 'hemiStakeEstimatorPage',
+            path: 'estimator',
+          },
         ],
         id: 'hemiStakeLayout',
         path: 'hemi-stake',

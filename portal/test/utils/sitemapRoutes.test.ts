@@ -31,9 +31,12 @@ const pageRoutes = function (dir: string, route = ''): string[] {
   ]
 }
 
+const allOn = { hemiEarn: true, hemiStakeCalculator: true }
+const allOff = { hemiEarn: false, hemiStakeCalculator: false }
+
 describe('utils/sitemapRoutes', function () {
   it('should account for every page on disk', function () {
-    const listed = sitemapRoutes(true)
+    const listed = sitemapRoutes(allOn)
     const unaccounted = pageRoutes(localeDir).filter(
       route => !listed.includes(route) && !(route in excluded),
     )
@@ -43,7 +46,7 @@ describe('utils/sitemapRoutes', function () {
   it('should not list a route without a page', function () {
     const onDisk = pageRoutes(localeDir)
     expect(
-      sitemapRoutes(true).filter(route => !onDisk.includes(route)),
+      sitemapRoutes(allOn).filter(route => !onDisk.includes(route)),
     ).toEqual([])
   })
 
@@ -65,8 +68,13 @@ describe('utils/sitemapRoutes', function () {
       '/tunnel',
       '/tunnel/transaction-history',
     ]
-    expect(sitemapRoutes(false)).toEqual(common)
-    expect(sitemapRoutes(true)).toEqual([...common, '/hemi-earn'].sort())
+    expect(sitemapRoutes(allOff)).toEqual(common)
+    expect(sitemapRoutes({ ...allOff, hemiEarn: true })).toEqual(
+      [...common, '/hemi-earn'].sort(),
+    )
+    expect(sitemapRoutes({ ...allOff, hemiStakeCalculator: true })).toEqual(
+      [...common, '/hemi-stake/estimator'].sort(),
+    )
   })
 
   describe('with a custom route table', function () {
@@ -77,7 +85,7 @@ describe('utils/sitemapRoutes', function () {
 
     it('should only walk the children of the locale route', function () {
       expect(
-        sitemapRoutes(true, [
+        sitemapRoutes(allOn, [
           { id: 'outside', path: '/outside' },
           ...withLocale([{ id: 'inside', path: 'inside' }]),
         ]),
@@ -87,7 +95,7 @@ describe('utils/sitemapRoutes', function () {
     it('should give an index route the path of its parent', function () {
       expect(
         sitemapRoutes(
-          true,
+          allOn,
           withLocale([
             {
               children: [
@@ -104,14 +112,14 @@ describe('utils/sitemapRoutes', function () {
 
     it('should skip an index route without a parent path', function () {
       expect(
-        sitemapRoutes(true, withLocale([{ id: 'home', index: true }])),
+        sitemapRoutes(allOn, withLocale([{ id: 'home', index: true }])),
       ).toEqual([])
     })
 
     it('should skip paths with a param or a splat', function () {
       expect(
         sitemapRoutes(
-          true,
+          allOn,
           withLocale([
             { id: 'dynamic', path: 'vault/:address' },
             { id: 'notFound', path: '*' },
@@ -124,7 +132,7 @@ describe('utils/sitemapRoutes', function () {
     it('should skip redirect routes', function () {
       expect(
         sitemapRoutes(
-          true,
+          allOn,
           withLocale([
             { id: 'redirect', path: 'redirect', redirect: true },
             { id: 'regular', path: 'regular' },
@@ -136,7 +144,7 @@ describe('utils/sitemapRoutes', function () {
     it('should list a route only once', function () {
       expect(
         sitemapRoutes(
-          true,
+          allOn,
           withLocale([
             {
               children: [{ id: 'page', index: true }],
@@ -159,11 +167,11 @@ describe('utils/sitemapRoutes', function () {
         },
         { id: 'regular', path: 'regular' },
       ])
-      expect(sitemapRoutes(true, definitions)).toEqual([
+      expect(sitemapRoutes(allOn, definitions)).toEqual([
         '/hemi-earn',
         '/regular',
       ])
-      expect(sitemapRoutes(false, definitions)).toEqual(['/regular'])
+      expect(sitemapRoutes(allOff, definitions)).toEqual(['/regular'])
     })
   })
 })

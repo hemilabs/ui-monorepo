@@ -39,8 +39,8 @@ export type StakingPosition = {
   forfeitable: boolean
   id: string
   lockTime: bigint
-  owner: string
-  pastOwners: string[]
+  owner: Address
+  pastOwners: Address[]
   status: StakingPositionStatus
   timestamp: bigint
   tokenId: bigint

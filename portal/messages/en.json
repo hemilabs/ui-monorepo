@@ -11,6 +11,8 @@
     "approve-and-withdraw": "Approve and Withdraw",
     "approving": "Approving...",
     "approving-token": "Approving {symbol}",
+    "apy": "APY",
+    "balance": "Balance",
     "cancel": "Cancel",
     "close": "Close",
     "close-notification": "Close notification",
@@ -405,7 +407,6 @@
       "historical-metrics": {
         "1-week": "1 week",
         "1-year": "1 year",
-        "apy": "APY",
         "metric": "Metric",
         "month": "{count, plural, one {# month} other {# months}}",
         "period": "Period",
@@ -508,6 +509,9 @@
       "unlock-token": "Unlock {symbol}"
     },
     "estimated-payouts": {
+      "added-amount": "Added {symbol}",
+      "added-time": "Added time",
+      "advanced-estimator": "Advanced estimator",
       "after-unlock": "after unlock",
       "apy": "{percentage} APY",
       "carried-from": "Based on epoch {epoch}, the last one funded.",
@@ -518,11 +522,24 @@
       "next-payout-line": "next payout <amount></amount> · epoch {epoch}, settles {date}",
       "not-funded": "Rewards for this epoch have not been funded yet.",
       "starting-from-epoch": "Payouts per epoch · starting from epoch <epoch></epoch>",
+      "this-lockup": "This lockup",
       "title": "Estimated payouts",
       "unlocks-on": "Unlocks {date}"
     },
     "estimator": {
+      "blended-was": "blended, was {percentage}",
+      "connect-to-blend": "Connect your wallet to include your positions in the estimate",
+      "estimated-payouts-first-year": "Estimated payouts in the first year",
+      "my-positions": "My positions",
+      "new-position": "New position",
+      "per-epoch": "{symbol} per epoch · starting from epoch {epoch}",
       "quick-amounts": "Quick amounts",
+      "scope": "Estimate scope",
+      "simple-first-year": "simple, first year",
+      "unit": "Unit",
+      "view-position": "View position",
+      "voting-power-title": "Voting power · <amount></amount> veHEMI",
+      "with-my-positions": "With my positions",
       "yours": "Yours · {amount}"
     },
     "form": {
@@ -628,6 +645,8 @@
     },
     "tabs": {
       "analytics": "Analytics",
+      "estimator": "Advanced estimator",
+      "estimator-short": "Estimator",
       "stake": "Stake"
     },
     "unlock-successful": "Unlock successful",
@@ -738,7 +757,6 @@
   },
   "tunnel-page": {
     "form": {
-      "balance": "Balance",
       "bitcoin-receiving-address": "Receiving Bitcoin address",
       "bitcoin-receiving-address-description": "Withdrawn {symbol} is sent to the address of your connected Bitcoin wallet, or to the custom address you enter.",
       "custom-address": "Custom address",

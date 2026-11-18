@@ -1,4 +1,10 @@
 import {
+  getEpochEnd,
+  getLockEnd,
+  getWeightAt,
+} from 'app/[locale]/hemi-stake/_utils/lockEpochs'
+import { emptyInputsByClass } from 'app/[locale]/hemi-stake/_utils/rewardClass'
+import {
   getEpochPayout,
   getLockMultiplier,
   getRewardsForecast,
@@ -8,7 +14,6 @@ import {
 import {
   MaxLockDurationSeconds,
   minLockAmount,
-  MinLockDurationSeconds,
   SixDaysSeconds,
 } from 've-hemi-actions'
 import { describe, expect, it } from 'vitest'
@@ -22,10 +27,13 @@ const days = (count: number) => count * 86_400
 // class of 761 HEMI the denominator lands on 1000, so a baseline of 1000 pays about 239.
 const golden = {
   amount: hemi(240),
+  inputsByClass: {
+    forfeitable: { baseline: hemi(7), weight: hemi(13) },
+    locked: { baseline: hemi(29), weight: hemi(31) },
+    transferable: { baseline: hemi(1000), weight: hemi(761) },
+  },
   lockDurationInSeconds: MaxLockDurationSeconds,
   now: epochAlignedNow,
-  transferableClassBaseline: hemi(1000),
-  transferableClassWeight: hemi(761),
 }
 
 const forecast = (overrides = {}) =>
@@ -35,8 +43,8 @@ describe('getEpochPayout', function () {
   it('takes the whole baseline when it is the only weight in the class', function () {
     expect(
       getEpochPayout({
-        transferableClassBaseline: hemi(1000),
-        transferableClassWeight: BigInt(0),
+        baseline: hemi(1000),
+        classWeight: BigInt(0),
         weight: hemi(5),
       }),
     ).toBe(hemi(1000))
@@ -45,8 +53,8 @@ describe('getEpochPayout', function () {
   it('takes half the baseline when it matches the rest of the class', function () {
     expect(
       getEpochPayout({
-        transferableClassBaseline: hemi(1000),
-        transferableClassWeight: hemi(50),
+        baseline: hemi(1000),
+        classWeight: hemi(50),
         weight: hemi(50),
       }),
     ).toBe(hemi(500))
@@ -55,8 +63,8 @@ describe('getEpochPayout', function () {
   it('pays nothing without weight', function () {
     expect(
       getEpochPayout({
-        transferableClassBaseline: hemi(1000),
-        transferableClassWeight: hemi(50),
+        baseline: hemi(1000),
+        classWeight: hemi(50),
         weight: BigInt(0),
       }),
     ).toBe(BigInt(0))
@@ -65,8 +73,8 @@ describe('getEpochPayout', function () {
   it('pays nothing out of an empty baseline', function () {
     expect(
       getEpochPayout({
-        transferableClassBaseline: BigInt(0),
-        transferableClassWeight: hemi(50),
+        baseline: BigInt(0),
+        classWeight: hemi(50),
         weight: hemi(50),
       }),
     ).toBe(BigInt(0))
@@ -75,8 +83,8 @@ describe('getEpochPayout', function () {
   it('does not divide by zero on an empty class', function () {
     expect(
       getEpochPayout({
-        transferableClassBaseline: hemi(1000),
-        transferableClassWeight: BigInt(0),
+        baseline: hemi(1000),
+        classWeight: BigInt(0),
         weight: BigInt(0),
       }),
     ).toBe(BigInt(0))
@@ -84,13 +92,13 @@ describe('getEpochPayout', function () {
 
   it('does not pay double for double the weight, the stake dilutes itself', function () {
     const single = getEpochPayout({
-      transferableClassBaseline: hemi(1000),
-      transferableClassWeight: hemi(100),
+      baseline: hemi(1000),
+      classWeight: hemi(100),
       weight: hemi(100),
     })
     const doubled = getEpochPayout({
-      transferableClassBaseline: hemi(1000),
-      transferableClassWeight: hemi(100),
+      baseline: hemi(1000),
+      classWeight: hemi(100),
       weight: hemi(200),
     })
     expect(doubled).toBeLessThan(single * BigInt(2))
@@ -101,28 +109,26 @@ describe('getWeightShare', function () {
   it('is half when the stake matches the rest of the class', function () {
     expect(
       getWeightShare({
-        transferableClassWeight: hemi(50),
+        classWeight: hemi(50),
         weight: hemi(50),
       }),
     ).toBe(0.5)
   })
 
   it('is nothing without weight', function () {
-    expect(
-      getWeightShare({ transferableClassWeight: hemi(50), weight: BigInt(0) }),
-    ).toBe(0)
+    expect(getWeightShare({ classWeight: hemi(50), weight: BigInt(0) })).toBe(0)
   })
 
   it('is nothing rather than NaN when there is no weight at all', function () {
-    expect(
-      getWeightShare({ transferableClassWeight: BigInt(0), weight: BigInt(0) }),
-    ).toBe(0)
+    expect(getWeightShare({ classWeight: BigInt(0), weight: BigInt(0) })).toBe(
+      0,
+    )
   })
 
   it('still resolves the smallest allowed stake against a millions-strong class', function () {
     expect(
       getWeightShare({
-        transferableClassWeight: hemi(11_660_000),
+        classWeight: hemi(11_660_000),
         weight: minLockAmount,
       }),
     ).toBeGreaterThan(0)
@@ -233,16 +239,17 @@ describe('getRewardsForecast', function () {
     expect(forecast({ amount: BigInt(0) }).yearOneReturnRatio).toBe(0)
   })
 
-  it('prices a duration under the floor as the shortest lock allowed', function () {
-    expect(forecast({ lockDurationInSeconds: 12 * 86_400 }).yearOneTotal).toBe(
-      forecast({ lockDurationInSeconds: MinLockDurationSeconds }).yearOneTotal,
+  it('keeps a duration under the new lock floor as it was given', function () {
+    const lockDurationInSeconds = 12 * 86_400
+    expect(forecast({ lockDurationInSeconds }).lockEnd).toBe(
+      getLockEnd({ lockTime: lockDurationInSeconds, timestamp: golden.now }),
     )
   })
 
-  it('still pays for a duration the caller left under the floor', function () {
-    expect(
-      forecast({ lockDurationInSeconds: 12 * 86_400 }).yearOneTotal,
-    ).toBeGreaterThan(BigInt(0))
+  it('earns nothing once the lock ends before the first epoch close', function () {
+    expect(forecast({ lockDurationInSeconds: 12 * 86_400 }).yearOneTotal).toBe(
+      BigInt(0),
+    )
   })
 
   it('prices a duration past the cap as the longest lock allowed', function () {
@@ -304,6 +311,13 @@ describe('getRewardsForecastByLockDurations', function () {
   it('reproduces the ladder the deployed simulator published', function () {
     const ratios = getRewardsForecastByLockDurations({
       amount: hemi(10_000),
+      inputsByClass: {
+        ...emptyInputsByClass,
+        transferable: {
+          baseline: BigInt('4166666660000000000000000'),
+          weight: hemi(10_056_994),
+        },
+      },
       lockDurationsInSeconds: [
         days(365),
         days(730),
@@ -311,13 +325,199 @@ describe('getRewardsForecastByLockDurations', function () {
         MaxLockDurationSeconds,
       ],
       now: SixDaysSeconds * 3402 + 43_200,
-      transferableClassBaseline: BigInt('4166666660000000000000000'),
-      transferableClassWeight: hemi(10_056_994),
     }).map(({ yearOneReturnRatio }) => yearOneReturnRatio)
 
     expect(ratios[0]).toBeCloseTo(3.055, 2)
     expect(ratios[1]).toBeCloseTo(9.266, 2)
     expect(ratios[2]).toBeCloseTo(15.475, 2)
     expect(ratios[3]).toBeCloseTo(21.68, 2)
+  })
+})
+
+describe('getRewardsForecast by reward class', function () {
+  const switchesAt = 10
+  const transferableAfter = getEpochEnd({
+    epochsAhead: switchesAt,
+    now: epochAlignedNow,
+  })
+  const locked = { forfeitable: false, transferableAfter }
+
+  it('draws from its own class until it becomes transferable', function () {
+    expect(
+      forecast({ positionClass: locked }).payouts.map(
+        ({ rewardClass }) => rewardClass,
+      ),
+    ).toEqual([
+      ...Array.from({ length: switchesAt }, () => 'locked'),
+      ...Array.from({ length: 60 - switchesAt }, () => 'transferable'),
+    ])
+  })
+
+  it('switches pot exactly at the instant it becomes transferable', function () {
+    const { payouts } = forecast({ positionClass: locked })
+
+    expect(payouts[switchesAt - 1].payout).toBe(
+      getEpochPayout({
+        baseline: golden.inputsByClass.locked.baseline,
+        classWeight: golden.inputsByClass.locked.weight,
+        weight: payouts[switchesAt - 1].weight,
+      }),
+    )
+    expect(payouts[switchesAt].payout).toBe(
+      getEpochPayout({
+        baseline: golden.inputsByClass.transferable.baseline,
+        classWeight: golden.inputsByClass.transferable.weight,
+        weight: payouts[switchesAt].weight,
+      }),
+    )
+  })
+
+  it('prices a forfeitable position out of the forfeitable pot', function () {
+    const { payouts } = forecast({
+      positionClass: {
+        forfeitable: true,
+        transferableAfter: Number.MAX_SAFE_INTEGER,
+      },
+    })
+
+    expect(
+      payouts.every(({ rewardClass }) => rewardClass === 'forfeitable'),
+    ).toBe(true)
+    expect(payouts[0].payout).toBe(
+      getEpochPayout({
+        baseline: golden.inputsByClass.forfeitable.baseline,
+        classWeight: golden.inputsByClass.forfeitable.weight,
+        weight: payouts[0].weight,
+      }),
+    )
+  })
+
+  it('pays nothing out of a class nobody funded, then pays once it turns transferable', function () {
+    const { payouts } = forecast({
+      inputsByClass: {
+        ...golden.inputsByClass,
+        locked: { weight: golden.inputsByClass.locked.weight },
+      },
+      positionClass: locked,
+    })
+
+    expect(payouts.slice(0, switchesAt).map(({ payout }) => payout)).toEqual(
+      Array.from({ length: switchesAt }, () => BigInt(0)),
+    )
+    expect(payouts[switchesAt].payout > BigInt(0)).toBe(true)
+  })
+
+  it('prices the position the form creates exactly as a transferable one', function () {
+    expect(forecast()).toEqual(
+      forecast({
+        positionClass: { forfeitable: false, transferableAfter: 0 },
+      }),
+    )
+  })
+
+  it('switches pot at the same instant with auto-relock on', function () {
+    expect(
+      getRewardsForecast({
+        ...golden,
+        autoRelock: true,
+        positionClass: locked,
+      }).payouts.map(({ rewardClass }) => rewardClass),
+    ).toEqual(
+      forecast({ positionClass: locked }).payouts.map(
+        ({ rewardClass }) => rewardClass,
+      ),
+    )
+  })
+})
+
+describe('getRewardsForecast with auto-relock', function () {
+  const relocked = (overrides = {}) =>
+    forecast({ autoRelock: true, ...overrides })
+  const midEpochNow = epochAlignedNow + days(5)
+  const epochsInMaxLock = 240
+
+  it('carries the same weight through every epoch of the year', function () {
+    const { payouts } = relocked()
+    payouts.forEach(({ weight }) => expect(weight).toBe(payouts[0].weight))
+  })
+
+  it('keeps every epoch a maximum lock started with, forever', function () {
+    const { payouts } = relocked({ now: midEpochNow })
+    expect(payouts[0].weight).toBe(
+      (golden.amount / BigInt(MaxLockDurationSeconds)) *
+        BigInt(epochsInMaxLock * SixDaysSeconds),
+    )
+  })
+
+  it('estimates the same year wherever in the epoch a whole-epoch lock starts', function () {
+    expect(relocked({ now: midEpochNow }).yearOneTotal).toBe(
+      relocked().yearOneTotal,
+    )
+  })
+
+  it('rides the lock end just like the decaying forecast does', function () {
+    // 180 days buys 29 whole epochs from a boundary and 30 from mid-epoch,
+    // because the lock end snaps. Both modes move with it.
+    const lockDurationInSeconds = days(180)
+    const later = { lockDurationInSeconds, now: midEpochNow }
+    const sooner = { lockDurationInSeconds }
+
+    expect(relocked(later).yearOneTotal).toBeGreaterThan(
+      relocked(sooner).yearOneTotal,
+    )
+    expect(forecast(later).yearOneTotal).toBeGreaterThan(
+      forecast(sooner).yearOneTotal,
+    )
+  })
+
+  it('matches extending the lock by one epoch every epoch', function () {
+    const lockDurationInSeconds = days(366)
+    const lockEnd = getLockEnd({
+      lockTime: lockDurationInSeconds,
+      timestamp: epochAlignedNow,
+    })
+    const extended = Array.from({ length: 60 }, (_, epochsAhead) =>
+      getEpochPayout({
+        baseline: golden.inputsByClass.transferable.baseline,
+        classWeight: golden.inputsByClass.transferable.weight,
+        weight: getWeightAt({
+          amount: golden.amount,
+          at: getEpochEnd({ epochsAhead, now: epochAlignedNow }),
+          lockEnd: lockEnd + (epochsAhead + 1) * SixDaysSeconds,
+        }),
+      }),
+    )
+    expect(
+      relocked({ lockDurationInSeconds }).payouts.map(({ payout }) => payout),
+    ).toEqual(extended)
+  })
+
+  it('keeps paying past the end of the lock', function () {
+    const { payouts } = relocked({ lockDurationInSeconds: SixDaysSeconds * 10 })
+    expect(payouts.filter(({ payout }) => payout > BigInt(0))).toHaveLength(60)
+  })
+
+  it('never carries the whole amount as weight on a shorter lock', function () {
+    relocked({ lockDurationInSeconds: days(366) }).payouts.forEach(
+      ({ weight }) =>
+        expect(
+          getLockMultiplier({ amount: golden.amount, weight }),
+        ).toBeLessThan(1),
+    )
+  })
+
+  it('still earns more for a longer lock', function () {
+    const totals = getRewardsForecastByLockDurations({
+      ...golden,
+      autoRelock: true,
+      lockDurationsInSeconds: [days(180), days(366), days(732), days(1461)],
+    }).map(({ yearOneTotal }) => yearOneTotal)
+    totals.slice(1).forEach(function (total, index) {
+      expect(total).toBeGreaterThan(totals[index])
+    })
+  })
+
+  it('leaves the decaying forecast alone when it is off', function () {
+    expect(forecast({ autoRelock: false })).toEqual(forecast())
   })
 })

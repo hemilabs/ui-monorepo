@@ -6,6 +6,11 @@ import {
 
 const maxLockSeconds = BigInt(MaxLockDurationSeconds)
 
+export const epochsPerYear = MaxLockDurationSeconds / (4 * SixDaysSeconds)
+
+export const capAtMaxLock = (lockDurationInSeconds: number) =>
+  Math.min(lockDurationInSeconds, MaxLockDurationSeconds)
+
 export const getLockEnd = ({
   lockTime,
   timestamp,

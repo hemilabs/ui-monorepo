@@ -31,6 +31,7 @@ export const HistoricalMetrics = function ({
   stakingVault,
 }: Props) {
   const t = useTranslations('hemi-earn.vault.historical-metrics')
+  const tCommon = useTranslations('common')
   const [period, setPeriod] = useState<MetricPeriod>('1w')
   const [selectedMetricType, setSelectedMetricType] =
     useState<MetricType>('deposits')
@@ -52,7 +53,7 @@ export const HistoricalMetrics = function ({
   ]
   const metricTypeOptions: SegmentedControlOption<MetricType>[] = [
     { label: t('vault-deposits'), value: 'deposits' },
-    { label: t('apy'), value: 'apy' },
+    { label: tCommon('apy'), value: 'apy' },
   ]
 
   const renderHeadline = function () {

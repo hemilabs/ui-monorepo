@@ -4,7 +4,7 @@ import {
   formatNumber,
 } from 'utils/format'
 
-import { type SupplyUnit } from './supplyHistory'
+import { type ChartUnit } from '../../_utils/chartUnit'
 
 export type SupplyPrecision = 'compact' | 'full'
 
@@ -18,7 +18,7 @@ export const formatSupplyValue = function ({
   locale: string
   precision?: SupplyPrecision
   symbol: string
-  unit: SupplyUnit
+  unit: ChartUnit
   value: number
 }) {
   const sign = value < 0 ? '-' : ''

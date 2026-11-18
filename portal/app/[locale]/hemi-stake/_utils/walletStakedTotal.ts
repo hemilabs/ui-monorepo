@@ -4,6 +4,11 @@ import {
 } from 'types/stakingDashboard'
 import { isAddressEqual, type Address } from 'viem'
 
+export const isActiveStake = (
+  { owner, status }: StakingPosition,
+  wallet: Address,
+) => status === StakingPositionStatus.ACTIVE && isAddressEqual(owner, wallet)
+
 export const sumActiveStake = (
   positions: StakingPosition[],
   wallet: Address | undefined,
@@ -11,9 +16,5 @@ export const sumActiveStake = (
   wallet === undefined
     ? BigInt(0)
     : positions
-        .filter(
-          ({ owner, status }) =>
-            status === StakingPositionStatus.ACTIVE &&
-            isAddressEqual(owner as Address, wallet),
-        )
+        .filter(position => isActiveStake(position, wallet))
         .reduce((total, { amount }) => total + amount, BigInt(0))

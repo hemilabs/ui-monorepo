@@ -11,6 +11,8 @@
     "approve-and-withdraw": "Aprovar e Sacar",
     "approving": "A aprovar...",
     "approving-token": "A aprovar {symbol}",
+    "apy": "TEA",
+    "balance": "Saldo",
     "cancel": "Cancelar",
     "close": "Fechar",
     "close-notification": "Fechar a notificação",
@@ -405,7 +407,6 @@
       "historical-metrics": {
         "1-week": "1 semana",
         "1-year": "1 ano",
-        "apy": "TEA",
         "metric": "Métrica",
         "month": "{count, plural, one {# mês} other {# meses}}",
         "period": "Período",
@@ -508,6 +509,9 @@
       "unlock-token": "Desbloquear {symbol}"
     },
     "estimated-payouts": {
+      "added-amount": "{symbol} adicionado",
+      "added-time": "Tempo adicional",
+      "advanced-estimator": "Estimador avançado",
       "after-unlock": "após o desbloqueio",
       "apy": "{percentage} TEA",
       "carried-from": "Com base na época {epoch}, a última financiada.",
@@ -518,11 +522,24 @@
       "next-payout-line": "próximo pagamento <amount></amount> · época {epoch}, liquida em {date}",
       "not-funded": "As recompensas desta época ainda não foram financiadas.",
       "starting-from-epoch": "Pagamentos por época · a partir da época <epoch></epoch>",
+      "this-lockup": "Este bloqueio",
       "title": "Pagamentos estimados",
       "unlocks-on": "Desbloqueia em {date}"
     },
     "estimator": {
+      "blended-was": "combinada, antes {percentage}",
+      "connect-to-blend": "Conecte sua carteira para incluir suas posições na estimativa",
+      "estimated-payouts-first-year": "Pagamentos estimados no primeiro ano",
+      "my-positions": "Minhas posições",
+      "new-position": "Nova posição",
+      "per-epoch": "{symbol} por época · a partir da época {epoch}",
       "quick-amounts": "Valores rápidos",
+      "scope": "Escopo da estimativa",
+      "simple-first-year": "simples, primeiro ano",
+      "unit": "Unidade",
+      "view-position": "Ver posição",
+      "voting-power-title": "Poder de voto · <amount></amount> veHEMI",
+      "with-my-positions": "Com minhas posições",
       "yours": "Seu saldo · {amount}"
     },
     "form": {
@@ -628,6 +645,8 @@
     },
     "tabs": {
       "analytics": "Análises",
+      "estimator": "Estimador avançado",
+      "estimator-short": "Estimador",
       "stake": "Stake"
     },
     "unlock-successful": "Desbloqueio bem-sucedido",
@@ -738,7 +757,6 @@
   },
   "tunnel-page": {
     "form": {
-      "balance": "Saldo",
       "bitcoin-receiving-address": "Endereço de receção Bitcoin",
       "bitcoin-receiving-address-description": "O {symbol} retirado é enviado para o endereço da sua carteira Bitcoin conectada, ou para o endereço personalizado que você inserir.",
       "custom-address": "Endereço personalizado",

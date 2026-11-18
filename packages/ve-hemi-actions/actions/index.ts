@@ -10,9 +10,12 @@ export {
 export { encodeWithdraw, withdraw } from './wallet/withdraw.ts'
 export {
   getBalanceOfNFTAt,
+  getLivePositionClass,
   getLockedBalance,
   getPositionVotingPowerDetails,
+  getPositionsDelegatedAway,
   getPositionsVotingPowerSum,
   getTotalVotingPower,
+  getTransferableAfter,
 } from './public/veHemi.ts'
 export { getTotalLocked } from './public/getTotalLocked.ts'

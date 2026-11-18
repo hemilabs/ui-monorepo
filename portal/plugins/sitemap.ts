@@ -6,10 +6,10 @@ import { sitemapRoutes } from '../utils/sitemapRoutes.ts'
 
 type Options = {
   baseUrl: string
-  includeHemiEarn: boolean
+  flags: Parameters<typeof sitemapRoutes>[0]
 }
 
-export const sitemap = ({ baseUrl, includeHemiEarn }: Options): Plugin => ({
+export const sitemap = ({ baseUrl, flags }: Options): Plugin => ({
   applyToEnvironment: environment => environment.name === 'client',
   generateBundle() {
     this.emitFile({
@@ -17,7 +17,7 @@ export const sitemap = ({ baseUrl, includeHemiEarn }: Options): Plugin => ({
       source: buildSitemap({
         baseUrl,
         locales,
-        routes: sitemapRoutes(includeHemiEarn),
+        routes: sitemapRoutes(flags),
       }),
       type: 'asset',
     })

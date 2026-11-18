@@ -1,21 +1,17 @@
-import {
-  formatCompactFiatParts,
-  formatFiatNumber,
-  formatNumber,
-} from 'utils/format'
+import { type Formatter } from 'utils/format'
 
 import { type ChartUnit } from '../../_utils/chartUnit'
 
 export type SupplyPrecision = 'compact' | 'full'
 
 export const formatSupplyValue = function ({
-  locale,
+  formatter,
   precision = 'compact',
   symbol,
   unit,
   value,
 }: {
-  locale: string
+  formatter: Formatter
   precision?: SupplyPrecision
   symbol: string
   unit: ChartUnit
@@ -26,11 +22,11 @@ export const formatSupplyValue = function ({
 
   if (precision === 'full') {
     return unit === 'usd'
-      ? `${sign}$${formatFiatNumber(amount, locale)}`
-      : `${sign}${formatNumber(amount, locale)} ${symbol}`
+      ? `${sign}$${formatter.formatFiatNumber(amount)}`
+      : `${sign}${formatter.formatNumber(amount)} ${symbol}`
   }
 
-  const { number, suffix } = formatCompactFiatParts(amount, locale)
+  const { number, suffix } = formatter.formatCompactFiatParts(amount)
   return unit === 'usd'
     ? `${sign}$${number}${suffix}`
     : `${sign}${number}${suffix} ${symbol}`

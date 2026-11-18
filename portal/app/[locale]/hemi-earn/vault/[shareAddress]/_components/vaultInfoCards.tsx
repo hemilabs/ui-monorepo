@@ -1,8 +1,8 @@
 import { ArrowGrowingIcon } from 'components/icons/arrowGrowingIcon'
 import { TotalDepositsIcon } from 'components/icons/totalDepositsIcon'
 import { StatCard } from 'components/statCard'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatApyDisplay, formatFiatNumber } from 'utils/format'
+import { useFormat } from 'hooks/useFormat'
+import { useTranslations } from 'use-intl'
 
 import { ApySourceLabel } from '../../../_components/apySourceLabel'
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
@@ -14,7 +14,7 @@ type Props = {
 }
 
 export const VaultInfoCards = function ({ vault }: Props) {
-  const locale = useLocale()
+  const { formatApyDisplay, formatFiatNumber } = useFormat()
   const t = useTranslations('hemi-earn')
 
   return (
@@ -29,7 +29,7 @@ export const VaultInfoCards = function ({ vault }: Props) {
             value={
               <RenderEarnFiatBalance
                 balance={vault.totalDeposits}
-                customFormatter={usd => `$${formatFiatNumber(usd, locale)}`}
+                customFormatter={usd => `$${formatFiatNumber(usd)}`}
                 queryStatus={vault.totalDepositsStatus}
                 token={vault.peggedToken}
               />
@@ -47,9 +47,7 @@ export const VaultInfoCards = function ({ vault }: Props) {
               </div>
             }
             value={
-              typeof vault.apy === 'number'
-                ? formatApyDisplay(vault.apy, locale)
-                : null
+              typeof vault.apy === 'number' ? formatApyDisplay(vault.apy) : null
             }
           />
         </div>

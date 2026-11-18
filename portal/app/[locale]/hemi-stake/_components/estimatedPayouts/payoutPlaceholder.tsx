@@ -1,8 +1,8 @@
 import { Button } from 'components/button'
+import { useFormat } from 'hooks/useFormat'
 import { useHemiToken } from 'hooks/useHemiToken'
 import Skeleton from 'react-loading-skeleton'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatNumber, formatShortDateWithYear } from 'utils/format'
+import { useTranslations } from 'use-intl'
 import { minLockAmount } from 've-hemi-actions'
 import { formatUnits } from 'viem'
 
@@ -23,7 +23,7 @@ export const PayoutPlaceholder = function ({
   meetsMinimumAmount,
   onRetry,
 }: Props) {
-  const locale = useLocale()
+  const { formatNumber, formatShortDateWithYear } = useFormat()
   const t = useTranslations('hemi-stake.estimated-payouts')
   const tCommon = useTranslations('common')
   const token = useHemiToken()
@@ -33,10 +33,7 @@ export const PayoutPlaceholder = function ({
       return (
         <span className="text-xs text-neutral-400">
           {t('enter-minimum-amount', {
-            amount: formatNumber(
-              formatUnits(minLockAmount, token.decimals),
-              locale,
-            ),
+            amount: formatNumber(formatUnits(minLockAmount, token.decimals)),
             symbol: token.symbol,
           })}
         </span>
@@ -72,7 +69,7 @@ export const PayoutPlaceholder = function ({
       {hasValidLockup && (
         <span className="text-xxs text-neutral-400">
           {t('unlocks-on', {
-            date: formatShortDateWithYear(new Date(lockEnd * 1000), locale),
+            date: formatShortDateWithYear(new Date(lockEnd * 1000)),
           })}
         </span>
       )}

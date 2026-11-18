@@ -4,20 +4,14 @@ import {
   SegmentedControl,
   type SegmentedControlOption,
 } from 'components/segmentedControl'
+import { useFormat } from 'hooks/useFormat'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { type ReactNode, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { screenBreakpoints } from 'styles'
-import { useLocale, useTranslations } from 'use-intl'
-import {
-  formatCompactFiat,
-  formatCompactFiatParts,
-  formatFiatAmount,
-  formatNumber,
-  formatShortDate,
-  formatShortDateWithYear,
-} from 'utils/format'
+import { useTranslations } from 'use-intl'
+import { type Formatter } from 'utils/format'
 import { getTokenPrice } from 'utils/token'
 
 import {
@@ -61,12 +55,12 @@ const columnWidths: ChartWidths = {
 
 const toShown = function ({
   existingBars,
+  formatter,
   hasNewPosition,
   incomingBars,
   isBlended,
   isReady,
   labels,
-  locale,
   unlocksOn,
   votingPower,
 }: {
@@ -75,8 +69,8 @@ const toShown = function ({
   incomingBars: PayoutPoint[]
   isBlended: boolean
   isReady: boolean
+  formatter: Formatter
   labels: { below: string; series: string; total: string }
-  locale: string
   unlocksOn: string
   votingPower: ChartPoint[]
 }) {
@@ -100,9 +94,8 @@ const toShown = function ({
           totalLabel: labels.total,
         }
       : undefined,
-    headline: formatNumber(
+    headline: formatter.formatNumber(
       votingPower.length > 0 ? votingPower[0].y : 0,
-      locale,
     ),
     payouts: incomingBars,
     unlocksOn: hasNewPosition ? unlocksOn : undefined,
@@ -209,7 +202,7 @@ export const ProjectionsCard = function ({
   votingWeights,
 }: Props) {
   const [unit, setUnit] = useState<ChartUnit>('hemi')
-  const locale = useLocale()
+  const formatter = useFormat()
   const t = useTranslations('hemi-stake')
   const tCommon = useTranslations('common')
   const token = useHemiToken()
@@ -235,17 +228,18 @@ export const ProjectionsCard = function ({
   })
 
   const ticks = getPayoutAxisTicks(incomingBars, axisTickCount)
-  const formatDate = (value: number) => formatShortDate(new Date(value), locale)
+  const formatDate = (value: number) =>
+    formatter.formatShortDate(new Date(value))
   const formatPayout = (value: number) =>
     activeUnit === 'usd'
-      ? formatCompactFiat(value, locale, 2)
-      : formatPayoutValue({ locale, symbol: token.symbol, value })
+      ? formatter.formatCompactFiat(value, 2)
+      : formatPayoutValue({ formatter, symbol: token.symbol, value })
   const formatDetail = (value: number) =>
     activeUnit === 'usd'
-      ? formatFiatAmount(value, locale)
-      : formatPayoutDetail({ locale, price, symbol: token.symbol, value })
+      ? formatter.formatFiatAmount(value)
+      : formatPayoutDetail({ formatter, price, symbol: token.symbol, value })
   const formatWeight = function (value: number) {
-    const { number, suffix } = formatCompactFiatParts(value, locale)
+    const { number, suffix } = formatter.formatCompactFiatParts(value)
     return `${number}${suffix}`
   }
 
@@ -257,6 +251,7 @@ export const ProjectionsCard = function ({
   const isPending = isLoading && !isError
   const shown = toShown({
     existingBars: toBars(existing).map(({ x, y }) => ({ x, y })),
+    formatter,
     hasNewPosition: incoming.some(epoch => epoch.weight > BigInt(0)),
     incomingBars,
     isBlended,
@@ -266,9 +261,8 @@ export const ProjectionsCard = function ({
       series: t('estimator.new-position'),
       total: t('estimated-payouts.title'),
     },
-    locale,
     unlocksOn: t('estimated-payouts.unlocks-on', {
-      date: formatShortDateWithYear(new Date(lockEnd * 1000), locale),
+      date: formatter.formatShortDateWithYear(new Date(lockEnd * 1000)),
     }),
     votingPower,
   })

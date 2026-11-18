@@ -25,6 +25,25 @@
             "ignoreRestSiblings": true
           }
         ],
+        "no-restricted-syntax": [
+          "error",
+          {
+            "message": "Use the locale-bound formatters in utils/format.ts.",
+            "selector": "MemberExpression[object.name='Intl'][property.name=/Format$/]"
+          },
+          {
+            "message": "Use the locale-bound formatters in utils/format.ts.",
+            "selector": "MemberExpression[object.name='Intl'][computed=true][property.value=/Format$/]"
+          },
+          {
+            "message": "Use the locale-bound formatters in utils/format.ts.",
+            "selector": "MemberExpression[property.name=/^toLocale.*String$/]"
+          },
+          {
+            "message": "Use the locale-bound formatters in utils/format.ts.",
+            "selector": "MemberExpression[computed=true][property.value=/^toLocale.*String$/]"
+          }
+        ],
         "jsx-a11y/anchor-has-content": "off",
         "jsx-a11y/click-events-have-key-events": "off",
         "jsx-a11y/interactive-supports-focus": "off",
@@ -187,6 +206,12 @@
       "files": [".github/pull_request_template.md"],
       "rules": {
         "markdownlint/md041": "off"
+      }
+    },
+    {
+      "files": ["portal/utils/format.ts"],
+      "rules": {
+        "no-restricted-syntax": "off"
       }
     }
   ],

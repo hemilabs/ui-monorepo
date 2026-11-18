@@ -1,8 +1,8 @@
 import { Badge } from 'components/badge'
 import { StatBadgeSkeleton } from 'components/statBadgeSkeleton'
 import { StatCard } from 'components/statCard'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatPercentage } from 'utils/format'
+import { useFormat } from 'hooks/useFormat'
+import { useTranslations } from 'use-intl'
 import { isDataUnavailable } from 'utils/queryStatus'
 
 import { type ChartUnit } from '../../_utils/chartUnit'
@@ -30,7 +30,7 @@ export const SupplySliceCard = function ({
   symbol,
   unit,
 }: Props) {
-  const locale = useLocale()
+  const formatter = useFormat()
   const t = useTranslations('hemi-stake.analytics')
   const { data, fetchStatus, isPending, status } = useSupplySlice({
     period,
@@ -49,13 +49,13 @@ export const SupplySliceCard = function ({
           <Badge size="small" variant="secondary">
             <span>
               {t('share-of-supply', {
-                share: formatPercentage(data.share * 100, locale),
+                share: formatter.formatPercentage(data.share * 100),
               })}
             </span>
             <span aria-hidden>·</span>
             <ChangeIndicator isUp={data.change >= 0}>
               {formatSupplyValue({
-                locale,
+                formatter,
                 symbol,
                 unit,
                 value: Math.abs(data.change),
@@ -78,7 +78,7 @@ export const SupplySliceCard = function ({
       value={
         data === undefined
           ? '-'
-          : formatSupplyValue({ locale, symbol, unit, value: data.value })
+          : formatSupplyValue({ formatter, symbol, unit, value: data.value })
       }
     />
   )

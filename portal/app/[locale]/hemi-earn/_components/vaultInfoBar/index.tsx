@@ -2,12 +2,9 @@ import { ButtonLink } from 'components/button'
 import { ExternalLink } from 'components/externalLink'
 import { TokenLogo } from 'components/tokenLogo'
 import { useChain } from 'hooks/useChain'
-import { useLocale, useTranslations } from 'use-intl'
-import {
-  formatApyDisplay,
-  formatCompactFiat,
-  formatEvmAddress,
-} from 'utils/format'
+import { useFormat } from 'hooks/useFormat'
+import { useTranslations } from 'use-intl'
+import { formatEvmAddress } from 'utils/format'
 
 import { type EarnVault } from '../../types'
 import { ApySourceLabel } from '../apySourceLabel'
@@ -24,7 +21,7 @@ type Props = {
 
 export const VaultInfoBar = function ({ vault }: Props) {
   const t = useTranslations('hemi-earn.vault-info')
-  const locale = useLocale()
+  const { formatApyDisplay, formatCompactFiat } = useFormat()
   const chain = useChain(vault.shareToken.chainId)
 
   const formattedAddress = formatEvmAddress(vault.shareAddress)
@@ -74,9 +71,7 @@ export const VaultInfoBar = function ({ vault }: Props) {
               <span className="body-text-medium text-neutral-950">
                 <RenderEarnFiatBalance
                   balance={vault.totalDeposits}
-                  customFormatter={usd =>
-                    formatCompactFiat(Number(usd), locale)
-                  }
+                  customFormatter={usd => formatCompactFiat(Number(usd))}
                   queryStatus={vault.totalDepositsStatus}
                   token={vault.peggedToken}
                 />
@@ -88,7 +83,7 @@ export const VaultInfoBar = function ({ vault }: Props) {
             label={<ApySourceLabel stakingVault={vault.stakingVault} />}
             value={
               typeof vault.apy === 'number'
-                ? formatApyDisplay(vault.apy, locale)
+                ? formatApyDisplay(vault.apy)
                 : undefined
             }
           />

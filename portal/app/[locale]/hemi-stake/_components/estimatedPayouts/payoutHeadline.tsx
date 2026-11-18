@@ -2,14 +2,9 @@ import { DisplayAmount } from 'components/displayAmount'
 import { RenderFiatBalance } from 'components/fiatBalance'
 import { InfoIcon } from 'components/icons/infoIcon'
 import { Tooltip } from 'components/tooltip'
+import { useFormat } from 'hooks/useFormat'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useLocale, useTranslations } from 'use-intl'
-import {
-  formatFiatAmount,
-  formatNumber,
-  formatShortDate,
-  formatShortDateWithYear,
-} from 'utils/format'
+import { useTranslations } from 'use-intl'
 import { formatUnits } from 'viem'
 
 import { formatApyFromRatio } from '../../_utils/formatApyFromRatio'
@@ -39,7 +34,13 @@ export const PayoutHeadline = function ({
   yearOneReturnRatio,
   yearOneTotal,
 }: Props) {
-  const locale = useLocale()
+  const formatter = useFormat()
+  const {
+    formatFiatAmount,
+    formatNumber,
+    formatShortDate,
+    formatShortDateWithYear,
+  } = formatter
   const t = useTranslations('hemi-stake.estimated-payouts')
   const tStake = useTranslations('hemi-stake')
   const token = useHemiToken()
@@ -57,7 +58,7 @@ export const PayoutHeadline = function ({
         <span className="hidden text-sm text-neutral-500 sm:inline">·</span>
         <span className="flex items-center gap-x-1 text-sm font-medium text-neutral-700">
           {t('apy', {
-            percentage: formatApyFromRatio(yearOneReturnRatio, locale),
+            percentage: formatApyFromRatio(yearOneReturnRatio, formatter),
           })}
           <Tooltip
             id={tooltipId}
@@ -81,7 +82,7 @@ export const PayoutHeadline = function ({
         <div className="rounded-full bg-orange-600 px-2.5 py-1 text-xxs font-medium text-white">
           <RenderFiatBalance
             balance={yearOneTotal}
-            customFormatter={amount => formatFiatAmount(amount, locale)}
+            customFormatter={formatFiatAmount}
             queryStatus="success"
             token={token}
           />
@@ -91,12 +92,12 @@ export const PayoutHeadline = function ({
             amount: () => (
               <RenderFiatBalance
                 balance={nextPayout}
-                customFormatter={amount => formatFiatAmount(amount, locale)}
+                customFormatter={formatFiatAmount}
                 queryStatus="success"
                 token={token}
               />
             ),
-            date: formatShortDate(new Date(nextPayoutAt * 1000), locale),
+            date: formatShortDate(new Date(nextPayoutAt * 1000)),
             epoch: currentEpoch,
           })}
         </span>
@@ -104,7 +105,7 @@ export const PayoutHeadline = function ({
       <div className="flex flex-col text-xxs text-neutral-400 sm:flex-row sm:items-baseline sm:gap-x-1">
         <span>
           {t('locked-summary', {
-            amount: formatNumber(input, locale),
+            amount: formatNumber(input),
             days: lockupDays,
             symbol: token.symbol,
           })}
@@ -112,7 +113,7 @@ export const PayoutHeadline = function ({
         <span className="hidden sm:inline">·</span>
         <span className="whitespace-nowrap font-semibold text-neutral-600">
           {t('unlocks-on', {
-            date: formatShortDateWithYear(new Date(lockEnd * 1000), locale),
+            date: formatShortDateWithYear(new Date(lockEnd * 1000)),
           })}
         </span>
       </div>

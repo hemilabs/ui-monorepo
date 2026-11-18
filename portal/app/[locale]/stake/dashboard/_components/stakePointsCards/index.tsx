@@ -1,9 +1,9 @@
 import { Card } from 'components/card'
 import { Image } from 'components/image'
+import { useFormat } from 'hooks/useFormat'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { ReactNode } from 'react'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatFiatNumber, formatTVL } from 'utils/format'
+import { useTranslations } from 'use-intl'
 import { calculateUsdValue } from 'utils/prices'
 import { useAccount } from 'wagmi'
 
@@ -75,7 +75,7 @@ export const EarnedPoints = function () {
 export const TotalStaked = function () {
   const { data: prices } = useTokenPrices()
   const { isError, isPending, totalStake } = useTotalStaked()
-  const locale = useLocale()
+  const { formatTVL } = useFormat()
   const t = useTranslations('stake-page.dashboard')
 
   const getPoints = function () {
@@ -85,7 +85,7 @@ export const TotalStaked = function () {
     if (isPending) {
       return '...'
     }
-    return formatTVL(totalStake, locale)
+    return formatTVL(totalStake)
   }
 
   return (
@@ -109,7 +109,7 @@ export const YourStake = function () {
   const { isConnected } = useAccount()
   const { data: prices, isPending: loadingPrices } = useTokenPrices()
   const { loading: loadingPosition, tokensWithPosition } = useStakePositions()
-  const locale = useLocale()
+  const { formatFiatNumber } = useFormat()
   const t = useTranslations('stake-page.dashboard')
 
   const getPoints = function () {
@@ -124,7 +124,7 @@ export const YourStake = function () {
       return '-'
     }
     const userPosition = calculateUsdValue(tokensWithPosition, prices)
-    return `$ ${formatFiatNumber(userPosition, locale)}`
+    return `$ ${formatFiatNumber(userPosition)}`
   }
 
   return (

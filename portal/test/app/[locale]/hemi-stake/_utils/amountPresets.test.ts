@@ -1,11 +1,16 @@
 import { getAmountPresets } from 'app/[locale]/hemi-stake/_utils/amountPresets'
+import { createFormatter } from 'utils/format'
 import { parseUnits } from 'viem'
 import { describe, expect, it } from 'vitest'
 
 const hemi = (amount: string) => parseUnits(amount, 18)
 
 const presetsFor = (balance: bigint | undefined, locale = 'en') =>
-  getAmountPresets({ balance, decimals: 18, locale })
+  getAmountPresets({
+    balance,
+    decimals: 18,
+    formatter: createFormatter(locale),
+  })
 
 describe('getAmountPresets', function () {
   it('labels the fixed presets with their compact notation', function () {
@@ -74,7 +79,7 @@ describe('getAmountPresets', function () {
       getAmountPresets({
         balance: parseUnits('42', 6),
         decimals: 6,
-        locale: 'en',
+        formatter: createFormatter('en'),
       }).walletPreset,
     ).toEqual({ label: '42', value: '42' })
   })

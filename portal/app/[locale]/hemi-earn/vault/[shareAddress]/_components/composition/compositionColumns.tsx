@@ -1,9 +1,9 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { Header } from 'components/table/_components/header'
+import { useFormat } from 'hooks/useFormat'
 import { useMemo } from 'react'
 import { type EvmToken } from 'types/token'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatPercentage } from 'utils/format'
+import { useTranslations } from 'use-intl'
 
 import { RenderEarnFiatBalance } from '../../../../_components/earnFiatBalance'
 import { type CompositionItem } from '../../_hooks/useComposition'
@@ -14,7 +14,7 @@ export type CompositionItemWithColor = CompositionItem & { color: string }
 export const shareToPercentage = (share: number) => share * 100
 
 export const useGetCompositionColumns = function (peggedToken: EvmToken) {
-  const locale = useLocale()
+  const { formatPercentage } = useFormat()
   const t = useTranslations('hemi-earn.vault.composition')
 
   return useMemo(
@@ -54,7 +54,7 @@ export const useGetCompositionColumns = function (peggedToken: EvmToken) {
         {
           cell: ({ row }) => (
             <span className="text-sm font-medium text-neutral-950">
-              {formatPercentage(shareToPercentage(row.original.share), locale)}
+              {formatPercentage(shareToPercentage(row.original.share))}
             </span>
           ),
           header: () => <Header text={t('share')} />,
@@ -62,6 +62,6 @@ export const useGetCompositionColumns = function (peggedToken: EvmToken) {
           meta: { className: 'justify-end', width: 112 },
         },
       ] satisfies ColumnDef<CompositionItemWithColor>[],
-    [locale, peggedToken, t],
+    [formatPercentage, peggedToken, t],
   )
 }

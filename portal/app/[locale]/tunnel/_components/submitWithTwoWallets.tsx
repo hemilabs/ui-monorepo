@@ -6,6 +6,7 @@ import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useUmami } from 'hooks/useUmami'
+import { ReactNode } from 'react'
 import { useTranslations } from 'use-intl'
 import { walletIsConnected } from 'utils/wallet'
 
@@ -14,7 +15,7 @@ import { ConnectBtcWallet } from './connectBtcWallet'
 type Props = {
   btcWalletRequired: boolean
   disabled: boolean
-  text: string
+  text: ReactNode
   validationError: string | undefined
 }
 

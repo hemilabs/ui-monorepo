@@ -1,6 +1,7 @@
 import { useDebounce } from '@hemilabs/react-hooks/useDebounce'
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { SetMaxBtcBalance } from 'components/setMaxBalance'
+import { Spinner } from 'components/spinner'
 import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
@@ -65,6 +66,8 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     minDepositSats,
   } = useMinDepositSats()
   const isMinDepositSatsLoaded = minDepositSats !== undefined
+  const isMinDepositSatsLoading =
+    !isMinDepositSatsLoaded && !isMinDepositSatsError
   const t = useTranslations()
   const { track } = useUmami()
   const bitcoin = useBitcoin()
@@ -82,10 +85,15 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     token: fromToken,
   })
 
-  const validationError =
-    !isMinDepositSatsLoaded && isMinDepositSatsError
-      ? t('tunnel-page.submit-button.min-deposit-load-failed')
-      : amountError
+  const getValidationError = function () {
+    if (isMinDepositSatsLoading) {
+      return undefined
+    }
+    if (!isMinDepositSatsLoaded) {
+      return t('tunnel-page.submit-button.min-deposit-load-failed')
+    }
+    return amountError
+  }
 
   const isBitcoinChainConnected = btcChainId === bitcoin.id
 
@@ -175,6 +183,13 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     )
   }
 
+  const getSubmitText = function () {
+    if (isMinDepositSatsLoading) {
+      return <Spinner size={'small'} />
+    }
+    return isDepositing ? t('common.depositing') : t('common.deposit')
+  }
+
   function renderFees() {
     if (!canDeposit || amountBigInt === BigInt(0)) {
       return null
@@ -226,8 +241,8 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
         <SubmitWithTwoWallets
           btcWalletRequired
           disabled={!canDeposit || isDepositing}
-          text={isDepositing ? t('common.depositing') : t('common.deposit')}
-          validationError={validationError}
+          text={getSubmitText()}
+          validationError={getValidationError()}
         />
       }
     />

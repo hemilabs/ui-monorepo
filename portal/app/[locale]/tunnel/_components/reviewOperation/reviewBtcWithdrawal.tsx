@@ -67,7 +67,7 @@ const ReviewContent = function ({
     fees: bitcoinWithdrawalEstimatedFees,
     isError: isBitcoinWithdrawalEstimateFeesError,
   } = useEstimateBtcWithdrawFees({
-    amount: BigInt(withdrawal.grossAmount),
+    amount: showWithdrawalStepFees ? BigInt(withdrawal.grossAmount) : BigInt(0),
     btcAddress: withdrawal.to,
     enabled: !!withdrawal.to && showWithdrawalStepFees,
   })

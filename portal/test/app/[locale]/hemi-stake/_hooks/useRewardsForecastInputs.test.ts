@@ -1,6 +1,6 @@
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient, QueryObserver } from '@tanstack/react-query'
 import { invalidateRewardsForecastInputs } from 'app/[locale]/hemi-stake/_hooks/useRewardsForecastInputs'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 const chainId = 43111
 const otherChainId = 743111
@@ -31,6 +31,31 @@ describe('invalidateRewardsForecastInputs', function () {
       true,
       true,
     ])
+  })
+
+  it('should refetch an observed forecast with the new denominators', async function () {
+    const queryClient = new QueryClient()
+    const [denominatorsKey, forecastKey] = keys(chainId)
+    const staleTime = 5 * 60 * 1000
+    let denominator = 1
+    const observer = new QueryObserver(queryClient, {
+      queryFn: () =>
+        queryClient.fetchQuery({
+          queryFn: () => denominator,
+          queryKey: denominatorsKey,
+          staleTime,
+        }),
+      queryKey: forecastKey,
+      staleTime,
+    })
+    const unsubscribe = observer.subscribe(() => undefined)
+    await vi.waitFor(() => expect(observer.getCurrentResult().data).toBe(1))
+
+    denominator = 2
+    invalidateRewardsForecastInputs(queryClient, chainId)
+
+    await vi.waitFor(() => expect(observer.getCurrentResult().data).toBe(2))
+    unsubscribe()
   })
 
   it('should leave other chains untouched', function () {

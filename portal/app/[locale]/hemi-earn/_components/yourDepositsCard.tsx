@@ -1,7 +1,7 @@
 import { TotalDepositsIcon } from 'components/icons/totalDepositsIcon'
 import { StatCard } from 'components/statCard'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatFiatNumber } from 'utils/format'
+import { useFormat } from 'hooks/useFormat'
+import { useTranslations } from 'use-intl'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
@@ -12,7 +12,7 @@ import { FromVaultsBadge } from './fromVaultsBadge'
 export const YourDepositsCard = function () {
   const { data, isError, isPending } = useTotalDeposits()
   const { status } = useAccount()
-  const locale = useLocale()
+  const { formatFiatNumber } = useFormat()
   const t = useTranslations('hemi-earn')
   const isDisconnected = !walletIsConnected(status)
   const hasError = isError || isDisconnected
@@ -24,7 +24,7 @@ export const YourDepositsCard = function () {
       isError={hasError}
       isLoading={isPending}
       label={t('info.your-deposits')}
-      value={<>${formatFiatNumber(data?.totalUsd ?? 0, locale)}</>}
+      value={<>${formatFiatNumber(data?.totalUsd ?? 0)}</>}
     />
   )
 }

@@ -3,9 +3,9 @@ import { RenderFiatBalance } from 'components/fiatBalance'
 import { ArrowGrowingIcon } from 'components/icons/arrowGrowingIcon'
 import { StatBadgeSkeleton } from 'components/statBadgeSkeleton'
 import { StatCard } from 'components/statCard'
+import { useFormat } from 'hooks/useFormat'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatCompactFiat, formatCompactFiatParts } from 'utils/format'
+import { useTranslations } from 'use-intl'
 import { isDataUnavailable } from 'utils/queryStatus'
 import { formatUnits } from 'viem'
 
@@ -16,7 +16,7 @@ const selectTotalStaked = (stats: StakeStats) => stats.totalStaked
 
 export const TotalStaked = function () {
   const token = useHemiToken()
-  const locale = useLocale()
+  const { formatCompactFiat, formatCompactFiatParts } = useFormat()
   const t = useTranslations('hemi-stake.stats')
   const { data, fetchStatus, isPending, status } =
     useStakeStats(selectTotalStaked)
@@ -27,11 +27,10 @@ export const TotalStaked = function () {
 
   const { number, suffix } = formatCompactFiatParts(
     Number(formatUnits(staked, token.decimals)),
-    locale,
   )
 
   const formatBadge = (amount: string) =>
-    Number(amount) > 0 ? formatCompactFiat(Number(amount), locale, 2) : '-'
+    Number(amount) > 0 ? formatCompactFiat(Number(amount), 2) : '-'
 
   return (
     <StatCard

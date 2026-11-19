@@ -1,43 +1,39 @@
-import {
-  formatCompactFiatParts,
-  formatFiatAmount,
-  formatNumber,
-} from 'utils/format'
+import { type Formatter } from 'utils/format'
 
 const formatTokenAmount = ({
-  locale,
+  formatter,
   symbol,
   value,
 }: {
-  locale: string
+  formatter: Formatter
   symbol: string
   value: number
-}) => `${formatNumber(value, locale)} ${symbol}`
+}) => `${formatter.formatNumber(value)} ${symbol}`
 
 export const formatPayoutValue = function ({
-  locale,
+  formatter,
   symbol,
   value,
 }: {
-  locale: string
+  formatter: Formatter
   symbol: string
   value: number
 }) {
-  const { number, suffix } = formatCompactFiatParts(value, locale)
+  const { number, suffix } = formatter.formatCompactFiatParts(value)
   return `${number}${suffix} ${symbol}`
 }
 
 export const formatPayoutDetail = ({
-  locale,
+  formatter,
   price,
   symbol,
   value,
 }: {
-  locale: string
+  formatter: Formatter
   price: number | undefined
   symbol: string
   value: number
 }) =>
   price === undefined
-    ? formatTokenAmount({ locale, symbol, value })
-    : `${formatTokenAmount({ locale, symbol, value })} · ${formatFiatAmount(value * price, locale)}`
+    ? formatTokenAmount({ formatter, symbol, value })
+    : `${formatTokenAmount({ formatter, symbol, value })} · ${formatter.formatFiatAmount(value * price)}`

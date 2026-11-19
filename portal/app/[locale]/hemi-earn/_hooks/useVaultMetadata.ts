@@ -1,6 +1,5 @@
+import { useFormat } from 'hooks/useFormat'
 import { useMemo } from 'react'
-import { useLocale } from 'use-intl'
-import { formatDuration } from 'utils/duration'
 import { type Address } from 'viem'
 
 import { findVaultMetadata } from '../_utils/vaults'
@@ -8,7 +7,7 @@ import { findVaultMetadata } from '../_utils/vaults'
 const maxTransferTimeFactor = 2
 
 export const useVaultMetadata = function (stakingVault: Address) {
-  const locale = useLocale()
+  const { formatDuration } = useFormat()
   return useMemo(
     function () {
       const metadata = findVaultMetadata(stakingVault)
@@ -17,12 +16,12 @@ export const useVaultMetadata = function (stakingVault: Address) {
         metadata.typicalTransferTime * maxTransferTimeFactor
       return {
         apyIncludesFees: metadata.apyIncludesFees,
-        maxDuration: formatDuration(maxTransferSeconds, locale),
+        maxDuration: formatDuration(maxTransferSeconds),
         maxTransferSeconds,
         operator: metadata.operator,
-        typicalDuration: formatDuration(metadata.typicalTransferTime, locale),
+        typicalDuration: formatDuration(metadata.typicalTransferTime),
       }
     },
-    [locale, stakingVault],
+    [formatDuration, stakingVault],
   )
 }

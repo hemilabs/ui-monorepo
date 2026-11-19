@@ -1,13 +1,13 @@
 import { DisplayAmount } from 'components/displayAmount'
 import { InfoIcon } from 'components/icons/infoIcon'
 import { Tooltip } from 'components/tooltip'
+import { useFormat } from 'hooks/useFormat'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useVeHemiToken } from 'hooks/useVeHemiToken'
 import { ReactNode, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import type { Token } from 'types/token'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatDate } from 'utils/format'
+import { useTranslations } from 'use-intl'
 import { unixNowTimestamp } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
@@ -73,7 +73,7 @@ export function Lockup({
   updateLockupDays,
 }: Props) {
   const t = useTranslations('hemi-stake')
-  const locale = useLocale()
+  const { formatDate } = useFormat()
   const token = useHemiToken()
 
   const amount = parseTokenUnits(input, token)
@@ -84,7 +84,6 @@ export function Lockup({
       lockTime: lockupSeconds,
       timestamp: Number(unixNowTimestamp()),
     }).unlockDate,
-    locale,
   )
 
   const votingPowerRatio = useMemo(

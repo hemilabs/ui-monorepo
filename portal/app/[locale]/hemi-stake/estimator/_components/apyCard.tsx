@@ -4,7 +4,8 @@ import { InfoIcon } from 'components/icons/infoIcon'
 import { StatBadgeSkeleton } from 'components/statBadgeSkeleton'
 import { StatCard } from 'components/statCard'
 import { Tooltip } from 'components/tooltip'
-import { useLocale, useTranslations } from 'use-intl'
+import { useFormat } from 'hooks/useFormat'
+import { useTranslations } from 'use-intl'
 
 import { formatApyFromRatio } from '../../_utils/formatApyFromRatio'
 
@@ -21,7 +22,7 @@ export const ApyCard = function ({
   stakedReturnRatio,
   yearOneReturnRatio,
 }: Props) {
-  const locale = useLocale()
+  const formatter = useFormat()
   const t = useTranslations('hemi-stake')
   const tCommon = useTranslations('common')
 
@@ -35,7 +36,7 @@ export const ApyCard = function ({
             {stakedReturnRatio === undefined
               ? t('estimator.simple-first-year')
               : t('estimator.blended-was', {
-                  percentage: formatApyFromRatio(stakedReturnRatio, locale),
+                  percentage: formatApyFromRatio(stakedReturnRatio, formatter),
                 })}
           </Badge>
         )
@@ -53,7 +54,7 @@ export const ApyCard = function ({
           </Tooltip>
         </span>
       }
-      value={formatApyFromRatio(yearOneReturnRatio, locale)}
+      value={formatApyFromRatio(yearOneReturnRatio, formatter)}
     />
   )
 }

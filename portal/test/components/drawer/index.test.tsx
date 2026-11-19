@@ -153,6 +153,7 @@ describe('Drawer', function () {
     await userEvent.keyboard('{Escape}')
     await userEvent.keyboard('{Escape}')
     endTransition(getPanel(screen))
+    endTransition(getPanel(screen))
 
     expect(onClose).toHaveBeenCalledOnce()
   })

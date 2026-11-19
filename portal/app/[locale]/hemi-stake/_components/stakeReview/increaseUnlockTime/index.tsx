@@ -83,8 +83,8 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
     show,
   }: {
     fee: bigint
-    show: boolean
     isError: boolean
+    show: boolean
   }): StepPropsWithoutPosition['fees'] =>
     show
       ? {

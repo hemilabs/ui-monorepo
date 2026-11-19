@@ -110,9 +110,9 @@ type LocalEarnOperationBase = {
   chainId: Chain['id']
   initiateTxHash?: Hash
   operator?: Address
+  settled?: boolean
   // Manual claim/recover the user signed; survives the soft-settle so the drawer keeps offering Retry.
   settlement?: EarnSettlement
-  settled?: boolean
   shareAddress: Address
   // Percent — the unit the settings panel edits and clampSlippage works in. Holds the
   // effective value, so "Auto" is resolved at sign time and a retry replays the real number.

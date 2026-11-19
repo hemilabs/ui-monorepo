@@ -31,9 +31,9 @@ export const parseAmountInput = function (value: string, token: Token) {
 }
 
 type ValidationResult = {
-  isValid: boolean
-  errorKey: InputError | undefined
   error?: string
+  errorKey: InputError | undefined
+  isValid: boolean
 }
 
 /**

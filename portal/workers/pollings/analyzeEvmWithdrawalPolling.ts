@@ -4,8 +4,8 @@ import { MessageStatus, type ToEvmWithdrawOperation } from 'types/tunnel'
 import { Hash } from 'viem'
 
 type Props = {
-  withdrawal: ToEvmWithdrawOperation
   focusedWithdrawalHash?: Hash
+  withdrawal: ToEvmWithdrawOperation
 }
 
 const getSeconds = (seconds: number) => seconds * 1000

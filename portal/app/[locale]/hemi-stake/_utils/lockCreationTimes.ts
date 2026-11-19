@@ -75,8 +75,8 @@ export const getMinExtensionDays = function ({
 }
 
 type GetUnlockInfoProps = {
-  timestamp: number | bigint
   lockTime: number | bigint
+  timestamp: number | bigint
 }
 
 export function getUnlockInfo({ lockTime, timestamp }: GetUnlockInfoProps) {

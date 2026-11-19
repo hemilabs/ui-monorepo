@@ -1,6 +1,6 @@
 type Props = {
-  title: string
   subtitle?: string
+  title: string
 }
 
 export const PageTitle = ({ subtitle, title }: Props) => (

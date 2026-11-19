@@ -16,8 +16,8 @@ type Resolver = (...args: any[]) => string
 // (just in-flight de-duplication of concurrent identical calls). Both key by
 // `resolver` (defaults to the first argument).
 type CacheOptions =
-  | { revalidate: number; maxAge?: number; resolver?: Resolver }
-  | { revalidate?: undefined; maxAge: number | undefined; resolver?: Resolver }
+  | { maxAge?: number; resolver?: Resolver; revalidate: number }
+  | { maxAge: number | undefined; resolver?: Resolver; revalidate?: undefined }
 
 function getSafeCachedFn(fn: AnyAsyncFn, options: CacheOptions) {
   // A present `maxAge` is passed through as-is — promise-mem treats `undefined`

@@ -15,9 +15,9 @@ type Props = {
   altText: string
   bgImage: string
   event: AnalyticsEvent
-  href: string
   heading: string
   headingColor: ColorVariant
+  href: string
   icon: string
   subHeading: string
   subHeadingColor?: ColorVariant

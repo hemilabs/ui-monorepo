@@ -496,8 +496,8 @@ export const getTotalStaked = function (hemiId: Chain['id']) {
 
 type GetWithdrawalProofAndClaimQueryResponse = GraphResponse<{
   withdrawal: {
-    id: string
     claimTxHash: string | null
+    id: string
     proveTxHash: string | null
   } | null
 }>

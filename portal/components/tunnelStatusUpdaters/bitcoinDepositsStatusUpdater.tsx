@@ -45,8 +45,8 @@ const WatchBtcDeposit = function ({
       let hasWorkedPostedBack = false
       const saveUpdates = function (
         event: MessageEvent<{
-          updates: Partial<BtcDepositOperation>
           type: string
+          updates: Partial<BtcDepositOperation>
         }>,
       ) {
         // This is needed because this component is rendered per-withdrawal, so each component will receive the posted message

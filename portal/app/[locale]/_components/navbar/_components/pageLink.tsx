@@ -8,8 +8,8 @@ import { IconContainer as DefaultIconContainer } from './iconContainer'
 import { ItemContainer, ItemLinkProps, ItemText, Row } from './navItem'
 
 type Props = {
-  selected?: boolean
   onClick?: () => void
+  selected?: boolean
 } & ItemLinkProps
 
 const PageLinkUI = ({

@@ -4,8 +4,8 @@ export type ReqData = {
     fromBlock: number
     limit: number
     orderBy: string
-    skip: number
     orderDirection: 'asc' | 'desc'
+    skip: number
   }>
 }
 

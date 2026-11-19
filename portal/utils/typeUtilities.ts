@@ -1,4 +1,4 @@
-export type EnableWorkersDebug = { type: 'enable-debug'; payload: string }
+export type EnableWorkersDebug = { payload: string; type: 'enable-debug' }
 
 export type NoPayload = { payload?: never }
 

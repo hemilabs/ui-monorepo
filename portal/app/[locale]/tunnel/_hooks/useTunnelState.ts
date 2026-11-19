@@ -23,9 +23,9 @@ export type TunnelState = {
   fromInput: string
   fromNetworkId: RemoteChain['id']
   fromToken: Token
+  providerType: TunnelProviderType
   toNetworkId: RemoteChain['id']
   toToken: Token
-  providerType: TunnelProviderType
 }
 
 type Action<T extends string> = {

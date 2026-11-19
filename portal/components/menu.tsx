@@ -1,5 +1,5 @@
 type Props = {
-  items: { id: string; content: React.ReactNode }[]
+  items: { content: React.ReactNode; id: string }[]
 }
 
 export const Menu = ({ items }: Props) => (

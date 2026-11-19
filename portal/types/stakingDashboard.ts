@@ -53,11 +53,11 @@ export type StakingDashboardOperation = Partial<{
   input: string
   inputDays: string
   lockupDays: number
-  transactionHash: Hash
   stakingPosition: Partial<
     Pick<StakingPosition, 'amount' | 'tokenId' | 'lockTime' | 'timestamp'>
   >
   status: StakingDashboardStatusType
+  transactionHash: Hash
 }>
 
 // Where a reward comes from. The Portal reads and claims one source today, but every
@@ -103,10 +103,10 @@ export type CollectAllRewardsStep = ClaimTransaction & {
 }
 
 export type CollectAllRewardsDashboardOperation = {
-  transactionHash?: Hash
   rewards?: ClaimableReward[]
   status?: CollectAllRewardsDashboardStatusType
   steps?: CollectAllRewardsStep[]
+  transactionHash?: Hash
 }
 
 // Prefer ordering these by value rather than by key
@@ -142,9 +142,9 @@ export type UnlockingDashboardOperation = {
   captureStatus?: CaptureDashboardStatusType
   captureTransactionHash?: Hash
   needsCapture?: boolean
-  transactionHash?: Hash
   stakingPosition?: Pick<StakingPosition, 'amount' | 'tokenId'>
   status?: UnlockingDashboardStatusType
+  transactionHash?: Hash
 }
 export type UnlockingOperationRunning = 'idle' | 'unlocking' | 'failed'
 export type StakingOperationRunning =

@@ -8,11 +8,11 @@ vi.mock('utils/chainClients', () => ({
 }))
 
 const createMockToken = function (params: {
-  symbol: string
-  balance?: bigint
   address?: string
+  balance?: bigint
   chainId?: number
   decimals?: number
+  symbol: string
 }): StakeToken {
   const {
     address = zeroAddress,

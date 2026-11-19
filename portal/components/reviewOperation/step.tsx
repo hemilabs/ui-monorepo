@@ -15,6 +15,7 @@ import { SubStep } from './subStep'
 
 type Props = {
   description: ReactNode
+  explorerChainId?: RemoteChain['id']
   fees?:
     | {
         amount: string
@@ -22,7 +23,6 @@ type Props = {
         token: Token
       }
     | undefined
-  explorerChainId?: RemoteChain['id']
   position: number
   postAction?: {
     description: ReactNode

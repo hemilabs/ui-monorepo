@@ -65,11 +65,11 @@ const toShown = function ({
   votingPower,
 }: {
   existingBars: ChartPoint[]
+  formatter: Formatter
   hasNewPosition: boolean
   incomingBars: PayoutPoint[]
   isBlended: boolean
   isReady: boolean
-  formatter: Formatter
   labels: { below: string; series: string; total: string }
   unlocksOn: string
   votingPower: ChartPoint[]

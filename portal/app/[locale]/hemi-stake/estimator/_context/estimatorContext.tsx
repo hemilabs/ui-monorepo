@@ -7,10 +7,12 @@ export type EstimatorScope = 'new-position' | 'with-my-positions'
 
 type EstimatorContextValue = {
   amount: string
+  autoRelock: boolean
   inputDays: string
   lockupDays: number
   scope: EstimatorScope
   updateAmount: (value: string) => void
+  updateAutoRelock: (enabled: boolean) => void
   updateInputDays: (days: string) => void
   updateLockupDays: (days: number) => void
   updateScope: (scope: EstimatorScope) => void
@@ -22,6 +24,7 @@ const EstimatorContext = createContext<EstimatorContextValue | undefined>(
 
 export function EstimatorProvider({ children }: { children: ReactNode }) {
   const [amount, updateAmount] = useAmount('10000')
+  const [autoRelock, updateAutoRelock] = useState(false)
   const [inputDays, updateInputDays] = useState(String(twoYears))
   const [lockupDays, updateLockupDays] = useState(twoYears)
   const [scope, updateScope] = useState<EstimatorScope>('new-position')
@@ -30,10 +33,12 @@ export function EstimatorProvider({ children }: { children: ReactNode }) {
     <EstimatorContext.Provider
       value={{
         amount,
+        autoRelock,
         inputDays,
         lockupDays,
         scope,
         updateAmount,
+        updateAutoRelock,
         updateInputDays,
         updateLockupDays,
         updateScope,

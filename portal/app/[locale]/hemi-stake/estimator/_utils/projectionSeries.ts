@@ -17,7 +17,7 @@ export const toPayoutBars = ({
   usdPrice,
 }: {
   decimals: number
-  lockEnd: number
+  lockEnd: number | undefined
   payouts: ProjectionEpoch[]
   unit: ChartUnit
   usdPrice: number | undefined

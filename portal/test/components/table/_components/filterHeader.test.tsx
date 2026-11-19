@@ -65,18 +65,6 @@ describe('FilterHeader', function () {
     await expectClosed(screen)
   })
 
-  it('opens from the keyboard and focuses the first option', async function () {
-    const screen = await renderFilterHeader()
-
-    getTrigger(screen).element().focus()
-    await userEvent.keyboard('{Enter}')
-
-    await expect
-      .element(getTrigger(screen))
-      .toHaveAttribute('aria-expanded', 'true')
-    await expect.element(getOption(screen, 'all')).toHaveFocus()
-  })
-
   it('focuses the first option when it opens', async function () {
     const screen = await renderFilterHeader()
 

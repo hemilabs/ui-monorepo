@@ -57,21 +57,20 @@ export const HistoricalMetrics = function ({
   ]
 
   const renderHeadline = function () {
-    if (isPending) {
-      return <Skeleton className="h-7 w-28" />
+    const lastValue = data?.at(-1)?.y
+    if (lastValue !== undefined) {
+      return (
+        <HeadlineValue
+          metricType={metricType}
+          peggedToken={peggedToken}
+          value={lastValue}
+        />
+      )
     }
-    const lastValue =
-      data && data.length > 0 ? data[data.length - 1].y : undefined
-    if (isError || lastValue === undefined) {
+    if (!isPending) {
       return '-'
     }
-    return (
-      <HeadlineValue
-        metricType={metricType}
-        peggedToken={peggedToken}
-        value={lastValue}
-      />
-    )
+    return <Skeleton className="h-7 w-28" />
   }
 
   return (

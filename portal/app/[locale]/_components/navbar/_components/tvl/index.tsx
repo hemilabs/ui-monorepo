@@ -19,20 +19,20 @@ const TvlImpl = function () {
   const isNotTestnet = networkType !== 'testnet'
 
   const renderAmount = function () {
+    if (data !== undefined) {
+      return <Text>{formatCompactFiat(data)}</Text>
+    }
+
     if (isError) {
       return <Text>{'-'}</Text>
     }
 
-    if (data === undefined) {
-      return (
-        <Skeleton
-          baseColor="rgba(255,255,255,0.08)"
-          highlightColor="rgba(255,255,255,0.4)"
-        />
-      )
-    }
-
-    return <Text>{formatCompactFiat(data)}</Text>
+    return (
+      <Skeleton
+        baseColor="rgba(255,255,255,0.08)"
+        highlightColor="rgba(255,255,255,0.4)"
+      />
+    )
   }
 
   return (

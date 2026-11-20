@@ -14,7 +14,7 @@ type Props = {
 
 export const DepositedAmount = function ({ vault }: Props) {
   const t = useTranslations('hemi-earn.vault-info')
-  const { data: positions, isPending } = useEarnPositions()
+  const { data: positions = [], isLoading } = useEarnPositions()
 
   const position = positions.find(
     ({ shareAddress }) => shareAddress === vault.shareAddress,
@@ -44,5 +44,5 @@ export const DepositedAmount = function ({ vault }: Props) {
     )
   }
 
-  return <VaultInfoItem isLoading={isPending} label={t('your-deposits')} />
+  return <VaultInfoItem isLoading={isLoading} label={t('your-deposits')} />
 }

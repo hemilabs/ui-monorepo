@@ -52,7 +52,7 @@ const VaultRow = function ({
 
 export const FromVaultsBadge = function () {
   const t = useTranslations('hemi-earn.info')
-  const { data: positions = [], isError, isPending } = useEarnPositions()
+  const { data: positions = [] } = useEarnPositions()
 
   const peggedAmountQueries = useQueries({
     queries: positions.map(position =>
@@ -65,7 +65,7 @@ export const FromVaultsBadge = function () {
 
   const count = positions.length
 
-  if (isError || isPending || count === 0) {
+  if (count === 0) {
     return null
   }
 

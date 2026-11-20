@@ -19,8 +19,8 @@ import { useInTransitShares } from './useInTransitShares'
 export const useEarnedAmount = function () {
   const {
     data: positions = [],
-    isError: isPositionsError,
-    isPending: isPositionsPending,
+    isLoading: isPositionsLoading,
+    isLoadingError: isPositionsLoadingError,
   } = useEarnPositions()
   const {
     data: prices,
@@ -70,12 +70,12 @@ export const useEarnedAmount = function () {
 
   const hasRows = rows.length > 0
   const isPending =
-    isPositionsPending ||
+    isPositionsLoading ||
     isInTransitPending ||
     (hasRows && (isPricesPending || isCostBasisLoading)) ||
     peggedAmountQueries.some(q => q.isPending && q.isFetching)
   const isError =
-    isPositionsError ||
+    isPositionsLoadingError ||
     (hasRows && (isPricesError || isCostBasisError)) ||
     peggedAmountQueries.some(q => q.isError)
 

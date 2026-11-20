@@ -11,14 +11,14 @@ import { canAccessVault, findVaultByShare } from '../../../_utils/vaults'
 
 const useIsAccessPending = function () {
   const { status: accountStatus } = useAccount()
-  const { isPending: arePositionsPending } = useEarnPositions()
+  const { isLoading: arePositionsLoading } = useEarnPositions()
   const { isPending: isInTransitPending } = useInTransitShares()
   const { isPending: areTransactionsPending } = useEarnTransactions()
 
   return (
     accountStatus === 'connecting' ||
     accountStatus === 'reconnecting' ||
-    arePositionsPending ||
+    arePositionsLoading ||
     isInTransitPending ||
     areTransactionsPending
   )
@@ -56,7 +56,7 @@ const useAccessGrant = function ({
 export const useAccessibleVault = function (shareAddress: string) {
   const { address } = useAccount()
   const { data: vaults } = useEarnVaults()
-  const { data: positions } = useEarnPositions()
+  const { data: positions = [] } = useEarnPositions()
   const { data: inTransitByShare } = useInTransitShares()
   const { data: transactions } = useEarnTransactions()
   const isAccessPending = useIsAccessPending()

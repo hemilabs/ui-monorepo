@@ -20,8 +20,8 @@ const positionUsd = (
 export const useTotalDeposits = function () {
   const {
     data: positions = [],
-    isError: isPositionsError,
-    isPending: isPositionsPending,
+    isLoading: isPositionsLoading,
+    isLoadingError: isPositionsLoadingError,
   } = useEarnPositions()
   const {
     data: prices,
@@ -56,11 +56,11 @@ export const useTotalDeposits = function () {
 
   const hasPositions = positions.length > 0
   const isPending =
-    isPositionsPending ||
+    isPositionsLoading ||
     (hasPositions && isPricesPending) ||
     peggedAmountQueries.some(q => q.isPending && q.isFetching)
   const isError =
-    isPositionsError ||
+    isPositionsLoadingError ||
     (hasPositions && isPricesError) ||
     (peggedAmountQueries.length > 0 &&
       peggedAmountQueries.every(q => q.isError))

@@ -21,8 +21,13 @@ const toSourceClaim = (windows: ClaimWindow) => ({
  * Everything one position can claim right now, and the transactions that would claim it.
  */
 export const useClaimableRewards = function (tokenId: bigint) {
-  const { data, fetchStatus, isError, isPending, status } =
-    useEpochClaimableRewards(tokenId)
+  const {
+    data,
+    fetchStatus,
+    isLoadingError: isError,
+    isPending,
+    status,
+  } = useEpochClaimableRewards(tokenId)
 
   const isUnavailable = isDataUnavailable({ fetchStatus, status })
 

@@ -45,7 +45,7 @@ export const useClaimablePositions = function (tokenIds: bigint[]) {
   })
 
   return {
-    isError: results.some(({ isError }) => isError),
+    isError: results.some(({ isLoadingError }) => isLoadingError),
     isPending: results.some(
       ({ fetchStatus, isPending, status }) =>
         isPending && !isDataUnavailable({ fetchStatus, status }),

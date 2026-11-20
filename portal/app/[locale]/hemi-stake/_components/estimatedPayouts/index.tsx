@@ -1,10 +1,10 @@
 import { featureFlags } from 'app/featureFlags'
 import { ButtonLink } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
+import { useFormat } from 'hooks/useFormat'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTokenPrices } from 'hooks/useTokenPrices'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatShortDate } from 'utils/format'
+import { useTranslations } from 'use-intl'
 import { unixNowTimestamp } from 'utils/time'
 import { getTokenPrice, parseTokenUnits } from 'utils/token'
 
@@ -75,7 +75,7 @@ const buildForecast = function ({
 }
 
 export const EstimatedPayouts = function () {
-  const locale = useLocale()
+  const formatter = useFormat()
   const t = useTranslations('hemi-stake.estimated-payouts')
   const token = useHemiToken()
   const { autoRelock, input, lockupDays } = useStakingDashboard()
@@ -128,12 +128,17 @@ export const EstimatedPayouts = function () {
       chart={
         <PayoutsChart
           afterUnlockLabel={t('after-unlock')}
-          formatDate={value => formatShortDate(new Date(value), locale)}
+          formatDate={value => formatter.formatShortDate(new Date(value))}
           formatDetail={value =>
-            formatPayoutDetail({ locale, price, symbol: token.symbol, value })
+            formatPayoutDetail({
+              formatter,
+              price,
+              symbol: token.symbol,
+              value,
+            })
           }
           formatValue={value =>
-            formatPayoutValue({ locale, symbol: token.symbol, value })
+            formatPayoutValue({ formatter, symbol: token.symbol, value })
           }
           isPending={isPending && !hasError && forecast.meetsMinimumAmount}
           series={chartSeries}

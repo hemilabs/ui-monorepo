@@ -3,12 +3,11 @@ import { type FetchStatus, type QueryStatus } from '@tanstack/react-query'
 import Big from 'big.js'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
+import { useFormat } from 'hooks/useFormat'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { ComponentProps } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
-import { useLocale } from 'use-intl'
-import { formatFiatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/nativeToken'
 import { isDataUnavailable } from 'utils/queryStatus'
 import { getTokenPrice, isEvmToken } from 'utils/token'
@@ -37,9 +36,8 @@ const RenderFiatBalanceUnsafe = function ({
   // oracle-merged `useEarnTokenPrices`) inject their own hook.
   usePrices?: typeof useTokenPrices
 }) {
-  const locale = useLocale()
-  const format =
-    customFormatter ?? ((amount: string) => formatFiatNumber(amount, locale))
+  const { formatFiatNumber } = useFormat()
+  const format = customFormatter ?? formatFiatNumber
   const {
     data: pricesData,
     fetchStatus: pricesFetchStatus,

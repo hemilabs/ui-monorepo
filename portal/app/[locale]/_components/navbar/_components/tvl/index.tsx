@@ -1,9 +1,9 @@
+import { useFormat } from 'hooks/useFormat'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTvl } from 'hooks/useTvl'
 import { type ReactNode, Suspense } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatCompactFiat } from 'utils/format'
+import { useTranslations } from 'use-intl'
 
 import { DollarSign } from './dollarSign'
 
@@ -13,7 +13,7 @@ const Text = ({ children }: { children: ReactNode }) => (
 
 const TvlImpl = function () {
   const { data, isError } = useTvl()
-  const locale = useLocale()
+  const { formatCompactFiat } = useFormat()
   const t = useTranslations('navbar')
   const [networkType] = useNetworkType()
   const isNotTestnet = networkType !== 'testnet'
@@ -32,7 +32,7 @@ const TvlImpl = function () {
       )
     }
 
-    return <Text>{formatCompactFiat(data, locale)}</Text>
+    return <Text>{formatCompactFiat(data)}</Text>
   }
 
   return (

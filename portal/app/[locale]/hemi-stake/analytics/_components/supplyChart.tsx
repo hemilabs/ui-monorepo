@@ -1,5 +1,5 @@
-import { useLocale, useTranslations } from 'use-intl'
-import { formatDate, formatShortDate } from 'utils/format'
+import { useFormat } from 'hooks/useFormat'
+import { useTranslations } from 'use-intl'
 import {
   VictoryAxis,
   VictoryBar,
@@ -55,7 +55,6 @@ type ActivePoint = ChartPoint & { childName?: string }
 type TooltipProps = {
   activePoints?: ActivePoint[]
   formatValue: (value: number) => string
-  locale: string
   rows: Record<SupplySlice, { color: string; label: string }>
   totalLabel: string
   x?: number
@@ -80,12 +79,13 @@ const supplySliceLines = (
 const SupplyTooltipLabel = function ({
   activePoints,
   formatValue,
-  locale,
   rows,
   totalLabel,
   x = 0,
   y = 0,
 }: TooltipProps) {
+  const { formatDate } = useFormat()
+
   if (!activePoints?.length) {
     return null
   }
@@ -98,7 +98,7 @@ const SupplyTooltipLabel = function ({
   return (
     <ChartTooltipLabel
       lines={lines}
-      title={formatDate(new Date(activePoints[0].x), locale, 'UTC')}
+      title={formatDate(new Date(activePoints[0].x), 'UTC')}
       total={formatValue(total)}
       totalLabel={totalLabel}
       x={x}
@@ -124,15 +124,15 @@ export const SupplyChart = function ({
   symbol,
   unit,
 }: Props) {
-  const locale = useLocale()
+  const formatter = useFormat()
   const t = useTranslations('hemi-stake.analytics')
   const chartWidth = useChartWidth()
 
   const formatValue = (value: number) =>
-    formatSupplyValue({ locale, symbol, unit, value })
+    formatSupplyValue({ formatter, symbol, unit, value })
 
   const formatTooltipValue = (value: number) =>
-    formatSupplyValue({ locale, precision: 'full', symbol, unit, value })
+    formatSupplyValue({ formatter, precision: 'full', symbol, unit, value })
 
   const rows = Object.fromEntries(
     stackOrder.map(slice => [
@@ -161,7 +161,6 @@ export const SupplyChart = function ({
                 labelComponent={
                   <SupplyTooltipLabel
                     formatValue={formatTooltipValue}
-                    locale={locale}
                     rows={rows}
                     totalLabel={t('total')}
                   />
@@ -182,7 +181,7 @@ export const SupplyChart = function ({
           style={xAxisStyle}
           tickCount={4}
           tickFormat={(tick: number) =>
-            formatShortDate(new Date(tick), locale, 'UTC')
+            formatter.formatShortDate(new Date(tick), 'UTC')
           }
         />
         <VictoryAxis
@@ -211,7 +210,7 @@ export const SupplyChart = function ({
       isPending={isPending}
       onRetry={onRetry}
       xTickFormat={(tick: number) =>
-        formatShortDate(new Date(tick), locale, 'UTC')
+        formatter.formatShortDate(new Date(tick), 'UTC')
       }
       xTicks={getPlaceholderXTicks(period)}
     />

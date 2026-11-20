@@ -4,9 +4,9 @@ import { RenderFiatBalance } from 'components/fiatBalance'
 import { SparkleIcon } from 'components/icons/sparkleIcon'
 import { StatBadgeSkeleton } from 'components/statBadgeSkeleton'
 import { StatCard } from 'components/statCard'
+import { useFormat } from 'hooks/useFormat'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatCompactFiat } from 'utils/format'
+import { useTranslations } from 'use-intl'
 import { formatUnits } from 'viem'
 
 type Props = {
@@ -20,12 +20,12 @@ export const PayoutsCard = function ({
   isLoading,
   yearOneTotal,
 }: Props) {
-  const locale = useLocale()
+  const { formatCompactFiat } = useFormat()
   const t = useTranslations('hemi-stake.estimator')
   const token = useHemiToken()
 
   const formatBadge = (amount: string) =>
-    Number(amount) > 0 ? formatCompactFiat(Number(amount), locale, 2) : '-'
+    Number(amount) > 0 ? formatCompactFiat(Number(amount), 2) : '-'
 
   return (
     <StatCard

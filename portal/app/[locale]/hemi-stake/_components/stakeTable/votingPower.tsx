@@ -1,9 +1,8 @@
 import { DisplayAmount } from 'components/displayAmount'
+import { useFormat } from 'hooks/useFormat'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useVeHemiToken } from 'hooks/useVeHemiToken'
 import Skeleton from 'react-loading-skeleton'
-import { useLocale } from 'use-intl'
-import { formatPercentage } from 'utils/format'
 import { formatUnits } from 'viem'
 
 import { usePositionVotingPower } from '../../_hooks/usePositionVotingPower'
@@ -14,7 +13,7 @@ type Props = {
 }
 
 export const VotingPower = function ({ amount, tokenId }: Props) {
-  const locale = useLocale()
+  const { formatPercentage } = useFormat()
   const token = useHemiToken()
   const { data: veHemiToken, isLoading: isLoadingVeHemiToken } =
     useVeHemiToken()
@@ -44,7 +43,7 @@ export const VotingPower = function ({ amount, tokenId }: Props) {
         <DisplayAmount amount={formattedPower} token={veHemiToken} />
       </span>
       <span className="body-text-caption text-neutral-500">
-        {formatPercentage(percentageOfMax, locale)}
+        {formatPercentage(percentageOfMax)}
       </span>
     </div>
   )

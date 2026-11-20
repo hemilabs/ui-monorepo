@@ -1,15 +1,10 @@
 import Big from 'big.js'
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
+import { useFormat } from 'hooks/useFormat'
 import { ComponentProps, ComponentType, Fragment, ReactNode } from 'react'
 import { Token } from 'types/token'
-import { useLocale } from 'use-intl'
-import {
-  formatFullAmount,
-  formatNumber,
-  roundNumber,
-  smallestFormattedNumber,
-} from 'utils/format'
+import { roundNumber, smallestFormattedNumber } from 'utils/format'
 
 type CustomContainer = ComponentType<{
   children?: ReactNode
@@ -42,8 +37,8 @@ export const DisplayAmount = function ({
   symbolContainer: SymbolContainer = DefaultTextContainer,
   token,
 }: Props) {
-  const locale = useLocale()
-  const formattedAmount = formatNumber(amount, locale)
+  const { formatFullAmount, formatNumber } = useFormat()
+  const formattedAmount = formatNumber(amount)
 
   const bigAmount = Big(amount)
   const notZero = !bigAmount.eq(0)
@@ -61,7 +56,7 @@ export const DisplayAmount = function ({
             {showTokenLogo && (
               <TokenLogo size="small" token={token} version={logoVersion} />
             )}
-            <span>{`${formatFullAmount(amount, token.decimals, locale)} ${token.symbol}`}</span>
+            <span>{`${formatFullAmount(amount, token.decimals)} ${token.symbol}`}</span>
           </div>
         ) : null
       }
@@ -70,7 +65,7 @@ export const DisplayAmount = function ({
       <Container>
         <AmountContainer>
           {belowPrecision
-            ? `< ${formatNumber(smallestFormattedNumber, locale)}`
+            ? `< ${formatNumber(smallestFormattedNumber)}`
             : `${formattedAmount}${showDots ? '...' : ''}`}
         </AmountContainer>
         {showSymbol ? (

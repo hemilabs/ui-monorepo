@@ -1,6 +1,5 @@
+import { useFormat } from 'hooks/useFormat'
 import { EvmToken } from 'types/token'
-import { useLocale } from 'use-intl'
-import { formatCompactFiatParts, formatPercentage } from 'utils/format'
 
 import { type MetricType } from '../../../../types'
 
@@ -15,12 +14,12 @@ export const HeadlineValue = function ({
   peggedToken,
   value,
 }: Props) {
-  const locale = useLocale()
+  const { formatCompactFiatParts, formatPercentage } = useFormat()
 
   if (metricType === 'apy') {
-    return <>{formatPercentage(value, locale)}</>
+    return <>{formatPercentage(value)}</>
   }
-  const { number, suffix } = formatCompactFiatParts(value, locale)
+  const { number, suffix } = formatCompactFiatParts(value)
   return (
     <>
       <span>{number}</span>

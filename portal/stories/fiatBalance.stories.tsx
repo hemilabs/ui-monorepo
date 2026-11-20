@@ -3,7 +3,7 @@ import { type FetchStatus, type QueryStatus } from '@tanstack/react-query'
 import { RenderFiatBalance } from 'components/fiatBalance'
 import { type useTokenPrices } from 'hooks/useTokenPrices'
 import { hemiMainnet } from 'networks/hemiMainnet'
-import { formatFiatAmount } from 'utils/format'
+import { createFormatter } from 'utils/format'
 import { getTokenBySymbol } from 'utils/token'
 import { parseUnits } from 'viem'
 
@@ -67,7 +67,7 @@ type Story = StoryObj<typeof RenderFiatBalance>
 export const Default: Story = {}
 
 export const WithCustomFormatter: Story = {
-  args: { customFormatter: amount => formatFiatAmount(amount, 'en') },
+  args: { customFormatter: createFormatter('en').formatFiatAmount },
 }
 
 export const Zero: Story = {

@@ -5,9 +5,9 @@ import {
 import { TokenInput } from 'components/tokenInput'
 import { parseAmountInput } from 'components/tokenInput/utils'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
+import { useFormat } from 'hooks/useFormat'
 import { type Token } from 'types/token'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatNumber } from 'utils/format'
+import { useTranslations } from 'use-intl'
 import { minLockAmount } from 've-hemi-actions'
 import { formatUnits } from 'viem'
 
@@ -27,7 +27,7 @@ export const EstimatorAmountField = function ({
   token,
   value,
 }: Props) {
-  const locale = useLocale()
+  const formatter = useFormat()
   const t = useTranslations('hemi-stake')
   const tCommon = useTranslations('common')
 
@@ -39,9 +39,8 @@ export const EstimatorAmountField = function ({
   const minimumMessage =
     belowMinimum || walletBelowMinimum
       ? tCommon('min-amount-stake', {
-          amount: formatNumber(
+          amount: formatter.formatNumber(
             formatUnits(minLockAmount, token.decimals),
-            locale,
           ),
           symbol: token.symbol,
         })
@@ -50,7 +49,7 @@ export const EstimatorAmountField = function ({
   const { presets, walletPreset } = getAmountPresets({
     balance,
     decimals: token.decimals,
-    locale,
+    formatter,
   })
 
   const walletOption: SegmentedControlOption<string> | undefined =

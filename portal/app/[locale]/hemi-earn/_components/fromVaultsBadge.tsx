@@ -2,9 +2,9 @@ import { useQueries } from '@tanstack/react-query'
 import { Badge } from 'components/badge'
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
+import { useFormat } from 'hooks/useFormat'
 import { type EvmToken } from 'types/token'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatNumber } from 'utils/format'
+import { useTranslations } from 'use-intl'
 import { formatUnits } from 'viem'
 
 import { sharesToPeggedOptions } from '../_fetchers/fetchSharesToPegged'
@@ -27,7 +27,7 @@ const VaultRow = function ({
   shareAmount,
   shareToken,
 }: VaultRowProps) {
-  const locale = useLocale()
+  const { formatNumber } = useFormat()
   return (
     <div className="flex items-center gap-x-1 sm:min-w-52">
       <TokenLogo size="small" token={shareToken} />
@@ -43,7 +43,7 @@ const VaultRow = function ({
         />
       </span>
       <span className="text-sm font-medium text-neutral-400">
-        ({formatNumber(formatUnits(shareAmount, shareToken.decimals), locale)}{' '}
+        ({formatNumber(formatUnits(shareAmount, shareToken.decimals))}{' '}
         {shareToken.symbol})
       </span>
     </div>

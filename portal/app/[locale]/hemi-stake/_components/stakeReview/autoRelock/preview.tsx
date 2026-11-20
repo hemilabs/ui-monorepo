@@ -4,18 +4,14 @@ import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
 import { CallToActionContainer } from 'components/reviewOperation/callToActionContainer'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { useFormat } from 'hooks/useFormat'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type Token } from 'types/token'
-import { useLocale, useTranslations } from 'use-intl'
-import {
-  formatNumber,
-  formatShortDate,
-  formatShortDateWithYear,
-} from 'utils/format'
+import { useTranslations } from 'use-intl'
 import { getTokenPrice } from 'utils/token'
 import { formatUnits } from 'viem'
 
@@ -133,7 +129,7 @@ export const Preview = function ({
   transferable,
 }: Props) {
   const hemi = useHemi()
-  const locale = useLocale()
+  const formatter = useFormat()
   const t = useTranslations('hemi-stake')
   const tDrawer = useTranslations('hemi-stake.drawer.auto-relock')
   const token = useHemiToken()
@@ -176,11 +172,11 @@ export const Preview = function ({
 
   const votingPower = formatUnits(currentWeight, token.decimals)
   const decaysCaption = tDrawer('decays-to-zero', {
-    date: formatShortDateWithYear(unlockDate, locale),
+    date: formatter.formatShortDateWithYear(unlockDate),
   })
   const frozenVotingPower = formatUnits(relockedWeight, token.decimals)
   const staysCaption = tDrawer('stays-at', {
-    votingPower: formatNumber(frozenVotingPower, locale),
+    votingPower: formatter.formatNumber(frozenVotingPower),
   })
 
   const [votingPowerFrom, votingPowerTo] = autoRelock
@@ -193,7 +189,7 @@ export const Preview = function ({
   const price = toPrice(getTokenPrice(token, prices))
 
   const toApy = (ratio: number) =>
-    hasForecast ? formatApyFromRatio(ratio, locale) : '-'
+    hasForecast ? formatApyFromRatio(ratio, formatter) : '-'
 
   const toTotal = (amount: bigint) => (
     <DisplayAmount amount={formatUnits(amount, token.decimals)} token={token} />
@@ -261,17 +257,17 @@ export const Preview = function ({
                   seriesLabel: legendDelta,
                   totalLabel: legendTotal,
                 }}
-                formatDate={value => formatShortDate(new Date(value), locale)}
+                formatDate={value => formatter.formatShortDate(new Date(value))}
                 formatDetail={value =>
                   formatPayoutDetail({
-                    locale,
+                    formatter,
                     price,
                     symbol: token.symbol,
                     value,
                   })
                 }
                 formatValue={value =>
-                  formatPayoutValue({ locale, symbol: token.symbol, value })
+                  formatPayoutValue({ formatter, symbol: token.symbol, value })
                 }
                 isPending={false}
                 series={delta}

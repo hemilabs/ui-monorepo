@@ -1,6 +1,5 @@
+import { useFormat } from 'hooks/useFormat'
 import Skeleton from 'react-loading-skeleton'
-import { useLocale } from 'use-intl'
-import { formatPercentage } from 'utils/format'
 import { VictoryPie } from 'victory'
 
 import {
@@ -27,7 +26,7 @@ export const CompositionChart = function ({
   hoveredIndex,
   isPending,
 }: Props) {
-  const locale = useLocale()
+  const { formatPercentage } = useFormat()
   if (data.length > 0) {
     const hoveredItem = hoveredIndex !== null ? data[hoveredIndex] : null
 
@@ -63,7 +62,7 @@ export const CompositionChart = function ({
         </svg>
         {hoveredItem !== null && (
           <span className="pointer-events-none absolute text-mid-md font-semibold text-orange-500">
-            {formatPercentage(shareToPercentage(hoveredItem.share), locale)}
+            {formatPercentage(shareToPercentage(hoveredItem.share))}
           </span>
         )}
       </div>

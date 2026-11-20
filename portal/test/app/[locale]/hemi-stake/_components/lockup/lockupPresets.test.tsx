@@ -99,8 +99,8 @@ describe('LockupPresets', function () {
         screen.getByRole('button', { name: /6 months/ }).getByText('12.5% APY'),
       )
       .toBeVisible()
-    await expect
-      .element(screen.getByRole('button', { name: '1 year' }))
-      .toHaveTextContent('1 year')
+    expect(
+      screen.getByRole('button', { name: '1 year' }).element().textContent,
+    ).toBe('1 year')
   })
 })

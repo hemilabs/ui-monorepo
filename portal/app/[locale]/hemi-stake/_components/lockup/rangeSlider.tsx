@@ -2,12 +2,12 @@ import { FormEvent, MouseEvent, useRef } from 'react'
 import { orange600 } from 'styles'
 
 type Props = {
-  value: number
-  onChange: (value: number) => void
-  min: number
   max: number
-  step: number
+  min: number
   minLocked?: number
+  onChange: (value: number) => void
+  step: number
+  value: number
 }
 
 export function RangeSlider({

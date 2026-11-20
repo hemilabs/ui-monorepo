@@ -63,8 +63,8 @@ declare global {
         }
       | {
           type: Exclude<NumberFormatPartTypes, 'literal'>
-          value: string
           unit: DurationFormatUnitSingular
+          value: string
         }
 
     type DurationFormatOption =
@@ -84,57 +84,57 @@ declare global {
     type fractionalDigitsOption = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
     interface ResolvedDurationFormatOptions {
-      locale?: UnicodeBCP47LocaleIdentifier
-      numberingSystem?: DateTimeFormatOptions['numberingSystem']
-      style?: DurationFormatStyle
-      years?: Exclude<DurationFormatOption, 'numeric' | '2-digit'>
-      yearsDisplay?: DurationFormatDisplayOption
-      months?: Exclude<DurationFormatOption, 'numeric' | '2-digit'>
-      monthsDisplay?: DurationFormatDisplayOption
-      weeks?: Exclude<DurationFormatOption, 'numeric' | '2-digit'>
-      weeksDisplay?: DurationFormatDisplayOption
       days?: Exclude<DurationFormatOption, 'numeric' | '2-digit'>
       daysDisplay?: DurationFormatDisplayOption
+      fractionalDigits?: fractionalDigitsOption
       hours?: DurationFormatOption
       hoursDisplay?: DurationFormatDisplayOption
-      minutes?: DurationFormatOption
-      minutesDisplay?: DurationFormatDisplayOption
-      seconds?: DurationFormatOption
-      secondsDisplay?: DurationFormatDisplayOption
-      milliseconds?: DurationFormatOption
-      millisecondsDisplay?: DurationFormatDisplayOption
+      locale?: UnicodeBCP47LocaleIdentifier
       microseconds?: DurationFormatOption
       microsecondsDisplay?: DurationFormatDisplayOption
+      milliseconds?: DurationFormatOption
+      millisecondsDisplay?: DurationFormatDisplayOption
+      minutes?: DurationFormatOption
+      minutesDisplay?: DurationFormatDisplayOption
+      months?: Exclude<DurationFormatOption, 'numeric' | '2-digit'>
+      monthsDisplay?: DurationFormatDisplayOption
       nanosecond?: DurationFormatOption
       nanosecondDisplay?: DurationFormatDisplayOption
-      fractionalDigits?: fractionalDigitsOption
+      numberingSystem?: DateTimeFormatOptions['numberingSystem']
+      seconds?: DurationFormatOption
+      secondsDisplay?: DurationFormatDisplayOption
+      style?: DurationFormatStyle
+      weeks?: Exclude<DurationFormatOption, 'numeric' | '2-digit'>
+      weeksDisplay?: DurationFormatDisplayOption
+      years?: Exclude<DurationFormatOption, 'numeric' | '2-digit'>
+      yearsDisplay?: DurationFormatDisplayOption
     }
 
     interface DurationFormatOptions {
-      localeMatcher?: DurationTimeFormatLocaleMatcher
-      numberingSystem?: DateTimeFormatOptions['numberingSystem']
-      style?: DurationFormatStyle
-      years?: Exclude<DurationFormatOption, 'numeric' | '2-digit'>
-      yearsDisplay?: DurationFormatDisplayOption
-      months?: Exclude<DurationFormatOption, 'numeric' | '2-digit'>
-      monthsDisplay?: DurationFormatDisplayOption
-      weeks?: Exclude<DurationFormatOption, 'numeric' | '2-digit'>
-      weeksDisplay?: DurationFormatDisplayOption
       days?: Exclude<DurationFormatOption, 'numeric' | '2-digit'>
       daysDisplay?: DurationFormatDisplayOption
+      fractionalDigits?: fractionalDigitsOption
       hours?: DurationFormatOption
       hoursDisplay?: DurationFormatDisplayOption
-      minutes?: DurationFormatOption
-      minutesDisplay?: DurationFormatDisplayOption
-      seconds?: DurationFormatOption
-      secondsDisplay?: DurationFormatDisplayOption
-      milliseconds?: DurationFormatOption
-      millisecondsDisplay?: DurationFormatDisplayOption
+      localeMatcher?: DurationTimeFormatLocaleMatcher
       microseconds?: DurationFormatOption
       microsecondsDisplay?: DurationFormatDisplayOption
+      milliseconds?: DurationFormatOption
+      millisecondsDisplay?: DurationFormatDisplayOption
+      minutes?: DurationFormatOption
+      minutesDisplay?: DurationFormatDisplayOption
+      months?: Exclude<DurationFormatOption, 'numeric' | '2-digit'>
+      monthsDisplay?: DurationFormatDisplayOption
       nanosecond?: DurationFormatOption
       nanosecondDisplay?: DurationFormatDisplayOption
-      fractionalDigits?: fractionalDigitsOption
+      numberingSystem?: DateTimeFormatOptions['numberingSystem']
+      seconds?: DurationFormatOption
+      secondsDisplay?: DurationFormatDisplayOption
+      style?: DurationFormatStyle
+      weeks?: Exclude<DurationFormatOption, 'numeric' | '2-digit'>
+      weeksDisplay?: DurationFormatDisplayOption
+      years?: Exclude<DurationFormatOption, 'numeric' | '2-digit'>
+      yearsDisplay?: DurationFormatDisplayOption
     }
 
     /**
@@ -164,8 +164,6 @@ declare global {
     }
 
     const DurationFormat: {
-      prototype: DurationFormat
-
       /**
        * @param locales A string with a BCP 47 language tag, or an array of such strings.
        *   For the general form and interpretation of the `locales` argument, see the [Intl](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl#locale_identification_and_negotiation)
@@ -179,6 +177,7 @@ declare global {
         locales?: LocalesArgument,
         options?: DurationFormatOptions,
       ): DurationFormat
+      prototype: DurationFormat
 
       /**
        * Returns an array containing those of the provided locales that are supported in display names without having to fall back to the runtime's default locale.

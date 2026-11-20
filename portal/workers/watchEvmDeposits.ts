@@ -15,8 +15,8 @@ const queue = new PQueue({ concurrency: 5 })
 
 type WatchEvmDeposit = {
   deposit: EvmDepositOperation
-  type: 'watch-evm-deposit'
   focusedDepositHash?: Hash
+  type: 'watch-evm-deposit'
 }
 
 type AppToWebWorkerActions = EnableWorkersDebug | WatchEvmDeposit

@@ -14,8 +14,8 @@ type Props = {
   balanceComponent?: ComponentType<{
     token: StakeToken
   }>
-  fees: ReactNode
   errorKey: string | undefined
+  fees: ReactNode
   isOperating: boolean
   maxBalance: ReactNode
   operation: StakeOperations

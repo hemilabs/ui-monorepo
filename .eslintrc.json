@@ -219,6 +219,20 @@
       "rules": {
         "no-restricted-syntax": "off"
       }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "@typescript-eslint/member-ordering": [
+          "warn",
+          {
+            "default": {
+              "memberTypes": "never",
+              "order": "natural-case-insensitive"
+            }
+          }
+        ]
+      }
     }
   ],
   "root": true,

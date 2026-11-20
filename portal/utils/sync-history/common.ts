@@ -6,8 +6,8 @@ export const calculateSkip = function ({
   skip,
 }: {
   limit: number
-  skip: number
   operations: Pick<TunnelOperation, 'blockNumber'>[]
+  skip: number
 }) {
   // it turns out that GraphQL does not allow $skip larger than 5000
   // if we hit that limit, we better use a different "fromBlock"

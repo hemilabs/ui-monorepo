@@ -39,8 +39,8 @@ const canDepositBitcoin = ({
   isBitcoinChainConnected,
   isMinDepositSatsLoaded,
 }: {
-  evmAddress: string | undefined
   canSubmit: boolean
+  evmAddress: string | undefined
   isBitcoinChainConnected: boolean
   isMinDepositSatsLoaded: boolean
 }) =>

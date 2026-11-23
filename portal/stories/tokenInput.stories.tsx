@@ -4,8 +4,10 @@ import { RenderCryptoBalance } from 'components/cryptoBalance'
 import { MaxButton } from 'components/setMaxBalance'
 import { TokenInput } from 'components/tokenInput'
 import { TokenInputBalance } from 'components/tokenInput/balance'
+import { TokenInputError } from 'components/tokenInput/error'
 import { inputErrors } from 'components/tokenInput/utils'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
+import { useId } from 'react'
 import { useArgs } from 'storybook/preview-api'
 import { tokenList } from 'tokenList'
 import type { Token } from 'types/token'
@@ -50,7 +52,6 @@ const meta = {
       mapping: { none: undefined },
       options: errorKeyOptions,
     },
-    errorMessage: { control: 'text' },
     fiatBalance: { control: false },
     fiatBalanceComponent: { control: false },
     headerAction: { control: false },
@@ -106,8 +107,21 @@ export const WithoutBalance: Story = {
 export const WithErrorMessage: Story = {
   args: {
     errorKey: 'less-than-min-value',
-    errorMessage: 'Minimum stake is 10 HEMI',
     value: '1',
+  },
+  render: function Render(args) {
+    const [, updateArgs] = useArgs()
+    const errorId = useId()
+    return (
+      <TokenInput
+        {...args}
+        bottomRight={
+          <TokenInputError id={errorId} message="Minimum stake is 10 HEMI" />
+        }
+        errorId={errorId}
+        onChange={value => updateArgs({ value })}
+      />
+    )
   },
 }
 

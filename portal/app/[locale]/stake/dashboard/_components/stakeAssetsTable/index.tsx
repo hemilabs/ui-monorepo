@@ -4,11 +4,9 @@ import { Table } from 'components/table'
 import { Header } from 'components/table/_components/header'
 import { TableCard } from 'components/table/tableCard'
 import { TokenLogo } from 'components/tokenLogo'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useTokenPrices } from 'hooks/useTokenPrices'
-import { useUmami } from 'hooks/useUmami'
-import { usePathname, useRouter } from 'i18n/navigation'
-import { MouseEvent, useCallback, useMemo } from 'react'
+import { usePathname } from 'i18n/navigation'
+import { useCallback, useMemo } from 'react'
 import { priorityStakeTokensToSort, StakeToken } from 'types/stake'
 import { useTranslations } from 'use-intl'
 import { sortTokens } from 'utils/sortTokens'
@@ -21,7 +19,7 @@ import { TokenBalance } from '../../../_components/tokenBalance'
 import { useDrawerStakeQueryString } from '../../../_hooks/useDrawerStakeQueryString'
 import { useStakePositions } from '../../../_hooks/useStakedBalance'
 
-import { WelcomeStake } from './welcomeStake'
+import { BoostStakingEnded } from './boostStakingEnded'
 
 type ActionProps = {
   stake: StakeToken
@@ -110,9 +108,6 @@ export const StakeAssetsTable = function () {
   const t = useTranslations('stake-page')
   const { loading: isLoadingBalance, tokensWithPosition } = useStakePositions()
   const { setDrawerQueryString } = useDrawerStakeQueryString()
-  const router = useRouter()
-  const [networkType] = useNetworkType()
-  const { track } = useUmami()
 
   const {
     data: prices,
@@ -137,19 +132,6 @@ export const StakeAssetsTable = function () {
     [isLoading, errorUpdateCount, tokensWithPosition, prices],
   )
 
-  const stakeMoreUrl = 'stake'
-  function goToStakePage(e: MouseEvent<HTMLAnchorElement>) {
-    track?.('stake - stake more')
-    // If the user is trying to open the link in a new tab or window, let the browser handle it
-    if (e.ctrlKey || e.metaKey || e.shiftKey) {
-      return
-    }
-    e.preventDefault()
-    e.stopPropagation()
-    const queryString = queryStringObjectToString({ networkType })
-    router.push(`/${stakeMoreUrl}${queryString}`)
-  }
-
   const handleRowClick = useCallback(
     (token: StakeToken) => setDrawerQueryString('manage', token.address),
     [setDrawerQueryString],
@@ -164,7 +146,7 @@ export const StakeAssetsTable = function () {
       <div className="h-[56dvh] md:min-h-136">
         {isEmpty ? (
           <TableCard>
-            <WelcomeStake href={`/${stakeMoreUrl}`} onClick={goToStakePage} />
+            <BoostStakingEnded />
           </TableCard>
         ) : (
           <Table

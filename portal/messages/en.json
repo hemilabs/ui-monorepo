@@ -703,12 +703,11 @@
       "unstaking": "Unstaking...",
       "unwrap": "Unwrap"
     },
-    "protocol": "Protocol",
-    "ready-to-earn": "Ready to stake? Use supported assets and start staking.",
-    "stake": {
-      "title": "Stake"
+    "ended": {
+      "description": "No new stakes are accepted. You can withdraw your tokens anytime.",
+      "title": "Boost staking has ended"
     },
-    "start-staking-earn-points": "Start staking",
+    "protocol": "Protocol",
     "toast": {
       "here-your-stake-tx": "Here’s your {type} transaction:",
       "unstaking": "unstaking",

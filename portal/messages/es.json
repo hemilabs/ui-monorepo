@@ -703,12 +703,11 @@
       "unstaking": "Desbloqueando...",
       "unwrap": "Convertir"
     },
-    "protocol": "Protocolo",
-    "ready-to-earn": "¿Listo para hacer stake? Utilice activos disponibles para comenzar a hacer stake.",
-    "stake": {
-      "title": "Stake"
+    "ended": {
+      "description": "Ya no se aceptan nuevos stakes. Puede retirar sus tokens en cualquier momento.",
+      "title": "Boost staking ha finalizado"
     },
-    "start-staking-earn-points": "Empiece a hacer stake",
+    "protocol": "Protocolo",
     "toast": {
       "here-your-stake-tx": "Aquí está su transacción de {type}:",
       "unstaking": "retiro",

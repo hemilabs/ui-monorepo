@@ -703,12 +703,11 @@
       "unstaking": "A desbloquear...",
       "unwrap": "Desembrulhar"
     },
-    "protocol": "Protocolo",
-    "ready-to-earn": "Pronto para fazer stake? Utilize ativos disponíveis para começar a fazer stake.",
-    "stake": {
-      "title": "Stake"
+    "ended": {
+      "description": "Já não são aceites novos stakes. Pode levantar os seus tokens a qualquer momento.",
+      "title": "O Boost staking terminou"
     },
-    "start-staking-earn-points": "Comece a fazer stake",
+    "protocol": "Protocolo",
     "toast": {
       "here-your-stake-tx": "Aqui está a sua transação de {type}:",
       "unstaking": "desbloqueio",

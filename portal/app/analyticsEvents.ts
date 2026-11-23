@@ -78,7 +78,6 @@ const analyticsEvents = [
   'nav - tools',
   'nav - faucet',
   'nav - pure finance',
-  'nav - stake',
   'nav - tunnel',
   'nav - language',
   'nav - legal and privacy',

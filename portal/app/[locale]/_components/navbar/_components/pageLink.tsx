@@ -22,7 +22,7 @@ const PageLinkUI = ({
   row: RowComponent = Row,
   selected,
   text,
-}: Omit<Props, 'event' | 'urlToBeSelected'>) => (
+}: Omit<Props, 'event'>) => (
   <ContainerComponent onClick={onClick} selected={selected}>
     <Link className="w-full" href={href}>
       <RowComponent>
@@ -41,10 +41,7 @@ const PageLinkUI = ({
   </ContainerComponent>
 )
 
-const PageLinkImpl = function ({
-  event,
-  ...props
-}: Omit<Props, 'urlToBeSelected'>) {
+const PageLinkImpl = function ({ event, ...props }: Props) {
   const { enabled, track } = useUmami()
 
   return (
@@ -63,15 +60,13 @@ export const PageLink = function ({
   rightSection,
   row,
   text,
-  urlToBeSelected = href,
 }: ItemLinkProps) {
   const pathname = usePathname()
 
   const selected =
-    typeof urlToBeSelected === 'string'
-      ? isSamePathOrUnder(pathname, urlToBeSelected)
-      : !!urlToBeSelected.pathname &&
-        isSamePathOrUnder(pathname, urlToBeSelected.pathname)
+    typeof href === 'string'
+      ? isSamePathOrUnder(pathname, href)
+      : !!href.pathname && isSamePathOrUnder(pathname, href.pathname)
 
   const props = {
     href,

@@ -6,9 +6,9 @@ import { ReloadHistory } from './reloadHistory'
 
 export type FilterOptions = {
   action: 'all' | 'pending'
+  operation: 'all' | 'bitcoin' | 'ethereum'
   timeDesc: boolean
   type: 'all' | 'withdrawals' | 'deposits'
-  operation: 'all' | 'bitcoin' | 'ethereum'
 }
 
 type Props = {

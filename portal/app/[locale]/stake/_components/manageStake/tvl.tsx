@@ -1,13 +1,14 @@
 import { useTotalSupply } from '@hemilabs/react-hooks/useTotalSupply'
 import { RenderFiatBalance } from 'components/fiatBalance'
+import { useFormat } from 'hooks/useFormat'
 import { type StakeToken } from 'types/stake'
 import { type EvmToken } from 'types/token'
-import { formatTVL } from 'utils/format'
 import { isNativeAddress } from 'utils/nativeToken'
 import { getWrappedEther } from 'utils/token'
 import { type Address } from 'viem'
 
 const TokenTvl = function ({ token }: { token: EvmToken }) {
+  const { formatTVL } = useFormat()
   const { data: supply, status } = useTotalSupply({
     address: token.address as Address,
     chainId: token.chainId,

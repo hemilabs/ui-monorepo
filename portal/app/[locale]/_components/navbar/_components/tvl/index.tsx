@@ -1,3 +1,4 @@
+import { useFormat } from 'hooks/useFormat'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTvl } from 'hooks/useTvl'
 import { type ReactNode, Suspense } from 'react'
@@ -12,29 +13,25 @@ const Text = ({ children }: { children: ReactNode }) => (
 
 const TvlImpl = function () {
   const { data, isError } = useTvl()
+  const { formatCompactFiat } = useFormat()
   const t = useTranslations('navbar')
   const [networkType] = useNetworkType()
   const isNotTestnet = networkType !== 'testnet'
 
   const renderAmount = function () {
+    if (data !== undefined) {
+      return <Text>{formatCompactFiat(data)}</Text>
+    }
+
     if (isError) {
       return <Text>{'-'}</Text>
     }
 
-    if (data === undefined) {
-      return (
-        <Skeleton
-          baseColor="rgba(255,255,255,0.08)"
-          highlightColor="rgba(255,255,255,0.4)"
-        />
-      )
-    }
-
     return (
-      <Text>{`$${new Intl.NumberFormat('en', {
-        compactDisplay: 'short',
-        notation: 'compact',
-      }).format(data)}`}</Text>
+      <Skeleton
+        baseColor="rgba(255,255,255,0.08)"
+        highlightColor="rgba(255,255,255,0.4)"
+      />
     )
   }
 

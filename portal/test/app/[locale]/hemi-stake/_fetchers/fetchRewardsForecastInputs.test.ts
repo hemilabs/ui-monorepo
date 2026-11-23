@@ -23,36 +23,29 @@ const denominators = {
   transferable: BigInt('11842292000000000000000000'),
 }
 
-const baseline = (transferable: bigint) => [
-  {
-    fundedByClass: { forfeitable: BigInt(0), locked: BigInt(0), transferable },
-    label: stringToHex('baseline', { size: 32 }),
-  },
-]
-
-const lockedOnlyBaseline = [
-  {
-    fundedByClass: {
-      forfeitable: BigInt(0),
-      locked: BigInt('1370000000000000000000000'),
-      transferable: BigInt(0),
-    },
-    label: stringToHex('baseline', { size: 32 }),
-  },
-]
-
-const fees = [
-  {
-    fundedByClass: {
-      forfeitable: BigInt(0),
-      locked: BigInt(0),
-      transferable: BigInt('15000000000000000000000'),
-    },
-    label: stringToHex('transaction-fees', { size: 32 }),
-  },
-]
-
 const baselineAmount = BigInt('4166666660000000000000000')
+const lockedAmount = BigInt('1370000000000000000000000')
+const forfeitableAmount = BigInt('259700000000000000000000')
+
+const stream = (
+  text,
+  {
+    forfeitable = BigInt(0),
+    locked = BigInt(0),
+    transferable = BigInt(0),
+  } = {},
+) => [
+  {
+    fundedByClass: { forfeitable, locked, transferable },
+    label: stringToHex(text, { size: 32 }),
+  },
+]
+
+const everyClass = stream('baseline', {
+  forfeitable: forfeitableAmount,
+  locked: lockedAmount,
+  transferable: baselineAmount,
+})
 
 const seed = function (queryClient, streamsByEpoch) {
   queryClient.setQueryData(
@@ -76,6 +69,18 @@ const seed = function (queryClient, streamsByEpoch) {
   })
 }
 
+const seedEmptyWindow = function (queryClient, overrides = {}) {
+  const streamsByEpoch = {}
+  for (
+    let epoch = currentEpoch;
+    epoch >= currentEpoch - maxEpochsBack;
+    epoch--
+  ) {
+    streamsByEpoch[epoch] = []
+  }
+  seed(queryClient, { ...streamsByEpoch, ...overrides })
+}
+
 const fetchInputs = queryClient =>
   fetchRewardsForecastInputs(queryClient, {
     chainId,
@@ -88,68 +93,97 @@ const fetchInputs = queryClient =>
 describe('fetchRewardsForecastInputs', function () {
   it('takes the baseline of the epoch in progress when it is funded', async function () {
     const queryClient = createTestQueryClient()
-    seed(queryClient, { [currentEpoch]: baseline(baselineAmount) })
+    seed(queryClient, { [currentEpoch]: everyClass })
 
     const result = await fetchInputs(queryClient)
 
-    expect(result.transferableClassBaseline).toBe(baselineAmount)
-    expect(result.carriedFrom).toBeUndefined()
+    expect(result.transferable.baseline).toBe(baselineAmount)
+    expect(result.transferable.carriedFrom).toBeUndefined()
   })
 
   it('carries the last funded baseline when the epoch in progress is empty', async function () {
     const queryClient = createTestQueryClient()
     seed(queryClient, {
       [currentEpoch]: [],
-      [currentEpoch - 1]: baseline(baselineAmount),
+      [currentEpoch - 1]: everyClass,
     })
 
     const result = await fetchInputs(queryClient)
 
-    expect(result.transferableClassBaseline).toBe(baselineAmount)
-    expect(result.carriedFrom).toBe(currentEpoch - 1)
+    expect(result.transferable.baseline).toBe(baselineAmount)
+    expect(result.transferable.carriedFrom).toBe(currentEpoch - 1)
   })
 
   it('skips an epoch that only collected fees', async function () {
     const queryClient = createTestQueryClient()
     seed(queryClient, {
-      [currentEpoch]: fees,
-      [currentEpoch - 1]: baseline(baselineAmount),
+      [currentEpoch]: stream('transaction-fees', {
+        transferable: BigInt('15000000000000000000000'),
+      }),
+      [currentEpoch - 1]: everyClass,
     })
 
     const result = await fetchInputs(queryClient)
 
-    expect(result.carriedFrom).toBe(currentEpoch - 1)
+    expect(result.transferable.carriedFrom).toBe(currentEpoch - 1)
   })
 
-  it('stops at the first epoch it finds, leaving the rest unread', async function () {
+  it('stops once every class has a baseline, leaving the rest unread', async function () {
     const queryClient = createTestQueryClient()
-    // Only these two are cached. Walking further would have to call the action.
-    seed(queryClient, {
-      [currentEpoch]: [],
-      [currentEpoch - 1]: baseline(baselineAmount),
-    })
+    seed(queryClient, { [currentEpoch]: everyClass })
 
     await fetchInputs(queryClient)
 
     expect(getEpochStreams).not.toHaveBeenCalled()
   })
 
-  it('gives up past the lookback and offers no baseline at all', async function () {
+  it('carries each class from its own most recent funded epoch', async function () {
     const queryClient = createTestQueryClient()
-    const empty = {}
-    for (
-      let epoch = currentEpoch;
-      epoch >= currentEpoch - maxEpochsBack;
-      epoch--
-    ) {
-      empty[epoch] = []
-    }
-    seed(queryClient, empty)
+    seed(queryClient, {
+      [currentEpoch]: stream('baseline', { locked: lockedAmount }),
+      [currentEpoch - 1]: stream('baseline', {
+        forfeitable: forfeitableAmount,
+        transferable: baselineAmount,
+      }),
+    })
 
     const result = await fetchInputs(queryClient)
 
-    expect(result.transferableClassBaseline).toBeUndefined()
-    expect(result.carriedFrom).toBeUndefined()
+    expect(result.locked.baseline).toBe(lockedAmount)
+    expect(result.locked.carriedFrom).toBeUndefined()
+    expect(result.transferable.baseline).toBe(baselineAmount)
+    expect(result.transferable.carriedFrom).toBe(currentEpoch - 1)
+  })
+
+  it('keeps walking for a class the newest epoch left unfunded', async function () {
+    const queryClient = createTestQueryClient()
+    seedEmptyWindow(queryClient, {
+      [currentEpoch]: stream('baseline', {
+        locked: lockedAmount,
+        transferable: baselineAmount,
+      }),
+      [currentEpoch - 3]: stream('baseline', {
+        forfeitable: forfeitableAmount,
+      }),
+    })
+
+    const result = await fetchInputs(queryClient)
+
+    expect(result.forfeitable.baseline).toBe(forfeitableAmount)
+    expect(result.forfeitable.carriedFrom).toBe(currentEpoch - 3)
+    expect(result.transferable.carriedFrom).toBeUndefined()
+  })
+
+  it('gives up past the lookback and offers no baseline at all', async function () {
+    const queryClient = createTestQueryClient()
+    seedEmptyWindow(queryClient)
+
+    const result = await fetchInputs(queryClient)
+
+    expect(result.forfeitable.baseline).toBeUndefined()
+    expect(result.locked.baseline).toBeUndefined()
+    expect(result.transferable.baseline).toBeUndefined()
+    expect(result.transferable.carriedFrom).toBeUndefined()
   })
 
   it('stops at the first fundable epoch rather than reading below it', async function () {
@@ -169,32 +203,36 @@ describe('fetchRewardsForecastInputs', function () {
       token,
     })
 
-    expect(result.transferableClassBaseline).toBeUndefined()
+    expect(result.transferable.baseline).toBeUndefined()
     expect(getEpochStreams).not.toHaveBeenCalled()
   })
 
-  it('takes a baseline that funded only the locked class as no baseline', async function () {
-    const queryClient = createTestQueryClient()
-    seed(queryClient, {
-      [currentEpoch]: lockedOnlyBaseline,
-      [currentEpoch - 1]: baseline(baselineAmount),
-    })
-
-    const result = await fetchInputs(queryClient)
-
-    expect(result.carriedFrom).toBe(currentEpoch - 1)
-    expect(result.transferableClassBaseline).toBe(baselineAmount)
-  })
-
-  it('reads the weight from the epoch in progress even when the baseline was carried', async function () {
+  it('reads the weight of every class from the epoch in progress', async function () {
     const queryClient = createTestQueryClient()
     seed(queryClient, {
       [currentEpoch]: [],
-      [currentEpoch - 1]: baseline(baselineAmount),
+      [currentEpoch - 1]: everyClass,
     })
 
     const result = await fetchInputs(queryClient)
 
-    expect(result.transferableClassWeight).toBe(denominators.transferable)
+    expect(result.forfeitable.weight).toBe(denominators.forfeitable)
+    expect(result.locked.weight).toBe(denominators.locked)
+    expect(result.transferable.weight).toBe(denominators.transferable)
+  })
+  it('never walks past the lookback for a class nobody ever funded', async function () {
+    const queryClient = createTestQueryClient()
+    seedEmptyWindow(queryClient, {
+      [currentEpoch]: stream('baseline', {
+        locked: lockedAmount,
+        transferable: baselineAmount,
+      }),
+    })
+
+    const result = await fetchInputs(queryClient)
+
+    expect(result.forfeitable.baseline).toBeUndefined()
+    expect(result.transferable.carriedFrom).toBeUndefined()
+    expect(getEpochStreams).not.toHaveBeenCalled()
   })
 })

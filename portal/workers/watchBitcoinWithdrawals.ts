@@ -10,9 +10,9 @@ import { Hash } from 'viem'
 import { analyzeBitcoinWithdrawalPolling } from './pollings/analyzeBitcoinWithdrawalPolling'
 
 type WatchBtcWithdrawal = {
+  focusedWithdrawalHash?: Hash
   type: 'watch-btc-withdrawal'
   withdrawal: ToBtcWithdrawOperation
-  focusedWithdrawalHash?: Hash
 }
 
 type AppToWebWorkerActions = EnableWorkersDebug | WatchBtcWithdrawal

@@ -25,13 +25,13 @@ export interface Unisat {
   getNetwork(): Promise<BtcSupportedNetworks>
   isBinance?: boolean
   isOkxWallet?: boolean
-  requestAccounts(): Promise<Account[]>
   on<Event extends keyof EventMap>(event: Event, handler: EventMap[Event]): void
   pushTx(txHex: string): Promise<BtcTransaction>
   removeListener<Event extends keyof EventMap>(
     event: Event,
     handler: EventMap[Event],
   ): void
+  requestAccounts(): Promise<Account[]>
   sendBitcoin: (
     toAddress: Account,
     satoshis: Satoshis,

@@ -26,9 +26,9 @@ export type HistorySyncer<TSyncType extends SyncType> = {
 }
 
 export type SyncHistoryCombinations = {
+  address: Address
   l1ChainId: RemoteChain['id']
   l2ChainId: Chain['id']
-  address: Address
 } & {
   depositsSyncInfo: SyncType
   withdrawalsSyncInfo: SyncType

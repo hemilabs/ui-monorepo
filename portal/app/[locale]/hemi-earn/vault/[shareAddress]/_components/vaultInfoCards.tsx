@@ -1,8 +1,8 @@
 import { ArrowGrowingIcon } from 'components/icons/arrowGrowingIcon'
 import { TotalDepositsIcon } from 'components/icons/totalDepositsIcon'
 import { StatCard } from 'components/statCard'
+import { useFormat } from 'hooks/useFormat'
 import { useTranslations } from 'use-intl'
-import { formatApyDisplay, formatFiatNumber } from 'utils/format'
 
 import { ApySourceLabel } from '../../../_components/apySourceLabel'
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
@@ -14,6 +14,7 @@ type Props = {
 }
 
 export const VaultInfoCards = function ({ vault }: Props) {
+  const { formatApyDisplay, formatFiatNumber } = useFormat()
   const t = useTranslations('hemi-earn')
 
   return (

@@ -6,17 +6,18 @@ import {
 import { useTranslations } from 'use-intl'
 import { isDataUnavailable } from 'utils/queryStatus'
 
+import { type ChartUnit } from '../../_utils/chartUnit'
 import { useSupplySeries } from '../_hooks/useSupplyStat'
-import { type SupplyPeriod, type SupplyUnit } from '../_utils/supplyHistory'
+import { type SupplyPeriod } from '../_utils/supplyHistory'
 
 import { SupplyChart } from './supplyChart'
 
 type Props = {
   onPeriodChange: (period: SupplyPeriod) => void
-  onUnitChange: (unit: SupplyUnit) => void
+  onUnitChange: (unit: ChartUnit) => void
   period: SupplyPeriod
   symbol: string
-  unit: SupplyUnit
+  unit: ChartUnit
 }
 
 export const SupplyChartCard = function ({

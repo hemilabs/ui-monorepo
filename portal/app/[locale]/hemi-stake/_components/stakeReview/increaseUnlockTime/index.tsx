@@ -26,8 +26,10 @@ import {
   maxDays,
   minDays,
 } from '../../../_utils/lockCreationTimes'
-import { getLockupErrorMessage } from '../../../_utils/lockupError'
-import { isValidLockup } from '../../lockup'
+import {
+  getLockupErrorMessage,
+  isValidLockup,
+} from '../../../_utils/lockupError'
 
 import { Preview } from './preview'
 import { RetryIncreaseUnlockTime } from './retryIncreaseUnlockTime'
@@ -81,8 +83,8 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
     show,
   }: {
     fee: bigint
-    show: boolean
     isError: boolean
+    show: boolean
   }): StepPropsWithoutPosition['fees'] =>
     show
       ? {

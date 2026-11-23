@@ -3,13 +3,12 @@ import { SettingsTrigger } from 'app/[locale]/hemi-earn/vault/[shareAddress]/_co
 import { RenderCryptoBalance } from 'components/cryptoBalance'
 import { MaxButton } from 'components/setMaxBalance'
 import { TokenInput } from 'components/tokenInput'
+import { TokenInputBalance } from 'components/tokenInput/balance'
 import { inputErrors } from 'components/tokenInput/utils'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
-import messages from 'messages/en.json'
 import { useArgs } from 'storybook/preview-api'
 import { tokenList } from 'tokenList'
 import type { Token } from 'types/token'
-import { IntlProvider } from 'use-intl'
 import { parseUnits } from 'viem'
 
 const hemiTokenAddress = '0x99e3dE3817F6081B2568208337ef83295b7f591D'
@@ -35,32 +34,28 @@ const errorKeyOptions = ['none', ...inputErrors]
 
 const meta = {
   args: {
-    balanceComponent: StoryBalance,
     disabled: false,
     errorKey: 'none',
     label: 'Amount',
-    showBalance: true,
     showFiatBalance: false,
     token: hemiToken,
     tokenSelector: <TokenSelectorReadOnly logoVersion="L1" token={hemiToken} />,
     value: '100',
   },
   argTypes: {
-    balanceComponent: { control: false },
-    balanceLabel: { control: false },
+    bottomRight: { control: false },
     disabled: { control: 'boolean' },
     errorKey: {
       control: 'select',
       mapping: { none: undefined },
       options: errorKeyOptions,
     },
+    errorMessage: { control: 'text' },
     fiatBalance: { control: false },
     fiatBalanceComponent: { control: false },
     headerAction: { control: false },
     label: { control: 'text' },
-    maxBalanceButton: { control: false },
     onChange: { control: false },
-    showBalance: { control: 'boolean' },
     showFiatBalance: { control: false },
     token: { control: false },
     tokenSelector: { control: false },
@@ -69,11 +64,9 @@ const meta = {
   component: TokenInput,
   decorators: [
     Story => (
-      <IntlProvider locale="en" messages={messages}>
-        <div className="mx-auto w-full lg:max-w-[536px]">
-          <Story />
-        </div>
-      </IntlProvider>
+      <div className="mx-auto w-full lg:max-w-[536px]">
+        <Story />
+      </div>
     ),
   ],
   render: function Render(args) {
@@ -81,10 +74,16 @@ const meta = {
     return (
       <TokenInput
         {...args}
-        maxBalanceButton={
-          <MaxButton
-            disabled={args.disabled ?? false}
-            onClick={() => updateArgs({ value: walletBalance })}
+        bottomRight={
+          <TokenInputBalance
+            balanceComponent={StoryBalance}
+            maxButton={
+              <MaxButton
+                disabled={args.disabled ?? false}
+                onClick={() => updateArgs({ value: walletBalance })}
+              />
+            }
+            token={hemiToken}
           />
         }
         onChange={value => updateArgs({ value })}
@@ -101,7 +100,15 @@ type Story = StoryObj<typeof TokenInput>
 export const Default: Story = {}
 
 export const WithoutBalance: Story = {
-  args: { showBalance: false },
+  render: args => <TokenInput {...args} onChange={() => undefined} />,
+}
+
+export const WithErrorMessage: Story = {
+  args: {
+    errorKey: 'less-than-min-value',
+    errorMessage: 'Minimum stake is 10 HEMI',
+    value: '1',
+  },
 }
 
 export const WithHeaderAction: Story = {

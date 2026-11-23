@@ -2,14 +2,9 @@ import { DisplayAmount } from 'components/displayAmount'
 import { RenderFiatBalance } from 'components/fiatBalance'
 import { InfoIcon } from 'components/icons/infoIcon'
 import { Tooltip } from 'components/tooltip'
+import { useFormat } from 'hooks/useFormat'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useLocale, useTranslations } from 'use-intl'
-import {
-  formatFiatAmount,
-  formatNumber,
-  formatShortDate,
-  formatShortDateWithYear,
-} from 'utils/format'
+import { useTranslations } from 'use-intl'
 import { formatUnits } from 'viem'
 
 import { formatApyFromRatio } from '../../_utils/formatApyFromRatio'
@@ -22,6 +17,7 @@ type Props = {
   lockupDays: number
   nextPayout: bigint
   nextPayoutAt: number
+  tooltipId: string
   yearOneReturnRatio: number
   yearOneTotal: bigint
 }
@@ -34,10 +30,17 @@ export const PayoutHeadline = function ({
   lockupDays,
   nextPayout,
   nextPayoutAt,
+  tooltipId,
   yearOneReturnRatio,
   yearOneTotal,
 }: Props) {
-  const locale = useLocale()
+  const formatter = useFormat()
+  const {
+    formatFiatAmount,
+    formatNumber,
+    formatShortDate,
+    formatShortDateWithYear,
+  } = formatter
   const t = useTranslations('hemi-stake.estimated-payouts')
   const tStake = useTranslations('hemi-stake')
   const token = useHemiToken()
@@ -54,9 +57,11 @@ export const PayoutHeadline = function ({
         <span className="text-sm text-neutral-500">{t('first-year')}</span>
         <span className="hidden text-sm text-neutral-500 sm:inline">·</span>
         <span className="flex items-center gap-x-1 text-sm font-medium text-neutral-700">
-          {t('apy', { percentage: formatApyFromRatio(yearOneReturnRatio) })}
+          {t('apy', {
+            percentage: formatApyFromRatio(yearOneReturnRatio, formatter),
+          })}
           <Tooltip
-            id="estimated-payouts-apy"
+            id={tooltipId}
             text={
               <div className="flex flex-col gap-y-2">
                 <span>{tStake('apy-estimate')}</span>
@@ -92,7 +97,7 @@ export const PayoutHeadline = function ({
                 token={token}
               />
             ),
-            date: formatShortDate(new Date(nextPayoutAt * 1000), locale),
+            date: formatShortDate(new Date(nextPayoutAt * 1000)),
             epoch: currentEpoch,
           })}
         </span>
@@ -108,7 +113,7 @@ export const PayoutHeadline = function ({
         <span className="hidden sm:inline">·</span>
         <span className="whitespace-nowrap font-semibold text-neutral-600">
           {t('unlocks-on', {
-            date: formatShortDateWithYear(new Date(lockEnd * 1000), locale),
+            date: formatShortDateWithYear(new Date(lockEnd * 1000)),
           })}
         </span>
       </div>

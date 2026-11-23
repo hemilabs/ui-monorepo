@@ -14,9 +14,9 @@ type Props = {
 }
 
 type RenderHeaderProps = {
-  offset: number
   hasTokens?: boolean
   height: number
+  offset: number
   virtualItemStart: number
 }
 
@@ -78,10 +78,10 @@ const TokenRow = ({
   start,
   token,
 }: {
-  token: TokenType
-  start: number
   offset: number
   onSelect: (t: TokenType) => void
+  start: number
+  token: TokenType
 }) => (
   <li
     className="absolute left-1 right-1 top-0 cursor-pointer rounded-lg hover:bg-neutral-100 md:left-3 md:right-3"
@@ -102,9 +102,9 @@ const shouldRenderHeader = ({
   isSearchActive,
 }: {
   alreadyRendered: boolean
+  condition?: boolean
   isFirst: boolean
   isSearchActive: boolean
-  condition?: boolean
 }) => !alreadyRendered && isFirst && !isSearchActive && condition
 
 export const List = function ({

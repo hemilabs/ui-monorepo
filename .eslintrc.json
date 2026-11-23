@@ -188,6 +188,51 @@
       "rules": {
         "markdownlint/md041": "off"
       }
+    },
+    {
+      "excludedFiles": ["portal/scripts/hemi-earn/**/*.ts"],
+      "files": ["portal/**/*.{js,ts,tsx}"],
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "message": "Use the locale-bound formatters in utils/format.ts.",
+            "selector": "MemberExpression[object.name='Intl'][property.name=/Format$/]"
+          },
+          {
+            "message": "Use the locale-bound formatters in utils/format.ts.",
+            "selector": "MemberExpression[object.name='Intl'][computed=true][property.value=/Format$/]"
+          },
+          {
+            "message": "Use the locale-bound formatters in utils/format.ts.",
+            "selector": "MemberExpression[property.name=/^toLocale.*String$/]"
+          },
+          {
+            "message": "Use the locale-bound formatters in utils/format.ts.",
+            "selector": "MemberExpression[computed=true][property.value=/^toLocale.*String$/]"
+          }
+        ]
+      }
+    },
+    {
+      "files": ["portal/utils/format.ts"],
+      "rules": {
+        "no-restricted-syntax": "off"
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "@typescript-eslint/member-ordering": [
+          "warn",
+          {
+            "default": {
+              "memberTypes": "never",
+              "order": "natural-case-insensitive"
+            }
+          }
+        ]
+      }
     }
   ],
   "root": true,

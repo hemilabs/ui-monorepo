@@ -47,8 +47,8 @@ const WatchEvmDeposit = function ({
       let hasWorkedPostedBack = false
       const saveUpdates = function (
         event: MessageEvent<{
-          updates: Partial<EvmDepositOperation>
           type: string
+          updates: Partial<EvmDepositOperation>
         }>,
       ) {
         // This is needed because this component is rendered per-deposit, so each component will receive the posted message

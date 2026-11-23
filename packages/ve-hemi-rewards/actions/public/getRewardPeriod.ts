@@ -11,7 +11,7 @@ import { getVeHemiRewardsContractAddress } from '../../constants.ts'
 
 export const getRewardPeriod = async function (
   client: Client,
-  { timestamp, tokenAddress }: { tokenAddress: Address; timestamp: number },
+  { timestamp, tokenAddress }: { timestamp: number; tokenAddress: Address },
 ) {
   if (!client) {
     throw new Error('Client is not defined')

@@ -24,10 +24,10 @@ export const ItemContainer = ({
   ...props
 }: Selectable &
   ComponentProps<'div'> & {
+    hoverClassName?: string
     justifyItems?: string
     padding?: string
     selectedClassName?: string
-    hoverClassName?: string
   }) => (
   <div
     {...props}
@@ -56,7 +56,7 @@ export const ItemText = ({
   selectedClassName = 'text-orange-600',
   text,
 }: Pick<NavItemProps, 'text'> &
-  Selectable & { selectedClassName?: string; hoverClassName?: string }) => (
+  Selectable & { hoverClassName?: string; selectedClassName?: string }) => (
   <span
     className={`text-sm font-semibold transition-colors duration-300 md:font-medium ${
       selected

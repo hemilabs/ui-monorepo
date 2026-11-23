@@ -1,28 +1,32 @@
-import { formatCompactFiatParts } from 'utils/format'
+import { type Formatter } from 'utils/format'
 import { formatUnits } from 'viem'
 
-const presetAmounts = [1_000, 10_000, 100_000, 1_000_000]
+const presetAmounts = [1_000, 10_000, 100_000]
 
 // Anything smaller compacts to a label reading "0", which would offer a chip
 // that says nothing and fills the field with dust.
 const minWalletAmount = 0.01
 
-const toCompactLabel = function (amount: number, locale: string) {
-  const { number, suffix } = formatCompactFiatParts(amount, locale, 2, 'trunc')
+const toCompactLabel = function (amount: number, formatter: Formatter) {
+  const { number, suffix } = formatter.formatCompactFiatParts(
+    amount,
+    2,
+    'trunc',
+  )
   return `${number}${suffix}`
 }
 
 export const getAmountPresets = function ({
   balance,
   decimals,
-  locale,
+  formatter,
 }: {
   balance: bigint | undefined
   decimals: number
-  locale: string
+  formatter: Formatter
 }) {
   const presets = presetAmounts.map(amount => ({
-    label: toCompactLabel(amount, locale),
+    label: toCompactLabel(amount, formatter),
     value: amount.toString(),
   }))
 
@@ -39,7 +43,7 @@ export const getAmountPresets = function ({
     presets,
     walletPreset: isWorthShowing
       ? {
-          label: toCompactLabel(Number(walletAmount), locale),
+          label: toCompactLabel(Number(walletAmount), formatter),
           value: walletAmount,
         }
       : undefined,

@@ -1,9 +1,9 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { Header } from 'components/table/_components/header'
+import { useFormat } from 'hooks/useFormat'
 import { useMemo } from 'react'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
-import { formatPercentage } from 'utils/format'
 
 import { RenderEarnFiatBalance } from '../../../../_components/earnFiatBalance'
 import { type CompositionItem } from '../../_hooks/useComposition'
@@ -14,6 +14,7 @@ export type CompositionItemWithColor = CompositionItem & { color: string }
 export const shareToPercentage = (share: number) => share * 100
 
 export const useGetCompositionColumns = function (peggedToken: EvmToken) {
+  const { formatPercentage } = useFormat()
   const t = useTranslations('hemi-earn.vault.composition')
 
   return useMemo(
@@ -61,6 +62,6 @@ export const useGetCompositionColumns = function (peggedToken: EvmToken) {
           meta: { className: 'justify-end', width: 112 },
         },
       ] satisfies ColumnDef<CompositionItemWithColor>[],
-    [peggedToken, t],
+    [formatPercentage, peggedToken, t],
   )
 }

@@ -40,7 +40,7 @@ const stakingColumns = ({
     ),
     header: () => <Header text={t('table.locked-amount')} />,
     id: 'locked-amount',
-    meta: { width: 180 },
+    meta: { width: 200 },
   },
   {
     cell({ row }) {

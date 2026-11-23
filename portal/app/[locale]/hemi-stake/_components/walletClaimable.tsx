@@ -5,11 +5,11 @@ import { StatBadgeSkeleton } from 'components/statBadgeSkeleton'
 import { StatCard } from 'components/statCard'
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
+import { useFormat } from 'hooks/useFormat'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { useMemo } from 'react'
 import { type EvmToken, type TokenWithBalance } from 'types/token'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatCompactFiat } from 'utils/format'
+import { useTranslations } from 'use-intl'
 import { calculateUsdValue } from 'utils/prices'
 import { isDataUnavailable } from 'utils/queryStatus'
 
@@ -27,12 +27,8 @@ const ClaimableFiat = function ({
   prices: Record<string, string>
   tokens: TokenWithBalance[]
 }) {
-  const locale = useLocale()
-  return (
-    <>
-      {formatCompactFiat(Number(calculateUsdValue(tokens, prices)), locale, 2)}
-    </>
-  )
+  const { formatCompactFiat } = useFormat()
+  return <>{formatCompactFiat(Number(calculateUsdValue(tokens, prices)), 2)}</>
 }
 
 export const WalletClaimable = function () {

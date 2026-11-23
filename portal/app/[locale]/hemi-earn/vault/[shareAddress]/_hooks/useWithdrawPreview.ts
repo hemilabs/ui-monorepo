@@ -99,8 +99,8 @@ export const useWithdrawPreview = function ({
   approvalAmount: bigint
   asset: Address
   shareAddress: Address
-  shareToken: EvmToken
   shares: bigint
+  shareToken: EvmToken
   slippageBps: bigint
   spender: Address
   validInput: boolean

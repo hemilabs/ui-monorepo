@@ -1,6 +1,5 @@
+import { useFormat } from 'hooks/useFormat'
 import { useEffect, useState } from 'react'
-import { useLocale } from 'use-intl'
-import { formatFutureTime, formatPastTime } from 'utils/format'
 import { getTimeoutInterval } from 'utils/relativeTimeRefresh'
 
 const useRerender = function (targetTimestamp: number) {
@@ -18,7 +17,7 @@ const useRerender = function (targetTimestamp: number) {
 }
 
 const RelativeTime = function ({ milliseconds }: { milliseconds: number }) {
-  const locale = useLocale()
+  const { formatFutureTime, formatPastTime } = useFormat()
   const now = new Date().getTime()
 
   // force rerender depending on how close the target timestamp is
@@ -29,11 +28,7 @@ const RelativeTime = function ({ milliseconds }: { milliseconds: number }) {
 
   // if time difference equals 0, Intl.RelativeTimeFormat returns "now"
   return (
-    <>
-      {isPast
-        ? formatPastTime(difference, locale)
-        : formatFutureTime(difference, locale)}
-    </>
+    <>{isPast ? formatPastTime(difference) : formatFutureTime(difference)}</>
   )
 }
 

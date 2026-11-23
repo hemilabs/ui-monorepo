@@ -3,8 +3,8 @@ import { isPendingOperation } from 'utils/tunnel'
 import { Hash } from 'viem'
 
 type Props = {
-  withdrawal: ToBtcWithdrawOperation
   focusedWithdrawalHash?: Hash
+  withdrawal: ToBtcWithdrawOperation
 }
 
 const getSeconds = (seconds: number) => seconds * 1000

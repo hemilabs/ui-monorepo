@@ -3,10 +3,10 @@ import { getNewColumnOrder, getSafeData } from 'components/table/_utils'
 import { describe, expect, it } from 'vitest'
 
 type TestData = {
+  amount: number
   id: string
   name: string
   status: string
-  amount: number
 }
 
 describe('getNewColumnOrder', function () {
@@ -110,10 +110,9 @@ describe('getNewColumnOrder', function () {
 })
 
 describe('getSafeData', function () {
-  // Regression guard for PR #1898: returning a fresh `[]` literal in the
-  // empty branch breaks referential stability for useReactTable, which
-  // invalidates the getCoreRowModel memo every render and triggers an
-  // infinite render loop via _autoResetPageIndex → setPagination.
+  // Returning a fresh `[]` literal in the empty branch breaks referential
+  // stability for useReactTable, which invalidates the getCoreRowModel memo
+  // and rebuilds the rows on every render.
   it('returns the same empty-array reference across calls when data is empty and not loading', function () {
     const a = getSafeData<TestData>(undefined, false, [])
     const b = getSafeData<TestData>([], false, [])

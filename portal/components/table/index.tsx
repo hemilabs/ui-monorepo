@@ -103,8 +103,8 @@ const TableHeader = <TData,>({
 )
 
 type TableBodyProps<TData> = {
-  CellComponent: ComponentType<ComponentProps<'td'>>
   bodyContainerClassName?: string
+  CellComponent: ComponentType<ComponentProps<'td'>>
   fetchMoreOnBottomReached: (el?: HTMLDivElement | null) => void
   headerScrollRef: RefObject<HTMLDivElement | null>
   isFetching: boolean
@@ -207,8 +207,8 @@ function TableBody<TData>({
 }
 
 type StaticTableBodyProps<TData> = {
-  CellComponent: ComponentType<ComponentProps<'td'>>
   bodyContainerClassName?: string
+  CellComponent: ComponentType<ComponentProps<'td'>>
   headerScrollRef: RefObject<HTMLDivElement | null>
   loading: boolean
   onRowClick?: (row: TData) => void
@@ -304,8 +304,8 @@ export type TableProps<TData> = {
   onRowClick?: (row: TData) => void
   onRowHover?: (index: number | null) => void
   placeholder?: ReactNode
-  rowClassName?: string
   priorityColumnIdsOnSmall?: string[]
+  rowClassName?: string
   rowSize?: number
   skeletonRows?: number
   smallBreakpoint?: number
@@ -354,6 +354,9 @@ export function Table<TData>({
   })
 
   const table = useReactTable({
+    // The table does not paginate. Resetting the page index on every new data
+    // reference updates state, so an unstable `data` would re-render forever.
+    autoResetPageIndex: false,
     columns: columnsWithSkeleton,
     data: safeData,
     getCoreRowModel: getCoreRowModel(),

@@ -11,7 +11,7 @@ import { useHemiEarnShares } from './useHemiEarnShares'
 // Combines the shares registry with independent TVL (per-share) and APY (one shared call) queries, each with its own freshness.
 export const useEarnVaults = function () {
   const [networkType] = useNetworkType()
-  const { data: shares, isError, isPending } = useHemiEarnShares()
+  const { data: shares, isPending } = useHemiEarnShares()
 
   // TVL is deliberately out of isPending: the page renders immediately and each cell shows its own skeleton via totalDepositsStatus.
   const tvlQueries = useQueries({
@@ -40,5 +40,5 @@ export const useEarnVaults = function () {
     totalDepositsStatus: tvlQueries[index]?.status ?? 'pending',
   }))
 
-  return { data, isError, isPending }
+  return { data, isPending }
 }

@@ -5,7 +5,7 @@
     "deps:check": "knip",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
-    "lint": "eslint --cache .",
+    "lint": "eslint --cache --max-warnings 0 .",
     "lint:fix": "eslint --cache . --fix",
     "prepare": "husky"
   },

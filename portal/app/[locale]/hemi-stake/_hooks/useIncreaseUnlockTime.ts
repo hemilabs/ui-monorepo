@@ -18,8 +18,10 @@ import { useAccount } from 'wagmi'
 import { daysToSeconds } from '../_utils/lockCreationTimes'
 import { updatePosition } from '../_utils/positionsCache'
 
+import { getDelegatedAwayQueryKeyPrefix } from './useDelegatedAway'
 import { getPositionDelegationDetailsQueryKey } from './usePositionDelegationDetails'
 import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
+import { invalidateRewardsForecastInputs } from './useRewardsForecastInputs'
 import { getStakingPositionsQueryKey } from './useStakingPositions'
 import { getTotalVotingPowerQueryKey } from './useTotalVotingPower'
 
@@ -160,7 +162,15 @@ export const useIncreaseUnlockTime = function ({
                 ownerAddress: address,
               }),
             })
+            queryClient.invalidateQueries({
+              queryKey: getDelegatedAwayQueryKeyPrefix({
+                chainId: token.chainId,
+                ownerAddress: address,
+              }),
+            })
           }
+
+          invalidateRewardsForecastInputs(queryClient, token.chainId)
 
           track?.('hemi stake - increase unlock time success')
         },

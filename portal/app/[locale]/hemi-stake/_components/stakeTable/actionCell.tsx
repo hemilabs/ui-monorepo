@@ -2,6 +2,7 @@ import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { Row } from '@tanstack/react-table'
 import { Tooltip } from 'components/tooltip'
+import { useFormat } from 'hooks/useFormat'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useMenuKeyboard } from 'hooks/useMenuKeyboard'
 import {
@@ -14,8 +15,7 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 import { type StakingPosition } from 'types/stakingDashboard'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatDate } from 'utils/format'
+import { useTranslations } from 'use-intl'
 import { formatUnits } from 'viem'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
@@ -83,7 +83,7 @@ type Props = {
 
 export function ActionCell({ row }: Props) {
   const t = useTranslations('hemi-stake')
-  const locale = useLocale()
+  const { formatDate } = useFormat()
   const { decimals, symbol } = useHemiToken()
   const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLDivElement>(null)
@@ -235,10 +235,7 @@ export function ActionCell({ row }: Props) {
                 canExtend
                   ? undefined
                   : t('table.add-time-available-on', {
-                      date: formatDate(
-                        new Date(extensionAvailableAt * 1000),
-                        locale,
-                      ),
+                      date: formatDate(new Date(extensionAvailableAt * 1000)),
                     })
               }
             />

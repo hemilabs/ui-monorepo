@@ -11,6 +11,7 @@ import {
 } from '../../../_constants/slippage'
 import { useCanDeposit } from '../../../_hooks/useCanDeposit'
 import { useRefreshTermsStep } from '../../../_hooks/useRefreshTermsStep'
+import { depositBlockMessageKey } from '../../../_utils/depositGate'
 import { percentToBps, resolveRetrySlippage } from '../../../_utils/slippage'
 import { type TermsStep } from '../../../_utils/termsGate'
 import {
@@ -138,7 +139,10 @@ export const RetryFailedDeposit = function ({
         submitButton={
           <Tooltip
             disabled={depositGate.canDeposit}
-            text={depositGate.reason && t(`hemi-earn.${depositGate.reason}`)}
+            text={
+              depositGate.reason &&
+              t(depositBlockMessageKey(depositGate.reason))
+            }
             variant="simple"
           >
             <Button

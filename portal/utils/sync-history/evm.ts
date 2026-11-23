@@ -48,8 +48,8 @@ export const createEvmSync = function ({
         limit,
         skip,
       }: {
-        fromBlock: number
         deposits: EvmDepositOperation[]
+        fromBlock: number
         limit: number
         skip: number
       }) {

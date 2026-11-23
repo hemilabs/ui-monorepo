@@ -1,5 +1,5 @@
+import { useFormat } from 'hooks/useFormat'
 import Skeleton from 'react-loading-skeleton'
-import { formatPercentage } from 'utils/format'
 import { VictoryPie } from 'victory'
 
 import {
@@ -26,6 +26,7 @@ export const CompositionChart = function ({
   hoveredIndex,
   isPending,
 }: Props) {
+  const { formatPercentage } = useFormat()
   if (data.length > 0) {
     const hoveredItem = hoveredIndex !== null ? data[hoveredIndex] : null
 

@@ -1,14 +1,9 @@
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
+import { useFormat } from 'hooks/useFormat'
 import Skeleton from 'react-loading-skeleton'
 import { screenBreakpoints } from 'styles'
 import { EvmToken } from 'types/token'
-import { useLocale } from 'use-intl'
-import {
-  formatCompactFiatParts,
-  formatDate,
-  formatPercentage,
-  formatShortDate,
-} from 'utils/format'
+import { type Formatter } from 'utils/format'
 import { secondsPerDay } from 'utils/time'
 import {
   VictoryArea,
@@ -78,23 +73,23 @@ const getPlaceholderXTicks = function (period: MetricPeriod) {
   )
 }
 
-const formatShortTimestamp = (timestampMs: number, locale: string) =>
-  formatShortDate(new Date(timestampMs), locale, 'UTC')
+const formatShortTimestamp = (timestampMs: number, formatter: Formatter) =>
+  formatter.formatShortDate(new Date(timestampMs), 'UTC')
 
-const formatFullTimestamp = (timestampMs: number, locale: string) =>
-  formatDate(new Date(timestampMs), locale, 'UTC')
+const formatFullTimestamp = (timestampMs: number, formatter: Formatter) =>
+  formatter.formatDate(new Date(timestampMs), 'UTC')
 
 // compact = rounded axis ticks ("4%"); full = precise tooltip value ("4.53%").
 type FormatPrecision = 'compact' | 'full'
 
 const formatYAxis = function ({
-  locale,
+  formatter,
   metricType,
   peggedToken,
   precision = 'compact',
   value,
 }: {
-  locale: string
+  formatter: Formatter
   metricType: MetricType
   peggedToken: EvmToken
   precision?: FormatPrecision
@@ -102,23 +97,23 @@ const formatYAxis = function ({
 }) {
   if (metricType === 'apy') {
     return precision === 'full'
-      ? formatPercentage(value)
-      : `${Math.round(value)}%`
+      ? formatter.formatPercentage(value)
+      : formatter.formatWholePercentage(value)
   }
-  const { number, suffix } = formatCompactFiatParts(value, locale)
+  const { number, suffix } = formatter.formatCompactFiatParts(value)
   return `${number}${suffix} ${peggedToken.symbol}`
 }
 
 function ChartTooltipLabel({
   datum,
-  locale,
+  formatter,
   metricType,
   peggedToken,
   x,
   y,
 }: {
   datum?: MetricDataPoint
-  locale: string
+  formatter: Formatter
   metricType: MetricType
   peggedToken: EvmToken
   x?: number
@@ -128,9 +123,9 @@ function ChartTooltipLabel({
     return null
   }
 
-  const dateText = formatFullTimestamp(datum.x, locale)
+  const dateText = formatFullTimestamp(datum.x, formatter)
   const valueText = formatYAxis({
-    locale,
+    formatter,
     metricType,
     peggedToken,
     precision: 'full',
@@ -169,13 +164,13 @@ const getChartWidth = (windowWidth: number) =>
   fallbackChartWidth
 
 const EmptyChart = ({
-  locale,
+  formatter,
   metricType,
   peggedToken,
   period,
   width,
 }: {
-  locale: string
+  formatter: Formatter
   metricType: MetricType
   peggedToken: EvmToken
   period: MetricPeriod
@@ -188,14 +183,14 @@ const EmptyChart = ({
   >
     <VictoryAxis
       style={xAxisStyle}
-      tickFormat={(tick: number) => formatShortTimestamp(tick, locale)}
+      tickFormat={(tick: number) => formatShortTimestamp(tick, formatter)}
       tickValues={getPlaceholderXTicks(period)}
     />
     <VictoryAxis
       dependentAxis
       style={yAxisStyle}
       tickFormat={(v: number) =>
-        formatYAxis({ locale, metricType, peggedToken, value: v })
+        formatYAxis({ formatter, metricType, peggedToken, value: v })
       }
       tickValues={metricType === 'apy' ? [0, 2, 4, 6] : undefined}
     />
@@ -219,7 +214,7 @@ export const HistoricalMetricsChart = function ({
   peggedToken,
   period,
 }: Props) {
-  const locale = useLocale()
+  const formatter = useFormat()
   const { width: windowWidth } = useWindowSize()
   const chartWidth = getChartWidth(windowWidth)
 
@@ -240,7 +235,7 @@ export const HistoricalMetricsChart = function ({
                   }}
                   labelComponent={
                     <ChartTooltipLabel
-                      locale={locale}
+                      formatter={formatter}
                       metricType={metricType}
                       peggedToken={peggedToken}
                     />
@@ -250,8 +245,8 @@ export const HistoricalMetricsChart = function ({
                 />
               }
               labels={({ datum }: { datum: MetricDataPoint }) =>
-                `${formatFullTimestamp(datum.x, locale)}  ${formatYAxis({
-                  locale,
+                `${formatFullTimestamp(datum.x, formatter)}  ${formatYAxis({
+                  formatter,
                   metricType,
                   peggedToken,
                   precision: 'full',
@@ -268,13 +263,13 @@ export const HistoricalMetricsChart = function ({
           <VictoryAxis
             style={xAxisStyle}
             tickCount={4}
-            tickFormat={(tick: number) => formatShortTimestamp(tick, locale)}
+            tickFormat={(tick: number) => formatShortTimestamp(tick, formatter)}
           />
           <VictoryAxis
             dependentAxis
             style={yAxisStyle}
             tickFormat={(v: number) =>
-              formatYAxis({ locale, metricType, peggedToken, value: v })
+              formatYAxis({ formatter, metricType, peggedToken, value: v })
             }
           />
           <AreaGradient />
@@ -308,7 +303,7 @@ export const HistoricalMetricsChart = function ({
     return (
       <div className="opacity-30">
         <EmptyChart
-          locale={locale}
+          formatter={formatter}
           metricType={metricType}
           peggedToken={peggedToken}
           period={period}
@@ -321,7 +316,7 @@ export const HistoricalMetricsChart = function ({
   if (!isPending) {
     return (
       <EmptyChart
-        locale={locale}
+        formatter={formatter}
         metricType={metricType}
         peggedToken={peggedToken}
         period={period}
@@ -334,7 +329,7 @@ export const HistoricalMetricsChart = function ({
     <div className="relative">
       <div className="invisible">
         <EmptyChart
-          locale={locale}
+          formatter={formatter}
           metricType={metricType}
           peggedToken={peggedToken}
           period={period}

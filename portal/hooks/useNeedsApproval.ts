@@ -18,8 +18,8 @@ export const useNeedsApproval = function ({
 }: {
   address: string
   amount: bigint
-  spender: Address
   chainId: Chain['id']
+  spender: Address
 }) {
   const { address: owner } = useAccount()
   const effectiveSpender = isNativeAddress(address) ? undefined : spender

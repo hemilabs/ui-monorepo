@@ -11,6 +11,8 @@
     "approve-and-withdraw": "Aprobar y Retirar",
     "approving": "Aprobando...",
     "approving-token": "Aprobando {symbol}",
+    "apy": "TEA",
+    "balance": "Balance",
     "cancel": "Cancelar",
     "close": "Cerrar",
     "close-notification": "Cerrar la notificación",
@@ -158,6 +160,17 @@
   "hemi-earn": {
     "apy-provided-by-vetro": "TEA · proporcionada por Vetro",
     "apy-source": "La TEA es una estimación variable proporcionada por Vetro, basada en el rendimiento reciente del fondo. No es una promesa ni un pronóstico de rendimientos futuros y puede cambiar en cualquier momento. Los rendimientos se muestran {fees, select, included {después de} other {antes de}} tarifas.",
+    "blocked": {
+      "restricted-location": {
+        "body": "Hemi Earn es operado por Vetro Service & Support Corp. y no se ofrece a personas en los Estados Unidos ni en otras jurisdicciones restringidas. Si ya tiene una posición, usted puede retirarla.",
+        "heading": "Hemi Earn no está disponible en su ubicación"
+      },
+      "sanctioned-wallet": {
+        "body": "Esta billetera no cumple los requisitos de elegibilidad de Vetro para Hemi Earn. Cualquier posición existente puede retirarse. Si tiene preguntas, contacte al <link>soporte de Vetro</link>.",
+        "heading": "Esta billetera no puede depositar en Hemi Earn"
+      }
+    },
+    "could-not-load-vaults": "No pudimos cargar los fondos",
     "deposits-paused": "Los depósitos nuevos están pausados en este momento.",
     "footer": {
       "attribution": "Hemi Earn es operado por Vetro Service & Support Corp. Los fondos disponibles a través de Hemi Earn pueden ser operados por Vetro o por terceros. Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. y sus afiliadas no operan, administran, custodian ni garantizan Hemi Earn ni ningún fondo, y no son parte de su acuerdo con Vetro. Hemi Earn no está disponible para personas de EE. UU. ni para otras personas restringidas.",
@@ -180,7 +193,9 @@
       "deposits-paused-details": "Los depósitos nuevos en Hemi Earn están pausados en este momento en el portal de Hemi. Su posición actual no se ve afectada por esta pausa, y usted puede seguir viéndola y retirándola más abajo. Si tiene preguntas, contacte al <link>soporte de Vetro</link>.",
       "note": "Operado por Vetro Service & Support Corp. <link>Términos</link>"
     },
+    "restricted-location": "Hemi Earn no está disponible en su ubicación.",
     "risk-warning": "Los rendimientos son variables y no están garantizados. Puede perder parte o la totalidad de su depósito.",
+    "sanctioned-wallet": "Esta billetera no puede depositar en Hemi Earn.",
     "subheading": "Hemi Earn, operado por Vetro, le da acceso a fondos de rendimiento directamente desde el portal de Hemi. Elija un fondo y deposite en unos pocos pasos. Los rendimientos son variables y no están garantizados.",
     "switch-to-start-earning": "Puede cambiar de red para comenzar a ganar con Hemi.",
     "terms": {
@@ -233,6 +248,8 @@
           "heading-deposit": "Su depósito quedó atascado en Ethereum",
           "heading-slippage": "Su retiro no se completó",
           "heading-slippage-deposit": "Su depósito no se completó",
+          "restricted-location": "Hemi Earn no está disponible en su ubicación, así que devuelva sus fondos a su billetera.",
+          "sanctioned-wallet": "Esta billetera no puede depositar en Hemi Earn, así que devuelva sus fondos a su billetera.",
           "vault-delisted": "Este fondo ya no acepta depósitos, así que devuelva sus fondos a su billetera."
         },
         "transfer-incomplete": "Esta transferencia aún no se ha completado. Hemi no puede acceder a los activos en Hemi Earn, ni moverlos ni recuperarlos. Contacte al soporte de Vetro e incluya el hash de su transacción:",
@@ -390,7 +407,6 @@
       "historical-metrics": {
         "1-week": "1 semana",
         "1-year": "1 año",
-        "apy": "TEA",
         "metric": "Métrica",
         "month": "{count, plural, one {# mes} other {# meses}}",
         "period": "Período",
@@ -457,7 +473,8 @@
     "apy-estimate": "Nota: hemiStake se lanzó hace poco, por lo que la TEA proyectada es alta. El pool de recompensas es compartido, así que a medida que se haga staking de más HEMI la TEA bajará.",
     "claim-rewards": {
       "heading": "Reclamar recompensas",
-      "subheading": "Estamos procesando su solicitud de recompensas. Puede seguir el progreso a continuación."
+      "subheading": "Estamos procesando su solicitud de recompensas. Puede seguir el progreso a continuación.",
+      "subheading-by-value": "Estamos procesando sus solicitudes de recompensas, empezando por las de mayor valor. Puede seguir el progreso a continuación."
     },
     "claim-rewards-failed": {
       "description": "No se pudieron reclamar todas sus recompensas. Abra los detalles para intentarlo de nuevo.",
@@ -468,9 +485,9 @@
     "drawer": {
       "approving": "Aprobando {symbol}",
       "claim-position-rewards": "Reclamar recompensas de la posición #{tokenId}",
-      "claim-position-rewards-step": "Reclamar recompensas de la posición #{tokenId}, épocas {fromEpoch}-{toEpoch} ({step} de {total})",
+      "claim-position-rewards-epochs": "Reclamar recompensas de la posición #{tokenId}, épocas {fromEpoch}-{toEpoch}",
       "claim-rewards": "Reclamar recompensas",
-      "claim-rewards-step": "Reclamar recompensas, épocas {fromEpoch}-{toEpoch} ({step} de {total})",
+      "claim-rewards-epochs": "Reclamar recompensas, épocas {fromEpoch}-{toEpoch}",
       "increase-amount": {
         "heading": "Agregar ${symbol} a este bloqueo",
         "subheading": "Depositar ${symbol} adicionales en su bloqueo existente para aumentar su cantidad de stake y poder de gobernanza."
@@ -492,6 +509,9 @@
       "unlock-token": "Desbloquear {symbol}"
     },
     "estimated-payouts": {
+      "added-amount": "{symbol} agregado",
+      "added-time": "Tiempo adicional",
+      "advanced-estimator": "Estimador avanzado",
       "after-unlock": "después del desbloqueo",
       "apy": "{percentage} TEA",
       "carried-from": "Con base en la época {epoch}, la última financiada.",
@@ -502,11 +522,24 @@
       "next-payout-line": "próximo pago <amount></amount> · época {epoch}, se liquida el {date}",
       "not-funded": "Las recompensas de esta época aún no han sido financiadas.",
       "starting-from-epoch": "Pagos por época · a partir de la época <epoch></epoch>",
+      "this-lockup": "Este bloqueo",
       "title": "Pagos estimados",
       "unlocks-on": "Se desbloquea el {date}"
     },
     "estimator": {
+      "blended-was": "combinada, antes {percentage}",
+      "connect-to-blend": "Conecte su billetera para incluir sus posiciones en la estimación",
+      "estimated-payouts-first-year": "Pagos estimados en el primer año",
+      "my-positions": "Mis posiciones",
+      "new-position": "Nueva posición",
+      "per-epoch": "{symbol} por época · a partir de la época {epoch}",
       "quick-amounts": "Montos rápidos",
+      "scope": "Alcance de la estimación",
+      "simple-first-year": "simple, primer año",
+      "unit": "Unidad",
+      "view-position": "Ver posición",
+      "voting-power-title": "Poder de voto · <amount></amount> veHEMI",
+      "with-my-positions": "Con mis posiciones",
       "yours": "Su saldo · {amount}"
     },
     "form": {
@@ -612,6 +645,8 @@
     },
     "tabs": {
       "analytics": "Analíticas",
+      "estimator": "Estimador avanzado",
+      "estimator-short": "Estimador",
       "stake": "Stake"
     },
     "unlock-successful": "Desbloqueo exitoso",
@@ -722,7 +757,6 @@
   },
   "tunnel-page": {
     "form": {
-      "balance": "Balance",
       "bitcoin-receiving-address": "Dirección de recepción en Bitcoin",
       "bitcoin-receiving-address-description": "El {symbol} retirado se envía a la dirección de su billetera Bitcoin conectada, o a la dirección personalizada que ingrese.",
       "custom-address": "Dirección personalizada",
@@ -782,6 +816,8 @@
       "enter-a-custom-address": "Ingrese una dirección personalizada",
       "initiate-withdrawal": "Iniciar Retiro",
       "input-a-correct-custom-address": "Ingrese una dirección personalizada correcta",
+      "min-deposit-load-failed": "No se pudo cargar el depósito mínimo",
+      "min-withdrawal-load-failed": "No se pudo cargar el retiro mínimo",
       "prove-withdrawal": "Probar retiro",
       "proving-withdrawal": "Probando...",
       "try-again": "Intentar de nuevo",

@@ -10,7 +10,6 @@
     "approve-and-deposit": "Aprobar y Depositar",
     "approve-and-withdraw": "Aprobar y Retirar",
     "approving": "Aprobando...",
-    "approving-token": "Aprobando {symbol}",
     "apy": "TEA",
     "balance": "Balance",
     "cancel": "Cancelar",
@@ -42,9 +41,7 @@
     "network-fees": "Tarifa de red",
     "network-gas-fee": "Tarifa de gas de {network}",
     "only-live-on-mainnet": "Solo disponible en Mainnet",
-    "open": "Abrir",
     "powered-by": "Con tecnología de <company></company>",
-    "stake": "Stake",
     "success": "Exitoso",
     "switch-to-mainnet": "Cambiar a Mainnet",
     "token-price": "Precio de {symbol}",
@@ -689,52 +686,32 @@
     "change-to-mainnet": "Cambie a Mainnet y haga stake",
     "dashboard": {
       "heading": "Boost staking",
-      "manage-token": "Gestionar {symbol}",
       "staked": "Staked",
       "subtitle": "Visualice sus posiciones activas de boost staking.",
-      "title": "Panel",
       "total-earned-points": "Total de puntos Hemi ganados",
       "total-earned-points-description": "Temporada finalizada.",
       "total-staked-on-hemi": "Total en stake en Hemi",
       "your-stake": "Su Stake"
     },
     "drawer": {
-      "approve-and-stake": "Aprobar y Hacer Stake",
-      "description-manage-stake": "Recargue su stake o retire en cualquier momento— ¡Usted tiene el control total!",
+      "description-manage-stake": "Retire sus tokens en stake en cualquier momento.",
       "manage-your-stake": "Gestione su stake",
-      "stake-and-earn-rewards": "Haga stake de {symbol} para potenciar su participación.",
-      "stake-token": "Hacer stake de {symbol}",
-      "staking": "Haciendo stake...",
-      "strategy-details": {
-        "heading": "Detalles de la Estrategia",
-        "tvl": "TVL (en Hemi)",
-        "website": "Sitio web"
-      },
       "unstake-eth-as-weth-heading": "El ETH desbloqueado se recibirá como WETH",
       "unstake-eth-as-weth-subheading": "Cuando hace stake con ETH, es automáticamente convertido a WETH. Al desbloquear, recibirá WETH, que puede convertir de nuevo a ETH si lo desea.",
       "unstake-token": "Desbloquear {symbol}",
       "unstaking": "Desbloqueando...",
-      "unwrap": "Convertir",
-      "you-can-unstake-anytime": "Puede retirar en cualquier momento."
+      "unwrap": "Convertir"
+    },
+    "ended": {
+      "description": "Ya no se aceptan nuevos stakes. Puede retirar sus tokens en cualquier momento.",
+      "title": "Boost staking ha finalizado"
     },
     "protocol": "Protocolo",
-    "ready-to-earn": "¿Listo para hacer stake? Utilice activos disponibles para comenzar a hacer stake.",
-    "stake": {
-      "action": "Acción",
-      "heading": "Stake for boost",
-      "subheading": "Haga stake de sus tokens.",
-      "title": "Stake"
-    },
-    "start-staking-earn-points": "Empiece a hacer stake",
     "toast": {
-      "go-boost-staking": "Ir a Boost staking",
       "here-your-stake-tx": "Aquí está su transacción de {type}:",
-      "staking": "stake",
-      "staking-successful": "Stake exitoso",
       "unstaking": "retiro",
       "unstaking-successful": "Retiro exitoso"
-    },
-    "wallet-balance": "Saldo de la billetera"
+    }
   },
   "token-selector": {
     "all-tokens": "Todos los tokens",

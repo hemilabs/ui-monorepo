@@ -1,7 +1,7 @@
 import { parseAsString, parseAsStringLiteral, useQueryState } from 'nuqs'
 
-const drawerModes = ['manage', 'stake'] as const
-export type DrawerModes = (typeof drawerModes)[number]
+const drawerModes = ['manage'] as const
+type DrawerModes = (typeof drawerModes)[number]
 
 export const isDrawerMode = (value: unknown): value is DrawerModes =>
   (drawerModes as readonly unknown[]).includes(value)

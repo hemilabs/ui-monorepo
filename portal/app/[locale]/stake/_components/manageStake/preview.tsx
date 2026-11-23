@@ -1,10 +1,9 @@
 import { CallToActionContainer } from 'components/reviewOperation/callToActionContainer'
-import { Tab, Tabs } from 'components/tabs'
 import { TokenInput } from 'components/tokenInput'
 import { TokenInputBalance } from 'components/tokenInput/balance'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { ComponentType, ReactNode } from 'react'
-import { StakeOperations, StakeToken } from 'types/stake'
+import { StakeToken } from 'types/stake'
 import { useTranslations } from 'use-intl'
 
 import { DisclaimerEth } from './disclaimerEth'
@@ -18,11 +17,7 @@ type Props = {
   fees: ReactNode
   isOperating: boolean
   maxBalance: ReactNode
-  operation: StakeOperations
   setAmount: (amount: string) => void
-  setOperation: () => void
-  showTabs: boolean
-  strategyDetails?: ReactNode
   submitButton: ReactNode
   token: StakeToken
 }
@@ -34,11 +29,7 @@ export const Preview = function ({
   fees,
   isOperating,
   maxBalance,
-  operation,
   setAmount,
-  setOperation,
-  showTabs,
-  strategyDetails,
   submitButton,
   token,
 }: Props) {
@@ -49,24 +40,6 @@ export const Preview = function ({
   return (
     <>
       <div className="flex min-h-0 flex-1 flex-col gap-y-4 overflow-y-auto px-4 pt-0.5 md:px-6">
-        {showTabs && (
-          <Tabs>
-            <Tab
-              onClick={setOperation}
-              selected={operation === 'stake'}
-              size="small"
-            >
-              {t('stake')}
-            </Tab>
-            <Tab
-              onClick={setOperation}
-              selected={operation === 'unstake'}
-              size="small"
-            >
-              {t('unstake')}
-            </Tab>
-          </Tabs>
-        )}
         <div className="mb-2 [&>*]:shadow-bs [&>*]:hover:shadow-sm">
           <TokenInput
             bottomRight={
@@ -86,7 +59,6 @@ export const Preview = function ({
           />
         </div>
         {fees}
-        {strategyDetails}
         {showEthDisclaimer && (
           <div className="pb-4 pt-1">
             <DisclaimerEth />

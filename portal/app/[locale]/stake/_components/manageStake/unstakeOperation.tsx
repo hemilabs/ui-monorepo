@@ -7,11 +7,7 @@ import { ToastLoader } from 'components/toast/toastLoader'
 import { useAmount } from 'hooks/useAmount'
 import { useHemi } from 'hooks/useHemi'
 import Skeleton from 'react-loading-skeleton'
-import {
-  UnstakeStatusEnum,
-  type StakeOperations,
-  type StakeToken,
-} from 'types/stake'
+import { UnstakeStatusEnum, type StakeToken } from 'types/stake'
 import { useTranslations } from 'use-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
@@ -42,7 +38,6 @@ const StakedBalance = lazyWithFallback(
 type Props = {
   closeDrawer: () => void
   heading: string
-  onOperationChange: (op: StakeOperations) => void
   subheading: string
   token: StakeToken
 }
@@ -50,7 +45,6 @@ type Props = {
 export const UnstakeOperation = function ({
   closeDrawer,
   heading,
-  onOperationChange,
   subheading,
   token,
 }: Props) {
@@ -136,11 +130,7 @@ export const UnstakeOperation = function ({
     <>
       {unstakeStatus === UnstakeStatusEnum.UNSTAKE_TX_CONFIRMED &&
         unStakeTransactionHash && (
-          <StakeToast
-            chainId={token.chainId}
-            txHash={unStakeTransactionHash}
-            type="unstake"
-          />
+          <StakeToast chainId={token.chainId} txHash={unStakeTransactionHash} />
         )}
       <Operation
         amount={amountInput}
@@ -173,10 +163,7 @@ export const UnstakeOperation = function ({
                 token={token}
               />
             }
-            operation="unstake"
             setAmount={setAmountInput}
-            setOperation={() => onOperationChange('stake')}
-            showTabs
             submitButton={
               <SubmitButton
                 disabled={!canUnstake}

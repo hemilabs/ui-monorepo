@@ -10,7 +10,6 @@
     "approve-and-deposit": "Approve and Deposit",
     "approve-and-withdraw": "Approve and Withdraw",
     "approving": "Approving...",
-    "approving-token": "Approving {symbol}",
     "apy": "APY",
     "balance": "Balance",
     "cancel": "Cancel",
@@ -42,9 +41,7 @@
     "network-fees": "Network fees",
     "network-gas-fee": "{network} gas fee",
     "only-live-on-mainnet": "Only live on Mainnet",
-    "open": "Open",
     "powered-by": "Powered by <company></company>",
-    "stake": "Stake",
     "success": "Success",
     "switch-to-mainnet": "Switch to Mainnet",
     "token-price": "{symbol} price",
@@ -689,52 +686,32 @@
     "change-to-mainnet": "Change to Mainnet and stake",
     "dashboard": {
       "heading": "Boost staking",
-      "manage-token": "Manage {symbol}",
       "staked": "Staked",
       "subtitle": "Monitor your boost staking positions.",
-      "title": "Dashboard",
       "total-earned-points": "Total Hemi points earned",
       "total-earned-points-description": "Season ended.",
       "total-staked-on-hemi": "Total Staked on Hemi",
       "your-stake": "Your Stake"
     },
     "drawer": {
-      "approve-and-stake": "Approve and Stake",
-      "description-manage-stake": "Top up your stake, or withdraw anytime—you're in full control!",
+      "description-manage-stake": "Withdraw your staked tokens anytime.",
       "manage-your-stake": "Manage your stake",
-      "stake-and-earn-rewards": "Stake {symbol} to boost your participation.",
-      "stake-token": "Stake {symbol}",
-      "staking": "Staking...",
-      "strategy-details": {
-        "heading": "Strategy Details",
-        "tvl": "TVL (on Hemi)",
-        "website": "Website"
-      },
       "unstake-eth-as-weth-heading": "Unstaked ETH will be received as WETH",
       "unstake-eth-as-weth-subheading": "When you stake ETH, it is automatically converted to WETH. Upon unstaking, you'll receive WETH, which you can unwrap back to ETH if desired.",
       "unstake-token": "Unstake {symbol}",
       "unstaking": "Unstaking...",
-      "unwrap": "Unwrap",
-      "you-can-unstake-anytime": "You can unstake any time."
+      "unwrap": "Unwrap"
+    },
+    "ended": {
+      "description": "No new stakes are accepted. You can withdraw your tokens anytime.",
+      "title": "Boost staking has ended"
     },
     "protocol": "Protocol",
-    "ready-to-earn": "Ready to stake? Use supported assets and start staking.",
-    "stake": {
-      "action": "Action",
-      "heading": "Stake for boost",
-      "subheading": "Stake your tokens.",
-      "title": "Stake"
-    },
-    "start-staking-earn-points": "Start staking",
     "toast": {
-      "go-boost-staking": "Go to Boost staking",
       "here-your-stake-tx": "Here’s your {type} transaction:",
-      "staking": "staking",
-      "staking-successful": "Staking successful",
       "unstaking": "unstaking",
       "unstaking-successful": "Unstaking successful"
-    },
-    "wallet-balance": "Wallet balance"
+    }
   },
   "token-selector": {
     "all-tokens": "All tokens",

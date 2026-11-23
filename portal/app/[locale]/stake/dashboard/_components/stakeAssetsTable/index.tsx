@@ -27,7 +27,7 @@ type ActionProps = {
 
 const CallToAction = function ({ stake }: ActionProps) {
   const pathname = usePathname()
-  const t = useTranslations('stake-page')
+  const t = useTranslations()
 
   const queryString = queryStringObjectToString({
     drawerMode: 'manage',
@@ -35,23 +35,20 @@ const CallToAction = function ({ stake }: ActionProps) {
   })
 
   return (
-    <span className="[&>a:focus-visible]:ring-2 [&>a:focus-visible]:ring-neutral-500">
-      <ButtonLink
-        aria-label={t('dashboard.manage-token', { symbol: stake.symbol })}
-        href={`${pathname}${queryString}`}
-        onClick={function (e) {
-          // prevent full navigation - we want a shallow navigation to open the drawer
-          e.preventDefault()
-          // navigation is done in event delegation, in the row
-        }}
-        size="xSmall"
-        variant="tertiary"
-      >
-        <span className="text-lg font-normal text-neutral-500 transition duration-300 hover:text-neutral-950">
-          ···
-        </span>
-      </ButtonLink>
-    </span>
+    <ButtonLink
+      aria-label={t('stake-page.drawer.unstake-token', {
+        symbol: stake.symbol,
+      })}
+      href={`${pathname}${queryString}`}
+      onClick={function (e) {
+        // prevent full navigation - we want a shallow navigation to open the drawer
+        e.preventDefault()
+        // navigation is done in event delegation, in the row
+      }}
+      size="xSmall"
+    >
+      {t('common.unstake')}
+    </ButtonLink>
   )
 }
 
@@ -100,7 +97,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     ),
     header: () => <Header text={t('action')} />,
     id: 'action',
-    meta: { className: 'justify-start lg:justify-end', width: 75 },
+    meta: { className: 'justify-start lg:justify-end', width: 100 },
   },
 ]
 

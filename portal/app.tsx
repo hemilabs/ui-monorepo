@@ -14,7 +14,6 @@ import { LocaleLayout } from 'app/[locale]/layout'
 import { NotFound } from 'app/[locale]/not-found'
 import { StakeDashboardPage } from 'app/[locale]/stake/dashboard/page'
 import { StakeLayout } from 'app/[locale]/stake/layout'
-import { StakePage } from 'app/[locale]/stake/page'
 import { TunnelLayout } from 'app/[locale]/tunnel/layout'
 import { TunnelPage } from 'app/[locale]/tunnel/page'
 import { TransactionHistoryPage } from 'app/[locale]/tunnel/transaction-history/page'
@@ -79,6 +78,21 @@ const ToHemiStake = function () {
   )
 }
 
+const ToStakeDashboard = function () {
+  const { hash, pathname, search } = useLocation()
+
+  return (
+    <Navigate
+      replace
+      to={{
+        hash,
+        pathname: `${pathname.replace(/\/+$/, '')}/dashboard`,
+        search,
+      }}
+    />
+  )
+}
+
 const ToEcosystem = function () {
   const { hash, pathname, search } = useLocation()
 
@@ -114,7 +128,7 @@ const elements: Record<RouteId, ReactElement> = {
   rootRedirect: <ToPreferredLocale path={landingPage} />,
   stakeDashboardPage: <StakeDashboardPage />,
   stakeLayout: <StakeLayout />,
-  stakePage: <StakePage />,
+  stakePageRedirect: <ToStakeDashboard />,
   stakeRedirect: <ToPreferredLocale path="/stake/dashboard" />,
   stakingDashboardRedirect: <ToPreferredLocale path="/hemi-stake" />,
   transactionHistoryPage: <TransactionHistoryPage />,

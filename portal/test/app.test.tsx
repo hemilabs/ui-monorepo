@@ -54,7 +54,6 @@ vi.mock('app/[locale]/stake/dashboard/page', () =>
   page('StakeDashboardPage', 'stake dashboard page'),
 )
 vi.mock('app/[locale]/stake/layout', () => layout('StakeLayout'))
-vi.mock('app/[locale]/stake/page', () => page('StakePage', 'stake page'))
 vi.mock('app/[locale]/tunnel/layout', () => layout('TunnelLayout'))
 vi.mock('app/[locale]/tunnel/page', () => page('TunnelPage', 'tunnel page'))
 vi.mock('app/[locale]/tunnel/transaction-history/page', () =>
@@ -74,7 +73,6 @@ describe('App', function () {
     ['/en/get-started', 'get started page'],
     ['/en/hemi-earn', 'hemi earn page'],
     ['/en/hemi-earn/vault/0x123', 'vault page'],
-    ['/en/stake', 'stake page'],
     ['/en/stake/dashboard', 'stake dashboard page'],
     ['/en/hemi-stake', 'hemi stake page'],
     ['/en/hemi-stake/analytics', 'hemi stake analytics page'],
@@ -106,6 +104,7 @@ describe('App', function () {
     ['/', '/en/hemi-stake', 'hemi stake page'],
     ['/en', '/en/hemi-stake', 'hemi stake page'],
     ['/stake', '/en/stake/dashboard', 'stake dashboard page'],
+    ['/en/stake', '/en/stake/dashboard', 'stake dashboard page'],
     ['/staking-dashboard', '/en/hemi-stake', 'hemi stake page'],
     ['/en/staking-dashboard', '/en/hemi-stake', 'hemi stake page'],
     ['/en/demos', '/en/ecosystem', 'ecosystem page'],

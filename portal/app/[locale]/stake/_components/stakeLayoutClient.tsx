@@ -1,4 +1,3 @@
-import { StakeTabs } from 'components/stakeTabs'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useStakeTokens } from 'hooks/useStakeTokens'
 import { Suspense } from 'react'
@@ -50,9 +49,6 @@ const StakeLayoutClient = function ({ children }: Props) {
 
   return (
     <>
-      <div className="mb-4 mt-5 px-4 md:hidden">
-        <StakeTabs />
-      </div>
       {children}
       <Suspense>
         <SideDrawer />

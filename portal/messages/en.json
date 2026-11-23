@@ -692,7 +692,6 @@
       "manage-token": "Manage {symbol}",
       "staked": "Staked",
       "subtitle": "Monitor your boost staking positions.",
-      "title": "Dashboard",
       "total-earned-points": "Total Hemi points earned",
       "total-earned-points-description": "Season ended.",
       "total-staked-on-hemi": "Total Staked on Hemi",
@@ -720,9 +719,6 @@
     "protocol": "Protocol",
     "ready-to-earn": "Ready to stake? Use supported assets and start staking.",
     "stake": {
-      "action": "Action",
-      "heading": "Stake for boost",
-      "subheading": "Stake your tokens.",
       "title": "Stake"
     },
     "start-staking-earn-points": "Start staking",
@@ -733,8 +729,7 @@
       "staking-successful": "Staking successful",
       "unstaking": "unstaking",
       "unstaking-successful": "Unstaking successful"
-    },
-    "wallet-balance": "Wallet balance"
+    }
   },
   "token-selector": {
     "all-tokens": "All tokens",

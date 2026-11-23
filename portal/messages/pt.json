@@ -692,7 +692,6 @@
       "manage-token": "Gerenciar {symbol}",
       "staked": "Staked",
       "subtitle": "Visualize suas posições ativas de boost staking.",
-      "title": "Painel",
       "total-earned-points": "Total de pontos Hemi ganhos",
       "total-earned-points-description": "Temporada encerrada.",
       "total-staked-on-hemi": "Total em stake em Hemi",
@@ -720,9 +719,6 @@
     "protocol": "Protocolo",
     "ready-to-earn": "Pronto para fazer stake? Utilize ativos disponíveis para começar a fazer stake.",
     "stake": {
-      "action": "Ação",
-      "heading": "Stake for boost",
-      "subheading": "Faça stake dos seus tokens.",
       "title": "Stake"
     },
     "start-staking-earn-points": "Comece a fazer stake",
@@ -733,8 +729,7 @@
       "staking-successful": "Stake bem-sucedido",
       "unstaking": "desbloqueio",
       "unstaking-successful": "Desbloqueio bem-sucedido"
-    },
-    "wallet-balance": "Saldo da carteira"
+    }
   },
   "token-selector": {
     "all-tokens": "Todos os tokens",

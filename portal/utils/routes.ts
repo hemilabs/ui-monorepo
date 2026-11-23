@@ -51,7 +51,7 @@ export const routes = [
       },
       {
         children: [
-          { id: 'stakePage', index: true },
+          { id: 'stakePageRedirect', index: true, redirect: true },
           { id: 'stakeDashboardPage', path: 'dashboard' },
         ],
         id: 'stakeLayout',

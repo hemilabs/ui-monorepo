@@ -35,11 +35,11 @@ export const RewardAmount = ({ reward, token }: RewardAmountProps) =>
 export function RewardsDisplay({ tokenId }: Props) {
   const t = useTranslations('hemi-stake.table')
   const { hasError, isPending: areTokensPending, tokens } = useRewardTokens()
-  const { isError, isPending, rewards } = useClaimableRewards(tokenId)
+  const { isLoadingError, isPending, rewards } = useClaimableRewards(tokenId)
 
   const claimable = rewards.filter(({ amount }) => amount > BigInt(0))
 
-  if (hasError || isError) {
+  if (hasError || isLoadingError) {
     return <span className="text-sm text-neutral-950">-</span>
   }
 

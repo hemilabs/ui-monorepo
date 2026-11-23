@@ -42,7 +42,7 @@ const loadStakeDashboardPage = () =>
   }))
 
 const StakeLayout = lazyWithFallback(function () {
-  loadStakeDashboardPage()
+  loadStakeDashboardPage().catch(() => undefined)
   return import('app/[locale]/stake/layout').then(mod => ({
     default: mod.StakeLayout,
   }))

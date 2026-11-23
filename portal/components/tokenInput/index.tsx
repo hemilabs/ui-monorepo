@@ -5,12 +5,10 @@ import { Token } from 'types/token'
 import { isInputError, parseAmountInput } from './utils'
 
 type Props<T extends Token> = {
-  // Rendered at the right of the fiat row, and replaced by `errorMessage`
-  // when there is one. Holds the balance through `TokenInputBalance`.
   bottomRight?: ReactNode
   disabled?: boolean
+  errorId?: string
   errorKey: string | undefined
-  errorMessage?: string
   // Overrides the default fiat preview (input × token price). Use when the
   // input unit isn't directly priced and the caller has a pre-converted
   // amount in a priced token (e.g. withdraw input is in svetBTC shares,
@@ -90,8 +88,8 @@ const getTextColor = function (value: string, errorKey: string | undefined) {
 export const TokenInput = function <T extends Token>({
   bottomRight,
   disabled = false,
+  errorId,
   errorKey,
-  errorMessage,
   fiatBalance,
   fiatBalanceComponent,
   footer,
@@ -103,24 +101,27 @@ export const TokenInput = function <T extends Token>({
   tokenSelector,
   value,
 }: Props<T>) {
-  const errorId = useId()
   const amount = parseAmountInput(value, token)
+  const inputId = useId()
   return (
     <div className="flex min-h-31 flex-col justify-between rounded-lg border border-solid border-transparent bg-neutral-50 p-4 font-medium text-neutral-500 hover:shadow-bs">
       <div className="flex items-center justify-between gap-x-2">
-        <span className="block text-sm">{label}</span>
+        <label className="block text-sm" htmlFor={inputId}>
+          {label}
+        </label>
         {headerAction}
       </div>
       <div className="flex items-center justify-between gap-x-2 text-sm">
         <div className="min-w-0 flex-1">
           <input
-            aria-describedby={errorMessage ? errorId : undefined}
+            aria-describedby={errorId}
             aria-invalid={showsInputError(value, errorKey)}
             className={`w-full bg-transparent text-4xl ${getTextColor(
               value,
               errorKey,
             )} outline-none`}
             disabled={disabled}
+            id={inputId}
             onChange={e => onChange(e.target.value)}
             type="text"
             value={value}
@@ -128,7 +129,7 @@ export const TokenInput = function <T extends Token>({
         </div>
         <div className="shrink-0">{tokenSelector}</div>
       </div>
-      {(showFiatBalance || bottomRight || errorMessage) && (
+      {(showFiatBalance || bottomRight) && (
         <div className="flex items-center gap-x-2 text-sm">
           {showFiatBalance && (
             <div className="flex items-center text-neutral-500">
@@ -141,12 +142,7 @@ export const TokenInput = function <T extends Token>({
               />
             </div>
           )}
-          <div className="ml-auto">
-            <span aria-live="polite" className="text-rose-500" id={errorId}>
-              {errorMessage}
-            </span>
-            {!errorMessage && bottomRight}
-          </div>
+          <div className="ml-auto">{bottomRight}</div>
         </div>
       )}
       {footer}

@@ -32,7 +32,7 @@ const CallToAction = function ({ stake }: ActionProps) {
   const t = useTranslations('stake-page')
 
   const queryString = queryStringObjectToString({
-    mode: 'manage',
+    drawerMode: 'manage',
     tokenAddress: stake.address,
   })
 

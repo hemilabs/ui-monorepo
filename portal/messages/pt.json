@@ -10,7 +10,6 @@
     "approve-and-deposit": "Aprovar e Depositar",
     "approve-and-withdraw": "Aprovar e Sacar",
     "approving": "A aprovar...",
-    "approving-token": "A aprovar {symbol}",
     "apy": "TEA",
     "balance": "Saldo",
     "cancel": "Cancelar",
@@ -42,9 +41,7 @@
     "network-fees": "Taxas de rede",
     "network-gas-fee": "Taxa de gás da {network}",
     "only-live-on-mainnet": "Disponível apenas na Mainnet",
-    "open": "Abrir",
     "powered-by": "Com tecnologia da <company></company>",
-    "stake": "Stake",
     "success": "Sucesso",
     "switch-to-mainnet": "Mudar para Mainnet",
     "token-price": "Preço de {symbol}",
@@ -698,23 +695,13 @@
       "your-stake": "O seu Stake"
     },
     "drawer": {
-      "approve-and-stake": "Aprovar e Fazer Stake",
-      "description-manage-stake": "Aumente o seu stake ou levante a qualquer momento— tem controle total!",
+      "description-manage-stake": "Levante os seus tokens em stake a qualquer momento.",
       "manage-your-stake": "Gerir o seu stake",
-      "stake-and-earn-rewards": "Faça stake de {symbol} para aumentar a sua participação.",
-      "stake-token": "Faça stake de {symbol}",
-      "staking": "A fazer stake...",
-      "strategy-details": {
-        "heading": "Detalhes da Estratégia",
-        "tvl": "TVL (no Hemi)",
-        "website": "Website"
-      },
       "unstake-eth-as-weth-heading": "ETH desbloqueado será recebido como WETH",
       "unstake-eth-as-weth-subheading": "Quando fazer stake com ETH, este é automaticamente convertido em WETH. Ao desbloquear, receberá WETH, que pode converter novamente em ETH, se desejar.",
       "unstake-token": "Desbloquear {symbol}",
       "unstaking": "A desbloquear...",
-      "unwrap": "Desembrulhar",
-      "you-can-unstake-anytime": "Pode desbloquear a qualquer momento."
+      "unwrap": "Desembrulhar"
     },
     "protocol": "Protocolo",
     "ready-to-earn": "Pronto para fazer stake? Utilize ativos disponíveis para começar a fazer stake.",
@@ -723,10 +710,7 @@
     },
     "start-staking-earn-points": "Comece a fazer stake",
     "toast": {
-      "go-boost-staking": "Ir para o Boost staking",
       "here-your-stake-tx": "Aqui está a sua transação de {type}:",
-      "staking": "stake",
-      "staking-successful": "Stake bem-sucedido",
       "unstaking": "desbloqueio",
       "unstaking-successful": "Desbloqueio bem-sucedido"
     }

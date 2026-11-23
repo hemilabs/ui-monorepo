@@ -1,13 +1,11 @@
 import hemilabsTokenList from '@hemilabs/token-list'
 import { validateInput } from 'components/tokenInput/utils'
-import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import { stakedBalance, unstakeToken } from 'hemi-viem-stake-actions/actions'
 import type { HemiWalletClient } from 'hooks/useHemiClient'
 import { NetworkType } from 'hooks/useNetworkType'
 import { EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
-import type { Address, Hash, PublicClient, TransactionReceipt } from 'viem'
-import { allowance, approve, balanceOf } from 'viem-erc20/actions'
+import type { Address, Hash, PublicClient } from 'viem'
 
 import { findChainById } from './chain'
 import { parseTokenUnits } from './token'
@@ -23,7 +21,7 @@ type CanSubmit = Omit<Parameters<typeof validateInput>[0], 'token'> & {
 /**
  * Determines whether a staking operation can be submitted based on input validation
  * and user balance. This function only validates the input amount, balance, and token constraints.
- * Network chain validation is handled separately in validateStakeOperation and validateUnstakeOperation.
+ * Network chain validation is handled separately in validateUnstakeOperation.
  *
  * @param params - The parameters required to check if submission is allowed.
  * @param params.amountInput - The input amount of tokens for the operation (as a string).
@@ -59,46 +57,6 @@ export const canSubmit = function ({
   return { canSubmit: true, error: undefined, errorKey: undefined }
 }
 
-const validateStakeOperation = async function ({
-  amountInput,
-  forAccount,
-  hemiPublicClient,
-  t,
-  token,
-}: {
-  forAccount: Address
-  hemiPublicClient: PublicClient
-} & Pick<CanSubmit, 'amountInput' | 't' | 'token'>) {
-  if (hemiPublicClient.chain?.id !== token.chainId) {
-    throw new Error(
-      t('common.connect-to-network', {
-        network: findChainById(token.chainId)!.name,
-      }),
-    )
-  }
-
-  const balance = isNativeToken(token)
-    ? await hemiPublicClient.getBalance({
-        address: forAccount,
-      })
-    : await balanceOf(hemiPublicClient, {
-        account: forAccount,
-        // @ts-expect-error token is not native, so token.address is address
-        address: token.address,
-      })
-
-  const { error } = canSubmit({
-    amountInput,
-    balance,
-    operation: 'stake',
-    t,
-    token,
-  })
-  if (error) {
-    throw new Error(error)
-  }
-}
-
 /**
  * Retrieves the appropriate token address based on whether the token is native or ERC-20.
  * If the token is native, it fetches the WETH address from the provided token list.
@@ -119,164 +77,6 @@ function getTokenAddress(token: EvmToken) {
     throw new Error('WETH token not found')
   }
   return wethToken.address as Address
-}
-
-type StakeEvents = Partial<{
-  onStake: () => void
-  onStakeConfirmed: () => void
-  onStakeFailed: () => void
-  onStakeTokenApprovalFailed: () => void
-  onStakeTokenApproved: () => void
-  onTokenApprove: () => void
-  onUserRejectedStake: () => void
-  onUserRejectedTokenApproval: () => void
-  onUserSignedStake: (hash: Hash) => void
-  onUserSignedTokenApproval: (hash: Hash) => void
-}>
-
-/**
- * Stakes an amount of a token in Hemi.
- *
- * Handles both native and ERC-20 tokens. For ERC-20 tokens, checks allowance and requests approval if needed.
- * Invokes the appropriate callbacks at each stage of the staking process, including approval, signing, confirmation, and failure.
- *
- * @param params - All the parameters needed to determine if a user can stake a token.
- * @param params.amountInput - The input amount of tokens for the operation (as a string).
- * @param params.forAccount - The address of the user that will stake.
- * @param params.hemiPublicClient - Hemi public client for read-only blockchain calls.
- * @param params.hemiWalletClient - Hemi Wallet client for signing transactions.
- * @param params.t - Translation function for localization and error messages.
- * @param params.token - The token to stake.
- * @param params.onStake - Optional callback to run prior to prompting the user to sign a Stake transaction.
- * @param params.onStakeConfirmed - Optional callback for the Stake transaction confirmation.
- * @param params.onStakeFailed - Optional callback for the Stake transaction failure.
- * @param params.onStakeTokenApprovalFailed - Optional callback for the Token approval transaction failure.
- * @param params.onStakeTokenApproved - Optional callback after the token is approved.
- * @param params.onTokenApprove - Optional callback to run prior to prompting the user to sign the Token approval transaction.
- * @param params.onUserRejectedStake - Optional callback for the user rejecting to sign the Stake transaction.
- * @param params.onUserRejectedTokenApproval - Optional callback for the user rejecting to sign the Token approval transaction.
- * @param params.onUserSignedStake - Optional callback for the user signing the Stake transaction (receives the transaction hash).
- * @param params.onUserSignedTokenApproval - Optional callback for the user signing the Token approval transaction (receives the transaction hash).
- * @returns A promise that resolves when the staking process is complete, or returns early if the user rejects or a failure occurs.
- */
-export const stake = async function ({
-  amountInput,
-  forAccount,
-  hemiPublicClient,
-  hemiWalletClient,
-  onStake,
-  onStakeConfirmed,
-  onStakeFailed,
-  onStakeTokenApprovalFailed,
-  onStakeTokenApproved,
-  onTokenApprove,
-  onUserRejectedStake,
-  onUserRejectedTokenApproval,
-  onUserSignedStake,
-  onUserSignedTokenApproval,
-  t,
-  token,
-}: {
-  forAccount: Address
-  hemiPublicClient: PublicClient
-  hemiWalletClient: HemiWalletClient
-} & Pick<CanSubmit, 'amountInput' | 't' | 'token'> &
-  StakeEvents) {
-  if (!hemiWalletClient) {
-    throw new Error('Hemi wallet client not initialized')
-  }
-
-  await validateStakeOperation({
-    amountInput,
-    forAccount,
-    hemiPublicClient,
-    t,
-    token,
-  })
-
-  const amount = parseTokenUnits(amountInput, token)
-
-  let stakePromise: Promise<Hash> | undefined
-
-  if (isNativeToken(token)) {
-    onStake?.()
-    stakePromise = hemiWalletClient.stakeETHToken({
-      amount,
-      forAccount,
-    })
-  } else {
-    const spender = stakeManagerAddresses[token.chainId]
-    const tokenAddress = token.address as Address
-    const tokenAllowance = await allowance(hemiPublicClient, {
-      address: tokenAddress,
-      owner: forAccount,
-      spender,
-    })
-
-    if (tokenAllowance < amount) {
-      // first, we need to approve the token to be spent by the stake manager
-      onTokenApprove?.()
-      const approveTxHash = await approve(hemiWalletClient, {
-        address: tokenAddress,
-        amount,
-        spender: stakeManagerAddresses[token.chainId],
-      }).catch(onUserRejectedTokenApproval)
-
-      if (!approveTxHash) {
-        return
-      }
-      // up to this point, the user has accepted the approval
-      onUserSignedTokenApproval?.(approveTxHash)
-
-      const approvalReceipt = await hemiPublicClient
-        .waitForTransactionReceipt({
-          hash: approveTxHash,
-        })
-        .catch(onStakeTokenApprovalFailed)
-
-      if (!approvalReceipt) {
-        return
-      }
-
-      const map: Record<TransactionReceipt['status'], () => void> = {
-        reverted: () => onStakeTokenApprovalFailed?.(),
-        success: () => onStakeTokenApproved?.(),
-      }
-
-      map[approvalReceipt.status]()
-    }
-    onStake?.()
-    stakePromise = hemiWalletClient.stakeERC20Token({
-      amount,
-      forAccount,
-      tokenAddress,
-    })
-  }
-
-  const stakeTransactionHash = await stakePromise.catch(onUserRejectedStake)
-
-  if (!stakeTransactionHash) {
-    return
-  }
-  // up to this point, the user has signed the Transaction
-  onUserSignedStake?.(stakeTransactionHash)
-
-  const receipt = await hemiPublicClient
-    .waitForTransactionReceipt({
-      hash: stakeTransactionHash,
-    })
-    .catch(onStakeFailed)
-  // if receipt is null, it's already handled on the .catch() above
-  if (!receipt) {
-    return
-  }
-
-  const map: Record<TransactionReceipt['status'], () => void> = {
-    reverted: () => onStakeFailed?.(),
-    success: () => onStakeConfirmed?.(),
-  }
-
-  map[receipt.status]()
 }
 
 const validateUnstakeOperation = async function ({

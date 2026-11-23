@@ -29,8 +29,6 @@ const SideDrawer = function () {
   return (
     <ManageStake
       closeDrawer={() => setDrawerQueryString(null, null)}
-      initialOperation={drawerMode === 'manage' ? 'unstake' : 'stake'}
-      mode={drawerMode}
       token={token}
     />
   )

@@ -1,8 +1,7 @@
-import { NotFound } from 'app/[locale]/not-found'
-import { useNetworkType } from 'hooks/useNetworkType'
+import { useDocumentTitle } from 'hooks/useDocumentTitle'
 import { useStakeTokens } from 'hooks/useStakeTokens'
 import { Suspense } from 'react'
-import { isStakeEnabledOnTestnet } from 'utils/stake'
+import { useTranslations } from 'use-intl'
 
 import {
   isDrawerMode,
@@ -39,11 +38,9 @@ type Props = {
 }
 
 const StakeLayoutClient = function ({ children }: Props) {
-  const [networkType] = useNetworkType()
+  const t = useTranslations()
 
-  if (!isStakeEnabledOnTestnet(networkType)) {
-    return <NotFound />
-  }
+  useDocumentTitle(`${t('navbar.boost-staking')} | ${t('metadata.title')}`)
 
   return (
     <>

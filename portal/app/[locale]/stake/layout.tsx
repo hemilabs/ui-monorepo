@@ -1,13 +1,17 @@
-import { useDocumentTitle } from 'hooks/useDocumentTitle'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { Outlet } from 'react-router'
-import { useTranslations } from 'use-intl'
+import { isStakeEnabledOnTestnet } from 'utils/stake'
+
+import { NotFound } from '../not-found'
 
 import StakeLayoutClient from './_components/stakeLayoutClient'
 
 export const StakeLayout = function () {
-  const t = useTranslations()
+  const [networkType] = useNetworkType()
 
-  useDocumentTitle(`${t('navbar.boost-staking')} | ${t('metadata.title')}`)
+  if (!isStakeEnabledOnTestnet(networkType)) {
+    return <NotFound />
+  }
 
   return (
     <StakeLayoutClient>

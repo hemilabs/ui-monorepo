@@ -8,7 +8,7 @@ const title = 'Demos'
 const getHeading = (screen: Awaited<ReturnType<typeof render>>) =>
   screen.getByRole('heading', { exact: true, level: 2, name: title })
 
-const getSiblingCount = (screen: Awaited<ReturnType<typeof render>>) =>
+const getChildCount = (screen: Awaited<ReturnType<typeof render>>) =>
   getHeading(screen).element().parentElement?.childElementCount
 
 describe('PageTitle', function () {
@@ -30,12 +30,12 @@ describe('PageTitle', function () {
     await screen.rerender(<PageTitle title={title} />)
 
     await expect.element(screen.getByText(subtitle)).not.toBeInTheDocument()
-    expect(getSiblingCount(screen)).toBe(1)
+    expect(getChildCount(screen)).toBe(1)
   })
 
   it('renders no subtitle when it is an empty string', async function () {
     const screen = await render(<PageTitle subtitle="" title={title} />)
 
-    expect(getSiblingCount(screen)).toBe(1)
+    expect(getChildCount(screen)).toBe(1)
   })
 })

@@ -71,10 +71,10 @@ export const FormContent = function ({
 }
 
 type StakingDashboardFormProps = {
+  belowForm?: ReactNode
   bottomSection?: ReactNode
   formContent: ReactNode
   onSubmit: VoidFunction
-  belowForm?: ReactNode
   submitButton?: ReactNode
 }
 

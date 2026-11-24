@@ -17,22 +17,20 @@ type State = {
 
 // See https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary
 export class ErrorBoundary extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props)
-    this.state = { hasError: false }
-  }
-
   componentDidCatch(error: Error) {
     // Capture the error with Sentry
     Sentry.captureException(error)
+  }
+
+  constructor(props: Props) {
+    super(props)
+    this.state = { hasError: false }
   }
 
   static getDerivedStateFromError() {
     // Update state so the next render will show the fallback UI.
     return { hasError: true }
   }
-
-  reset = () => this.setState({ hasError: false })
 
   render() {
     if (!this.state.hasError) {
@@ -46,4 +44,6 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
     return fallback ?? <GenericError />
   }
+
+  reset = () => this.setState({ hasError: false })
 }

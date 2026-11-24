@@ -165,8 +165,8 @@ export const encodeIncreaseUnlockTime = ({
   lockDurationInSeconds,
   tokenId,
 }: {
-  tokenId: bigint
   lockDurationInSeconds: bigint
+  tokenId: bigint
 }) =>
   encodeFunctionData({
     abi: veHemiAbi,

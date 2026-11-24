@@ -12,15 +12,13 @@ import { HemiStakeLayout } from 'app/[locale]/hemi-stake/layout'
 import { HemiStakePage } from 'app/[locale]/hemi-stake/page'
 import { LocaleLayout } from 'app/[locale]/layout'
 import { NotFound } from 'app/[locale]/not-found'
-import { StakeDashboardPage } from 'app/[locale]/stake/dashboard/page'
-import { StakeLayout } from 'app/[locale]/stake/layout'
-import { StakePage } from 'app/[locale]/stake/page'
 import { TunnelLayout } from 'app/[locale]/tunnel/layout'
 import { TunnelPage } from 'app/[locale]/tunnel/page'
 import { TransactionHistoryPage } from 'app/[locale]/tunnel/transaction-history/page'
 import { featureFlags } from 'app/featureFlags'
 import { UntranslatedError500 } from 'components/error500'
 import { ErrorBoundary } from 'components/errorBoundary'
+import { lazyWithFallback } from 'components/lazyWithFallback'
 import { preferredLocale } from 'i18n/routing'
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v8'
 import { type ReactElement } from 'react'
@@ -37,6 +35,20 @@ import { type RouteDefinition, type RouteId, routes } from 'utils/routes'
 // Without this the route tree never reaches Sentry, and every transaction is
 // named after the raw pathname instead of the pattern it matched.
 const SentryRoutes = Sentry.wrapReactRouterRouting(Routes)
+
+const loadStakeDashboardPage = () =>
+  import('app/[locale]/stake/dashboard/page').then(mod => ({
+    default: mod.StakeDashboardPage,
+  }))
+
+const StakeLayout = lazyWithFallback(function () {
+  loadStakeDashboardPage().catch(() => undefined)
+  return import('app/[locale]/stake/layout').then(mod => ({
+    default: mod.StakeLayout,
+  }))
+})
+
+const StakeDashboardPage = lazyWithFallback(loadStakeDashboardPage)
 
 const ToPreferredLocale = function ({ path }: { path: string }) {
   const { hash, search } = useLocation()
@@ -79,6 +91,21 @@ const ToHemiStake = function () {
   )
 }
 
+const ToStakeDashboard = function () {
+  const { hash, pathname, search } = useLocation()
+
+  return (
+    <Navigate
+      replace
+      to={{
+        hash,
+        pathname: `${pathname.replace(/\/+$/, '')}/dashboard`,
+        search,
+      }}
+    />
+  )
+}
+
 const ToEcosystem = function () {
   const { hash, pathname, search } = useLocation()
 
@@ -114,7 +141,7 @@ const elements: Record<RouteId, ReactElement> = {
   rootRedirect: <ToPreferredLocale path={landingPage} />,
   stakeDashboardPage: <StakeDashboardPage />,
   stakeLayout: <StakeLayout />,
-  stakePage: <StakePage />,
+  stakePageRedirect: <ToStakeDashboard />,
   stakeRedirect: <ToPreferredLocale path="/stake/dashboard" />,
   stakingDashboardRedirect: <ToPreferredLocale path="/hemi-stake" />,
   transactionHistoryPage: <TransactionHistoryPage />,

@@ -1,17 +1,8 @@
 import Skeleton from 'react-loading-skeleton'
 
-const heights = {
-  default: 'h-[62px]',
-  withCallToAction: 'h-24.5',
-} as const
-
-type Props = {
-  variant?: keyof typeof heights
-}
-
-export const ToastLoader = ({ variant = 'default' }: Props) => (
+export const ToastLoader = () => (
   <Skeleton
-    className={`w-full rounded-lg md:w-96 ${heights[variant]}`}
+    className="h-[62px] w-full rounded-lg md:w-96"
     containerClassName="toast-position"
   />
 )

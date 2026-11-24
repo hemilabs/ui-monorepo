@@ -105,10 +105,10 @@ export const FormContent = function ({
 }
 
 type TunnelFormProps = {
+  belowForm?: React.ReactNode
   bottomSection?: ReactNode
   formContent: ReactNode
   onSubmit: VoidFunction | undefined
-  belowForm?: React.ReactNode
   submitButton?: ReactNode
 }
 

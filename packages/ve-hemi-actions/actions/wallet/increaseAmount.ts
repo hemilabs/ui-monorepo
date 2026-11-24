@@ -182,8 +182,8 @@ export const encodeIncreaseAmount = ({
   amount,
   tokenId,
 }: {
-  tokenId: bigint
   amount: bigint
+  tokenId: bigint
 }) =>
   encodeFunctionData({
     abi: veHemiAbi,

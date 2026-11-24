@@ -8,10 +8,10 @@ export const IconContainer = ({
   size = 'size-7 md:size-5',
 }: {
   children: ReactNode
-  selected?: boolean
-  size?: string
-  selectedClassName?: string
   hoverClassName?: string
+  selected?: boolean
+  selectedClassName?: string
+  size?: string
 }) => (
   <div
     className={`flex ${size} items-center justify-center rounded-md transition-colors duration-300 ${

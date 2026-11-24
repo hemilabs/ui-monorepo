@@ -3,10 +3,10 @@ import { getNewColumnOrder, getSafeData } from 'components/table/_utils'
 import { describe, expect, it } from 'vitest'
 
 type TestData = {
+  amount: number
   id: string
   name: string
   status: string
-  amount: number
 }
 
 describe('getNewColumnOrder', function () {

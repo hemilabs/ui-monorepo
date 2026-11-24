@@ -60,12 +60,12 @@ export type IncreaseUnlockTimeEvents = CommonEvents & {
 }
 
 export type WithdrawEvents = CommonEvents & {
+  'pre-withdraw': []
+  'user-signed-withdraw': [Hash]
+  'user-signing-withdraw-error': [Error]
   'withdraw-failed': [Error]
   'withdraw-failed-validation': [string]
   'withdraw-settled': []
   'withdraw-transaction-reverted': [TransactionReceipt]
   'withdraw-transaction-succeeded': [TransactionReceipt]
-  'pre-withdraw': []
-  'user-signed-withdraw': [Hash]
-  'user-signing-withdraw-error': [Error]
 }

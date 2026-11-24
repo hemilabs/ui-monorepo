@@ -40,8 +40,8 @@ function WatchBitcoinWithdrawal({
 
       const saveUpdates = function (
         event: MessageEvent<{
-          updates: Partial<ToBtcWithdrawOperation>
           type: string
+          updates: Partial<ToBtcWithdrawOperation>
         }>,
       ) {
         // This is needed because this component is rendered per-withdrawal, so each component will receive the posted message

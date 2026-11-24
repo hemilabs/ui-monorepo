@@ -32,8 +32,8 @@ type Props = {
   onChange: (value: string) => void
   onSubmit: VoidFunction
   operationRunning: StakingOperationRunning
-  validInput: boolean
   validationError: string | undefined
+  validInput: boolean
 }
 
 export function Preview({

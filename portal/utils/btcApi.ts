@@ -16,8 +16,8 @@ type TransactionStatus = {
 }
 
 type Vout = {
-  scriptpubkeyAsm: string
   scriptpubkeyAddress: string
+  scriptpubkeyAsm: string
   scriptpubkeyType: string
   value: number
 }
@@ -51,20 +51,20 @@ export type Utxo = Omit<UnparsedUtxo, 'txid'> & {
 }
 
 export type TransactionReceipt = {
-  txId: BtcTransaction
   status: {
     blockHeight?: number
     blockTime?: number
     confirmed: boolean
   }
+  txId: BtcTransaction
   vout: Vout[]
 }
 
 type Fees = {
+  economyFee: number
   fastestFee: number
   halfHourFee: number
   hourFee: number
-  economyFee: number
   minimumFee: number
 }
 

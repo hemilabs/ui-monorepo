@@ -34,8 +34,8 @@ const wrapperHeights: Record<Size, string> = {
 
 type InputWrapperProps = {
   children: ReactNode
-  showCloseIcon: boolean
   onClear?: VoidFunction
+  showCloseIcon: boolean
   size?: Size
 }
 

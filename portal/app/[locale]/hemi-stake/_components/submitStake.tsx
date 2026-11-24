@@ -11,12 +11,12 @@ import { useTranslations } from 'use-intl'
 type Props = {
   buttonSize?: ButtonSize
   canStake: boolean
-  token: StakingDashboardToken
   isAllowanceError: boolean
   isAllowanceLoading: boolean
   isRunningOperation: boolean
   needsApproval: boolean
   operationRunning: StakingOperationRunning
+  token: StakingDashboardToken
   validationError: string | undefined
 }
 export const SubmitStake = function ({

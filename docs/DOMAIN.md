@@ -109,7 +109,7 @@ The native tunnel is not the only route in and out of Hemi. For EVM ↔ EVM tran
 
 ## Staking
 
-The nav lists two unrelated staking products, sharing a word and nothing else: different contracts, different tokens, different purpose. Only the first is described here; **boost staking**, where allowlisted tokens are parked in a staking contract, is not documented yet.
+The Portal has two unrelated staking products, sharing a word and nothing else: different contracts, different tokens, different purpose. Only the first is in the nav and described here; **boost staking**, where allowlisted tokens are parked in a staking contract, is reachable only by URL (`/stake/dashboard`) so existing holders can still withdraw, and is not documented yet.
 
 ### Hemi Stake (veHEMI)
 

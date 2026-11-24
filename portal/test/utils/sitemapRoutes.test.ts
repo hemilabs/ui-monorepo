@@ -63,7 +63,6 @@ describe('utils/sitemapRoutes', function () {
       '/get-started',
       '/hemi-stake',
       '/hemi-stake/analytics',
-      '/stake',
       '/stake/dashboard',
       '/tunnel',
       '/tunnel/transaction-history',

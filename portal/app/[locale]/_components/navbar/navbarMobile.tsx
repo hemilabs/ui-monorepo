@@ -4,7 +4,6 @@ import { ComponentProps } from 'react'
 import { useTranslations } from 'use-intl'
 
 import { BitcoinKitLink } from './_components/bitcoinKitLink'
-import { BoostStaking } from './_components/boostStaking'
 import { Dex } from './_components/dex'
 import { DocsLink } from './_components/docsLink'
 import { EcosystemLink } from './_components/ecosystemLink'
@@ -76,9 +75,6 @@ export const NavbarMobile = function () {
               <Dex />
             </SmallBox>
           </MainnetOnly>
-          <SmallBox>
-            <BoostStaking />
-          </SmallBox>
           <SmallBox>
             <EcosystemLink />
           </SmallBox>

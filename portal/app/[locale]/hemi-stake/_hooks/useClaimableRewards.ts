@@ -21,7 +21,7 @@ const toSourceClaim = (windows: ClaimWindow) => ({
  * Everything one position can claim right now, and the transactions that would claim it.
  */
 export const useClaimableRewards = function (tokenId: bigint) {
-  const { data, fetchStatus, isError, isPending, status } =
+  const { data, fetchStatus, isLoadingError, isPending, status } =
     useEpochClaimableRewards(tokenId)
 
   const isUnavailable = isDataUnavailable({ fetchStatus, status })
@@ -31,12 +31,12 @@ export const useClaimableRewards = function (tokenId: bigint) {
       const sources = [toSourceClaim(data ?? [])]
 
       return {
-        isError,
+        isLoadingError,
         isPending: isPending && !isUnavailable,
         rewards: mergeClaimableRewards(sources.map(source => source.rewards)),
         transactions: sources.flatMap(source => source.transactions),
       }
     },
-    [data, isError, isPending, isUnavailable],
+    [data, isLoadingError, isPending, isUnavailable],
   )
 }

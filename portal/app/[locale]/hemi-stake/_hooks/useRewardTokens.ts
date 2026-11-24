@@ -26,8 +26,10 @@ export const useRewardTokens = function () {
   })
 
   const { hasError, isPending } = getRewardTokensStatus({
-    addressesStatus,
-    tokenStatuses: tokenQueries.map(query => query.status),
+    addressesStatus: systemState === undefined ? addressesStatus : 'success',
+    tokenStatuses: tokenQueries.map(query =>
+      query.data === undefined ? query.status : 'success',
+    ),
   })
 
   const tokens = useMemo(

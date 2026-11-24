@@ -26,9 +26,9 @@ const VaultsSection = lazyWithFallback(
 )
 
 const TokensGate = function ({ children }: { children: ReactNode }) {
-  const { isError, refetch } = useHemiEarnShares()
+  const { isLoadingError, refetch } = useHemiEarnShares()
   const t = useTranslations('hemi-earn')
-  if (isError)
+  if (isLoadingError)
     return (
       <div className="h-90">
         <TableCard>

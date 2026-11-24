@@ -12,12 +12,10 @@ export const useEarnPositions = function () {
   const { address } = useAccount()
   const queryClient = useQueryClient()
 
-  const { data, isError, isLoading } = useQuery({
+  return useQuery({
     enabled: !!address,
     queryFn: () =>
       fetchEarnPositions({ account: address!, networkType, queryClient }),
     queryKey: [...earnPositionsKeyPrefix, networkType, address],
   })
-
-  return { data: data ?? [], isError, isPending: isLoading }
 }

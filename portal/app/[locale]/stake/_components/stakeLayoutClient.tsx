@@ -1,3 +1,4 @@
+import { NotFound } from 'app/[locale]/not-found'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useStakeTokens } from 'hooks/useStakeTokens'
 import { Suspense } from 'react'
@@ -9,7 +10,6 @@ import {
 } from '../_hooks/useDrawerStakeQueryString'
 
 import { ManageStake } from './manageStake'
-import { StakeDisabledTestnet } from './stakeDisabledTestnet'
 
 const SideDrawer = function () {
   const { drawerMode, setDrawerQueryString, tokenAddress } =
@@ -42,7 +42,7 @@ const StakeLayoutClient = function ({ children }: Props) {
   const [networkType] = useNetworkType()
 
   if (!isStakeEnabledOnTestnet(networkType)) {
-    return <StakeDisabledTestnet />
+    return <NotFound />
   }
 
   return (

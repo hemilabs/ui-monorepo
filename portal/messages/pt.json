@@ -682,7 +682,6 @@
   "stake-page": {
     "action": "Ação",
     "asset": "Ativo",
-    "change-to-mainnet": "Mudar para Mainnet e faça stake",
     "dashboard": {
       "heading": "Boost staking",
       "staked": "Staked",

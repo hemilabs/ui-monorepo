@@ -1,7 +1,7 @@
-import { useNetworkType } from 'hooks/useNetworkType'
+import { useDocumentTitle } from 'hooks/useDocumentTitle'
 import { useStakeTokens } from 'hooks/useStakeTokens'
 import { Suspense } from 'react'
-import { isStakeEnabledOnTestnet } from 'utils/stake'
+import { useTranslations } from 'use-intl'
 
 import {
   isDrawerMode,
@@ -9,7 +9,6 @@ import {
 } from '../_hooks/useDrawerStakeQueryString'
 
 import { ManageStake } from './manageStake'
-import { StakeDisabledTestnet } from './stakeDisabledTestnet'
 
 const SideDrawer = function () {
   const { drawerMode, setDrawerQueryString, tokenAddress } =
@@ -39,11 +38,9 @@ type Props = {
 }
 
 const StakeLayoutClient = function ({ children }: Props) {
-  const [networkType] = useNetworkType()
+  const t = useTranslations()
 
-  if (!isStakeEnabledOnTestnet(networkType)) {
-    return <StakeDisabledTestnet />
-  }
+  useDocumentTitle(`${t('navbar.boost-staking')} | ${t('metadata.title')}`)
 
   return (
     <>

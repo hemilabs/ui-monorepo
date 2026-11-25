@@ -2,6 +2,7 @@ import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { featureFlags } from 'app/featureFlags'
 import { EventEmitter } from 'events'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUmami } from 'hooks/useUmami'
@@ -57,6 +58,10 @@ export const useToggleAutoRelock = function ({
 
   return useMutation({
     mutationFn: async function runToggleAutoRelock() {
+      if (!featureFlags.enableHemiStakeAutoRelock) {
+        throw new Error('Auto-relock is not enabled')
+      }
+
       await ensureConnectedTo(token.chainId)
 
       if (!address) {

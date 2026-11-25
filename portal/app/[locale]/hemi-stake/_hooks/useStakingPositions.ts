@@ -1,4 +1,5 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import { featureFlags } from 'app/featureFlags'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { StakingPosition } from 'types/stakingDashboard'
@@ -31,6 +32,7 @@ export const useStakingPositions = function (
     queryFn: () =>
       fetchStakingPositions({
         address: ownerAddress!,
+        autoRelockSupported: featureFlags.enableHemiStakeAutoRelock,
         chainId: hemi.id,
         hemiClient,
       }),

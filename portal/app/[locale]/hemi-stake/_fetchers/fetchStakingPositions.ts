@@ -7,10 +7,12 @@ import { getLockEnd } from '../_utils/lockEpochs'
 
 export const fetchStakingPositions = async function ({
   address,
+  autoRelockSupported,
   chainId,
   hemiClient,
 }: {
   address: Address
+  autoRelockSupported: boolean
   chainId: Chain['id']
   hemiClient: Client
 }) {
@@ -21,7 +23,7 @@ export const fetchStakingPositions = async function ({
     .map(({ tokenId }) => tokenId)
 
   const statuses =
-    activeTokenIds.length > 0
+    autoRelockSupported && activeTokenIds.length > 0
       ? await getAutoRelockStatus(hemiClient, activeTokenIds)
       : []
 

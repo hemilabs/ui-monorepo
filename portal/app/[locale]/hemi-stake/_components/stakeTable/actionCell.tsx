@@ -1,6 +1,7 @@
 import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { Row } from '@tanstack/react-table'
+import { featureFlags } from 'app/featureFlags'
 import { Tooltip } from 'components/tooltip'
 import { useFormat } from 'hooks/useFormat'
 import { useHemiToken } from 'hooks/useHemiToken'
@@ -80,6 +81,31 @@ const ActionItem = function ({
         )}
       </>
     </Tooltip>
+  )
+}
+
+const AutoRelockActionItem = function ({
+  autoRelock,
+  enabled,
+  onClick,
+}: {
+  autoRelock: boolean
+  enabled: boolean
+  onClick: VoidFunction
+}) {
+  const t = useTranslations('hemi-stake')
+  if (!featureFlags.enableHemiStakeAutoRelock) {
+    return null
+  }
+  return (
+    <ActionItem
+      enabled={enabled}
+      icon={<AutoRelockIcon />}
+      label={t(
+        autoRelock ? 'table.disable-auto-relock' : 'table.enable-auto-relock',
+      )}
+      onClick={onClick}
+    />
   )
 }
 
@@ -283,14 +309,9 @@ export function ActionCell({ row }: Props) {
                     })
               }
             />
-            <ActionItem
+            <AutoRelockActionItem
+              autoRelock={autoRelock}
               enabled={canAutoRelock}
-              icon={<AutoRelockIcon />}
-              label={t(
-                autoRelock
-                  ? 'table.disable-auto-relock'
-                  : 'table.enable-auto-relock',
-              )}
               onClick={handleToggleAutoRelock}
             />
           </div>,

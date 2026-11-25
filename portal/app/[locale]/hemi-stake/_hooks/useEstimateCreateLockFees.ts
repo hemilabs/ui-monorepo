@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { StakingDashboardToken } from 'types/stakingDashboard'
 import { createErc20AllowanceStateOverride } from 'utils/erc20StateOverride'
@@ -23,7 +24,7 @@ export const useEstimateCreateLockFees = function ({
 
   const data = encodeCreateLock({
     amount,
-    autoRelock,
+    autoRelock: featureFlags.enableHemiStakeAutoRelock && autoRelock,
     lockDurationInSeconds,
   })
 

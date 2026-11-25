@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import { Card } from 'components/card'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
@@ -78,7 +79,11 @@ export const EstimatorInputs = function () {
                   disabled={submission.isRunningOperation}
                   inputDays={inputDays}
                   lockupDays={lockupDays}
-                  updateAutoRelock={updateAutoRelock}
+                  updateAutoRelock={
+                    featureFlags.enableHemiStakeAutoRelock
+                      ? updateAutoRelock
+                      : undefined
+                  }
                   updateInputDays={updateInputDays}
                   updateLockupDays={updateLockupDays}
                 />

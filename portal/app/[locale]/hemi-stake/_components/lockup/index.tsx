@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import { DisplayAmount } from 'components/displayAmount'
 import { InfoIcon } from 'components/icons/infoIcon'
 import { Tooltip } from 'components/tooltip'
@@ -190,7 +191,7 @@ export function Lockup({
           <VotingPowerCaption
             autoRelock={autoRelock}
             expireDate={formatShortDateWithYear(unlockDate)}
-            show={canUsePresets}
+            show={featureFlags.enableHemiStakeAutoRelock && canUsePresets}
             valid={valid}
           />
         </div>

@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import { useMemo, useState } from 'react'
 import { StakingPositionStatus } from 'types/stakingDashboard'
 import { walletIsConnected } from 'utils/wallet'
@@ -33,7 +34,9 @@ export const HemiStakePage = function () {
       if (filter === StakingPositionStatus.WITHDRAWN) {
         return positions?.reverse()
       }
-      return positions && sortPositionsByUnlock(positions)
+      return featureFlags.enableHemiStakeAutoRelock
+        ? positions && sortPositionsByUnlock(positions)
+        : positions
     },
     [data, filter],
   )

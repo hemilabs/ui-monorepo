@@ -26,7 +26,13 @@ const status = (effectiveLockEnd, isAutoRelockEnabled) => ({
 // snapToEpoch(1794337048 + 15778800), pinned so a drift in the derivation fails here
 const derivedEnd = BigInt(1810115848 - (1810115848 % 525960))
 
-const fetch = () => fetchStakingPositions({ address, chainId, hemiClient })
+const fetch = () =>
+  fetchStakingPositions({
+    address,
+    autoRelockSupported: true,
+    chainId,
+    hemiClient,
+  })
 
 describe('fetchStakingPositions', function () {
   it('pairs each status with the position it belongs to', async function () {
@@ -141,5 +147,24 @@ describe('fetchStakingPositions', function () {
     vi.mocked(getLockedPositions).mockRejectedValue(new Error('502'))
 
     await expect(fetch()).rejects.toThrow('502')
+  })
+
+  it('computes the lock end from the subgraph without reading the chain when auto-relock is not supported', async function () {
+    vi.mocked(getLockedPositions).mockResolvedValue([position(10)])
+    vi.mocked(getAutoRelockStatus).mockResolvedValue([status(111, true)])
+
+    const positions = await fetchStakingPositions({
+      address,
+      autoRelockSupported: false,
+      chainId,
+      hemiClient,
+    })
+
+    expect(getAutoRelockStatus).not.toHaveBeenCalled()
+    expect(positions[0]).toMatchObject({
+      autoRelock: false,
+      effectiveLockEnd: derivedEnd,
+      tokenId: BigInt(10),
+    })
   })
 })

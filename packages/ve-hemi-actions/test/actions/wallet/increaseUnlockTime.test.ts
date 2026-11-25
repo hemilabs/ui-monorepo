@@ -26,6 +26,7 @@ vi.mock('../../../actions/public/veHemi', () => ({
 
 const validParameters = {
   account: '0x1234567890123456789012345678901234567890' as const,
+  autoRelockSupported: true,
   lockDurationInSeconds: 30 * 24 * 60 * 60, // 30 days
   tokenId: BigInt(1),
   walletClient: { chain: hemiSepolia },
@@ -502,5 +503,33 @@ describe('increaseUnlockTime', function () {
 
     expect(unexpectedError).toHaveBeenCalledOnce()
     expect(increaseUnlockTimeSettled).toHaveBeenCalledOnce()
+  })
+
+  describe('without auto-relock support', function () {
+    it('should compare the new unlock time against the stored lock end', async function () {
+      vi.mocked(getLockedBalance).mockResolvedValue({
+        amount: BigInt(500),
+        end: BigInt(Math.floor(Date.now() / 1000) + 86400 * 10),
+      })
+      vi.mocked(writeContract).mockResolvedValue(zeroHash)
+      vi.mocked(waitForTransactionReceipt).mockResolvedValue({
+        status: 'success',
+      })
+
+      const { emitter, promise } = increaseUnlockTime({
+        ...validParameters,
+        autoRelockSupported: false,
+        lockDurationInSeconds: 86400 * 30,
+      })
+
+      const increaseUnlockTimeSettled = vi.fn()
+      emitter.on('increase-unlock-time-settled', increaseUnlockTimeSettled)
+
+      await promise
+
+      expect(increaseUnlockTimeSettled).toHaveBeenCalledOnce()
+      expect(writeContract).toHaveBeenCalledOnce()
+      expect(getAutoRelockStatus).not.toHaveBeenCalled()
+    })
   })
 })

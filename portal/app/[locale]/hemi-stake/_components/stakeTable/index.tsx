@@ -1,4 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table'
+import { featureFlags } from 'app/featureFlags'
 import { DataUnavailable } from 'components/dataUnavailable'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { Table } from 'components/table'
@@ -103,11 +104,12 @@ const stakingColumns = ({
   filter,
   ...props
 }: StakingColumnsProps & { filter: StakeTableFilterOptions }) =>
-  allStakingColumns(props).filter(
-    column =>
-      filter !== StakingPositionStatus.WITHDRAWN ||
-      (column.id !== 'auto-relock' && column.id !== 'voting-power'),
-  )
+  allStakingColumns(props).filter(function (column) {
+    if (filter === StakingPositionStatus.WITHDRAWN) {
+      return column.id !== 'auto-relock' && column.id !== 'voting-power'
+    }
+    return featureFlags.enableHemiStakeAutoRelock || column.id !== 'auto-relock'
+  })
 
 type Props = {
   data: StakingPosition[] | undefined

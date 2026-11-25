@@ -11,8 +11,9 @@ import {
 } from 'viem'
 import { setStorageAt } from 'viem/actions'
 
-import { anvilPort, hemiTokenAddress } from './anvil'
+import { anvilPort } from './anvil'
 
+const hemiTokenAddress = '0x99e3dE3817F6081B2568208337ef83295b7f591D'
 const fundedHemiBalance = parseUnits('1000', 18)
 
 const getBalanceSlot = (account: `0x${string}`) =>

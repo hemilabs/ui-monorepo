@@ -12,6 +12,29 @@ const l2ChainId = 743111
 
 describe('context/tunnelHistoryContext/utils', function () {
   describe('mergeContent', function () {
+    it('preserves the object for a non-duplicated operation', function () {
+      const stored = {
+        transactionHash: '0xstored',
+      } as EvmDepositOperation
+      const result = syncContent(
+        {
+          chainId: l1ChainId,
+          chunkIndex: 0,
+          content: [stored],
+          fromBlock: 0,
+          status: 'finished',
+        },
+        {
+          chainId: l1ChainId,
+          chunkIndex: 0,
+          content: [],
+          fromBlock: 0,
+        },
+      )
+
+      expect(result.content[0]).toBe(stored)
+    })
+
     it('sorts operations by timestamp in descending order', function () {
       const oldest = {
         amount: '1',

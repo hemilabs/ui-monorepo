@@ -13,7 +13,7 @@ describe('Table', function () {
       const onRowClick = vi.fn()
       const columns = [
         {
-          accessorKey: 'name',
+          accessorFn: (row: Row | null) => row?.name,
           header: 'Name',
           id: 'name',
         },
@@ -34,7 +34,7 @@ describe('Table', function () {
         throw new Error('Expected a loading skeleton row')
       }
 
-      await skeletonRow.click()
+      skeletonRow.click()
 
       expect(onRowClick).not.toHaveBeenCalled()
     },

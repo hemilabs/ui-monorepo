@@ -10,16 +10,9 @@ const emptyArray: unknown[] = []
  * the empty branch always returns the same module-level reference so consumers
  * don't trip useReactTable's getCoreRowModel memo invalidation.
  */
-export function getSafeData<TData>(
-  data: TData[] | undefined,
-  showSkeleton: boolean,
-  skeletonArray: TData[],
-): TData[] {
+export function getSafeData<TData>(data: TData[] | undefined): TData[] {
   if (data && data.length > 0) {
     return data
-  }
-  if (showSkeleton) {
-    return skeletonArray
   }
   return emptyArray as TData[]
 }

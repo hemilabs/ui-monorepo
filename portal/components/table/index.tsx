@@ -183,7 +183,6 @@ function TableBody<TData>({
             />
             <VirtualRows
               CellComponent={CellComponent}
-              loading={loading}
               onRowClick={onRowClick}
               onRowHover={onRowHover}
               rowClassName={rowClassName}
@@ -273,7 +272,6 @@ function StaticTableBody<TData>({
               />
               <StaticRows
                 CellComponent={CellComponent}
-                loading={loading}
                 onRowClick={onRowClick}
                 onRowHover={onRowHover}
                 rowClassName={rowClassName}
@@ -343,12 +341,10 @@ export function Table<TData>({
     ref: scrollContainerRef,
   })
 
-  const { columnOrder, columnsWithSkeleton, safeData } = useTableData({
+  const { columnOrder, safeData } = useTableData({
     columns,
     data,
-    loading,
     priorityColumnIdsOnSmall,
-    skeletonRows,
     smallBreakpoint,
     width,
   })
@@ -357,7 +353,7 @@ export function Table<TData>({
     // The table does not paginate. Resetting the page index on every new data
     // reference updates state, so an unstable `data` would re-render forever.
     autoResetPageIndex: false,
-    columns: columnsWithSkeleton,
+    columns,
     data: safeData,
     getCoreRowModel: getCoreRowModel(),
     state: { columnOrder },

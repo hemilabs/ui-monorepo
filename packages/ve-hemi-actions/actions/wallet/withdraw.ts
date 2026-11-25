@@ -20,10 +20,12 @@ import {
 
 const canRunWithdraw = async function ({
   account,
+  autoRelockSupported,
   tokenId,
   walletClient,
 }: {
   account: Address
+  autoRelockSupported: boolean
   tokenId: bigint
   walletClient: WalletClient
 }): Promise<{
@@ -47,10 +49,12 @@ const canRunWithdraw = async function ({
   }
 
   try {
-    const [{ amount, end }, owner, [autoRelock]] = await Promise.all([
+    const [{ amount, end }, owner, autoRelockStatus] = await Promise.all([
       getLockedBalance(walletClient, tokenId),
       getOwnerOf(walletClient, tokenId),
-      getAutoRelockStatus(walletClient, [tokenId]),
+      autoRelockSupported
+        ? getAutoRelockStatus(walletClient, [tokenId])
+        : undefined,
     ])
 
     if (owner.toLowerCase() !== account.toLowerCase()) {
@@ -61,7 +65,7 @@ const canRunWithdraw = async function ({
       return { canWithdraw: false, reason: 'no existing lock' }
     }
 
-    if (autoRelock.isAutoRelockEnabled) {
+    if (autoRelockStatus?.[0].isAutoRelockEnabled) {
       return { canWithdraw: false, reason: 'auto-relock is enabled' }
     }
 
@@ -78,10 +82,12 @@ const canRunWithdraw = async function ({
 
 const runWithdraw = ({
   account,
+  autoRelockSupported,
   tokenId,
   walletClient,
 }: {
   account: Address
+  autoRelockSupported: boolean
   tokenId: bigint
   walletClient: WalletClient
 }) =>
@@ -89,6 +95,7 @@ const runWithdraw = ({
     try {
       const { canWithdraw, reason } = await canRunWithdraw({
         account,
+        autoRelockSupported,
         tokenId,
         walletClient,
       }).catch(() => ({

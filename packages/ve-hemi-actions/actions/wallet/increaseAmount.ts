@@ -15,6 +15,7 @@ import type { IncreaseAmountEvents } from '../../types.ts'
 import { unixNowTimestamp, validateIncreaseAmountInputs } from '../../utils.ts'
 import {
   getAutoRelockStatus,
+  getLockedBalance,
   memoizedGetHemiTokenAddress,
 } from '../public/veHemi.ts'
 
@@ -24,12 +25,14 @@ const canIncreaseAmount = async function ({
   account,
   additionalAmount,
   approvalAdditionalAmount,
+  autoRelockSupported,
   tokenId,
   walletClient,
 }: {
   account: Address
   additionalAmount: bigint
   approvalAdditionalAmount?: bigint
+  autoRelockSupported: boolean
   tokenId: bigint
   walletClient: WalletClient
 }): Promise<{
@@ -65,11 +68,11 @@ const canIncreaseAmount = async function ({
       return { canIncrease: false, reason: 'insufficient balance' }
     }
 
-    const [{ effectiveLockEnd }] = await getAutoRelockStatus(walletClient, [
-      tokenId,
-    ])
+    const lockEnd = autoRelockSupported
+      ? (await getAutoRelockStatus(walletClient, [tokenId]))[0].effectiveLockEnd
+      : (await getLockedBalance(walletClient, tokenId)).end
     const now = unixNowTimestamp()
-    if (effectiveLockEnd <= now) {
+    if (lockEnd <= now) {
       return { canIncrease: false, reason: 'lock already expired' }
     }
 
@@ -83,12 +86,14 @@ const runIncreaseAmount = ({
   account,
   additionalAmount,
   approvalAdditionalAmount,
+  autoRelockSupported,
   tokenId,
   walletClient,
 }: {
   account: Address
   additionalAmount: bigint
   approvalAdditionalAmount?: bigint
+  autoRelockSupported: boolean
   tokenId: bigint
   walletClient: WalletClient
 }) =>
@@ -98,6 +103,7 @@ const runIncreaseAmount = ({
         account,
         additionalAmount,
         approvalAdditionalAmount,
+        autoRelockSupported,
         tokenId,
         walletClient,
       }).catch(() => ({

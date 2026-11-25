@@ -2,6 +2,7 @@ import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { featureFlags } from 'app/featureFlags'
 import { EventEmitter } from 'events'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
@@ -88,6 +89,7 @@ export const useIncreaseAmount = function ({
         account: address,
         additionalAmount: amount,
         approvalAdditionalAmount: amount,
+        autoRelockSupported: featureFlags.enableHemiStakeAutoRelock,
         tokenId,
         walletClient: hemiWalletClient!,
       })

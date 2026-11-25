@@ -28,6 +28,7 @@ vi.mock('../../../actions/public/veHemi', () => ({
 
 const validParameters = {
   account: '0x1234567890123456789012345678901234567890' as const,
+  autoRelockSupported: true,
   tokenId: BigInt(1),
   walletClient: { chain: hemiSepolia },
 }
@@ -340,5 +341,29 @@ describe('withdraw', function () {
 
     expect(failed).toHaveBeenCalledExactlyOnceWith('auto-relock is enabled')
     expect(writeContract).not.toHaveBeenCalled()
+  })
+
+  describe('without auto-relock support', function () {
+    it('should withdraw an expired lock without reading the auto-relock status', async function () {
+      vi.mocked(getAutoRelockStatus).mockResolvedValue([
+        { effectiveLockEnd: BigInt(0), isAutoRelockEnabled: true },
+      ])
+      vi.mocked(writeContract).mockResolvedValue(zeroHash)
+      vi.mocked(waitForTransactionReceipt).mockResolvedValue({
+        status: 'success',
+      })
+
+      const { emitter, promise } = withdraw({
+        ...validParameters,
+        autoRelockSupported: false,
+      })
+      const withdrawSettled = vi.fn()
+      emitter.on('withdraw-settled', withdrawSettled)
+      await promise
+
+      expect(withdrawSettled).toHaveBeenCalledOnce()
+      expect(writeContract).toHaveBeenCalledOnce()
+      expect(getAutoRelockStatus).not.toHaveBeenCalled()
+    })
   })
 })

@@ -16,6 +16,8 @@ packages:
 
 blockExoticSubdeps: true
 
+lockfileIncludeTarballUrl: true
+
 minimumReleaseAge: 10080 # 7 days in minutes
 minimumReleaseAgeExclude:
   - '@hemilabs/*'
@@ -25,6 +27,8 @@ minimumReleaseAgeExclude:
   - 'viem-sanctions-oracle' # temporary, drop after 2026-11-13 when 1.0.0 matures
 
 overrides:
+  '@walletconnect/relay-auth@1.1.0>@noble/curves': '1.8.1' # relay-auth pins 1.8.0, published without provenance
+  '@walletconnect/relay-auth@1.1.0>@noble/hashes': '1.8.0' # relay-auth pins 1.7.0, published without provenance
   brace-expansion@5: '5.0.8' # CVE-2026-13149 / CVE-2026-14257 DoS fixes
   postcss: '8.5.14' # Needed as Next pins 8.4.31 exactly
 
@@ -39,3 +43,12 @@ publicHoistPattern:
   - '*eslint*'
 
 saveExact: true
+
+trustPolicy: no-downgrade
+
+trustPolicyExclude:
+  - 'chokidar@4.0.3' # graph-cli pins 4.x; 4.0.2+ lost provenance that 4.0.1 had
+  - 'eslint-config-prettier@8.10.2' # legacy release has no attestation
+  - 'eslint-import-resolver-typescript@3.10.1' # legacy release has no attestation
+  - 'semver@6.3.1' # legacy release has no attestation
+  - 'ua-parser-js@1.0.41' # react-device-detect dependency; 1.x was never attested

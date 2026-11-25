@@ -176,6 +176,7 @@ function TableBody<TData>({
             }}
           >
             <LoadingSkeletonRows
+              CellComponent={CellComponent}
               loading={loading}
               rows={rows}
               skeletonRows={skeletonRows}
@@ -265,6 +266,7 @@ function StaticTableBody<TData>({
           >
             <tbody>
               <LoadingSkeletonRows
+                CellComponent={CellComponent}
                 loading={loading}
                 rows={rows}
                 skeletonRows={skeletonRows}

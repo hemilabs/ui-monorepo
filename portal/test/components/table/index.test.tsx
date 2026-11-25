@@ -1,4 +1,5 @@
 import { Table } from 'components/table'
+import type { ComponentProps } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
 
@@ -11,6 +12,9 @@ describe('Table', function () {
     'does not call onRowClick for a loading skeleton row in %s mode',
     async function (mode) {
       const onRowClick = vi.fn()
+      const CellComponent = (props: ComponentProps<'td'>) => (
+        <td {...props} data-testid="custom-cell" />
+      )
       const columns = [
         {
           accessorFn: (row: Row | null) => row?.name,
@@ -21,13 +25,16 @@ describe('Table', function () {
 
       const screen = await render(
         <Table
+          cellComponent={CellComponent}
           columns={columns}
           data={[]}
           loading
           mode={mode}
           onRowClick={onRowClick}
+          skeletonRows={1}
         />,
       )
+      await expect.element(screen.getByTestId('custom-cell')).toBeVisible()
       const skeletonRow = screen.container.querySelector('tbody tr')
 
       if (!skeletonRow) {

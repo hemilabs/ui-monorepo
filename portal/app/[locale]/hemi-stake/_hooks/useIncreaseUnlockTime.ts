@@ -201,7 +201,9 @@ export const useIncreaseUnlockTime = function ({
       return promise
     },
     onSettled() {
-      queryClient.invalidateQueries({ queryKey: stakingPositionQueryKey })
+      if (featureFlags.enableHemiStakeAutoRelock) {
+        queryClient.invalidateQueries({ queryKey: stakingPositionQueryKey })
+      }
 
       // Do not return the promises here. Doing so will delay the resolution of
       // the mutation, which will cause the UI to be out of sync until balances are re-validated.

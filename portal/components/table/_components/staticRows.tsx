@@ -32,7 +32,11 @@ export function StaticRows<TData>({
         <tr
           className={`${baseRowClassName} ${rowClassName ?? ''}`}
           key={row.id}
-          onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+          onClick={
+            onRowClick && row.original !== null
+              ? () => onRowClick(row.original)
+              : undefined
+          }
           onMouseEnter={onRowHover ? () => onRowHover(row.index) : undefined}
           onMouseLeave={onRowHover ? () => onRowHover(null) : undefined}
         >

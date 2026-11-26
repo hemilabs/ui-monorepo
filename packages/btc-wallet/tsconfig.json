@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "erasableSyntaxOnly": true,
+    "strict": true,
     "types": []
   },
   "extends": "@tsconfig/vite-react/tsconfig.json",

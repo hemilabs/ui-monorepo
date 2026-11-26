@@ -2,7 +2,7 @@ import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { screenBreakpoints } from 'styles'
 
 export type ChartWidths = {
-  breakpoints: ReadonlyArray<[number, number]>
+  breakpoints: readonly [number, number][]
   fallback: number
 }
 

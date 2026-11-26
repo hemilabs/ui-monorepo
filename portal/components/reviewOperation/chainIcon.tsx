@@ -3,11 +3,11 @@ import { BitcoinIcon } from 'components/reviewOperation/_icons/bitcoinIcon'
 import { EthIcon } from 'components/reviewOperation/_icons/ethIcon'
 import { HemiIcon } from 'components/reviewOperation/_icons/hemiIcon'
 import { hemi, hemiSepolia } from 'hemi-viem'
-import { ReactNode } from 'react'
-import { RemoteChain } from 'types/chain'
+import type { ReactNode } from 'react'
+import type { RemoteChain } from 'types/chain'
 import { mainnet, sepolia } from 'viem/chains'
 
-interface Props {
+type Props = {
   chainId: RemoteChain['id']
 }
 

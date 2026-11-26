@@ -1,6 +1,9 @@
 import { useContext } from 'react'
 
-import { BtcWalletContext, BtcContextConfig } from '../context/btcWalletContext'
+import {
+  type BtcContextConfig,
+  BtcWalletContext,
+} from '../context/btcWalletContext'
 
 export const useConfig = function (): BtcContextConfig {
   const config = useContext(BtcWalletContext)

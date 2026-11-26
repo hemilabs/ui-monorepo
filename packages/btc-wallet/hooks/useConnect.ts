@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useContext } from 'react'
 
-import { WalletConnector } from '../connectors/types'
+import type { WalletConnector } from '../connectors/types'
 import { GlobalContext } from '../context/globalContext'
 
 import { getNetworksQueryKey } from './queryKeys'

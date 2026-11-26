@@ -1,4 +1,4 @@
-import { Unisat } from './unisat'
+import type { Unisat } from './unisat'
 
 declare global {
   interface Window {

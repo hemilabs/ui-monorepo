@@ -2,7 +2,7 @@ allowBuilds:
   bufferutil: false # optional native ws speedup; ws falls back to pure JS
   esbuild: true # platform binary used by vitest (via vite) for test transforms
   keccak: false # has a pure-JS fallback; the native addon is never loaded in the browser bundle
-  sharp: true # libvips bindings required by Next.js production image optimization
+  sharp: true # libvips bindings for next, an optional peer of nuqs
   unrs-resolver: true # Rust resolver required by eslint-import-resolver-typescript during lint
   utf-8-validate: false # optional native ws speedup; ws falls back to pure JS
   workerd: false # wrangler dev fetches the runtime it needs on its own; vite build never uses it
@@ -24,13 +24,12 @@ minimumReleaseAgeExclude:
   - '@vetro-protocol/*'
   - 'hemi-viem'
   - 'umami-analytics'
-  - 'viem-sanctions-oracle' # temporary, drop after 2026-11-13 when 1.0.0 matures
 
 overrides:
   '@walletconnect/relay-auth@1.1.0>@noble/curves': '1.8.1' # relay-auth pins 1.8.0, published without provenance
   '@walletconnect/relay-auth@1.1.0>@noble/hashes': '1.8.0' # relay-auth pins 1.7.0, published without provenance
   brace-expansion@5: '5.0.8' # CVE-2026-13149 / CVE-2026-14257 DoS fixes
-  postcss: '8.5.14' # Needed as Next pins 8.4.31 exactly
+  postcss: '8.5.14' # next (optional peer of nuqs) pins 8.4.31 exactly
 
 patchedDependencies:
   '@graphprotocol/graph-cli@*': 'patches/@graphprotocol__graph-cli.patch'

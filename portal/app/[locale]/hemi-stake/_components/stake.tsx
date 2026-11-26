@@ -12,7 +12,7 @@ import { SubmitStake } from './submitStake'
 export const Stake = function () {
   const token = useHemiToken()
 
-  const { input, lockupDays, updateInput } = useStakingDashboard()
+  const { autoRelock, input, lockupDays, updateInput } = useStakingDashboard()
 
   const {
     canStake,
@@ -26,7 +26,7 @@ export const Stake = function () {
     operationRunning,
     submit,
     validationError,
-  } = useStakeSubmission({ input, lockupDays })
+  } = useStakeSubmission({ autoRelock, input, lockupDays })
 
   function RenderBelowForm() {
     if (!canStake) return null

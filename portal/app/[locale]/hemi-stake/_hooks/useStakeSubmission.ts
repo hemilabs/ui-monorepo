@@ -22,11 +22,13 @@ import { useStake } from './useStake'
 
 const useStakeGas = function ({
   amount,
+  autoRelock,
   lockupDays,
   needsApproval,
   spender,
 }: {
   amount: bigint
+  autoRelock: boolean
   lockupDays: number
   needsApproval: boolean
   spender: Address
@@ -41,6 +43,7 @@ const useStakeGas = function ({
   const { fees: createLockGasFees, isError: isCreateLockFeesError } =
     useEstimateCreateLockFees({
       amount,
+      autoRelock,
       lockDurationInSeconds: wholeDaysToSeconds(lockupDays),
       token,
     })
@@ -60,9 +63,11 @@ const useStakeGas = function ({
 }
 
 export const useStakeSubmission = function ({
+  autoRelock,
   input,
   lockupDays,
 }: {
+  autoRelock: boolean
   input: string
   lockupDays: number
 }) {
@@ -100,12 +105,14 @@ export const useStakeSubmission = function ({
 
   const { createLockGasFees, gas } = useStakeGas({
     amount,
+    autoRelock,
     lockupDays,
     needsApproval,
     spender,
   })
 
   const { isPending: isRunningOperation, mutate: stake } = useStake({
+    autoRelock,
     input,
     lockupDays,
     on(emitter) {

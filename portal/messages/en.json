@@ -481,10 +481,28 @@
     "claim-rewards-successful": "Claim rewards successful",
     "drawer": {
       "approving": "Approving {symbol}",
+      "auto-relock": {
+        "apy": "APY",
+        "decays-to-zero": "Decays to 0 by {date}",
+        "legend-added-by-auto-relock": "Added by auto-relock",
+        "legend-after-disabling": "After disabling",
+        "legend-today": "Today",
+        "legend-with-auto-relock": "With auto-relock",
+        "stays-at": "Stays at {votingPower}",
+        "step": "Update auto-relock"
+      },
       "claim-position-rewards": "Claim rewards from position #{tokenId}",
       "claim-position-rewards-epochs": "Claim rewards from position #{tokenId}, epochs {fromEpoch}-{toEpoch}",
       "claim-rewards": "Claim rewards",
       "claim-rewards-epochs": "Claim rewards, epochs {fromEpoch}-{toEpoch}",
+      "disable-auto-relock": {
+        "heading": "Disable auto-relock",
+        "subheading": "Your position stops renewing its duration every epoch, so the countdown to unlock starts again from where it is now."
+      },
+      "enable-auto-relock": {
+        "heading": "Enable auto-relock",
+        "subheading": "Your position keeps its current duration forever, as if you extended it by one epoch every epoch. Turn it off and the countdown starts again."
+      },
       "increase-amount": {
         "heading": "Add ${symbol} to this lockup",
         "subheading": "Deposit additional ${symbol} into your existing lockup to increase your staked amount and governance power."
@@ -512,6 +530,7 @@
       "after-unlock": "after unlock",
       "apy": "{percentage} APY",
       "carried-from": "Based on epoch {epoch}, the last one funded.",
+      "countdown-paused": "Countdown paused",
       "enter-minimum-amount": "Enter at least {amount} {symbol} to see your estimate.",
       "first-year": "in the first year",
       "load-failed": "Could not load the reward data.",
@@ -542,6 +561,8 @@
     "form": {
       "approve-and-stake": "Approve and Stake",
       "approximate": "~{percentage}",
+      "auto-relock": "Auto-relock",
+      "auto-relock-tooltip": "Your position keeps its current duration forever, as if you extended it by one epoch every epoch. Turn it off and the countdown starts again.",
       "custom": "Custom",
       "days": "{days, plural, one {{days} day} other {{days} days}}",
       "expire-date": "Expire date:",
@@ -555,6 +576,8 @@
       "title": "Stake",
       "unlocking": "Unlocking...",
       "use-or": "Use <min></min> or <max></max>",
+      "voting-power-decays": "Decays to 0 by {date}",
+      "voting-power-stays": "Stays constant while auto-relock is on",
       "years": "{years, plural, one {{years} year} other {{years} years}}"
     },
     "get-started": {
@@ -617,17 +640,23 @@
       "add-liquidity-to-lockup": "Add ${symbol} to this lockup",
       "add-time-available-on": "Available on {date}",
       "add-time-to-lockup": "Add time to this lockup",
+      "auto-relock": "Auto-relock",
+      "auto-relock-off": "Off",
+      "auto-relock-on": "On",
       "burned": "Burned",
       "claim": "Claim",
       "claim-all-rewards": "Claim all rewards",
       "claiming": "Claiming...",
       "claiming-paused": "Rewards claiming is paused",
       "could-not-load-positions": "We couldn't load your positions",
+      "disable-auto-relock": "Disable auto-relock",
+      "enable-auto-relock": "Enable auto-relock",
       "get-started": "Get started by staking your ${symbol}",
       "get-started-burned": "Your burned positions will show up here once their lockup periods have ended.",
       "locked-amount": "Locked Amount",
       "lockup": "Lockup",
       "lockup-tooltip": "Locked for {duration}, unlocks on {date}",
+      "lockup-tooltip-auto-relock": "Auto-relock holds the lockup at {duration}. Turn it off and it unlocks on {date}.",
       "no-hemi-burned": "No burned positions yet",
       "no-hemi-staked": "No ${symbol} staked",
       "on": "On {date}",

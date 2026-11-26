@@ -221,12 +221,17 @@ export const getBtcDepositInfo = async function ({
   ).catch(() => null)
 }
 
+type SubgraphStakingPosition = Omit<
+  StakingPosition,
+  'autoRelock' | 'effectiveLockEnd'
+>
+
 /**
  * Raw staking position as returned by the subgraph API, with numeric fields
  * serialized as strings.
  */
 type StakingPositionApiResult = Omit<
-  StakingPosition,
+  SubgraphStakingPosition,
   | 'amount'
   | 'blockNumber'
   | 'blockTimestamp'
@@ -271,7 +276,7 @@ export const getLockedPositions = function ({
           lockTime: BigInt(position.lockTime),
           timestamp: BigInt(position.timestamp),
           tokenId: BigInt(position.tokenId),
-        }) as StakingPosition,
+        }) as SubgraphStakingPosition,
     ),
   )
 }

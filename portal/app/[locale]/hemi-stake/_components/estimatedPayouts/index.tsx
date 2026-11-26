@@ -37,12 +37,14 @@ import { PayoutsCard } from './payoutsCard'
 
 const buildForecast = function ({
   amount,
+  autoRelock,
   decimals,
   hasValidLockup,
   inputsByClass,
   lockupDays,
 }: {
   amount: bigint
+  autoRelock: boolean
   decimals: number
   hasValidLockup: boolean
   inputsByClass: InputsByClass
@@ -50,13 +52,14 @@ const buildForecast = function ({
 }) {
   const forecast = getRewardsForecast({
     amount,
+    autoRelock,
     inputsByClass,
     lockDurationInSeconds: Number(wholeDaysToSeconds(lockupDays)),
     now: Number(unixNowTimestamp()),
   })
   const series = toPayoutSeries({
     decimals,
-    lockEnd: forecast.lockEnd,
+    lockEnd: autoRelock ? undefined : forecast.lockEnd,
     payouts: forecast.payouts,
   })
   const hasForecast =
@@ -75,7 +78,7 @@ export const EstimatedPayouts = function () {
   const formatter = useFormat()
   const t = useTranslations('hemi-stake.estimated-payouts')
   const token = useHemiToken()
-  const { input, lockupDays } = useStakingDashboard()
+  const { autoRelock, input, lockupDays } = useStakingDashboard()
   const {
     data: systemState,
     isError: isSystemStateError,
@@ -99,6 +102,7 @@ export const EstimatedPayouts = function () {
 
   const { chartSeries, forecast, hasForecast } = buildForecast({
     amount,
+    autoRelock,
     decimals: token.decimals,
     hasValidLockup,
     inputsByClass,
@@ -146,6 +150,7 @@ export const EstimatedPayouts = function () {
       headline={
         hasForecast && systemState !== undefined ? (
           <PayoutHeadline
+            autoRelock={autoRelock}
             carriedFrom={forecastInputs?.transferable.carriedFrom}
             currentEpoch={systemState.currentEpoch}
             input={input}
@@ -159,6 +164,7 @@ export const EstimatedPayouts = function () {
           />
         ) : (
           <PayoutPlaceholder
+            autoRelock={autoRelock}
             hasError={hasError}
             hasValidLockup={hasValidLockup}
             isPending={isPending}

@@ -7,12 +7,17 @@ export {
   encodeIncreaseUnlockTime,
   increaseUnlockTime,
 } from './wallet/increaseUnlockTime.ts'
+export {
+  encodeToggleAutoRelock,
+  toggleAutoRelock,
+} from './wallet/toggleAutoRelock.ts'
 export { encodeWithdraw, withdraw } from './wallet/withdraw.ts'
 export {
-  getBalanceOfNFTAt,
+  getAutoRelockStatus,
   getLivePositionClass,
   getLockedBalance,
   getPositionVotingPowerDetails,
+  getPositionWeight,
   getPositionsDelegatedAway,
   getPositionsVotingPowerSum,
   getTotalVotingPower,

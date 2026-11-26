@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import { useMemo, useState } from 'react'
 import { StakingPositionStatus } from 'types/stakingDashboard'
 import { walletIsConnected } from 'utils/wallet'
@@ -15,6 +16,7 @@ import {
 import { WalletStatsSection } from './_components/walletStatsSection'
 import { StakingDashboardProvider } from './_context/stakingDashboardContext'
 import { useStakingPositions } from './_hooks/useStakingPositions'
+import { sortPositionsByUnlock } from './_utils/sortPositionsByUnlock'
 
 export const HemiStakePage = function () {
   const { data, isLoading, isLoadingError, refetch } = useStakingPositions()
@@ -29,8 +31,11 @@ export const HemiStakePage = function () {
   const filteredData = useMemo(
     function () {
       const positions = data?.filter(position => position.status === filter)
-      return filter === StakingPositionStatus.WITHDRAWN
-        ? positions?.reverse()
+      if (filter === StakingPositionStatus.WITHDRAWN) {
+        return positions?.reverse()
+      }
+      return featureFlags.enableHemiStakeAutoRelock
+        ? positions && sortPositionsByUnlock(positions)
         : positions
     },
     [data, filter],

@@ -65,7 +65,7 @@ type Props = Pick<
   tooltipId: string
 }
 
-const drawerWidths: ChartWidths = {
+export const drawerWidths: ChartWidths = {
   breakpoints: [[screenBreakpoints.md, 400]],
   fallback: 320,
 }
@@ -172,6 +172,7 @@ export const StackedPayouts = function ({
         footer={footer}
         headline={
           <PayoutHeadline
+            autoRelock={false}
             carriedFrom={carriedFrom}
             currentEpoch={currentEpoch}
             input={formatUnits(forecast.totalAmount, token.decimals)}
@@ -195,6 +196,7 @@ export const StackedPayouts = function ({
       footer={footer}
       headline={
         <PayoutPlaceholder
+          autoRelock={false}
           hasError={isError}
           hasValidLockup={hasValidLockup}
           isPending={isPending}

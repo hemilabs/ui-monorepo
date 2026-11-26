@@ -2,6 +2,7 @@ import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { featureFlags } from 'app/featureFlags'
 import { EventEmitter } from 'events'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUmami } from 'hooks/useUmami'
@@ -69,6 +70,7 @@ export const useIncreaseUnlockTime = function ({
       }
       const { emitter, promise } = increaseUnlockTime({
         account: address,
+        autoRelockSupported: featureFlags.enableHemiStakeAutoRelock,
         lockDurationInSeconds: daysToSeconds(lockupDays),
         tokenId,
         walletClient: hemiWalletClient!,
@@ -78,10 +80,7 @@ export const useIncreaseUnlockTime = function ({
         'user-signed-increase-unlock-time',
         function (transactionHash) {
           updateStakingDashboardOperation({
-            stakingPosition: {
-              lockTime: daysToSeconds(BigInt(lockupDays)),
-              tokenId,
-            },
+            stakingPosition: { tokenId },
             status: StakingDashboardStatus.STAKE_TX_PENDING,
             transactionHash,
           })
@@ -132,6 +131,7 @@ export const useIncreaseUnlockTime = function ({
 
                 return {
                   ...position,
+                  effectiveLockEnd: newUnlockTime,
                   lockTime: newLockTime,
                 }
               },
@@ -201,6 +201,10 @@ export const useIncreaseUnlockTime = function ({
       return promise
     },
     onSettled() {
+      if (featureFlags.enableHemiStakeAutoRelock) {
+        queryClient.invalidateQueries({ queryKey: stakingPositionQueryKey })
+      }
+
       // Do not return the promises here. Doing so will delay the resolution of
       // the mutation, which will cause the UI to be out of sync until balances are re-validated.
       // Query invalidation here must work as fire and forget, as, after all, it runs in the background!

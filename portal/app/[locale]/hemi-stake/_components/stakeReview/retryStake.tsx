@@ -14,6 +14,7 @@ export const RetryStake = function () {
     useState<Exclude<StakingOperationRunning, 'staked'>>('idle')
 
   const {
+    autoRelock,
     input,
     lockupDays,
     resetStateAfterOperation,
@@ -27,6 +28,7 @@ export const RetryStake = function () {
 
   // this component tries to initiate a new stake, based on the failed one
   const { mutate: runStake } = useStake({
+    autoRelock,
     input,
     lockupDays,
     on(emitter) {

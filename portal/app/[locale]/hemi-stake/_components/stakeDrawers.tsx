@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { type Toast } from 'components/toast'
 import { ToastLoader } from 'components/toast/toastLoader'
@@ -66,6 +67,9 @@ const SideDrawer = function () {
     increasingAmount: !!stakingDashboardOperation,
     increasingUnlockTime: !!stakingDashboardOperation,
     staking: true,
+    togglingAutoRelock:
+      featureFlags.enableHemiStakeAutoRelock &&
+      !!stakingDashboardOperation?.stakingPosition,
     unlocking: !!unlockingDashboardOperation,
   }
 

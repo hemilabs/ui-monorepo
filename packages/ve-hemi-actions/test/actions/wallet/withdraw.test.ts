@@ -5,6 +5,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest'
 
 import { withdraw } from '../../../actions'
 import {
+  getAutoRelockStatus,
   getHemiTokenAddress,
   memoizedGetHemiTokenAddress,
   getLockedBalance,
@@ -18,6 +19,7 @@ vi.mock('viem/actions', () => ({
 }))
 
 vi.mock('../../../actions/public/veHemi', () => ({
+  getAutoRelockStatus: vi.fn(),
   getHemiTokenAddress: vi.fn(),
   getLockedBalance: vi.fn(),
   getOwnerOf: vi.fn(),
@@ -26,6 +28,7 @@ vi.mock('../../../actions/public/veHemi', () => ({
 
 const validParameters = {
   account: '0x1234567890123456789012345678901234567890' as const,
+  autoRelockSupported: true,
   tokenId: BigInt(1),
   walletClient: { chain: hemiSepolia },
 }
@@ -35,6 +38,9 @@ describe('withdraw', function () {
     vi.mocked(getHemiTokenAddress).mockResolvedValue(zeroAddress)
     vi.mocked(memoizedGetHemiTokenAddress).mockResolvedValue(zeroAddress)
     vi.mocked(getOwnerOf).mockResolvedValue(validParameters.account)
+    vi.mocked(getAutoRelockStatus).mockResolvedValue([
+      { effectiveLockEnd: BigInt(0), isAutoRelockEnabled: false },
+    ])
 
     // Mock getLockedBalance to return an expired lock with amount
     const pastTimestamp = BigInt(Math.floor(Date.now() / 1000) - 86400) // 1 day ago (expired)
@@ -321,5 +327,43 @@ describe('withdraw', function () {
 
     expect(withdrawTransactionSucceeded).toHaveBeenCalled()
     expect(withdrawSettled).toHaveBeenCalledOnce()
+  })
+
+  it('should refuse a position while auto-relock is armed', async function () {
+    vi.mocked(getAutoRelockStatus).mockResolvedValue([
+      { effectiveLockEnd: BigInt(0), isAutoRelockEnabled: true },
+    ])
+
+    const { emitter, promise } = withdraw(validParameters)
+    const failed = vi.fn()
+    emitter.on('withdraw-failed-validation', failed)
+    await promise
+
+    expect(failed).toHaveBeenCalledExactlyOnceWith('auto-relock is enabled')
+    expect(writeContract).not.toHaveBeenCalled()
+  })
+
+  describe('without auto-relock support', function () {
+    it('should withdraw an expired lock without reading the auto-relock status', async function () {
+      vi.mocked(getAutoRelockStatus).mockResolvedValue([
+        { effectiveLockEnd: BigInt(0), isAutoRelockEnabled: true },
+      ])
+      vi.mocked(writeContract).mockResolvedValue(zeroHash)
+      vi.mocked(waitForTransactionReceipt).mockResolvedValue({
+        status: 'success',
+      })
+
+      const { emitter, promise } = withdraw({
+        ...validParameters,
+        autoRelockSupported: false,
+      })
+      const withdrawSettled = vi.fn()
+      emitter.on('withdraw-settled', withdrawSettled)
+      await promise
+
+      expect(withdrawSettled).toHaveBeenCalledOnce()
+      expect(writeContract).toHaveBeenCalledOnce()
+      expect(getAutoRelockStatus).not.toHaveBeenCalled()
+    })
   })
 })

@@ -1,9 +1,12 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import { featureFlags } from 'app/featureFlags'
 import { useHemi } from 'hooks/useHemi'
+import { useHemiClient } from 'hooks/useHemiClient'
 import { StakingPosition } from 'types/stakingDashboard'
-import { getLockedPositions } from 'utils/subgraph'
 import { Address, Chain } from 'viem'
 import { useAccount } from 'wagmi'
+
+import { fetchStakingPositions } from '../_fetchers/fetchStakingPositions'
 
 export const getStakingPositionsQueryKey = ({
   address,
@@ -21,14 +24,17 @@ export const useStakingPositions = function (
 ) {
   const { address: ownerAddress } = useAccount()
   const hemi = useHemi()
+  const hemiClient = useHemiClient()
 
   return useQuery({
     ...options,
     enabled: !!ownerAddress && (options.enabled ?? true),
     queryFn: () =>
-      getLockedPositions({
+      fetchStakingPositions({
         address: ownerAddress!,
+        autoRelockSupported: featureFlags.enableHemiStakeAutoRelock,
         chainId: hemi.id,
+        hemiClient,
       }),
     queryKey: getStakingPositionsQueryKey({
       address: ownerAddress,

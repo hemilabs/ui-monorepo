@@ -6,7 +6,11 @@ import { veHemiAbi } from '../../abi.ts'
 import { unixNowTimestamp } from '../../utils.ts'
 import { veHemiVoteDelegationAbi } from '../../voteDelegationAbi.ts'
 
-import { getVeHemiContractAddress } from './../../constants.ts'
+import {
+  getVeHemiContractAddress,
+  halfEpochSeconds,
+  SixDaysSeconds,
+} from './../../constants.ts'
 
 export const getHemiTokenAddress = async function (client: Client) {
   if (!client.chain) {
@@ -90,10 +94,10 @@ export const getLivePositionClass = async function (
   return { forfeitable, transferableAfter }
 }
 
-export const getBalanceOfNFTAt = async function (
+export const getPositionWeight = async function (
   client: Client,
   tokenId: bigint,
-  timestamp: bigint,
+  now: bigint,
 ) {
   if (!client.chain) {
     throw new Error('Client chain is not defined')
@@ -101,12 +105,67 @@ export const getBalanceOfNFTAt = async function (
 
   const veHemiAddress = getVeHemiContractAddress(client.chain.id)
 
-  return readContract(client, {
-    abi: veHemiAbi,
-    address: veHemiAddress,
-    args: [tokenId, timestamp],
-    functionName: 'balanceOfNFTAt',
+  const [current, ahead] = await multicall(client, {
+    allowFailure: false,
+    contracts: [
+      {
+        abi: veHemiAbi,
+        address: veHemiAddress,
+        args: [tokenId, now],
+        functionName: 'balanceOfNFTAt' as const,
+      },
+      {
+        abi: veHemiAbi,
+        address: veHemiAddress,
+        args: [tokenId, now + BigInt(1)],
+        functionName: 'balanceOfNFTAt' as const,
+      },
+    ],
   })
+
+  const slope = current > ahead ? current - ahead : BigInt(0)
+  const elapsedInEpoch = now % BigInt(SixDaysSeconds)
+  const relocked = current + slope * (elapsedInEpoch - BigInt(halfEpochSeconds))
+
+  return { current, relocked: relocked > BigInt(0) ? relocked : BigInt(0) }
+}
+
+export const getAutoRelockStatus = async function (
+  client: Client,
+  tokenIds: bigint[],
+) {
+  if (!client.chain) {
+    throw new Error('Client chain is not defined')
+  }
+
+  if (tokenIds.length === 0) {
+    return []
+  }
+
+  const veHemiAddress = getVeHemiContractAddress(client.chain.id)
+
+  const results = await multicall(client, {
+    allowFailure: false,
+    contracts: tokenIds.flatMap(tokenId => [
+      {
+        abi: veHemiAbi,
+        address: veHemiAddress,
+        args: [tokenId],
+        functionName: 'effectiveLockEnd' as const,
+      },
+      {
+        abi: veHemiAbi,
+        address: veHemiAddress,
+        args: [tokenId],
+        functionName: 'isAutoRelockEnabled' as const,
+      },
+    ]),
+  })
+
+  return tokenIds.map((_, index) => ({
+    effectiveLockEnd: results[index * 2] as bigint,
+    isAutoRelockEnabled: results[index * 2 + 1] as boolean,
+  }))
 }
 
 const getVoteDelegationAddress = async function (client: Client) {

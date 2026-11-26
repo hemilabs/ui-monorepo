@@ -15,15 +15,17 @@ import {
   unixNowTimestamp,
   validateIncreaseUnlockTimeInputs,
 } from '../../utils.ts'
-import { getLockedBalance } from '../public/veHemi.ts'
+import { getAutoRelockStatus, getLockedBalance } from '../public/veHemi.ts'
 
 const canIncreaseUnlockTime = async function ({
   account,
+  autoRelockSupported,
   lockDurationInSeconds,
   tokenId,
   walletClient,
 }: {
   account: Address
+  autoRelockSupported: boolean
   lockDurationInSeconds: number
   tokenId: bigint
   walletClient: WalletClient
@@ -49,23 +51,27 @@ const canIncreaseUnlockTime = async function ({
   }
 
   try {
-    // Check if lock exists and is not expired
-    const { amount, end } = await getLockedBalance(walletClient, tokenId)
+    const [{ amount, end }, autoRelockStatus] = await Promise.all([
+      getLockedBalance(walletClient, tokenId),
+      autoRelockSupported
+        ? getAutoRelockStatus(walletClient, [tokenId])
+        : undefined,
+    ])
+    const lockEnd = autoRelockStatus?.[0].effectiveLockEnd ?? end
     const now = unixNowTimestamp()
 
     if (amount <= 0) {
       return { canIncrease: false, reason: 'no existing lock' }
     }
 
-    if (end <= now) {
+    if (lockEnd <= now) {
       return { canIncrease: false, reason: 'lock already expired' }
     }
 
-    // Check if new duration would actually extend the lock
     const newUnlockTime = BigInt(
       snapToEpoch(Number(now) + lockDurationInSeconds),
     )
-    if (newUnlockTime <= end) {
+    if (newUnlockTime <= lockEnd) {
       return {
         canIncrease: false,
         reason: 'new unlock time must be greater than current unlock time',
@@ -80,11 +86,13 @@ const canIncreaseUnlockTime = async function ({
 
 const runIncreaseUnlockTime = ({
   account,
+  autoRelockSupported,
   lockDurationInSeconds,
   tokenId,
   walletClient,
 }: {
   account: Address
+  autoRelockSupported: boolean
   lockDurationInSeconds: number
   tokenId: bigint
   walletClient: WalletClient
@@ -93,6 +101,7 @@ const runIncreaseUnlockTime = ({
     try {
       const { canIncrease, reason } = await canIncreaseUnlockTime({
         account,
+        autoRelockSupported,
         lockDurationInSeconds,
         tokenId,
         walletClient,

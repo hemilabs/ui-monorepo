@@ -1,4 +1,7 @@
+import { InfoIcon } from 'components/icons/infoIcon'
 import { LockupInput } from 'components/inputText'
+import { Toggle } from 'components/toggle'
+import { Tooltip } from 'components/tooltip'
 import { ReactNode, useEffect, useId, useState } from 'react'
 import { useTranslations } from 'use-intl'
 
@@ -82,28 +85,75 @@ function TryValuesHint({
   )
 }
 
+const AutoRelockRow = function ({
+  checked = false,
+  disabled,
+  onCheckedChange,
+  show,
+}: {
+  checked?: boolean
+  disabled?: boolean
+  onCheckedChange?: (enabled: boolean) => void
+  show: boolean
+}) {
+  const id = useId()
+  const t = useTranslations('hemi-stake.form')
+  if (!show || onCheckedChange === undefined) {
+    return null
+  }
+  return (
+    <div className="body-text-medium flex items-center justify-between gap-x-2 text-neutral-900">
+      <div className="flex items-center gap-x-1">
+        <span>{t('auto-relock')}</span>
+        <Tooltip
+          id={`auto-relock-estimate-${id}`}
+          text={t('auto-relock-tooltip')}
+          variant="info"
+        >
+          <div className="group/icon flex items-center">
+            <InfoIcon className="group-hover/icon:[&>g>path]:fill-neutral-950" />
+          </div>
+        </Tooltip>
+      </div>
+      <Toggle
+        ariaLabel={t('auto-relock')}
+        checked={checked}
+        disabled={disabled}
+        id={`auto-relock-${id}`}
+        onCheckedChange={onCheckedChange}
+      />
+    </div>
+  )
+}
+
 type Props = {
   amount: bigint
+  autoRelock?: boolean
+  disabled?: boolean
   headerAction?: ReactNode
   inputDays: string
   lockupDays: number
   minLocked?: number
+  updateAutoRelock?: (enabled: boolean) => void
   updateInputDays: (days: string) => void
   updateLockupDays: (days: number) => void
 }
 
 export function LockupPicker({
   amount,
+  autoRelock = false,
+  disabled,
   headerAction,
   inputDays,
   lockupDays,
   minLocked,
+  updateAutoRelock,
   updateInputDays,
   updateLockupDays,
 }: Props) {
   const t = useTranslations('hemi-stake')
 
-  const sublabels = useLockupApySublabels(amount)
+  const sublabels = useLockupApySublabels(amount, autoRelock)
 
   const presets = [
     { days: sixMonths, label: t('form.months', { months: 6 }) },
@@ -236,6 +286,12 @@ export function LockupPicker({
           )}
         </div>
       </div>
+      <AutoRelockRow
+        checked={autoRelock}
+        disabled={disabled}
+        onCheckedChange={updateAutoRelock}
+        show={canUsePresets}
+      />
       <div className="flex min-h-26 flex-col justify-center xs:min-h-14">
         {!showPresets ? (
           <div className="flex flex-col gap-y-4">

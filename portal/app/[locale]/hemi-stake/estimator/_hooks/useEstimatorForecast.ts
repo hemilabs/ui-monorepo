@@ -13,7 +13,7 @@ import { useRewardsForecastInputs } from '../../_hooks/useRewardsForecastInputs'
 import { useStakingPositions } from '../../_hooks/useStakingPositions'
 import { getBlendedForecast } from '../../_utils/blendedForecast'
 import { wholeDaysToSeconds } from '../../_utils/lockCreationTimes'
-import { getEpochEnd, getLockEnd } from '../../_utils/lockEpochs'
+import { getEpochEnd } from '../../_utils/lockEpochs'
 import {
   alwaysTransferable,
   emptyInputsByClass,
@@ -27,10 +27,7 @@ import { isForecastUnavailable } from '../_utils/isForecastUnavailable'
 import { useNeedsWallet } from './useNeedsWallet'
 
 const toLockEnd = (position: StakingPosition) =>
-  getLockEnd({
-    lockTime: Number(position.lockTime),
-    timestamp: Number(position.timestamp),
-  })
+  Number(position.effectiveLockEnd)
 
 const toStakedPositions = function ({
   now,
@@ -60,6 +57,7 @@ const toExistingLegs = (
 ) =>
   positions.map(position => ({
     amount: position.amount,
+    autoRelock: position.autoRelock,
     delegatedAway: delegatedAway[position.tokenId.toString()] === true,
     lockEnd: toLockEnd(position),
     positionClass: classes[position.tokenId.toString()] ?? alwaysTransferable,
@@ -84,7 +82,7 @@ const toLoadState = function (
 }
 
 export const useEstimatorForecast = function () {
-  const { amount, lockupDays, scope } = useEstimator()
+  const { amount, autoRelock, lockupDays, scope } = useEstimator()
   const { address } = useAccount()
   const token = useHemiToken()
   const needsWallet = useNeedsWallet()
@@ -119,7 +117,11 @@ export const useEstimatorForecast = function () {
       const run = (incomingAmount: bigint) =>
         getBlendedForecast({
           existing,
-          incoming: { amount: incomingAmount, lockDurationInSeconds },
+          incoming: {
+            amount: incomingAmount,
+            autoRelock,
+            lockDurationInSeconds,
+          },
           inputsByClass,
           now,
         })
@@ -128,6 +130,7 @@ export const useEstimatorForecast = function () {
     },
     [
       amountUnits,
+      autoRelock,
       classes.data,
       delegatedAway.data,
       inputsByClass,

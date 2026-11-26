@@ -30,7 +30,8 @@ type Props = {
 }
 
 export const ReviewStake = function ({ onClose }: Props) {
-  const { input, lockupDays, stakingDashboardOperation } = useStakingDashboard()
+  const { autoRelock, input, lockupDays, stakingDashboardOperation } =
+    useStakingDashboard()
   const token = useHemiToken()
 
   const stakingStatus =
@@ -65,6 +66,7 @@ export const ReviewStake = function ({ onClose }: Props) {
   const { fees: createLockGasFees, isError: isCreateLockFeesError } =
     useEstimateCreateLockFees({
       amount,
+      autoRelock,
       lockDurationInSeconds: BigInt(daysToSeconds(lockupDays)),
       token,
     })

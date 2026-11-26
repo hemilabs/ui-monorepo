@@ -16,8 +16,8 @@ type Props = {
 }
 
 export const StakeFromEstimator = function ({ submission }: Props) {
-  const { amount, inputDays, lockupDays } = useEstimator()
-  const { updateInput, updateInputDays, updateLockupDays } =
+  const { amount, autoRelock, inputDays, lockupDays } = useEstimator()
+  const { updateAutoRelock, updateInput, updateInputDays, updateLockupDays } =
     useStakingDashboard()
   const t = useTranslations()
   const token = useHemiToken()
@@ -47,6 +47,7 @@ export const StakeFromEstimator = function ({ submission }: Props) {
 
   const handleSubmit = function (e: FormEvent) {
     e.preventDefault()
+    updateAutoRelock(autoRelock)
     updateInput(amount)
     updateInputDays(inputDays)
     updateLockupDays(lockupDays)

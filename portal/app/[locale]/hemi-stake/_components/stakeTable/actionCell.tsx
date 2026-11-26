@@ -1,6 +1,7 @@
 import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { Row } from '@tanstack/react-table'
+import { featureFlags } from 'app/featureFlags'
 import { Tooltip } from 'components/tooltip'
 import { useFormat } from 'hooks/useFormat'
 import { useHemiToken } from 'hooks/useHemiToken'
@@ -14,13 +15,19 @@ import {
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
-import { type StakingPosition } from 'types/stakingDashboard'
+import {
+  type StakingPosition,
+  StakingPositionStatus,
+} from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
-import { formatUnits } from 'viem'
+import { type Address, formatUnits, isAddressEqual } from 'viem'
+import { useAccount } from 'wagmi'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
+import { AutoRelockIcon } from '../../_icons/autoRelockIcon'
 import { PlusIcon } from '../../_icons/plusIcon'
+import { canEnableAutoRelock } from '../../_utils/autoRelockEligibility'
 import {
   getExtensionAvailableAt,
   getUnlockInfo,
@@ -77,6 +84,31 @@ const ActionItem = function ({
   )
 }
 
+const AutoRelockActionItem = function ({
+  autoRelock,
+  enabled,
+  onClick,
+}: {
+  autoRelock: boolean
+  enabled: boolean
+  onClick: VoidFunction
+}) {
+  const t = useTranslations('hemi-stake')
+  if (!featureFlags.enableHemiStakeAutoRelock) {
+    return null
+  }
+  return (
+    <ActionItem
+      enabled={enabled}
+      icon={<AutoRelockIcon />}
+      label={t(
+        autoRelock ? 'table.disable-auto-relock' : 'table.enable-auto-relock',
+      )}
+      onClick={onClick}
+    />
+  )
+}
+
 type Props = {
   row: Row<StakingPosition>
 }
@@ -99,7 +131,17 @@ export function ActionCell({ row }: Props) {
   const { updateStakingDashboardOperation } = useStakingDashboard()
   const { setDrawerQueryString } = useDrawerStakingQueryString()
 
-  const { amount, lockTime, timestamp, tokenId } = row.original
+  const {
+    amount,
+    autoRelock,
+    effectiveLockEnd,
+    forfeitable,
+    owner,
+    status,
+    tokenId,
+    transferable,
+  } = row.original
+  const { address } = useAccount()
 
   const MENU_OFFSET = 4
 
@@ -167,8 +209,7 @@ export function ActionCell({ row }: Props) {
 
   const { currentTimeInSeconds, timeRemainingSeconds, unlockTime } =
     getUnlockInfo({
-      lockTime,
-      timestamp,
+      unlockTime: effectiveLockEnd,
     })
   const extensionAvailableAt = getExtensionAvailableAt(unlockTime)
   const canExtend = currentTimeInSeconds >= extensionAvailableAt
@@ -193,12 +234,41 @@ export function ActionCell({ row }: Props) {
       lockupDays: minDays,
       stakingPosition: {
         amount,
-        lockTime,
-        timestamp,
+        effectiveLockEnd,
         tokenId,
       },
     })
     setDrawerQueryString('increasingUnlockTime')
+  }
+
+  const isActive = status === StakingPositionStatus.ACTIVE
+  const isWalletOwner = !!address && isAddressEqual(owner as Address, address)
+  const canOperate = isWalletOwner && timeRemainingSeconds > 0
+  const canAutoRelock =
+    canOperate &&
+    isActive &&
+    (autoRelock ||
+      canEnableAutoRelock({
+        effectiveLockEnd,
+        forfeitable,
+        now: currentTimeInSeconds,
+        transferable,
+      }))
+
+  function handleToggleAutoRelock() {
+    closeAndFocusTrigger()
+    updateStakingDashboardOperation({
+      autoRelock,
+      stakingPosition: {
+        amount,
+        effectiveLockEnd,
+        tokenId,
+        transferable,
+      },
+      status: undefined,
+      transactionHash: undefined,
+    })
+    setDrawerQueryString('togglingAutoRelock')
   }
 
   return (
@@ -221,13 +291,13 @@ export function ActionCell({ row }: Props) {
             style={{ left: menuPosition.left, top: menuPosition.top }}
           >
             <ActionItem
-              enabled={timeRemainingSeconds > 0}
+              enabled={canOperate}
               icon={<PlusIcon />}
               label={t('table.add-liquidity-to-lockup', { symbol })}
               onClick={handleIncreaseAmount}
             />
             <ActionItem
-              enabled={timeRemainingSeconds > 0 && canExtend}
+              enabled={canOperate && canExtend}
               icon={<PlusIcon />}
               label={t('table.add-time-to-lockup')}
               onClick={handleIncreaseUnlockTime}
@@ -238,6 +308,11 @@ export function ActionCell({ row }: Props) {
                       date: formatDate(new Date(extensionAvailableAt * 1000)),
                     })
               }
+            />
+            <AutoRelockActionItem
+              autoRelock={autoRelock}
+              enabled={canAutoRelock}
+              onClick={handleToggleAutoRelock}
             />
           </div>,
           document.body,

@@ -481,10 +481,28 @@
     "claim-rewards-successful": "Recompensas reclamadas com sucesso",
     "drawer": {
       "approving": "A aprovar {symbol}",
+      "auto-relock": {
+        "apy": "TEA",
+        "decays-to-zero": "Cai para 0 em {date}",
+        "legend-added-by-auto-relock": "Adicionado pelo rebloqueio automático",
+        "legend-after-disabling": "Depois de desativar",
+        "legend-today": "Hoje",
+        "legend-with-auto-relock": "Com rebloqueio automático",
+        "stays-at": "Fica em {votingPower}",
+        "step": "Atualizar o rebloqueio automático"
+      },
       "claim-position-rewards": "Reclamar recompensas da posição #{tokenId}",
       "claim-position-rewards-epochs": "Reclamar recompensas da posição #{tokenId}, épocas {fromEpoch}-{toEpoch}",
       "claim-rewards": "Reclamar recompensas",
       "claim-rewards-epochs": "Reclamar recompensas, épocas {fromEpoch}-{toEpoch}",
+      "disable-auto-relock": {
+        "heading": "Desativar rebloqueio automático",
+        "subheading": "Sua posição deixa de renovar a duração a cada época, então a contagem até o desbloqueio recomeça de onde está agora."
+      },
+      "enable-auto-relock": {
+        "heading": "Ativar rebloqueio automático",
+        "subheading": "Sua posição mantém a duração atual para sempre, como se você a estendesse uma época a cada época. Desligue e a contagem recomeça."
+      },
       "increase-amount": {
         "heading": "Adicionar ${symbol} a este bloqueio",
         "subheading": "Deposite ${symbol} adicionais em seu bloqueio existente para aumentar sua quantidade de stake e poder de governança."
@@ -512,6 +530,7 @@
       "after-unlock": "após o desbloqueio",
       "apy": "{percentage} TEA",
       "carried-from": "Com base na época {epoch}, a última financiada.",
+      "countdown-paused": "Contagem pausada",
       "enter-minimum-amount": "Insira pelo menos {amount} {symbol} para ver sua estimativa.",
       "first-year": "no primeiro ano",
       "load-failed": "Não foi possível carregar os dados de recompensas.",
@@ -542,6 +561,8 @@
     "form": {
       "approve-and-stake": "Aprovar e Fazer Stake",
       "approximate": "~{percentage}",
+      "auto-relock": "Rebloqueio automático",
+      "auto-relock-tooltip": "Sua posição mantém a duração atual para sempre, como se você a estendesse uma época a cada época. Desligue e a contagem recomeça.",
       "custom": "Personalizado",
       "days": "{days, plural, one {{days} dia} other {{days} dias}}",
       "expire-date": "Data de vencimento:",
@@ -555,6 +576,8 @@
       "title": "Stake",
       "unlocking": "Desbloqueando...",
       "use-or": "Use <min></min> ou <max></max>",
+      "voting-power-decays": "Cai para 0 em {date}",
+      "voting-power-stays": "Fica constante enquanto o rebloqueio automático estiver ativado",
       "years": "{years, plural, one {{years} ano} other {{years} anos}}"
     },
     "get-started": {
@@ -617,17 +640,23 @@
       "add-liquidity-to-lockup": "Adicionar ${symbol} a este bloqueio",
       "add-time-available-on": "Disponível em {date}",
       "add-time-to-lockup": "Adicionar tempo a este bloqueio",
+      "auto-relock": "Rebloqueio automático",
+      "auto-relock-off": "Desativado",
+      "auto-relock-on": "Ativado",
       "burned": "Queimado",
       "claim": "Reclamar",
       "claim-all-rewards": "Reclamar todas as recompensas",
       "claiming": "Reclamando...",
       "claiming-paused": "A reivindicação de recompensas está pausada",
       "could-not-load-positions": "Não foi possível carregar suas posições",
+      "disable-auto-relock": "Desativar rebloqueio automático",
+      "enable-auto-relock": "Ativar rebloqueio automático",
       "get-started": "Comece a fazer stake com seu ${symbol}",
       "get-started-burned": "As suas posições queimadas aparecerão aqui assim que os seus períodos de bloqueio terminarem.",
       "locked-amount": "Quantidade Bloqueada",
       "lockup": "Bloqueio",
       "lockup-tooltip": "Bloqueio de {duration}, desbloqueia em {date}",
+      "lockup-tooltip-auto-relock": "O rebloqueio automático mantém o bloqueio em {duration}. Desligue e desbloqueia em {date}.",
       "no-hemi-burned": "Ainda não há posições queimadas",
       "no-hemi-staked": "Sem ${symbol} staked",
       "on": "Em {date}",

@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import { Card } from 'components/card'
 import { TokenInput } from 'components/tokenInput'
 import { TokenInputBalance } from 'components/tokenInput/balance'
@@ -24,9 +25,11 @@ export const FormContent = function ({
 }: FormContentProps) {
   const token = useHemiToken()
   const {
+    autoRelock,
     input,
     inputDays,
     lockupDays,
+    updateAutoRelock,
     updateInput,
     updateInputDays,
     updateLockupDays,
@@ -54,9 +57,14 @@ export const FormContent = function ({
         value={input}
       />
       <Lockup
+        autoRelock={autoRelock}
+        disabled={isRunningOperation}
         input={input}
         inputDays={inputDays}
         lockupDays={lockupDays}
+        updateAutoRelock={
+          featureFlags.enableHemiStakeAutoRelock ? updateAutoRelock : undefined
+        }
         updateInputDays={updateInputDays}
         updateLockupDays={updateLockupDays}
       />

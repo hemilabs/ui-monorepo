@@ -2,6 +2,7 @@ import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { featureFlags } from 'app/featureFlags'
 import { EventEmitter } from 'events'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
@@ -23,6 +24,7 @@ import { createLock } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 
 import { daysToSeconds } from '../_utils/lockCreationTimes'
+import { getLockEnd } from '../_utils/lockEpochs'
 import { prependPosition } from '../_utils/positionsCache'
 
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
@@ -32,6 +34,7 @@ import { getStakingPositionsQueryKey } from './useStakingPositions'
 import { getTotalVotingPowerQueryKey } from './useTotalVotingPower'
 
 type UseStake = {
+  autoRelock: boolean
   input: string
   lockupDays: number
   on?: (emitter: EventEmitter<CreateLockEvents>) => void
@@ -40,6 +43,7 @@ type UseStake = {
 }
 
 export const useStake = function ({
+  autoRelock,
   input,
   lockupDays,
   on,
@@ -47,6 +51,7 @@ export const useStake = function ({
   updateStakingDashboardOperation,
 }: UseStake) {
   const amount = parseTokenUnits(input, token)
+  const withAutoRelock = featureFlags.enableHemiStakeAutoRelock && autoRelock
 
   const { setDrawerQueryString } = useDrawerStakingQueryString()
   const { track } = useUmami()
@@ -94,6 +99,7 @@ export const useStake = function ({
         account: address,
         amount,
         approvalAmount: amount,
+        autoRelock: withAutoRelock,
         lockDurationInSeconds: daysToSeconds(lockupDays),
         walletClient: hemiWalletClient!,
       })
@@ -187,8 +193,15 @@ export const useStake = function ({
 
         const newPosition: StakingPosition = {
           amount,
+          autoRelock: withAutoRelock,
           blockNumber,
           blockTimestamp: ts,
+          effectiveLockEnd: BigInt(
+            getLockEnd({
+              lockTime: Number(lockDuration),
+              timestamp: Number(ts),
+            }),
+          ),
           forfeitable: false,
           id: tokenId.toString(),
           lockTime: lockDuration,

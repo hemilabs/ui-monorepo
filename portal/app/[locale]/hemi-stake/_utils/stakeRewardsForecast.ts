@@ -1,11 +1,12 @@
 import { toFraction } from 'utils/bigint'
-import { minLockAmount, snapToEpoch } from 've-hemi-actions'
+import { minLockAmount } from 've-hemi-actions'
 
 import {
   capAtMaxLock,
   epochsPerYear,
   getEpochEnd,
   getLockEnd,
+  getRelockedWeight,
   getWeightAt,
 } from './lockEpochs'
 import {
@@ -54,6 +55,7 @@ export const getRewardsForecast = function ({
   lockDurationInSeconds,
   now,
   positionClass = alwaysTransferable,
+  relockedWeight,
 }: {
   amount: bigint
   autoRelock?: boolean
@@ -61,14 +63,15 @@ export const getRewardsForecast = function ({
   lockDurationInSeconds: number
   now: number
   positionClass?: PositionClass
+  relockedWeight?: bigint
 }) {
   const lockEnd = getLockEnd({
     lockTime: capAtMaxLock(lockDurationInSeconds),
     timestamp: now,
   })
 
-  const relockedWeight = autoRelock
-    ? getWeightAt({ amount, at: snapToEpoch(now), lockEnd })
+  const heldWeight = autoRelock
+    ? (relockedWeight ?? getRelockedWeight({ amount, lockEnd, now }))
     : BigInt(0)
 
   const payouts = Array.from(
@@ -76,7 +79,7 @@ export const getRewardsForecast = function ({
     function (_, epochsAhead) {
       const timestamp = getEpochEnd({ epochsAhead, now })
       const weight = autoRelock
-        ? relockedWeight
+        ? heldWeight
         : getWeightAt({ amount, at: timestamp, lockEnd })
       const rewardClass = getRewardClassAt({ at: timestamp, ...positionClass })
       const { baseline = BigInt(0), weight: classWeight } =

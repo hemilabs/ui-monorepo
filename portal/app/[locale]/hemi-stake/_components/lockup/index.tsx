@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import { DisplayAmount } from 'components/displayAmount'
 import { InfoIcon } from 'components/icons/infoIcon'
 import { Tooltip } from 'components/tooltip'
@@ -14,9 +15,10 @@ import { formatUnits } from 'viem'
 
 import {
   getUnlockInfo,
-  predictVotingPower,
   wholeDaysToSeconds,
 } from '../../_utils/lockCreationTimes'
+import { getLockEnd, getPositionWeights } from '../../_utils/lockEpochs'
+import { isValidLockup } from '../../_utils/lockupError'
 
 import { LockupPicker } from './lockupPicker'
 import { WarningMessage } from './warningMessage'
@@ -30,7 +32,7 @@ const InfoRow = ({ label, value }: { label: string; value: ReactNode }) => (
   </p>
 )
 
-const VotingPowerEquivalence = function ({
+export const VotingPowerEquivalence = function ({
   amount,
   token,
   votingPower,
@@ -55,36 +57,73 @@ const VotingPowerEquivalence = function ({
   )
 }
 
+const VotingPowerCaption = function ({
+  autoRelock = false,
+  expireDate,
+  show,
+  valid,
+}: {
+  autoRelock?: boolean
+  expireDate: string
+  show: boolean
+  valid: boolean
+}) {
+  const t = useTranslations('hemi-stake.form')
+  if (!show) {
+    return null
+  }
+  if (!valid) {
+    return <span className="text-xxs text-neutral-400">-</span>
+  }
+  return (
+    <span className="text-xxs text-neutral-400">
+      {autoRelock
+        ? t('voting-power-stays')
+        : t('voting-power-decays', { date: expireDate })}
+    </span>
+  )
+}
+
 type Props = {
+  autoRelock?: boolean
+  disabled?: boolean
   input: string
   inputDays: string
   lockupDays: number
   minLocked?: number
+  updateAutoRelock?: (enabled: boolean) => void
   updateInputDays: (days: string) => void
   updateLockupDays: (days: number) => void
 }
 
 export function Lockup({
+  autoRelock = false,
+  disabled,
   input,
   inputDays,
   lockupDays,
   minLocked,
+  updateAutoRelock,
   updateInputDays,
   updateLockupDays,
 }: Props) {
   const t = useTranslations('hemi-stake')
-  const { formatDate } = useFormat()
+  const { formatDate, formatShortDateWithYear } = useFormat()
   const token = useHemiToken()
 
   const amount = parseTokenUnits(input, token)
 
+  const canUsePresets = minLocked === undefined
+  const valid = isValidLockup({ minLocked, value: Number(inputDays) })
   const lockupSeconds = wholeDaysToSeconds(lockupDays)
-  const expireDate = formatDate(
-    getUnlockInfo({
-      lockTime: lockupSeconds,
-      timestamp: Number(unixNowTimestamp()),
-    }).unlockDate,
-  )
+  const lockEnd = getLockEnd({
+    lockTime: Number(lockupSeconds),
+    timestamp: Number(unixNowTimestamp()),
+  })
+  const { unlockDate } = getUnlockInfo({
+    unlockTime: lockEnd,
+  })
+  const expireDate = formatDate(unlockDate)
 
   const votingPowerRatio = useMemo(
     function calcVotingPower() {
@@ -92,16 +131,18 @@ export function Lockup({
         return '0'
       }
 
-      const votingPower = predictVotingPower({
+      const { current } = getPositionWeights({
         amount,
-        lockTime: lockupSeconds,
-        timestamp: unixNowTimestamp(),
+        autoRelock,
+        fromChain: undefined,
+        lockEnd,
+        now: Number(unixNowTimestamp()),
       })
 
-      const formattedPower = formatUnits(votingPower, token.decimals)
+      const formattedPower = formatUnits(current, token.decimals)
       return formattedPower.toString()
     },
-    [amount, lockupSeconds, token.decimals],
+    [amount, autoRelock, lockEnd, token.decimals],
   )
 
   return (
@@ -109,6 +150,8 @@ export function Lockup({
       <div className="w-full space-y-4 rounded-lg border border-solid border-transparent bg-neutral-50 p-4 ring-1 ring-transparent hover:shadow-bs">
         <LockupPicker
           amount={amount}
+          autoRelock={autoRelock}
+          disabled={disabled}
           headerAction={
             <Tooltip
               id="lockup-apy-estimate"
@@ -123,6 +166,7 @@ export function Lockup({
           inputDays={inputDays}
           lockupDays={lockupDays}
           minLocked={minLocked}
+          updateAutoRelock={updateAutoRelock}
           updateInputDays={updateInputDays}
           updateLockupDays={updateLockupDays}
         />
@@ -133,16 +177,24 @@ export function Lockup({
             <Divider />
           </>
         )}
-        <InfoRow
-          label={`${t('voting-power')}:`}
-          value={
-            <VotingPowerEquivalence
-              amount={input}
-              token={token}
-              votingPower={votingPowerRatio}
-            />
-          }
-        />
+        <div className="flex flex-col gap-y-0.5">
+          <InfoRow
+            label={`${t('voting-power')}:`}
+            value={
+              <VotingPowerEquivalence
+                amount={input}
+                token={token}
+                votingPower={votingPowerRatio}
+              />
+            }
+          />
+          <VotingPowerCaption
+            autoRelock={autoRelock}
+            expireDate={formatShortDateWithYear(unlockDate)}
+            show={featureFlags.enableHemiStakeAutoRelock && canUsePresets}
+            valid={valid}
+          />
+        </div>
       </div>
       {minLocked && (
         <WarningMessage>{t('form.lockup-extend-warning')}</WarningMessage>

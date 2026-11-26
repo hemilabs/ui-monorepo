@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import { Card } from 'components/card'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
@@ -27,16 +28,22 @@ export const EstimatorInputs = function () {
   const { data: balance } = useTokenBalance(token.chainId, token.address)
   const {
     amount,
+    autoRelock,
     inputDays,
     lockupDays,
     scope,
     updateAmount,
+    updateAutoRelock,
     updateInputDays,
     updateLockupDays,
     updateScope,
   } = useEstimator()
 
-  const submission = useStakeSubmission({ input: amount, lockupDays })
+  const submission = useStakeSubmission({
+    autoRelock,
+    input: amount,
+    lockupDays,
+  })
 
   const scopeOptions: SegmentedControlOption<EstimatorScope>[] = [
     { label: t('new-position'), value: 'new-position' },
@@ -68,8 +75,15 @@ export const EstimatorInputs = function () {
               <div className="flex flex-col gap-y-3 rounded-lg bg-neutral-50 px-4 py-3">
                 <LockupPicker
                   amount={parseTokenUnits(amount, token)}
+                  autoRelock={autoRelock}
+                  disabled={submission.isRunningOperation}
                   inputDays={inputDays}
                   lockupDays={lockupDays}
+                  updateAutoRelock={
+                    featureFlags.enableHemiStakeAutoRelock
+                      ? updateAutoRelock
+                      : undefined
+                  }
                   updateInputDays={updateInputDays}
                   updateLockupDays={updateLockupDays}
                 />

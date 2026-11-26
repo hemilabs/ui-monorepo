@@ -5,6 +5,7 @@ import {
   epochsPerYear,
   getEpochEnd,
   getLockEnd,
+  getRelockedWeight,
   getWeightAt,
 } from './lockEpochs'
 import {
@@ -79,11 +80,31 @@ const sumWeights = (weights: ClassWeights) =>
 
 type ExistingPosition = {
   amount: bigint
+  autoRelock?: boolean
   delegatedAway?: boolean
   lockEnd: number
   positionClass: PositionClass
   settledLockEnd?: number
 }
+
+const getLegWeights = ({
+  amount,
+  at,
+  autoRelock = false,
+  lockEnd,
+  now,
+  positionClass,
+}: {
+  amount: bigint
+  at: number
+  autoRelock?: boolean
+  lockEnd: number
+  now: number
+  positionClass: PositionClass
+}) =>
+  autoRelock
+    ? { transferable: getRelockedWeight({ amount, lockEnd, now }) }
+    : getClassWeights({ amount, at, lockEnd, positionClass })
 
 export const getBlendedForecast = function ({
   existing,
@@ -94,6 +115,7 @@ export const getBlendedForecast = function ({
   existing: ExistingPosition[]
   incoming: {
     amount: bigint
+    autoRelock?: boolean
     lockDurationInSeconds: number
     positionClass?: PositionClass
   }
@@ -109,22 +131,25 @@ export const getBlendedForecast = function ({
   })
 
   const atSettled = staked.map(position =>
-    getClassWeights({
+    getLegWeights({
       ...position,
       at: settledAt,
       lockEnd: position.settledLockEnd ?? position.lockEnd,
+      now,
     }),
   )
 
   const epochs = Array.from({ length: epochsPerYear }, function (_, index) {
     const at = getEpochEnd({ epochsAhead: index, now })
     const stakedWeights = staked.map(position =>
-      getClassWeights({ ...position, at }),
+      getLegWeights({ ...position, at, now }),
     )
-    const incomingWeights = getClassWeights({
+    const incomingWeights = getLegWeights({
       amount: incoming.amount,
       at,
+      autoRelock: incoming.autoRelock,
       lockEnd: incomingLockEnd,
+      now,
       positionClass: incoming.positionClass ?? alwaysTransferable,
     })
 

@@ -34,8 +34,10 @@ export type StakingPositionStatus =
 
 export type StakingPosition = {
   amount: bigint
+  autoRelock: boolean
   blockNumber: bigint
   blockTimestamp: bigint
+  effectiveLockEnd: bigint
   forfeitable: boolean
   id: string
   lockTime: bigint
@@ -50,11 +52,15 @@ export type StakingPosition = {
 
 export type StakingDashboardOperation = Partial<{
   approvalTxHash: Hash
+  autoRelock: boolean
   input: string
   inputDays: string
   lockupDays: number
   stakingPosition: Partial<
-    Pick<StakingPosition, 'amount' | 'tokenId' | 'lockTime' | 'timestamp'>
+    Pick<
+      StakingPosition,
+      'amount' | 'effectiveLockEnd' | 'tokenId' | 'transferable'
+    >
   >
   status: StakingDashboardStatusType
   transactionHash: Hash

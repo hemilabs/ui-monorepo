@@ -10,6 +10,7 @@ import { formatUnits } from 'viem'
 import { formatApyFromRatio } from '../../_utils/formatApyFromRatio'
 
 type Props = {
+  autoRelock: boolean
   carriedFrom: number | undefined
   currentEpoch: number
   input: string
@@ -23,6 +24,7 @@ type Props = {
 }
 
 export const PayoutHeadline = function ({
+  autoRelock,
   carriedFrom,
   currentEpoch,
   input,
@@ -112,9 +114,11 @@ export const PayoutHeadline = function ({
         </span>
         <span className="hidden sm:inline">·</span>
         <span className="whitespace-nowrap font-semibold text-neutral-600">
-          {t('unlocks-on', {
-            date: formatShortDateWithYear(new Date(lockEnd * 1000)),
-          })}
+          {autoRelock
+            ? t('countdown-paused')
+            : t('unlocks-on', {
+                date: formatShortDateWithYear(new Date(lockEnd * 1000)),
+              })}
         </span>
       </div>
     </div>

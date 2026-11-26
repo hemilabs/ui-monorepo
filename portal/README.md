@@ -104,6 +104,8 @@ pnpm test
 
 This runs the unit tests (`*.test.ts`, in Node) and the integration tests (`*.test.tsx`, in Chromium). To run only one of them, use `pnpm test:unit` or `pnpm test:integration`. Before it runs, `test:integration` installs Chromium with Playwright.
 
+The end-to-end tests in [/e2e](./e2e/) run separately with `pnpm test:e2e`. They start an Anvil fork of Hemi mainnet on port 8547, fund Anvil's first test account with HEMI, and load the portal with [`@hemilabs/mock-wallet`](https://github.com/hemilabs/mock-wallet), which connects and signs as that account with no popup. Calls to the portal API are stubbed. To fork from another RPC, set `HEMI_FORK_URL`.
+
 ## Local sandbox for Hemi Earn
 
 To test the Hemi Earn UI end-to-end against a controlled Anvil fork, see [`scripts/hemi-earn/README.md`](./scripts/hemi-earn/README.md). The sandbox deploys the required mocks and funds a test account so the UI can be exercised without external tooling.

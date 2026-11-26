@@ -1,4 +1,4 @@
-import '@formatjs/intl-durationformat/polyfill'
+import '@formatjs/intl-durationformat/polyfill.js'
 
 import Big from 'big.js'
 import { type Account, type BtcTransaction } from 'btc-wallet/unisat'

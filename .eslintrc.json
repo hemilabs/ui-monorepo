@@ -3,7 +3,9 @@
   "ignorePatterns": [
     "packages/*/dist",
     "portal/dist",
+    "portal/playwright-report",
     "portal/storybook-static",
+    "portal/test-results",
     "subgraphs/**/*.ts",
     "!subgraphs/hemi-supply-indexer/src/**/*.ts",
     "!subgraphs/hemi-supply-indexer/tests/**/*.ts",
@@ -232,6 +234,13 @@
             }
           }
         ]
+      }
+    },
+    {
+      "files": ["portal/e2e/**/*.ts"],
+      "rules": {
+        "@vitest/require-hook": "off",
+        "react-hooks/rules-of-hooks": "off"
       }
     }
   ],

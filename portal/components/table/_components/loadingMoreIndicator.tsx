@@ -1,10 +1,12 @@
 import type { Table } from '@tanstack/react-table'
 import { Virtualizer } from '@tanstack/react-virtual'
+import type { ComponentProps, ComponentType } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { Column } from './column'
 
 type Props<TData> = {
+  CellComponent?: ComponentType<ComponentProps<'td'>>
   isFetching: boolean
   loading: boolean
   rowSize: number
@@ -13,6 +15,7 @@ type Props<TData> = {
 }
 
 export function LoadingMoreIndicator<TData>({
+  CellComponent = Column,
   isFetching,
   loading,
   rowSize,
@@ -32,13 +35,13 @@ export function LoadingMoreIndicator<TData>({
       }}
     >
       {table.getVisibleLeafColumns().map(column => (
-        <Column
+        <CellComponent
           className={column.columnDef.meta?.className ?? 'justify-start'}
           key={column.id}
           style={{ width: column.columnDef.meta?.width }}
         >
           <Skeleton className="w-16" />
-        </Column>
+        </CellComponent>
       ))}
     </tr>
   )

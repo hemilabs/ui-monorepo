@@ -26,7 +26,10 @@ export function LoadingSkeletonRows<TData>({
   return (
     <>
       {Array.from(Array(skeletonRows).keys()).map(index => (
-        <tr className="flex items-center" key={`skeleton-${index}`}>
+        <tr
+          className="flex items-center *:cursor-default"
+          key={`skeleton-${index}`}
+        >
           {table.getVisibleLeafColumns().map(column => (
             <CellComponent
               className={column.columnDef.meta?.className ?? 'justify-start'}

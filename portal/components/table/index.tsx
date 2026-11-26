@@ -112,7 +112,6 @@ type TableBodyProps<TData> = {
   onRowClick?: (row: TData) => void
   onRowHover?: (index: number | null) => void
   placeholder?: ReactNode
-  rowClassName?: string
   rowSize: number
   rowVirtualizer: ReturnType<typeof useTableVirtualizer<TData>>
   scrollContainerRef: RefObject<HTMLDivElement | null>
@@ -131,7 +130,6 @@ function TableBody<TData>({
   onRowClick,
   onRowHover,
   placeholder,
-  rowClassName,
   rowSize,
   rowVirtualizer,
   scrollContainerRef,
@@ -186,11 +184,11 @@ function TableBody<TData>({
               CellComponent={CellComponent}
               onRowClick={onRowClick}
               onRowHover={onRowHover}
-              rowClassName={rowClassName}
               rows={rows}
               virtualItems={virtualItems}
             />
             <LoadingMoreIndicator
+              CellComponent={CellComponent}
               isFetching={isFetching}
               loading={loading}
               rowSize={rowSize}
@@ -214,7 +212,6 @@ type StaticTableBodyProps<TData> = {
   onRowClick?: (row: TData) => void
   onRowHover?: (index: number | null) => void
   placeholder?: ReactNode
-  rowClassName?: string
   scrollRef: RefObject<HTMLDivElement | null>
   skeletonRows: number
   table: ReturnType<typeof useReactTable<TData>>
@@ -229,7 +226,6 @@ function StaticTableBody<TData>({
   onRowClick,
   onRowHover,
   placeholder,
-  rowClassName,
   scrollRef,
   skeletonRows,
   table,
@@ -276,7 +272,6 @@ function StaticTableBody<TData>({
                 CellComponent={CellComponent}
                 onRowClick={onRowClick}
                 onRowHover={onRowHover}
-                rowClassName={rowClassName}
                 rows={rows}
               />
             </tbody>
@@ -305,7 +300,6 @@ export type TableProps<TData> = {
   onRowHover?: (index: number | null) => void
   placeholder?: ReactNode
   priorityColumnIdsOnSmall?: string[]
-  rowClassName?: string
   rowSize?: number
   skeletonRows?: number
   smallBreakpoint?: number
@@ -327,7 +321,6 @@ export function Table<TData>({
   onRowHover,
   placeholder,
   priorityColumnIdsOnSmall,
-  rowClassName,
   rowSize = 56,
   skeletonRows = 4,
   smallBreakpoint = screenBreakpoints.lg,
@@ -413,7 +406,6 @@ export function Table<TData>({
           onRowClick={onRowClick}
           onRowHover={onRowHover}
           placeholder={placeholder}
-          rowClassName={rowClassName}
           rowSize={rowSize}
           rowVirtualizer={rowVirtualizer}
           scrollContainerRef={scrollContainerRef}
@@ -431,7 +423,6 @@ export function Table<TData>({
           onRowClick={onRowClick}
           onRowHover={onRowHover}
           placeholder={placeholder}
-          rowClassName={rowClassName}
           scrollRef={staticScrollRef}
           skeletonRows={skeletonRows}
           table={table}

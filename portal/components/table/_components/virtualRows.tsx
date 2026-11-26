@@ -10,7 +10,6 @@ type Props<TData> = {
   CellComponent?: ComponentType<ComponentProps<'td'>>
   onRowClick?: (row: TData) => void
   onRowHover?: (index: number | null) => void
-  rowClassName?: string
   rows: Row<TData>[]
   virtualItems: VirtualItem[]
 }
@@ -19,7 +18,6 @@ export const VirtualRows = <TData,>({
   CellComponent = Column,
   onRowClick,
   onRowHover,
-  rowClassName,
   rows,
   virtualItems,
 }: Props<TData>) => (
@@ -28,7 +26,7 @@ export const VirtualRows = <TData,>({
       const row = rows[virtualRow.index]
       return (
         <tr
-          className={`${baseRowClassName} ${rowClassName ?? ''}`}
+          className={baseRowClassName}
           data-index={virtualRow.index}
           key={row.id}
           onClick={onRowClick ? () => onRowClick(row.original) : undefined}

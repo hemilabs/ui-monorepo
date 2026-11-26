@@ -47,6 +47,25 @@ describe('Table', function () {
     },
   )
 
+  it('uses the custom cell component for the loading-more row', async function () {
+    const CellComponent = (props: ComponentProps<'td'>) => (
+      <td {...props} data-testid="custom-cell" />
+    )
+    const columns = [{ header: 'Name', id: 'name' }]
+
+    const screen = await render(
+      <Table
+        cellComponent={CellComponent}
+        columns={columns}
+        data={[]}
+        isFetching
+        mode="virtual"
+      />,
+    )
+
+    await expect.element(screen.getByTestId('custom-cell')).toBeVisible()
+  })
+
   it('renders once per new data array', async function () {
     let cellRenders = 0
     const columns = [

@@ -9,7 +9,6 @@ type Props<TData> = {
   CellComponent?: ComponentType<ComponentProps<'td'>>
   onRowClick?: (row: TData) => void
   onRowHover?: (index: number | null) => void
-  rowClassName?: string
   rows: Row<TData>[]
 }
 
@@ -17,13 +16,12 @@ export const StaticRows = <TData,>({
   CellComponent = Column,
   onRowClick,
   onRowHover,
-  rowClassName,
   rows,
 }: Props<TData>) => (
   <>
     {rows.map(row => (
       <tr
-        className={`${baseRowClassName} ${rowClassName ?? ''}`}
+        className={baseRowClassName}
         key={row.id}
         onClick={onRowClick ? () => onRowClick(row.original) : undefined}
         onMouseEnter={onRowHover ? () => onRowHover(row.index) : undefined}

@@ -3,7 +3,7 @@ import en from 'messages/en.json'
 import { type ReactNode } from 'react'
 import { type BtcToken, type EvmToken } from 'types/token'
 import { IntlProvider } from 'use-intl'
-import { zeroAddress } from 'viem'
+import { parseUnits } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 import { render, type RenderResult } from 'vitest-browser-react'
 
@@ -44,7 +44,7 @@ const erc20Token: EvmToken = {
 }
 
 const nativeToken: EvmToken = {
-  address: zeroAddress,
+  address: 'ETH',
   chainId: 1,
   decimals: 18,
   name: 'Ether',
@@ -99,26 +99,25 @@ const renderEvm = async function ({
 }
 
 type BtcState = {
-  confirmed?: number
+  balance?: { confirmed: number; unconfirmed: number }
   disabled?: boolean
   fees?: number
   isLoadingBalance?: boolean
   isLoadingFees?: boolean
-  unconfirmed?: number
 }
 
 const renderBtc = async function (state: BtcState) {
   const {
-    confirmed = 150_000,
     disabled = false,
     isLoadingBalance = false,
     isLoadingFees = false,
-    unconfirmed = 0,
   } = state
+  const balance =
+    'balance' in state ? state.balance : { confirmed: 150_000, unconfirmed: 0 }
   const fees = 'fees' in state ? state.fees : 50_000
   useBtcAccount.mockReturnValue({ address: 'tb1qxy2kgdygjrsqtzq2n0yrf2493' })
   useBitcoinBalance.mockReturnValue({
-    balance: { confirmed, unconfirmed },
+    balance,
     isLoading: isLoadingBalance,
   })
   useEstimateBtcFees.mockReturnValue({ fees, isLoading: isLoadingFees })
@@ -140,8 +139,8 @@ const renderBtc = async function (state: BtcState) {
 describe('SetMaxEvmBalance', function () {
   it('deducts the gas from the balance of the native token', async function () {
     const { onSetMaxBalance, screen } = await renderEvm({
-      gas: BigInt(0.5e18),
-      nativeBalance: BigInt(1.5e18),
+      gas: parseUnits('0.5', 18),
+      nativeBalance: parseUnits('1.5', 18),
     })
     await getMaxButton(screen).click()
 
@@ -150,10 +149,10 @@ describe('SetMaxEvmBalance', function () {
 
   it('does not deduct the gas from the balance of an erc20 token', async function () {
     const { onSetMaxBalance, screen } = await renderEvm({
-      gas: BigInt(1e18),
-      nativeBalance: BigInt(3e18),
+      gas: parseUnits('1', 18),
+      nativeBalance: parseUnits('3', 18),
       token: erc20Token,
-      tokenBalance: BigInt(2.5e6),
+      tokenBalance: parseUnits('2.5', 6),
     })
     await getMaxButton(screen).click()
 
@@ -161,19 +160,31 @@ describe('SetMaxEvmBalance', function () {
   })
 
   it.for<[string, EvmState]>([
-    ['disabled', { disabled: true, nativeBalance: BigInt(1e18) }],
+    ['disabled', { disabled: true, nativeBalance: parseUnits('1', 18) }],
     [
       'loading the native balance',
-      { isLoadingNativeBalance: true, nativeBalance: BigInt(1e18) },
+      { isLoadingNativeBalance: true, nativeBalance: parseUnits('1', 18) },
     ],
     ['without a balance', {}],
     [
       'the gas equals the balance',
-      { gas: BigInt(1e18), nativeBalance: BigInt(1e18) },
+      { gas: parseUnits('1', 18), nativeBalance: parseUnits('1', 18) },
     ],
     [
       'the gas is more than the balance',
-      { gas: BigInt(2e18), nativeBalance: BigInt(1e18) },
+      { gas: parseUnits('2', 18), nativeBalance: parseUnits('1', 18) },
+    ],
+    [
+      'the erc20 balance is zero',
+      {
+        nativeBalance: parseUnits('1', 18),
+        token: erc20Token,
+        tokenBalance: BigInt(0),
+      },
+    ],
+    [
+      'the erc20 balance is not loaded',
+      { nativeBalance: parseUnits('1', 18), token: erc20Token },
     ],
   ])('is disabled when %s', async function ([, state]) {
     const { screen } = await renderEvm(state)
@@ -184,9 +195,8 @@ describe('SetMaxEvmBalance', function () {
 describe('SetMaxBtcBalance', function () {
   it('deducts the fees from the confirmed balance', async function () {
     const { onSetMaxBalance, screen } = await renderBtc({
-      confirmed: 150_000,
+      balance: { confirmed: 150_000, unconfirmed: 900_000 },
       fees: 50_000,
-      unconfirmed: 900_000,
     })
     await getMaxButton(screen).click()
 
@@ -197,9 +207,12 @@ describe('SetMaxBtcBalance', function () {
     ['disabled', { disabled: true }],
     ['loading the balance', { isLoadingBalance: true }],
     ['loading the fees', { isLoadingFees: true }],
-    ['the balance is zero', { confirmed: 0 }],
+    ['there is no balance', { balance: undefined }],
     ['the fees are unknown', { fees: undefined }],
-    ['the fees equal the balance', { confirmed: 50_000, fees: 50_000 }],
+    [
+      'the fees equal the balance',
+      { balance: { confirmed: 50_000, unconfirmed: 0 }, fees: 50_000 },
+    ],
   ])('is disabled when %s', async function ([, state]) {
     const { screen } = await renderBtc(state)
     await expect.element(getMaxButton(screen)).toBeDisabled()

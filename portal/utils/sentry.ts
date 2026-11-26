@@ -14,6 +14,9 @@ const isWalletConnectLogRecord = (value: unknown) =>
   typeof value.context === 'string' &&
   typeof value.level === 'number'
 
+const isReownConfigLog = (value: unknown) =>
+  typeof value === 'string' && value.startsWith('[Reown Config]')
+
 const hasWalletProviderErrorCode = (exception: unknown) =>
   isObject(exception) &&
   typeof exception.code === 'number' &&
@@ -22,7 +25,8 @@ const hasWalletProviderErrorCode = (exception: unknown) =>
 export const isWalletNoise = function (event: ErrorEvent, hint: EventHint) {
   const args = event.extra?.arguments
   return (
-    (Array.isArray(args) && args.some(isWalletConnectLogRecord)) ||
+    (Array.isArray(args) &&
+      (isReownConfigLog(args[0]) || args.some(isWalletConnectLogRecord))) ||
     hasWalletProviderErrorCode(hint.originalException)
   )
 }

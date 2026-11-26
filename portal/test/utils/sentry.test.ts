@@ -18,6 +18,27 @@ describe('utils/sentry', function () {
       expect(isWalletNoise(consoleEvent('message', record), {})).toBe(true)
     })
 
+    it('should drop Reown configuration logs', function () {
+      expect(
+        isWalletNoise(
+          consoleEvent(
+            '[Reown Config] Failed to fetch remote project configuration.',
+            Object.assign(new Error('Failed to fetch'), { name: 'TypeError' }),
+          ),
+          {},
+        ),
+      ).toBe(true)
+    })
+
+    it('should keep console events without Reown configuration prefixes', function () {
+      expect(
+        isWalletNoise(
+          consoleEvent('Failed to fetch remote project configuration'),
+          {},
+        ),
+      ).toBe(false)
+    })
+
     it('should keep objects with a context but no numeric level', function () {
       expect(isWalletNoise(consoleEvent({ context: 'portal' }), {})).toBe(false)
       expect(

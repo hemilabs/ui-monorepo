@@ -20,6 +20,7 @@ const unsupportedWalletErrors = [
   "'ethereum.chainId' is deprecated",
   "'ethereum.selectedAddress' is deprecated",
   // Injected scripts that cannot compile wasm under the portal's CSP
+  'Compiling or instantiating WebAssembly module violates',
   'failed to asynchronously prepare wasm',
   // MetaMask-based extensions logging to the console
   'ObjectMultiplex - malformed chunk',
@@ -29,6 +30,7 @@ const unsupportedWalletErrors = [
   'shouldSetTallyForCurrentProvider is not a function',
   'StreamMiddleware - Unknown response id',
   'Talisman extension has not been configured yet',
+  'Waves global variable is deprecated',
   'WavesKeeper global variable is deprecated',
 ]
 
@@ -52,8 +54,8 @@ function enableSentry() {
     'Database deleted by request of the user',
     // user has not enough gas
     'insufficient funds for gas * price + value',
-    // Metamask error
-    "MetaMask: 'eth_accounts' unexpectedly updated accounts. Please report this bug",
+    // MetaMask and Rabby
+    "'eth_accounts' unexpectedly updated accounts. Please report this bug",
     // Another Metamask error
     'MetaMetrics.getInstance().createEventBuilder is not a function.',
     // From "TronWeb: 'tronWeb.sidechain' is deprecated and may be removed in the future. Please use the 'sunweb' sdk instead...",

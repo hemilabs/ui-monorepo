@@ -6,15 +6,12 @@ import {
   encodeAbiParameters,
   http,
   keccak256,
-  parseUnits,
   toHex,
 } from 'viem'
 import { setStorageAt } from 'viem/actions'
 
 import { anvilPort } from './anvil'
-
-const hemiTokenAddress = '0x99e3dE3817F6081B2568208337ef83295b7f591D'
-const fundedHemiBalance = parseUnits('1000', 18)
+import { fundedHemiBalance, hemiTokenAddress } from './hemiToken'
 
 const getBalanceSlot = (account: `0x${string}`) =>
   keccak256(

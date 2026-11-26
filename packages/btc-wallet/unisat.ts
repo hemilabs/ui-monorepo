@@ -1,4 +1,4 @@
-import { UTXO } from 'coinselect'
+import type { UTXO } from 'coinselect'
 
 export type Account = string
 export type Satoshis = number
@@ -11,13 +11,13 @@ export type BtcSupportedNetworks = 'livenet' | 'testnet'
 
 export type BtcTransaction = string
 
-interface EventMap {
+type EventMap = {
   accountsChanged: (accounts: Account[]) => void
   chainChanged: (args: { network: BtcSupportedNetworks }) => void
 }
 
 // See https://docs.unisat.io/dev/unisat-developer-center/unisat-wallet#methods
-export interface Unisat {
+export type Unisat = {
   disconnect(): Promise<void>
   getAccounts(): Promise<Account[]>
   getBalance(): Promise<Balance>

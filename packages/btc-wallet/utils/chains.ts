@@ -1,4 +1,4 @@
-import { BtcChain, bitcoinChains } from '../chains'
+import { type BtcChain, bitcoinChains } from '../chains'
 
 export const isChainIdSupported = (chainId: BtcChain['id']) =>
   bitcoinChains.some(btcChain => btcChain.id === chainId)

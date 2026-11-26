@@ -2,10 +2,7 @@
   "extends": ["bloq", "prettier"],
   "ignorePatterns": [
     "packages/*/dist",
-    "portal/.next",
     "portal/dist",
-    "portal/next-env.d.ts",
-    "portal/out",
     "portal/storybook-static",
     "subgraphs/**/*.ts",
     "!subgraphs/hemi-supply-indexer/src/**/*.ts",
@@ -144,7 +141,10 @@
     },
     {
       "extends": ["bloq/typescript", "prettier"],
-      "files": ["*.d.ts"]
+      "files": ["**/*.d.ts"],
+      "rules": {
+        "@typescript-eslint/consistent-type-definitions": "off"
+      }
     },
     {
       "extends": ["bloq/vitest"],
@@ -237,6 +237,8 @@
   ],
   "root": true,
   "rules": {
+    "@typescript-eslint/array-type": ["error", { "default": "array" }],
+    "@typescript-eslint/consistent-type-definitions": ["error", "type"],
     "camelcase": [
       "warn",
       {

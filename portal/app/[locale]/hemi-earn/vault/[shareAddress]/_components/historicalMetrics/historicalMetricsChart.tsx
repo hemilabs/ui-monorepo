@@ -152,7 +152,7 @@ const chartHeight = 130
 
 // The SVG scales to fill its container, so a smaller viewBox width makes labels appear
 // larger. Pick widths per breakpoint (largest first) so tick labels stay a consistent visual size.
-const chartWidthByBreakpoint: ReadonlyArray<[number, number]> = [
+const chartWidthByBreakpoint: readonly [number, number][] = [
   [screenBreakpoints.xl, 680],
   [screenBreakpoints.lg, 520],
   [screenBreakpoints.md, 500],

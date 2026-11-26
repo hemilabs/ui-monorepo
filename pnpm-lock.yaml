@@ -67,9 +67,9 @@ importers:
       '@tanstack/react-query':
         specifier: 5.100.9
         version: 5.100.9(react@19.2.8)
-      '@tsconfig/next':
-        specifier: 2.0.3
-        version: 2.0.3
+      '@tsconfig/vite-react':
+        specifier: 8.1.1
+        version: 8.1.1
       '@types/react':
         specifier: 19.2.17
         version: 19.2.17
@@ -3518,9 +3518,6 @@ packages:
 
   '@total-typescript/ts-reset@0.6.1':
     resolution: {integrity: sha512-cka47fVSo6lfQDIATYqb/vO1nvFfbPw7uWLayIXIhGETj0wcOOlrlkobOMDNQOFr9QOafegUPq13V2+6vtD7yg==, tarball: https://registry.npmjs.org/@total-typescript/ts-reset/-/ts-reset-0.6.1.tgz}
-
-  '@tsconfig/next@2.0.3':
-    resolution: {integrity: sha512-b4aKvmdWnv9aUy+NStUFlefirk3SItW20OJtbi5/ue9oMRaQtUYbN5zsr7OmV3rlx6Gp6h7A82gPoCXhrNGVPQ==, tarball: https://registry.npmjs.org/@tsconfig/next/-/next-2.0.3.tgz}
 
   '@tsconfig/node24@24.0.3':
     resolution: {integrity: sha512-vcERKtKQKHgzt/vfS3Gjasd8SUI2a0WZXpgJURdJsMySpS5+ctgbPfuLj2z/W+w4lAfTWxoN4upKfu2WzIRYnw==, tarball: https://registry.npmjs.org/@tsconfig/node24/-/node24-24.0.3.tgz}
@@ -12710,8 +12707,6 @@ snapshots:
       '@testing-library/dom': 10.4.1
 
   '@total-typescript/ts-reset@0.6.1': {}
-
-  '@tsconfig/next@2.0.3': {}
 
   '@tsconfig/node24@24.0.3': {}
 

@@ -1,4 +1,4 @@
-import { Unisat } from '../unisat'
+import type { Unisat } from '../unisat'
 import { sendBitcoin } from '../utils/psbt'
 
 import { type ConnectorGroup, type WalletConnector } from './types'

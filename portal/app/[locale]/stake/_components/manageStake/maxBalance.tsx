@@ -9,12 +9,6 @@ type Props = Omit<ComponentProps<typeof SetMaxEvmBalance>, 'gas'> & {
   token: StakeToken
 }
 
-export const StakeMaxBalance = (
-  props: Props & {
-    estimateFees: bigint
-  },
-) => <SetMaxEvmBalance {...props} gas={props.estimateFees} />
-
 export const UnstakeMaxBalance = function ({
   disabled,
   onSetMaxBalance,

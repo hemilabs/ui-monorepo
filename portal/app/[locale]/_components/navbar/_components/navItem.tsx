@@ -1,7 +1,6 @@
 import { type AnalyticsEvent } from 'app/analyticsEvents'
 import { Link } from 'components/link'
 import { ComponentProps, ReactNode, ComponentType } from 'react'
-import { UrlObject } from 'url'
 
 import { IconContainer } from './iconContainer'
 
@@ -47,7 +46,6 @@ export type NavItemProps = {
   rightSection?: ReactNode
   row?: ComponentType<ComponentProps<'div'>>
   text: string
-  urlToBeSelected?: string | UrlObject
 }
 
 export const ItemText = ({

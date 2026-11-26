@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import Big from 'big.js'
 import { useHemi } from 'hooks/useHemi'
 import { useTokenPrices } from 'hooks/useTokenPrices'
+import { isDataUnavailable } from 'utils/queryStatus'
 import { getTotalStaked } from 'utils/subgraph'
 import { getTokenByAddress, getTokenPrice } from 'utils/token'
 import { formatUnits } from 'viem'
@@ -13,14 +14,14 @@ export const useTotalStaked = function () {
   const hemi = useHemi()
   const {
     data: prices,
-    isError: isTokenPricesError,
-    isPending: isLoadingPrices,
+    fetchStatus: pricesFetchStatus,
+    status: pricesStatus,
   } = useTokenPrices()
 
   const {
-    data: totalPerToken = [],
-    isError: isTotalStakedError,
-    isPending: isLoadingTotalStaked,
+    data: totalPerToken,
+    fetchStatus: totalStakedFetchStatus,
+    status: totalStakedStatus,
   } = useQuery({
     queryFn: () => getTotalStaked(hemi.id),
     queryKey: ['total-staked', hemi.id],
@@ -28,11 +29,21 @@ export const useTotalStaked = function () {
     refetchInterval: 2 * 60 * 1000,
   })
 
-  const isError = isTokenPricesError || isTotalStakedError
-  const isPending = isLoadingTotalStaked || isLoadingPrices
+  const isDataMissing =
+    isDataUnavailable({
+      fetchStatus: pricesFetchStatus,
+      status: pricesStatus,
+    }) ||
+    isDataUnavailable({
+      fetchStatus: totalStakedFetchStatus,
+      status: totalStakedStatus,
+    })
 
-  const calculateTotalStake = (pricesData: Record<string, string>) =>
-    totalPerToken
+  const calculateTotalStake = (
+    pricesData: Record<string, string>,
+    totals: NonNullable<typeof totalPerToken>,
+  ) =>
+    totals
       .reduce(function (acc, { id, totalStaked }) {
         const token = getTokenByAddress(id, hemi.id)
         // While low chance, there may be a token that is not in the list, if for example
@@ -49,10 +60,13 @@ export const useTotalStaked = function () {
       }, Big(0))
       .toFixed()
 
+  const totalStake =
+    prices !== undefined && totalPerToken !== undefined
+      ? calculateTotalStake(prices, totalPerToken)
+      : undefined
+
   return {
-    isError,
-    isPending,
-    totalStake:
-      prices === undefined || isPending ? '0' : calculateTotalStake(prices),
+    isError: totalStake === undefined && isDataMissing,
+    totalStake,
   }
 }

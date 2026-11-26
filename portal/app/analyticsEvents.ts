@@ -78,7 +78,6 @@ const analyticsEvents = [
   'nav - tools',
   'nav - faucet',
   'nav - pure finance',
-  'nav - stake',
   'nav - tunnel',
   'nav - language',
   'nav - legal and privacy',
@@ -89,10 +88,6 @@ const analyticsEvents = [
   'nav - youtube',
   'nav - x',
   // /stake
-  'stake - stake failed',
-  'stake - stake started',
-  'stake - stake success',
-  'stake - stake more',
   'stake - unstake failed',
   'stake - unstake started',
   'stake - unstake success',

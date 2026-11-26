@@ -3,9 +3,11 @@ import {
   type SegmentedControlOption,
 } from 'components/segmentedControl'
 import { TokenInput } from 'components/tokenInput'
+import { TokenInputError } from 'components/tokenInput/error'
 import { parseAmountInput } from 'components/tokenInput/utils'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { useFormat } from 'hooks/useFormat'
+import { useId } from 'react'
 import { type Token } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { minLockAmount } from 've-hemi-actions'
@@ -30,6 +32,7 @@ export const EstimatorAmountField = function ({
   const formatter = useFormat()
   const t = useTranslations('hemi-stake')
   const tCommon = useTranslations('common')
+  const errorId = useId()
 
   const amountUnits = parseAmountInput(value, token)
   const belowMinimum =
@@ -75,8 +78,14 @@ export const EstimatorAmountField = function ({
 
   return (
     <TokenInput
+      bottomRight={
+        <TokenInputError
+          id={errorId}
+          message={belowMinimum ? minimumMessage : undefined}
+        />
+      }
+      errorId={errorId}
       errorKey={belowMinimum ? 'less-than-min-value' : undefined}
-      errorMessage={belowMinimum ? minimumMessage : undefined}
       footer={<div className="mt-3 sm:hidden">{quickAmounts}</div>}
       headerAction={<div className="hidden sm:block">{quickAmounts}</div>}
       label={t('amount')}

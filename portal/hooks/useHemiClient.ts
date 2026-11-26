@@ -1,5 +1,4 @@
 import { hemiWalletBitcoinTunnelManagerActions } from 'hemi-viem'
-import { hemiWalletStakeActions } from 'hemi-viem-stake-actions'
 import { type WalletClient } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
 
@@ -11,9 +10,7 @@ export const useHemiClient = function () {
 }
 
 const walletClientToHemiClient = (walletClient: WalletClient) =>
-  walletClient
-    .extend(hemiWalletBitcoinTunnelManagerActions())
-    .extend(hemiWalletStakeActions())
+  walletClient.extend(hemiWalletBitcoinTunnelManagerActions())
 
 export const useHemiWalletClient = function () {
   const hemi = useHemi()

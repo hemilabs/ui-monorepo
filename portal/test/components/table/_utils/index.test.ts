@@ -113,10 +113,10 @@ describe('getSafeData', function () {
   // Returning a fresh `[]` literal in the empty branch breaks referential
   // stability for useReactTable, which invalidates the getCoreRowModel memo
   // and rebuilds the rows on every render.
-  it('returns the same empty-array reference across calls when data is empty and not loading', function () {
-    const a = getSafeData<TestData>(undefined, false, [])
-    const b = getSafeData<TestData>([], false, [])
-    const c = getSafeData<TestData>(undefined, false, [])
+  it('returns the same empty-array reference across calls when data is empty', function () {
+    const a = getSafeData<TestData>(undefined)
+    const b = getSafeData<TestData>([])
+    const c = getSafeData<TestData>(undefined)
 
     expect(a).toBe(b)
     expect(b).toBe(c)
@@ -127,22 +127,6 @@ describe('getSafeData', function () {
       { amount: 1, id: 'a', name: 'Alice', status: 'ok' },
     ]
 
-    expect(getSafeData(data, false, [])).toBe(data)
-  })
-
-  it('returns the skeleton array when data is empty and showSkeleton is true', function () {
-    const skeleton: TestData[] = [null, null] as unknown as TestData[]
-
-    expect(getSafeData<TestData>(undefined, true, skeleton)).toBe(skeleton)
-    expect(getSafeData<TestData>([], true, skeleton)).toBe(skeleton)
-  })
-
-  it('prefers real data over the skeleton when both are available', function () {
-    const data: TestData[] = [
-      { amount: 1, id: 'a', name: 'Alice', status: 'ok' },
-    ]
-    const skeleton: TestData[] = [null] as unknown as TestData[]
-
-    expect(getSafeData(data, true, skeleton)).toBe(data)
+    expect(getSafeData(data)).toBe(data)
   })
 })

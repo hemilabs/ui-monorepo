@@ -6,8 +6,18 @@ type Props = {
   walletAddress: Address | undefined
 }
 
-const isValidReceiver = (address: string): address is Address =>
-  isAddress(address, { strict: false }) && getAddress(address) !== zeroAddress
+const hasChecksum = (hex: string) =>
+  hex !== hex.toLowerCase() && hex !== hex.toUpperCase()
+
+const isValidReceiver = function (address: string): address is Address {
+  if (!isAddress(address, { strict: false })) {
+    return false
+  }
+  if (hasChecksum(address.slice(2)) && getAddress(address) !== address) {
+    return false
+  }
+  return getAddress(address) !== zeroAddress
+}
 
 const getErrorKey = function ({
   customAddress,

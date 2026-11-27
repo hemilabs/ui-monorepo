@@ -65,7 +65,6 @@ describe('resolveReceivingEvmAddress', function () {
   it.each([
     ['all lowercase', customAddress.toLowerCase()],
     ['all uppercase', `0x${customAddress.slice(2).toUpperCase()}`],
-    ['a wrong checksum', customAddress.replace('aA', 'aa')],
   ])(
     'accepts a custom address in %s and returns it checksummed',
     function (_, address) {
@@ -82,6 +81,26 @@ describe('resolveReceivingEvmAddress', function () {
       })
     },
   )
+
+  it.each([
+    ['a wrong checksum', customAddress.replace('aA', 'aa')],
+    [
+      'a typo in a checksummed address',
+      customAddress.replace('BeAed', 'BeAee'),
+    ],
+  ])('rejects a custom address with %s', function (_, address) {
+    expect(
+      resolveReceivingEvmAddress({
+        customAddress: address,
+        customAddressEnabled: true,
+        walletAddress,
+      }),
+    ).toEqual({
+      errorKey: 'input-a-correct-custom-address',
+      isCustomAddressValid: false,
+      receivingAddress: undefined,
+    })
+  })
 
   it('uses a valid custom address', function () {
     expect(

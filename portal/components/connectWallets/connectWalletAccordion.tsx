@@ -3,7 +3,7 @@ import { Chevron } from 'components/icons/chevron'
 import { OrangeCheckIcon } from 'components/icons/orangeCheckIcon'
 import { Tooltip } from 'components/tooltip'
 import { useUmami } from 'hooks/useUmami'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import { useTranslations } from 'use-intl'
 
 import { DownloadIcon } from './icons/download'
@@ -56,6 +56,10 @@ export function ConnectWalletAccordion<T extends WalletItem>({
   const t = useTranslations('connect-wallets')
   const [isOpen, setIsOpen] = useState(true)
   const [selectedWallet, setSelectedWallet] = useState<T | null>(null)
+  const detailViewRef = useRef<HTMLDivElement>(null)
+  const walletButtonRefs = useRef(new Map<string, HTMLButtonElement>())
+  const showDetailView = selectedWallet && renderDetailView
+  const isDetailViewOpen = !!showDetailView
 
   const handleClick = function () {
     track?.(event)
@@ -63,15 +67,40 @@ export function ConnectWalletAccordion<T extends WalletItem>({
   }
 
   const handleWalletClick = async function (wallet: T) {
-    const result = await onConnect(wallet)
+    try {
+      const result = await onConnect(wallet)
 
-    // If onConnect returns true (or void) and renderDetailView exists, show detail view
-    // This allows EVM wallets to show QR code after initiating connection
-    // If onConnect returns false, don't show detail view (e.g., direct connection succeeded)
-    if (renderDetailView && result !== false) {
-      setSelectedWallet(wallet)
+      // If onConnect returns true (or void) and renderDetailView exists, show detail view
+      // This allows EVM wallets to show QR code after initiating connection
+      // If onConnect returns false, don't show detail view (e.g., direct connection succeeded)
+      if (renderDetailView && result !== false) {
+        setSelectedWallet(wallet)
+      }
+    } catch {
+      // Wallet rejection and cancellation are expected; leave the current view unchanged.
     }
   }
+
+  const handleBack = function () {
+    const openedWallet = selectedWallet
+    setSelectedWallet(null)
+    if (openedWallet) {
+      requestAnimationFrame(function () {
+        walletButtonRefs.current.get(openedWallet.id)?.focus()
+      })
+    }
+  }
+
+  useEffect(
+    function focusDetailViewBackButton() {
+      if (isDetailViewOpen) {
+        detailViewRef.current
+          ?.querySelector<HTMLButtonElement>('button')
+          ?.focus()
+      }
+    },
+    [isDetailViewOpen],
+  )
 
   const sortedWallets = [...wallets].sort(function (a, b) {
     const aState = getWalletState(a)
@@ -86,8 +115,6 @@ export function ConnectWalletAccordion<T extends WalletItem>({
 
     return 0
   })
-
-  const showDetailView = selectedWallet && renderDetailView
 
   return (
     <div className="rounded-lg bg-white shadow-sm">
@@ -127,6 +154,7 @@ export function ConnectWalletAccordion<T extends WalletItem>({
             className={`p-3 transition-transform duration-300 ${
               showDetailView ? '-translate-x-full' : 'translate-x-0'
             }`}
+            inert={!!showDetailView}
           >
             <h4 className="mb-3 mt-1 text-neutral-500">{t('wallets')}</h4>
             <div className="flex gap-2 overflow-x-auto p-1 md:grid md:grid-cols-3 md:overflow-x-visible md:p-0">
@@ -139,6 +167,13 @@ export function ConnectWalletAccordion<T extends WalletItem>({
                     className="group relative mb-2 flex size-30 shrink-0 flex-col items-center justify-center gap-2 rounded-lg bg-neutral-50/80 p-2 transition-shadow duration-300 hover:shadow-sm md:mb-0"
                     key={wallet.id}
                     onClick={() => handleWalletClick(wallet)}
+                    ref={function (button) {
+                      if (button) {
+                        walletButtonRefs.current.set(wallet.id, button)
+                      } else {
+                        walletButtonRefs.current.delete(wallet.id)
+                      }
+                    }}
                   >
                     {showCheck && (
                       <div className="absolute right-2 top-2">
@@ -185,9 +220,9 @@ export function ConnectWalletAccordion<T extends WalletItem>({
               className={`absolute inset-0 m-4 transition-transform duration-300 ${
                 showDetailView ? 'translate-x-0' : 'translate-x-full'
               }`}
+              ref={detailViewRef}
             >
-              {selectedWallet &&
-                renderDetailView(selectedWallet, () => setSelectedWallet(null))}
+              {selectedWallet && renderDetailView(selectedWallet, handleBack)}
             </div>
           )}
         </div>

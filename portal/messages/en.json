@@ -66,6 +66,7 @@
     "your-wallet-not-connected": "Your wallet is not connected"
   },
   "connect-wallets": {
+    "back": "Back",
     "btc-wallet": "BTC Wallet",
     "btc-wallet-requirement": "A Bitcoin wallet is only required if moving assets between Bitcoin and Hemi.",
     "connect-btc-wallet": "Connect your BTC Wallet",

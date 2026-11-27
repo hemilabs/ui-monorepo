@@ -35,6 +35,7 @@ type Props = {
   children: ReactNode
   container?: HTMLElement
   onClose?: VoidFunction
+  open?: boolean
   overlay?: ComponentType
   position?: 'left' | 'right'
 }
@@ -43,6 +44,7 @@ export const Drawer = function ({
   children,
   container,
   onClose,
+  open,
   overlay: OverlayComponent = DrawerOverlay,
   position = 'right',
 }: Props) {
@@ -102,6 +104,15 @@ export const Drawer = function ({
       setIsOpen(false)
     },
     [onClose],
+  )
+
+  useEffect(
+    function closeWhenNoLongerOpen() {
+      if (open === false) {
+        handleClose()
+      }
+    },
+    [handleClose, open],
   )
 
   const handleOutsideClose = useCallback(

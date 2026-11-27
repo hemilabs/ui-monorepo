@@ -56,7 +56,7 @@ const CustomAddressToggle = function ({
 type CustomAddressInputProps = {
   customAddress: string
   disabled: boolean
-  isCheckingAddress: boolean
+  isCheckingAddress?: boolean
   isCustomAddressValid: boolean | undefined
   onCustomAddressChange: (customAddress: string) => void
   placeholder: string
@@ -110,7 +110,7 @@ type EditableProps = {
   customAddressEnabled: boolean
   disabled: boolean
   editable: true
-  isCheckingAddress: boolean
+  isCheckingAddress?: boolean
   isCustomAddressValid: boolean | undefined
   onCustomAddressChange: (customAddress: string) => void
   onCustomAddressEnabledChange: (customAddressEnabled: boolean) => void

@@ -26,7 +26,7 @@ import { findChainById, getL1StandardBridgeAddress } from 'utils/chain'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { isNativeAddress } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
-import { type Chain, zeroAddress } from 'viem'
+import { type Address, type Chain, zeroAddress } from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
 
 import { useTunnelOperation } from './useTunnelOperation'
@@ -36,6 +36,7 @@ type UseDeposit = {
   fromInput: string
   fromToken: EvmToken
   on?: (emitter: EventEmitter<DepositErc20Events>) => void
+  to: Address | undefined
   toToken: EvmToken
 }
 
@@ -44,6 +45,7 @@ export const useDeposit = function ({
   fromInput,
   fromToken,
   on,
+  to,
   toToken,
 }: UseDeposit) {
   const amount = parseTokenUnits(fromInput, fromToken)
@@ -88,6 +90,9 @@ export const useDeposit = function ({
       if (!address) {
         throw new Error('No account connected')
       }
+      if (!to) {
+        throw new Error('No receiving address')
+      }
 
       await ensureConnectedTo(fromToken.chainId)
 
@@ -102,6 +107,7 @@ export const useDeposit = function ({
             l1PublicClient: getEvmL1PublicClient(fromToken.chainId),
             l1WalletClient: l1WalletClient!,
             l2Chain: findChainById(toToken.chainId) as Chain,
+            to,
           })
         : depositErc20({
             account: address,
@@ -115,6 +121,7 @@ export const useDeposit = function ({
             l2Chain: findChainById(toToken.chainId) as Chain,
             // @ts-expect-error string is Address
             l2TokenAddress: toToken.address,
+            to,
           })
 
       let deposit: EvmDepositOperation | undefined
@@ -129,8 +136,7 @@ export const useDeposit = function ({
         l2Token: depositingNative
           ? NativeTokenSpecialAddressOnL2
           : toToken.address,
-        // "to" field uses the same address as from, which is user's address
-        to: address,
+        to,
       })
 
       emitter.on('user-signed-approve', function (approvalTxHash) {

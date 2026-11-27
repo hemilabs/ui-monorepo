@@ -16,17 +16,22 @@ concurrency:
 
 jobs:
   refresh-tvl:
+    env:
+      DUNE_API_KEY: ${{ secrets.TVL_DUNE_API_KEY }}
+      DUNE_QUERY_ID: ${{ vars.TVL_DUNE_QUERY_ID }}
+      SLACK_MENTION: ${{ vars.SLACK_MENTION }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     runs-on: ubuntu-latest
     steps:
       - run: |
           curl --fail-with-body --max-time 30 --silent --show-error \
-            -X POST "https://api.dune.com/api/v1/query/${{ vars.TVL_DUNE_QUERY_ID }}/execute" \
-            -H "X-Dune-API-Key: ${{ secrets.TVL_DUNE_API_KEY }}" \
+            -X POST "https://api.dune.com/api/v1/query/${DUNE_QUERY_ID}/execute" \
+            -H "X-Dune-API-Key: ${DUNE_API_KEY}" \
             -H "Content-Type: application/json" \
             -d '{}'
       - if: failure()
         run: |
           curl --fail-with-body --max-time 30 --silent --show-error \
-            -X POST "${{ secrets.SLACK_WEBHOOK_URL }}" \
+            -X POST "${SLACK_WEBHOOK_URL}" \
             -H "Content-Type: application/json" \
-            -d '{"text": "${{ vars.SLACK_MENTION }} :boom: TVL refresh failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}'
+            -d "$(jq -n --arg text "${SLACK_MENTION} :boom: TVL refresh failed: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" '{text: $text}')"

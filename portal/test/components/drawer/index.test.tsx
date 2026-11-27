@@ -78,6 +78,28 @@ describe('Drawer', function () {
     expect(onClose).toHaveBeenCalledOnce()
   })
 
+  it('closes once open turns false and the closing animation ends', async function () {
+    const onClose = vi.fn()
+    const screen = await render(
+      <Drawer onClose={onClose} open>
+        <p>{content}</p>
+      </Drawer>,
+    )
+    await waitForOpen()
+
+    await screen.rerender(
+      <Drawer onClose={onClose} open={false}>
+        <p>{content}</p>
+      </Drawer>,
+    )
+
+    expect(onClose).not.toHaveBeenCalled()
+
+    endTransition(getPanel(screen))
+
+    expect(onClose).toHaveBeenCalledOnce()
+  })
+
   it('ignores transitions other than the panel transform', async function () {
     const onClose = vi.fn()
     const screen = await renderDrawer(onClose)

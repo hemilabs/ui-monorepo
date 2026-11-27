@@ -25,8 +25,7 @@ export const MobileBottomBar = ({ closeMenu, isMenuOpen, openMenu }: Props) => (
        * useOnClickOutside on any open drawer so it doesn't close on the
        * same mousedown that opens the menu.
        * When closing (X): propagation is allowed so the navbar Drawer's
-       * useOnClickOutside detects the click outside and plays its closing
-       * animation; closeMenu only changes the button icon.
+       * useOnClickOutside starts its closing animation on mousedown.
        */}
       <ButtonIcon
         onClick={isMenuOpen ? closeMenu : openMenu}

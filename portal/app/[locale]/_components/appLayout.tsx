@@ -69,8 +69,6 @@ export const AppLayout = function ({ children }: Props) {
     setNavbarDrawerMounted(true)
   }, [])
 
-  // Only changes the button icon — the Drawer handles its own animated close
-  // via useOnClickOutside, then calls closeNavbar after the transition.
   const closeMenu = useCallback(() => setIsNavbarOpen(false), [])
 
   const closeNavbar = useCallback(function closeNavbar() {
@@ -125,7 +123,7 @@ export const AppLayout = function ({ children }: Props) {
           </div>
         </MainContainer>
         {showNavbarDrawer && (
-          <Drawer onClose={closeNavbar} position="left">
+          <Drawer onClose={closeNavbar} open={isNavbarOpen} position="left">
             <NavbarResponsive />
           </Drawer>
         )}

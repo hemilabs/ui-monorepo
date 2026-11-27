@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "scripts": {
     "deps:check": "knip",
-    "format:check": "prettier --check .",
+    "format:check": "prettier --check --cache --cache-strategy content .",
     "format:write": "prettier --write .",
-    "lint": "eslint --cache --max-warnings 0 .",
-    "lint:fix": "eslint --cache . --fix",
+    "lint": "eslint --cache --cache-strategy content --max-warnings 0 .",
+    "lint:fix": "eslint --cache --cache-strategy content . --fix",
     "prepare": "husky"
   },
   "devDependencies": {

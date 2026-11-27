@@ -43,6 +43,11 @@ publicHoistPattern:
 
 saveExact: true
 
+# Run recursive scripts without dependency ordering, so builds don't wait for
+# builds they don't need. Safe because workspaces import each other's source,
+# not build output; remove it if one starts consuming another's build.
+sort: false
+
 trustPolicy: no-downgrade
 
 trustPolicyExclude:

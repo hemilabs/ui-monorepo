@@ -99,16 +99,7 @@ export const useWithdraw = function ({
       }
 
       const { emitter, promise } = withdrawingNative
-        ? initiateWithdrawEth({
-            account,
-            amount,
-            l1Chain,
-            l2Chain,
-            l2PublicClient: hemiPublicClient,
-            l2TokenAddress,
-            l2WalletClient: hemiWalletClient!,
-            to,
-          })
+        ? initiateWithdrawEth(args)
         : initiateWithdrawErc20(args)
 
       let withdrawal: ToEvmWithdrawOperation | undefined

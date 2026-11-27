@@ -1,7 +1,7 @@
 import { TEST_ADDRESS } from '@hemilabs/anvil-fork-setup/utils'
 import { expect, type Locator, type Page } from '@playwright/test'
 import { createFormatter, formatEvmAddress } from 'utils/format'
-import { snapToEpoch } from 've-hemi-actions'
+import { MinLockDurationSeconds, snapToEpoch } from 've-hemi-actions'
 import { getLockedBalance } from 've-hemi-actions/actions'
 import { formatUnits, parseUnits } from 'viem'
 import {
@@ -12,7 +12,7 @@ import {
 } from 'viem/actions'
 import { balanceOf } from 'viem-erc20/actions'
 
-import { createHemiClient } from './anvil'
+import { advanceChainTime, createHemiClient } from './anvil'
 import { test } from './fixtures/wallet'
 import { fundedHemiBalance, hemiTokenAddress } from './hemiToken'
 import { createPosition } from './positions'
@@ -188,4 +188,61 @@ test('adds time to a lock', async function ({ page, stakingPositions }) {
       ),
     }),
   ).toBeVisible()
+})
+
+test('unlocks an expired lock', async function ({ page, stakingPositions }) {
+  const client = createHemiClient()
+  const amount = parseUnits('25', 18)
+  const position = await createPosition({
+    amount,
+    lockDurationInSeconds: MinLockDurationSeconds,
+  })
+  stakingPositions.push(position)
+  const tokenId = BigInt(position.tokenId)
+  const countLocks = () =>
+    readContract(client, {
+      abi: veHemiAbi,
+      address: veHemiAddress,
+      args: [TEST_ADDRESS],
+      functionName: 'balanceOf',
+    })
+  const getHemiBalance = () =>
+    balanceOf(client, { account: TEST_ADDRESS, address: hemiTokenAddress })
+  const [{ end }, { timestamp }, locksBefore, hemiBefore] = await Promise.all([
+    getLockedBalance(client, tokenId),
+    getBlock(client),
+    countLocks(),
+    getHemiBalance(),
+  ])
+  const chainTimestamp = await advanceChainTime(
+    Number(end - timestamp) + 86_400,
+  )
+
+  await page.clock.setFixedTime(new Date(Number(chainTimestamp) * 1000))
+  await page.goto('/en/hemi-stake')
+  const unlockButton = page.getByRole('button', { exact: true, name: 'Unlock' })
+  await expect(unlockButton).toBeEnabled()
+  await unlockButton.click()
+
+  await expect.poll(countLocks).toBe(locksBefore - BigInt(1))
+  await expect(
+    readContract(client, {
+      abi: veHemiAbi,
+      address: veHemiAddress,
+      args: [tokenId],
+      functionName: 'ownerOf',
+    }),
+  ).rejects.toThrow('ERC721NonexistentToken')
+  expect(await getHemiBalance()).toBe(hemiBefore + amount)
+  position.status = 'withdrawn'
+  const drawerHeading = page.getByRole('heading', {
+    name: 'We’re unlocking your tokens',
+  })
+  await expect(drawerHeading).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(drawerHeading).toBeHidden()
+  const positionCell = page.getByRole('cell', { name: hemiCell(amount) })
+  await expect(positionCell).toBeHidden()
+  await page.getByRole('button', { exact: true, name: 'Burned' }).click()
+  await expect(positionCell).toBeVisible()
 })

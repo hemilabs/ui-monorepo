@@ -120,6 +120,7 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
     <>
       <div className="flex items-center gap-2 md:justify-between">
         <button
+          aria-label={t('back')}
           className="group text-neutral-600 hover:text-neutral-950"
           onClick={onBack}
         >

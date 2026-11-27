@@ -66,6 +66,7 @@
     "your-wallet-not-connected": "Tu billetera no está conectada"
   },
   "connect-wallets": {
+    "back": "Atrás",
     "btc-wallet": "Billetera BTC",
     "btc-wallet-requirement": "Una billetera de Bitcoin solo es necesaria si se transfieren activos entre Bitcoin y Hemi.",
     "connect-btc-wallet": "Conecte su billetera de BTC",

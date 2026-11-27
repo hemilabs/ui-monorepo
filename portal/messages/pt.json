@@ -66,6 +66,7 @@
     "your-wallet-not-connected": "A sua carteira não está conectada"
   },
   "connect-wallets": {
+    "back": "Voltar",
     "btc-wallet": "Carteira BTC",
     "btc-wallet-requirement": "Uma carteira Bitcoin é necessária apenas se transferir ativos entre Bitcoin e Hemi.",
     "connect-btc-wallet": "Conectar a sua Carteira BTC",

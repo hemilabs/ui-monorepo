@@ -29,29 +29,33 @@ const renderDetailView = (wallet: Wallet, onBack: VoidFunction) => (
   <div>
     <p>{`Scan with ${wallet.name}`}</p>
     <button onClick={onBack}>Back</button>
+    <button>Details</button>
   </div>
+)
+
+const getAccordion = (
+  props: Partial<ComponentProps<typeof ConnectWalletAccordion<Wallet>>> = {},
+) => (
+  <IntlProvider locale="en" messages={en}>
+    <ConnectWalletAccordion
+      event="evm connect"
+      getWalletState={wallet => ({
+        showCheck: wallet.installed,
+        showInstall: false,
+      })}
+      icon={null}
+      onConnect={vi.fn()}
+      renderLogo={() => null}
+      text={headerText}
+      wallets={wallets}
+      {...props}
+    />
+  </IntlProvider>
 )
 
 const renderAccordion = (
   props: Partial<ComponentProps<typeof ConnectWalletAccordion<Wallet>>> = {},
-) =>
-  render(
-    <IntlProvider locale="en" messages={en}>
-      <ConnectWalletAccordion
-        event="evm connect"
-        getWalletState={wallet => ({
-          showCheck: wallet.installed,
-          showInstall: false,
-        })}
-        icon={null}
-        onConnect={vi.fn()}
-        renderLogo={() => null}
-        text={headerText}
-        wallets={wallets}
-        {...props}
-      />
-    </IntlProvider>,
-  )
+) => render(getAccordion(props))
 
 const settle = () => new Promise(resolve => setTimeout(resolve, 50))
 
@@ -172,6 +176,70 @@ describe('ConnectWalletAccordion', function () {
     await expect
       .element(screen.getByText('Scan with Rabby'))
       .toBeInTheDocument()
+  })
+
+  it('does not emit an unhandled rejection when onConnect rejects', async function () {
+    let rejectionEmitted = false
+    const handleUnhandledRejection = function (event: PromiseRejectionEvent) {
+      rejectionEmitted = true
+      event.preventDefault()
+    }
+    window.addEventListener('unhandledrejection', handleUnhandledRejection)
+
+    const screen = await renderAccordion({
+      onConnect: () => Promise.reject(new Error('Wallet rejected')),
+      renderDetailView,
+    })
+
+    await screen.getByRole('button', { name: 'MetaMask' }).click()
+    await settle()
+
+    window.removeEventListener('unhandledrejection', handleUnhandledRejection)
+    expect(screen.container.textContent).not.toContain('Scan with')
+    expect(rejectionEmitted).toBe(false)
+  })
+
+  it('does not pull focus back after a re-render', async function () {
+    const screen = await renderAccordion({
+      onConnect: () => true,
+      renderDetailView,
+    })
+
+    await screen.getByRole('button', { name: 'MetaMask' }).click()
+
+    const back = screen.getByRole('button', { name: 'Back' })
+    await expect.element(back).toHaveFocus()
+
+    const details = screen.getByRole('button', { name: 'Details' })
+    details.element().focus()
+
+    await screen.rerender(
+      getAccordion({
+        onConnect: () => true,
+        renderDetailView: (wallet, onBack) => renderDetailView(wallet, onBack),
+      }),
+    )
+    await settle()
+
+    await expect.element(details).toHaveFocus()
+  })
+
+  it('takes the wallet list out of focus and restores it after Back', async function () {
+    const screen = await renderAccordion({
+      onConnect: () => true,
+      renderDetailView,
+    })
+    const metaMask = screen.getByRole('button', { name: 'MetaMask' })
+
+    await metaMask.click()
+
+    const back = screen.getByRole('button', { name: 'Back' })
+    await expect.element(back).toHaveFocus()
+    expect(metaMask.element().closest('[inert]')).not.toBeNull()
+
+    await back.click()
+
+    await expect.element(metaMask).toHaveFocus()
   })
 
   it('goes back to the list through the detail view', async function () {

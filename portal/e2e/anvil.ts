@@ -1,17 +1,30 @@
 import { hemi } from 'hemi-viem'
 import {
   createPublicClient,
+  createTestClient,
   type EIP1193RequestFn,
   http,
   toHex,
   type Transport,
 } from 'viem'
+import { getBlock, increaseTime, mine } from 'viem/actions'
 
 export const anvilPort = 8547
 export const anvilUrl = `http://127.0.0.1:${anvilPort}`
 
 export const createHemiClient = () =>
   createPublicClient({ chain: hemi, transport: http(anvilUrl) })
+
+export const createAnvilTestClient = () =>
+  createTestClient({ chain: hemi, mode: 'anvil', transport: http(anvilUrl) })
+
+export const advanceChainTime = async function (seconds: number) {
+  const client = createAnvilTestClient()
+  await increaseTime(client, { seconds })
+  await mine(client, { blocks: 1 })
+  const { timestamp } = await getBlock(client)
+  return timestamp
+}
 
 // Anvil's gas estimate for veHEMI's createLock comes out below what the
 // delegate() call inside it needs, so an unpadded limit reverts out of gas.

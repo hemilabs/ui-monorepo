@@ -59,7 +59,7 @@ export const createPosition = async function ({
   }
   const { lockDuration, tokenId, ts } = lockEvent
 
-  return {
+  const position: StakingPositionApiResult = {
     amount: amount.toString(),
     blockNumber: receipt.blockNumber.toString(),
     blockTimestamp: ts.toString(),
@@ -73,5 +73,6 @@ export const createPosition = async function ({
     tokenId: tokenId.toString(),
     transactionHash: receipt.transactionHash,
     transferable: true,
-  } satisfies StakingPositionApiResult
+  }
+  return position
 }

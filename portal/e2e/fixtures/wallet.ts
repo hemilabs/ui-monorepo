@@ -3,11 +3,10 @@ import { installMockWallet } from '@hemilabs/mock-wallet'
 import { expect, type Route, test as base } from '@playwright/test'
 import { hemi } from 'hemi-viem'
 import { type StakingPositionApiResult } from 'utils/subgraph'
-import { createTestClient, http } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { revert, snapshot } from 'viem/actions'
 
-import { anvilUrl, walletTransport } from '../anvil'
+import { createAnvilTestClient, walletTransport } from '../anvil'
 
 export const portalApiUrl = 'http://localhost:5555'
 
@@ -61,11 +60,7 @@ export const test = base.extend<Fixtures>({
     // The fork is shared by every test, so each one starts from the funded
     // baseline. Otherwise an allowance from one test would skip the next
     // test's approval step.
-    const testClient = createTestClient({
-      chain: hemi,
-      mode: 'anvil',
-      transport: http(anvilUrl),
-    })
+    const testClient = createAnvilTestClient()
     const snapshotId = await snapshot(testClient)
     await use(page)
     await page.close()

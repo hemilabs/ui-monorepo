@@ -16,7 +16,7 @@ import {
 } from 'types/tunnel'
 import { useTranslations } from 'use-intl'
 import { getNativeToken } from 'utils/nativeToken'
-import { formatUnits } from 'viem'
+import { type Address, formatUnits } from 'viem'
 
 import {
   ToEvmWithdrawalContext,
@@ -85,6 +85,7 @@ const ReviewContent = function ({
       enabled: withdrawal.status === MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
       fromToken,
       l1ChainId: withdrawal.l1ChainId,
+      to: withdrawal.to as Address,
     })
 
   const getWithdrawalStatus = function () {

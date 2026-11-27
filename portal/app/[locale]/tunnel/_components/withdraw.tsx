@@ -18,7 +18,7 @@ import Skeleton from 'react-loading-skeleton'
 import { useTranslations } from 'use-intl'
 import { maxBigInt } from 'utils/bigint'
 import { isEvmNetwork } from 'utils/chain'
-import { formatBtcAddress } from 'utils/format'
+import { formatBtcAddress, formatEvmAddress } from 'utils/format'
 import { getTotal } from 'utils/getTotal'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits, tunnelsThroughPartners } from 'utils/token'
@@ -32,6 +32,7 @@ import { useEstimateBtcWithdrawFees } from '../_hooks/useEstimateBtcWithdrawFees
 import { useEstimateWithdrawFees } from '../_hooks/useEstimateWithdrawFees'
 import { useMinWithdrawalSats } from '../_hooks/useMinWithdrawalSats'
 import { useReceivingBitcoinAddress } from '../_hooks/useReceivingBitcoinAddress'
+import { useReceivingEvmAddress } from '../_hooks/useReceivingEvmAddress'
 import {
   type EvmTunneling,
   type HemiToBitcoinTunneling,
@@ -354,11 +355,15 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     updateFromInput,
   } = state
 
-  const { status } = useAccount()
+  const { address, status } = useAccount()
+
+  const { addressError, receivingAddress, ...customAddressProps } =
+    useReceivingEvmAddress(state)
 
   const operatesNativeToken = isNativeToken(fromToken)
 
   const fromChain = useChain(fromNetworkId)!
+  const toChain = useChain(toNetworkId)!
 
   const {
     data: walletNativeTokenBalance,
@@ -390,6 +395,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
       amount: parseTokenUnits(fromInput, fromToken),
       fromToken,
       l1ChainId: toToken.chainId,
+      to: receivingAddress,
     })
 
   const { isPending: isWithdrawing, mutate: withdraw } = useWithdraw({
@@ -400,6 +406,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
         resetStateAfterOperation(),
       )
     },
+    to: receivingAddress,
     toToken,
   })
 
@@ -422,9 +429,12 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
       })
 
   const balanceLoaded = nativeTokenBalanceLoaded || tokenBalanceLoaded
-  const canWithdraw = canSubmit && !tunnelsThroughPartners(fromToken)
+  const canWithdraw =
+    canSubmit &&
+    !tunnelsThroughPartners(fromToken) &&
+    receivingAddress !== undefined
 
-  function RenderBelowForm() {
+  function renderFees() {
     if (!canWithdraw) {
       return null
     }
@@ -437,6 +447,31 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
           total={totalDeposit}
         />
       </FeesContainer>
+    )
+  }
+
+  function renderBelowForm() {
+    if (providerType !== 'native' || tunnelsThroughPartners(fromToken)) {
+      return null
+    }
+
+    return (
+      <div className="relative -translate-y-7">
+        <ReceivingAddress
+          {...customAddressProps}
+          address={address ? formatEvmAddress(address) : undefined}
+          disabled={isWithdrawing}
+          editable
+          placeholder={t('tunnel-page.form.evm-custom-address-placeholder')}
+          receivingText={t('tunnel-page.form.evm-receiving-address', {
+            network: toChain.name,
+          })}
+          tooltipText={t('tunnel-page.form.evm-receiving-address-description', {
+            symbol: toToken.symbol,
+          })}
+        />
+        {renderFees()}
+      </div>
     )
   }
 
@@ -479,7 +514,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
         fromToken={fromToken}
         isWithdrawing={isWithdrawing}
         setIsPartnersDrawerOpen={setIsPartnersDrawerOpen}
-        validationError={validationError}
+        validationError={validationError ?? addressError}
       />
     )
   }
@@ -487,7 +522,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
   return (
     <>
       <TunnelForm
-        belowForm={<RenderBelowForm />}
+        belowForm={renderBelowForm()}
         bottomSection={<RenderBottomSection />}
         formContent={
           <FormContent

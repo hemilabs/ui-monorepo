@@ -31,6 +31,7 @@ type UseWithdraw = {
   fromInput: string
   fromToken: EvmToken
   on?: (emitter: EventEmitter<WithdrawEvents>) => void
+  to: Address | undefined
   toToken: EvmToken
 }
 
@@ -38,6 +39,7 @@ export const useWithdraw = function ({
   fromInput,
   fromToken,
   on,
+  to,
   toToken,
 }: UseWithdraw) {
   const amount = parseTokenUnits(fromInput, fromToken)
@@ -70,6 +72,9 @@ export const useWithdraw = function ({
       if (!account) {
         throw new Error('Not Connected')
       }
+      if (!to) {
+        throw new Error('No receiving address')
+      }
 
       await ensureConnectedTo(fromToken.chainId)
 
@@ -90,6 +95,7 @@ export const useWithdraw = function ({
         l2PublicClient: hemiPublicClient,
         l2TokenAddress,
         l2WalletClient: hemiWalletClient!,
+        to,
       }
 
       const { emitter, promise } = withdrawingNative
@@ -101,6 +107,7 @@ export const useWithdraw = function ({
             l2PublicClient: hemiPublicClient,
             l2TokenAddress,
             l2WalletClient: hemiWalletClient!,
+            to,
           })
         : initiateWithdrawErc20(args)
 
@@ -116,8 +123,7 @@ export const useWithdraw = function ({
           l2ChainId: fromToken.chainId,
           l2Token: l2TokenAddress,
           status: MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
-          // "to" field uses the same address as from, which is user's address
-          to: account,
+          to,
           transactionHash,
         }
         addWithdrawalToTunnelHistory(withdrawal)

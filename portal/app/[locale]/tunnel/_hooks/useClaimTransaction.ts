@@ -10,6 +10,7 @@ import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
 import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { isNativeAddress } from 'utils/nativeToken'
+import { type Address, isAddressEqual } from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
 
 export const useClaimTransaction = function ({
@@ -72,14 +73,21 @@ export const useClaimTransaction = function ({
           status: MessageStatus.RELAYED,
         })
 
-        if (claimingNativeToken) {
+        const creditedToAccount = isAddressEqual(
+          withdrawal.to as Address,
+          account,
+        )
+
+        if (claimingNativeToken && creditedToAccount) {
           // Use negative, because the balance would be reduced by fees, but incremented by <amount>
           // TODO revert the "-1"
           updateNativeBalanceAfterFees(receipt, -BigInt(withdrawal.amount))
         } else {
           // update native token due to fees
           updateNativeBalanceAfterFees(receipt)
+        }
 
+        if (!claimingNativeToken && creditedToAccount) {
           // the erc20 balance amount gets credited
           queryClient.setQueryData(
             erc20BalanceQueryKey,

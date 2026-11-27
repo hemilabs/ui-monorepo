@@ -13,6 +13,6 @@ permissions:
 
 jobs:
   js-checks:
-    uses: hemilabs/.github/.github/workflows/js-checks-pnpm.yml@d3bde3f5627e6a4e61c04cae8a6e04eef5874a01 # v1.4.0
+    uses: hemilabs/.github/.github/workflows/js-checks-pnpm.yml@6fd9422b57c759b4002957621c307d59a2c74edf # v1.5.0
     with:
       runs-on: ubuntu-24.04

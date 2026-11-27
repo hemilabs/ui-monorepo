@@ -77,8 +77,11 @@ export const useStakeSubmission = function ({
   const [operationRunning, setOperationRunning] =
     useState<Exclude<StakingOperationRunning, 'staked'>>('idle')
 
-  const { resetStateAfterOperation, updateStakingDashboardOperation } =
-    useStakingDashboard()
+  const {
+    resetStateAfterOperation,
+    startStakingDashboardOperation,
+    updateStakingDashboardOperation,
+  } = useStakingDashboard()
 
   const { status } = useEvmAccount()
 
@@ -129,6 +132,7 @@ export const useStakeSubmission = function ({
   })
 
   const submit = function () {
+    startStakingDashboardOperation({})
     stake()
     if (needsApproval) {
       setOperationRunning('approving')

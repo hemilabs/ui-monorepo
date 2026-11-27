@@ -128,7 +128,7 @@ export function ActionCell({ row }: Props) {
   }, menuRef)
   const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 })
   const { height: viewportHeight, width: viewportWidth } = useWindowSize()
-  const { updateStakingDashboardOperation } = useStakingDashboard()
+  const { startStakingDashboardOperation } = useStakingDashboard()
   const { setDrawerQueryString } = useDrawerStakingQueryString()
 
   const {
@@ -216,7 +216,7 @@ export function ActionCell({ row }: Props) {
 
   function handleIncreaseAmount() {
     closeAndFocusTrigger()
-    updateStakingDashboardOperation({
+    startStakingDashboardOperation({
       input: '0',
       stakingPosition: {
         amount,
@@ -228,7 +228,7 @@ export function ActionCell({ row }: Props) {
 
   function handleIncreaseUnlockTime() {
     closeAndFocusTrigger()
-    updateStakingDashboardOperation({
+    startStakingDashboardOperation({
       input: formatUnits(amount, decimals),
       inputDays: minDays.toString(),
       lockupDays: minDays,
@@ -257,7 +257,7 @@ export function ActionCell({ row }: Props) {
 
   function handleToggleAutoRelock() {
     closeAndFocusTrigger()
-    updateStakingDashboardOperation({
+    startStakingDashboardOperation({
       autoRelock,
       stakingPosition: {
         amount,
@@ -265,8 +265,6 @@ export function ActionCell({ row }: Props) {
         tokenId,
         transferable,
       },
-      status: undefined,
-      transactionHash: undefined,
     })
     setDrawerQueryString('togglingAutoRelock')
   }

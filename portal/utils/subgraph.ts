@@ -230,7 +230,7 @@ type SubgraphStakingPosition = Omit<
  * Raw staking position as returned by the subgraph API, with numeric fields
  * serialized as strings.
  */
-type StakingPositionApiResult = Omit<
+export type StakingPositionApiResult = Omit<
   SubgraphStakingPosition,
   | 'amount'
   | 'blockNumber'

@@ -12,8 +12,8 @@ export const usePollHistory = function ({
   history,
 }: {
   chainId: Chain['id']
-  history: HistoryReducerState
   dispatch: Dispatch<HistoryActions>
+  history: HistoryReducerState
 }) {
   const operations = isL2NetworkId(chainId)
     ? history.withdrawals

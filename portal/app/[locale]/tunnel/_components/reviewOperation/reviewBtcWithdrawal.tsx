@@ -19,7 +19,6 @@ import {
 import { useTranslations } from 'use-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { secondsToHours } from 'utils/time'
-import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
 
 import { useEstimateChallengeBtcWithdrawFees } from '../../_hooks/useEstimateBtcChallengeWithdrawFees'
@@ -68,7 +67,7 @@ const ReviewContent = function ({
     fees: bitcoinWithdrawalEstimatedFees,
     isError: isBitcoinWithdrawalEstimateFeesError,
   } = useEstimateBtcWithdrawFees({
-    amount: parseTokenUnits(withdrawal.amount, fromToken),
+    amount: showWithdrawalStepFees ? BigInt(withdrawal.grossAmount) : BigInt(0),
     btcAddress: withdrawal.to,
     enabled: !!withdrawal.to && showWithdrawalStepFees,
   })

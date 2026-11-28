@@ -1,13 +1,13 @@
-import { AddTokenToWallet } from 'components/addTokenToWallet'
-import { Button } from 'components/button'
-import { SubmitWhenConnected } from 'components/submitWhenConnected'
-import { WarningBox } from 'components/warningBox'
 import {
   claimDeposit,
   claimRedeem,
   recoverDeposit,
   recoverRedeem,
-} from 'hemi-earn-actions/actions'
+} from '@vetro-protocol/hemi-earn/actions'
+import { AddTokenToWallet } from 'components/addTokenToWallet'
+import { Button } from 'components/button'
+import { SubmitWhenConnected } from 'components/submitWhenConnected'
+import { WarningBox } from 'components/warningBox'
 import { type FormEvent, type ReactNode } from 'react'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
@@ -26,6 +26,7 @@ import {
   type EarnTransaction,
   type EarnVault,
 } from '../../../types'
+import { TransferIncompleteBanner } from '../../transferIncomplete'
 
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
@@ -192,7 +193,15 @@ export const SettleBanner = function ({
 }) {
   const t = useTranslations('hemi-earn.transactions.banner')
   const key = pickSettleBannerKey(transaction)
-  if (!key) return null
+  if (!key || !transaction) return null
+  if (key === 'recover-funds' || key === 'recover-shares') {
+    return (
+      <TransferIncompleteBanner
+        heading={t(`${key}.heading`)}
+        requestTxHash={transaction.requestTxHash}
+      />
+    )
+  }
   // Padding matches the drawer's 24px gutter (16px on mobile).
   return (
     <div className="px-4 py-6 md:px-6">

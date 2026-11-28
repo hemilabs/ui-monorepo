@@ -1,20 +1,24 @@
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { EventEmitter } from 'events'
+import {
+  useIsMutating,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
 import {
   type RequestRedeemEvents,
-  getHemiEarnRouterAddress,
-} from 'hemi-earn-actions'
-import { requestRedeem } from 'hemi-earn-actions/actions'
+  hemiEarnRouterAddress,
+} from '@vetro-protocol/hemi-earn'
+import { requestRedeem } from '@vetro-protocol/hemi-earn/actions'
+import { EventEmitter } from 'events'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { maxBigInt } from 'utils/bigint'
 import { unixNowTimestamp } from 'utils/time'
-import { type Hash } from 'viem'
+import { type Address, type Hash } from 'viem'
 import { useAccount, useConfig } from 'wagmi'
 import { getWalletClient } from 'wagmi/actions'
 
@@ -24,8 +28,6 @@ import { useLocalEarnOperations } from '../../../_hooks/useLocalEarnOperations'
 import { type EarnAsset, type EarnVault } from '../../../types'
 import { getUserShareValueQueryKey } from '../_fetchers/fetchUserShareValue'
 import { type WithdrawOperation, WithdrawStatus } from '../_types/operations'
-
-import { useDrawerQueryString } from './useDrawerQueryString'
 
 type UseWithdraw = {
   // Allowance to request when approving; defaults to the redeemed shares.
@@ -53,6 +55,14 @@ type UseWithdraw = {
   vault: EarnVault
 }
 
+const getWithdrawMutationKey = (shareAddress: Address) => [
+  'hemi-earn-withdraw',
+  shareAddress,
+]
+
+export const useIsWithdrawing = (shareAddress: Address) =>
+  useIsMutating({ mutationKey: getWithdrawMutationKey(shareAddress) }) > 0
+
 export const useWithdraw = function ({
   approvalAmount,
   assetsOutMin,
@@ -68,7 +78,6 @@ export const useWithdraw = function ({
   updateWithdrawOperation,
   vault,
 }: UseWithdraw) {
-  const { setDrawerQueryString } = useDrawerQueryString()
   const { address } = useAccount()
   const chainId = selectedAsset.token.chainId
   const config = useConfig()
@@ -76,7 +85,6 @@ export const useWithdraw = function ({
   const queryClient = useQueryClient()
   const [networkType] = useNetworkType()
   const { track } = useUmami()
-  const routerAddress = getHemiEarnRouterAddress()
   const { markSettledByInitiateTxHash, upsertLocalOperation } =
     useLocalEarnOperations()
 
@@ -100,7 +108,7 @@ export const useWithdraw = function ({
   const allowanceQueryKey = buildAllowanceQueryKey({
     chainId,
     owner: address,
-    spender: routerAddress,
+    spender: hemiEarnRouterAddress,
     tokenAddress: vault.shareAddress,
   })
 
@@ -144,8 +152,7 @@ export const useWithdraw = function ({
       // Approval hash for this attempt; seeded from priorApprovalTxHash for retries, overwritten if a fresh approval is signed.
       let observedApprovalTxHash: Hash | undefined = priorApprovalTxHash
 
-      const { emitter, promise } = requestRedeem({
-        account: address,
+      const { emitter, promise } = requestRedeem(walletClient, {
         approvalAmount,
         asset: selectedAsset.address,
         assetsOutMin,
@@ -153,10 +160,7 @@ export const useWithdraw = function ({
         isInstant,
         operator: address,
         receiver: address,
-        routerAddress,
         shares,
-        shareToken: vault.shareAddress,
-        walletClient,
       })
 
       emitter.on('user-signed-approval', function (approvalTxHash) {
@@ -175,7 +179,6 @@ export const useWithdraw = function ({
             status: WithdrawStatus.APPROVAL_TX_PENDING,
           },
         })
-        setDrawerQueryString('withdrawing')
       })
 
       emitter.on('approve-transaction-reverted', function (receipt) {
@@ -220,7 +223,6 @@ export const useWithdraw = function ({
         if (supersedesInitiateTxHash) {
           markSettledByInitiateTxHash(supersedesInitiateTxHash)
         }
-        setDrawerQueryString('withdrawing')
       })
 
       emitter.on('user-signing-withdraw-error', function () {
@@ -310,6 +312,7 @@ export const useWithdraw = function ({
 
       return promise
     },
+    mutationKey: getWithdrawMutationKey(vault.shareAddress),
     onSettled() {
       queryClient.invalidateQueries({ queryKey: tokenBalanceQueryKey })
       queryClient.invalidateQueries({ queryKey: shareBalanceQueryKey })

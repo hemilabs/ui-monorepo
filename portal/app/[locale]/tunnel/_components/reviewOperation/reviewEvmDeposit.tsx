@@ -21,7 +21,7 @@ import {
 import { useTranslations } from 'use-intl'
 import { getL1StandardBridgeAddress } from 'utils/chain'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
-import { formatUnits } from 'viem'
+import { type Address, formatUnits } from 'viem'
 
 import { useEstimateDepositFees } from '../../_hooks/useEstimateDepositFees'
 import { RetryEvmDeposit } from '../retryEvmDeposit'
@@ -73,6 +73,7 @@ const ReviewContent = function ({
         EvmDepositStatus.DEPOSIT_TX_FAILED,
       ].includes(depositStatus),
       fromToken,
+      to: deposit.to as Address,
       toToken,
     })
 

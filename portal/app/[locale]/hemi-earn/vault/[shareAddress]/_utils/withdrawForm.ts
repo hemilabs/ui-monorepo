@@ -15,18 +15,41 @@ export const getTypedAssetAmount = ({
   token: EvmToken
 }) => (isTokensMode ? parseTokenUnits(input, token) : BigInt(0))
 
+// Snap to the full balance when within 0.1% so a tokens-mode Max doesn't leave
+// dust shares.
+const snapToShareBalance = function ({
+  shareBalance,
+  shares,
+}: {
+  shareBalance: bigint | undefined
+  shares: bigint
+}) {
+  if (shareBalance === undefined || shares > shareBalance) {
+    return shares
+  }
+  const threshold = (shareBalance * BigInt(999)) / BigInt(1000)
+  return shares > BigInt(0) && shares >= threshold ? shareBalance : shares
+}
+
 export const deriveWithdrawShares = ({
   assetShares,
   input,
   isTokensMode,
+  shareBalance,
   shareToken,
 }: {
   assetShares: bigint | undefined
   input: string
   isTokensMode: boolean
+  shareBalance: bigint | undefined
   shareToken: EvmToken
 }) =>
-  isTokensMode ? (assetShares ?? BigInt(0)) : parseTokenUnits(input, shareToken)
+  snapToShareBalance({
+    shareBalance,
+    shares: isTokensMode
+      ? (assetShares ?? BigInt(0))
+      : parseTokenUnits(input, shareToken),
+  })
 
 export const getWithdrawValidationTarget = ({
   assetToken,

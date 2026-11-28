@@ -7,17 +7,31 @@ import {
   useNavigationType,
 } from 'react-router'
 import { scrubAddresses } from 'utils/scrubAddresses'
+import { isWalletNoise } from 'utils/sentry'
 
 const unsupportedWalletErrors = [
   '@polkadot/keyring requires direct dependencies',
+  '[binance-w3w] callback id',
   "Backpack couldn't override `window.ethereum`.",
   'Cannot redefine property: ethereum',
   // Nightly wallet
   'Cannot set property ethereum of #<Window> which has only a getter',
+  // Rabby
+  "'ethereum.chainId' is deprecated",
+  "'ethereum.selectedAddress' is deprecated",
+  // Injected scripts that cannot compile wasm under the portal's CSP
+  'Compiling or instantiating WebAssembly module violates',
+  'failed to asynchronously prepare wasm',
+  // MetaMask-based extensions logging to the console
+  'ObjectMultiplex - malformed chunk',
+  'ObjectMultiplex - orphaned data',
   'sendRequest() -> core.crypto.encode()',
   'shouldSetPelagusForCurrentProvider is not a function',
   'shouldSetTallyForCurrentProvider is not a function',
+  'StreamMiddleware - Unknown response id',
   'Talisman extension has not been configured yet',
+  'Waves global variable is deprecated',
+  'WavesKeeper global variable is deprecated',
 ]
 
 const walletConnectErrors = [
@@ -40,8 +54,8 @@ function enableSentry() {
     'Database deleted by request of the user',
     // user has not enough gas
     'insufficient funds for gas * price + value',
-    // Metamask error
-    "MetaMask: 'eth_accounts' unexpectedly updated accounts. Please report this bug",
+    // MetaMask and Rabby
+    "'eth_accounts' unexpectedly updated accounts. Please report this bug",
     // Another Metamask error
     'MetaMetrics.getInstance().createEventBuilder is not a function.',
     // From "TronWeb: 'tronWeb.sidechain' is deprecated and may be removed in the future. Please use the 'sunweb' sdk instead...",
@@ -84,9 +98,25 @@ function enableSentry() {
     // breadcrumbs, spans and error messages, and denyUrls does not help here,
     // as it only filters by the URL of the stack frames.
     beforeBreadcrumb: breadcrumb => scrubAddresses(breadcrumb),
-    beforeSend: event => scrubAddresses(event),
+    // Wallet and extension noise that is not ours to fix is dropped before
+    // it uses quota.
+    beforeSend: (event, hint) =>
+      isWalletNoise(event, hint) ? null : scrubAddresses(event),
     beforeSendSpan: span => scrubAddresses(span),
-    beforeSendTransaction: event => scrubAddresses(event),
+    dataCollection: {
+      cookies: false,
+      databaseQueryData: false,
+      genAI: { inputs: false, outputs: false },
+      graphQL: { document: false, variables: false },
+      httpBodies: [],
+      httpHeaders: {
+        request: { allow: ['referer', 'user-agent'] },
+        response: false,
+      },
+      queues: false,
+      urlQueryParams: { deny: ['forwarded', '-ip', 'remote-', 'via', '-user'] },
+      userInfo: false,
+    },
     denyUrls: [
       // Filter all Wallet Connect related urls
       /(https|wss):\/\/.*\.walletconnect\.(com|org)/,

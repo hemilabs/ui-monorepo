@@ -1,4 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table'
+import { featureFlags } from 'app/featureFlags'
 import { DataUnavailable } from 'components/dataUnavailable'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { Table } from 'components/table'
@@ -6,7 +7,10 @@ import { Header } from 'components/table/_components/header'
 import { TableCard } from 'components/table/tableCard'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { type StakingPosition } from 'types/stakingDashboard'
+import {
+  type StakingPosition,
+  StakingPositionStatus,
+} from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
@@ -14,6 +18,7 @@ import { useAccount } from 'wagmi'
 import { Amount } from '../amount'
 import { RewardsDisplay } from '../rewardsDisplay'
 
+import { AutoRelockBadge } from './autoRelockBadge'
 import { HeroBanner } from './heroBanner'
 import { LockupTime } from './lockupTime'
 import { NoPositionStaked } from './noPositionStaked'
@@ -25,7 +30,7 @@ type StakingColumnsProps = {
   t: ReturnType<typeof useTranslations<'hemi-stake'>>
 }
 
-const stakingColumns = ({
+const allStakingColumns = ({
   t,
 }: StakingColumnsProps): ColumnDef<StakingPosition>[] => [
   {
@@ -40,19 +45,20 @@ const stakingColumns = ({
     ),
     header: () => <Header text={t('table.locked-amount')} />,
     id: 'locked-amount',
-    meta: { width: 180 },
+    meta: { width: 200 },
   },
   {
     cell({ row }) {
-      const { lockTime, status, timestamp } = row.original
+      const { autoRelock, effectiveLockEnd, lockTime, status } = row.original
       return (
         <ErrorBoundary
           fallback={<span className="text-sm text-neutral-950">-</span>}
         >
           <LockupTime
+            autoRelock={autoRelock}
+            effectiveLockEnd={effectiveLockEnd}
             lockTime={lockTime}
             status={status}
-            timestamp={timestamp}
           />
         </ErrorBoundary>
       )
@@ -81,12 +87,29 @@ const stakingColumns = ({
     meta: { width: 95 },
   },
   {
+    cell: ({ row }) => <AutoRelockBadge enabled={row.original.autoRelock} />,
+    header: () => <Header text={t('table.auto-relock')} />,
+    id: 'auto-relock',
+    meta: { width: 150 },
+  },
+  {
     cell: ({ row }) => <PositionActions row={row} />,
     header: () => <Header text={t('table.action')} />,
     id: 'action',
     meta: { className: 'justify-start lg:justify-end', width: 280 },
   },
 ]
+
+const stakingColumns = ({
+  filter,
+  ...props
+}: StakingColumnsProps & { filter: StakeTableFilterOptions }) =>
+  allStakingColumns(props).filter(function (column) {
+    if (filter === StakingPositionStatus.WITHDRAWN) {
+      return column.id !== 'auto-relock' && column.id !== 'voting-power'
+    }
+    return featureFlags.enableHemiStakeAutoRelock || column.id !== 'auto-relock'
+  })
 
 type Props = {
   data: StakingPosition[] | undefined
@@ -106,13 +129,7 @@ export function StakeTable({
   const t = useTranslations('hemi-stake')
   const { status } = useAccount()
 
-  const cols = useMemo(
-    () =>
-      stakingColumns({ t }).filter(
-        column => filter !== 'withdrawn' || column.id !== 'voting-power',
-      ),
-    [filter, t],
-  )
+  const cols = useMemo(() => stakingColumns({ filter, t }), [filter, t])
 
   const table = (
     <Table

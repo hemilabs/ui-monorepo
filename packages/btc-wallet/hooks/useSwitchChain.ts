@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { useContext, useEffect } from 'react'
 
-import { BtcChain } from '../chains'
+import type { BtcChain } from '../chains'
 import { GlobalContext } from '../context/globalContext'
 
 import { useAccount } from './useAccount'

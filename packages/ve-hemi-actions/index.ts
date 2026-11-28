@@ -1,4 +1,5 @@
 export type {
+  AutoRelockEvents,
   CreateLockEvents,
   IncreaseAmountEvents,
   IncreaseUnlockTimeEvents,
@@ -7,6 +8,7 @@ export type {
 
 export {
   getVeHemiContractAddress,
+  halfEpochSeconds,
   MaxLockDurationSeconds,
   minLockAmount,
   MinLockDurationSeconds,

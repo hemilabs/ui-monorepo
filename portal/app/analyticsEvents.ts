@@ -59,6 +59,8 @@ const analyticsEvents = [
   'hemi earn - return shares failed',
   'hemi earn - return shares started',
   'hemi earn - return shares success',
+  'hemi earn - terms rejected',
+  'hemi earn - terms signed',
   'hemi earn - withdraw failed',
   'hemi earn - withdraw started',
   'hemi earn - withdraw success',
@@ -76,7 +78,6 @@ const analyticsEvents = [
   'nav - tools',
   'nav - faucet',
   'nav - pure finance',
-  'nav - stake',
   'nav - tunnel',
   'nav - language',
   'nav - legal and privacy',
@@ -87,10 +88,6 @@ const analyticsEvents = [
   'nav - youtube',
   'nav - x',
   // /stake
-  'stake - stake failed',
-  'stake - stake started',
-  'stake - stake success',
-  'stake - stake more',
   'stake - unstake failed',
   'stake - unstake started',
   'stake - unstake success',
@@ -99,6 +96,10 @@ const analyticsEvents = [
   'hemi stake - approve increase amount failed',
   'hemi stake - approve increase amount reverted',
   'hemi stake - approve reverted',
+  'hemi stake - auto relock failed',
+  'hemi stake - auto relock failed validation',
+  'hemi stake - auto relock reverted',
+  'hemi stake - auto relock success',
   'hemi stake - capture position class reverted',
   'hemi stake - collect rewards transaction reverted',
   'hemi stake - collect rewards transaction succeeded',
@@ -116,6 +117,7 @@ const analyticsEvents = [
   'hemi stake - lock creation failed',
   'hemi stake - lock creation reverted',
   'hemi stake - lock creation success',
+  'hemi stake - signed auto relock',
   'hemi stake - signed capture position class',
   'hemi stake - signed collect rewards',
   'hemi stake - signed increase amount',
@@ -123,6 +125,7 @@ const analyticsEvents = [
   'hemi stake - signed lock creation',
   'hemi stake - signed withdraw',
   'hemi stake - signing approve error',
+  'hemi stake - signing auto relock error',
   'hemi stake - signing collect rewards error',
   'hemi stake - signing increase amount error',
   'hemi stake - signing increase unlock time error',
@@ -197,9 +200,6 @@ const analyticsEvents = [
   // earn rewards card
   'earn rewards - open link',
   'earn rewards - close',
-  // hemi stake launch card
-  'hemi stake card - open',
-  'hemi stake card - close',
 ] as const
 
 type AnalyticsEvents = typeof analyticsEvents

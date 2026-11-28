@@ -2,9 +2,9 @@ import { useQueries } from '@tanstack/react-query'
 import { Badge } from 'components/badge'
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
+import { useFormat } from 'hooks/useFormat'
 import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
-import { formatNumber } from 'utils/format'
 import { formatUnits } from 'viem'
 
 import { sharesToPeggedOptions } from '../_fetchers/fetchSharesToPegged'
@@ -20,36 +20,39 @@ type VaultRowProps = {
   shareToken: EvmToken
 }
 
-const VaultRow = ({
+const VaultRow = function ({
   peggedAmount,
   peggedAmountStatus,
   peggedToken,
   shareAmount,
   shareToken,
-}: VaultRowProps) => (
-  <div className="flex items-center gap-x-1 sm:min-w-52">
-    <TokenLogo size="small" token={shareToken} />
-    <span className="mr-auto text-sm font-medium text-white">
-      {shareToken.symbol}
-    </span>
-    <span className="text-sm font-medium text-white">
-      $
-      <RenderEarnFiatBalance
-        balance={peggedAmount}
-        queryStatus={peggedAmountStatus}
-        token={peggedToken}
-      />
-    </span>
-    <span className="text-sm font-medium text-neutral-400">
-      ({formatNumber(formatUnits(shareAmount, shareToken.decimals))}{' '}
-      {shareToken.symbol})
-    </span>
-  </div>
-)
+}: VaultRowProps) {
+  const { formatNumber } = useFormat()
+  return (
+    <div className="flex items-center gap-x-1 sm:min-w-52">
+      <TokenLogo size="small" token={shareToken} />
+      <span className="mr-auto text-sm font-medium text-white">
+        {shareToken.symbol}
+      </span>
+      <span className="text-sm font-medium text-white">
+        $
+        <RenderEarnFiatBalance
+          balance={peggedAmount}
+          queryStatus={peggedAmountStatus}
+          token={peggedToken}
+        />
+      </span>
+      <span className="text-sm font-medium text-neutral-400">
+        ({formatNumber(formatUnits(shareAmount, shareToken.decimals))}{' '}
+        {shareToken.symbol})
+      </span>
+    </div>
+  )
+}
 
 export const FromVaultsBadge = function () {
   const t = useTranslations('hemi-earn.info')
-  const { data: positions = [], isError, isPending } = useEarnPositions()
+  const { data: positions = [] } = useEarnPositions()
 
   const peggedAmountQueries = useQueries({
     queries: positions.map(position =>
@@ -62,7 +65,7 @@ export const FromVaultsBadge = function () {
 
   const count = positions.length
 
-  if (isError || isPending || count === 0) {
+  if (count === 0) {
     return null
   }
 

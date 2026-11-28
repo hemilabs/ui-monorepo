@@ -3,11 +3,11 @@ import { type FetchStatus, type QueryStatus } from '@tanstack/react-query'
 import Big from 'big.js'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
+import { useFormat } from 'hooks/useFormat'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { ComponentProps } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
-import { formatFiatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/nativeToken'
 import { isDataUnavailable } from 'utils/queryStatus'
 import { getTokenPrice, isEvmToken } from 'utils/token'
@@ -21,7 +21,7 @@ type Props<T extends Token = Token> = {
 
 const RenderFiatBalanceUnsafe = function ({
   balance,
-  customFormatter = formatFiatNumber,
+  customFormatter,
   fetchStatus,
   queryStatus,
   token,
@@ -36,6 +36,8 @@ const RenderFiatBalanceUnsafe = function ({
   // oracle-merged `useEarnTokenPrices`) inject their own hook.
   usePrices?: typeof useTokenPrices
 }) {
+  const { formatFiatNumber } = useFormat()
+  const format = customFormatter ?? formatFiatNumber
   const {
     data: pricesData,
     fetchStatus: pricesFetchStatus,
@@ -49,11 +51,7 @@ const RenderFiatBalanceUnsafe = function ({
     const price = getTokenPrice(token, pricesData)
 
     return (
-      <>
-        {customFormatter(
-          Big(stringBalance).times(price).toFixed(token.decimals),
-        )}
-      </>
+      <>{format(Big(stringBalance).times(price).toFixed(token.decimals))}</>
     )
   }
 

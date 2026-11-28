@@ -1,4 +1,5 @@
 import { Button } from 'components/button'
+import { useFormat } from 'hooks/useFormat'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useState } from 'react'
 import {
@@ -6,8 +7,7 @@ import {
   StakingPositionStatus,
   type UnlockingOperationRunning,
 } from 'types/stakingDashboard'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatDate } from 'utils/format'
+import { useTranslations } from 'use-intl'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useUnlock } from '../../_hooks/useUnlock'
@@ -30,7 +30,7 @@ type Props = {
 
 export function Unlock({ operation, unlockDate }: Props) {
   const t = useTranslations('hemi-stake')
-  const locale = useLocale()
+  const { formatDate } = useFormat()
   const token = useHemiToken()
   const { amount, tokenId } = operation
   const [operationRunning, setOperationRunning] =
@@ -71,7 +71,7 @@ export function Unlock({ operation, unlockDate }: Props) {
         </div>
         <span className="body-text-caption text-neutral-500">
           {t('table.on', {
-            date: formatDate(unlockDate, locale),
+            date: formatDate(unlockDate),
           })}
         </span>
       </div>

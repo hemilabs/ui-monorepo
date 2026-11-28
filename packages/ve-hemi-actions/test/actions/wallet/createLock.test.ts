@@ -4,7 +4,7 @@ import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { allowance, approve, balanceOf } from 'viem-erc20/actions'
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 
-import { createLock } from '../../../actions'
+import { createLock, encodeCreateLock } from '../../../actions'
 import {
   getHemiTokenAddress,
   memoizedGetHemiTokenAddress,
@@ -443,5 +443,65 @@ describe('createLock', function () {
       'failed to check balance',
     )
     expect(lockCreationSettled).toHaveBeenCalledOnce()
+  })
+
+  it('should send createLockWithAutoRelock when the flag is on', async function () {
+    vi.mocked(balanceOf).mockResolvedValue(validParameters.amount)
+    vi.mocked(allowance).mockResolvedValue(BigInt(validParameters.amount))
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue({
+      status: 'success',
+    })
+
+    const { promise } = createLock({ ...validParameters, autoRelock: true })
+    await promise
+
+    expect(writeContract).toHaveBeenCalledWith(
+      validParameters.walletClient,
+      expect.objectContaining({
+        args: [
+          validParameters.amount,
+          BigInt(validParameters.lockDurationInSeconds),
+          true,
+          false,
+        ],
+        functionName: 'createLockWithAutoRelock',
+      }),
+    )
+  })
+
+  it('should still approve the same spender on the auto-relock path', async function () {
+    vi.mocked(balanceOf).mockResolvedValue(validParameters.amount)
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue({
+      status: 'success',
+    })
+
+    const { promise } = createLock({ ...validParameters, autoRelock: true })
+    await promise
+
+    expect(approve).toHaveBeenCalledWith(
+      validParameters.walletClient,
+      expect.objectContaining({
+        spender: getVeHemiContractAddress(hemiSepolia.id),
+      }),
+    )
+  })
+
+  it('should encode a different selector for each path', function () {
+    const plain = encodeCreateLock({
+      amount: validParameters.amount,
+      lockDurationInSeconds: BigInt(validParameters.lockDurationInSeconds),
+    })
+    const armed = encodeCreateLock({
+      amount: validParameters.amount,
+      autoRelock: true,
+      lockDurationInSeconds: BigInt(validParameters.lockDurationInSeconds),
+    })
+
+    expect(plain.slice(0, 10)).not.toBe(armed.slice(0, 10))
+    expect(armed.length).toBeGreaterThan(plain.length)
   })
 })

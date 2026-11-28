@@ -4,17 +4,7 @@ const EarnCard = lazyWithFallback(() =>
   import('./earnCard').then(mod => ({ default: mod.EarnCard })),
 )
 
-const HemiStakeCard = lazyWithFallback(() =>
-  import('./hemiStakeCard').then(mod => ({ default: mod.HemiStakeCard })),
-)
-
-// Both cards dock to the same corner, so the Merkl one waits its turn while the
-// hemiStake launch card is up.
+// The Merkl earn card is parked for now.
 const showEarnCard = false
 
-export const AppOverlays = () => (
-  <>
-    <HemiStakeCard />
-    {showEarnCard && <EarnCard />}
-  </>
-)
+export const AppOverlays = () => <>{showEarnCard && <EarnCard />}</>

@@ -10,9 +10,7 @@ const { dsn, loggingLevels } = config.get<{
 if (dsn) {
   init({
     dsn,
-    enableLogs: true,
     environment: process.env.NODE_ENV || 'development',
     integrations: [consoleLoggingIntegration({ levels: loggingLevels })],
-    sendDefaultPii: true,
   })
 }

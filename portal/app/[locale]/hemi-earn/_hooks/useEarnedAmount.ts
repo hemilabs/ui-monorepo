@@ -1,6 +1,7 @@
 import { useQueries } from '@tanstack/react-query'
 import Big from 'big.js'
 import { getTokenPrice } from 'utils/token'
+import { getAddress } from 'viem'
 
 import { sharesToPeggedOptions } from '../_fetchers/fetchSharesToPegged'
 import { positionEarnedUsd } from '../_utils/earnedAmount'
@@ -12,14 +13,14 @@ import { useEarnTokenPrices } from './useEarnTokenPrices'
 import { useEarnVaults } from './useEarnVaults'
 import { useInTransitShares } from './useInTransitShares'
 
-// Total earned = Σ (convertToAssets(shares) − cost basis) per position, priced.
-// Cost basis (Vetro-parity, unrealized) comes from the earn-cost-basis endpoint;
-// the current value reuses the same shares→pegged→USD path as useTotalDeposits.
+// Total earned = Σ (convertToAssets(shares) − cost basis) per position, priced. The cost
+// basis (unrealized) comes from Vetro's /hemi-earn/cost-basis; the current value reuses
+// the same shares→pegged→USD path as useTotalDeposits.
 export const useEarnedAmount = function () {
   const {
     data: positions = [],
-    isError: isPositionsError,
-    isPending: isPositionsPending,
+    isLoading: isPositionsLoading,
+    isLoadingError: isPositionsLoadingError,
   } = useEarnPositions()
   const {
     data: prices,
@@ -46,7 +47,7 @@ export const useEarnedAmount = function () {
         shareAddress: position.shareAddress,
         shares:
           position.yourDeposit +
-          (inTransitByShare[position.shareAddress.toLowerCase()] ?? BigInt(0)),
+          (inTransitByShare[getAddress(position.shareAddress)] ?? BigInt(0)),
       }),
     ),
   })
@@ -57,8 +58,7 @@ export const useEarnedAmount = function () {
     if (costBasis === undefined || currentPegged === undefined) return acc
     return acc.plus(
       positionEarnedUsd({
-        costBasisBaseUnits:
-          costBasis[position.shareAddress.toLowerCase()] ?? '0',
+        costBasisBaseUnits: costBasis[getAddress(position.shareAddress)] ?? '0',
         currentPegged,
         decimals: position.peggedToken.decimals,
         price: prices ? getTokenPrice(position.peggedToken, prices) : '0',
@@ -70,12 +70,12 @@ export const useEarnedAmount = function () {
 
   const hasRows = rows.length > 0
   const isPending =
-    isPositionsPending ||
+    isPositionsLoading ||
     isInTransitPending ||
     (hasRows && (isPricesPending || isCostBasisLoading)) ||
     peggedAmountQueries.some(q => q.isPending && q.isFetching)
   const isError =
-    isPositionsError ||
+    isPositionsLoadingError ||
     (hasRows && (isPricesError || isCostBasisError)) ||
     peggedAmountQueries.some(q => q.isError)
 

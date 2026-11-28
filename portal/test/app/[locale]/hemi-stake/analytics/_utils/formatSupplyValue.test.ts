@@ -1,37 +1,59 @@
 import { formatSupplyValue } from 'app/[locale]/hemi-stake/analytics/_utils/formatSupplyValue'
+import { createFormatter } from 'utils/format'
 import { describe, expect, it } from 'vitest'
 
-const locale = 'en'
+const formatter = createFormatter('en')
 const symbol = 'HEMI'
 
 describe('formatSupplyValue', function () {
   it('should append the token symbol in token mode', function () {
     expect(
-      formatSupplyValue({ locale, symbol, unit: 'hemi', value: 1_500_000 }),
+      formatSupplyValue({ formatter, symbol, unit: 'hemi', value: 1_500_000 }),
     ).toBe('1.5M HEMI')
   })
 
   it('should prefix with the dollar sign in usd mode', function () {
     expect(
-      formatSupplyValue({ locale, symbol, unit: 'usd', value: 1_500_000 }),
+      formatSupplyValue({ formatter, symbol, unit: 'usd', value: 1_500_000 }),
     ).toBe('$1.5M')
   })
 
   it('should keep the sign ahead of the currency symbol', function () {
     expect(
-      formatSupplyValue({ locale, symbol, unit: 'usd', value: -1_500_000 }),
+      formatSupplyValue({ formatter, symbol, unit: 'usd', value: -1_500_000 }),
     ).toBe('-$1.5M')
   })
 
   it('should keep the sign ahead of the amount in token mode', function () {
     expect(
-      formatSupplyValue({ locale, symbol, unit: 'hemi', value: -1_500_000 }),
+      formatSupplyValue({ formatter, symbol, unit: 'hemi', value: -1_500_000 }),
     ).toBe('-1.5M HEMI')
   })
 
   it('should leave small amounts uncompacted', function () {
     expect(
-      formatSupplyValue({ locale, symbol, unit: 'hemi', value: 999 }),
+      formatSupplyValue({ formatter, symbol, unit: 'hemi', value: 999 }),
     ).toBe('999 HEMI')
+  })
+
+  it('should follow the locale with full precision', function () {
+    expect(
+      formatSupplyValue({
+        formatter: createFormatter('es'),
+        precision: 'full',
+        symbol,
+        unit: 'usd',
+        value: -1234.5,
+      }),
+    ).toBe('-$1.234,50')
+    expect(
+      formatSupplyValue({
+        formatter: createFormatter('pt'),
+        precision: 'full',
+        symbol,
+        unit: 'hemi',
+        value: 1234.5,
+      }),
+    ).toBe('1.234,5 HEMI')
   })
 })

@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react'
 import { sanitizeAmount } from 'utils/form'
 
-export const useAmount = function () {
-  const [amount, setAmount] = useState('0')
+export const useAmount = function (initialAmount = '0') {
+  const [amount, setAmount] = useState(initialAmount)
 
   const onChange = useCallback(function (input: string) {
     const result = sanitizeAmount(input)

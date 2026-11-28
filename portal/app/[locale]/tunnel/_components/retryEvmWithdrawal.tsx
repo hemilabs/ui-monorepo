@@ -5,7 +5,7 @@ import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { useTranslations } from 'use-intl'
-import { formatUnits } from 'viem'
+import { type Address, formatUnits } from 'viem'
 
 import { ToEvmWithdrawalContext } from '../_context/toEvmWithdrawalContext'
 import { useWithdraw } from '../_hooks/useWithdraw'
@@ -45,6 +45,7 @@ const Retry = function ({
         setOperationStatus('failed'),
       )
     },
+    to: withdrawal.to as Address,
     toToken,
   })
 

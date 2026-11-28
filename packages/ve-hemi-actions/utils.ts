@@ -14,6 +14,8 @@ import {
   SupportedChains,
 } from './constants.ts'
 
+export const unixNowTimestamp = () => BigInt(Math.floor(Date.now() / 1000))
+
 const validateAccount = function (account: Address) {
   if (!isAddress(account)) {
     return 'account is not a valid address'
@@ -64,6 +66,28 @@ const validateApprovalAmount = function (
   }
 
   return undefined
+}
+
+const validatePositionInputs = function ({
+  account,
+  chainId,
+  tokenId,
+}: {
+  account: Address
+  chainId: number
+  tokenId: bigint
+}) {
+  const accountError = validateAccount(account)
+  if (accountError) {
+    return accountError
+  }
+
+  const chainError = validateChain(chainId)
+  if (chainError) {
+    return chainError
+  }
+
+  return validateTokenId(tokenId)
 }
 
 export const validateCreateLockInputs = function ({
@@ -169,19 +193,9 @@ export const validateIncreaseUnlockTimeInputs = function ({
   lockDurationInSeconds: number
   tokenId: bigint
 }) {
-  const accountError = validateAccount(account)
-  if (accountError) {
-    return accountError
-  }
-
-  const chainError = validateChain(chainId)
-  if (chainError) {
-    return chainError
-  }
-
-  const tokenError = validateTokenId(tokenId)
-  if (tokenError) {
-    return tokenError
+  const positionError = validatePositionInputs({ account, chainId, tokenId })
+  if (positionError) {
+    return positionError
   }
 
   if (lockDurationInSeconds <= 0) {
@@ -195,32 +209,9 @@ export const validateIncreaseUnlockTimeInputs = function ({
   return undefined
 }
 
-export const validateWithdrawInputs = function ({
-  account,
-  chainId,
-  tokenId,
-}: {
-  account: Address
-  chainId: number
-  tokenId: bigint
-}) {
-  const accountError = validateAccount(account)
-  if (accountError) {
-    return accountError
-  }
+export const validateWithdrawInputs = validatePositionInputs
 
-  const chainError = validateChain(chainId)
-  if (chainError) {
-    return chainError
-  }
-
-  const tokenError = validateTokenId(tokenId)
-  if (tokenError) {
-    return tokenError
-  }
-
-  return undefined
-}
+export const validateToggleAutoRelockInputs = validatePositionInputs
 
 type VeHemiLockEvent = {
   lockDuration: bigint

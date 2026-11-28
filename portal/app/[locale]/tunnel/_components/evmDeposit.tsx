@@ -12,6 +12,7 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import { useState } from 'react'
 import { useTranslations } from 'use-intl'
 import { getL1StandardBridgeAddress } from 'utils/chain'
+import { formatEvmAddress } from 'utils/format'
 import { getTotal } from 'utils/getTotal'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits, tunnelsThroughPartners } from 'utils/token'
@@ -22,9 +23,11 @@ import { useAccount as useEvmAccount } from 'wagmi'
 
 import { useDeposit } from '../_hooks/useDeposit'
 import { useEstimateDepositFees } from '../_hooks/useEstimateDepositFees'
+import { useReceivingEvmAddress } from '../_hooks/useReceivingEvmAddress'
 import { EvmTunneling, TypedTunnelState } from '../_hooks/useTunnelState'
 
 import { FormContent, TunnelForm } from './form'
+import { ReceivingAddress } from './receivingAddress'
 import { SubmitEvmDeposit } from './submitEvmDeposit'
 import { TunnelProviderToggle } from './tunnelProviderToggle'
 
@@ -61,7 +64,10 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   const amount = parseTokenUnits(fromInput, fromToken)
 
-  const { status } = useEvmAccount()
+  const { address, status } = useEvmAccount()
+
+  const { addressError, receivingAddress, ...customAddressProps } =
+    useReceivingEvmAddress(state)
 
   const operatesNativeToken = isNativeToken(fromToken)
 
@@ -110,6 +116,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
     useEstimateDepositFees({
       amount,
       fromToken,
+      to: receivingAddress,
       toToken,
     })
 
@@ -127,6 +134,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
       })
       emitter.on('deposit-settled', () => setOperationRunning('idle'))
     },
+    to: receivingAddress,
     toToken,
   })
 
@@ -164,9 +172,12 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   const balanceLoaded = nativeTokenBalanceLoaded || tokenBalanceLoaded
 
-  const canDeposit = canSubmit && !tunnelsThroughPartners(fromToken)
+  const canDeposit =
+    canSubmit &&
+    !tunnelsThroughPartners(fromToken) &&
+    receivingAddress !== undefined
 
-  function renderBelowForm() {
+  function renderFees() {
     if (!canDeposit) return null
 
     return (
@@ -177,6 +188,30 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
           total={getTotalDeposit()}
         />
       </FeesContainer>
+    )
+  }
+
+  function renderBelowForm() {
+    if (providerType !== 'native' || tunnelsThroughPartners(fromToken)) {
+      return null
+    }
+
+    return (
+      <div className="relative -translate-y-7">
+        <ReceivingAddress
+          {...customAddressProps}
+          address={address ? formatEvmAddress(address) : undefined}
+          disabled={isRunningOperation}
+          editable
+          placeholder={t('tunnel-page.form.evm-custom-address-placeholder')}
+          receivingText={t('tunnel-page.form.hemi-receiving-address')}
+          tooltipText={t(
+            'tunnel-page.form.hemi-custom-receiving-address-description',
+            { symbol: fromToken.symbol },
+          )}
+        />
+        {renderFees()}
+      </div>
     )
   }
 
@@ -206,7 +241,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
         needsApproval={needsApproval}
         operationRunning={operationRunning}
         setIsPartnersDrawerOpen={setIsPartnersDrawerOpen}
-        validationError={validationError}
+        validationError={validationError ?? addressError}
       />
     )
   }

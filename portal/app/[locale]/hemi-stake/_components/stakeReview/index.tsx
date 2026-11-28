@@ -2,6 +2,7 @@ import { Drawer } from 'components/drawer'
 
 import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
 
+import { ReviewAutoRelock } from './autoRelock'
 import { ReviewIncreaseAmount } from './increaseAmount'
 import { ReviewIncreaseUnlockTime } from './increaseUnlockTime'
 import { ReviewCollectRewards } from './reviewCollectRewards'
@@ -17,6 +18,7 @@ const reviewComponents = {
   increasingAmount: ReviewIncreaseAmount,
   increasingUnlockTime: ReviewIncreaseUnlockTime,
   staking: ReviewStake,
+  togglingAutoRelock: ReviewAutoRelock,
   unlocking: ReviewUnlock,
 } as const
 

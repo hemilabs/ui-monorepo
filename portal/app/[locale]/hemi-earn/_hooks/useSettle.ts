@@ -2,8 +2,8 @@ import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { type ClaimDepositEvents } from '@vetro-protocol/hemi-earn'
 import { type EventEmitter } from 'events'
-import { type ClaimDepositEvents } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
@@ -18,7 +18,8 @@ import { type EarnTransaction } from '../types'
 import { useLocalEarnOperations } from './useLocalEarnOperations'
 
 // The four settlement actions share this signature (one Hemi Router tx, no approval/quote leg).
-type SettleAction = (typeof import('hemi-earn-actions/actions'))['claimDeposit']
+type SettleAction =
+  (typeof import('@vetro-protocol/hemi-earn/actions'))['claimDeposit']
 
 type UseSettle = {
   action: SettleAction
@@ -81,10 +82,8 @@ export const useSettle = function ({
 
       await ensureConnectedTo(hemi.id)
 
-      const { emitter, promise } = action({
-        account: address,
+      const { emitter, promise } = action(hemiWalletClient!, {
         requestId: BigInt(requestId),
-        walletClient: hemiWalletClient!,
       })
 
       // Keyed by the request tx (requestTxHash = the local entry's initiateTxHash).

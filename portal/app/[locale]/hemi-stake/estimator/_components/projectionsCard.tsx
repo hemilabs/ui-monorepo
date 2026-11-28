@@ -1,0 +1,364 @@
+import { Button } from 'components/button'
+import { Card } from 'components/card'
+import {
+  SegmentedControl,
+  type SegmentedControlOption,
+} from 'components/segmentedControl'
+import { useFormat } from 'hooks/useFormat'
+import { useHemiToken } from 'hooks/useHemiToken'
+import { useTokenPrices } from 'hooks/useTokenPrices'
+import { type ReactNode, useState } from 'react'
+import Skeleton from 'react-loading-skeleton'
+import { screenBreakpoints } from 'styles'
+import { useTranslations } from 'use-intl'
+import { type Formatter } from 'utils/format'
+import { getTokenPrice } from 'utils/token'
+
+import {
+  LegendItem,
+  PayoutsChart,
+  stackedBelowColor,
+  payoutsColor,
+} from '../../_components/payoutsChart'
+import { type ChartWidths } from '../../_hooks/useChartWidth'
+import { type ChartPoint } from '../../_utils/chartPoint'
+import { type ChartUnit } from '../../_utils/chartUnit'
+import {
+  formatPayoutDetail,
+  formatPayoutValue,
+} from '../../_utils/formatPayoutValue'
+import {
+  type PayoutPoint,
+  getPayoutAxisTicks,
+  getUnlockMarkerX,
+  toZeroedSeries,
+} from '../../_utils/payoutsChartData'
+import { toPrice } from '../../_utils/toPrice'
+import {
+  type ProjectionEpoch,
+  toPayoutBars,
+  toVotingPowerCurve,
+} from '../_utils/projectionSeries'
+
+import { VotingPowerChart } from './votingPowerChart'
+
+const axisTickCount = 5
+
+const columnWidths: ChartWidths = {
+  breakpoints: [
+    [screenBreakpoints.xl, 620],
+    [screenBreakpoints.lg, 420],
+    [screenBreakpoints.md, 560],
+  ],
+  fallback: 300,
+}
+
+const toShown = function ({
+  existingBars,
+  formatter,
+  hasNewPosition,
+  incomingBars,
+  isBlended,
+  isReady,
+  labels,
+  unlocksOn,
+  votingPower,
+}: {
+  existingBars: ChartPoint[]
+  formatter: Formatter
+  hasNewPosition: boolean
+  incomingBars: PayoutPoint[]
+  isBlended: boolean
+  isReady: boolean
+  labels: { below: string; series: string; total: string }
+  unlocksOn: string
+  votingPower: ChartPoint[]
+}) {
+  if (!isReady) {
+    return {
+      below: undefined,
+      headline: undefined,
+      payouts: toZeroedSeries(incomingBars),
+      unlocksOn: undefined,
+      unlockX: undefined,
+      weights: votingPower.map(point => ({ ...point, y: 0 })),
+    }
+  }
+
+  return {
+    below: isBlended
+      ? {
+          label: labels.below,
+          points: existingBars,
+          seriesLabel: labels.series,
+          totalLabel: labels.total,
+        }
+      : undefined,
+    headline: formatter.formatNumber(
+      votingPower.length > 0 ? votingPower[0].y : 0,
+    ),
+    payouts: incomingBars,
+    unlocksOn: hasNewPosition ? unlocksOn : undefined,
+    unlockX: hasNewPosition ? getUnlockMarkerX(incomingBars) : undefined,
+    weights: votingPower,
+  }
+}
+
+const HeadingLabel = function ({
+  className,
+  isError,
+  label,
+}: {
+  className: string
+  isError: boolean
+  label: string | undefined
+}) {
+  if (label !== undefined) {
+    return <>{label}</>
+  }
+  return isError ? <>-</> : <Skeleton className={className} />
+}
+
+const RetryOverlay = function ({
+  children,
+  message,
+  onRetry,
+  tryAgain,
+}: {
+  children: ReactNode
+  message: string
+  onRetry: VoidFunction | undefined
+  tryAgain: string
+}) {
+  if (onRetry === undefined) {
+    return <>{children}</>
+  }
+
+  return (
+    <div className="relative">
+      <div className="opacity-30">{children}</div>
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-y-2">
+        <span className="text-xs text-neutral-400">{message}</span>
+        <Button
+          onClick={onRetry}
+          size="xSmall"
+          type="button"
+          variant="secondary"
+        >
+          {tryAgain}
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+const UnitToggle = function ({
+  label,
+  onChange,
+  options,
+  price,
+  value,
+}: {
+  label: string
+  onChange: (unit: ChartUnit) => void
+  options: SegmentedControlOption<ChartUnit>[]
+  price: number | undefined
+  value: ChartUnit
+}) {
+  if (price === undefined) {
+    return null
+  }
+  return (
+    <SegmentedControl
+      label={label}
+      onChange={onChange}
+      options={options}
+      value={value}
+    />
+  )
+}
+
+type Props = {
+  currentEpoch: number | undefined
+  existing: ProjectionEpoch[]
+  incoming: ProjectionEpoch[]
+  isBlended: boolean
+  isError: boolean
+  isLoading: boolean
+  lockEnd: number | undefined
+  onRetry: VoidFunction | undefined
+  votingWeights: { timestamp: number; weight: bigint }[] | undefined
+}
+
+export const ProjectionsCard = function ({
+  currentEpoch,
+  existing,
+  incoming,
+  isBlended,
+  isError,
+  isLoading,
+  lockEnd,
+  onRetry,
+  votingWeights,
+}: Props) {
+  const [unit, setUnit] = useState<ChartUnit>('hemi')
+  const formatter = useFormat()
+  const t = useTranslations('hemi-stake')
+  const tCommon = useTranslations('common')
+  const token = useHemiToken()
+  const { data: prices } = useTokenPrices()
+
+  const price = toPrice(getTokenPrice(token, prices))
+  const activeUnit = price === undefined ? 'hemi' : unit
+  const symbol = activeUnit === 'usd' ? 'USD' : token.symbol
+
+  const toBars = (payouts: ProjectionEpoch[]) =>
+    toPayoutBars({
+      decimals: token.decimals,
+      lockEnd,
+      payouts,
+      unit: activeUnit,
+      usdPrice: price,
+    })
+
+  const incomingBars = toBars(incoming)
+  const votingPower = toVotingPowerCurve({
+    decimals: token.decimals,
+    weights: votingWeights ?? [],
+  })
+
+  const ticks = getPayoutAxisTicks(incomingBars, axisTickCount)
+  const formatDate = (value: number) =>
+    formatter.formatShortDate(new Date(value))
+  const formatPayout = (value: number) =>
+    activeUnit === 'usd'
+      ? formatter.formatCompactFiat(value, 2)
+      : formatPayoutValue({ formatter, symbol: token.symbol, value })
+  const formatDetail = (value: number) =>
+    activeUnit === 'usd'
+      ? formatter.formatFiatAmount(value)
+      : formatPayoutDetail({ formatter, price, symbol: token.symbol, value })
+  const formatWeight = function (value: number) {
+    const { number, suffix } = formatter.formatCompactFiatParts(value)
+    return `${number}${suffix}`
+  }
+
+  const unitOptions: SegmentedControlOption<ChartUnit>[] = [
+    { label: token.symbol, value: 'hemi' },
+    { label: 'USD', value: 'usd' },
+  ]
+
+  const isPending = isLoading && !isError
+  const shown = toShown({
+    existingBars: toBars(existing).map(({ x, y }) => ({ x, y })),
+    formatter,
+    hasNewPosition: incoming.some(epoch => epoch.weight > BigInt(0)),
+    incomingBars,
+    isBlended,
+    isReady: !isError && !isPending,
+    labels: {
+      below: t('estimator.my-positions'),
+      series: t('estimator.new-position'),
+      total: t('estimated-payouts.title'),
+    },
+    unlocksOn:
+      lockEnd === undefined
+        ? t('estimated-payouts.countdown-paused')
+        : t('estimated-payouts.unlocks-on', {
+            date: formatter.formatShortDateWithYear(new Date(lockEnd * 1000)),
+          }),
+    votingPower,
+  })
+
+  return (
+    <Card shadow="sm">
+      <RetryOverlay
+        message={t('estimated-payouts.load-failed')}
+        onRetry={onRetry}
+        tryAgain={tCommon('try-again')}
+      >
+        <div className="flex w-full flex-col gap-y-6 p-4">
+          <div className="flex flex-col gap-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+              <span className="body-text-medium text-neutral-500">
+                <HeadingLabel
+                  className="w-48"
+                  isError={isError}
+                  label={
+                    currentEpoch === undefined
+                      ? undefined
+                      : t('estimator.per-epoch', {
+                          epoch: String(currentEpoch),
+                          symbol,
+                        })
+                  }
+                />
+              </span>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                {shown.unlocksOn !== undefined && (
+                  <span className="body-text-caption text-neutral-400">
+                    {shown.unlocksOn}
+                  </span>
+                )}
+                <UnitToggle
+                  label={t('estimator.unit')}
+                  onChange={setUnit}
+                  options={unitOptions}
+                  price={price}
+                  value={unit}
+                />
+              </div>
+            </div>
+            <PayoutsChart
+              afterUnlockLabel={t('estimated-payouts.after-unlock')}
+              below={shown.below}
+              formatDate={formatDate}
+              formatDetail={formatDetail}
+              formatValue={formatPayout}
+              height={150}
+              isPending={isPending}
+              series={shown.payouts}
+              ticks={ticks}
+              unlockX={shown.unlockX}
+              widths={columnWidths}
+            />
+            {shown.below !== undefined && (
+              <div className="body-text-caption flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-500">
+                <LegendItem
+                  color={payoutsColor}
+                  label={t('estimator.new-position')}
+                />
+                <LegendItem
+                  color={stackedBelowColor}
+                  label={t('estimator.my-positions')}
+                />
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col gap-y-3">
+            <span className="body-text-medium text-neutral-500">
+              {t.rich('estimator.voting-power-title', {
+                amount: () => (
+                  <HeadingLabel
+                    className="w-16"
+                    isError={isError}
+                    label={shown.headline}
+                  />
+                ),
+              })}
+            </span>
+            <VotingPowerChart
+              formatDate={formatDate}
+              formatValue={formatWeight}
+              isPending={isPending}
+              series={shown.weights}
+              ticks={ticks}
+              unlockX={shown.unlockX}
+              widths={columnWidths}
+            />
+          </div>
+        </div>
+      </RetryOverlay>
+    </Card>
+  )
+}

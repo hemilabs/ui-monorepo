@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { StakingDashboardToken } from 'types/stakingDashboard'
 import { createErc20AllowanceStateOverride } from 'utils/erc20StateOverride'
@@ -7,11 +8,13 @@ import { useAccount, useEstimateGas } from 'wagmi'
 
 export const useEstimateCreateLockFees = function ({
   amount,
+  autoRelock,
   enabled = true,
   lockDurationInSeconds,
   token,
 }: {
   amount: bigint
+  autoRelock: boolean
   enabled?: boolean
   lockDurationInSeconds: bigint
   token: StakingDashboardToken
@@ -21,6 +24,7 @@ export const useEstimateCreateLockFees = function ({
 
   const data = encodeCreateLock({
     amount,
+    autoRelock: featureFlags.enableHemiStakeAutoRelock && autoRelock,
     lockDurationInSeconds,
   })
 

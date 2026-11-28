@@ -1,9 +1,10 @@
 import Big from 'big.js'
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
+import { useFormat } from 'hooks/useFormat'
 import { ComponentProps, ComponentType, Fragment, ReactNode } from 'react'
 import { Token } from 'types/token'
-import { formatNumber, smallestFormattedNumber } from 'utils/format'
+import { roundNumber, smallestFormattedNumber } from 'utils/format'
 
 type CustomContainer = ComponentType<{
   children?: ReactNode
@@ -36,13 +37,15 @@ export const DisplayAmount = function ({
   symbolContainer: SymbolContainer = DefaultTextContainer,
   token,
 }: Props) {
+  const { formatFullAmount, formatNumber } = useFormat()
   const formattedAmount = formatNumber(amount)
 
   const bigAmount = Big(amount)
   const notZero = !bigAmount.eq(0)
   const belowPrecision =
     bigAmount.gt(0) && bigAmount.lt(smallestFormattedNumber)
-  const showDots = bigAmount.lt(1) && notZero && formattedAmount !== amount
+  const showDots =
+    bigAmount.lt(1) && notZero && !Big(roundNumber(amount)).eq(bigAmount)
   return (
     <Tooltip
       disabled={!showTooltip}
@@ -53,13 +56,7 @@ export const DisplayAmount = function ({
             {showTokenLogo && (
               <TokenLogo size="small" token={token} version={logoVersion} />
             )}
-            <span>{`${new Intl.NumberFormat('en-US', {
-              maximumFractionDigits: token.decimals,
-              useGrouping: true,
-            }).format(
-              // @ts-expect-error NumberFormat.format accept strings, typings are wrong. See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/format#parameters
-              amount,
-            )} ${token.symbol}`}</span>
+            <span>{`${formatFullAmount(amount, token.decimals)} ${token.symbol}`}</span>
           </div>
         ) : null
       }
@@ -68,7 +65,7 @@ export const DisplayAmount = function ({
       <Container>
         <AmountContainer>
           {belowPrecision
-            ? `< ${smallestFormattedNumber}`
+            ? `< ${formatNumber(smallestFormattedNumber)}`
             : `${formattedAmount}${showDots ? '...' : ''}`}
         </AmountContainer>
         {showSymbol ? (

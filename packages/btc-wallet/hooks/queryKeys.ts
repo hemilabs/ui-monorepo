@@ -1,4 +1,4 @@
-import { WalletConnector } from '../connectors/types'
+import type { WalletConnector } from '../connectors/types'
 
 export const getAccountsQueryKey = (connector: WalletConnector | undefined) => [
   'btc-wallet',

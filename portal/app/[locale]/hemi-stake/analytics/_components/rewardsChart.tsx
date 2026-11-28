@@ -1,7 +1,7 @@
+import { useFormat } from 'hooks/useFormat'
 import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatDate } from 'utils/format'
+import { useTranslations } from 'use-intl'
 import { SixDaysSeconds } from 've-hemi-actions'
 import {
   type CallbackArgs,
@@ -13,7 +13,11 @@ import {
   VictoryVoronoiContainer,
 } from 'victory'
 
-import { useChartWidth } from '../_hooks/useChartWidth'
+import {
+  ChartTooltipLabel,
+  getTooltipHeight,
+} from '../../_components/chartTooltipLabel'
+import { useChartWidth } from '../../_hooks/useChartWidth'
 import {
   chartHeight,
   epochAxisStyle,
@@ -25,7 +29,6 @@ import { formatSupplyValue } from '../_utils/formatSupplyValue'
 import { type RewardsBar, type RewardsSeries } from '../_utils/rewardsHistory'
 
 import { ChartPlaceholder } from './chartPlaceholder'
-import { ChartTooltipLabel, getTooltipHeight } from './chartTooltipLabel'
 
 const tooltipWidth = 216
 const openEpochOpacity = 0.4
@@ -115,16 +118,16 @@ type Props = {
 }
 
 export const RewardsChart = function ({ isPending, onRetry, series }: Props) {
-  const locale = useLocale()
+  const formatter = useFormat()
   const t = useTranslations('hemi-stake.analytics')
   const chartWidth = useChartWidth()
 
   const formatValue = (value: number) =>
-    formatSupplyValue({ locale, symbol: '', unit: 'usd', value })
+    formatSupplyValue({ formatter, symbol: '', unit: 'usd', value })
 
   const formatTooltipValue = (value: number) =>
     formatSupplyValue({
-      locale,
+      formatter,
       precision: 'full',
       symbol: '',
       unit: 'usd',
@@ -132,7 +135,7 @@ export const RewardsChart = function ({ isPending, onRetry, series }: Props) {
     })
 
   const formatDay = (day: string) =>
-    formatDate(new Date(`${day}T00:00:00Z`), locale, 'UTC')
+    formatter.formatDate(new Date(`${day}T00:00:00Z`), 'UTC')
 
   const formatTooltipTitle = ({
     preHemiStake,
@@ -141,7 +144,7 @@ export const RewardsChart = function ({ isPending, onRetry, series }: Props) {
   }: RewardsBar) =>
     preHemiStake
       ? `${t('epoch', { epoch: String(preHemiStake.fundedEpoch) })} · ${formatDay(preHemiStake.from)} – ${formatDay(preHemiStake.to)}`
-      : `${t('epoch', { epoch: String(epoch) })} · ${formatDate(new Date(epoch * SixDaysSeconds * 1000), locale, 'UTC')} – ${formatDate(new Date(timestamp), locale, 'UTC')}`
+      : `${t('epoch', { epoch: String(epoch) })} · ${formatter.formatDate(new Date(epoch * SixDaysSeconds * 1000), 'UTC')} – ${formatter.formatDate(new Date(timestamp), 'UTC')}`
 
   const formatTooltipNote = function ({
     preHemiStake,

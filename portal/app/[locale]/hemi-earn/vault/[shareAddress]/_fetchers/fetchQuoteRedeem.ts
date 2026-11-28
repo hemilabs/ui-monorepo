@@ -1,18 +1,17 @@
 import { type QueryClient, type UseQueryOptions } from '@tanstack/react-query'
-import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
+import { hemiEarnAgentAddress } from '@vetro-protocol/hemi-earn'
 import {
   getAssetData,
   quoteRedeem,
   quoteRedeemFulfillment,
   resolveIsInstant,
-} from 'hemi-earn-actions/actions'
+} from '@vetro-protocol/hemi-earn/actions'
 import { hemi } from 'hemi-viem'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient, getPublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 
 import { shareConfigQueryOptions } from '../../../_fetchers/fetchHemiEarnAssetConfigs'
-import { agentAddressQueryOptions } from '../../../_hooks/useHemiEarnAgentAddress'
 
 export type QuoteRedeem = {
   callbackFee: bigint
@@ -42,29 +41,21 @@ export async function fetchQuoteRedeem({
   const { remoteShare } = await queryClient.ensureQueryData(
     shareConfigQueryOptions(shareAddress),
   )
-  const [isInstant, assetData, agentAddress] = await Promise.all([
-    resolveIsInstant({
+  const [isInstant, assetData] = await Promise.all([
+    resolveIsInstant(ethereumClient, {
+      address: remoteShare,
       caller: account,
-      client: ethereumClient,
-      stakingVault: remoteShare,
     }),
-    getAssetData(hemiClient, {
-      asset,
-      routerAddress: getHemiEarnRouterAddress(),
-    }),
-    queryClient.ensureQueryData(agentAddressQueryOptions()),
+    getAssetData(hemiClient, { asset }),
   ])
-  const callbackFee = await quoteRedeemFulfillment({
-    agentAddress,
-    asset: assetData.remoteAsset,
-    client: ethereumClient,
+  const callbackFee = await quoteRedeemFulfillment(ethereumClient, {
+    address: hemiEarnAgentAddress,
+    remoteAsset: assetData.remoteAsset,
   })
-  const nativeFee = await quoteRedeem({
+  const nativeFee = await quoteRedeem(hemiClient, {
     asset,
     callbackFee,
-    client: hemiClient,
     isInstant,
-    routerAddress: getHemiEarnRouterAddress(),
     shares,
   })
   return { callbackFee, isInstant, nativeFee }

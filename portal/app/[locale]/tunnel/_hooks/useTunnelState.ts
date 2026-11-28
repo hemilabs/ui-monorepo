@@ -20,12 +20,14 @@ export type Operation = 'claim' | 'deposit' | 'prove' | 'withdraw' | 'view'
 type TunnelProviderType = 'native' | 'thirdParty'
 
 export type TunnelState = {
+  customEvmAddress: string
+  customEvmAddressEnabled: boolean
   fromInput: string
   fromNetworkId: RemoteChain['id']
   fromToken: Token
+  providerType: TunnelProviderType
   toNetworkId: RemoteChain['id']
   toToken: Token
-  providerType: TunnelProviderType
 }
 
 type Action<T extends string> = {
@@ -33,6 +35,11 @@ type Action<T extends string> = {
 }
 
 type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
+
+type UpdateCustomEvmAddress = Action<'updateCustomEvmAddress'> &
+  Payload<
+    Partial<Pick<TunnelState, 'customEvmAddress' | 'customEvmAddressEnabled'>>
+  >
 
 type UpdateFromNetwork = Action<'updateFromNetwork'> &
   Payload<TunnelState['fromNetworkId']>
@@ -52,6 +59,7 @@ type ToggleTunnelProviderType = Action<'toggleTunnelProviderType'> &
 
 type Actions =
   | ResetStateAfterOperation
+  | UpdateCustomEvmAddress
   | UpdateFromNetwork
   | UpdateFromInput
   | UpdateFromToken
@@ -72,10 +80,17 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
     case 'resetStateAfterOperation': {
       const newState = {
         ...state,
+        customEvmAddress: '',
+        customEvmAddressEnabled: false,
         fromInput: '0',
       }
       return newState
     }
+    case 'updateCustomEvmAddress':
+      return {
+        ...state,
+        ...action.payload,
+      }
     case 'updateFromNetwork': {
       const { payload: fromNetworkId } = action
       return {
@@ -229,6 +244,8 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
   )
 
   const [state, dispatch] = useReducer(reducer, {
+    customEvmAddress: '',
+    customEvmAddressEnabled: false,
     fromInput: '0',
     fromToken: getNativeToken(initial.fromNetworkId),
     providerType: 'native',
@@ -344,6 +361,11 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
       ],
     ),
     toggleTunnelProviderType,
+    updateCustomEvmAddress: useCallback(
+      (payload: UpdateCustomEvmAddress['payload']) =>
+        dispatch({ payload, type: 'updateCustomEvmAddress' }),
+      [dispatch],
+    ),
     updateFromInput,
     updateFromNetwork: useCallback(
       function (fromNetworkId: UpdateFromNetwork['payload']) {

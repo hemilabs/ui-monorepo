@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import fetch from 'fetch-plus-plus'
 import { type EvmToken } from 'types/token'
-import { isValidUrl } from 'utils/url'
 import { type Address, formatUnits } from 'viem'
 
 import {
@@ -9,9 +8,6 @@ import {
   type MetricPeriod,
   type MetricType,
 } from '../../../types'
-
-const apiUrl = import.meta.env.VITE_VETRO_API_URL
-const isVetroApiConfigured = apiUrl !== undefined && isValidUrl(apiUrl)
 
 type ApyHistory = { apy: number; timestamp: number }[]
 
@@ -23,7 +19,7 @@ const fetchApyHistory = async function ({
   stakingVault: Address
 }): Promise<MetricDataPoint[]> {
   const history = (await fetch(
-    `${apiUrl}/variable-stake/apy-history/${stakingVault}/${period}`,
+    `${import.meta.env.VITE_VETRO_API_URL}/variable-stake/apy-history/${stakingVault}/${period}`,
   )) as ApyHistory
   return history.map(({ apy, timestamp }) => ({ x: timestamp, y: apy }))
 }
@@ -40,7 +36,7 @@ const fetchTotalDeposits = async function ({
   stakingVault: Address
 }): Promise<MetricDataPoint[]> {
   const history = (await fetch(
-    `${apiUrl}/variable-stake/total-deposits-history/${stakingVault}/${period}`,
+    `${import.meta.env.VITE_VETRO_API_URL}/variable-stake/total-deposits-history/${stakingVault}/${period}`,
   )) as TotalDepositsHistory
   return history.map(({ timestamp, totalDeposits }) => ({
     x: timestamp,
@@ -64,7 +60,6 @@ export const useHistoricalMetrics = ({
   stakingVault,
 }: UseHistoricalMetrics) =>
   useQuery({
-    enabled: isVetroApiConfigured,
     queryFn: (): Promise<MetricDataPoint[]> =>
       metricType === 'apy'
         ? fetchApyHistory({ period, stakingVault })

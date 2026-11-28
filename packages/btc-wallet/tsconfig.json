@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
-    "erasableSyntaxOnly": true
+    "erasableSyntaxOnly": true,
+    "strict": true,
+    "types": []
   },
-  "extends": "@tsconfig/next/tsconfig.json",
+  "extends": "@tsconfig/vite-react/tsconfig.json",
   "include": ["**/**/*.ts", "**/**/*.tsx", "global.d.ts"]
 }

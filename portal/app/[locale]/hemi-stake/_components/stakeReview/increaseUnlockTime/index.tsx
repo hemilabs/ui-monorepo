@@ -26,8 +26,10 @@ import {
   maxDays,
   minDays,
 } from '../../../_utils/lockCreationTimes'
-import { getLockupErrorMessage } from '../../../_utils/lockupError'
-import { isValidLockup } from '../../lockup'
+import {
+  getLockupErrorMessage,
+  isValidLockup,
+} from '../../../_utils/lockupError'
 
 import { Preview } from './preview'
 import { RetryIncreaseUnlockTime } from './retryIncreaseUnlockTime'
@@ -50,7 +52,7 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
   // stakingDashboardOperation and stakingPosition will always be defined here
   const { input, inputDays, lockupDays, stakingPosition, transactionHash } =
     stakingDashboardOperation!
-  const { lockTime, timestamp, tokenId } = stakingPosition!
+  const { effectiveLockEnd, tokenId } = stakingPosition!
 
   const stakingDashboardStatus =
     stakingDashboardOperation?.status ?? StakingDashboardStatus.STAKE_TX_PENDING
@@ -81,8 +83,8 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
     show,
   }: {
     fee: bigint
-    show: boolean
     isError: boolean
+    show: boolean
   }): StepPropsWithoutPosition['fees'] =>
     show
       ? {
@@ -166,12 +168,11 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
     })
 
   const getMinLocked = function () {
-    if (lockTime === undefined || timestamp === undefined) {
+    if (effectiveLockEnd === undefined) {
       return minDays
     }
     const { currentTimeInSeconds, unlockTime } = getUnlockInfo({
-      lockTime,
-      timestamp,
+      unlockTime: effectiveLockEnd,
     })
     return (
       getMinExtensionDays({ lockEnd: unlockTime, now: currentTimeInSeconds }) ??

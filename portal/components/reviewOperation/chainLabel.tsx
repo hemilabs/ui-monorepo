@@ -1,8 +1,8 @@
-import { RemoteChain } from 'types/chain'
+import type { RemoteChain } from 'types/chain'
 
 import { ChainIcon } from './chainIcon'
 
-interface Props {
+type Props = {
   active?: boolean
   chainId: RemoteChain['id']
   label: string

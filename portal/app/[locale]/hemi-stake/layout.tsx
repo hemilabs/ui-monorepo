@@ -10,10 +10,10 @@ import { HemiStakeTabs } from './_components/hemiStakeTabs'
 import { isStakingDashboardEnabledOnTestnet } from './_utils/isStakingDashboardEnabledOnTestnet'
 
 export const HemiStakeLayout = function () {
-  const t = useTranslations('hemi-stake')
+  const t = useTranslations()
   const [networkType] = useNetworkType()
 
-  useDocumentTitle('Hemi Stake | Hemi Portal')
+  useDocumentTitle(`${t('navbar.hemi-stake')} | ${t('metadata.title')}`)
 
   const isEnabled = isStakingDashboardEnabledOnTestnet(networkType)
 
@@ -29,7 +29,7 @@ export const HemiStakeLayout = function () {
             <Outlet />
           </>
         ) : (
-          <TestnetDisabled subtitle={t('switch-to-start-staking')} />
+          <TestnetDisabled subtitle={t('hemi-stake.switch-to-start-staking')} />
         )}
       </div>
     </PageLayout>

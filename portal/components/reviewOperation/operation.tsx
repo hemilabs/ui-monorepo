@@ -5,12 +5,14 @@ import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { ComponentProps, ReactNode } from 'react'
 
 type Props = {
+  aboveAmount?: ReactNode
   aboveCallToAction?: ReactNode
+  belowAmount?: ReactNode
   belowSubheading?: ReactNode
   bottomSection?: ReactNode
   callToAction?: ReactNode
   steps: StepPropsWithoutPosition[]
-  subheading: string
+  subheading?: string
 } & ComponentProps<typeof DrawerTopSection> &
   Omit<ComponentProps<typeof Amount>, 'value'> & {
     // rename value to amount
@@ -18,8 +20,10 @@ type Props = {
   }
 
 export const Operation = ({
+  aboveAmount,
   aboveCallToAction,
   amount,
+  belowAmount,
   belowSubheading,
   bottomSection,
   callToAction,
@@ -31,16 +35,20 @@ export const Operation = ({
   token,
 }: Props) => (
   <>
-    <div className="mb-3 flex min-h-21 flex-col gap-y-3">
+    <div
+      className={`mb-3 flex flex-col gap-y-3 ${subheading ? 'min-h-21' : ''}`}
+    >
       <DrawerTopSection heading={heading} onClose={onClose} />
-      <DrawerParagraph>{subheading}</DrawerParagraph>
+      {!!subheading && <DrawerParagraph>{subheading}</DrawerParagraph>}
     </div>
     {!!belowSubheading && <div>{belowSubheading}</div>}
     <ReviewOperation
+      aboveAmount={aboveAmount}
       aboveCallToAction={aboveCallToAction}
       amount={
         <Amount endAdornment={endAdornment} token={token} value={amount} />
       }
+      belowAmount={belowAmount}
       bottomSection={bottomSection}
       callToAction={callToAction}
       steps={steps}

@@ -109,7 +109,7 @@ The native tunnel is not the only route in and out of Hemi. For EVM ↔ EVM tran
 
 ## Staking
 
-The nav lists two unrelated staking products, sharing a word and nothing else: different contracts, different tokens, different purpose. Only the first is described here; **boost staking**, where allowlisted tokens are parked in a staking contract, is not documented yet.
+The Portal has two unrelated staking products, sharing a word and nothing else: different contracts, different tokens, different purpose. Only the first is in the nav and described here; **boost staking**, where allowlisted tokens are parked in a staking contract, is reachable only by URL (`/stake/dashboard`) so existing holders can still withdraw, and is not documented yet.
 
 ### Hemi Stake (veHEMI)
 
@@ -131,6 +131,8 @@ Lock durations are given as a duration from now, and the resulting unlock time i
 The 10 HEMI minimum is hardcoded as `minLockAmount` in the `ve-hemi-actions` package (it isn't readable from the contract, since `MIN_LOCK_AMOUNT` is private).
 
 Weight — used both for voting and for reward distribution — is `amount * (lock end - now) / MAX_TIME`. It therefore grows linearly with the remaining lock time and decays linearly to zero at the unlock date: 100 HEMI locked for the maximum four years starts at roughly 100 veHEMI, the same amount locked for one year at roughly 25. "Roughly" because the unlock date is rounded down to the epoch grid and the per-second slope is truncated, so the figure sits slightly below the round number.
+
+**Auto-relock** keeps a position at its current duration, so its weight stays flat instead of decaying to zero. It is the same as extending the lock by one epoch every epoch: enabled with 45 epochs left, the position stays at 45 epochs left, and disabling it starts that countdown from that moment. The flat weight raises the first-year APY, the more so the shorter the lockup.
 
 A position can only grow:
 
@@ -154,6 +156,7 @@ The list of positions comes from the veHEMI subgraph through `portal-backend/api
 #### Hemi Stake Rewards
 
 The current Hemi Stake rewards system depends on 2 contracts: The VeHemiEpochRewards contract and VeHemiEpochRewardsLens. Rewards use the same epoch grid as locks ([`SIX_DAYS`](#hemi-stake-vehemi), so the epoch of a timestamp is `timestamp / 525_960`). Funding per epoch takes place through streams, which are a source of money. For example, "Protocol fees" is a source of money; "Incentives" could be another. Each epoch's pot is split into 3 classes of positions: "Transferable", "Locked", and "Forfeitable". Each class is funded independently, so an epoch can be funded for one class and pay nothing to the other two. At the end of each epoch, the position gets the weight measured against its own class of position. In each reward token, the position gets `weight / classDenominator` of its class's pot. A non-transferable position whose lock was extended can draw from two pots: its own class for its original lock, and "Transferable" for the extended part.  
+Which class a position belongs to is decided by `transferableAfter`, the instant it becomes transferable, read off veHEMI: from that instant on its whole weight competes in "Transferable", and before it in its own class, which is "Forfeitable" when the position can be forfeited and "Locked" otherwise. A position that was minted transferable has no such instant, so it is always "Transferable". Extending the lock does not move the instant, which is why an extension splits the weight between the two pots. The Rewards contract also keeps that pair under `positionClass`, but only as the record of a capture most live positions have yet to sign, so reading the class from there reports every uncaptured position as transferable. The form estimate, the lockup APY and the auto-relock comparison (`getRewardsForecast`) don't model the split yet: they price the whole weight against one class per epoch, which understates a position whose lock outlives the instant. The estimator and the top-up and extension forecasts (`getBlendedForecast`) do split it.  
 After an epoch ends, rewards become claimable. Rewards that are not claimed can be swept back after a delay. A sweep applies to one epoch, one token and one class: once swept, the rewards of that class in that token for that epoch can no longer be claimed. The streams are defined by the owner of the Rewards contract. Each stream pays in a single token, and different streams may use different tokens.
 
 Only the owner of a position at the end of an epoch can claim that epoch's rewards. Selling a position does not move the rewards it already earned. A single claim is limited to `MAX_CLAIM_PAIRS` epoch and token pairs, so a long history can need several claims. Claiming does not change the lock.
@@ -166,9 +169,9 @@ Before this system, the `ve-hemi-rewards` contract (`0x0d85B6676d499c05FE06fcB6A
 
 The Portal needs a user's full operation history across the three chains of the active network type — Hemi, the EVM L1 and Bitcoin — and rebuilding it by scanning blocks over RPC is slow and rate-limited. Subgraphs (The Graph) index the relevant events so history can be queried in bulk.
 
-The `subgraphs/` folder holds one subgraph per concern. The tunnel-related ones cover deposits, BTC deposits, withdrawals, and withdrawal proofs and claims; the rest cover Hemi Earn, staking and veHEMI. Every subgraph is deployed once per chain, so mainnet and testnet are separate deployments.
+The `subgraphs/` folder holds one subgraph per concern. The tunnel-related ones cover deposits, BTC deposits, withdrawals, and withdrawal proofs and claims; the rest cover staking and veHEMI. Each of these is deployed once per chain, so mainnet and testnet are separate deployments. The folder also holds `hemi-supply-indexer`, which is not a subgraph: it runs on Envio, reads HEMI balances across four chains in one mainnet-only deployment, and feeds the supply endpoints rather than a user's history.
 
-The Portal does not query The Graph directly. Requests go through the backend API (`portal-backend/api`) under `/subgraphs/{chainId}/...`, which keeps API keys server-side and normalizes responses.
+The Portal does not query The Graph directly. Requests go through the backend API (`portal-backend/api`) under `/subgraphs/{chainId}/...`, which keeps API keys server-side and normalizes responses. Hemi Earn is the exception: its history and cost basis come straight from Vetro's API, which owns that indexer.
 
 History itself is assembled in web workers so the UI stays responsive. The workers combine subgraph data with direct RPC reads — a subgraph lags behind the chain head, so recent blocks are still scanned — track how far each chain has been synced, and persist the result locally so a returning user sees their history immediately. Operation status is then refreshed against chain state: whether a withdrawal is provable, claimable or challengeable is always decided by the contracts, never by the cached record.
 

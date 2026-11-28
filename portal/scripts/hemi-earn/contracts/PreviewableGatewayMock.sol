@@ -9,8 +9,8 @@ import {ERC20Mock} from "src/mocks/ERC20Mock.sol";
 /// @title PreviewableGatewayMock
 /// @notice Drop-in replacement for `GatewayMock` that adds the
 ///         `previewWithdraw(tokenOut, amountOut)` view from the production
-///         `IGateway` interface. The portal's `previewWithdraw` action
-///         (see `packages/hemi-earn-actions/src/actions/public/previewWithdraw.ts`)
+///         `IGateway` interface. The portal's `previewWithdraw` call
+///         (from `@vetro-protocol/gateway/actions`)
 ///         calls it to compute the pegged-token input needed to receive
 ///         exactly `amountOut` of `tokenOut` on redeem — the canonical
 ///         inverse of `previewRedeem`.

@@ -4,8 +4,8 @@ export type ReqData = {
     fromBlock: number
     limit: number
     orderBy: string
-    skip: number
     orderDirection: 'asc' | 'desc'
+    skip: number
   }>
 }
 
@@ -14,6 +14,7 @@ export type ChainIdPathParams = { chainIdStr: string }
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     interface Request {
       // Populated by the subgraph route middlewares (parseChainId,
       // parseQueryParams) before the route handlers read it.

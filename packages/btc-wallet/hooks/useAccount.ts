@@ -3,7 +3,7 @@ import { useContext, useEffect, useMemo } from 'react'
 
 import { bitcoinChains } from '../chains'
 import { GlobalContext } from '../context/globalContext'
-import { BtcSupportedNetworks } from '../unisat'
+import type { BtcSupportedNetworks } from '../unisat'
 
 import { getAccountsQueryKey, getNetworksQueryKey } from './queryKeys'
 import { useConfig } from './useConfig'

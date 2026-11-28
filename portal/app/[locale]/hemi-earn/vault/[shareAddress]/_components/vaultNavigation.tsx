@@ -10,6 +10,7 @@ import { useTranslations } from 'use-intl'
 import { queryStringObjectToString } from 'utils/url'
 
 import { useEarnVaults } from '../../../_hooks/useEarnVaults'
+import { getListedVaults } from '../../../_utils/vaults'
 import { type EarnVault } from '../../../types'
 
 type Props = {
@@ -64,7 +65,7 @@ export const VaultNavigation = function ({ vault }: Props) {
         {isDropdownOpen && (
           <div className="absolute left-0 top-full z-20 mt-1">
             <Menu
-              items={vaults.map(vaultOption => ({
+              items={getListedVaults(vaults).map(vaultOption => ({
                 content: (
                   <button
                     className="-mx-2 -my-1 flex items-center gap-x-2 whitespace-nowrap px-2 py-1 text-left text-sm"

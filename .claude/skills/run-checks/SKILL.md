@@ -35,7 +35,7 @@ pnpm prettier --write <files>
 pnpm eslint --cache --max-warnings 0 <js/md/ts/tsx files>
 ```
 
-Do not lint `subgraphs/**/*.ts` (except `hemi-earn-requests-subgraph`).
+Do not lint `subgraphs/**/*.ts` (except `hemi-supply-indexer`).
 `.eslintrc.json` ignores these files, and with `--max-warnings 0` the
 "file ignored" warning fails the run.
 

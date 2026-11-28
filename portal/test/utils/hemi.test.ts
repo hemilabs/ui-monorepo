@@ -2,12 +2,12 @@ import { bitcoinTestnet } from 'btc-wallet/chains'
 import { hemiSepolia } from 'hemi-viem'
 import {
   acknowledgedDeposits,
-  getVaultIndexByBTCAddress,
-  getBitcoinWithdrawalGracePeriod,
   getBitcoinVaultStateAddress,
+  getBitcoinWithdrawalGracePeriod,
   getTransactionByTxId,
   getTxConfirmations,
   getVaultByIndex,
+  getVaultIndexByBTCAddress,
   isAddressValid,
   isBitcoinWithdrawalChallenged,
   isBitcoinWithdrawalFulfilled,
@@ -15,8 +15,8 @@ import {
 import {
   BtcDepositOperation,
   BtcDepositStatus,
-  MessageDirection,
   BtcWithdrawStatus,
+  MessageDirection,
   ToBtcWithdrawOperation,
 } from 'types/tunnel'
 import { createBtcApi } from 'utils/btcApi'

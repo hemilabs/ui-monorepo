@@ -20,66 +20,15 @@ import {
 } from '../../../types'
 
 import { ClaimFromVaultCta } from './claimFromVault'
-import { HistoricalDepositReview } from './historicalDepositReview'
+import { DepositDrawerBody } from './depositDrawerBody'
 import { HistoricalWithdrawReview } from './historicalWithdrawReview'
 import { RemoteFailedCta } from './remoteFailed'
-import { RetryFailedDeposit } from './retryFailedDeposit'
 import { RetryFailedWithdraw } from './retryFailedWithdraw'
 import { AddTokenToWalletCta, SettleCta } from './settleShared'
 import { TransactionDrawerSkeleton } from './transactionDrawerSkeleton'
 import { TransactionNotFound } from './transactionNotFound'
 import { TransactionUnavailable } from './transactionUnavailable'
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
-
-// Drawer's already open, so no redirect on sign. A reverted claim/recover stays at
-// FULFILLED/CANCELLED, re-surfacing the same CTA (as "try again").
-function depositCallToAction({
-  asset,
-  transaction,
-  vault,
-}: {
-  asset: EarnAsset
-  transaction: EarnTransaction
-  vault: EarnVault
-}) {
-  if (canRetryRow(transaction)) {
-    return (
-      <RetryFailedDeposit
-        asset={asset}
-        transaction={transaction}
-        vault={vault}
-      />
-    )
-  }
-  if (isRemoteFailed(transaction)) {
-    return <RemoteFailedCta transaction={transaction} />
-  }
-  if (needsManualClaim(transaction)) {
-    return (
-      <SettleCta
-        asset={asset}
-        operation="CLAIM"
-        transaction={transaction}
-        vault={vault}
-      />
-    )
-  }
-  if (needsRecover(transaction)) {
-    return (
-      <SettleCta
-        asset={asset}
-        operation="RECOVER"
-        transaction={transaction}
-        vault={vault}
-      />
-    )
-  }
-  // Claim done — offer to add the share token to the wallet.
-  if (transaction.status === 'FINALIZED') {
-    return <AddTokenToWalletCta token={vault.shareToken} />
-  }
-  return null
-}
 
 // Redeem mirror: claim delivers the asset, recover returns the shares.
 function redeemCallToAction({
@@ -221,35 +170,26 @@ const TransactionDrawerContent = function () {
   }
   const { transaction } = resolved
 
-  const callToAction =
-    transaction.kind === 'REDEEM'
-      ? redeemCallToAction({
-          asset: resolved.asset,
-          transaction,
-          vault: resolved.vault,
-        })
-      : depositCallToAction({
-          asset: resolved.asset,
-          transaction,
-          vault: resolved.vault,
-        })
-
   return (
     <Drawer onClose={close}>
       <div className="drawer-content h-[80dvh] md:h-full">
         {transaction.kind === 'REDEEM' ? (
           <HistoricalWithdrawReview
-            callToAction={callToAction}
+            callToAction={redeemCallToAction({
+              asset: resolved.asset,
+              transaction,
+              vault: resolved.vault,
+            })}
             onClose={close}
             transaction={transaction}
             vault={resolved.vault}
           />
         ) : (
-          <HistoricalDepositReview
-            callToAction={callToAction}
+          <DepositDrawerBody
+            asset={resolved.asset}
             onClose={close}
-            token={resolved.asset.token}
             transaction={transaction}
+            vault={resolved.vault}
           />
         )}
       </div>

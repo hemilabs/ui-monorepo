@@ -6,6 +6,8 @@ import { type EvmToken } from 'types/token'
 import { useTranslations } from 'use-intl'
 import { formatUnits } from 'viem'
 
+import { VetroFeeRow, type VetroFeeRowProps } from './vetroFeeRow'
+
 const Row = ({ children, label }: { children: ReactNode; label: string }) => (
   <div className="flex items-center justify-between text-sm font-medium">
     <span className="text-neutral-500">{label}</span>
@@ -84,6 +86,7 @@ type Props = {
   nativeToken: EvmToken
   topRow: TopRowProps
   totalFees: bigint | undefined
+  vetroFee: VetroFeeRowProps
 }
 
 export const OperationSummary = function ({
@@ -94,11 +97,13 @@ export const OperationSummary = function ({
   nativeToken,
   topRow,
   totalFees,
+  vetroFee,
 }: Props) {
   const t = useTranslations()
   return (
     <div className="flex flex-col gap-y-2.5">
       <TopRow {...topRow} />
+      <VetroFeeRow {...vetroFee} />
       <div className="h-px w-full bg-neutral-200" />
       <FeeRow
         amount={hemiGasFee}

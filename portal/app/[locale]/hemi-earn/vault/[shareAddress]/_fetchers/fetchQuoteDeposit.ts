@@ -1,10 +1,10 @@
 import { type QueryClient, type UseQueryOptions } from '@tanstack/react-query'
 import { previewDeposit } from '@vetro-protocol/gateway/actions'
-import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
+import { hemiEarnAgentAddress } from '@vetro-protocol/hemi-earn'
 import {
   quoteDeposit,
   quoteDepositFulfillment,
-} from 'hemi-earn-actions/actions'
+} from '@vetro-protocol/hemi-earn/actions'
 import { hemi } from 'hemi-viem'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient, getPublicClient } from 'utils/chainClients'
@@ -13,7 +13,6 @@ import { type Address } from 'viem'
 import { shareConfigQueryOptions } from '../../../_fetchers/fetchHemiEarnAssetConfigs'
 import { gatewayForShareQueryOptions } from '../../../_hooks/gatewayForShare'
 import { assetDataQueryOptions } from '../../../_hooks/useAssetData'
-import { agentAddressQueryOptions } from '../../../_hooks/useHemiEarnAgentAddress'
 
 export type QuoteDeposit = {
   callbackFee: bigint
@@ -49,28 +48,22 @@ export async function fetchQuoteDeposit({
     }),
   )
 
-  const callbackFeePromise = Promise.all([
-    queryClient.ensureQueryData(agentAddressQueryOptions()),
-    queryClient
-      .ensureQueryData(shareConfigQueryOptions(shareAddress))
-      .then(({ remoteShare }) => remoteShare),
-  ]).then(([agentAddress, remoteShare]) =>
-    quoteDepositFulfillment({
-      agentAddress,
-      client: ethereumClient,
-      share: remoteShare,
-    }),
-  )
+  const callbackFeePromise = queryClient
+    .ensureQueryData(shareConfigQueryOptions(shareAddress))
+    .then(({ remoteShare }) =>
+      quoteDepositFulfillment(ethereumClient, {
+        address: hemiEarnAgentAddress,
+        remoteShare,
+      }),
+    )
 
   const [callbackFee, nativeFee, peggedAmount] = await Promise.all([
     callbackFeePromise,
     callbackFeePromise.then(cbFee =>
-      quoteDeposit({
+      quoteDeposit(hemiClient, {
         asset,
         assets: amount,
         callbackFee: cbFee,
-        client: hemiClient,
-        routerAddress: getHemiEarnRouterAddress(),
       }),
     ),
     peggedAmountPromise,

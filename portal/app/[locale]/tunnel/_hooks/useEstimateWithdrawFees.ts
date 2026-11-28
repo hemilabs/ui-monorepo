@@ -12,25 +12,28 @@ export const useEstimateWithdrawFees = function ({
   enabled = true,
   fromToken,
   l1ChainId,
+  to,
 }: {
   amount: bigint
   enabled?: boolean
   fromToken: EvmToken
   l1ChainId: Chain['id']
+  to?: Address | undefined
 }) {
   const { address } = useAccount()
+  const receiver = to ?? address
 
   const l2BridgeAddress = getL2BridgeAddress(l1ChainId)
   const isNative = isNativeAddress(fromToken.address)
   const { data: gasUnits, isError } = useEstimateGas({
     chainId: fromToken.chainId,
-    data: address
+    data: receiver
       ? encodeInitiateWithdraw({
           amount,
           l2TokenAddress: isNative
             ? NativeTokenSpecialAddressOnL2
             : (fromToken.address as Address),
-          to: address,
+          to: receiver,
         })
       : undefined,
     query: { enabled: enabled && !!address },

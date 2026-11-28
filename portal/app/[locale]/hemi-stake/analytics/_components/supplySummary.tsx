@@ -1,15 +1,12 @@
-import {
-  supplySlices,
-  type SupplyPeriod,
-  type SupplyUnit,
-} from '../_utils/supplyHistory'
+import { type ChartUnit } from '../../_utils/chartUnit'
+import { supplySlices, type SupplyPeriod } from '../_utils/supplyHistory'
 
 import { SupplySliceCard } from './supplySliceCard'
 
 type Props = {
   period: SupplyPeriod
   symbol: string
-  unit: SupplyUnit
+  unit: ChartUnit
 }
 
 export const SupplySummary = ({ period, symbol, unit }: Props) => (

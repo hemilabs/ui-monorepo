@@ -34,13 +34,15 @@ export type StakingPositionStatus =
 
 export type StakingPosition = {
   amount: bigint
+  autoRelock: boolean
   blockNumber: bigint
   blockTimestamp: bigint
+  effectiveLockEnd: bigint
   forfeitable: boolean
   id: string
   lockTime: bigint
-  owner: string
-  pastOwners: string[]
+  owner: Address
+  pastOwners: Address[]
   status: StakingPositionStatus
   timestamp: bigint
   tokenId: bigint
@@ -50,14 +52,18 @@ export type StakingPosition = {
 
 export type StakingDashboardOperation = Partial<{
   approvalTxHash: Hash
+  autoRelock: boolean
   input: string
   inputDays: string
   lockupDays: number
-  transactionHash: Hash
   stakingPosition: Partial<
-    Pick<StakingPosition, 'amount' | 'tokenId' | 'lockTime' | 'timestamp'>
+    Pick<
+      StakingPosition,
+      'amount' | 'effectiveLockEnd' | 'tokenId' | 'transferable'
+    >
   >
   status: StakingDashboardStatusType
+  transactionHash: Hash
 }>
 
 // Where a reward comes from. The Portal reads and claims one source today, but every
@@ -103,10 +109,10 @@ export type CollectAllRewardsStep = ClaimTransaction & {
 }
 
 export type CollectAllRewardsDashboardOperation = {
-  transactionHash?: Hash
   rewards?: ClaimableReward[]
   status?: CollectAllRewardsDashboardStatusType
   steps?: CollectAllRewardsStep[]
+  transactionHash?: Hash
 }
 
 // Prefer ordering these by value rather than by key
@@ -142,9 +148,9 @@ export type UnlockingDashboardOperation = {
   captureStatus?: CaptureDashboardStatusType
   captureTransactionHash?: Hash
   needsCapture?: boolean
-  transactionHash?: Hash
   stakingPosition?: Pick<StakingPosition, 'amount' | 'tokenId'>
   status?: UnlockingDashboardStatusType
+  transactionHash?: Hash
 }
 export type UnlockingOperationRunning = 'idle' | 'unlocking' | 'failed'
 export type StakingOperationRunning =

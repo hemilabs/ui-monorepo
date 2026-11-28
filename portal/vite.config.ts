@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv, type PluginOption } from 'vite'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
+import { getRouteFlags } from './app/routeFlags.ts'
 import { sitemap } from './plugins/sitemap.ts'
 
 const polyfills = () => nodePolyfills({ include: ['http', 'https', 'util'] })
@@ -60,7 +61,7 @@ export default defineConfig(function ({ mode }) {
     plugins.push(
       sitemap({
         baseUrl: env.PORTAL_SITE_URL,
-        includeHemiEarn: env.VITE_ENABLE_HEMI_EARN_PAGE === 'true',
+        flags: getRouteFlags(env),
       }),
     )
   }
@@ -134,6 +135,31 @@ export default defineConfig(function ({ mode }) {
         ),
       })),
       tsconfigPaths: true,
+    },
+    server: {
+      proxy: {
+        '/portal-api': {
+          changeOrigin: true,
+          // See the note in '/vetro-api'.
+          configure: proxy =>
+            proxy.on('proxyReq', proxyReq =>
+              proxyReq.removeHeader('cf-connecting-ip'),
+            ),
+          rewrite: path => path.replace(/^\/portal-api/, ''),
+          target: 'https://portal-api.hemi.xyz',
+        },
+        '/vetro-api': {
+          changeOrigin: true,
+          // miniflare adds CF-Connecting-IP, and Cloudflare rejects proxied
+          // requests that carry it (error 1000).
+          configure: proxy =>
+            proxy.on('proxyReq', proxyReq =>
+              proxyReq.removeHeader('cf-connecting-ip'),
+            ),
+          rewrite: path => path.replace(/^\/vetro-api/, ''),
+          target: 'https://api.vetro.org',
+        },
+      },
     },
     worker: {
       // Worker bundles get their own plugin pipeline, the top-level `plugins`

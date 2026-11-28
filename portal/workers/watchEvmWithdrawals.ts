@@ -21,9 +21,9 @@ export const getUpdateWithdrawalKey = (withdrawal: WithdrawTunnelOperation) =>
   `update-withdrawal-${withdrawal.l2ChainId}-${withdrawal.transactionHash}` as const
 
 type WatchWithdrawal = {
+  focusedWithdrawalHash?: Hash
   type: 'watch-evm-withdrawal'
   withdrawal: ToEvmWithdrawOperation
-  focusedWithdrawalHash?: Hash
 }
 
 type AppToWebWorkerActions = EnableWorkersDebug | WatchWithdrawal

@@ -1,0 +1,310 @@
+import { Button } from 'components/button'
+import { DisplayAmount } from 'components/displayAmount'
+import { EvmFeesSummary } from 'components/evmFeesSummary'
+import { FeesContainer } from 'components/feesContainer'
+import { CallToActionContainer } from 'components/reviewOperation/callToActionContainer'
+import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { useFormat } from 'hooks/useFormat'
+import { useHemi } from 'hooks/useHemi'
+import { useHemiToken } from 'hooks/useHemiToken'
+import { useTokenPrices } from 'hooks/useTokenPrices'
+import { type ReactNode } from 'react'
+import Skeleton from 'react-loading-skeleton'
+import { type Token } from 'types/token'
+import { useTranslations } from 'use-intl'
+import { getTokenPrice } from 'utils/token'
+import { formatUnits } from 'viem'
+
+import { useAutoRelockInputs } from '../../../_hooks/useAutoRelockInputs'
+import { getAutoRelockComparison } from '../../../_utils/autoRelockComparison'
+import { formatApyFromRatio } from '../../../_utils/formatApyFromRatio'
+import {
+  formatPayoutDetail,
+  formatPayoutValue,
+} from '../../../_utils/formatPayoutValue'
+import { getUnlockInfo } from '../../../_utils/lockCreationTimes'
+import { getPositionWeights } from '../../../_utils/lockEpochs'
+import { getPayoutAxisTicks } from '../../../_utils/payoutsChartData'
+import {
+  alwaysTransferable,
+  emptyInputsByClass,
+} from '../../../_utils/rewardClass'
+import { toPrice } from '../../../_utils/toPrice'
+import { VotingPowerEquivalence } from '../../lockup'
+import {
+  LegendItem,
+  PayoutsChart,
+  payoutsColor,
+  stackedBelowColor,
+} from '../../payoutsChart'
+import { drawerWidths } from '../stackedPayouts'
+
+const cardClassName =
+  'flex w-full flex-col gap-y-3 rounded-lg bg-neutral-50 p-4'
+const sectionLabelClassName =
+  'text-xxs font-medium uppercase tracking-widest text-neutral-500'
+
+const Arrow = () => <span className="text-neutral-400">&rarr;</span>
+
+const ChangeRow = ({
+  from,
+  label,
+  to,
+}: {
+  from: ReactNode
+  label: string
+  to: ReactNode
+}) => (
+  <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-sm">
+    <span className="text-neutral-500">{label}</span>
+    <div className="flex items-center gap-x-2 text-neutral-950">
+      <span className="text-neutral-500">{from}</span>
+      <Arrow />
+      <span className="font-medium">{to}</span>
+    </div>
+  </div>
+)
+
+const PayoutsFallback = function ({
+  hasError,
+  isPending,
+  onRetry,
+}: {
+  hasError: boolean
+  isPending: boolean
+  onRetry: VoidFunction
+}) {
+  const t = useTranslations('hemi-stake.estimated-payouts')
+  const tCommon = useTranslations('common')
+
+  if (hasError) {
+    return (
+      <div className="flex flex-col items-start gap-y-2">
+        <span className="text-xs text-neutral-400">{t('load-failed')}</span>
+        <Button
+          onClick={onRetry}
+          size="xSmall"
+          type="button"
+          variant="secondary"
+        >
+          {tCommon('try-again')}
+        </Button>
+      </div>
+    )
+  }
+
+  if (isPending) {
+    return <Skeleton className="h-6 w-40" />
+  }
+
+  return <span className="text-xs text-neutral-400">{t('not-funded')}</span>
+}
+
+type Props = {
+  autoRelock: boolean
+  effectiveLockEnd: bigint
+  gas: {
+    amount: string
+    isError: boolean
+    label: string
+    token: Token
+  }
+  isRunningOperation: boolean
+  onSubmit: VoidFunction
+  stakedAmount: bigint
+  submitLabel: string
+  tokenId: bigint
+  transferable: boolean | undefined
+}
+
+export const Preview = function ({
+  autoRelock,
+  effectiveLockEnd,
+  gas,
+  isRunningOperation,
+  onSubmit,
+  stakedAmount,
+  submitLabel,
+  tokenId,
+  transferable,
+}: Props) {
+  const hemi = useHemi()
+  const formatter = useFormat()
+  const t = useTranslations('hemi-stake')
+  const tDrawer = useTranslations('hemi-stake.drawer.auto-relock')
+  const token = useHemiToken()
+  const { data: prices } = useTokenPrices()
+  const { hasError, inputsByClass, positionClass, retry, weight } =
+    useAutoRelockInputs({ tokenId, transferable })
+
+  const {
+    currentTimeInSeconds: now,
+    timeRemainingSeconds,
+    unlockDate,
+    unlockTime,
+  } = getUnlockInfo({ unlockTime: effectiveLockEnd })
+
+  const { current: currentWeight, relocked: relockedWeight } =
+    getPositionWeights({
+      amount: stakedAmount,
+      autoRelock,
+      fromChain: weight,
+      lockEnd: unlockTime,
+      now,
+    })
+
+  const { base, current, delta, next } = getAutoRelockComparison({
+    amount: stakedAmount,
+    autoRelock,
+    decimals: token.decimals,
+    inputsByClass: inputsByClass ?? emptyInputsByClass,
+    lockDurationInSeconds: timeRemainingSeconds,
+    now,
+    positionClass: positionClass ?? alwaysTransferable,
+    relockedWeight,
+    unlockTime,
+  })
+
+  const hasData = inputsByClass !== undefined && positionClass !== undefined
+  const hasForecast =
+    hasData &&
+    (current.yearOneTotal > BigInt(0) || next.yearOneTotal > BigInt(0))
+
+  const votingPower = formatUnits(currentWeight, token.decimals)
+  const decaysCaption = tDrawer('decays-to-zero', {
+    date: formatter.formatShortDateWithYear(unlockDate),
+  })
+  const frozenVotingPower = formatUnits(relockedWeight, token.decimals)
+  const staysCaption = tDrawer('stays-at', {
+    votingPower: formatter.formatNumber(frozenVotingPower),
+  })
+
+  const [votingPowerFrom, votingPowerTo] = autoRelock
+    ? [staysCaption, decaysCaption]
+    : [decaysCaption, staysCaption]
+  const [legendBase, legendTotal] = autoRelock
+    ? [tDrawer('legend-after-disabling'), tDrawer('legend-today')]
+    : [tDrawer('legend-today'), tDrawer('legend-with-auto-relock')]
+  const legendDelta = tDrawer('legend-added-by-auto-relock')
+  const price = toPrice(getTokenPrice(token, prices))
+
+  const toApy = (ratio: number) =>
+    hasForecast ? formatApyFromRatio(ratio, formatter) : '-'
+
+  const toTotal = (amount: bigint) => (
+    <DisplayAmount amount={formatUnits(amount, token.decimals)} token={token} />
+  )
+
+  return (
+    <form
+      className="flex min-h-0 flex-1 flex-col"
+      onSubmit={function (e) {
+        e.preventDefault()
+        onSubmit()
+      }}
+    >
+      <div className="flex flex-1 flex-col gap-y-3 overflow-y-auto p-4 md:p-6">
+        <div className={cardClassName}>
+          <ChangeRow
+            from={toApy(current.yearOneReturnRatio)}
+            label={tDrawer('apy')}
+            to={toApy(next.yearOneReturnRatio)}
+          />
+          <div className="h-px w-full bg-neutral-300/55" />
+          <div className="flex flex-col gap-y-1">
+            <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-sm">
+              <span className="text-neutral-500">{t('voting-power')}</span>
+              <span className="text-neutral-950">
+                <VotingPowerEquivalence
+                  amount={formatUnits(stakedAmount, token.decimals)}
+                  token={token}
+                  votingPower={votingPower}
+                />
+              </span>
+            </div>
+            <div className="flex flex-wrap items-center gap-x-2 text-xxs text-neutral-400">
+              <span>{votingPowerFrom}</span>
+              <Arrow />
+              <span className="font-medium text-neutral-600">
+                {votingPowerTo}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className={cardClassName}>
+          <span className={sectionLabelClassName}>
+            {t('estimated-payouts.title')}
+          </span>
+          {hasForecast ? (
+            <>
+              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                <span className="text-sm text-neutral-500">
+                  {toTotal(current.yearOneTotal)}
+                </span>
+                <Arrow />
+                <span className="text-mid-md font-semibold text-neutral-950">
+                  {toTotal(next.yearOneTotal)}
+                </span>
+                <span className="text-sm text-neutral-500">
+                  {t('estimated-payouts.first-year')}
+                </span>
+              </div>
+              <PayoutsChart
+                afterUnlockLabel={t('estimated-payouts.after-unlock')}
+                below={{
+                  label: legendBase,
+                  points: base,
+                  seriesLabel: legendDelta,
+                  totalLabel: legendTotal,
+                }}
+                formatDate={value => formatter.formatShortDate(new Date(value))}
+                formatDetail={value =>
+                  formatPayoutDetail({
+                    formatter,
+                    price,
+                    symbol: token.symbol,
+                    value,
+                  })
+                }
+                formatValue={value =>
+                  formatPayoutValue({ formatter, symbol: token.symbol, value })
+                }
+                isPending={false}
+                series={delta}
+                ticks={getPayoutAxisTicks(delta)}
+                unlockX={undefined}
+                widths={drawerWidths}
+              />
+              <div className="body-text-caption flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-500">
+                <LegendItem color={stackedBelowColor} label={legendBase} />
+                <LegendItem color={payoutsColor} label={legendDelta} />
+              </div>
+            </>
+          ) : (
+            <PayoutsFallback
+              hasError={hasError}
+              isPending={!hasData && !hasError}
+              onRetry={retry}
+            />
+          )}
+        </div>
+        <FeesContainer compact>
+          <EvmFeesSummary gas={gas} />
+        </FeesContainer>
+      </div>
+      <CallToActionContainer>
+        <div className="flex w-full [&>button]:w-full">
+          <SubmitWhenConnectedToChain
+            chainId={hemi.id}
+            submitButton={
+              <Button disabled={isRunningOperation} size="small">
+                {submitLabel}
+              </Button>
+            }
+            submitButtonSize="small"
+          />
+        </div>
+      </CallToActionContainer>
+    </form>
+  )
+}

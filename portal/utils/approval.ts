@@ -6,8 +6,7 @@ import { maxUint256 } from 'viem'
 // to 10 is what keeps the label honest.
 export const extraApprovalMultiplier = 10
 
-// undefined lets the action approve exactly what it pulls, which for a redeem can
-// exceed the requested amount once the dust snap rounds it up to the full balance.
+// undefined lets the action approve exactly what it pulls.
 export const getExtraApprovalAmount = (amount: bigint, enabled: boolean) =>
   enabled && amount > BigInt(0)
     ? minBigInt(amount * BigInt(extraApprovalMultiplier), maxUint256)

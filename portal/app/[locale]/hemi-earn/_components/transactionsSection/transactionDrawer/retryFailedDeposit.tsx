@@ -10,7 +10,10 @@ import {
   applySlippage,
 } from '../../../_constants/slippage'
 import { useCanDeposit } from '../../../_hooks/useCanDeposit'
+import { useRefreshTermsStep } from '../../../_hooks/useRefreshTermsStep'
+import { depositBlockMessageKey } from '../../../_utils/depositGate'
 import { percentToBps, resolveRetrySlippage } from '../../../_utils/slippage'
+import { type TermsStep } from '../../../_utils/termsGate'
 import {
   type EarnAsset,
   type EarnTransaction,
@@ -25,6 +28,8 @@ import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 type Props = {
   asset: EarnAsset
+  onTermsRequired: VoidFunction
+  termsStep: TermsStep | undefined
   transaction: EarnTransaction
   vault: EarnVault
 }
@@ -33,6 +38,8 @@ type Props = {
 // earnTxId to the new tx so the drawer transitions in place from FAILED to in-flight.
 export const RetryFailedDeposit = function ({
   asset,
+  onTermsRequired,
+  termsStep,
   transaction,
   vault,
 }: Props) {
@@ -40,7 +47,8 @@ export const RetryFailedDeposit = function ({
   const [operationRunning, setOperationRunning] =
     useState<DepositOperationRunning>('idle')
   const t = useTranslations()
-  const depositGate = useCanDeposit()
+  const depositGate = useCanDeposit(vault)
+  const refreshTermsStep = useRefreshTermsStep()
 
   const amount = BigInt(transaction.amountIn)
   const input = formatUnits(amount, asset.token.decimals)
@@ -98,11 +106,27 @@ export const RetryFailedDeposit = function ({
 
   const isDepositing = operationRunning === 'depositing'
 
-  const handleRetry = function (e: FormEvent) {
+  const handleRetry = async function (e: FormEvent) {
     e.preventDefault()
-    if (!depositGate.canDeposit || !quote || !shares || shares <= BigInt(0))
+    if (
+      isDepositing ||
+      !depositGate.canDeposit ||
+      !quote ||
+      !shares ||
+      shares <= BigInt(0)
+    )
       return
+    if (termsStep !== 'accepted') {
+      onTermsRequired()
+      return
+    }
+
     setOperationRunning('depositing')
+    if ((await refreshTermsStep()) !== 'accepted') {
+      setOperationRunning('idle')
+      onTermsRequired()
+      return
+    }
     runDeposit()
   }
 
@@ -115,13 +139,17 @@ export const RetryFailedDeposit = function ({
         submitButton={
           <Tooltip
             disabled={depositGate.canDeposit}
-            text={depositGate.reason && t(`hemi-earn.${depositGate.reason}`)}
+            text={
+              depositGate.reason &&
+              t(depositBlockMessageKey(depositGate.reason))
+            }
             variant="simple"
           >
             <Button
               disabled={
                 !depositGate.canDeposit ||
                 isDepositing ||
+                termsStep === undefined ||
                 !quote ||
                 !shares ||
                 shares <= BigInt(0)

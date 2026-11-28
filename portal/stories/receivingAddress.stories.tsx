@@ -1,8 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ReceivingAddress } from 'app/[locale]/tunnel/_components/receivingAddress'
-import messages from 'messages/en.json'
 import { useArgs } from 'storybook/preview-api'
-import { IntlProvider } from 'use-intl'
 
 type StoryProps = {
   address: string | undefined
@@ -50,11 +48,9 @@ const meta = {
   },
   decorators: [
     Story => (
-      <IntlProvider locale="en" messages={messages}>
-        <div className="w-[536px]">
-          <Story />
-        </div>
-      </IntlProvider>
+      <div className="w-[536px]">
+        <Story />
+      </div>
     ),
   ],
   parameters: {

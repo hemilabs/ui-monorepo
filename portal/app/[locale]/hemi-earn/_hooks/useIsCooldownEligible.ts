@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { resolveIsInstant } from 'hemi-earn-actions/actions'
+import { resolveIsInstant } from '@vetro-protocol/hemi-earn/actions'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
@@ -17,11 +17,10 @@ export const useIsCooldownEligible = ({
   useQuery({
     enabled: !!account,
     async queryFn() {
-      const isInstant = await resolveIsInstant({
-        caller: account!,
-        client: getEvmL1PublicClient(mainnet.id),
-        stakingVault,
-      })
+      const isInstant = await resolveIsInstant(
+        getEvmL1PublicClient(mainnet.id),
+        { address: stakingVault, caller: account! },
+      )
       return !isInstant
     },
     queryKey: ['hemi-earn', 'cooldown-eligible', stakingVault, account],

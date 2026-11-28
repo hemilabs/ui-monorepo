@@ -1,58 +1,29 @@
-import { useMemo } from 'react'
-import Skeleton from 'react-loading-skeleton'
-
 import { getNewColumnOrder, getSafeData } from '../_utils'
 import { TableProps } from '../index'
 
-type Props<TData> = Omit<
+type Props<TData> = Pick<
   TableProps<TData>,
-  'data' | 'loading' | 'skeletonRows' | 'smallBreakpoint'
+  'columns' | 'data' | 'priorityColumnIdsOnSmall'
 > &
-  Required<
-    Pick<
-      TableProps<TData>,
-      'data' | 'loading' | 'skeletonRows' | 'smallBreakpoint'
-    >
-  > & {
+  Required<Pick<TableProps<TData>, 'smallBreakpoint'>> & {
     width: number
   }
 
 export function useTableData<TData>({
   columns,
   data,
-  loading,
   priorityColumnIdsOnSmall,
-  skeletonRows,
   smallBreakpoint,
   width,
 }: Props<TData>) {
-  const showSkeleton = (data?.length ?? 0) === 0 && loading
-
-  const columnsWithSkeleton = useMemo(
-    () =>
-      columns.map(col =>
-        showSkeleton
-          ? {
-              ...col,
-              cell: () => <Skeleton className="w-16" />,
-            }
-          : col,
-      ),
-    [columns, showSkeleton],
-  )
-
-  const skeletonArray = useMemo(
-    () => new Array(skeletonRows).fill(null),
-    [skeletonRows],
-  )
-  const safeData = getSafeData(data, showSkeleton, skeletonArray)
+  const safeData = getSafeData(data)
 
   const columnOrder = getNewColumnOrder({
     breakpoint: smallBreakpoint,
-    columns: columnsWithSkeleton,
+    columns,
     priorityColumnIds: priorityColumnIdsOnSmall,
     width,
   })
 
-  return { columnOrder, columnsWithSkeleton, safeData }
+  return { columnOrder, safeData }
 }

@@ -11,6 +11,8 @@ export const SupportedChains: number[] = [hemi.id, hemiSepolia.id]
 // In the contract: YEAR = 365.25 days, SIX_DAYS = YEAR / (12 * 5) = 525,960 seconds
 export const SixDaysSeconds = 525_960
 
+export const halfEpochSeconds = SixDaysSeconds / 2
+
 export const snapToEpoch = (timestamp: number) =>
   Math.floor(timestamp / SixDaysSeconds) * SixDaysSeconds
 

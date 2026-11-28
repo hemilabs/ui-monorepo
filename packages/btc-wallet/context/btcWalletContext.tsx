@@ -1,7 +1,7 @@
 import { createContext } from 'react'
 
 import { type BtcChain } from '../chains'
-import { ConnectorGroup } from '../connectors/types'
+import type { ConnectorGroup } from '../connectors/types'
 import { isChainSupported } from '../utils/chains'
 
 import { GlobalContextProvider } from './globalContext'

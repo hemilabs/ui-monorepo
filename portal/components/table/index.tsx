@@ -103,8 +103,8 @@ const TableHeader = <TData,>({
 )
 
 type TableBodyProps<TData> = {
-  CellComponent: ComponentType<ComponentProps<'td'>>
   bodyContainerClassName?: string
+  CellComponent: ComponentType<ComponentProps<'td'>>
   fetchMoreOnBottomReached: (el?: HTMLDivElement | null) => void
   headerScrollRef: RefObject<HTMLDivElement | null>
   isFetching: boolean
@@ -112,7 +112,6 @@ type TableBodyProps<TData> = {
   onRowClick?: (row: TData) => void
   onRowHover?: (index: number | null) => void
   placeholder?: ReactNode
-  rowClassName?: string
   rowSize: number
   rowVirtualizer: ReturnType<typeof useTableVirtualizer<TData>>
   scrollContainerRef: RefObject<HTMLDivElement | null>
@@ -131,7 +130,6 @@ function TableBody<TData>({
   onRowClick,
   onRowHover,
   placeholder,
-  rowClassName,
   rowSize,
   rowVirtualizer,
   scrollContainerRef,
@@ -176,6 +174,7 @@ function TableBody<TData>({
             }}
           >
             <LoadingSkeletonRows
+              CellComponent={CellComponent}
               loading={loading}
               rows={rows}
               skeletonRows={skeletonRows}
@@ -183,14 +182,13 @@ function TableBody<TData>({
             />
             <VirtualRows
               CellComponent={CellComponent}
-              loading={loading}
               onRowClick={onRowClick}
               onRowHover={onRowHover}
-              rowClassName={rowClassName}
               rows={rows}
               virtualItems={virtualItems}
             />
             <LoadingMoreIndicator
+              CellComponent={CellComponent}
               isFetching={isFetching}
               loading={loading}
               rowSize={rowSize}
@@ -207,14 +205,13 @@ function TableBody<TData>({
 }
 
 type StaticTableBodyProps<TData> = {
-  CellComponent: ComponentType<ComponentProps<'td'>>
   bodyContainerClassName?: string
+  CellComponent: ComponentType<ComponentProps<'td'>>
   headerScrollRef: RefObject<HTMLDivElement | null>
   loading: boolean
   onRowClick?: (row: TData) => void
   onRowHover?: (index: number | null) => void
   placeholder?: ReactNode
-  rowClassName?: string
   scrollRef: RefObject<HTMLDivElement | null>
   skeletonRows: number
   table: ReturnType<typeof useReactTable<TData>>
@@ -229,7 +226,6 @@ function StaticTableBody<TData>({
   onRowClick,
   onRowHover,
   placeholder,
-  rowClassName,
   scrollRef,
   skeletonRows,
   table,
@@ -266,6 +262,7 @@ function StaticTableBody<TData>({
           >
             <tbody>
               <LoadingSkeletonRows
+                CellComponent={CellComponent}
                 loading={loading}
                 rows={rows}
                 skeletonRows={skeletonRows}
@@ -273,10 +270,8 @@ function StaticTableBody<TData>({
               />
               <StaticRows
                 CellComponent={CellComponent}
-                loading={loading}
                 onRowClick={onRowClick}
                 onRowHover={onRowHover}
-                rowClassName={rowClassName}
                 rows={rows}
               />
             </tbody>
@@ -304,7 +299,6 @@ export type TableProps<TData> = {
   onRowClick?: (row: TData) => void
   onRowHover?: (index: number | null) => void
   placeholder?: ReactNode
-  rowClassName?: string
   priorityColumnIdsOnSmall?: string[]
   rowSize?: number
   skeletonRows?: number
@@ -327,7 +321,6 @@ export function Table<TData>({
   onRowHover,
   placeholder,
   priorityColumnIdsOnSmall,
-  rowClassName,
   rowSize = 56,
   skeletonRows = 4,
   smallBreakpoint = screenBreakpoints.lg,
@@ -343,18 +336,19 @@ export function Table<TData>({
     ref: scrollContainerRef,
   })
 
-  const { columnOrder, columnsWithSkeleton, safeData } = useTableData({
+  const { columnOrder, safeData } = useTableData({
     columns,
     data,
-    loading,
     priorityColumnIdsOnSmall,
-    skeletonRows,
     smallBreakpoint,
     width,
   })
 
   const table = useReactTable({
-    columns: columnsWithSkeleton,
+    // The table does not paginate. Resetting the page index on every new data
+    // reference updates state, so an unstable `data` would re-render forever.
+    autoResetPageIndex: false,
+    columns,
     data: safeData,
     getCoreRowModel: getCoreRowModel(),
     state: { columnOrder },
@@ -412,7 +406,6 @@ export function Table<TData>({
           onRowClick={onRowClick}
           onRowHover={onRowHover}
           placeholder={placeholder}
-          rowClassName={rowClassName}
           rowSize={rowSize}
           rowVirtualizer={rowVirtualizer}
           scrollContainerRef={scrollContainerRef}
@@ -430,7 +423,6 @@ export function Table<TData>({
           onRowClick={onRowClick}
           onRowHover={onRowHover}
           placeholder={placeholder}
-          rowClassName={rowClassName}
           scrollRef={staticScrollRef}
           skeletonRows={skeletonRows}
           table={table}

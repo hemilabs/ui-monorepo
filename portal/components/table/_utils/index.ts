@@ -1,8 +1,8 @@
 import { type ColumnDef } from '@tanstack/react-table'
 
 // Stable reference for the empty-data branch of getSafeData. Passing a fresh
-// `[]` literal to useReactTable invalidates getCoreRowModel's memo every render
-// and triggers an infinite render loop via _autoResetPageIndex → setPagination.
+// `[]` literal to useReactTable invalidates getCoreRowModel's memo every render,
+// so the rows would be rebuilt on every render.
 const emptyArray: unknown[] = []
 
 /**
@@ -10,16 +10,9 @@ const emptyArray: unknown[] = []
  * the empty branch always returns the same module-level reference so consumers
  * don't trip useReactTable's getCoreRowModel memo invalidation.
  */
-export function getSafeData<TData>(
-  data: TData[] | undefined,
-  showSkeleton: boolean,
-  skeletonArray: TData[],
-): TData[] {
+export function getSafeData<TData>(data: TData[] | undefined): TData[] {
   if (data && data.length > 0) {
     return data
-  }
-  if (showSkeleton) {
-    return skeletonArray
   }
   return emptyArray as TData[]
 }

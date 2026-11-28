@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { encodeRequestRedeem } from 'hemi-earn-actions/actions'
+import { encodeRequestRedeem } from '@vetro-protocol/hemi-earn/actions'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
@@ -99,8 +99,8 @@ export const useWithdrawPreview = function ({
   approvalAmount: bigint
   asset: Address
   shareAddress: Address
-  shareToken: EvmToken
   shares: bigint
+  shareToken: EvmToken
   slippageBps: bigint
   spender: Address
   validInput: boolean

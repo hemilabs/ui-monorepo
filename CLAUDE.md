@@ -20,6 +20,7 @@ _Applies to all code._
 - For any web3 code, like reading or writing to smart contracts, use `viem`, and `wagmi` if needed.
 - Do not use arrow functions, except when the function consists of only one statement. In those cases, use arrow functions without brackets.
 - When adding tests, the `test` folder replicates the folder structure where the file being tested is imported from. To run the test, use `pnpm test` in the project folder.
+- Each new test must fail when the behavior it names breaks: break the line under test, run the test and see it fail. Common traps: a text assertion that matches a substring of the name used to find the element, a guard against repeated events tested with a single event, and an order the fix depends on that no test pins.
 - When adding a `vitest.config.ts`, use this configuration:
 
 ```typescript
@@ -42,7 +43,7 @@ beforeEach(function () {
 
 in tests as the vitest config will automatically clear the mocks.
 
-- After writing all the code, format with prettier. Prettier is installed in the root of the repo, and we use its default config. You can get the prettier version from the root's package.json. To format the code, you can use `pnpm format:write`
+- After writing all the code, format with prettier. Prettier is installed in the root of the repo. You can get the prettier version from the root's package.json. To format the code, you can use `pnpm format:write`
 - Do not export/expose functions unless they are strictly needed. To verify that there are no unused exports, we use `knip`. There is a command in the root repo, `pnpm deps:check`
 - Prefer functions like filter, map, reduce, over for, while loops for better readability, unless the complexity/performance impact favors the latter over the former.
 - When placing object keys, place them in ascending sorted order. This applies when creating objects, or defining properties in parameters / arguments / types.
@@ -59,8 +60,6 @@ _Applies to `**/*.{ts,tsx}`._
 
 Apply the [general rules](#general-rules) to all code as a base guideline, unless there is an exception.
 
-- Prefer using `T[]` over `Array<T>`
-- Prefer using `type` over `interface`
 - When adding a `tsconfig.json`, start with an empty version like this:
 
 ```json
@@ -135,6 +134,8 @@ if (error) {
 return 'Loading...'
 ```
 
+The data-first pattern does not apply to gates: hooks that decide whether an action is allowed (pause, eligibility, terms, sanctions, location). React Query keeps cached data when a refetch fails, so a gate that trusts `data` first can allow the action on a stale verdict. Gates fail closed: check the error first, and treat loading, error, unresolved and missing input as blocked.
+
 - When creating reusable hooks that internally use `useQuery` or `useMutation`, if the output of these functions is to be returned, don't rename them - just return its return value and let consumers do the rename, if needed.
 
 Example:
@@ -161,11 +162,14 @@ Furthermore, consider the [code structure](./portal/README.md#structure), which 
 
 ### Rules
 
-- Routing lives in `app.tsx` at the portal root, wired with react-router. Pages still live below the `app` folder, but a folder holding a `page.tsx` is not a route on its own: it only becomes reachable once it is added to the route table in `app.tsx`.
+- Routing is wired with react-router. The route table is plain data in `utils/routes.ts`, and `app.tsx` at the portal root builds the `<Route>` tree from it, mapping each route id to its element. Pages still live below the `app` folder, but a folder holding a `page.tsx` is not a route on its own: it only becomes reachable once it is added to `utils/routes.ts` and given an element in `app.tsx`. The sitemap is derived from the same table. Redirects set `redirect: true` and are left out of the sitemap; every other route is listed. A route id ends in `Redirect` exactly when it is a redirect, and a test enforces it.
 - When creating a new component, hook, or function utility, prefer co-locating these new files in their `_components`, `_hooks` or `_utils` that belong to the page where it is being used. This means that each page will have their own folders for these types of files.
   If the component/hook/util is generic enough, they can be created in/moved to their respective folder `components`/`hooks`/`utils` in the root of the portal project.
+- Enforce a gate where the action runs, not by hiding UI. Every entry point to a gated action goes through the same gate: the main form, its confirm step, retries of failed operations (local and remote) in the transaction drawer and history, and direct URL access. For Hemi Earn deposits, that gate is `useCanDeposit` (resolved by `resolveDepositGate` in `hemi-earn/_utils/depositGate.ts`); add new deposit blockers there instead of in a single component.
 - When adding new functions to either `utils` or `_utils`, if they contain logic, add tests in the `test` folder. If the function is only code that calls an external source, tests may be skipped.
-- **ALL strings that are visible to users MUST be translated** depending on the locale. The exceptions are numbers in isolation (when they are rendered on their own and not as a part of a string), and if a string consists of a word that is not translated in any language (For example: "Testnet"). This means that when a string rendered to the user is added, its translations to all supported languages must be added to the corresponding files in the [messages](./portal/messages) folder. **Never use hardcoded strings in components - always use the translation functions.**
+- A base component in `components` with interaction logic gets integration tests in the `test` folder. Important components outside `components` can also get them when their interaction logic is worth testing. A `.tsx` test under `test` runs in a real browser (Chromium, with Vitest Browser Mode); a `.ts` test runs in Node. Test behavior (values, roles, focus, callbacks), not class names or styles. Tailwind is not loaded.
+- **ALL strings that are visible to users MUST be translated** depending on the locale. The exceptions are numbers in isolation (when they are rendered on their own and not as a part of a string), and if a string consists of a word that is not translated in any language (For example: "Testnet"). Another exception is temporary texts of pages or sections that are behind a feature flag. This means that when a string rendered to the user is added, its translations to all supported languages must be added to the corresponding files in the [messages](./portal/messages) folder. **Never use hardcoded strings in components - always use the translation functions.**
+- Numbers visible to users (amounts, fiat values, percentages, chart labels and tooltips) must use the active locale-bound formatter: `useFormat()` from `hooks/useFormat` in components, or `createFormatter(locale)` from `utils/format` in non-component code. Pass the formatter to utilities that format values. Never format without a locale-bound formatter or hardcode a locale (e.g. `'en'`, `'en-US'`, `defaultLocale`).
 - When adding translations, follow this pattern:
   - Use `useTranslations('section-name')` hook to get the translation function
   - Add translation keys in a logical hierarchy within the appropriate section

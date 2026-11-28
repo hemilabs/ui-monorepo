@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react'
 
-import { WalletConnector } from '../connectors/types'
+import type { WalletConnector } from '../connectors/types'
 import { GlobalContext } from '../context/globalContext'
 
 import { usePrevious } from './usePrevious'

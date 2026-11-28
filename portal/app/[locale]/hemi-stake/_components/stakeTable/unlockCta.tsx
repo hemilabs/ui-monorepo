@@ -1,8 +1,8 @@
 import { Button } from 'components/button'
 import { Tooltip } from 'components/tooltip'
+import { useFormat } from 'hooks/useFormat'
 import { StakingPosition } from 'types/stakingDashboard'
-import { useLocale, useTranslations } from 'use-intl'
-import { formatDate } from 'utils/format'
+import { useTranslations } from 'use-intl'
 
 import { getUnlockInfo } from '../../_utils/lockCreationTimes'
 
@@ -14,19 +14,18 @@ type Props = {
 
 export function UnlockCta({ operation }: Props) {
   const t = useTranslations('hemi-stake.table')
-  const locale = useLocale()
+  const { formatDate } = useFormat()
 
-  const { amount, lockTime, status, timestamp, tokenId } = operation
+  const { amount, effectiveLockEnd, status, tokenId } = operation
 
   const { timeRemainingSeconds, unlockDate } = getUnlockInfo({
-    lockTime,
-    timestamp,
+    unlockTime: effectiveLockEnd,
   })
 
   if (timeRemainingSeconds > 0) {
     return (
       <Tooltip
-        text={t('unlocks-on', { date: formatDate(unlockDate, locale) })}
+        text={t('unlocks-on', { date: formatDate(unlockDate) })}
         variant="simple"
       >
         <Button disabled size="xxSmall">

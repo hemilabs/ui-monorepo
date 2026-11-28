@@ -4,6 +4,7 @@ import {
   getBitcoinVaultStateAddress as getBitcoinVaultStateAddressAction,
   getBitcoinWithdrawalGracePeriod as getBitcoinWithdrawalGracePeriodAction,
   getVaultByIndex,
+  getVaultIndexByBTCAddress as getVaultIndexByBTCAddressAction,
 } from 'hemi-viem/actions'
 import pMemoize from 'promise-mem'
 import { type Address, type PublicClient } from 'viem'
@@ -43,6 +44,20 @@ export const getVaultAddressByIndex = pMemoize(
   {
     resolver: (hemiClient, vaultIndex) =>
       `${hemiClient.chain?.id}_${vaultIndex}`,
+  },
+)
+
+const BitcoinDepositVaultIndexCacheMaxAge = 5 * 60 * 1000
+
+export const getVaultIndexByBTCAddress = pMemoize(
+  (hemiClient: PublicClient, bitcoinAddress: string) =>
+    getVaultIndexByBTCAddressAction(hemiClient, {
+      btcAddress: bitcoinAddress,
+    }),
+  {
+    maxAge: BitcoinDepositVaultIndexCacheMaxAge,
+    resolver: (hemiClient, bitcoinAddress) =>
+      `${hemiClient.chain?.id}_${bitcoinAddress}`,
   },
 )
 

@@ -6,7 +6,7 @@ import { useHemiClient } from 'hooks/useHemiClient'
 import { BtcDepositOperation } from 'types/tunnel'
 import { calculateDepositOutputIndex } from 'utils/bitcoin'
 import { createBtcApi, mapBitcoinNetwork } from 'utils/btcApi'
-import { getBitcoinDepositVaultIndex } from 'utils/hemiClientExtraActions'
+import { getBitcoinDepositVault } from 'utils/hemi'
 import { type PublicClient } from 'viem'
 import { useEstimateGas } from 'wagmi'
 
@@ -17,7 +17,7 @@ async function getEncodedConfirmDeposit({
   deposit: BtcDepositOperation
   hemiClient: PublicClient
 }) {
-  const vaultIndex = await getBitcoinDepositVaultIndex(hemiClient)
+  const { vaultIndex } = await getBitcoinDepositVault(hemiClient, deposit.to)
 
   const btcApi = createBtcApi(mapBitcoinNetwork(deposit.l1ChainId))
   const receipt = await btcApi.getTransactionReceipt(deposit.transactionHash)

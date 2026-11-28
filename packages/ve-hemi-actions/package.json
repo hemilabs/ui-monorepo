@@ -21,7 +21,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "hemi-viem": "2.9.0",
+    "hemi-viem": "2.9.1",
     "promise-mem": "1.0.4",
     "to-promise-event": "1.0.0",
     "viem-erc20": "2.2.1"

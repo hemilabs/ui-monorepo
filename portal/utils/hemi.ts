@@ -37,6 +37,7 @@ import {
   getBitcoinVaultGracePeriod,
   getBitcoinVaultStateAddress,
   getVaultAddressByIndex,
+  getVaultIndexByBTCAddress,
 } from './hemiMemoized'
 
 // Max Sanchez note: looks like if we pass in all lower-case hex, Unisat publishes the bytes instead of the string.
@@ -45,9 +46,15 @@ import {
 export const hemiAddressToBitcoinOpReturn = (hemiAddress: Address) =>
   hemiAddress.toUpperCase().slice(2)
 
-export const getDepositVaultAddress = (hemiClient: PublicClient) =>
-  getBitcoinDepositVaultIndex(hemiClient).then(vaultIndex =>
-    getVaultAddressByIndex(hemiClient, vaultIndex),
+export const getBitcoinDepositVault = (
+  hemiClient: PublicClient,
+  bitcoinAddress: string,
+) =>
+  getVaultIndexByBTCAddress(hemiClient, bitcoinAddress).then(
+    async vaultIndex => ({
+      vaultAddress: await getVaultAddressByIndex(hemiClient, vaultIndex),
+      vaultIndex,
+    }),
   )
 
 const BitcoinConfirmationsOnHemi = 6
@@ -330,14 +337,20 @@ export const confirmBtcDeposit = ({
   hemiWalletClient: HemiWalletClient
 }) =>
   Promise.all([
-    getBitcoinDepositVaultIndex(hemiClient),
-    getDepositVaultAddress(hemiClient).then(vaultAddress =>
-      getHemiStatusOfBtcDeposit({ deposit, hemiClient, vaultAddress }),
+    getBitcoinDepositVault(hemiClient, deposit.to).then(
+      async ({ vaultAddress, vaultIndex }) => ({
+        currentStatus: await getHemiStatusOfBtcDeposit({
+          deposit,
+          hemiClient,
+          vaultAddress,
+        }),
+        vaultIndex,
+      }),
     ),
     createBtcApi(mapBitcoinNetwork(deposit.l1ChainId))
       .getTransactionReceipt(deposit.transactionHash)
       .then(receipt => calculateDepositOutputIndex(receipt!, deposit.to)),
-  ]).then(function ([vaultIndex, currentStatus, outputIndex]) {
+  ]).then(function ([{ currentStatus, vaultIndex }, outputIndex]) {
     if (currentStatus === BtcDepositStatus.BTC_DEPOSITED) {
       throw new Error('Bitcoin Deposit already confirmed')
     }

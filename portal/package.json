@@ -46,7 +46,7 @@
     "fetch-plus-plus": "1.0.0",
     "hemi-socials": "2.1.0",
     "hemi-tunnel-actions": "workspace:*",
-    "hemi-viem": "2.9.0",
+    "hemi-viem": "2.9.1",
     "hemi-viem-stake-actions": "workspace:*",
     "lodash": "4.18.1",
     "nuqs": "2.10.2",

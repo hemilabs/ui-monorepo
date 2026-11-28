@@ -1,18 +1,38 @@
 import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { Row } from '@tanstack/react-table'
+import { featureFlags } from 'app/featureFlags'
+import { Tooltip } from 'components/tooltip'
+import { useFormat } from 'hooks/useFormat'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useMenuKeyboard } from 'hooks/useMenuKeyboard'
-import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import {
+  ReactNode,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import { createPortal } from 'react-dom'
-import { type StakingPosition } from 'types/stakingDashboard'
+import {
+  type StakingPosition,
+  StakingPositionStatus,
+} from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
-import { formatUnits } from 'viem'
+import { type Address, formatUnits, isAddressEqual } from 'viem'
+import { useAccount } from 'wagmi'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
+import { AutoRelockIcon } from '../../_icons/autoRelockIcon'
 import { PlusIcon } from '../../_icons/plusIcon'
-import { getUnlockInfo, minDays } from '../../_utils/lockCreationTimes'
+import { canEnableAutoRelock } from '../../_utils/autoRelockEligibility'
+import {
+  getExtensionAvailableAt,
+  getUnlockInfo,
+  minDays,
+} from '../../_utils/lockCreationTimes'
 
 import { ActionButton } from './actionButton'
 
@@ -21,28 +41,73 @@ type ActionItemProps = {
   icon: ReactNode
   label: string
   onClick?: VoidFunction
+  tooltip?: string
 }
 
-const ActionItem = ({
+const ActionItem = function ({
   enabled = true,
   icon,
   label,
   onClick,
-}: ActionItemProps) => (
-  <button
-    aria-disabled={!enabled}
-    className={`flex w-full items-center gap-2 rounded px-3 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 ${
-      enabled
-        ? 'cursor-pointer hover:bg-neutral-50 hover:text-neutral-950'
-        : 'cursor-default [&>*]:opacity-50'
-    }`}
-    onClick={enabled ? onClick : undefined}
-    type="button"
-  >
-    {icon}
-    <span>{label}</span>
-  </button>
-)
+  tooltip,
+}: ActionItemProps) {
+  const tooltipId = useId()
+  return (
+    <Tooltip
+      placement="bottom"
+      text={tooltip}
+      trigger={['hover', 'focus']}
+      variant="simple"
+    >
+      <>
+        <button
+          aria-describedby={tooltip ? tooltipId : undefined}
+          aria-disabled={!enabled}
+          className={`flex w-full items-center gap-2 rounded px-3 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 ${
+            enabled
+              ? 'cursor-pointer hover:bg-neutral-50 hover:text-neutral-950'
+              : 'cursor-default [&>*]:opacity-50'
+          }`}
+          onClick={enabled ? onClick : undefined}
+          type="button"
+        >
+          {icon}
+          <span>{label}</span>
+        </button>
+        {tooltip && (
+          <span className="sr-only" id={tooltipId}>
+            {tooltip}
+          </span>
+        )}
+      </>
+    </Tooltip>
+  )
+}
+
+const AutoRelockActionItem = function ({
+  autoRelock,
+  enabled,
+  onClick,
+}: {
+  autoRelock: boolean
+  enabled: boolean
+  onClick: VoidFunction
+}) {
+  const t = useTranslations('hemi-stake')
+  if (!featureFlags.enableHemiStakeAutoRelock) {
+    return null
+  }
+  return (
+    <ActionItem
+      enabled={enabled}
+      icon={<AutoRelockIcon />}
+      label={t(
+        autoRelock ? 'table.disable-auto-relock' : 'table.enable-auto-relock',
+      )}
+      onClick={onClick}
+    />
+  )
+}
 
 type Props = {
   row: Row<StakingPosition>
@@ -50,6 +115,7 @@ type Props = {
 
 export function ActionCell({ row }: Props) {
   const t = useTranslations('hemi-stake')
+  const { formatDate } = useFormat()
   const { decimals, symbol } = useHemiToken()
   const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLDivElement>(null)
@@ -62,10 +128,20 @@ export function ActionCell({ row }: Props) {
   }, menuRef)
   const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 })
   const { height: viewportHeight, width: viewportWidth } = useWindowSize()
-  const { updateStakingDashboardOperation } = useStakingDashboard()
+  const { startStakingDashboardOperation } = useStakingDashboard()
   const { setDrawerQueryString } = useDrawerStakingQueryString()
 
-  const { amount, lockTime, timestamp, tokenId } = row.original
+  const {
+    amount,
+    autoRelock,
+    effectiveLockEnd,
+    forfeitable,
+    owner,
+    status,
+    tokenId,
+    transferable,
+  } = row.original
+  const { address } = useAccount()
 
   const MENU_OFFSET = 4
 
@@ -131,14 +207,16 @@ export function ActionCell({ row }: Props) {
     triggerRef,
   })
 
-  const { timeRemainingSeconds } = getUnlockInfo({
-    lockTime,
-    timestamp,
-  })
+  const { currentTimeInSeconds, timeRemainingSeconds, unlockTime } =
+    getUnlockInfo({
+      unlockTime: effectiveLockEnd,
+    })
+  const extensionAvailableAt = getExtensionAvailableAt(unlockTime)
+  const canExtend = currentTimeInSeconds >= extensionAvailableAt
 
   function handleIncreaseAmount() {
     closeAndFocusTrigger()
-    updateStakingDashboardOperation({
+    startStakingDashboardOperation({
       input: '0',
       stakingPosition: {
         amount,
@@ -150,18 +228,45 @@ export function ActionCell({ row }: Props) {
 
   function handleIncreaseUnlockTime() {
     closeAndFocusTrigger()
-    updateStakingDashboardOperation({
+    startStakingDashboardOperation({
       input: formatUnits(amount, decimals),
       inputDays: minDays.toString(),
       lockupDays: minDays,
       stakingPosition: {
         amount,
-        lockTime,
-        timestamp,
+        effectiveLockEnd,
         tokenId,
       },
     })
     setDrawerQueryString('increasingUnlockTime')
+  }
+
+  const isActive = status === StakingPositionStatus.ACTIVE
+  const isWalletOwner = !!address && isAddressEqual(owner as Address, address)
+  const canOperate = isWalletOwner && timeRemainingSeconds > 0
+  const canAutoRelock =
+    canOperate &&
+    isActive &&
+    (autoRelock ||
+      canEnableAutoRelock({
+        effectiveLockEnd,
+        forfeitable,
+        now: currentTimeInSeconds,
+        transferable,
+      }))
+
+  function handleToggleAutoRelock() {
+    closeAndFocusTrigger()
+    startStakingDashboardOperation({
+      autoRelock,
+      stakingPosition: {
+        amount,
+        effectiveLockEnd,
+        tokenId,
+        transferable,
+      },
+    })
+    setDrawerQueryString('togglingAutoRelock')
   }
 
   return (
@@ -184,16 +289,28 @@ export function ActionCell({ row }: Props) {
             style={{ left: menuPosition.left, top: menuPosition.top }}
           >
             <ActionItem
-              enabled={timeRemainingSeconds > 0}
+              enabled={canOperate}
               icon={<PlusIcon />}
               label={t('table.add-liquidity-to-lockup', { symbol })}
               onClick={handleIncreaseAmount}
             />
             <ActionItem
-              enabled={timeRemainingSeconds > 0}
+              enabled={canOperate && canExtend}
               icon={<PlusIcon />}
               label={t('table.add-time-to-lockup')}
               onClick={handleIncreaseUnlockTime}
+              tooltip={
+                canExtend
+                  ? undefined
+                  : t('table.add-time-available-on', {
+                      date: formatDate(new Date(extensionAvailableAt * 1000)),
+                    })
+              }
+            />
+            <AutoRelockActionItem
+              autoRelock={autoRelock}
+              enabled={canAutoRelock}
+              onClick={handleToggleAutoRelock}
             />
           </div>,
           document.body,

@@ -1,14 +1,11 @@
 import { Card } from 'components/card'
-import { CustomTokenDrawer } from 'components/customTokenDrawer'
 import { TokenInput } from 'components/tokenInput'
+import { TokenInputBalance } from 'components/tokenInput/balance'
 import { TokenSelector } from 'components/tokenSelector'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
-import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
-import { useHemi } from 'hooks/useHemi'
 import { useTunnelTokens } from 'hooks/useTunnelTokens'
 import { FormEvent, ReactNode } from 'react'
 import { useTranslations } from 'use-intl'
-import { isEvmNetworkId } from 'utils/chain'
 
 import { useTunnelState } from '../_hooks/useTunnelState'
 
@@ -47,17 +44,9 @@ export const FormContent = function ({
     updateToNetwork,
   } = tunnelState
 
-  const [customTokenAddress] = useCustomTokenAddress()
-  const hemi = useHemi()
   const t = useTranslations('tunnel-page')
 
   const fromTokens = useTunnelTokens(fromNetworkId)
-
-  const evmTunneling =
-    isEvmNetworkId(fromNetworkId) && isEvmNetworkId(toNetworkId)
-
-  const l1ChainId = fromNetworkId === hemi.id ? toNetworkId : fromNetworkId
-  const l2ChainId = hemi.id
 
   return (
     <>
@@ -78,15 +67,19 @@ export const FormContent = function ({
       {(!provider || providerType === 'native') && (
         <div className="mb-3 flex flex-col gap-y-1.5">
           <TokenInput
+            bottomRight={
+              <TokenInputBalance
+                maxButton={setMaxBalanceButton}
+                token={fromToken}
+              />
+            }
             disabled={isRunningOperation}
             errorKey={errorKey}
             label={t('form.send')}
-            maxBalanceButton={setMaxBalanceButton}
             onChange={updateFromInput}
             token={fromToken}
             tokenSelector={
               <TokenSelector
-                chainId={fromNetworkId}
                 disabled={isRunningOperation}
                 onSelectToken={updateFromToken}
                 selectedToken={fromToken}
@@ -96,6 +89,7 @@ export const FormContent = function ({
             value={fromInput}
           />
           <TokenInput
+            bottomRight={<TokenInputBalance token={toToken} />}
             disabled={isRunningOperation}
             errorKey={errorKey}
             label={t('form.receive')}
@@ -104,16 +98,6 @@ export const FormContent = function ({
             tokenSelector={<TokenSelectorReadOnly token={toToken} />}
             value={calculateReceiveAmount(fromInput)}
           />
-          {!!customTokenAddress && evmTunneling && (
-            <CustomTokenDrawer
-              customTokenAddress={customTokenAddress}
-              fromNetworkId={fromNetworkId}
-              // @ts-expect-error TS fails to check these, but they are checked above by evmTunneling
-              l1ChainId={l1ChainId}
-              l2ChainId={l2ChainId}
-              onSelectToken={updateFromToken}
-            />
-          )}
         </div>
       )}
     </>
@@ -121,10 +105,10 @@ export const FormContent = function ({
 }
 
 type TunnelFormProps = {
+  belowForm?: React.ReactNode
   bottomSection?: ReactNode
   formContent: ReactNode
   onSubmit: VoidFunction | undefined
-  belowForm?: React.ReactNode
   submitButton?: ReactNode
 }
 

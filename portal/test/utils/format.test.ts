@@ -1,22 +1,18 @@
+import Big from 'big.js'
 import {
+  createFormatter,
   formatBtcAddress,
   formatBtcHash,
-  formatApyDisplay,
-  formatCompactFiat,
-  formatCompactFiatParts,
-  formatDate,
   formatEvmAddress,
   formatEvmHash,
-  formatFiatAmount,
-  formatFutureTime,
-  formatPastTime,
-  formatPercentage,
-  formatShortDate,
-  formatShortDateWithYear,
-  formatTokenPrice,
-  formatTVL,
+  roundNumber,
+  smallestFormattedNumber,
 } from 'utils/format'
 import { describe, expect, it } from 'vitest'
+
+const englishFormatter = createFormatter('en')
+const portugueseFormatter = createFormatter('pt')
+const spanishFormatter = createFormatter('es')
 
 describe('utils/format', function () {
   describe('formatBtcAddress', function () {
@@ -112,7 +108,7 @@ describe('utils/format', function () {
     it.each(cases)(
       'should return correct past relative time for %i seconds in %s locale',
       function (seconds: number, locale: string, expected: string) {
-        const result = formatPastTime(seconds, locale)
+        const result = createFormatter(locale).formatPastTime(seconds)
         expect(result).toBe(expected)
       },
     )
@@ -175,87 +171,114 @@ describe('utils/format', function () {
     it.each(cases)(
       'should return correct future relative time for %i seconds in %s locale',
       function (seconds: number, locale: string, expected: string) {
-        const result = formatFutureTime(seconds, locale)
+        const result = createFormatter(locale).formatFutureTime(seconds)
         expect(result).toBe(expected)
       },
     )
   })
 
+  describe('formatDuration', function () {
+    it('uses the largest matching duration unit', function () {
+      expect(createFormatter('en').formatDuration(3600)).toBe('1 hour')
+    })
+
+    it('formats the duration unit using the selected locale', function () {
+      expect(createFormatter('es').formatDuration(3600)).toBe('1 hora')
+      expect(createFormatter('pt').formatDuration(3600)).toBe('1 hora')
+    })
+  })
+
   describe('formatApyDisplay', function () {
     it('flags a tiny positive apy instead of rounding it to zero', function () {
-      expect(formatApyDisplay(0.005)).toBe('< 0.01%')
+      expect(englishFormatter.formatApyDisplay(0.005)).toBe('< 0.01%')
     })
 
     it('flags a tiny negative apy the same way', function () {
-      expect(formatApyDisplay(-0.005)).toBe('< -0.01%')
+      expect(englishFormatter.formatApyDisplay(-0.005)).toBe('< -0.01%')
     })
 
     it('reads zero as zero, not as less than a hundredth', function () {
-      expect(formatApyDisplay(0)).toBe('0.00%')
+      expect(englishFormatter.formatApyDisplay(0)).toBe('0.00%')
     })
 
     it('formats a negative apy beyond the threshold', function () {
-      expect(formatApyDisplay(-5.25)).toBe('-5.25%')
+      expect(englishFormatter.formatApyDisplay(-5.25)).toBe('-5.25%')
     })
 
     it('formats the threshold itself', function () {
-      expect(formatApyDisplay(0.01)).toBe('0.01%')
+      expect(englishFormatter.formatApyDisplay(0.01)).toBe('0.01%')
     })
 
     it('formats a larger apy', function () {
-      expect(formatApyDisplay(5.25)).toBe('5.25%')
+      expect(englishFormatter.formatApyDisplay(5.25)).toBe('5.25%')
+    })
+
+    it('follows the locale separators, also in the threshold labels', function () {
+      expect(spanishFormatter.formatApyDisplay(5.25)).toBe('5,25%')
+      expect(spanishFormatter.formatApyDisplay(0.005)).toBe('< 0,01%')
+      expect(portugueseFormatter.formatApyDisplay(-0.005)).toBe('< -0,01%')
     })
   })
 
   describe('formatFiatAmount', function () {
     it('shows two decimals', function () {
-      expect(formatFiatAmount(12.345)).toBe('$12.35')
+      expect(englishFormatter.formatFiatAmount(12.345)).toBe('$12.35')
     })
 
     it('flags anything under a cent instead of rounding it to zero', function () {
-      expect(formatFiatAmount(0.0049)).toBe('< $0.01')
+      expect(englishFormatter.formatFiatAmount(0.0049)).toBe('< $0.01')
     })
 
     it('shows a cent as a cent', function () {
-      expect(formatFiatAmount(0.01)).toBe('$0.01')
+      expect(englishFormatter.formatFiatAmount(0.01)).toBe('$0.01')
     })
 
     it('reads zero as zero, not as less than a cent', function () {
-      expect(formatFiatAmount(0)).toBe('$0.00')
+      expect(englishFormatter.formatFiatAmount(0)).toBe('$0.00')
     })
 
     it('groups thousands', function () {
-      expect(formatFiatAmount('1234567')).toBe('$1,234,567.00')
+      expect(englishFormatter.formatFiatAmount('1234567')).toBe('$1,234,567.00')
+    })
+
+    it('follows the locale separators, also in the threshold label', function () {
+      expect(spanishFormatter.formatFiatAmount('1234567')).toBe('$1.234.567,00')
+      expect(portugueseFormatter.formatFiatAmount(0.0049)).toBe('< $0,01')
     })
   })
 
   describe('formatTVL', function () {
     it('should format a number less than one hundred thousand correctly', function () {
-      expect(formatTVL(99_999)).toBe('< $100K')
+      expect(englishFormatter.formatTVL(99_999)).toBe('< $100K')
     })
 
     it('should format a number equal to one hundred thousand correctly', function () {
-      expect(formatTVL(100_000)).toBe('$100,000')
+      expect(englishFormatter.formatTVL(100_000)).toBe('$100,000')
     })
 
     it('should format a number greater than one hundred thousand correctly', function () {
-      expect(formatTVL(2500000)).toBe('$2,500,000')
+      expect(englishFormatter.formatTVL(2500000)).toBe('$2,500,000')
     })
 
     it('should format a string number less than one hundred thousand correctly', function () {
-      expect(formatTVL('99999')).toBe('< $100K')
+      expect(englishFormatter.formatTVL('99999')).toBe('< $100K')
     })
 
     it('should format a string number equal to one hundred thousand correctly', function () {
-      expect(formatTVL('100000')).toBe('$100,000')
+      expect(englishFormatter.formatTVL('100000')).toBe('$100,000')
     })
 
     it('should format a string number greater than one hundred thousand correctly', function () {
-      expect(formatTVL('2500000')).toBe('$2,500,000')
+      expect(englishFormatter.formatTVL('2500000')).toBe('$2,500,000')
     })
 
     it('should format a string number greater than one hundred thousand without decimals', function () {
-      expect(formatTVL('2500000.13')).toBe('$2,500,000')
+      expect(englishFormatter.formatTVL('2500000.13')).toBe('$2,500,000')
+    })
+
+    it('should follow the locale, also in the threshold label', function () {
+      expect(spanishFormatter.formatTVL(2500000)).toBe('$2.500.000')
+      expect(portugueseFormatter.formatTVL(99_999)).toBe('< $100\u00a0mil')
     })
   })
 
@@ -266,39 +289,53 @@ describe('utils/format', function () {
     const nbsp = '\u00A0'
 
     it('should format a small number in en locale', function () {
-      expect(formatCompactFiat(999, 'en')).toBe('$999')
+      expect(englishFormatter.formatCompactFiat(999)).toBe('$999')
     })
 
     it('should format thousands in en locale', function () {
-      expect(formatCompactFiat(1500, 'en')).toBe('$1.5K')
+      expect(englishFormatter.formatCompactFiat(1500)).toBe('$1.5K')
     })
 
     it('should format millions in en locale', function () {
-      expect(formatCompactFiat(420_000_000, 'en')).toBe('$420M')
+      expect(englishFormatter.formatCompactFiat(420_000_000)).toBe('$420M')
     })
 
     it('should format billions in en locale', function () {
-      expect(formatCompactFiat(1_200_000_000, 'en')).toBe('$1.2B')
+      expect(englishFormatter.formatCompactFiat(1_200_000_000)).toBe('$1.2B')
     })
 
     it('should format zero in en locale', function () {
-      expect(formatCompactFiat(0, 'en')).toBe('$0')
+      expect(englishFormatter.formatCompactFiat(0)).toBe('$0')
     })
 
     it('should honor maximumFractionDigits when provided', function () {
-      expect(formatCompactFiat(420_170_000, 'en', 2)).toBe('$420.17M')
+      expect(englishFormatter.formatCompactFiat(420_170_000, 2)).toBe(
+        '$420.17M',
+      )
     })
 
     it('should format millions in es locale with trailing space', function () {
-      expect(formatCompactFiat(420_000_000, 'es')).toBe(`$420${nbsp}M`)
+      expect(spanishFormatter.formatCompactFiat(420_000_000)).toBe(
+        `$420${nbsp}M`,
+      )
     })
 
     it('should format millions in es locale with comma decimal', function () {
-      expect(formatCompactFiat(420_170_000, 'es', 2)).toBe(`$420,17${nbsp}M`)
+      expect(spanishFormatter.formatCompactFiat(420_170_000, 2)).toBe(
+        `$420,17${nbsp}M`,
+      )
     })
 
     it('should format millions in pt locale using "mi" suffix', function () {
-      expect(formatCompactFiat(420_000_000, 'pt')).toBe(`$420${nbsp}mi`)
+      expect(portugueseFormatter.formatCompactFiat(420_000_000)).toBe(
+        `$420${nbsp}mi`,
+      )
+    })
+
+    it('should group thousands of millions in es locale', function () {
+      expect(spanishFormatter.formatCompactFiat(2_065_440_000, 2)).toBe(
+        `$2.065,44${nbsp}M`,
+      )
     })
   })
 
@@ -306,51 +343,58 @@ describe('utils/format', function () {
     const nbsp = '\u00A0'
 
     it('should split number and suffix for millions in en locale', function () {
-      expect(formatCompactFiatParts(420_170_000, 'en')).toEqual({
+      expect(englishFormatter.formatCompactFiatParts(420_170_000)).toEqual({
         number: '420.17',
         suffix: 'M',
       })
     })
 
     it('should split number and suffix for billions in en locale', function () {
-      expect(formatCompactFiatParts(1_234_567_890, 'en')).toEqual({
+      expect(englishFormatter.formatCompactFiatParts(1_234_567_890)).toEqual({
         number: '1.23',
         suffix: 'B',
       })
     })
 
     it('should return an empty suffix for small numbers', function () {
-      expect(formatCompactFiatParts(999, 'en')).toEqual({
+      expect(englishFormatter.formatCompactFiatParts(999)).toEqual({
         number: '999',
         suffix: '',
       })
     })
 
     it('should return an empty suffix for zero', function () {
-      expect(formatCompactFiatParts(0, 'en')).toEqual({
+      expect(englishFormatter.formatCompactFiatParts(0)).toEqual({
         number: '0',
         suffix: '',
       })
     })
 
     it('should honor an explicit maximumFractionDigits', function () {
-      expect(formatCompactFiatParts(420_170_000, 'en', 0)).toEqual({
+      expect(englishFormatter.formatCompactFiatParts(420_170_000, 0)).toEqual({
         number: '420',
         suffix: 'M',
       })
     })
 
     it('should use comma decimals in es locale', function () {
-      expect(formatCompactFiatParts(420_170_000, 'es')).toEqual({
+      expect(spanishFormatter.formatCompactFiatParts(420_170_000)).toEqual({
         number: `420,17${nbsp}`,
         suffix: 'M',
       })
     })
 
     it('should use "mi" suffix in pt locale', function () {
-      expect(formatCompactFiatParts(420_170_000, 'pt')).toEqual({
+      expect(portugueseFormatter.formatCompactFiatParts(420_170_000)).toEqual({
         number: `420,17${nbsp}`,
         suffix: 'mi',
+      })
+    })
+
+    it('should group thousands of millions in es locale', function () {
+      expect(spanishFormatter.formatCompactFiatParts(2_065_440_000)).toEqual({
+        number: `2.065,44${nbsp}`,
+        suffix: 'M',
       })
     })
   })
@@ -362,29 +406,31 @@ describe('utils/format', function () {
     const december5 = new Date(2026, 11, 5)
 
     it('should format a date in en locale', function () {
-      expect(formatShortDate(march15, 'en')).toBe('Mar 15')
+      expect(englishFormatter.formatShortDate(march15)).toBe('Mar 15')
     })
 
     it('should format a date in es locale', function () {
-      expect(formatShortDate(march15, 'es')).toBe('15 mar')
+      expect(spanishFormatter.formatShortDate(march15)).toBe('15 mar')
     })
 
     it('should format a date in pt locale', function () {
-      expect(formatShortDate(march15, 'pt')).toBe('15 de mar.')
+      expect(portugueseFormatter.formatShortDate(march15)).toBe('15 de mar.')
     })
 
     it('should zero-pad single-digit days', function () {
-      expect(formatShortDate(december5, 'en')).toBe('Dec 05')
+      expect(englishFormatter.formatShortDate(december5)).toBe('Dec 05')
     })
 
     it('should format in the given time zone', function () {
       // A UTC-midnight instant falls on the previous day in negative-offset
       // zones; passing 'UTC' keeps it on Jun 25 regardless of the runner's tz.
       const utcMidnight = new Date('2026-06-25T00:00:00Z')
-      expect(formatShortDate(utcMidnight, 'en', 'UTC')).toBe('Jun 25')
-      expect(formatShortDate(utcMidnight, 'en', 'America/New_York')).toBe(
-        'Jun 24',
+      expect(englishFormatter.formatShortDate(utcMidnight, 'UTC')).toBe(
+        'Jun 25',
       )
+      expect(
+        englishFormatter.formatShortDate(utcMidnight, 'America/New_York'),
+      ).toBe('Jun 24')
     })
   })
 
@@ -392,30 +438,39 @@ describe('utils/format', function () {
     const march15 = new Date(2026, 2, 15)
 
     it('should format a date in en locale', function () {
-      expect(formatShortDateWithYear(march15, 'en')).toBe('Mar 15, 2026')
+      expect(englishFormatter.formatShortDateWithYear(march15)).toBe(
+        'Mar 15, 2026',
+      )
     })
 
     it('should format a date in es locale', function () {
-      expect(formatShortDateWithYear(march15, 'es')).toBe('15 mar 2026')
+      expect(spanishFormatter.formatShortDateWithYear(march15)).toBe(
+        '15 mar 2026',
+      )
     })
 
     it('should format a date in pt locale', function () {
-      expect(formatShortDateWithYear(march15, 'pt')).toBe('15 de mar. de 2026')
+      expect(portugueseFormatter.formatShortDateWithYear(march15)).toBe(
+        '15 de mar. de 2026',
+      )
     })
 
     it('should zero-pad single-digit days', function () {
-      expect(formatShortDateWithYear(new Date(2026, 11, 5), 'en')).toBe(
-        'Dec 05, 2026',
-      )
+      expect(
+        englishFormatter.formatShortDateWithYear(new Date(2026, 11, 5)),
+      ).toBe('Dec 05, 2026')
     })
 
     it('should carry the year across a time zone boundary', function () {
       const newYearUtc = new Date('2027-01-01T00:00:00Z')
-      expect(formatShortDateWithYear(newYearUtc, 'en', 'UTC')).toBe(
+      expect(englishFormatter.formatShortDateWithYear(newYearUtc, 'UTC')).toBe(
         'Jan 01, 2027',
       )
       expect(
-        formatShortDateWithYear(newYearUtc, 'en', 'America/New_York'),
+        englishFormatter.formatShortDateWithYear(
+          newYearUtc,
+          'America/New_York',
+        ),
       ).toBe('Dec 31, 2026')
     })
   })
@@ -423,76 +478,206 @@ describe('utils/format', function () {
   describe('formatDate', function () {
     it('should format in the given time zone', function () {
       const utcMidnight = new Date('2026-06-25T00:00:00Z')
-      expect(formatDate(utcMidnight, 'en', 'UTC')).toBe('06/25/2026')
-      expect(formatDate(utcMidnight, 'en', 'America/New_York')).toBe(
+      expect(englishFormatter.formatDate(utcMidnight, 'UTC')).toBe('06/25/2026')
+      expect(englishFormatter.formatDate(utcMidnight, 'America/New_York')).toBe(
         '06/24/2026',
       )
     })
   })
 
+  describe('formatNumber', function () {
+    it('should use the en locale separators', function () {
+      expect(englishFormatter.formatNumber(1234567)).toBe('1,234,567')
+    })
+
+    it('should follow the locale separators', function () {
+      expect(portugueseFormatter.formatNumber(1234567)).toBe('1.234.567')
+      expect(spanishFormatter.formatNumber(1234567)).toBe('1.234.567')
+      expect(spanishFormatter.formatNumber(1234)).toBe('1.234')
+      expect(portugueseFormatter.formatNumber(1234.5678)).toBe('1.234,56')
+    })
+
+    it('should round an amount below six decimals down to zero', function () {
+      expect(englishFormatter.formatNumber('0.00000012')).toBe('0.000000')
+    })
+  })
+
+  describe('roundNumber', function () {
+    it('should round down to six significant digits without formatting', function () {
+      expect(roundNumber('1234.5678')).toBe('1234.56')
+    })
+
+    it('should keep an amount that needs no rounding intact', function () {
+      expect(roundNumber('0.5')).toBe('0.5')
+    })
+  })
+
+  describe('smallestFormattedNumber', function () {
+    it('should be the smallest amount formatNumber keeps intact', function () {
+      expect(englishFormatter.formatNumber(smallestFormattedNumber)).toBe(
+        smallestFormattedNumber,
+      )
+    })
+
+    it('should be the last step before formatNumber loses every digit', function () {
+      const below = Big(smallestFormattedNumber).div(10).toFixed()
+      expect(englishFormatter.formatNumber(below)).not.toMatch(/[1-9]/)
+    })
+  })
+
   describe('formatPercentage', function () {
     it('should format integer percentage correctly', function () {
-      expect(formatPercentage(50)).toBe('50.00%')
+      expect(englishFormatter.formatPercentage(50)).toBe('50.00%')
     })
 
     it('should format decimal percentage correctly', function () {
-      expect(formatPercentage(25.5)).toBe('25.50%')
+      expect(englishFormatter.formatPercentage(25.5)).toBe('25.50%')
     })
 
     it('should format percentage with many decimals correctly', function () {
-      expect(formatPercentage(33.333333)).toBe('33.33%')
+      expect(englishFormatter.formatPercentage(33.333333)).toBe('33.33%')
     })
 
     it('should format zero percentage correctly', function () {
-      expect(formatPercentage(0)).toBe('0.00%')
+      expect(englishFormatter.formatPercentage(0)).toBe('0.00%')
     })
 
     it('should format percentage greater than 100 correctly', function () {
-      expect(formatPercentage(150)).toBe('150.00%')
+      expect(englishFormatter.formatPercentage(150)).toBe('150.00%')
     })
 
     it('should format negative percentage correctly', function () {
-      expect(formatPercentage(-25.5)).toBe('-25.50%')
+      expect(englishFormatter.formatPercentage(-25.5)).toBe('-25.50%')
     })
 
     it('should format string percentage correctly', function () {
-      expect(formatPercentage('75')).toBe('75.00%')
+      expect(englishFormatter.formatPercentage('75')).toBe('75.00%')
     })
 
     it('should format string decimal percentage correctly', function () {
-      expect(formatPercentage('12.34')).toBe('12.34%')
+      expect(englishFormatter.formatPercentage('12.34')).toBe('12.34%')
     })
 
     it('should format very small percentage correctly', function () {
-      expect(formatPercentage(0.001)).toBe('0.00%')
+      expect(englishFormatter.formatPercentage(0.001)).toBe('0.00%')
     })
 
     it('should format small decimal percentage correctly', function () {
-      expect(formatPercentage(0.01)).toBe('0.01%')
+      expect(englishFormatter.formatPercentage(0.01)).toBe('0.01%')
     })
 
     it('should format percentage with high precision correctly', function () {
-      expect(formatPercentage(99.999999)).toBe('100.00%')
+      expect(englishFormatter.formatPercentage(99.999999)).toBe('100.00%')
+    })
+
+    it('should follow the locale separators', function () {
+      expect(spanishFormatter.formatPercentage(87.5)).toBe('87,50%')
+      expect(portugueseFormatter.formatPercentage(1234.5)).toBe('1.234,50%')
+    })
+  })
+
+  describe('formatWholePercentage', function () {
+    it('should round to a whole number', function () {
+      expect(englishFormatter.formatWholePercentage(15.3)).toBe('15%')
+      expect(englishFormatter.formatWholePercentage(23.6)).toBe('24%')
+    })
+
+    it('should follow the locale separators', function () {
+      expect(englishFormatter.formatWholePercentage(1500)).toBe('1,500%')
+      expect(spanishFormatter.formatWholePercentage(1500)).toBe('1500%')
+      expect(portugueseFormatter.formatWholePercentage(1500)).toBe('1.500%')
+    })
+
+    it('should not show a sign for a negative value that rounds to zero', function () {
+      expect(englishFormatter.formatWholePercentage(-0.4)).toBe('0%')
+      expect(englishFormatter.formatWholePercentage(-0.6)).toBe('-1%')
+    })
+  })
+
+  describe('formatFullAmount', function () {
+    it('should keep every decimal up to the token decimals', function () {
+      expect(
+        englishFormatter.formatFullAmount('0.123456789012345678', 18),
+      ).toBe('0.123456789012345678')
+    })
+
+    it('should not round a string beyond float precision', function () {
+      expect(
+        englishFormatter.formatFullAmount('12345678901234567.89', 18),
+      ).toBe('12,345,678,901,234,567.89')
+    })
+
+    it('should cap the decimals at the token decimals', function () {
+      expect(englishFormatter.formatFullAmount('1.123456789', 6)).toBe(
+        '1.123457',
+      )
+    })
+
+    it('should follow the locale separators, grouping 4-digit numbers too', function () {
+      expect(spanishFormatter.formatFullAmount('1234.5', 18)).toBe('1.234,5')
+      expect(portugueseFormatter.formatFullAmount('1234.5', 18)).toBe('1.234,5')
     })
   })
   describe('formatTokenPrice', function () {
     it('should keep sub-cent digits, capped at six decimals', function () {
-      expect(formatTokenPrice(0.00723137, 'en')).toBe('$0.007231')
-      expect(formatTokenPrice(0.0154, 'en')).toBe('$0.0154')
+      expect(englishFormatter.formatTokenPrice(0.00723137)).toBe('$0.007231')
+      expect(englishFormatter.formatTokenPrice(0.0154)).toBe('$0.0154')
     })
 
     it('should read as money from a dollar up', function () {
-      expect(formatTokenPrice(3.5, 'en')).toBe('$3.50')
-      expect(formatTokenPrice(1234.5678, 'en')).toBe('$1,234.57')
+      expect(englishFormatter.formatTokenPrice(3.5)).toBe('$3.50')
+      expect(englishFormatter.formatTokenPrice(1234.5678)).toBe('$1,234.57')
     })
 
     it('should keep two decimals on zero', function () {
-      expect(formatTokenPrice(0, 'en')).toBe('$0.00')
+      expect(englishFormatter.formatTokenPrice(0)).toBe('$0.00')
     })
 
     it('should follow the locale separators', function () {
-      expect(formatTokenPrice(1234.5678, 'pt')).toBe('$1.234,57')
-      expect(formatTokenPrice(0.0154, 'es')).toBe('$0,0154')
+      expect(portugueseFormatter.formatTokenPrice(1234.5678)).toBe('$1.234,57')
+      expect(spanishFormatter.formatTokenPrice(0.0154)).toBe('$0,0154')
+    })
+  })
+
+  describe('formatAverageLockDuration', function () {
+    const days = (amount: number) => amount * 60 * 60 * 24
+
+    it('should use years from a full year up', function () {
+      expect(englishFormatter.formatAverageLockDuration(days(657.45))).toBe(
+        '1.8 years',
+      )
+      expect(englishFormatter.formatAverageLockDuration(days(365.25))).toBe(
+        '1 year',
+      )
+    })
+
+    it('should use months below a year', function () {
+      expect(englishFormatter.formatAverageLockDuration(days(182.625))).toBe(
+        '6 months',
+      )
+      expect(englishFormatter.formatAverageLockDuration(days(30.4375))).toBe(
+        '1 month',
+      )
+    })
+
+    it('should use weeks below a month', function () {
+      expect(englishFormatter.formatAverageLockDuration(days(21))).toBe(
+        '3 weeks',
+      )
+    })
+
+    it('should use days below a week', function () {
+      expect(englishFormatter.formatAverageLockDuration(days(6))).toBe('6 days')
+      expect(englishFormatter.formatAverageLockDuration(0)).toBe('0 days')
+    })
+
+    it('should follow the locale for the unit and the separator', function () {
+      expect(spanishFormatter.formatAverageLockDuration(days(657.45))).toBe(
+        '1,8 años',
+      )
+      expect(portugueseFormatter.formatAverageLockDuration(days(182.625))).toBe(
+        '6 meses',
+      )
     })
   })
 })

@@ -10,6 +10,8 @@ import {
 import {
   validateCreateLockInputs,
   validateIncreaseAmountInputs,
+  validateToggleAutoRelockInputs,
+  validateWithdrawInputs,
 } from '../utils'
 
 describe('validateCreateLockInputs', function () {
@@ -274,5 +276,45 @@ describe('validateIncreaseAmountInputs', function () {
   it('should use amount as default approval amount when not provided', function () {
     const { approvalAdditionalAmount, ...newParams } = validParams
     expect(validateIncreaseAmountInputs(newParams)).toBeUndefined()
+  })
+})
+
+describe('the shared position validators', function () {
+  const validParams = {
+    account: '0x1234567890123456789012345678901234567890' as const,
+    chainId: hemiSepolia.id,
+    tokenId: BigInt(1),
+  }
+
+  it('should accept valid inputs', function () {
+    expect(validateWithdrawInputs(validParams)).toBeUndefined()
+    expect(validateToggleAutoRelockInputs(validParams)).toBeUndefined()
+  })
+
+  it('should reject an account that is not an address', function () {
+    expect(
+      validateToggleAutoRelockInputs({
+        ...validParams,
+        account: 'not-an-address',
+      }),
+    ).toBe('account is not a valid address')
+  })
+
+  it('should reject the zero address', function () {
+    expect(
+      validateToggleAutoRelockInputs({ ...validParams, account: zeroAddress }),
+    ).toBe('account cannot be zero address')
+  })
+
+  it('should reject an unsupported chain', function () {
+    expect(
+      validateToggleAutoRelockInputs({ ...validParams, chainId: 999999 }),
+    ).toBe('chain is not supported')
+  })
+
+  it('should reject a token id of zero', function () {
+    expect(
+      validateToggleAutoRelockInputs({ ...validParams, tokenId: BigInt(0) }),
+    ).toBe('invalid token ID')
   })
 })

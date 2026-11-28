@@ -59,6 +59,8 @@ const analyticsEvents = [
   'hemi earn - return shares failed',
   'hemi earn - return shares started',
   'hemi earn - return shares success',
+  'hemi earn - terms rejected',
+  'hemi earn - terms signed',
   'hemi earn - withdraw failed',
   'hemi earn - withdraw started',
   'hemi earn - withdraw success',
@@ -76,7 +78,6 @@ const analyticsEvents = [
   'nav - tools',
   'nav - faucet',
   'nav - pure finance',
-  'nav - stake',
   'nav - tunnel',
   'nav - language',
   'nav - legal and privacy',
@@ -87,30 +88,36 @@ const analyticsEvents = [
   'nav - youtube',
   'nav - x',
   // /stake
-  'stake - stake failed',
-  'stake - stake started',
-  'stake - stake success',
-  'stake - stake more',
   'stake - unstake failed',
   'stake - unstake started',
   'stake - unstake success',
   // /hemi-stake
   'hemi stake - approve failed',
+  'hemi stake - approve increase amount failed',
   'hemi stake - approve increase amount reverted',
   'hemi stake - approve reverted',
+  'hemi stake - auto relock failed',
+  'hemi stake - auto relock failed validation',
+  'hemi stake - auto relock reverted',
+  'hemi stake - auto relock success',
   'hemi stake - capture position class reverted',
   'hemi stake - collect rewards transaction reverted',
   'hemi stake - collect rewards transaction succeeded',
   'hemi stake - filter active',
   'hemi stake - filter burned',
+  'hemi stake - increase amount failed',
+  'hemi stake - increase amount failed validation',
   'hemi stake - increase amount success',
   'hemi stake - increase amount transaction reverted',
+  'hemi stake - increase unlock time failed',
+  'hemi stake - increase unlock time failed validation',
   'hemi stake - increase unlock time reverted',
   'hemi stake - increase unlock time success',
   'hemi stake - lock creation failed validation',
   'hemi stake - lock creation failed',
   'hemi stake - lock creation reverted',
   'hemi stake - lock creation success',
+  'hemi stake - signed auto relock',
   'hemi stake - signed capture position class',
   'hemi stake - signed collect rewards',
   'hemi stake - signed increase amount',
@@ -118,6 +125,7 @@ const analyticsEvents = [
   'hemi stake - signed lock creation',
   'hemi stake - signed withdraw',
   'hemi stake - signing approve error',
+  'hemi stake - signing auto relock error',
   'hemi stake - signing collect rewards error',
   'hemi stake - signing increase amount error',
   'hemi stake - signing increase unlock time error',
@@ -175,7 +183,7 @@ const analyticsEvents = [
   'evm copy',
   'evm disconnected',
   // dex's
-  'nav - rubic',
+  'nav - jumper',
   'nav - dzap',
   'nav - 1delta',
   'nav - eisen',
@@ -183,13 +191,8 @@ const analyticsEvents = [
   'nav - oku',
   'nav - izumi',
   'nav - dodo',
-  'nav - atlas',
   'nav - lunarfi',
   'nav - brownfi',
-  // custom Tokens for the tunnel
-  'custom erc20 - cancel',
-  'custom erc20 - open modal',
-  'custom erc20 - save token',
   // save tokens in user's wallet
   'save token wallet - error',
   'save token wallet - init',
@@ -197,9 +200,6 @@ const analyticsEvents = [
   // earn rewards card
   'earn rewards - open link',
   'earn rewards - close',
-  // hemi stake launch card
-  'hemi stake card - open',
-  'hemi stake card - close',
 ] as const
 
 type AnalyticsEvents = typeof analyticsEvents
@@ -219,9 +219,6 @@ type AnalyticsEventsWithWallet = Extract<
 // These events require an ERC20 address
 type AnalyticsEventsWithERC20 = Extract<
   AnalyticsEvent,
-  | 'custom erc20 - cancel'
-  | 'custom erc20 - open modal'
-  | 'custom erc20 - save token'
   | 'save token wallet - error'
   | 'save token wallet - init'
   | 'save token wallet - ok'

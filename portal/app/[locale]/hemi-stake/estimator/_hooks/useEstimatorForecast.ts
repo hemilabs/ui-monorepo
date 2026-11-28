@@ -1,0 +1,173 @@
+import { useHemiToken } from 'hooks/useHemiToken'
+import { useMemo } from 'react'
+import { type StakingPosition } from 'types/stakingDashboard'
+import { parseTokenUnits } from 'utils/token'
+import { type Address } from 'viem'
+import { useAccount } from 'wagmi'
+
+import { useDelegatedAway } from '../../_hooks/useDelegatedAway'
+import { useEpochAnchoredNow } from '../../_hooks/useEpochAnchoredNow'
+import { useEpochSystemState } from '../../_hooks/useEpochSystemState'
+import { usePositionClasses } from '../../_hooks/usePositionClasses'
+import { useRewardsForecastInputs } from '../../_hooks/useRewardsForecastInputs'
+import { useStakingPositions } from '../../_hooks/useStakingPositions'
+import { getBlendedForecast } from '../../_utils/blendedForecast'
+import { wholeDaysToSeconds } from '../../_utils/lockCreationTimes'
+import { getEpochEnd } from '../../_utils/lockEpochs'
+import {
+  alwaysTransferable,
+  emptyInputsByClass,
+  type PositionClass,
+} from '../../_utils/rewardClass'
+import { isActiveStake } from '../../_utils/walletStakedTotal'
+import { useEstimator } from '../_context/estimatorContext'
+import { canForecast } from '../_utils/canForecast'
+import { isForecastUnavailable } from '../_utils/isForecastUnavailable'
+
+import { useNeedsWallet } from './useNeedsWallet'
+
+const toLockEnd = (position: StakingPosition) =>
+  Number(position.effectiveLockEnd)
+
+const toStakedPositions = function ({
+  now,
+  positions,
+  wallet,
+}: {
+  now: number
+  positions: StakingPosition[] | undefined
+  wallet: Address | undefined
+}) {
+  if (!positions || !wallet) {
+    return []
+  }
+
+  const settledAt = getEpochEnd({ epochsAhead: 0, now })
+
+  return positions.filter(
+    position =>
+      isActiveStake(position, wallet) && toLockEnd(position) > settledAt,
+  )
+}
+
+const toExistingLegs = (
+  positions: StakingPosition[],
+  classes: Record<string, PositionClass>,
+  delegatedAway: Record<string, boolean>,
+) =>
+  positions.map(position => ({
+    amount: position.amount,
+    autoRelock: position.autoRelock,
+    delegatedAway: delegatedAway[position.tokenId.toString()] === true,
+    lockEnd: toLockEnd(position),
+    positionClass: classes[position.tokenId.toString()] ?? alwaysTransferable,
+  }))
+
+const toLoadState = function (
+  queries: {
+    data: unknown
+    isError: boolean
+    isPending: boolean
+    refetch: () => unknown
+  }[],
+) {
+  const failed = queries.filter(
+    query => query.isError && query.data === undefined,
+  )
+  return {
+    isError: failed.length > 0,
+    isLoading: queries.some(query => query.isPending),
+    retry: () => failed.forEach(query => query.refetch()),
+  }
+}
+
+export const useEstimatorForecast = function () {
+  const { amount, autoRelock, lockupDays, scope } = useEstimator()
+  const { address } = useAccount()
+  const token = useHemiToken()
+  const needsWallet = useNeedsWallet()
+
+  const blends = scope === 'with-my-positions' && !needsWallet
+
+  const systemState = useEpochSystemState()
+  const now = useEpochAnchoredNow(systemState.data?.currentEpoch)
+  const forecastInputs = useRewardsForecastInputs()
+  const positions = useStakingPositions({ enabled: blends })
+
+  const staked = useMemo(
+    () =>
+      blends
+        ? toStakedPositions({ now, positions: positions.data, wallet: address })
+        : [],
+    [address, blends, now, positions.data],
+  )
+
+  const classes = usePositionClasses(blends ? staked : undefined)
+  const delegatedAway = useDelegatedAway(blends ? staked : undefined)
+
+  const amountUnits = parseTokenUnits(amount, token)
+  const inputsByClass = forecastInputs.data ?? emptyInputsByClass
+  const lockDurationInSeconds = Number(wholeDaysToSeconds(lockupDays))
+
+  const { blended, stakedAlone } = useMemo(
+    function () {
+      const existing = classes.data
+        ? toExistingLegs(staked, classes.data, delegatedAway.data ?? {})
+        : []
+      const run = (incomingAmount: bigint) =>
+        getBlendedForecast({
+          existing,
+          incoming: {
+            amount: incomingAmount,
+            autoRelock,
+            lockDurationInSeconds,
+          },
+          inputsByClass,
+          now,
+        })
+
+      return { blended: run(amountUnits), stakedAlone: run(BigInt(0)).existing }
+    },
+    [
+      amountUnits,
+      autoRelock,
+      classes.data,
+      delegatedAway.data,
+      inputsByClass,
+      lockDurationInSeconds,
+      now,
+      staked,
+    ],
+  )
+
+  const delegationKnown =
+    delegatedAway.data !== undefined || staked.length === 0
+
+  const { isError, isLoading, retry } = toLoadState(
+    blends
+      ? [systemState, forecastInputs, positions, classes, delegatedAway]
+      : [systemState, forecastInputs],
+  )
+
+  return {
+    currentEpoch: systemState.data?.currentEpoch,
+    forecast: blended,
+    isBlended: staked.length > 0,
+    isError,
+    isLoading,
+    retry,
+    stakedReturnRatio: stakedAlone.yearOneReturnRatio,
+    unavailable: isForecastUnavailable({
+      hasForecast: canForecast({
+        amountUnits,
+        inputsByClass,
+        lockupDays,
+        staked,
+      }),
+      isError,
+      isLoading,
+      needsWallet,
+    }),
+    votingWeights: delegationKnown ? blended.votingWeights : undefined,
+  }
+}

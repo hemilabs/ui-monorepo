@@ -1,9 +1,12 @@
+import { Tooltip } from 'components/tooltip'
 import { type ReactNode } from 'react'
 
 import { SegmentedControlItem } from './item'
 
 export type SegmentedControlOption<T extends string> = {
+  disabled?: boolean
   label: ReactNode
+  tooltip?: string
   value: T
 }
 
@@ -22,20 +25,26 @@ export const SegmentedControl = <T extends string>({
   options,
   value,
 }: Props<T>) => (
-  <div aria-label={label} className="flex items-center gap-2" role="group">
+  <div
+    aria-label={label}
+    className="flex flex-wrap items-center gap-2"
+    role="group"
+  >
     {options.map(option => (
-      <SegmentedControlItem
-        className={fullWidth ? 'flex-1' : undefined}
-        key={option.value}
-        onClick={function () {
-          if (option.value !== value) {
-            onChange(option.value)
-          }
-        }}
-        selected={option.value === value}
-      >
-        {option.label}
-      </SegmentedControlItem>
+      <Tooltip key={option.value} text={option.tooltip} variant="simple">
+        <SegmentedControlItem
+          className={fullWidth ? 'flex-1' : undefined}
+          disabled={option.disabled}
+          onClick={function () {
+            if (!option.disabled && option.value !== value) {
+              onChange(option.value)
+            }
+          }}
+          selected={option.value === value}
+        >
+          {option.label}
+        </SegmentedControlItem>
+      </Tooltip>
     ))}
   </div>
 )

@@ -17,7 +17,7 @@ import {
  */
 export function stakedBalance(
   client: Client,
-  parameters: { tokenAddress: Address; address: Address },
+  parameters: { address: Address; tokenAddress: Address },
 ) {
   const { address, tokenAddress } = parameters
   return readContract(client, {

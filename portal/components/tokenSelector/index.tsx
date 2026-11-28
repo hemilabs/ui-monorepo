@@ -6,7 +6,6 @@ import { useUmami } from 'hooks/useUmami'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { screenBreakpoints } from 'styles'
-import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 
 import { Chevron } from '../icons/chevron'
@@ -39,7 +38,6 @@ const TokenList = lazyWithFallback(
 )
 
 type Props = {
-  chainId: RemoteChain['id']
   disabled: boolean
   onSelectToken: (token: Token) => void
   selectedToken: Token
@@ -47,7 +45,6 @@ type Props = {
 }
 
 export const TokenSelector = function ({
-  chainId,
   disabled,
   onSelectToken,
   selectedToken,
@@ -67,7 +64,7 @@ export const TokenSelector = function ({
   return (
     <>
       <button
-        className="group/token-selector flex h-8 w-40 items-center gap-x-1.5 rounded-lg border border-solid border-neutral-300/55 bg-white px-3 py-1.5 text-sm font-medium shadow-soft transition-colors duration-200 hover:bg-neutral-50"
+        className="group/token-selector flex h-8 w-40 items-center gap-x-1.5 rounded-lg border border-solid border-neutral-300/55 bg-white px-3 py-1.5 text-sm font-medium shadow-soft transition-colors duration-200 enabled:hover:bg-neutral-50 disabled:cursor-not-allowed"
         disabled={disabled || tokens.length < 2}
         onClick={openModal}
         type="button"
@@ -78,12 +75,11 @@ export const TokenSelector = function ({
           symbol={selectedToken.symbol}
         />
         {tokens.length > 1 && (
-          <Chevron.Bottom className="ml-auto flex-shrink-0 [&>path]:fill-neutral-500 [&>path]:group-hover/token-selector:fill-neutral-950" />
+          <Chevron.Bottom className="ml-auto flex-shrink-0 [&>path]:fill-neutral-500 [&>path]:group-enabled/token-selector:group-hover/token-selector:fill-neutral-950" />
         )}
       </button>
-      {showTokenSelector && typeof chainId === 'number' && (
+      {showTokenSelector && (
         <TokenList
-          chainId={chainId}
           closeModal={closeModal}
           onSelectToken={handleSelection}
           tokens={tokens}

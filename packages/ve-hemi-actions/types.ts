@@ -13,6 +13,17 @@ export type ApprovalEvents = {
   'user-signing-approve-error': [Error]
 }
 
+export type AutoRelockEvents = CommonEvents & {
+  'auto-relock-failed': [Error]
+  'auto-relock-failed-validation': [string]
+  'auto-relock-settled': []
+  'auto-relock-transaction-reverted': [TransactionReceipt]
+  'auto-relock-transaction-succeeded': [TransactionReceipt]
+  'pre-auto-relock': []
+  'user-signed-auto-relock': [Hash]
+  'user-signing-auto-relock-error': [Error]
+}
+
 export type CreateLockEvents = CommonEvents &
   ApprovalEvents & {
     'lock-creation-failed': [Error]
@@ -49,12 +60,12 @@ export type IncreaseUnlockTimeEvents = CommonEvents & {
 }
 
 export type WithdrawEvents = CommonEvents & {
+  'pre-withdraw': []
+  'user-signed-withdraw': [Hash]
+  'user-signing-withdraw-error': [Error]
   'withdraw-failed': [Error]
   'withdraw-failed-validation': [string]
   'withdraw-settled': []
   'withdraw-transaction-reverted': [TransactionReceipt]
   'withdraw-transaction-succeeded': [TransactionReceipt]
-  'pre-withdraw': []
-  'user-signed-withdraw': [Hash]
-  'user-signing-withdraw-error': [Error]
 }

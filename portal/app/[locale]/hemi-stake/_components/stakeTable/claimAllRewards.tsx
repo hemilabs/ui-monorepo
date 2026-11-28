@@ -7,7 +7,11 @@ import { useTranslations } from 'use-intl'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useClaimablePositions } from '../../_hooks/useClaimablePositions'
-import { useCollectRewards } from '../../_hooks/useCollectAllRewards'
+import {
+  useCollectRewards,
+  useIsCollectingRewards,
+} from '../../_hooks/useCollectAllRewards'
+import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
 import { useRewardsPaused } from '../../_hooks/useRewardsPaused'
 
 type Props = {
@@ -17,7 +21,12 @@ type Props = {
 export function ClaimAllRewards({ positions }: Props) {
   const t = useTranslations('hemi-stake.table')
   const isPaused = useRewardsPaused()
-  const { updateCollectRewardsDashboardOperation } = useStakingDashboard()
+  const {
+    collectRewardsDashboardOperation,
+    updateCollectRewardsDashboardOperation,
+  } = useStakingDashboard()
+  const { setDrawerQueryString } = useDrawerStakingQueryString()
+  const isCollecting = useIsCollectingRewards()
 
   const tokenIds = useMemo(
     () => positions?.map(({ tokenId }) => tokenId) ?? [],
@@ -26,30 +35,45 @@ export function ClaimAllRewards({ positions }: Props) {
 
   const { positions: claimablePositions } = useClaimablePositions(tokenIds)
 
-  const { isPending: isCollecting, mutate: runCollectRewards } =
-    useCollectRewards({
-      tokenIds,
-      updateCollectRewardsDashboardOperation,
-    })
+  const { mutate: runCollectRewards } = useCollectRewards({
+    tokenIds,
+    updateCollectRewardsDashboardOperation,
+  })
 
   const positionsWithRewards = claimablePositions.filter(
     ({ transactions }) => transactions.length > 0,
   )
 
-  if (positionsWithRewards.length < 2) {
+  if (positionsWithRewards.length < 2 && !isCollecting) {
     return null
   }
 
+  const handleClick = function () {
+    if (isCollecting) {
+      setDrawerQueryString('claimingRewards')
+      return
+    }
+    runCollectRewards()
+  }
+
+  const showPaused = isPaused && !isCollecting
+
   return (
-    <Tooltip disabled={!isPaused} text={t('claiming-paused')} variant="simple">
+    <Tooltip
+      disabled={!showPaused}
+      text={t('claiming-paused')}
+      variant="simple"
+    >
       <Button
-        disabled={isCollecting || isPaused}
-        onClick={() => runCollectRewards()}
+        disabled={
+          showPaused || (isCollecting && !collectRewardsDashboardOperation)
+        }
+        onClick={handleClick}
         size="xSmall"
       >
         <span className="flex items-center gap-x-1">
-          {t('claim-all-rewards')}
-          {isPaused ? <InfoIcon /> : null}
+          {t(isCollecting ? 'claiming' : 'claim-all-rewards')}
+          {showPaused ? <InfoIcon /> : null}
         </span>
       </Button>
     </Tooltip>

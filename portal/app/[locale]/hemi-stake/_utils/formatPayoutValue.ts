@@ -1,38 +1,39 @@
-import { defaultLocale } from 'i18n/routing'
-import {
-  formatCompactFiatParts,
-  formatFiatAmount,
-  formatNumber,
-} from 'utils/format'
+import { type Formatter } from 'utils/format'
 
 const formatTokenAmount = ({
+  formatter,
   symbol,
   value,
 }: {
+  formatter: Formatter
   symbol: string
   value: number
-}) => `${formatNumber(value)} ${symbol}`
+}) => `${formatter.formatNumber(value)} ${symbol}`
 
 export const formatPayoutValue = function ({
+  formatter,
   symbol,
   value,
 }: {
+  formatter: Formatter
   symbol: string
   value: number
 }) {
-  const { number, suffix } = formatCompactFiatParts(value, defaultLocale)
+  const { number, suffix } = formatter.formatCompactFiatParts(value)
   return `${number}${suffix} ${symbol}`
 }
 
 export const formatPayoutDetail = ({
+  formatter,
   price,
   symbol,
   value,
 }: {
+  formatter: Formatter
   price: number | undefined
   symbol: string
   value: number
 }) =>
   price === undefined
-    ? formatTokenAmount({ symbol, value })
-    : `${formatTokenAmount({ symbol, value })} · ${formatFiatAmount(value * price)}`
+    ? formatTokenAmount({ formatter, symbol, value })
+    : `${formatTokenAmount({ formatter, symbol, value })} · ${formatter.formatFiatAmount(value * price)}`

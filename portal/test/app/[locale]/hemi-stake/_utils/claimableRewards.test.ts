@@ -1,12 +1,18 @@
 import { RewardSource, type ClaimableReward } from 'types/stakingDashboard'
 import { type Address } from 'viem'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import {
   getClaimTransactions,
   getClaimWindows,
+  markClaimWindowAsClaimed,
   mergeClaimableRewards,
+  sortClaimsByValue,
 } from '../../../../../app/[locale]/hemi-stake/_utils/claimableRewards'
+
+vi.mock('utils/chainClients', () => ({
+  getPublicClient: vi.fn(),
+}))
 
 const hemi: Address = '0x1111111111111111111111111111111111111111'
 const usdc: Address = '0x2222222222222222222222222222222222222222'
@@ -19,7 +25,6 @@ const reward = (
   amount,
   decimals: 18,
   source: RewardSource.EPOCH,
-  symbol: 'HEMI',
   token,
   ...overrides,
 })
@@ -32,7 +37,7 @@ describe('mergeClaimableRewards', function () {
 
   it('should keep one row per reward token', function () {
     const merged = mergeClaimableRewards([
-      [reward(hemi, BigInt(5)), reward(usdc, BigInt(7), { symbol: 'USDC' })],
+      [reward(hemi, BigInt(5)), reward(usdc, BigInt(7))],
     ])
 
     expect(merged).toHaveLength(2)
@@ -49,18 +54,16 @@ describe('mergeClaimableRewards', function () {
 
   it('should keep the metadata of the first row it saw for a token', function () {
     const merged = mergeClaimableRewards([
-      [reward(hemi, BigInt(5), { decimals: 8, symbol: 'hemiBTC' })],
-      [reward(hemi, BigInt(3), { decimals: 18, symbol: 'HEMI' })],
+      [reward(hemi, BigInt(5), { decimals: 8 })],
+      [reward(hemi, BigInt(3), { decimals: 18 })],
     ])
 
-    expect(merged).toEqual([
-      reward(hemi, BigInt(8), { decimals: 8, symbol: 'hemiBTC' }),
-    ])
+    expect(merged).toEqual([reward(hemi, BigInt(8), { decimals: 8 })])
   })
 
   it('should keep a token that is owed nothing', function () {
     const merged = mergeClaimableRewards([
-      [reward(hemi, BigInt(0)), reward(usdc, BigInt(4), { symbol: 'USDC' })],
+      [reward(hemi, BigInt(0)), reward(usdc, BigInt(4))],
     ])
 
     expect(merged).toHaveLength(2)
@@ -168,7 +171,12 @@ describe('getClaimTransactions', function () {
     ])
 
     expect(transactions).toEqual([
-      { fromEpoch: 64, source: RewardSource.EPOCH, toEpoch: 100 },
+      {
+        fromEpoch: 64,
+        rewards: [reward(hemi, BigInt(9))],
+        source: RewardSource.EPOCH,
+        toEpoch: 100,
+      },
     ])
   })
 
@@ -200,8 +208,18 @@ describe('getClaimTransactions', function () {
     ])
 
     expect(transactions).toEqual([
-      { fromEpoch: 3338, source: RewardSource.EPOCH, toEpoch: 3385 },
-      { fromEpoch: 3386, source: RewardSource.EPOCH, toEpoch: 3401 },
+      {
+        fromEpoch: 3338,
+        rewards: [reward(hemi, BigInt(405))],
+        source: RewardSource.EPOCH,
+        toEpoch: 3385,
+      },
+      {
+        fromEpoch: 3386,
+        rewards: [reward(hemi, BigInt(723))],
+        source: RewardSource.EPOCH,
+        toEpoch: 3401,
+      },
     ])
   })
 
@@ -212,7 +230,165 @@ describe('getClaimTransactions', function () {
     ])
 
     expect(transactions).toEqual([
-      { fromEpoch: 3386, source: RewardSource.EPOCH, toEpoch: 3401 },
+      {
+        fromEpoch: 3386,
+        rewards: [reward(hemi, BigInt(723))],
+        source: RewardSource.EPOCH,
+        toEpoch: 3401,
+      },
     ])
+  })
+})
+
+describe('sortClaimsByValue', function () {
+  const tokens = [
+    { address: hemi, decimals: 18, symbol: 'HEMI' },
+    { address: usdc, decimals: 18, symbol: 'USDC' },
+  ]
+
+  const claim = (
+    tokenId: number,
+    fromEpoch: number,
+    rewards: ClaimableReward[],
+  ) => ({ fromEpoch, rewards, tokenId: BigInt(tokenId) })
+
+  const order = (claims: { fromEpoch: number; tokenId: bigint }[]) =>
+    claims.map(({ fromEpoch, tokenId }) => [Number(tokenId), fromEpoch])
+
+  it('should send the most valuable window first, across positions', function () {
+    const sorted = sortClaimsByValue({
+      claims: [
+        claim(1, 0, [reward(hemi, BigInt(1))]),
+        claim(1, 64, [reward(usdc, BigInt(1))]),
+        claim(2, 0, [reward(hemi, BigInt(1)), reward(usdc, BigInt(1))]),
+      ],
+      hemiTokenAddress: hemi,
+      prices: { HEMI: '0.1', USDC: '1' },
+      tokens,
+    })
+
+    expect(order(sorted)).toEqual([
+      [2, 0],
+      [1, 64],
+      [1, 0],
+    ])
+  })
+
+  it('should rank by the HEMI amount when prices are not loaded', function () {
+    const sorted = sortClaimsByValue({
+      claims: [
+        claim(1, 0, [reward(usdc, BigInt(1000))]),
+        claim(1, 64, [reward(hemi, BigInt(2))]),
+        claim(2, 0, [reward(hemi, BigInt(5))]),
+      ],
+      hemiTokenAddress: hemi,
+      prices: undefined,
+      tokens,
+    })
+
+    expect(order(sorted)).toEqual([
+      [2, 0],
+      [1, 64],
+      [1, 0],
+    ])
+  })
+
+  it('should count a reward token without a price as worth nothing', function () {
+    const sorted = sortClaimsByValue({
+      claims: [
+        claim(1, 0, [reward(usdc, BigInt(1000))]),
+        claim(1, 64, [reward(hemi, BigInt(1))]),
+      ],
+      hemiTokenAddress: hemi,
+      prices: { HEMI: '0.1' },
+      tokens,
+    })
+
+    expect(order(sorted)).toEqual([
+      [1, 64],
+      [1, 0],
+    ])
+  })
+
+  it('should break ties by position, then by epoch', function () {
+    const sorted = sortClaimsByValue({
+      claims: [
+        claim(2, 0, [reward(hemi, BigInt(1))]),
+        claim(1, 64, [reward(hemi, BigInt(1))]),
+        claim(1, 0, [reward(hemi, BigInt(1))]),
+      ],
+      hemiTokenAddress: hemi,
+      prices: { HEMI: '0.1' },
+      tokens,
+    })
+
+    expect(order(sorted)).toEqual([
+      [1, 0],
+      [1, 64],
+      [2, 0],
+    ])
+  })
+})
+
+describe('markClaimWindowAsClaimed', function () {
+  const windows = [
+    { fromEpoch: 1, rewards: [reward(hemi, BigInt(5))], toEpoch: 10 },
+    {
+      fromEpoch: 11,
+      rewards: [reward(hemi, BigInt(3)), reward(usdc, BigInt(7))],
+      toEpoch: 20,
+    },
+  ]
+
+  it('zeroes every reward of the claimed window', function () {
+    const result = markClaimWindowAsClaimed(windows, {
+      fromEpoch: 11,
+      toEpoch: 20,
+    })
+
+    expect(result[1].rewards).toEqual([
+      reward(hemi, BigInt(0)),
+      reward(usdc, BigInt(0)),
+    ])
+  })
+
+  it('leaves the other windows untouched', function () {
+    const result = markClaimWindowAsClaimed(windows, {
+      fromEpoch: 11,
+      toEpoch: 20,
+    })
+
+    expect(result[0]).toBe(windows[0])
+  })
+
+  it('drops the claimed window from the claim transactions', function () {
+    const result = markClaimWindowAsClaimed(windows, {
+      fromEpoch: 1,
+      toEpoch: 10,
+    })
+
+    expect(getClaimTransactions(result)).toEqual([
+      {
+        fromEpoch: 11,
+        rewards: [reward(hemi, BigInt(3)), reward(usdc, BigInt(7))],
+        source: RewardSource.EPOCH,
+        toEpoch: 20,
+      },
+    ])
+  })
+
+  it('returns the windows unchanged when none matches', function () {
+    const result = markClaimWindowAsClaimed(windows, {
+      fromEpoch: 1,
+      toEpoch: 20,
+    })
+
+    expect(result).toEqual(windows)
+  })
+
+  it('does not mutate the input', function () {
+    markClaimWindowAsClaimed(windows, { fromEpoch: 1, toEpoch: 10 })
+
+    expect(windows[0].rewards[0].amount).toBe(BigInt(5))
   })
 })

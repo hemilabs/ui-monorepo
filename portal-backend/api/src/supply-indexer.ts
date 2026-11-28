@@ -5,23 +5,35 @@ import { UpstreamGraphQLError } from './subgraphs/errors.ts'
 import {
   type GraphResponse,
   checkGraphQLErrors,
-  requestHemiEarn,
+  requestHemiSupply,
 } from './subgraphs/subgraph.ts'
+
+type Correction = {
+  amount: string
+  from: string
+}
 
 export type SupplyIndexerOptions = {
   cache: Cache
-  correction: string
+  corrections: Correction[]
   merkleLocked: number
 }
 
 type SupplyRow = {
+  baseOpBalances: string | null
   bnbBlock: number | null
+  bnbInvestorAllocation: string | null
+  bnbOpBalances: string | null
   bnbSafe: string | null
   burned: string | null
   date: string
   ethBlock: number | null
+  ethInvestorAllocation: string | null
+  ethOpBalances: string | null
   ethSafe: string | null
   hemiBlock: number | null
+  hemiFoundationFinance: string | null
+  hemiInvestorAllocation: string | null
   hemiSafe: string | null
   locked: string | null
   merkle: string | null
@@ -29,14 +41,23 @@ type SupplyRow = {
   totalSupply: string | null
 }
 
+const hemiOnBaseFrom = '2025-12-29'
+
 const fields = `
+  baseOpBalances
   bnbBlock
+  bnbInvestorAllocation
+  bnbOpBalances
   bnbSafe
   burned
   date
   ethBlock
+  ethInvestorAllocation
+  ethOpBalances
   ethSafe
   hemiBlock
+  hemiFoundationFinance
+  hemiInvestorAllocation
   hemiSafe
   locked
   merkle
@@ -53,14 +74,14 @@ const fromUnit = function (value: string) {
 
 function createSupplyIndexer({
   cache,
-  correction,
+  corrections,
   merkleLocked,
 }: SupplyIndexerOptions) {
   async function query<T>(
     graphQuery: string,
     variables?: Record<string, string>,
   ) {
-    const response = await requestHemiEarn<GraphResponse<T>>({
+    const response = await requestHemiSupply<GraphResponse<T>>({
       query: graphQuery,
       variables,
     })
@@ -68,12 +89,22 @@ function createSupplyIndexer({
     return response.data
   }
 
-  function toAmounts(row: SupplyRow) {
+  const getCorrection = (date: string) =>
+    corrections.findLast(({ from }) => from <= date)?.amount ?? '0'
+
+  function toAmounts(row: SupplyRow, correction: string) {
     const nonCirculating =
       BigInt(correction) +
+      toBigInt(row.baseOpBalances) +
+      toBigInt(row.bnbInvestorAllocation) +
+      toBigInt(row.bnbOpBalances) +
       toBigInt(row.bnbSafe) +
       toBigInt(row.burned) +
+      toBigInt(row.ethInvestorAllocation) +
+      toBigInt(row.ethOpBalances) +
       toBigInt(row.ethSafe) +
+      toBigInt(row.hemiFoundationFinance) +
+      toBigInt(row.hemiInvestorAllocation) +
       toBigInt(row.hemiSafe) +
       (toBigInt(row.merkle) * BigInt(merkleLocked)) / 100n +
       toBigInt(row.opBalances)
@@ -92,6 +123,10 @@ function createSupplyIndexer({
       `query GetLatestSupplySnapshots {
         DailySupplySnapshot(
           where: {
+            _or: [
+              { baseBlock: { _is_null: false } }
+              { date: { _lt: "${hemiOnBaseFrom}" } }
+            ]
             bnbBlock: { _is_null: false }
             ethBlock: { _is_null: false }
             hemiBlock: { _is_null: false }
@@ -108,7 +143,9 @@ function createSupplyIndexer({
         'the supply indexer has not read every chain yet',
       )
     }
-    return fromUnit(toAmounts(row).circulating.toString())
+    return fromUnit(
+      toAmounts(row, getCorrection(row.date)).circulating.toString(),
+    )
   }
 
   async function getSupplyHistory(period: string) {
@@ -121,6 +158,10 @@ function createSupplyIndexer({
         `query GetDailySupplySnapshots($firstDate: String!, $lastDate: String!) {
           DailySupplySnapshot(
             where: {
+              _or: [
+                { baseBlock: { _is_null: false } }
+                { date: { _lt: "${hemiOnBaseFrom}" } }
+              ]
               bnbBlock: { _is_null: false }
               date: { _gte: $firstDate, _lte: $lastDate }
               ethBlock: { _is_null: false }
@@ -138,7 +179,7 @@ function createSupplyIndexer({
       }),
     ])
     return data.DailySupplySnapshot.map(function (row) {
-      const amounts = toAmounts(row)
+      const amounts = toAmounts(row, getCorrection(row.date))
       return {
         circulating: amounts.circulating.toString(),
         date: row.date,

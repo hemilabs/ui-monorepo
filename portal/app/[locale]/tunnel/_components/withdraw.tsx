@@ -5,6 +5,7 @@ import { FeesContainer } from 'components/feesContainer'
 import { WarningIcon } from 'components/icons/warningIcon'
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { SetMaxEvmBalance } from 'components/setMaxBalance'
+import { Spinner } from 'components/spinner'
 import { useAccounts } from 'hooks/useAccounts'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
@@ -15,8 +16,9 @@ import { useUmami } from 'hooks/useUmami'
 import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { useTranslations } from 'use-intl'
+import { maxBigInt } from 'utils/bigint'
 import { isEvmNetwork } from 'utils/chain'
-import { formatBtcAddress } from 'utils/format'
+import { formatBtcAddress, formatEvmAddress } from 'utils/format'
 import { getTotal } from 'utils/getTotal'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits, tunnelsThroughPartners } from 'utils/token'
@@ -30,6 +32,7 @@ import { useEstimateBtcWithdrawFees } from '../_hooks/useEstimateBtcWithdrawFees
 import { useEstimateWithdrawFees } from '../_hooks/useEstimateWithdrawFees'
 import { useMinWithdrawalSats } from '../_hooks/useMinWithdrawalSats'
 import { useReceivingBitcoinAddress } from '../_hooks/useReceivingBitcoinAddress'
+import { useReceivingEvmAddress } from '../_hooks/useReceivingEvmAddress'
 import {
   type EvmTunneling,
   type HemiToBitcoinTunneling,
@@ -38,9 +41,9 @@ import {
 } from '../_hooks/useTunnelState'
 import { useWithdraw } from '../_hooks/useWithdraw'
 
-import { BitcoinReceivingAddress } from './bitcoinReceivingAddress'
 import { FormContent, TunnelForm } from './form'
 import { HemiBtcFeesSummary } from './hemiBtcFeesSummary'
+import { ReceivingAddress } from './receivingAddress'
 import { SubmitEvmWithdrawal } from './submitEvmWithdrawal'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 import { TunnelProviderToggle } from './tunnelProviderToggle'
@@ -81,8 +84,14 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   const { btcAddress, btcWalletStatus, evmWalletStatus } = useAccounts()
   const fromChain = useChain(fromNetworkId)!
 
-  const { isPending: isLoadingMinWithdrawalSats, minWithdrawalFormattedSats } =
-    useMinWithdrawalSats(fromToken)
+  const {
+    isError: isMinWithdrawalSatsError,
+    minWithdrawalFormattedSats,
+    minWithdrawalSats,
+  } = useMinWithdrawalSats(fromToken)
+  const isMinWithdrawalSatsLoaded = minWithdrawalSats !== undefined
+  const isMinWithdrawalSatsLoading =
+    !isMinWithdrawalSatsLoaded && !isMinWithdrawalSatsError
   const { data: bitcoinBalance, isSuccess: balanceLoaded } = useTokenBalance(
     fromToken.chainId,
     fromToken.address,
@@ -193,7 +202,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     }
 
     return formatUnits(
-      amount - (btcWithdrawalFee ?? BigInt(0)),
+      maxBigInt(amount - (btcWithdrawalFee ?? BigInt(0)), BigInt(0)),
       fromToken.decimals,
     )
   }
@@ -206,7 +215,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   })
 
   const canWithdraw = [
-    !isLoadingMinWithdrawalSats,
+    isMinWithdrawalSatsLoaded,
     amountValidation.canSubmit,
     canSubmitAddress,
   ].every(Boolean)
@@ -228,10 +237,23 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   }
 
   const getSubmitText = function () {
+    if (isMinWithdrawalSatsLoading) {
+      return <Spinner size={'small'} />
+    }
     if (isWithdrawing) {
       return t('tunnel-page.submit-button.withdrawing')
     }
     return t('tunnel-page.submit-button.initiate-withdrawal')
+  }
+
+  const getValidationError = function () {
+    if (isMinWithdrawalSatsLoading) {
+      return undefined
+    }
+    if (!isMinWithdrawalSatsLoaded) {
+      return t('tunnel-page.submit-button.min-withdrawal-load-failed')
+    }
+    return amountValidation.error ?? addressError
   }
 
   function renderFees() {
@@ -258,15 +280,17 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     <TunnelForm
       belowForm={
         <div className="relative -translate-y-7">
-          <BitcoinReceivingAddress
+          <ReceivingAddress
             address={btcAddress ? formatBtcAddress(btcAddress) : undefined}
             customAddress={customAddress}
             customAddressEnabled={customAddressEnabled}
             disabled={isWithdrawing}
+            editable
             isCheckingAddress={isCheckingAddress}
             isCustomAddressValid={isCustomAddressValid}
             onCustomAddressChange={setCustomAddress}
             onCustomAddressEnabledChange={setCustomAddressEnabled}
+            placeholder={t('tunnel-page.form.custom-address-placeholder')}
             receivingText={t('tunnel-page.form.bitcoin-receiving-address')}
             tooltipText={t(
               'tunnel-page.form.bitcoin-receiving-address-description',
@@ -303,7 +327,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
           btcWalletRequired={btcWalletRequired}
           disabled={disableForm}
           text={getSubmitText()}
-          validationError={amountValidation.error ?? addressError}
+          validationError={getValidationError()}
         />
       }
     />
@@ -331,11 +355,15 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     updateFromInput,
   } = state
 
-  const { status } = useAccount()
+  const { address, status } = useAccount()
+
+  const { addressError, receivingAddress, ...customAddressProps } =
+    useReceivingEvmAddress(state)
 
   const operatesNativeToken = isNativeToken(fromToken)
 
   const fromChain = useChain(fromNetworkId)!
+  const toChain = useChain(toNetworkId)!
 
   const {
     data: walletNativeTokenBalance,
@@ -367,6 +395,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
       amount: parseTokenUnits(fromInput, fromToken),
       fromToken,
       l1ChainId: toToken.chainId,
+      to: receivingAddress,
     })
 
   const { isPending: isWithdrawing, mutate: withdraw } = useWithdraw({
@@ -377,6 +406,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
         resetStateAfterOperation(),
       )
     },
+    to: receivingAddress,
     toToken,
   })
 
@@ -399,9 +429,12 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
       })
 
   const balanceLoaded = nativeTokenBalanceLoaded || tokenBalanceLoaded
-  const canWithdraw = canSubmit && !tunnelsThroughPartners(fromToken)
+  const canWithdraw =
+    canSubmit &&
+    !tunnelsThroughPartners(fromToken) &&
+    receivingAddress !== undefined
 
-  function RenderBelowForm() {
+  function renderFees() {
     if (!canWithdraw) {
       return null
     }
@@ -414,6 +447,31 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
           total={totalDeposit}
         />
       </FeesContainer>
+    )
+  }
+
+  function renderBelowForm() {
+    if (providerType !== 'native' || tunnelsThroughPartners(fromToken)) {
+      return null
+    }
+
+    return (
+      <div className="relative -translate-y-7">
+        <ReceivingAddress
+          {...customAddressProps}
+          address={address ? formatEvmAddress(address) : undefined}
+          disabled={isWithdrawing}
+          editable
+          placeholder={t('tunnel-page.form.evm-custom-address-placeholder')}
+          receivingText={t('tunnel-page.form.evm-receiving-address', {
+            network: toChain.name,
+          })}
+          tooltipText={t('tunnel-page.form.evm-receiving-address-description', {
+            symbol: toToken.symbol,
+          })}
+        />
+        {renderFees()}
+      </div>
     )
   }
 
@@ -456,7 +514,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
         fromToken={fromToken}
         isWithdrawing={isWithdrawing}
         setIsPartnersDrawerOpen={setIsPartnersDrawerOpen}
-        validationError={validationError}
+        validationError={validationError ?? addressError}
       />
     )
   }
@@ -464,7 +522,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
   return (
     <>
       <TunnelForm
-        belowForm={<RenderBelowForm />}
+        belowForm={renderBelowForm()}
         bottomSection={<RenderBottomSection />}
         formContent={
           <FormContent
@@ -483,11 +541,11 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
             }
             tunnelState={{
               ...state,
-              updateFromToken(from, to) {
+              updateFromToken(from) {
                 if (tunnelsThroughPartners(from)) {
                   setIsPartnersDrawerOpen(true)
                 }
-                state.updateFromToken(from, to)
+                state.updateFromToken(from)
               },
             }}
           />

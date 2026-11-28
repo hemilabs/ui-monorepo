@@ -1,5 +1,10 @@
 import { formatUnits } from 'viem'
 
+import { type ChartPoint } from '../../_utils/chartPoint'
+import { type ChartUnit } from '../../_utils/chartUnit'
+
+import { daysPerPeriod } from './periods'
+
 export type SupplyPoint = {
   circulating: string
   date: string
@@ -11,19 +16,12 @@ export type SupplyPoint = {
 
 export type SupplyPeriod = '1w' | '1m' | '3m'
 
-export type SupplyUnit = 'hemi' | 'usd'
-
 export type SupplySlice = 'circulating' | 'nonCirculating' | 'staked'
 
 export type ParsedSupplyPoint = Record<SupplySlice, number> & {
   priceUsd: number | null
   timestamp: number
   totalSupply: number
-}
-
-export type ChartPoint = {
-  x: number
-  y: number
 }
 
 // legend order, top of the stack first
@@ -40,12 +38,6 @@ export const sliceLabels = {
   nonCirculating: 'non-circulating',
   staked: 'staked',
 } as const
-
-const daysPerPeriod: Record<SupplyPeriod, number> = {
-  '1m': 30,
-  '1w': 7,
-  '3m': 90,
-}
 
 const oneDayMs = 24 * 60 * 60 * 1000
 
@@ -98,7 +90,7 @@ export const parseSupplyPoints = (points: SupplyPoint[], decimals: number) =>
 const hasPrices = (points: ParsedSupplyPoint[]) =>
   points.every(point => point.priceUsd !== null)
 
-const canRender = (points: ParsedSupplyPoint[], unit: SupplyUnit) =>
+const canRender = (points: ParsedSupplyPoint[], unit: ChartUnit) =>
   unit === 'hemi' || hasPrices(points)
 
 const toValue = ({
@@ -108,7 +100,7 @@ const toValue = ({
 }: {
   point: ParsedSupplyPoint
   slice: SupplySlice
-  unit: SupplyUnit
+  unit: ChartUnit
 }) => (unit === 'usd' ? point[slice] * (point.priceUsd ?? 0) : point[slice])
 
 export const toChartSeries = function ({
@@ -116,7 +108,7 @@ export const toChartSeries = function ({
   unit,
 }: {
   points: ParsedSupplyPoint[]
-  unit: SupplyUnit
+  unit: ChartUnit
 }) {
   if (!canRender(points, unit)) {
     return undefined
@@ -144,7 +136,7 @@ export const getSupplySummary = function ({
   unit,
 }: {
   points: ParsedSupplyPoint[]
-  unit: SupplyUnit
+  unit: ChartUnit
 }) {
   const first = points.at(0)
   const last = points.at(-1)

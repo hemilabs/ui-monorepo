@@ -7,14 +7,11 @@ import { MagnifyingGlassIcon } from 'components/icons/magnifyingGlassIcon'
 import { SearchInput } from 'components/inputText'
 import { Modal } from 'components/modal'
 import { useTopTokensToHighlight } from 'hooks/useTopTokensToHighlight'
-import { useUserTokenList } from 'hooks/useUserTokenList'
-import partition from 'lodash/partition'
 import { useState } from 'react'
 import { screenBreakpoints } from 'styles'
 import { Token as TokenType } from 'types/token'
 import { useTranslations } from 'use-intl'
-import { isCustomToken } from 'utils/token'
-import { type Chain, isAddress, isAddressEqual } from 'viem'
+import { isAddress, isAddressEqual } from 'viem'
 
 import { List } from './list'
 import { NoTokensMatch } from './noTokensMatch'
@@ -23,7 +20,6 @@ import { TokenQuickSelect } from './tokenQuickSelect'
 import { getQuickSelectionTokens } from './utils'
 
 type Props = {
-  chainId: Chain['id']
   closeModal: () => void
   onSelectToken: (token: TokenType) => void
   tokens: TokenType[]
@@ -33,7 +29,6 @@ const bySymbol = (a: TokenType, b: TokenType) =>
   a.symbol.localeCompare(b.symbol)
 
 export const TokenList = function ({
-  chainId,
   closeModal,
   onSelectToken,
   tokens,
@@ -41,7 +36,6 @@ export const TokenList = function ({
   const t = useTranslations('token-selector')
   const [searchText, setSearchText] = useState('')
   const debouncedSearchText = useDebounce(searchText)
-  const { userTokenList } = useUserTokenList(chainId)
   const { width } = useWindowSize()
   const { height: viewportHeight } = useVisualViewportSize()
 
@@ -69,7 +63,7 @@ export const TokenList = function ({
 
   const userTypedAddress = isAddress(debouncedSearchText)
 
-  const tokensToList = tokens.filter(
+  const supportedTokens = tokens.filter(
     token =>
       token.name.toLowerCase().includes(debouncedSearchText.toLowerCase()) ||
       token.symbol.toLowerCase().includes(debouncedSearchText.toLowerCase()) ||
@@ -78,10 +72,6 @@ export const TokenList = function ({
       (userTypedAddress &&
         isAddress(token.address) &&
         isAddressEqual(token.address, debouncedSearchText)),
-  )
-
-  const [customTokens, supportedTokens] = partition(tokensToList, token =>
-    isCustomToken(userTokenList, token),
   )
 
   const {
@@ -106,12 +96,10 @@ export const TokenList = function ({
     )
     .sort(bySymbol)
 
-  const sortedTokens = [
-    // Do not sort 'fetchedSortedTopTokens' again; already sorted by balance in hook.
-    ...(fetchedSortedTopTokens as TokenType[])
-      .concat(restOfTokens)
-      .concat(customTokens.sort(bySymbol)),
-  ]
+  // Do not sort 'fetchedSortedTopTokens' again; already sorted by balance in hook.
+  const sortedTokens = (fetchedSortedTopTokens as TokenType[]).concat(
+    restOfTokens,
+  )
 
   function handleSelectToken(token: TokenType) {
     onSelectToken(token)
@@ -185,18 +173,13 @@ export const TokenList = function ({
         </div>
       ) : sortedTokens.length > 0 ? (
         <List
-          chainId={chainId}
           isSearchActive={!!searchText}
           onSelectToken={token => handleSelectToken(token)}
           tokens={searchText ? restOfTokens : supportedTokens.sort(bySymbol)}
           yourTokens={fetchedSortedTopTokens}
         />
       ) : (
-        <NoTokensMatch
-          chainId={chainId}
-          closeModal={closeModal}
-          searchText={debouncedSearchText}
-        />
+        <NoTokensMatch searchText={debouncedSearchText} />
       )}
     </div>
   )

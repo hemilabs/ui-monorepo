@@ -53,8 +53,8 @@ const WatchEvmWithdrawal = function ({
       let hasWorkedPostedBack = false
       const saveUpdates = function (
         event: MessageEvent<{
-          updates: Partial<ToEvmWithdrawOperation>
           type: string
+          updates: Partial<ToEvmWithdrawOperation>
         }>,
       ) {
         // This is needed because this component is rendered per-withdrawal, so each component will receive the posted message

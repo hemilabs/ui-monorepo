@@ -1,9 +1,11 @@
 import type { Row, Table } from '@tanstack/react-table'
+import type { ComponentProps, ComponentType } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { Column } from './column'
 
 type Props<TData> = {
+  CellComponent?: ComponentType<ComponentProps<'td'>>
   loading: boolean
   rows: Row<TData>[]
   skeletonRows: number
@@ -11,6 +13,7 @@ type Props<TData> = {
 }
 
 export function LoadingSkeletonRows<TData>({
+  CellComponent = Column,
   loading,
   rows,
   skeletonRows,
@@ -23,15 +26,18 @@ export function LoadingSkeletonRows<TData>({
   return (
     <>
       {Array.from(Array(skeletonRows).keys()).map(index => (
-        <tr className="flex items-center" key={`skeleton-${index}`}>
+        <tr
+          className="flex items-center *:cursor-default"
+          key={`skeleton-${index}`}
+        >
           {table.getVisibleLeafColumns().map(column => (
-            <Column
+            <CellComponent
               className={column.columnDef.meta?.className ?? 'justify-start'}
               key={column.id}
               style={{ width: column.columnDef.meta?.width }}
             >
               <Skeleton className="w-16" />
-            </Column>
+            </CellComponent>
           ))}
         </tr>
       ))}

@@ -108,3 +108,14 @@ export const InSettingsRow: Story = {
     )
   },
 }
+
+export const InSettingsRowOnGray: Story = {
+  decorators: [
+    Story => (
+      <div className="bg-neutral-50 p-4">
+        <Story />
+      </div>
+    ),
+  ],
+  render: InSettingsRow.render,
+}

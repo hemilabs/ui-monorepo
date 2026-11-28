@@ -6,7 +6,10 @@ import { CollectAllRewardsDashboardStatus } from 'types/stakingDashboard'
 import { useTranslations } from 'use-intl'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
-import { useCollectRewards } from '../../_hooks/useCollectAllRewards'
+import {
+  useCollectRewards,
+  useIsCollectingRewards,
+} from '../../_hooks/useCollectAllRewards'
 import { useRewardsPaused } from '../../_hooks/useRewardsPaused'
 
 export const RetryCollectRewards = function () {
@@ -29,12 +32,13 @@ export const RetryCollectRewards = function () {
 
   const isPaused = useRewardsPaused()
 
-  const { isPending: isCollecting, mutate: runCollectRewards } =
-    useCollectRewards({
-      completedSteps,
-      tokenIds,
-      updateCollectRewardsDashboardOperation,
-    })
+  const isCollecting = useIsCollectingRewards()
+
+  const { mutate: runCollectRewards } = useCollectRewards({
+    completedSteps,
+    tokenIds,
+    updateCollectRewardsDashboardOperation,
+  })
 
   const handleRetry = function (e: FormEvent) {
     e.preventDefault()

@@ -4,11 +4,9 @@ import { Table } from 'components/table'
 import { Header } from 'components/table/_components/header'
 import { TableCard } from 'components/table/tableCard'
 import { TokenLogo } from 'components/tokenLogo'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useTokenPrices } from 'hooks/useTokenPrices'
-import { useUmami } from 'hooks/useUmami'
-import { usePathname, useRouter } from 'i18n/navigation'
-import { MouseEvent, useCallback, useMemo } from 'react'
+import { usePathname } from 'i18n/navigation'
+import { useCallback, useMemo } from 'react'
 import { priorityStakeTokensToSort, StakeToken } from 'types/stake'
 import { useTranslations } from 'use-intl'
 import { sortTokens } from 'utils/sortTokens'
@@ -21,7 +19,7 @@ import { TokenBalance } from '../../../_components/tokenBalance'
 import { useDrawerStakeQueryString } from '../../../_hooks/useDrawerStakeQueryString'
 import { useStakePositions } from '../../../_hooks/useStakedBalance'
 
-import { WelcomeStake } from './welcomeStake'
+import { BoostStakingEnded } from './boostStakingEnded'
 
 type ActionProps = {
   stake: StakeToken
@@ -29,31 +27,28 @@ type ActionProps = {
 
 const CallToAction = function ({ stake }: ActionProps) {
   const pathname = usePathname()
-  const t = useTranslations('stake-page')
+  const t = useTranslations()
 
   const queryString = queryStringObjectToString({
-    mode: 'manage',
+    drawerMode: 'manage',
     tokenAddress: stake.address,
   })
 
   return (
-    <span className="[&>a:focus-visible]:ring-2 [&>a:focus-visible]:ring-neutral-500">
-      <ButtonLink
-        aria-label={t('dashboard.manage-token', { symbol: stake.symbol })}
-        href={`${pathname}${queryString}`}
-        onClick={function (e) {
-          // prevent full navigation - we want a shallow navigation to open the drawer
-          e.preventDefault()
-          // navigation is done in event delegation, in the row
-        }}
-        size="xSmall"
-        variant="tertiary"
-      >
-        <span className="text-lg font-normal text-neutral-500 transition duration-300 hover:text-neutral-950">
-          ···
-        </span>
-      </ButtonLink>
-    </span>
+    <ButtonLink
+      aria-label={t('stake-page.drawer.unstake-token', {
+        symbol: stake.symbol,
+      })}
+      href={`${pathname}${queryString}`}
+      onClick={function (e) {
+        // prevent full navigation - we want a shallow navigation to open the drawer
+        e.preventDefault()
+        // navigation is done in event delegation, in the row
+      }}
+      size="xSmall"
+    >
+      {t('common.unstake')}
+    </ButtonLink>
   )
 }
 
@@ -102,7 +97,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     ),
     header: () => <Header text={t('action')} />,
     id: 'action',
-    meta: { className: 'justify-start lg:justify-end', width: 75 },
+    meta: { className: 'justify-start lg:justify-end', width: 100 },
   },
 ]
 
@@ -110,9 +105,6 @@ export const StakeAssetsTable = function () {
   const t = useTranslations('stake-page')
   const { loading: isLoadingBalance, tokensWithPosition } = useStakePositions()
   const { setDrawerQueryString } = useDrawerStakeQueryString()
-  const router = useRouter()
-  const [networkType] = useNetworkType()
-  const { track } = useUmami()
 
   const {
     data: prices,
@@ -137,19 +129,6 @@ export const StakeAssetsTable = function () {
     [isLoading, errorUpdateCount, tokensWithPosition, prices],
   )
 
-  const stakeMoreUrl = 'stake'
-  function goToStakePage(e: MouseEvent<HTMLAnchorElement>) {
-    track?.('stake - stake more')
-    // If the user is trying to open the link in a new tab or window, let the browser handle it
-    if (e.ctrlKey || e.metaKey || e.shiftKey) {
-      return
-    }
-    e.preventDefault()
-    e.stopPropagation()
-    const queryString = queryStringObjectToString({ networkType })
-    router.push(`/${stakeMoreUrl}${queryString}`)
-  }
-
   const handleRowClick = useCallback(
     (token: StakeToken) => setDrawerQueryString('manage', token.address),
     [setDrawerQueryString],
@@ -164,7 +143,7 @@ export const StakeAssetsTable = function () {
       <div className="h-[56dvh] md:min-h-136">
         {isEmpty ? (
           <TableCard>
-            <WelcomeStake href={`/${stakeMoreUrl}`} onClick={goToStakePage} />
+            <BoostStakingEnded />
           </TableCard>
         ) : (
           <Table

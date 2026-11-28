@@ -106,18 +106,16 @@ export const ReviewCollectRewards = function ({ onClose }: Props) {
     )
     const values = {
       fromEpoch: step.fromEpoch.toString(),
-      step: positionSteps.indexOf(step) + 1,
       toEpoch: step.toEpoch.toString(),
       tokenId: step.tokenId.toString(),
-      total: positionSteps.length,
     }
     if (positionCount > 1) {
       return positionSteps.length > 1
-        ? t('drawer.claim-position-rewards-step', values)
+        ? t('drawer.claim-position-rewards-epochs', values)
         : t('drawer.claim-position-rewards', values)
     }
     return positionSteps.length > 1
-      ? t('drawer.claim-rewards-step', values)
+      ? t('drawer.claim-rewards-epochs', values)
       : t('drawer.claim-rewards', values)
   }
 
@@ -169,7 +167,11 @@ export const ReviewCollectRewards = function ({ onClose }: Props) {
       heading={t('claim-rewards.heading')}
       onClose={onClose}
       steps={steps.map(addCollectRewardsStep)}
-      subheading={t('claim-rewards.subheading')}
+      subheading={t(
+        steps.length > 1
+          ? 'claim-rewards.subheading-by-value'
+          : 'claim-rewards.subheading',
+      )}
       token={token}
     />
   )

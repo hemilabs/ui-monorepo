@@ -20,16 +20,10 @@ export const useVeHemiToken = function () {
       query.data
         ? {
             ...query.data,
-            extensions: {
-              ...query.data.extensions,
-              l1LogoURI:
-                query.data.extensions?.l1LogoURI ??
-                hemiToken.extensions?.l1LogoURI,
-            },
             logoURI: query.data.logoURI ?? hemiToken.logoURI,
           }
         : undefined,
-    [hemiToken.extensions?.l1LogoURI, hemiToken.logoURI, query.data],
+    [hemiToken.logoURI, query.data],
   )
 
   return { ...query, data }

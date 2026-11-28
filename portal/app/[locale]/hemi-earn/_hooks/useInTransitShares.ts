@@ -1,15 +1,15 @@
 import { sumInTransitSharesByShare } from '../_utils/earnRows'
 
-import { useEarnPools } from './useEarnPools'
 import { useEarnTransactions } from './useEarnTransactions'
+import { useEarnVaults } from './useEarnVaults'
 
 export const useInTransitShares = function () {
   const { data: transactions = [], isPending: isTransactionsPending } =
     useEarnTransactions()
-  const { data: pools = [], isPending: isPoolsPending } = useEarnPools()
+  const { data: vaults = [], isPending: isVaultsPending } = useEarnVaults()
 
   return {
-    data: sumInTransitSharesByShare(transactions, pools),
-    isPending: isTransactionsPending || isPoolsPending,
+    data: sumInTransitSharesByShare(transactions, vaults),
+    isPending: isTransactionsPending || isVaultsPending,
   }
 }

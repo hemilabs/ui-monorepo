@@ -1,8 +1,9 @@
-import { StakingPosition } from 'types/stakingDashboard'
 import { secondsPerDay, unixNowTimestamp } from 'utils/time'
-import { MaxLockDurationSeconds, MinLockDurationSeconds } from 've-hemi-actions'
-
-import { getLockEnd, getWeightAt } from './lockEpochs'
+import {
+  MaxLockDurationSeconds,
+  MinLockDurationSeconds,
+  SixDaysSeconds,
+} from 've-hemi-actions'
 
 export const minDays = Math.floor(MinLockDurationSeconds / secondsPerDay)
 export const maxDays = Math.floor(MaxLockDurationSeconds / secondsPerDay)
@@ -48,52 +49,44 @@ export function daysToSeconds(days: number | bigint): number | bigint {
 export const wholeDaysToSeconds = (days: number) =>
   daysToSeconds(BigInt(Math.trunc(days)))
 
-type GetUnlockInfoProps = {
-  timestamp: number | bigint
-  lockTime: number | bigint
+// The contract only accepts an extension whose rounded-down end lands at least one epoch past the current one
+export const getExtensionAvailableAt = (lockEnd: number) =>
+  lockEnd + SixDaysSeconds - MaxLockDurationSeconds
+
+export const getMinExtensionDays = function ({
+  lockEnd,
+  now,
+}: {
+  lockEnd: number
+  now: number
+}) {
+  if (now < getExtensionAvailableAt(lockEnd)) {
+    return null
+  }
+  const minSeconds = lockEnd + SixDaysSeconds - now
+  if (minSeconds <= MinLockDurationSeconds) {
+    return minDays
+  }
+  const days = Math.ceil(minSeconds / secondsPerDay)
+  return Math.min(minDays + Math.ceil((days - minDays) / step) * step, maxDays)
 }
 
-export function getUnlockInfo({ lockTime, timestamp }: GetUnlockInfoProps) {
+type GetUnlockInfoProps = {
+  unlockTime: number | bigint
+}
+
+export function getUnlockInfo({ unlockTime }: GetUnlockInfoProps) {
   const currentTimeInSeconds = Number(unixNowTimestamp())
 
-  // Convert to Number for calculations
-  const timestampNum = Number(timestamp)
-  const lockTimeNum = Number(lockTime)
+  const unlockTimeNum = Number(unlockTime)
+  const timeRemainingSeconds = unlockTimeNum - currentTimeInSeconds
 
-  const unlockTime = getLockEnd({
-    lockTime: lockTimeNum,
-    timestamp: timestampNum,
-  })
-  const timeRemainingSeconds = unlockTime - currentTimeInSeconds
-
-  // Calculate unlock date in UTC
-  const unlockDate = new Date(unlockTime * 1000)
+  const unlockDate = new Date(unlockTimeNum * 1000)
 
   return {
     currentTimeInSeconds,
     timeRemainingSeconds,
-    totalLockTimeSeconds: lockTimeNum,
     unlockDate,
-    unlockTime,
+    unlockTime: unlockTimeNum,
   }
 }
-
-type PredictVotingPowerProps = Pick<
-  StakingPosition,
-  'amount' | 'lockTime' | 'timestamp'
-> & { now?: number }
-
-export const predictVotingPower = ({
-  amount,
-  lockTime,
-  now = Number(unixNowTimestamp()),
-  timestamp,
-}: PredictVotingPowerProps) =>
-  getWeightAt({
-    amount,
-    at: now,
-    lockEnd: getLockEnd({
-      lockTime: Number(lockTime),
-      timestamp: Number(timestamp),
-    }),
-  })

@@ -56,6 +56,7 @@ export function useEstimateBtcWithdrawFees({
   })
 
   const { data: gasUnits, isError: isGasError } = useEstimateGas({
+    chainId: hemi.id,
     data: encodedData,
     query: { enabled: isSuccess && !!encodedData },
     to: bitcoinManagerAddresses,

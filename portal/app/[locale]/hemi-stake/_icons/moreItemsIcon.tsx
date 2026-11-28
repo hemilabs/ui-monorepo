@@ -9,6 +9,7 @@ export const MoreItemsIcon = (props: ComponentProps<'svg'>) => (
     {...props}
   >
     <path
+      className="transition-colors duration-200"
       d="M2 8a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm4.5 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm6-1.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"
       fill="#737373"
     />

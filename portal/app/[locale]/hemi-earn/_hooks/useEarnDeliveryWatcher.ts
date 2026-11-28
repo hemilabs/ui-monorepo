@@ -20,7 +20,7 @@ import {
 import { useEarnTransactionsQuery } from './useEarnTransactionsQuery'
 import { useLocalEarnOperations } from './useLocalEarnOperations'
 
-const vetroPoolsPrefix = ['hemi-earn', 'pools'] as const
+const vetroVaultsPrefix = ['hemi-earn', 'vaults'] as const
 const vetroUserShareValuePrefix = ['hemi-earn', 'user-share-value'] as const
 
 type ReconcileArgs = {
@@ -99,9 +99,9 @@ function invalidateOnDelivery(
   queryClient: ReturnType<typeof useQueryClient>,
   events: DeliveredEvent[],
 ) {
-  queryClient.invalidateQueries({ queryKey: vetroPoolsPrefix })
+  queryClient.invalidateQueries({ queryKey: vetroVaultsPrefix })
   queryClient.invalidateQueries({ queryKey: vetroUserShareValuePrefix })
-  // Sync read of the already-loaded config list; if not cached, skip the share-balance key (pools/positions still invalidate).
+  // Sync read of the already-loaded config list; if not cached, skip the share-balance key (vaults/positions still invalidate).
   const configs =
     queryClient.getQueryData(hemiEarnAssetConfigsQueryOptions().queryKey) ?? []
   for (const event of events) {

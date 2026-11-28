@@ -1,7 +1,6 @@
 import { type AnalyticsEvent } from 'app/analyticsEvents'
 import { Link } from 'components/link'
 import { ComponentProps, ReactNode, ComponentType } from 'react'
-import { UrlObject } from 'url'
 
 import { IconContainer } from './iconContainer'
 
@@ -24,10 +23,10 @@ export const ItemContainer = ({
   ...props
 }: Selectable &
   ComponentProps<'div'> & {
+    hoverClassName?: string
     justifyItems?: string
     padding?: string
     selectedClassName?: string
-    hoverClassName?: string
   }) => (
   <div
     {...props}
@@ -47,7 +46,6 @@ export type NavItemProps = {
   rightSection?: ReactNode
   row?: ComponentType<ComponentProps<'div'>>
   text: string
-  urlToBeSelected?: string | UrlObject
 }
 
 export const ItemText = ({
@@ -56,7 +54,7 @@ export const ItemText = ({
   selectedClassName = 'text-orange-600',
   text,
 }: Pick<NavItemProps, 'text'> &
-  Selectable & { selectedClassName?: string; hoverClassName?: string }) => (
+  Selectable & { hoverClassName?: string; selectedClassName?: string }) => (
   <span
     className={`text-sm font-semibold transition-colors duration-300 md:font-medium ${
       selected

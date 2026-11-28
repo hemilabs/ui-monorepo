@@ -61,8 +61,8 @@ export type ToBtcWithdrawOperation = CommonOperation &
     l2ChainId: Chain['id']
   } & {
     challengeTxHash?: Hash
-    uuid?: string // bigint can't be serialized into local storage
     netSatsAfterFee: string
+    uuid?: string // bigint can't be serialized into local storage
     vault: Address
   }
 

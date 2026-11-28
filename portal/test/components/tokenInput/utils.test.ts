@@ -1,4 +1,4 @@
-import { validateInput } from 'components/tokenInput/utils'
+import { parseAmountInput, validateInput } from 'components/tokenInput/utils'
 import { parseTokenUnits } from 'utils/token'
 import { zeroAddress } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
@@ -234,4 +234,25 @@ describe('validateInput', function () {
       isValid: true,
     })
   })
+})
+
+describe('parseAmountInput', function () {
+  it('parses a valid amount', function () {
+    expect(parseAmountInput('1.5', token)).toBe(parseTokenUnits('1.5', token))
+  })
+
+  it('parses an amount surrounded by spaces', function () {
+    expect(parseAmountInput(' 1 ', token)).toBe(parseTokenUnits('1', token))
+  })
+
+  it('returns zero for an empty input', function () {
+    expect(parseAmountInput('', token)).toBe(BigInt(0))
+  })
+
+  it.each(['1e3', '+1', ' ', '0x10', 'Infinity', '-1', 'abc'])(
+    'returns undefined for "%s"',
+    function (value) {
+      expect(parseAmountInput(value, token)).toBeUndefined()
+    },
+  )
 })

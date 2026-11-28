@@ -3,7 +3,6 @@ import { ButtonIcon } from 'components/button'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { HamburgerIcon } from 'components/icons/hamburgerIcon'
 import { lazyWithFallback } from 'components/lazyWithFallback'
-import { StakeTabs } from 'components/stakeTabs'
 import { TunnelTabs } from 'components/tunnelTabs'
 
 import { Badge } from '../badge'
@@ -35,7 +34,6 @@ export const Header = ({ isMenuOpen, openNavbar, toggleMenu }: Props) => (
       </ButtonIcon>
     </div>
     <div className="hidden pl-3 md:block">
-      <StakeTabs />
       <TunnelTabs />
       <HemiStakeTabs />
     </div>

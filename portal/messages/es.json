@@ -10,7 +10,8 @@
     "approve-and-deposit": "Aprobar y Depositar",
     "approve-and-withdraw": "Aprobar y Retirar",
     "approving": "Aprobando...",
-    "approving-token": "Aprobando {symbol}",
+    "apy": "TEA",
+    "balance": "Balance",
     "cancel": "Cancelar",
     "close": "Cerrar",
     "close-notification": "Cerrar la notificación",
@@ -40,9 +41,7 @@
     "network-fees": "Tarifa de red",
     "network-gas-fee": "Tarifa de gas de {network}",
     "only-live-on-mainnet": "Solo disponible en Mainnet",
-    "open": "Abrir",
     "powered-by": "Con tecnología de <company></company>",
-    "stake": "Stake",
     "success": "Exitoso",
     "switch-to-mainnet": "Cambiar a Mainnet",
     "token-price": "Precio de {symbol}",
@@ -156,111 +155,69 @@
     "view-all-tutorials": "Ver todos los tutoriales"
   },
   "hemi-earn": {
-    "heading": "Obtenga rendimiento con Hemi Earn",
+    "apy-provided-by-vetro": "TEA · proporcionada por Vetro",
+    "apy-source": "La TEA es una estimación variable proporcionada por Vetro, basada en el rendimiento reciente del fondo. No es una promesa ni un pronóstico de rendimientos futuros y puede cambiar en cualquier momento. Los rendimientos se muestran {fees, select, included {después de} other {antes de}} tarifas.",
+    "blocked": {
+      "restricted-location": {
+        "body": "Hemi Earn es operado por Vetro Service & Support Corp. y no se ofrece a personas en los Estados Unidos ni en otras jurisdicciones restringidas. Si ya tiene una posición, usted puede retirarla.",
+        "heading": "Hemi Earn no está disponible en su ubicación"
+      },
+      "sanctioned-wallet": {
+        "body": "Esta billetera no cumple los requisitos de elegibilidad de Vetro para Hemi Earn. Cualquier posición existente puede retirarse. Si tiene preguntas, contacte al <link>soporte de Vetro</link>.",
+        "heading": "Esta billetera no puede depositar en Hemi Earn"
+      }
+    },
+    "could-not-load-vaults": "No pudimos cargar los fondos",
+    "deposits-paused": "Los depósitos nuevos están pausados en este momento.",
+    "footer": {
+      "attribution": "Hemi Earn es operado por Vetro Service & Support Corp. Los fondos disponibles a través de Hemi Earn pueden ser operados por Vetro o por terceros. Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. y sus afiliadas no operan, administran, custodian ni garantizan Hemi Earn ni ningún fondo, y no son parte de su acuerdo con Vetro. Hemi Earn no está disponible para personas de EE. UU. ni para otras personas restringidas.",
+      "vetro-privacy": "Política de Privacidad de Vetro",
+      "vetro-terms": "Términos de Uso de Vetro"
+    },
+    "heading": "Obtenga rendimiento con su BTC y sus stablecoins",
     "info": {
-      "earned-amount": "Cantidad ganada",
-      "from-pools": "{count, plural, one {De # fondo} other {De # fondos}}",
-      "staked-balance": "Su saldo invertido"
+      "estimated-earnings": "Sus ganancias estimadas",
+      "from-vaults": "{count, plural, one {De # fondo} other {De # fondos}}",
+      "your-deposits": "Sus depósitos"
     },
     "navigation": {
       "back": "Atrás",
       "hemi-earn": "Hemi Earn",
-      "pool-name": "fondo {tokenSymbol}"
+      "vault-name": "fondo {tokenSymbol}"
     },
-    "pool": {
-      "apy": "TEA",
-      "composition": {
-        "amount": "Monto",
-        "by-protocol": "Por protocolo",
-        "by-token": "Por token",
-        "position": "Posición",
-        "protocols-count": "{count, plural, one {# protocolo} other {# protocolos}}",
-        "reserve-buffer": "Reserva de liquidez",
-        "share": "Participación",
-        "title": "Composición",
-        "tokens-count": "{count, plural, one {# token} other {# tokens}}",
-        "view-mode": "Modo de vista"
-      },
-      "deposit-successful": "Depósito exitoso",
-      "drawer": {
-        "approving": "Aprobando {symbol}",
-        "cooldown-ended": "Período de espera completado",
-        "deposit": {
-          "heading": "Revisar depósito de stake",
-          "subheading": "Su transacción ha sido enviada y está esperando confirmación en la blockchain."
-        },
-        "funds-returned": "Fondos devueltos",
-        "funds-to-recover": "Fondos por recuperar",
-        "get-share-tokens": "Recibir share tokens",
-        "receive-token": "Recibir {symbol}",
-        "shares-returned": "Shares devueltas",
-        "shares-to-recover": "Shares por recuperar",
-        "stake-token": "Hacer stake de {symbol}",
-        "unstake-token": "Hacer unstake de {symbol}",
-        "wait-cooldown-countdown": "{days, plural, =0 {El período de espera termina en {hours}h} other {El período de espera termina en #d {hours}h}}",
-        "wait-cooldown-countdown-soon": "El período de espera termina en menos de una hora",
-        "wait-cooldown-pending": "El período de espera es de {days, plural, one {# día} other {# días}}",
-        "withdraw": {
-          "heading": "Revisar retiro de stake",
-          "subheading": "Su transacción ha sido enviada y está esperando confirmación en la blockchain."
-        }
-      },
-      "form": {
-        "amount-too-small": "Monto demasiado pequeño",
-        "asset-unavailable": "Activo no disponible",
-        "available": "Disponible",
-        "bridging-fees": "Tarifas de bridge",
-        "cooldown-warning": "Retirar fondos tarda {days, plural, one {# día} other {# días}} en completarse.",
-        "cooldown-warning-fallback": "Retirar fondos tarda algunos días en completarse.",
-        "ethereum-gas-fee": "Tarifa de gas de Ethereum",
-        "hemi-fees": "Tarifas de Hemi",
-        "network-error": "Error al previsualizar — reintente",
-        "share-token-available-to-withdraw": "Token de participación disponible para retirar",
-        "withdraw-share-tokens-as": "Retirar token de participación como",
-        "withdrawing": "Retirando...",
-        "you-will-receive": "Recibirá"
-      },
-      "here-is-your-tx": "Aquí está su transacción:",
-      "historical-metrics": {
-        "1-week": "1 semana",
-        "1-year": "1 año",
-        "apy": "TEA",
-        "metric": "Métrica",
-        "month": "{count, plural, one {# mes} other {# meses}}",
-        "period": "Período",
-        "pool-deposits": "Depósitos del fondo",
-        "title": "Métricas históricas"
-      },
-      "settings": {
-        "accept-risk": "Entiendo y acepto el riesgo",
-        "advanced-settings": "Configuración avanzada",
-        "auto": "Auto",
-        "continue-anyway": "Continuar de todos modos",
-        "high-slippage": "Slippage alto",
-        "high-slippage-value": "Slippage alto {value}%",
-        "low-slippage": "Slippage demasiado bajo",
-        "low-slippage-value": "Slippage bajo {value}%",
-        "max-slippage": "Slippage máximo",
-        "slippage-value": "Slippage {value}%",
-        "very-high-slippage": "Slippage muy alto",
-        "very-high-slippage-value": "Slippage muy alto {value}%",
-        "warning-description-deposit": "<highlight>Su slippage está configurado por encima del {threshold}%.</highlight> Esto aumenta su exposición al impacto de precio. Podría recibir muchas menos shares de las cotizadas.",
-        "warning-description-withdrawal": "<highlight>Su slippage está configurado por encima del {threshold}%.</highlight> Esto aumenta su exposición al impacto de precio. Podría recibir muchos menos tokens de los cotizados.",
-        "warning-title": "Advertencia de slippage alto"
-      },
-      "total-deposits": "Depósitos totales del fondo",
-      "withdraw-successful": "Retiro exitoso"
+    "operator": {
+      "banner": "Hemi Earn es operado por Vetro Service & Support Corp. Hemi solo proporciona esta interfaz. <link>Ver los Términos de Vetro</link>",
+      "deposits-paused-details": "Los depósitos nuevos en Hemi Earn están pausados en este momento en el portal de Hemi. Su posición actual no se ve afectada por esta pausa, y usted puede seguir viéndola y retirándola más abajo. Si tiene preguntas, contacte al <link>soporte de Vetro</link>.",
+      "note": "Operado por Vetro Service & Support Corp. <link>Términos</link>"
     },
-    "pool-info": {
-      "apy": "TEA",
-      "manage": "Gestionar",
-      "pool-contract": "Contrato del fondo",
-      "share-token": "Token de participación",
-      "staked-balance": "Su saldo invertido",
-      "total-deposits": "Depósitos totales"
-    },
-    "subheading": "Gane rendimiento con sus activos en un solo clic",
+    "restricted-location": "Hemi Earn no está disponible en su ubicación.",
+    "risk-warning": "Los rendimientos son variables y no están garantizados. Puede perder parte o la totalidad de su depósito.",
+    "sanctioned-wallet": "Esta billetera no puede depositar en Hemi Earn.",
+    "subheading": "Hemi Earn, operado por Vetro, le da acceso a fondos de rendimiento directamente desde el portal de Hemi. Elija un fondo y deposite en unos pocos pasos. Los rendimientos son variables y no están garantizados.",
     "switch-to-start-earning": "Puede cambiar de red para comenzar a ganar con Hemi.",
+    "terms": {
+      "agree-and-continue": "Aceptar y continuar",
+      "cannot-sign": "Su billetera no admite la firma necesaria para aceptar los Términos de Vetro. Para depositar en Hemi Earn, conecte una billetera que admita la firma de mensajes.",
+      "checkbox": "He leído y acepto los Términos de Uso de Vetro, incluidos los Términos de Hemi Earn, y su Política de Privacidad. Entiendo que Hemi Earn es operado por Vetro Service & Support Corp., que mi acuerdo es únicamente con Vetro, y que Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. y sus afiliadas no son parte de él ni tienen obligaciones conmigo respecto de Hemi Earn. Confirmo que no soy una persona de EE. UU. ni una Persona Restringida según los Términos de Vetro.",
+      "handoff": {
+        "before-you-continue": "Antes de continuar, tenga en cuenta lo siguiente:",
+        "body": "Hemi Earn es un servicio de terceros operado por Vetro Service & Support Corp., una empresa de Panamá. Cuando usa Hemi Earn, su acuerdo es con Vetro, no con Hemi. Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. y sus afiliadas solo proporcionan esta interfaz. No operan, administran, custodian ni garantizan Hemi Earn ni ningún fondo, y no son parte de su acuerdo con Vetro.",
+        "bullets": {
+          "assets": "Sus activos se envían de su billetera a contratos inteligentes operados por Vetro, que los depositan en el fondo que elija y pueden transferirlos entre redes. Algunos fondos son operados por terceros, no por Vetro. El operador de cada fondo se muestra en su página.",
+          "not-available": "Hemi Earn no está disponible para personas de EE. UU. ni para otras personas restringidas.",
+          "withdrawals": "Los retiros pueden demorarse o estar sujetos a colas o períodos de bloqueo.",
+          "yields": "Los rendimientos son variables y no están garantizados. Podría perder parte o la totalidad de su depósito, incluso por fallas de contratos inteligentes, puentes, operadores de fondos, estrategias, stablecoins o mercados."
+        },
+        "privacy-policy": "Política de Privacidad de Vetro",
+        "terms-of-use": "Términos de Uso de Vetro",
+        "title": "Está entrando en Hemi Earn, operado por Vetro"
+      },
+      "re-acceptance": {
+        "body": "Para hacer nuevos depósitos en Hemi Earn, revise y acepte los Términos de Uso actualizados de Vetro. Puede retirar su posición actual en cualquier momento sin aceptarlos. <link>Ver los Términos actualizados</link>",
+        "title": "Vetro actualizó sus Términos"
+      },
+      "signing-note": "A continuación, su billetera le pedirá que firme un mensaje confirmando su acuerdo. Firmar es gratis y no envía una transacción."
+    },
     "transactions": {
       "banner": {
         "cancelled": {
@@ -275,24 +232,24 @@
           "heading": "No pudimos recibir sus share tokens automáticamente",
           "subheading": "Haga clic en 'Recibir share tokens' para recibir sus tokens."
         },
+        "contact-support": "Contactar al soporte de Vetro",
         "recover-funds": {
-          "heading": "La transacción falló",
-          "subheading": "Algo salió mal. Use el botón de abajo para devolver sus fondos a su billetera."
+          "heading": "La transacción falló"
         },
         "recover-shares": {
-          "heading": "La transacción falló",
-          "subheading": "Algo salió mal. Use el botón de abajo para devolver sus share tokens a su billetera."
+          "heading": "La transacción falló"
         },
         "remote-failed": {
+          "deposits-paused": "Los depósitos nuevos están pausados, así que devuelva sus fondos a su billetera por ahora.",
           "heading": "Su retiro quedó atascado en Ethereum",
           "heading-deposit": "Su depósito quedó atascado en Ethereum",
           "heading-slippage": "Su retiro no se completó",
           "heading-slippage-deposit": "Su depósito no se completó",
-          "subheading": "El paso entre redes falló. Reintente para agregar gas y completar el retiro, o cancele para devolver sus share tokens a su billetera.",
-          "subheading-deposit": "El paso entre redes falló. Reintente para agregar gas y completar el depósito, o cancele para devolver sus fondos a su billetera.",
-          "subheading-slippage": "El precio superó su límite de slippage antes de que el paso final pudiera ejecutarse, por lo que sus share tokens siguen retenidos. Devuélvalos a su billetera y luego intente el retiro de nuevo con una tolerancia de slippage mayor.",
-          "subheading-slippage-deposit": "El precio superó su límite de slippage antes de que el paso final pudiera ejecutarse, por lo que sus fondos siguen retenidos. Devuélvalos a su billetera y luego intente el depósito de nuevo con una tolerancia de slippage mayor."
+          "restricted-location": "Hemi Earn no está disponible en su ubicación, así que devuelva sus fondos a su billetera.",
+          "sanctioned-wallet": "Esta billetera no puede depositar en Hemi Earn, así que devuelva sus fondos a su billetera.",
+          "vault-delisted": "Este fondo ya no acepta depósitos, así que devuelva sus fondos a su billetera."
         },
+        "transfer-incomplete": "Esta transferencia aún no se ha completado. Hemi no puede acceder a los activos en Hemi Earn, ni moverlos ni recuperarlos. Contacte al soporte de Vetro e incluya el hash de su transacción:",
         "withdraw": {
           "heading": "Su retiro está listo",
           "subheading": "Esto normalmente ocurre de forma automática, pero puede hacerlo usted mismo. Esta transacción se ejecuta en Ethereum."
@@ -301,7 +258,7 @@
       "cancel-modal": {
         "cancelling": "Cancelando...",
         "confirm": "Cancelar retiro",
-        "description": "Si lo cancela, sus fondos volverán a estar en stake y dejarán de estar en el período de espera.",
+        "description": "Si lo cancela, su depósito permanecerá en el fondo y dejará de estar en el período de espera.",
         "keep": "Mantener retiro",
         "title": "Cancelar retiro"
       },
@@ -317,24 +274,26 @@
         "type": "Tipo"
       },
       "connect-to-view": "Conecte su billetera para ver sus transacciones de earn.",
+      "could-not-load-all-transactions": "No pudimos cargar todas sus transacciones",
+      "could-not-load-transactions": "No pudimos cargar sus transacciones",
       "deposit": "Depósito",
       "drawer": {
-        "deposit-heading": "Detalles del depósito de stake",
-        "deposit-subheading": "Revise su transacción de depósito de stake.",
+        "deposit-heading": "Detalles del depósito",
+        "deposit-subheading": "Revise su transacción de depósito.",
         "step": {
           "approval-needed": "Aprobación necesaria",
           "approve-token": "Aprobar {symbol}",
+          "deposit-token": "Depositar {symbol} en el fondo",
           "funds-returned": "Fondos devueltos",
           "funds-to-recover": "Fondos por recuperar",
           "get-share-tokens": "Recibir share tokens",
           "receive-token": "Recibir {symbol}",
           "shares-returned": "Shares devueltas",
           "shares-to-recover": "Shares por recuperar",
-          "stake-token": "Hacer stake de {symbol}",
-          "unstake-token": "Retirar {symbol}"
+          "withdraw-token": "Retirar {symbol} del fondo"
         },
-        "withdraw-heading": "Detalles del retiro de stake",
-        "withdraw-subheading": "Revise su transacción de retiro de stake."
+        "withdraw-heading": "Detalles del retiro",
+        "withdraw-subheading": "Revise su transacción de retiro."
       },
       "nothing-here": "Aún no hay nada aquí",
       "nothing-here-subtitle": "Sus transacciones aparecerán una vez que comience.",
@@ -378,18 +337,130 @@
       "view": "Ver",
       "withdraw": "Retirar",
       "withdrawal": "Retiro"
-    }
+    },
+    "vault": {
+      "composition": {
+        "amount": "Monto",
+        "by-protocol": "Por protocolo",
+        "by-token": "Por token",
+        "position": "Posición",
+        "protocols-count": "{count, plural, one {# protocolo} other {# protocolos}}",
+        "reserve-buffer": "Reserva de liquidez",
+        "share": "Participación",
+        "subtitle": "Activos mantenidos en las estrategias subyacentes del fondo, según lo informado por Vetro.",
+        "title": "Composición",
+        "tokens-count": "{count, plural, one {# token} other {# tokens}}",
+        "view-mode": "Modo de vista"
+      },
+      "deposit-complete": "Su depósito se ha completado. Su posición está en el fondo {vaultName}, operado por {operator}.",
+      "deposit-complete-plain": "Su depósito se ha completado.",
+      "deposit-successful": "Depósito exitoso",
+      "drawer": {
+        "approving": "Aprobando {symbol}",
+        "confirm-in-wallet": "Confirme en la billetera",
+        "cooldown-ended": "Período de espera completado",
+        "deposit": {
+          "heading": "Revisar depósito",
+          "review": "Está depositando en {vaultName} a través de Hemi Earn, operado por Vetro Service & Support Corp. Sus activos van de su billetera a los contratos inteligentes de Vetro, que los depositan en el fondo y pueden transferirlos entre redes. Los depósitos pueden tardar hasta {duration} en completarse. Los rendimientos son variables y no están garantizados, y podría perder parte o la totalidad de su depósito.",
+          "subheading": "Su transacción ha sido enviada y está esperando confirmación en la blockchain."
+        },
+        "deposit-token": "Depositar {symbol} en el fondo",
+        "funds-returned": "Fondos devueltos",
+        "funds-to-recover": "Fondos por recuperar",
+        "get-share-tokens": "Recibir share tokens",
+        "in-transit": "Su transferencia está en curso entre redes. Esto suele tardar {duration}, pero puede demorar más. Puede cerrar esta página; el estado se actualizará en Mis transacciones de earn.",
+        "receive-token": "Recibir {symbol}",
+        "review-fallback": "Revise los detalles a continuación antes de confirmar en su billetera.",
+        "shares-returned": "Shares devueltas",
+        "shares-to-recover": "Shares por recuperar",
+        "vault-details-and-fees": "Detalles y comisiones del fondo",
+        "wait-cooldown-countdown": "{days, plural, =0 {El período de espera termina en {hours}h} other {El período de espera termina en #d {hours}h}}",
+        "wait-cooldown-countdown-soon": "El período de espera termina en menos de una hora",
+        "wait-cooldown-pending": "El período de espera es de {days, plural, one {# día} other {# días}}",
+        "withdraw": {
+          "heading": "Revisar retiro",
+          "review": "Está retirando de {vaultName} a través de Hemi Earn, operado por Vetro Service & Support Corp. Los retiros pueden tardar en completarse y pueden estar sujetos a colas o períodos de bloqueo establecidos por el fondo.",
+          "subheading": "Su transacción ha sido enviada y está esperando confirmación en la blockchain."
+        },
+        "withdraw-token": "Retirar {symbol} del fondo"
+      },
+      "form": {
+        "amount-too-small": "Monto demasiado pequeño",
+        "asset-unavailable": "Activo no disponible",
+        "available": "Disponible",
+        "bridging-fees": "Tarifas de bridge",
+        "cooldown-warning": "Retirar fondos tarda {days, plural, one {# día} other {# días}} en completarse.",
+        "cooldown-warning-fallback": "Retirar fondos tarda algunos días en completarse.",
+        "ethereum-gas-fee": "Tarifa de gas de Ethereum",
+        "hemi-network-fee": "Tarifa de red de Hemi",
+        "network-error": "Error al previsualizar — reintente",
+        "share-token-available-to-withdraw": "Token de participación disponible para retirar",
+        "vetro-deposit-fee": "Tarifa de depósito de Vetro",
+        "vetro-withdrawal-fee": "Tarifa de retiro de Vetro",
+        "withdraw-share-tokens-as": "Retirar token de participación como",
+        "withdrawing": "Retirando...",
+        "you-will-receive": "Recibirá"
+      },
+      "historical-metrics": {
+        "1-week": "1 semana",
+        "1-year": "1 año",
+        "metric": "Métrica",
+        "month": "{count, plural, one {# mes} other {# meses}}",
+        "period": "Período",
+        "title": "Métricas históricas",
+        "vault-deposits": "Depósitos del fondo"
+      },
+      "settings": {
+        "accept-risk": "Entiendo y acepto el riesgo",
+        "advanced-settings": "Configuración avanzada",
+        "auto": "Auto",
+        "continue-anyway": "Continuar de todos modos",
+        "high-slippage": "Slippage alto",
+        "high-slippage-value": "Slippage alto {value}%",
+        "low-slippage": "Slippage demasiado bajo",
+        "low-slippage-value": "Slippage bajo {value}%",
+        "max-slippage": "Slippage máximo",
+        "slippage-value": "Slippage {value}%",
+        "very-high-slippage": "Slippage muy alto",
+        "very-high-slippage-value": "Slippage muy alto {value}%",
+        "warning-description-deposit": "<highlight>Su slippage está configurado por encima del {threshold}%.</highlight> Esto aumenta su exposición al impacto de precio. Podría recibir muchas menos shares de las cotizadas.",
+        "warning-description-withdrawal": "<highlight>Su slippage está configurado por encima del {threshold}%.</highlight> Esto aumenta su exposición al impacto de precio. Podría recibir muchos menos tokens de los cotizados.",
+        "warning-title": "Advertencia de slippage alto"
+      },
+      "total-deposits": "Depósitos totales del fondo",
+      "withdraw-complete": "Su retiro se ha completado. Los activos han vuelto a su billetera.",
+      "withdraw-successful": "Retiro exitoso"
+    },
+    "vault-delisted": "Este fondo ya no acepta depósitos.",
+    "vault-info": {
+      "curators": "{count, plural, one {Curador} other {Curadores}}: {names}",
+      "manage": "Gestionar",
+      "operator": "Operador del fondo: {operator}",
+      "share-token": "Token de participación",
+      "total-deposits": "Depósitos totales",
+      "vault-contract": "Contrato del fondo",
+      "your-deposits": "Sus depósitos"
+    },
+    "vetro-data-disclaimer": "Datos proporcionados por Vetro. Las cifras pueden estar retrasadas y no han sido verificadas por Hemi."
   },
   "hemi-stake": {
     "amount": "Cantidad",
     "analytics": {
       "1-week": "1 semana",
+      "1-year": "1 año",
       "circulating": "En circulación",
       "decreased-by": "disminuyó",
+      "epoch": "Época {epoch}",
+      "epochs": "Épocas",
+      "in-progress": "En curso",
       "increased-by": "aumentó",
       "month": "{count, plural, one {# mes} other {# meses}}",
       "non-circulating": "Fuera de circulación",
       "period": "Período",
+      "pre-hemi-stake": "Recompensas previas a hemiStake",
+      "projected": "Incentivos base proyectados",
+      "protocol-fees": "+ Tarifas del protocolo",
+      "rewards-title": "Recompensas distribuidas",
       "share-of-supply": "{share} de la oferta",
       "staked": "En stake",
       "title": "Oferta de {symbol}",
@@ -399,15 +470,39 @@
     "apy-estimate": "Nota: hemiStake se lanzó hace poco, por lo que la TEA proyectada es alta. El pool de recompensas es compartido, así que a medida que se haga staking de más HEMI la TEA bajará.",
     "claim-rewards": {
       "heading": "Reclamar recompensas",
-      "subheading": "Estamos procesando su solicitud de recompensas. Puede seguir el progreso a continuación."
+      "subheading": "Estamos procesando su solicitud de recompensas. Puede seguir el progreso a continuación.",
+      "subheading-by-value": "Estamos procesando sus solicitudes de recompensas, empezando por las de mayor valor. Puede seguir el progreso a continuación."
+    },
+    "claim-rewards-failed": {
+      "description": "No se pudieron reclamar todas sus recompensas. Abra los detalles para intentarlo de nuevo.",
+      "title": "Error al reclamar recompensas",
+      "view-details": "Ver detalles"
     },
     "claim-rewards-successful": "Recompensas reclamadas con éxito",
     "drawer": {
       "approving": "Aprobando {symbol}",
+      "auto-relock": {
+        "apy": "TEA",
+        "decays-to-zero": "Baja a 0 el {date}",
+        "legend-added-by-auto-relock": "Añadido por el rebloqueo automático",
+        "legend-after-disabling": "Después de desactivar",
+        "legend-today": "Hoy",
+        "legend-with-auto-relock": "Con rebloqueo automático",
+        "stays-at": "Se mantiene en {votingPower}",
+        "step": "Actualizar el rebloqueo automático"
+      },
       "claim-position-rewards": "Reclamar recompensas de la posición #{tokenId}",
-      "claim-position-rewards-step": "Reclamar recompensas de la posición #{tokenId}, épocas {fromEpoch}-{toEpoch} ({step} de {total})",
+      "claim-position-rewards-epochs": "Reclamar recompensas de la posición #{tokenId}, épocas {fromEpoch}-{toEpoch}",
       "claim-rewards": "Reclamar recompensas",
-      "claim-rewards-step": "Reclamar recompensas, épocas {fromEpoch}-{toEpoch} ({step} de {total})",
+      "claim-rewards-epochs": "Reclamar recompensas, épocas {fromEpoch}-{toEpoch}",
+      "disable-auto-relock": {
+        "heading": "Desactivar rebloqueo automático",
+        "subheading": "Su posición deja de renovar su duración cada época, así que la cuenta regresiva para el desbloqueo empieza de nuevo desde donde está ahora."
+      },
+      "enable-auto-relock": {
+        "heading": "Activar rebloqueo automático",
+        "subheading": "Su posición mantiene su duración actual para siempre, como si la extendiera una época cada época. Desactívelo y la cuenta regresiva empieza de nuevo."
+      },
       "increase-amount": {
         "heading": "Agregar ${symbol} a este bloqueo",
         "subheading": "Depositar ${symbol} adicionales en su bloqueo existente para aumentar su cantidad de stake y poder de gobernanza."
@@ -429,9 +524,13 @@
       "unlock-token": "Desbloquear {symbol}"
     },
     "estimated-payouts": {
+      "added-amount": "{symbol} agregado",
+      "added-time": "Tiempo adicional",
+      "advanced-estimator": "Estimador avanzado",
       "after-unlock": "después del desbloqueo",
       "apy": "{percentage} TEA",
       "carried-from": "Con base en la época {epoch}, la última financiada.",
+      "countdown-paused": "Cuenta regresiva en pausa",
       "enter-minimum-amount": "Ingrese al menos {amount} {symbol} para ver su estimación.",
       "first-year": "en el primer año",
       "load-failed": "No se pudieron cargar los datos de recompensas.",
@@ -439,12 +538,31 @@
       "next-payout-line": "próximo pago <amount></amount> · época {epoch}, se liquida el {date}",
       "not-funded": "Las recompensas de esta época aún no han sido financiadas.",
       "starting-from-epoch": "Pagos por época · a partir de la época <epoch></epoch>",
+      "this-lockup": "Este bloqueo",
       "title": "Pagos estimados",
       "unlocks-on": "Se desbloquea el {date}"
+    },
+    "estimator": {
+      "blended-was": "combinada, antes {percentage}",
+      "connect-to-blend": "Conecte su billetera para incluir sus posiciones en la estimación",
+      "estimated-payouts-first-year": "Pagos estimados en el primer año",
+      "my-positions": "Mis posiciones",
+      "new-position": "Nueva posición",
+      "per-epoch": "{symbol} por época · a partir de la época {epoch}",
+      "quick-amounts": "Montos rápidos",
+      "scope": "Alcance de la estimación",
+      "simple-first-year": "simple, primer año",
+      "unit": "Unidad",
+      "view-position": "Ver posición",
+      "voting-power-title": "Poder de voto · <amount></amount> veHEMI",
+      "with-my-positions": "Con mis posiciones",
+      "yours": "Su saldo · {amount}"
     },
     "form": {
       "approve-and-stake": "Aprobar y Hacer Stake",
       "approximate": "~{percentage}",
+      "auto-relock": "Rebloqueo automático",
+      "auto-relock-tooltip": "Su posición mantiene su duración actual para siempre, como si la extendiera una época cada época. Desactívelo y la cuenta regresiva empieza de nuevo.",
       "custom": "Personalizado",
       "days": "{days, plural, one {{days} día} other {{days} días}}",
       "expire-date": "Fecha de vencimiento:",
@@ -458,6 +576,8 @@
       "title": "Stake",
       "unlocking": "Desbloqueando...",
       "use-or": "Utilice <min></min> o <max></max>",
+      "voting-power-decays": "Baja a 0 el {date}",
+      "voting-power-stays": "Se mantiene constante mientras el rebloqueo automático esté activado",
       "years": "{years, plural, one {{years} año} other {{years} años}}"
     },
     "get-started": {
@@ -482,10 +602,6 @@
       "headline": "Toda una economía.<break></break><highlight>Una</highlight> llave.",
       "live-on": "disponible el 19 de septiembre",
       "subtitle": "Haga stake de Hemi para recibir parte de cada pago y acceder a los próximos lanzamientos."
-    },
-    "launch-card": {
-      "is-live": "<name></name> ya está disponible",
-      "live-on": "Disponible el 19 de septiembre"
     },
     "lockup-period": "Período de bloqueo",
     "perks": {
@@ -516,23 +632,31 @@
       "your-claimable": "Disponible para reclamar",
       "your-staked": "Su stake"
     },
-    "subheading": "Bloquee ${symbol} desde {minDays, plural, one {# día} other {# días}} hasta {maxYears, plural, one {# año} other {# años}}. Reciba cada pago en {symbol}, hemiBTC y USDC, y obtenga poder de voto.",
+    "subheading": "Bloquee ${symbol} desde {minDays, plural, one {# día} other {# días}} hasta {maxYears, plural, one {# año} other {# años}}. Reciba cada pago en {symbol} y hemiBTC, y obtenga poder de voto.",
     "switch-to-start-staking": "Puede cambiar de red para comenzar a hacer staking de su HEMI.",
     "table": {
       "action": "Acción",
       "active": "Activo",
       "add-liquidity-to-lockup": "Agregar ${symbol} a este bloqueo",
+      "add-time-available-on": "Disponible el {date}",
       "add-time-to-lockup": "Agregar tiempo a este bloqueo",
+      "auto-relock": "Rebloqueo automático",
+      "auto-relock-off": "Desactivado",
+      "auto-relock-on": "Activado",
       "burned": "Quemado",
       "claim": "Reclamar",
       "claim-all-rewards": "Reclamar todas las recompensas",
+      "claiming": "Reclamando...",
       "claiming-paused": "El reclamo de recompensas está pausado",
       "could-not-load-positions": "No pudimos cargar sus posiciones",
+      "disable-auto-relock": "Desactivar rebloqueo automático",
+      "enable-auto-relock": "Activar rebloqueo automático",
       "get-started": "Comience haciendo staking de sus ${symbol}",
       "get-started-burned": "Sus posiciones quemadas aparecerán aquí una vez que hayan finalizado sus períodos de bloqueo.",
       "locked-amount": "Cantidad bloqueada",
       "lockup": "Bloqueo",
       "lockup-tooltip": "Bloqueo de {duration}, se desbloquea el {date}",
+      "lockup-tooltip-auto-relock": "El rebloqueo automático mantiene el bloqueo en {duration}. Desactívelo y se desbloquea el {date}.",
       "no-hemi-burned": "Aún no hay posiciones quemadas.",
       "no-hemi-staked": "No hay ${symbol} en stake",
       "on": "En {date}",
@@ -547,6 +671,8 @@
     },
     "tabs": {
       "analytics": "Analíticas",
+      "estimator": "Estimador avanzado",
+      "estimator-short": "Estimador",
       "stake": "Stake"
     },
     "unlock-successful": "Desbloqueo exitoso",
@@ -559,6 +685,7 @@
     "agree-to-terms-and-policy": "Al usar esta aplicación, usted acepta los <terms>Términos de Uso</terms> y la <policy>Política de Privacidad</policy>",
     "bitcoinkit": "Kit de Hemi Bitcoin",
     "boost-staking": "Boost staking",
+    "by-vetro": "por Vetro",
     "data-attribution": "Datos proporcionados por <link>CoinMarketCap.com</link>",
     "dex": {
       "aggregators": "Agregadores",
@@ -574,90 +701,51 @@
       "language": "Idioma",
       "legal-and-privacy": "Privacidad y Legales"
     },
+    "hemi-earn": "Hemi Earn",
     "hemi-stake": "Hemi Stake",
     "network": "Red",
     "network-status": "Estado de la red",
-    "new": "Nuevo",
     "tunnel": "Túnel",
     "tvl": "TVL en Hemi"
   },
   "stake-page": {
     "action": "Acción",
     "asset": "Activo",
-    "change-to-mainnet": "Cambie a Mainnet y haga stake",
     "dashboard": {
       "heading": "Boost staking",
-      "manage-token": "Gestionar {symbol}",
       "staked": "Staked",
       "subtitle": "Visualice sus posiciones activas de boost staking.",
-      "title": "Panel",
       "total-earned-points": "Total de puntos Hemi ganados",
       "total-earned-points-description": "Temporada finalizada.",
       "total-staked-on-hemi": "Total en stake en Hemi",
       "your-stake": "Su Stake"
     },
     "drawer": {
-      "approve-and-stake": "Aprobar y Hacer Stake",
-      "description-manage-stake": "Recargue su stake o retire en cualquier momento— ¡Usted tiene el control total!",
+      "description-manage-stake": "Retire sus tokens en stake en cualquier momento.",
       "manage-your-stake": "Gestione su stake",
-      "stake-and-earn-rewards": "Haga stake de {symbol} para potenciar su participación.",
-      "stake-token": "Hacer stake de {symbol}",
-      "staking": "Haciendo stake...",
-      "strategy-details": {
-        "heading": "Detalles de la Estrategia",
-        "tvl": "TVL (en Hemi)",
-        "website": "Sitio web"
-      },
       "unstake-eth-as-weth-heading": "El ETH desbloqueado se recibirá como WETH",
       "unstake-eth-as-weth-subheading": "Cuando hace stake con ETH, es automáticamente convertido a WETH. Al desbloquear, recibirá WETH, que puede convertir de nuevo a ETH si lo desea.",
       "unstake-token": "Desbloquear {symbol}",
       "unstaking": "Desbloqueando...",
-      "unwrap": "Convertir",
-      "you-can-unstake-anytime": "Puede retirar en cualquier momento."
+      "unwrap": "Convertir"
+    },
+    "ended": {
+      "description": "Ya no se aceptan nuevos stakes. Puede retirar sus tokens en cualquier momento.",
+      "title": "Boost staking ha finalizado"
     },
     "protocol": "Protocolo",
-    "ready-to-earn": "¿Listo para hacer stake? Utilice activos disponibles para comenzar a hacer stake.",
-    "stake": {
-      "action": "Acción",
-      "heading": "Stake for boost",
-      "subheading": "Haga stake de sus tokens.",
-      "title": "Stake"
-    },
-    "start-staking-earn-points": "Empiece a hacer stake",
     "toast": {
-      "go-boost-staking": "Ir a Boost staking",
       "here-your-stake-tx": "Aquí está su transacción de {type}:",
-      "staking": "stake",
-      "staking-successful": "Stake exitoso",
       "unstaking": "retiro",
       "unstaking-successful": "Retiro exitoso"
-    },
-    "wallet-balance": "Saldo de la billetera"
-  },
-  "token-custom-drawer": {
-    "add-contract-to-preview": "Añada una dirección de contrato para previsualizar el token...",
-    "add-this-pair": "Agregue este par a la lista de tokens de Hemi para que todos puedan tunelizarlos",
-    "add-token": "Añadir token",
-    "add-token-on-chain": "Añada la dirección del contrato del token en la red de Capa {network}",
-    "address-does-not-match-l2": "No coincide con el par de L1",
-    "heading": "Tunelizar un token ERC-20 existente",
-    "i-am-sure-to-tunnel": "Estoy seguro que quiero tunelizar este token.",
-    "l1-address-not-configured": "Dirección L1 no configurada en el contrato",
-    "layer-token-address": "Dirección de contrato del token de capa {layer}",
-    "make-a-request-to-add": "Si desea agregar este par de tokens ERC-20 a la lista de tokens aprobados de Hemi, <link>haga una solicitud</link>.",
-    "see-on-explorer": "Ver en {explorer}",
-    "subheading": "Necesita ingresar el par de direcciones de contrato tanto de Ethereum como de Hemi para tunelear con este token.",
-    "this-address-is-not-valid": "Esta dirección es inválida",
-    "this-address-is-valid": "Esta dirección es válida"
+    }
   },
   "token-selector": {
     "all-tokens": "Todos los tokens",
-    "manually-added-tokens": "Tokens agregados manualmente",
     "no-results-for": "No se encontraron resultados para <search></search>",
     "search-results": "Resultados de la búsqueda",
     "search-tokens": "Buscar por nombre de token o dirección...",
     "select-token": "Seleccione un token",
-    "validating-token-address": "Validando dirección del token...",
     "your-tokens": "Sus tokens"
   },
   "transaction-history": {
@@ -673,12 +761,15 @@
   },
   "tunnel-page": {
     "form": {
-      "balance": "Balance",
       "bitcoin-receiving-address": "Dirección de recepción en Bitcoin",
       "bitcoin-receiving-address-description": "El {symbol} retirado se envía a la dirección de su billetera Bitcoin conectada, o a la dirección personalizada que ingrese.",
       "custom-address": "Dirección personalizada",
       "custom-address-placeholder": "Dirección de Bitcoin...",
+      "evm-custom-address-placeholder": "Dirección EVM...",
+      "evm-receiving-address": "Dirección de recepción en {network}",
+      "evm-receiving-address-description": "El {symbol} retirado se envía a la dirección de su billetera EVM conectada, o a la dirección personalizada que ingrese.",
       "from-network": "Desde la Red",
+      "hemi-custom-receiving-address-description": "El {symbol} depositado se envía a la dirección de su billetera EVM conectada, o a la dirección personalizada que ingrese.",
       "hemi-receiving-address": "Dirección de recepción en Hemi",
       "hemi-receiving-address-description": "El {symbol} depositado se envía a la dirección asociada con su billetera EVM conectada.",
       "hemi-tunnel": "Túnel de Hemi",
@@ -733,6 +824,8 @@
       "enter-a-custom-address": "Ingrese una dirección personalizada",
       "initiate-withdrawal": "Iniciar Retiro",
       "input-a-correct-custom-address": "Ingrese una dirección personalizada correcta",
+      "min-deposit-load-failed": "No se pudo cargar el depósito mínimo",
+      "min-withdrawal-load-failed": "No se pudo cargar el retiro mínimo",
       "prove-withdrawal": "Probar retiro",
       "proving-withdrawal": "Probando...",
       "try-again": "Intentar de nuevo",

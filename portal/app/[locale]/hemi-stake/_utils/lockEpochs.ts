@@ -1,9 +1,16 @@
-import { MaxLockDurationSeconds, SixDaysSeconds } from 've-hemi-actions'
+import {
+  halfEpochSeconds,
+  MaxLockDurationSeconds,
+  SixDaysSeconds,
+  snapToEpoch,
+} from 've-hemi-actions'
 
 const maxLockSeconds = BigInt(MaxLockDurationSeconds)
 
-const snapToEpoch = (timestamp: number) =>
-  Math.floor(timestamp / SixDaysSeconds) * SixDaysSeconds
+export const epochsPerYear = MaxLockDurationSeconds / (4 * SixDaysSeconds)
+
+export const capAtMaxLock = (lockDurationInSeconds: number) =>
+  Math.min(lockDurationInSeconds, MaxLockDurationSeconds)
 
 export const getLockEnd = ({
   lockTime,
@@ -32,3 +39,38 @@ export const getWeightAt = ({
   lockEnd: number
 }) =>
   at < lockEnd ? (amount / maxLockSeconds) * BigInt(lockEnd - at) : BigInt(0)
+
+export const getRelockedWeight = ({
+  amount,
+  lockEnd,
+  now,
+}: {
+  amount: bigint
+  lockEnd: number
+  now: number
+}) => getWeightAt({ amount, at: snapToEpoch(now) + halfEpochSeconds, lockEnd })
+
+type PositionWeights = {
+  current: bigint
+  relocked: bigint
+}
+
+export const getPositionWeights = ({
+  amount,
+  autoRelock,
+  fromChain,
+  lockEnd,
+  now,
+}: {
+  amount: bigint
+  autoRelock: boolean
+  fromChain: PositionWeights | undefined
+  lockEnd: number
+  now: number
+}): PositionWeights =>
+  fromChain ?? {
+    current: autoRelock
+      ? getRelockedWeight({ amount, lockEnd, now })
+      : getWeightAt({ amount, at: now, lockEnd }),
+    relocked: getRelockedWeight({ amount, lockEnd, now }),
+  }

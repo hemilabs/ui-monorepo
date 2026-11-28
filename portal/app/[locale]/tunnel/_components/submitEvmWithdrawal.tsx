@@ -6,8 +6,8 @@ import { tunnelsThroughPartners } from 'utils/token'
 
 type Props = {
   canWithdraw: boolean
-  isWithdrawing: boolean
   fromToken: EvmToken
+  isWithdrawing: boolean
   setIsPartnersDrawerOpen: (isOpen: boolean) => void
   validationError: string | undefined
 }

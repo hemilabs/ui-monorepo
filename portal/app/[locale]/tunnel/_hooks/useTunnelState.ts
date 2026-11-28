@@ -10,6 +10,7 @@ import { findChainById } from 'utils/chain'
 import { sanitizeAmount } from 'utils/form'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { getTokenByAddress } from 'utils/token'
+import { getTunnelPairs } from 'utils/tunnelPairs'
 import { type NoPayload, type Payload } from 'utils/typeUtilities'
 import { type Chain, isHash } from 'viem'
 
@@ -19,12 +20,14 @@ export type Operation = 'claim' | 'deposit' | 'prove' | 'withdraw' | 'view'
 type TunnelProviderType = 'native' | 'thirdParty'
 
 export type TunnelState = {
+  customEvmAddress: string
+  customEvmAddressEnabled: boolean
   fromInput: string
   fromNetworkId: RemoteChain['id']
   fromToken: Token
+  providerType: TunnelProviderType
   toNetworkId: RemoteChain['id']
   toToken: Token
-  providerType: TunnelProviderType
 }
 
 type Action<T extends string> = {
@@ -32,6 +35,11 @@ type Action<T extends string> = {
 }
 
 type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
+
+type UpdateCustomEvmAddress = Action<'updateCustomEvmAddress'> &
+  Payload<
+    Partial<Pick<TunnelState, 'customEvmAddress' | 'customEvmAddressEnabled'>>
+  >
 
 type UpdateFromNetwork = Action<'updateFromNetwork'> &
   Payload<TunnelState['fromNetworkId']>
@@ -51,6 +59,7 @@ type ToggleTunnelProviderType = Action<'toggleTunnelProviderType'> &
 
 type Actions =
   | ResetStateAfterOperation
+  | UpdateCustomEvmAddress
   | UpdateFromNetwork
   | UpdateFromInput
   | UpdateFromToken
@@ -71,10 +80,17 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
     case 'resetStateAfterOperation': {
       const newState = {
         ...state,
+        customEvmAddress: '',
+        customEvmAddressEnabled: false,
         fromInput: '0',
       }
       return newState
     }
+    case 'updateCustomEvmAddress':
+      return {
+        ...state,
+        ...action.payload,
+      }
     case 'updateFromNetwork': {
       const { payload: fromNetworkId } = action
       return {
@@ -204,10 +220,7 @@ type TunnelFunctionEvents = {
     ? () => void
     : (payload: Extract<Actions, { type: K }>['payload']) => void
 } & {
-  updateFromToken: (
-    fromToken: TunnelState['fromToken'],
-    toToken?: TunnelState['toToken'],
-  ) => void
+  updateFromToken: (fromToken: TunnelState['fromToken']) => void
 }
 
 export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
@@ -231,6 +244,8 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
   )
 
   const [state, dispatch] = useReducer(reducer, {
+    customEvmAddress: '',
+    customEvmAddressEnabled: false,
     fromInput: '0',
     fromToken: getNativeToken(initial.fromNetworkId),
     providerType: 'native',
@@ -286,8 +301,10 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
 
   const getTunnelToken = useCallback(
     function (fromToken: Token, toNetworkId: RemoteChain['id']) {
+      // Partners may deliver another token than the tunnel pair
       const bridgeAddress =
-        fromToken.extensions?.bridgeInfo?.[toNetworkId]?.tokenAddress
+        fromToken.extensions?.tunnelDstAddress ??
+        getTunnelPairs(fromToken.extensions)?.[toNetworkId]?.tokenAddress
       // find the tunneled pair of the token, or go with the native if missing
       // bitcoin is a special case as it tunnels a native token (btc) into an erc20
       if (fromToken.chainId === bitcoin.id) {
@@ -324,10 +341,31 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
         tunnelOperation.updateTxHash(null)
         tunnelOperation.updateOperation(newOperation)
         dispatch({ type: 'toggleInput' })
+        if (state.toToken.extensions?.tunnelDstAddress) {
+          dispatch({
+            payload: {
+              fromToken: state.toToken,
+              toToken: getTunnelToken(state.toToken, state.fromNetworkId),
+            },
+            type: 'updateFromToken',
+          })
+        }
       },
-      [dispatch, operation, tunnelOperation],
+      [
+        dispatch,
+        getTunnelToken,
+        operation,
+        state.fromNetworkId,
+        state.toToken,
+        tunnelOperation,
+      ],
     ),
     toggleTunnelProviderType,
+    updateCustomEvmAddress: useCallback(
+      (payload: UpdateCustomEvmAddress['payload']) =>
+        dispatch({ payload, type: 'updateCustomEvmAddress' }),
+      [dispatch],
+    ),
     updateFromInput,
     updateFromNetwork: useCallback(
       function (fromNetworkId: UpdateFromNetwork['payload']) {
@@ -342,20 +380,13 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
       [dispatch, getTunnelToken, state.toNetworkId],
     ),
     updateFromToken: useCallback(
-      function (fromToken, toToken) {
-        // if token is defined use that one. This is needed for the scenarios where
-        // the token is not saved yet in the custom list
-        if (toToken) {
-          dispatch({ payload: { fromToken, toToken }, type: 'updateFromToken' })
-          return
-        }
-
+      function (fromToken) {
         // if the selected token can't be tunneled to the target chain
         // we need to first update the target network
         // just grab the first available network that's enabled
-        if (!fromToken.extensions?.bridgeInfo?.[state.toNetworkId]) {
+        if (!getTunnelPairs(fromToken.extensions)?.[state.toNetworkId]) {
           const [newToNetworkId] = Object.keys(
-            fromToken.extensions!.bridgeInfo!,
+            getTunnelPairs(fromToken.extensions)!,
           ).filter(id => networks.some(n => n.id.toString() === id))
           // parse as int or keep as string, depending on the id
           const payload = (

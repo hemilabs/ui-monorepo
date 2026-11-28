@@ -2,6 +2,7 @@ import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { featureFlags } from 'app/featureFlags'
 import { EventEmitter } from 'events'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
@@ -19,8 +20,10 @@ import { useAccount } from 'wagmi'
 
 import { updatePosition } from '../_utils/positionsCache'
 
+import { getDelegatedAwayQueryKeyPrefix } from './useDelegatedAway'
 import { getPositionDelegationDetailsQueryKey } from './usePositionDelegationDetails'
 import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
+import { invalidateRewardsForecastInputs } from './useRewardsForecastInputs'
 import { getStakingPositionsQueryKey } from './useStakingPositions'
 import { getTotalVotingPowerQueryKey } from './useTotalVotingPower'
 
@@ -86,6 +89,7 @@ export const useIncreaseAmount = function ({
         account: address,
         additionalAmount: amount,
         approvalAdditionalAmount: amount,
+        autoRelockSupported: featureFlags.enableHemiStakeAutoRelock,
         tokenId,
         walletClient: hemiWalletClient!,
       })
@@ -182,7 +186,15 @@ export const useIncreaseAmount = function ({
               ownerAddress: address,
             }),
           })
+          queryClient.invalidateQueries({
+            queryKey: getDelegatedAwayQueryKeyPrefix({
+              chainId: token.chainId,
+              ownerAddress: address,
+            }),
+          })
         }
+
+        invalidateRewardsForecastInputs(queryClient, token.chainId)
 
         track?.('hemi stake - increase amount success')
       })
@@ -195,6 +207,35 @@ export const useIncreaseAmount = function ({
         updateNativeBalanceAfterFees(receipt)
 
         track?.('hemi stake - increase amount transaction reverted')
+      })
+
+      emitter.on('increase-amount-failed-validation', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+
+        track?.('hemi stake - increase amount failed validation')
+      })
+      emitter.on('approve-failed', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.APPROVAL_TX_FAILED,
+        })
+
+        track?.('hemi stake - approve increase amount failed')
+      })
+      emitter.on('increase-amount-failed', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+
+        track?.('hemi stake - increase amount failed')
+      })
+      emitter.on('unexpected-error', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+
+        track?.('hemi stake - unexpected error')
       })
 
       on?.(emitter)

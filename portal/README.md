@@ -4,16 +4,16 @@ The Portal is a Web3 app that allows users to interact with Hemi, an L2 that int
 
 ## Structure
 
-The Portal is a Vite app. `main.tsx` is the entry, `app.tsx` at the root holds the react-router route table, and the build produces a static bundle served by the Cloudflare Worker.
+The Portal is a Vite app. `main.tsx` is the entry, the react-router route table is plain data in [utils/routes.ts](./utils/routes.ts) that `app.tsx` at the root turns into the `<Route>` tree (and the sitemap is derived from), and the build produces a static bundle served by the Cloudflare Worker.
 
 Some relevant folders are:
 
-- [/app](./app/) folder, which holds the pages and their co-located `_components`/`_hooks`/`_utils`. The `[locale]` folder name is historical and does not drive routing; `app.tsx` does.
+- [/app](./app/) folder, which holds the pages and their co-located `_components`/`_hooks`/`_utils`. The `[locale]` folder name is historical and does not drive routing; `utils/routes.ts` does.
 - [/components](./components/) folder, which contains reusable components to the entire app that are not tied to a specific page.
 - [/hooks](./hooks/) folder, which contains reusable hooks to the entire app that are not tied to a specific page.
 - [/messages/](./messages/) folder, which contain a file per locale with all the translated resources.
 - [/public](./public/) folder, which is served verbatim at the site root.
-- [worker/index.ts](./worker/index.ts), the Cloudflare Worker that serves the built assets and sets the security headers on every response.
+- [worker/index.ts](./worker/index.ts), the Cloudflare Worker that serves the built assets, sets the security headers on every response, and stamps a meta tag telling the app whether the visitor is in a country Hemi Earn cannot serve.
 - [/test](./test/) folder, which contains some tests for different portal files. These tests are for plain Typescript functions, and not for components.
 - [/types](./types/) folder, which contains many reusable Typescript types across the entire app
 - [/utils](./utils/) folder, which contains most of the logic that is not tied to UI.
@@ -48,7 +48,10 @@ VITE_ENABLE_ANALYTICS=<true|false> # Enable Analytics with Umami
 VITE_ANALYTICS_URL=<url> # Umami analytics URL
 VITE_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
 # These env variables are required for enabling the following features
+VITE_DISABLE_HEMI_EARN_DEPOSITS=<true|false> # Pause new Hemi Earn deposits. Unset means deposits are open
 VITE_ENABLE_HEMI_EARN_PAGE=<true|false> # Enable the Hemi Earn page
+VITE_ENABLE_HEMI_STAKE_AUTO_RELOCK=<true|false> # Enable auto-relock on Hemi Stake. Keep it off until the veHEMI contract supports it
+VITE_ENABLE_HEMI_STAKE_CALCULATOR=<true|false> # Enable the Hemi Stake calculator
 VITE_ENABLE_SAFE_WALLET=<true|false> # Enable the Safe connector, needed to run the Portal as a Safe App
 VITE_ENABLE_STAKE_GOVERNANCE_TESTNET=<true|false> # Enable stake governance on Testnet, for local development
 VITE_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development
@@ -65,7 +68,7 @@ VITE_BTC_INPUTS_SIZE=105 # Assumed size in vbytes of a single transaction input,
 VITE_BTC_OUTPUTS_SIZE=25 # Assumed size in vbytes of a single transaction output, used to estimate bitcoin fees
 # Backend API URL
 VITE_PORTAL_API_URL=<url> # To get the token prices, user points, TVL and more
-VITE_VETRO_API_URL=<url> # Vetro API URL; powers the Hemi Earn page (variable-stake APY and user rewards)
+VITE_VETRO_API_URL=<url> # Vetro API URL; powers the Hemi Earn page (variable-stake APY, user rewards, transaction history, cost basis and Terms acceptance)
 # Use it to enable wallet connect
 VITE_WALLET_CONNECT_PROJECT_ID=<wallet-connect-id>
 # Sitemap
@@ -99,6 +102,10 @@ Run tests with the following command:
 pnpm test
 ```
 
+This runs the unit tests (`*.test.ts`, in Node) and the integration tests (`*.test.tsx`, in Chromium). To run only one of them, use `pnpm test:unit` or `pnpm test:integration`. Before it runs, `test:integration` installs Chromium with Playwright.
+
+The end-to-end tests in [/e2e](./e2e/) run separately with `pnpm test:e2e`. They start an Anvil fork of Hemi mainnet on port 8547, fund Anvil's first test account with HEMI, and load the portal with [`@hemilabs/mock-wallet`](https://github.com/hemilabs/mock-wallet), which connects and signs as that account with no popup. Calls to the portal API are stubbed. To fork from another RPC, set `HEMI_FORK_URL`.
+
 ## Local sandbox for Hemi Earn
 
 To test the Hemi Earn UI end-to-end against a controlled Anvil fork, see [`scripts/hemi-earn/README.md`](./scripts/hemi-earn/README.md). The sandbox deploys the required mocks and funds a test account so the UI can be exercised without external tooling.
@@ -120,3 +127,10 @@ pnpm exec wrangler dev
 ```
 
 The build is what points wrangler at the directory holding the assets, so the commands that serve or deploy them need it. Without `dist/` they fail with a complaint about a missing `directory` property. `wrangler types` runs either way.
+
+The Storybook is deployed to Cloudflare as a separate Worker, `hemi-portal-storybook`, configured in `wrangler.storybook.jsonc`. Build and deploy it with:
+
+```sh
+pnpm storybook:build
+pnpm exec wrangler deploy -c wrangler.storybook.jsonc
+```

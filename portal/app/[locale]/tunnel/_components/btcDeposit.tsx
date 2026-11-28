@@ -1,6 +1,7 @@
 import { useDebounce } from '@hemilabs/react-hooks/useDebounce'
 import { lazyWithFallback } from 'components/lazyWithFallback'
 import { SetMaxBtcBalance } from 'components/setMaxBalance'
+import { Spinner } from 'components/spinner'
 import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
@@ -8,6 +9,7 @@ import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useUmami } from 'hooks/useUmami'
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'use-intl'
+import { maxBigInt } from 'utils/bigint'
 import { formatEvmAddress } from 'utils/format'
 import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
@@ -35,17 +37,14 @@ const canDepositBitcoin = ({
   canSubmit,
   evmAddress,
   isBitcoinChainConnected,
-  isMinDepositsSatsLoading,
+  isMinDepositSatsLoaded,
 }: {
-  evmAddress: string | undefined
   canSubmit: boolean
-  isMinDepositsSatsLoading: boolean
+  evmAddress: string | undefined
   isBitcoinChainConnected: boolean
+  isMinDepositSatsLoaded: boolean
 }) =>
-  !isMinDepositsSatsLoading &&
-  canSubmit &&
-  !!evmAddress &&
-  isBitcoinChainConnected
+  isMinDepositSatsLoaded && canSubmit && !!evmAddress && isBitcoinChainConnected
 
 export const BtcDeposit = function ({ state }: BtcDepositProps) {
   const [isDepositing, setIsDepositing] = useState(false)
@@ -61,15 +60,21 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
 
   const { btcChainId, btcWalletStatus, evmAddress } = useAccounts()
   const { balance, isSuccess: balanceLoaded } = useBitcoinBalance()
-  const { isPending: isMinDepositsSatsLoading, minDepositFormattedSats } =
-    useMinDepositSats()
+  const {
+    isError: isMinDepositSatsError,
+    minDepositFormattedSats,
+    minDepositSats,
+  } = useMinDepositSats()
+  const isMinDepositSatsLoaded = minDepositSats !== undefined
+  const isMinDepositSatsLoading =
+    !isMinDepositSatsLoaded && !isMinDepositSatsError
   const t = useTranslations()
   const { track } = useUmami()
   const bitcoin = useBitcoin()
 
   const {
     canSubmit,
-    error: validationError,
+    error: amountError,
     errorKey,
   } = validateSubmit({
     amountInput: fromInput,
@@ -80,13 +85,23 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     token: fromToken,
   })
 
+  const getValidationError = function () {
+    if (isMinDepositSatsLoading) {
+      return undefined
+    }
+    if (!isMinDepositSatsLoaded) {
+      return t('tunnel-page.submit-button.min-deposit-load-failed')
+    }
+    return amountError
+  }
+
   const isBitcoinChainConnected = btcChainId === bitcoin.id
 
   const canDeposit = canDepositBitcoin({
     canSubmit,
     evmAddress,
     isBitcoinChainConnected,
-    isMinDepositsSatsLoading,
+    isMinDepositSatsLoaded,
   })
 
   const debouncedFromInput = useDebounce(fromInput, 300)
@@ -163,9 +178,16 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     }
 
     return formatUnits(
-      amountBigInt - (btcDepositFee ?? BigInt(0)),
+      maxBigInt(amountBigInt - (btcDepositFee ?? BigInt(0)), BigInt(0)),
       fromToken.decimals,
     )
+  }
+
+  const getSubmitText = function () {
+    if (isMinDepositSatsLoading) {
+      return <Spinner size={'small'} />
+    }
+    return isDepositing ? t('common.depositing') : t('common.deposit')
   }
 
   function renderFees() {
@@ -182,6 +204,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
         <div className="relative -translate-y-7">
           <ReceivingAddress
             address={evmAddress ? formatEvmAddress(evmAddress) : undefined}
+            editable={false}
             receivingText={t('tunnel-page.form.hemi-receiving-address')}
             tooltipText={t(
               'tunnel-page.form.hemi-receiving-address-description',
@@ -217,9 +240,9 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
       submitButton={
         <SubmitWithTwoWallets
           btcWalletRequired
-          disabled={!canDeposit || isDepositing || isMinDepositsSatsLoading}
-          text={isDepositing ? t('common.depositing') : t('common.deposit')}
-          validationError={validationError}
+          disabled={!canDeposit || isDepositing}
+          text={getSubmitText()}
+          validationError={getValidationError()}
         />
       }
     />

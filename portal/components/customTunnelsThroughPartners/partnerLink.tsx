@@ -24,7 +24,7 @@ export const PartnerLink = function ({
     >
       {icon}
       <span className="mr-auto">{text}</span>
-      <PartnerLinkArrowIcon className="[&>path]:fill-neutral-400 [&>path]:transition-colors [&>path]:duration-200 group-hover/link:[&>path]:fill-neutral-950" />
+      <PartnerLinkArrowIcon className="[&>path]:fill-neutral-400 group-hover/link:[&>path]:fill-neutral-950" />
     </ExternalLink>
   )
 }

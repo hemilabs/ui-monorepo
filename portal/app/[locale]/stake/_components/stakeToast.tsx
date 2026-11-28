@@ -5,15 +5,12 @@ import { useTranslations } from 'use-intl'
 import { formatEvmHash } from 'utils/format'
 import { type Hash } from 'viem'
 
-type ToastType = 'stake' | 'unstake'
-
 type Props = {
   chainId: RemoteChain['id']
   txHash: Hash
-  type: ToastType
 }
 
-export const StakeToast = function ({ chainId, txHash, type }: Props) {
+export const StakeToast = function ({ chainId, txHash }: Props) {
   const blockExplorer = useChain(chainId)?.blockExplorers?.default
 
   const t = useTranslations('stake-page.toast')
@@ -23,21 +20,6 @@ export const StakeToast = function ({ chainId, txHash, type }: Props) {
     label: formatEvmHash(txHash),
   }
 
-  if (type === 'stake') {
-    return (
-      <Toast
-        description={t('here-your-stake-tx', {
-          type: t('staking'),
-        })}
-        goTo={{
-          href: '/stake/dashboard',
-          label: t('go-boost-staking'),
-        }}
-        title={t('staking-successful')}
-        tx={tx}
-      />
-    )
-  }
   return (
     <Toast
       description={t('here-your-stake-tx', {

@@ -1,7 +1,7 @@
 import { TotalDepositsIcon } from 'components/icons/totalDepositsIcon'
 import { StatCard } from 'components/statCard'
+import { useFormat } from 'hooks/useFormat'
 import { useTranslations } from 'use-intl'
-import { formatNumber } from 'utils/format'
 import { isDataUnavailable } from 'utils/queryStatus'
 
 import { type StakeStats } from '../_fetchers/fetchStakeStats'
@@ -10,6 +10,7 @@ import { useStakeStats } from '../_hooks/useStakeStats'
 const selectWalletsStaking = (stats: StakeStats) => stats.walletsStaking
 
 export const WalletsStaking = function () {
+  const { formatNumber } = useFormat()
   const t = useTranslations('hemi-stake.stats')
   const { data, fetchStatus, isPending, status } =
     useStakeStats(selectWalletsStaking)

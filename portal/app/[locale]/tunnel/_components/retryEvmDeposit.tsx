@@ -5,7 +5,7 @@ import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
 import { EvmDepositOperation } from 'types/tunnel'
 import { useTranslations } from 'use-intl'
-import { formatUnits } from 'viem'
+import { type Address, formatUnits } from 'viem'
 
 import { useDeposit } from '../_hooks/useDeposit'
 
@@ -52,6 +52,7 @@ const Retry = function ({
       )
       emitter.on('deposit-settled', () => setOperationStatus('idle'))
     },
+    to: deposit.to as Address,
     toToken,
   })
 

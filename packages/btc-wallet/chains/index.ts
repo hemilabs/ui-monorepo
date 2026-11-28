@@ -1,6 +1,6 @@
 import { type Chain } from 'viem'
 
-import { BtcSupportedNetworks } from '../unisat'
+import type { BtcSupportedNetworks } from '../unisat'
 
 export type BtcChain = Omit<Chain, 'id'> & { id: BtcSupportedNetworks }
 

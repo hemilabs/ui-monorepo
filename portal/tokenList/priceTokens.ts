@@ -1,6 +1,6 @@
 import hemilabsTokenList from '@hemilabs/token-list'
 import { hemi, hemiSepolia } from 'hemi-viem'
-import { Extensions } from 'types/token'
+import { type EvmToken, Extensions } from 'types/token'
 import { Address, Chain } from 'viem'
 
 type PriceMap = Record<Address, Pick<Extensions, 'priceSymbol'>>
@@ -54,20 +54,22 @@ const usdcAddresses = [
 const getL1TokenMaps = (priceMaps: PriceMap, hemiChain: Chain) =>
   Object.fromEntries(
     Object.entries(priceMaps)
-      .map(function ([address, { priceSymbol }]) {
-        // @ts-expect-error it fails to understand sourceId is a key of bridgeInfo but it works
-        const l1Address = hemilabsTokenList.tokens.find(
+      .map(function ([address, { priceSymbol }]):
+        | [string, Pick<Extensions, 'priceSymbol'>]
+        | null {
+        const extensions = (hemilabsTokenList.tokens as EvmToken[]).find(
           t => t.chainId === hemiChain.id && t.address === address,
-        )?.extensions?.bridgeInfo?.[hemiChain.sourceId!]?.tokenAddress
+        )?.extensions
+        const l1Address =
+          extensions?.bridgeInfo?.[hemiChain.sourceId!]?.tokenAddress ??
+          extensions?.oft?.peers?.[hemiChain.sourceId!]?.tokenAddress
         if (!l1Address) {
           return null
         }
         return [l1Address, { priceSymbol }]
       })
       // Remove those that don't have a L1 address, like some stake tokens
-      .filter(
-        (entry): entry is [string, { priceSymbol: string }] => entry !== null,
-      ),
+      .filter(entry => entry !== null),
   )
 
 function getMainnetPriceList() {

@@ -1,4 +1,4 @@
-import { formatApyDisplay } from 'utils/format'
+import { type Formatter } from 'utils/format'
 
-export const formatApyFromRatio = (ratio: number) =>
-  formatApyDisplay(ratio * 100)
+export const formatApyFromRatio = (ratio: number, formatter: Formatter) =>
+  formatter.formatApyDisplay(ratio * 100)

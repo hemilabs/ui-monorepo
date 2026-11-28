@@ -15,6 +15,7 @@ import { SubStep } from './subStep'
 
 type Props = {
   description: ReactNode
+  explorerChainId?: RemoteChain['id']
   fees?:
     | {
         amount: string
@@ -22,7 +23,6 @@ type Props = {
         token: Token
       }
     | undefined
-  explorerChainId?: RemoteChain['id']
   position: number
   postAction?: {
     description: ReactNode
@@ -87,7 +87,7 @@ const Completed = function ({
   )
 }
 
-const NotReady = ({ description, position, postAction }: Props) => (
+const NotReady = ({ description, fees, position, postAction }: Props) => (
   <>
     <div className="absolute left-2.25 top-0.5">
       <ShortVerticalLine stroke="stroke-neutral-300/55" />
@@ -96,7 +96,8 @@ const NotReady = ({ description, position, postAction }: Props) => (
       <PositionStatus position={position} status={ProgressStatus.NOT_READY} />
     </div>
     <OneRowBox bgColor="bg-white">
-      <span className="text-neutral-600">{description}</span>
+      <span className="mr-auto text-neutral-600">{description}</span>
+      {fees && <Fees {...fees} />}
     </OneRowBox>
     {!!postAction && (
       <div className="absolute bottom-6 left-2.25">

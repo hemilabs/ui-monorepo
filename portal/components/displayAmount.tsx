@@ -1,9 +1,10 @@
 import Big from 'big.js'
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
+import { useFormat } from 'hooks/useFormat'
 import { ComponentProps, ComponentType, Fragment, ReactNode } from 'react'
 import { Token } from 'types/token'
-import { formatNumber } from 'utils/format'
+import { roundNumber, smallestFormattedNumber } from 'utils/format'
 
 type CustomContainer = ComponentType<{
   children?: ReactNode
@@ -18,9 +19,10 @@ type Props = {
   amountContainer?: CustomContainer
   container?: CustomContainer
   logoVersion?: ComponentProps<typeof TokenLogo>['version']
-  symbolContainer?: CustomContainer
   showSymbol?: boolean
   showTokenLogo?: boolean
+  showTooltip?: boolean
+  symbolContainer?: CustomContainer
   token: Token
 }
 
@@ -31,40 +33,41 @@ export const DisplayAmount = function ({
   logoVersion,
   showSymbol = true,
   showTokenLogo = true,
+  showTooltip = true,
   symbolContainer: SymbolContainer = DefaultTextContainer,
   token,
 }: Props) {
+  const { formatFullAmount, formatNumber } = useFormat()
   const formattedAmount = formatNumber(amount)
 
   const bigAmount = Big(amount)
   const notZero = !bigAmount.eq(0)
-  // Only show dots for small numbers (x < 1), if the amount is not zero and we're truncating decimals
-  const showDots = bigAmount.lt(1) && notZero && formattedAmount !== amount
+  const belowPrecision =
+    bigAmount.gt(0) && bigAmount.lt(smallestFormattedNumber)
+  const showDots =
+    bigAmount.lt(1) && notZero && !Big(roundNumber(amount)).eq(bigAmount)
   return (
     <Tooltip
+      disabled={!showTooltip}
       id={`amount-tooltip-${token.symbol}`}
       text={
-        notZero ? (
+        showTooltip && notZero ? (
           <div className="flex items-center gap-x-1">
             {showTokenLogo && (
               <TokenLogo size="small" token={token} version={logoVersion} />
             )}
-            <span>{`${new Intl.NumberFormat('en-US', {
-              maximumFractionDigits: token.decimals,
-              useGrouping: true,
-            }).format(
-              // @ts-expect-error NumberFormat.format accept strings, typings are wrong. See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/format#parameters
-              amount,
-            )} ${token.symbol}`}</span>
+            <span>{`${formatFullAmount(amount, token.decimals)} ${token.symbol}`}</span>
           </div>
         ) : null
       }
       variant="simple"
     >
       <Container>
-        <AmountContainer>{`${formattedAmount}${
-          showDots ? '...' : ''
-        }`}</AmountContainer>
+        <AmountContainer>
+          {belowPrecision
+            ? `< ${formatNumber(smallestFormattedNumber)}`
+            : `${formattedAmount}${showDots ? '...' : ''}`}
+        </AmountContainer>
         {showSymbol ? (
           <SymbolContainer>{` ${token.symbol}`}</SymbolContainer>
         ) : null}

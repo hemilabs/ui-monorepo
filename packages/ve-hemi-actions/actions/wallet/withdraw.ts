@@ -11,15 +11,21 @@ import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { veHemiAbi } from '../../abi.ts'
 import { getVeHemiContractAddress } from '../../constants.ts'
 import type { WithdrawEvents } from '../../types.ts'
-import { validateWithdrawInputs } from '../../utils.ts'
-import { getLockedBalance, getOwnerOf } from '../public/veHemi.ts'
+import { unixNowTimestamp, validateWithdrawInputs } from '../../utils.ts'
+import {
+  getAutoRelockStatus,
+  getLockedBalance,
+  getOwnerOf,
+} from '../public/veHemi.ts'
 
 const canRunWithdraw = async function ({
   account,
+  autoRelockSupported,
   tokenId,
   walletClient,
 }: {
   account: Address
+  autoRelockSupported: boolean
   tokenId: bigint
   walletClient: WalletClient
 }): Promise<{
@@ -43,10 +49,12 @@ const canRunWithdraw = async function ({
   }
 
   try {
-    // Check if lock exists and is expired and if the account is the owner
-    const [{ amount, end }, owner] = await Promise.all([
+    const [{ amount, end }, owner, autoRelockStatus] = await Promise.all([
       getLockedBalance(walletClient, tokenId),
       getOwnerOf(walletClient, tokenId),
+      autoRelockSupported
+        ? getAutoRelockStatus(walletClient, [tokenId])
+        : undefined,
     ])
 
     if (owner.toLowerCase() !== account.toLowerCase()) {
@@ -57,7 +65,11 @@ const canRunWithdraw = async function ({
       return { canWithdraw: false, reason: 'no existing lock' }
     }
 
-    const now = BigInt(Math.floor(Date.now() / 1000))
+    if (autoRelockStatus?.[0].isAutoRelockEnabled) {
+      return { canWithdraw: false, reason: 'auto-relock is enabled' }
+    }
+
+    const now = unixNowTimestamp()
     if (end > now) {
       return { canWithdraw: false, reason: 'lock not yet expired' }
     }
@@ -70,10 +82,12 @@ const canRunWithdraw = async function ({
 
 const runWithdraw = ({
   account,
+  autoRelockSupported,
   tokenId,
   walletClient,
 }: {
   account: Address
+  autoRelockSupported: boolean
   tokenId: bigint
   walletClient: WalletClient
 }) =>
@@ -81,6 +95,7 @@ const runWithdraw = ({
     try {
       const { canWithdraw, reason } = await canRunWithdraw({
         account,
+        autoRelockSupported,
         tokenId,
         walletClient,
       }).catch(() => ({

@@ -11,6 +11,7 @@ import { type NoPayload, type Payload } from 'utils/typeUtilities'
 import { twoYears } from '../_utils/lockCreationTimes'
 
 type StakingDashboardState = {
+  autoRelock: boolean
   collectRewardsDashboardOperation?: CollectAllRewardsDashboardOperation
   input: string
   inputDays: string
@@ -24,6 +25,9 @@ type Action<T extends string> = {
 }
 
 type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
+type StartStakingDashboardOperation = Action<'startStakingDashboardOperation'> &
+  Payload<StakingDashboardOperation>
+type UpdateAutoRelock = Action<'updateAutoRelock'> & Payload<boolean>
 type UpdateCollectRewardsDashboardOperation =
   Action<'updateCollectRewardsDashboardOperation'> &
     Payload<CollectAllRewardsDashboardOperation | undefined>
@@ -39,6 +43,8 @@ type UpdateUnlockingDashboardOperation =
 
 type Actions =
   | ResetStateAfterOperation
+  | StartStakingDashboardOperation
+  | UpdateAutoRelock
   | UpdateCollectRewardsDashboardOperation
   | UpdateInput
   | UpdateInputDays
@@ -56,11 +62,21 @@ type ActionHandlers = {
 const actionHandlers: ActionHandlers = {
   resetStateAfterOperation: state => ({
     ...state,
+    autoRelock: false,
     input: '0',
     inputDays: twoYears.toString(),
     lockupDays: twoYears,
   }),
 
+  startStakingDashboardOperation: (state, payload) => ({
+    ...state,
+    stakingDashboardOperation: payload,
+  }),
+
+  updateAutoRelock: (state, payload) => ({
+    ...state,
+    autoRelock: payload,
+  }),
   updateCollectRewardsDashboardOperation: (state, payload) => ({
     ...state,
     collectRewardsDashboardOperation: {
@@ -116,6 +132,19 @@ function reducer(
   )(state, action.payload)
 }
 
+const sanitizeOperation = function <
+  T extends StakingDashboardOperation | undefined,
+>(payload: T) {
+  if (payload?.input === undefined) {
+    return { payload }
+  }
+  const result = sanitizeAmount(payload.input)
+  if ('error' in result) {
+    return undefined
+  }
+  return { payload: { ...payload, input: result.value } }
+}
+
 type StakingDashboardFunctionEvents = {
   [K in Actions['type']]: Extract<Actions, { type: K }> extends NoPayload
     ? () => void
@@ -125,10 +154,23 @@ type StakingDashboardFunctionEvents = {
 export const useStakingDashboardState = function (): StakingDashboardState &
   StakingDashboardFunctionEvents {
   const [state, dispatch] = useReducer(reducer, {
+    autoRelock: false,
     input: '0',
     inputDays: twoYears.toString(),
     lockupDays: twoYears,
   } as StakingDashboardState)
+
+  const startStakingDashboardOperation = useCallback(function (
+    payload: StartStakingDashboardOperation['payload'],
+  ) {
+    const sanitized = sanitizeOperation(payload)
+    if (sanitized) {
+      dispatch({
+        payload: sanitized.payload,
+        type: 'startStakingDashboardOperation',
+      })
+    }
+  }, [])
 
   const updateCollectRewardsDashboardOperation = useCallback(function (
     payload: UpdateCollectRewardsDashboardOperation['payload'],
@@ -149,6 +191,12 @@ export const useStakingDashboardState = function (): StakingDashboardState &
     dispatch({ payload, type: 'updateInputDays' })
   }, [])
 
+  const updateAutoRelock = useCallback(function (
+    payload: UpdateAutoRelock['payload'],
+  ) {
+    dispatch({ payload, type: 'updateAutoRelock' })
+  }, [])
+
   const updateLockupDays = useCallback(function (
     payload: UpdateLockupDays['payload'],
   ) {
@@ -158,20 +206,13 @@ export const useStakingDashboardState = function (): StakingDashboardState &
   const updateStakingDashboardOperation = useCallback(function (
     payload: UpdateStakingDashboardOperation['payload'],
   ) {
-    let sanitizedPayload = payload
-
-    if (payload?.input !== undefined) {
-      const result = sanitizeAmount(payload.input)
-      if ('error' in result) {
-        return
-      }
-      sanitizedPayload = { ...payload, input: result.value }
+    const sanitized = sanitizeOperation(payload)
+    if (sanitized) {
+      dispatch({
+        payload: sanitized.payload,
+        type: 'updateStakingDashboardOperation',
+      })
     }
-
-    dispatch({
-      payload: sanitizedPayload,
-      type: 'updateStakingDashboardOperation',
-    })
   }, [])
 
   const updateUnlockingDashboardOperation = useCallback(function (
@@ -186,6 +227,8 @@ export const useStakingDashboardState = function (): StakingDashboardState &
       () => dispatch({ type: 'resetStateAfterOperation' }),
       [],
     ),
+    startStakingDashboardOperation,
+    updateAutoRelock,
     updateCollectRewardsDashboardOperation,
     updateInput,
     updateInputDays,

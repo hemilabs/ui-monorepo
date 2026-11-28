@@ -60,7 +60,6 @@ export const getEpochClaimableRewardsQueryOptions = ({
             amount: claim.claimable,
             decimals: claim.decimals,
             source: RewardSource.EPOCH,
-            symbol: claim.symbol,
             token: claim.token,
           }))
 

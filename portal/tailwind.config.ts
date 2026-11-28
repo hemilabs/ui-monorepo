@@ -5,6 +5,7 @@ const config: Config = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './stories/**/*.{ts,tsx}',
     // Vite's entry file lives at the package root
     './*.tsx',
   ],
@@ -305,7 +306,6 @@ const config: Config = {
         '26': '6.5rem',
         '29': '7.25rem',
         '30': '7.5rem',
-        '34': '8.5rem',
         '37': '9.2rem',
         '39': '9.75rem',
         '42': '10.5rem',

@@ -1,5 +1,6 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { getFailedRequest } from 'hemi-earn-actions/actions'
+import { useQuery } from '@tanstack/react-query'
+import { hemiEarnAgentAddress } from '@vetro-protocol/hemi-earn'
+import { getFailedRequest } from '@vetro-protocol/hemi-earn/actions'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { type Address, isAddressEqual, zeroAddress } from 'viem'
@@ -7,8 +8,6 @@ import { useAccount } from 'wagmi'
 
 import { isRemoteFailed } from '../_utils/transactionPredicates'
 import { type EarnTransaction } from '../types'
-
-import { agentAddressQueryOptions } from './useHemiEarnAgentAddress'
 
 export const getFailedRequestQueryKey = (
   account: Address | undefined,
@@ -21,22 +20,17 @@ export const useFailedRequest = function (
   transaction: EarnTransaction | undefined,
 ) {
   const { address } = useAccount()
-  const queryClient = useQueryClient()
 
   const requestId = transaction?.requestId
 
   return useQuery({
     enabled: !!address && isRemoteFailed(transaction),
-    async queryFn() {
+    queryFn() {
       if (requestId === undefined) {
         throw new Error('useFailedRequest: missing requestId')
       }
-      const agentAddress = await queryClient.ensureQueryData(
-        agentAddressQueryOptions(),
-      )
-      return getFailedRequest({
-        agentAddress,
-        client: getEvmL1PublicClient(mainnet.id),
+      return getFailedRequest(getEvmL1PublicClient(mainnet.id), {
+        address: hemiEarnAgentAddress,
         requestId: BigInt(requestId),
       })
     },

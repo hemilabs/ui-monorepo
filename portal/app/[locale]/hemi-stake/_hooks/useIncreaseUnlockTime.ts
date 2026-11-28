@@ -2,6 +2,7 @@ import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { featureFlags } from 'app/featureFlags'
 import { EventEmitter } from 'events'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUmami } from 'hooks/useUmami'
@@ -11,15 +12,17 @@ import {
   StakingDashboardToken,
 } from 'types/stakingDashboard'
 import { unixNowTimestamp } from 'utils/time'
-import { IncreaseUnlockTimeEvents, SixDaysSeconds } from 've-hemi-actions'
+import { IncreaseUnlockTimeEvents, snapToEpoch } from 've-hemi-actions'
 import { increaseUnlockTime } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 
 import { daysToSeconds } from '../_utils/lockCreationTimes'
 import { updatePosition } from '../_utils/positionsCache'
 
+import { getDelegatedAwayQueryKeyPrefix } from './useDelegatedAway'
 import { getPositionDelegationDetailsQueryKey } from './usePositionDelegationDetails'
 import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
+import { invalidateRewardsForecastInputs } from './useRewardsForecastInputs'
 import { getStakingPositionsQueryKey } from './useStakingPositions'
 import { getTotalVotingPowerQueryKey } from './useTotalVotingPower'
 
@@ -67,6 +70,7 @@ export const useIncreaseUnlockTime = function ({
       }
       const { emitter, promise } = increaseUnlockTime({
         account: address,
+        autoRelockSupported: featureFlags.enableHemiStakeAutoRelock,
         lockDurationInSeconds: daysToSeconds(lockupDays),
         tokenId,
         walletClient: hemiWalletClient!,
@@ -76,10 +80,7 @@ export const useIncreaseUnlockTime = function ({
         'user-signed-increase-unlock-time',
         function (transactionHash) {
           updateStakingDashboardOperation({
-            stakingPosition: {
-              lockTime: daysToSeconds(BigInt(lockupDays)),
-              tokenId,
-            },
+            stakingPosition: { tokenId },
             status: StakingDashboardStatus.STAKE_TX_PENDING,
             transactionHash,
           })
@@ -87,12 +88,26 @@ export const useIncreaseUnlockTime = function ({
           track?.('hemi stake - signed increase unlock time')
         },
       )
+      emitter.on('increase-unlock-time-failed-validation', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+
+        track?.('hemi stake - increase unlock time failed validation')
+      })
       emitter.on('user-signing-increase-unlock-time-error', function () {
         updateStakingDashboardOperation({
           status: StakingDashboardStatus.STAKE_TX_FAILED,
         })
 
         track?.('hemi stake - signing increase unlock time error')
+      })
+      emitter.on('increase-unlock-time-failed', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+
+        track?.('hemi stake - increase unlock time failed')
       })
       emitter.on(
         'increase-unlock-time-transaction-succeeded',
@@ -109,14 +124,14 @@ export const useIncreaseUnlockTime = function ({
                 // Calculate new unlock time (current time + chosen duration, rounded)
                 const rawUnlockTime =
                   unixNowTimestamp() + daysToSeconds(BigInt(lockupDays))
-                const sixDays = BigInt(SixDaysSeconds)
-                const newUnlockTime = (rawUnlockTime / sixDays) * sixDays
+                const newUnlockTime = BigInt(snapToEpoch(Number(rawUnlockTime)))
 
                 // New lockTime is duration from original start to new end
                 const newLockTime = newUnlockTime - BigInt(position.timestamp)
 
                 return {
                   ...position,
+                  effectiveLockEnd: newUnlockTime,
                   lockTime: newLockTime,
                 }
               },
@@ -147,7 +162,15 @@ export const useIncreaseUnlockTime = function ({
                 ownerAddress: address,
               }),
             })
+            queryClient.invalidateQueries({
+              queryKey: getDelegatedAwayQueryKeyPrefix({
+                chainId: token.chainId,
+                ownerAddress: address,
+              }),
+            })
           }
+
+          invalidateRewardsForecastInputs(queryClient, token.chainId)
 
           track?.('hemi stake - increase unlock time success')
         },
@@ -165,12 +188,23 @@ export const useIncreaseUnlockTime = function ({
           track?.('hemi stake - increase unlock time reverted')
         },
       )
+      emitter.on('unexpected-error', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+
+        track?.('hemi stake - unexpected error')
+      })
 
       on?.(emitter)
 
       return promise
     },
     onSettled() {
+      if (featureFlags.enableHemiStakeAutoRelock) {
+        queryClient.invalidateQueries({ queryKey: stakingPositionQueryKey })
+      }
+
       // Do not return the promises here. Doing so will delay the resolution of
       // the mutation, which will cause the UI to be out of sync until balances are re-validated.
       // Query invalidation here must work as fire and forget, as, after all, it runs in the background!

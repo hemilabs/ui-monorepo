@@ -1,4 +1,5 @@
 export type {
+  AutoRelockEvents,
   CreateLockEvents,
   IncreaseAmountEvents,
   IncreaseUnlockTimeEvents,
@@ -7,10 +8,12 @@ export type {
 
 export {
   getVeHemiContractAddress,
+  halfEpochSeconds,
   MaxLockDurationSeconds,
   minLockAmount,
   MinLockDurationSeconds,
   SixDaysSeconds,
+  snapToEpoch,
 } from './constants.ts'
 
 export { getLockEvent, validateCreateLockInputs } from './utils.ts'

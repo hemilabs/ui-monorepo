@@ -1,7 +1,7 @@
 import { createContext, useState } from 'react'
 
-import { WalletConnector } from '../connectors/types'
-import { ConnectionStatus } from '../types'
+import type { WalletConnector } from '../connectors/types'
+import type { ConnectionStatus } from '../types'
 
 type GlobalState = {
   connectionStatus: ConnectionStatus

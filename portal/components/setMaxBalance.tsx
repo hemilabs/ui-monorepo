@@ -83,7 +83,6 @@ export const SetMaxBtcBalance = function ({
     disabled ||
     isLoadingBalance ||
     isLoadingFees ||
-    btcBalance === 0 ||
     fees === undefined ||
     btcBalance <= fees
 

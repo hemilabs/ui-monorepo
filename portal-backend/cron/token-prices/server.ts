@@ -1,5 +1,4 @@
 import safeAsyncFn from 'safe-async-fn'
-import startInterval from 'startinterval2'
 
 import { config } from './src/config.ts'
 import { refreshHistory } from './src/refresh-history.ts'
@@ -28,12 +27,12 @@ async function runHistory() {
 
 console.log(`Token prices cron v${config.get('version')} started`)
 
+run()
+runHistory()
+
 const refreshPricesMin = config.get('refreshPricesMin')
 if (refreshPricesMin > 0) {
   const intervalMs = refreshPricesMin * 60 * 1000
-  startInterval(run, intervalMs)
-  startInterval(runHistory, intervalMs)
-} else {
-  run()
-  runHistory()
+  setInterval(run, intervalMs)
+  setInterval(runHistory, intervalMs)
 }

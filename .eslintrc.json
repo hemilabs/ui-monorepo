@@ -1,15 +1,15 @@
 {
   "extends": ["bloq", "prettier"],
   "ignorePatterns": [
-    "portal/.next",
+    "packages/*/dist",
     "portal/dist",
-    "portal/next-env.d.ts",
-    "portal/out",
+    "portal/playwright-report",
     "portal/storybook-static",
+    "portal/test-results",
     "subgraphs/**/*.ts",
-    "!subgraphs/hemi-earn-requests-subgraph/src/**/*.ts",
-    "!subgraphs/hemi-earn-requests-subgraph/tests/**/*.ts",
-    "!subgraphs/hemi-earn-requests-subgraph/*.config.ts"
+    "!subgraphs/hemi-supply-indexer/src/**/*.ts",
+    "!subgraphs/hemi-supply-indexer/tests/**/*.ts",
+    "!subgraphs/hemi-supply-indexer/*.config.ts"
   ],
   "overrides": [
     {
@@ -110,7 +110,7 @@
     },
     {
       "extends": ["bloq/node", "bloq/typescript", "prettier"],
-      "files": ["subgraphs/hemi-earn-requests-subgraph/{src,tests}/**/*.ts"],
+      "files": ["subgraphs/hemi-supply-indexer/{src,tests}/**/*.ts"],
       "rules": {
         "arrow-body-style": ["warn", "as-needed"],
         "node/no-unsupported-features/es-syntax": [
@@ -122,14 +122,14 @@
       }
     },
     {
-      "files": ["subgraphs/hemi-earn-requests-subgraph/tests/**/*.ts"],
+      "files": ["subgraphs/hemi-supply-indexer/tests/**/*.ts"],
       "rules": {
         "node/no-unpublished-import": ["error", { "allowModules": ["vitest"] }]
       }
     },
     {
       "extends": ["bloq/node", "bloq/typescript", "prettier"],
-      "files": ["subgraphs/hemi-earn-requests-subgraph/*.config.ts"],
+      "files": ["subgraphs/hemi-supply-indexer/*.config.ts"],
       "rules": {
         "node/no-missing-import": "off",
         "node/no-unpublished-import": "off",
@@ -143,7 +143,10 @@
     },
     {
       "extends": ["bloq/typescript", "prettier"],
-      "files": ["*.d.ts"]
+      "files": ["**/*.d.ts"],
+      "rules": {
+        "@typescript-eslint/consistent-type-definitions": "off"
+      }
     },
     {
       "extends": ["bloq/vitest"],
@@ -187,10 +190,64 @@
       "rules": {
         "markdownlint/md041": "off"
       }
+    },
+    {
+      "excludedFiles": ["portal/scripts/hemi-earn/**/*.ts"],
+      "files": ["portal/**/*.{js,ts,tsx}"],
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "message": "Use the locale-bound formatters in utils/format.ts.",
+            "selector": "MemberExpression[object.name='Intl'][property.name=/Format$/]"
+          },
+          {
+            "message": "Use the locale-bound formatters in utils/format.ts.",
+            "selector": "MemberExpression[object.name='Intl'][computed=true][property.value=/Format$/]"
+          },
+          {
+            "message": "Use the locale-bound formatters in utils/format.ts.",
+            "selector": "MemberExpression[property.name=/^toLocale.*String$/]"
+          },
+          {
+            "message": "Use the locale-bound formatters in utils/format.ts.",
+            "selector": "MemberExpression[computed=true][property.value=/^toLocale.*String$/]"
+          }
+        ]
+      }
+    },
+    {
+      "files": ["portal/utils/format.ts"],
+      "rules": {
+        "no-restricted-syntax": "off"
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "@typescript-eslint/member-ordering": [
+          "warn",
+          {
+            "default": {
+              "memberTypes": "never",
+              "order": "natural-case-insensitive"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "files": ["portal/e2e/**/*.ts"],
+      "rules": {
+        "@vitest/require-hook": "off",
+        "react-hooks/rules-of-hooks": "off"
+      }
     }
   ],
   "root": true,
   "rules": {
+    "@typescript-eslint/array-type": ["error", { "default": "array" }],
+    "@typescript-eslint/consistent-type-definitions": ["error", "type"],
     "camelcase": [
       "warn",
       {

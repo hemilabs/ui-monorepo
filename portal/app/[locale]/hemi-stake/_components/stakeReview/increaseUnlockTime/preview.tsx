@@ -12,6 +12,8 @@ import { Token } from 'types/token'
 import { Lockup } from '../../lockup'
 import { SubmitStake } from '../../submitStake'
 
+import { ExtendPayouts } from './extendPayouts'
+
 type PreviewProps = {
   callToAction: ReactNode
   gas: {
@@ -71,9 +73,14 @@ export function Preview({
               updateLockupDays={onUpdateLockupDays}
             />
             {isValid && (
-              <FeesContainer compact>
-                <EvmFeesSummary gas={gas} operationToken={token} />
-              </FeesContainer>
+              <>
+                <div className="mt-3">
+                  <ExtendPayouts />
+                </div>
+                <FeesContainer compact>
+                  <EvmFeesSummary gas={gas} />
+                </FeesContainer>
+              </>
             )}
           </div>
           <CallToActionContainer>

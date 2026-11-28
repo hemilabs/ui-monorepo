@@ -10,7 +10,8 @@
     "approve-and-deposit": "Approve and Deposit",
     "approve-and-withdraw": "Approve and Withdraw",
     "approving": "Approving...",
-    "approving-token": "Approving {symbol}",
+    "apy": "APY",
+    "balance": "Balance",
     "cancel": "Cancel",
     "close": "Close",
     "close-notification": "Close notification",
@@ -40,9 +41,7 @@
     "network-fees": "Network fees",
     "network-gas-fee": "{network} gas fee",
     "only-live-on-mainnet": "Only live on Mainnet",
-    "open": "Open",
     "powered-by": "Powered by <company></company>",
-    "stake": "Stake",
     "success": "Success",
     "switch-to-mainnet": "Switch to Mainnet",
     "token-price": "{symbol} price",
@@ -156,111 +155,69 @@
     "view-all-tutorials": "View all tutorials"
   },
   "hemi-earn": {
-    "heading": "Earn yield with Hemi Earn",
+    "apy-provided-by-vetro": "APY · provided by Vetro",
+    "apy-source": "APY is a variable estimate provided by Vetro based on the vault's recent performance. It is not a promise or forecast of future returns and can change at any time. Returns are shown {fees, select, included {after} other {before}} fees.",
+    "blocked": {
+      "restricted-location": {
+        "body": "Hemi Earn is operated by Vetro Service & Support Corp. and is not offered to persons in the United States or other restricted jurisdictions. If you already have a position, you can still withdraw it.",
+        "heading": "Hemi Earn isn't available in your location"
+      },
+      "sanctioned-wallet": {
+        "body": "This wallet doesn't meet Vetro's eligibility requirements for Hemi Earn. Any existing position can still be withdrawn. For questions, contact <link>Vetro support</link>.",
+        "heading": "This wallet can't deposit into Hemi Earn"
+      }
+    },
+    "could-not-load-vaults": "We couldn't load the vaults",
+    "deposits-paused": "New deposits are currently paused.",
+    "footer": {
+      "attribution": "Hemi Earn is operated by Vetro Service & Support Corp. Vaults available through Hemi Earn may be operated by Vetro or by third parties. Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. and their affiliates do not operate, manage, custody or guarantee Hemi Earn or any vault and are not parties to your agreement with Vetro. Hemi Earn is not available to U.S. persons or other restricted persons.",
+      "vetro-privacy": "Vetro Privacy Policy",
+      "vetro-terms": "Vetro Terms of Use"
+    },
+    "heading": "Earn on your BTC and stablecoins",
     "info": {
-      "earned-amount": "Your earned amount",
-      "from-pools": "{count, plural, one {From # pool} other {From # pools}}",
-      "staked-balance": "Your staked balance"
+      "estimated-earnings": "Your estimated earnings",
+      "from-vaults": "{count, plural, one {From # vault} other {From # vaults}}",
+      "your-deposits": "Your deposits"
     },
     "navigation": {
       "back": "Back",
       "hemi-earn": "Hemi Earn",
-      "pool-name": "{tokenSymbol} pool"
+      "vault-name": "{tokenSymbol} vault"
     },
-    "pool": {
-      "apy": "APY",
-      "composition": {
-        "amount": "Amount",
-        "by-protocol": "By protocol",
-        "by-token": "By token",
-        "position": "Position",
-        "protocols-count": "{count, plural, one {# protocol} other {# protocols}}",
-        "reserve-buffer": "Reserve Buffer",
-        "share": "Share",
-        "title": "Composition",
-        "tokens-count": "{count, plural, one {# token} other {# tokens}}",
-        "view-mode": "View mode"
-      },
-      "deposit-successful": "Deposit successful",
-      "drawer": {
-        "approving": "Approving {symbol}",
-        "cooldown-ended": "Cooldown period complete",
-        "deposit": {
-          "heading": "Review stake deposit",
-          "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
-        },
-        "funds-returned": "Funds returned",
-        "funds-to-recover": "Funds to recover",
-        "get-share-tokens": "Get share tokens",
-        "receive-token": "Receive {symbol}",
-        "shares-returned": "Shares returned",
-        "shares-to-recover": "Shares to recover",
-        "stake-token": "Stake {symbol}",
-        "unstake-token": "Unstake {symbol}",
-        "wait-cooldown-countdown": "{days, plural, =0 {Cooldown ends in {hours}h} other {Cooldown ends in #d {hours}h}}",
-        "wait-cooldown-countdown-soon": "Cooldown ends in less than an hour",
-        "wait-cooldown-pending": "Wait for the {days, plural, one {# day} other {# days}} cooldown period",
-        "withdraw": {
-          "heading": "Review stake withdrawal",
-          "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
-        }
-      },
-      "form": {
-        "amount-too-small": "Amount too small",
-        "asset-unavailable": "Asset unavailable",
-        "available": "Available",
-        "bridging-fees": "Bridging fees",
-        "cooldown-warning": "Withdrawing funds takes {days, plural, one {# day} other {# days}} to complete.",
-        "cooldown-warning-fallback": "Withdrawing funds takes several days to complete.",
-        "ethereum-gas-fee": "Ethereum gas fee",
-        "hemi-fees": "Hemi fees",
-        "network-error": "Preview failed — try again",
-        "share-token-available-to-withdraw": "Share token available to withdraw",
-        "withdraw-share-tokens-as": "Withdraw share token as",
-        "withdrawing": "Withdrawing...",
-        "you-will-receive": "You'll receive"
-      },
-      "here-is-your-tx": "Here's your transaction:",
-      "historical-metrics": {
-        "1-week": "1 week",
-        "1-year": "1 year",
-        "apy": "APY",
-        "metric": "Metric",
-        "month": "{count, plural, one {# month} other {# months}}",
-        "period": "Period",
-        "pool-deposits": "Pool deposits",
-        "title": "Historical metrics"
-      },
-      "settings": {
-        "accept-risk": "I understand and accept the risk",
-        "advanced-settings": "Advanced settings",
-        "auto": "Auto",
-        "continue-anyway": "Continue anyway",
-        "high-slippage": "High slippage",
-        "high-slippage-value": "High slippage {value}%",
-        "low-slippage": "Slippage too low",
-        "low-slippage-value": "Low slippage {value}%",
-        "max-slippage": "Max slippage",
-        "slippage-value": "Slippage {value}%",
-        "very-high-slippage": "Very high slippage",
-        "very-high-slippage-value": "Very high slippage {value}%",
-        "warning-description-deposit": "<highlight>Your slippage is set above {threshold}%.</highlight> This increases your exposure to price impact. You may receive significantly fewer shares than quoted.",
-        "warning-description-withdrawal": "<highlight>Your slippage is set above {threshold}%.</highlight> This increases your exposure to price impact. You may receive significantly fewer tokens than quoted.",
-        "warning-title": "High slippage warning"
-      },
-      "total-deposits": "Pool total deposits",
-      "withdraw-successful": "Withdraw successful"
+    "operator": {
+      "banner": "Hemi Earn is operated by Vetro Service & Support Corp. Hemi provides this interface only. <link>View Vetro's Terms</link>",
+      "deposits-paused-details": "New deposits into Hemi Earn are currently paused in the Hemi portal. Your existing position is not affected by this pause, and you can still view and withdraw it below. For questions, contact <link>Vetro support</link>.",
+      "note": "Operated by Vetro Service & Support Corp. <link>Terms</link>"
     },
-    "pool-info": {
-      "apy": "APY",
-      "manage": "Manage",
-      "pool-contract": "Pool Contract",
-      "share-token": "Share token",
-      "staked-balance": "Your staked balance",
-      "total-deposits": "Total deposits"
-    },
-    "subheading": "One click earn for your assets",
+    "restricted-location": "Hemi Earn isn't available in your location.",
+    "risk-warning": "Yields are variable and not guaranteed. You may lose some or all of your deposit.",
+    "sanctioned-wallet": "This wallet can't deposit into Hemi Earn.",
+    "subheading": "Hemi Earn, operated by Vetro, gives you access to yield vaults right from the Hemi portal. Choose a vault and deposit in a few steps. Yields are variable and not guaranteed.",
     "switch-to-start-earning": "You can switch networks to start earning with Hemi.",
+    "terms": {
+      "agree-and-continue": "Agree and continue",
+      "cannot-sign": "Your wallet doesn't support the signature needed to accept Vetro's Terms. To deposit into Hemi Earn, please connect a wallet that supports message signing.",
+      "checkbox": "I have read and agree to Vetro's Terms of Use, including the Hemi Earn Terms, and its Privacy Policy. I understand that Hemi Earn is operated by Vetro Service & Support Corp., that my agreement is solely with Vetro, and that Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. and their affiliates are not parties to it and have no obligations to me in respect of Hemi Earn. I confirm that I am not a U.S. person or otherwise a Restricted Person under Vetro's Terms.",
+      "handoff": {
+        "before-you-continue": "Before you continue, please note:",
+        "body": "Hemi Earn is a third-party service operated by Vetro Service & Support Corp., a Panama company. When you use Hemi Earn, your agreement is with Vetro, not with Hemi. Hemispheres Service & Support (BVI) Ltd., Hemi Labs, Inc. and their affiliates provide this interface only. They do not operate, manage, custody or guarantee Hemi Earn or any vault, and they are not parties to your agreement with Vetro.",
+        "bullets": {
+          "assets": "Your assets are sent from your wallet to smart contracts operated by Vetro, which deposit them into the vault you choose and may bridge them between networks. Some vaults are operated by third parties, not Vetro. Each vault's operator is shown on its page.",
+          "not-available": "Hemi Earn is not available to U.S. persons or other restricted persons.",
+          "withdrawals": "Withdrawals may be delayed or subject to queues or lock-up periods.",
+          "yields": "Yields are variable and not guaranteed. You could lose some or all of your deposit, including through failures of smart contracts, bridges, vault operators, strategies, stablecoins or markets."
+        },
+        "privacy-policy": "Vetro Privacy Policy",
+        "terms-of-use": "Vetro Terms of Use",
+        "title": "You're entering Hemi Earn, operated by Vetro"
+      },
+      "re-acceptance": {
+        "body": "To make new deposits into Hemi Earn, please review and accept Vetro's updated Terms of Use. You can withdraw your existing position at any time without accepting. <link>View updated Terms</link>",
+        "title": "Vetro has updated its Terms"
+      },
+      "signing-note": "Next, your wallet will ask you to sign a message confirming your agreement. Signing is free and does not send a transaction."
+    },
     "transactions": {
       "banner": {
         "cancelled": {
@@ -275,24 +232,24 @@
           "heading": "We couldn't claim your share tokens automatically",
           "subheading": "Click on 'Claim share tokens' to get your tokens."
         },
+        "contact-support": "Contact Vetro support",
         "recover-funds": {
-          "heading": "Transaction failed",
-          "subheading": "Something went wrong. Use the button below to return your funds to your wallet."
+          "heading": "Transaction failed"
         },
         "recover-shares": {
-          "heading": "Transaction failed",
-          "subheading": "Something went wrong. Use the button below to return your share tokens to your wallet."
+          "heading": "Transaction failed"
         },
         "remote-failed": {
+          "deposits-paused": "New deposits are paused, so return your funds to your wallet for now.",
           "heading": "Your withdrawal is stuck on Ethereum",
           "heading-deposit": "Your deposit is stuck on Ethereum",
           "heading-slippage": "Your withdrawal didn't complete",
           "heading-slippage-deposit": "Your deposit didn't complete",
-          "subheading": "The cross-chain step failed. Retry to add more gas and complete the withdrawal, or cancel to return your share tokens to your wallet.",
-          "subheading-deposit": "The cross-chain step failed. Retry to add more gas and complete the deposit, or cancel to return your funds to your wallet.",
-          "subheading-slippage": "The price moved past your slippage limit before the final step could run, so your share tokens are still held. Return them to your wallet, then try the withdrawal again with a higher slippage tolerance.",
-          "subheading-slippage-deposit": "The price moved past your slippage limit before the final step could run, so your funds are still held. Return them to your wallet, then try the deposit again with a higher slippage tolerance."
+          "restricted-location": "Hemi Earn isn't available in your location, so return your funds to your wallet.",
+          "sanctioned-wallet": "This wallet can't deposit into Hemi Earn, so return your funds to your wallet.",
+          "vault-delisted": "This vault no longer accepts deposits, so return your funds to your wallet."
         },
+        "transfer-incomplete": "This transfer hasn't completed yet. Hemi can't access, move or recover assets in Hemi Earn. Please contact Vetro support and include your transaction hash:",
         "withdraw": {
           "heading": "Your withdrawal is ready",
           "subheading": "This usually happens automatically, but you can do it yourself. This transaction runs on Ethereum."
@@ -301,7 +258,7 @@
       "cancel-modal": {
         "cancelling": "Cancelling...",
         "confirm": "Cancel withdrawal",
-        "description": "If you cancel it, your funds will go back to being staked and will no longer be in the cooldown lock.",
+        "description": "If you cancel it, your funds will remain deposited in the vault and will no longer be in the cooldown lock.",
         "keep": "Keep withdrawal",
         "title": "Cancel withdrawal"
       },
@@ -317,24 +274,26 @@
         "type": "Type"
       },
       "connect-to-view": "Connect your wallet to view your earn transactions.",
+      "could-not-load-all-transactions": "We couldn't load all your transactions",
+      "could-not-load-transactions": "We couldn't load your transactions",
       "deposit": "Deposit",
       "drawer": {
-        "deposit-heading": "Stake deposit details",
-        "deposit-subheading": "Review your stake deposit transaction.",
+        "deposit-heading": "Deposit details",
+        "deposit-subheading": "Review your deposit transaction.",
         "step": {
           "approval-needed": "Approval needed",
           "approve-token": "Approve {symbol}",
+          "deposit-token": "Deposit {symbol} into vault",
           "funds-returned": "Funds returned",
           "funds-to-recover": "Funds to recover",
           "get-share-tokens": "Get share tokens",
           "receive-token": "Receive {symbol}",
           "shares-returned": "Shares returned",
           "shares-to-recover": "Shares to recover",
-          "stake-token": "Stake {symbol}",
-          "unstake-token": "Unstake {symbol}"
+          "withdraw-token": "Withdraw {symbol} from vault"
         },
-        "withdraw-heading": "Stake withdrawal details",
-        "withdraw-subheading": "Review your stake withdrawal transaction."
+        "withdraw-heading": "Withdrawal details",
+        "withdraw-subheading": "Review your withdrawal transaction."
       },
       "nothing-here": "Nothing here yet",
       "nothing-here-subtitle": "Your transactions will appear once you get started.",
@@ -378,18 +337,130 @@
       "view": "View",
       "withdraw": "Withdraw",
       "withdrawal": "Withdrawal"
-    }
+    },
+    "vault": {
+      "composition": {
+        "amount": "Amount",
+        "by-protocol": "By protocol",
+        "by-token": "By token",
+        "position": "Position",
+        "protocols-count": "{count, plural, one {# protocol} other {# protocols}}",
+        "reserve-buffer": "Reserve Buffer",
+        "share": "Share",
+        "subtitle": "Assets held across the vault's underlying strategies, as reported by Vetro.",
+        "title": "Composition",
+        "tokens-count": "{count, plural, one {# token} other {# tokens}}",
+        "view-mode": "View mode"
+      },
+      "deposit-complete": "Your deposit is complete. Your position is held in the {vaultName} vault, operated by {operator}.",
+      "deposit-complete-plain": "Your deposit is complete.",
+      "deposit-successful": "Deposit successful",
+      "drawer": {
+        "approving": "Approving {symbol}",
+        "confirm-in-wallet": "Confirm in wallet",
+        "cooldown-ended": "Cooldown period complete",
+        "deposit": {
+          "heading": "Review deposit",
+          "review": "You're depositing into {vaultName} through Hemi Earn, operated by Vetro Service & Support Corp. Your assets go from your wallet to Vetro's smart contracts, which deposit them into the vault and may bridge them between networks. Deposits can take up to {duration} to complete. Yields are variable and not guaranteed, and you may lose some or all of your deposit.",
+          "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
+        },
+        "deposit-token": "Deposit {symbol} into vault",
+        "funds-returned": "Funds returned",
+        "funds-to-recover": "Funds to recover",
+        "get-share-tokens": "Get share tokens",
+        "in-transit": "Your transfer is in progress between networks. This usually takes {duration} but can take longer. You can close this page; the status will update in My earn transactions.",
+        "receive-token": "Receive {symbol}",
+        "review-fallback": "Review the details below before you confirm in your wallet.",
+        "shares-returned": "Shares returned",
+        "shares-to-recover": "Shares to recover",
+        "vault-details-and-fees": "Vault details and fees",
+        "wait-cooldown-countdown": "{days, plural, =0 {Cooldown ends in {hours}h} other {Cooldown ends in #d {hours}h}}",
+        "wait-cooldown-countdown-soon": "Cooldown ends in less than an hour",
+        "wait-cooldown-pending": "Wait for the {days, plural, one {# day} other {# days}} cooldown period",
+        "withdraw": {
+          "heading": "Review withdrawal",
+          "review": "You're withdrawing from {vaultName} through Hemi Earn, operated by Vetro Service & Support Corp. Withdrawals can take time to complete and may be subject to queues or lock-up periods set by the vault.",
+          "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
+        },
+        "withdraw-token": "Withdraw {symbol} from vault"
+      },
+      "form": {
+        "amount-too-small": "Amount too small",
+        "asset-unavailable": "Asset unavailable",
+        "available": "Available",
+        "bridging-fees": "Bridging fees",
+        "cooldown-warning": "Withdrawing funds takes {days, plural, one {# day} other {# days}} to complete.",
+        "cooldown-warning-fallback": "Withdrawing funds takes several days to complete.",
+        "ethereum-gas-fee": "Ethereum gas fee",
+        "hemi-network-fee": "Hemi network fee",
+        "network-error": "Preview failed — try again",
+        "share-token-available-to-withdraw": "Share token available to withdraw",
+        "vetro-deposit-fee": "Vetro deposit fee",
+        "vetro-withdrawal-fee": "Vetro withdrawal fee",
+        "withdraw-share-tokens-as": "Withdraw share token as",
+        "withdrawing": "Withdrawing...",
+        "you-will-receive": "You'll receive"
+      },
+      "historical-metrics": {
+        "1-week": "1 week",
+        "1-year": "1 year",
+        "metric": "Metric",
+        "month": "{count, plural, one {# month} other {# months}}",
+        "period": "Period",
+        "title": "Historical metrics",
+        "vault-deposits": "Vault deposits"
+      },
+      "settings": {
+        "accept-risk": "I understand and accept the risk",
+        "advanced-settings": "Advanced settings",
+        "auto": "Auto",
+        "continue-anyway": "Continue anyway",
+        "high-slippage": "High slippage",
+        "high-slippage-value": "High slippage {value}%",
+        "low-slippage": "Slippage too low",
+        "low-slippage-value": "Low slippage {value}%",
+        "max-slippage": "Max slippage",
+        "slippage-value": "Slippage {value}%",
+        "very-high-slippage": "Very high slippage",
+        "very-high-slippage-value": "Very high slippage {value}%",
+        "warning-description-deposit": "<highlight>Your slippage is set above {threshold}%.</highlight> This increases your exposure to price impact. You may receive significantly fewer shares than quoted.",
+        "warning-description-withdrawal": "<highlight>Your slippage is set above {threshold}%.</highlight> This increases your exposure to price impact. You may receive significantly fewer tokens than quoted.",
+        "warning-title": "High slippage warning"
+      },
+      "total-deposits": "Vault total deposits",
+      "withdraw-complete": "Your withdrawal is complete. The assets have been returned to your wallet.",
+      "withdraw-successful": "Withdraw successful"
+    },
+    "vault-delisted": "This vault no longer accepts deposits.",
+    "vault-info": {
+      "curators": "{count, plural, one {Curator} other {Curators}}: {names}",
+      "manage": "Manage",
+      "operator": "Vault operator: {operator}",
+      "share-token": "Share token",
+      "total-deposits": "Total deposits",
+      "vault-contract": "Vault contract",
+      "your-deposits": "Your deposits"
+    },
+    "vetro-data-disclaimer": "Data provided by Vetro. Figures may be delayed and have not been verified by Hemi."
   },
   "hemi-stake": {
     "amount": "Amount",
     "analytics": {
       "1-week": "1 week",
+      "1-year": "1 year",
       "circulating": "Circulating",
       "decreased-by": "decreased by",
+      "epoch": "Epoch {epoch}",
+      "epochs": "Epochs",
+      "in-progress": "In progress",
       "increased-by": "increased by",
       "month": "{count, plural, one {# month} other {# months}}",
       "non-circulating": "Non-circulating",
       "period": "Period",
+      "pre-hemi-stake": "Rewards before hemiStake",
+      "projected": "Projected baseline incentives",
+      "protocol-fees": "+ Protocol fees",
+      "rewards-title": "Rewards distributed",
       "share-of-supply": "{share} of supply",
       "staked": "Staked",
       "title": "{symbol} supply",
@@ -399,15 +470,39 @@
     "apy-estimate": "Note: hemiStake launched recently, so projected APY is high. The reward pool is shared, so as more HEMI is staked APY will decrease.",
     "claim-rewards": {
       "heading": "Claim rewards",
-      "subheading": "We’re processing your reward claim. You can follow the progress below."
+      "subheading": "We’re processing your reward claim. You can follow the progress below.",
+      "subheading-by-value": "We’re processing your reward claims, starting with the highest-value ones. You can follow the progress below."
+    },
+    "claim-rewards-failed": {
+      "description": "Not all of your rewards could be claimed. Open the details to try again.",
+      "title": "Claim rewards failed",
+      "view-details": "View details"
     },
     "claim-rewards-successful": "Claim rewards successful",
     "drawer": {
       "approving": "Approving {symbol}",
+      "auto-relock": {
+        "apy": "APY",
+        "decays-to-zero": "Decays to 0 by {date}",
+        "legend-added-by-auto-relock": "Added by auto-relock",
+        "legend-after-disabling": "After disabling",
+        "legend-today": "Today",
+        "legend-with-auto-relock": "With auto-relock",
+        "stays-at": "Stays at {votingPower}",
+        "step": "Update auto-relock"
+      },
       "claim-position-rewards": "Claim rewards from position #{tokenId}",
-      "claim-position-rewards-step": "Claim rewards from position #{tokenId}, epochs {fromEpoch}-{toEpoch} ({step} of {total})",
+      "claim-position-rewards-epochs": "Claim rewards from position #{tokenId}, epochs {fromEpoch}-{toEpoch}",
       "claim-rewards": "Claim rewards",
-      "claim-rewards-step": "Claim rewards, epochs {fromEpoch}-{toEpoch} ({step} of {total})",
+      "claim-rewards-epochs": "Claim rewards, epochs {fromEpoch}-{toEpoch}",
+      "disable-auto-relock": {
+        "heading": "Disable auto-relock",
+        "subheading": "Your position stops renewing its duration every epoch, so the countdown to unlock starts again from where it is now."
+      },
+      "enable-auto-relock": {
+        "heading": "Enable auto-relock",
+        "subheading": "Your position keeps its current duration forever, as if you extended it by one epoch every epoch. Turn it off and the countdown starts again."
+      },
       "increase-amount": {
         "heading": "Add ${symbol} to this lockup",
         "subheading": "Deposit additional ${symbol} into your existing lockup to increase your staked amount and governance power."
@@ -429,9 +524,13 @@
       "unlock-token": "Unlock {symbol}"
     },
     "estimated-payouts": {
+      "added-amount": "Added {symbol}",
+      "added-time": "Added time",
+      "advanced-estimator": "Advanced estimator",
       "after-unlock": "after unlock",
       "apy": "{percentage} APY",
       "carried-from": "Based on epoch {epoch}, the last one funded.",
+      "countdown-paused": "Countdown paused",
       "enter-minimum-amount": "Enter at least {amount} {symbol} to see your estimate.",
       "first-year": "in the first year",
       "load-failed": "Could not load the reward data.",
@@ -439,12 +538,31 @@
       "next-payout-line": "next payout <amount></amount> · epoch {epoch}, settles {date}",
       "not-funded": "Rewards for this epoch have not been funded yet.",
       "starting-from-epoch": "Payouts per epoch · starting from epoch <epoch></epoch>",
+      "this-lockup": "This lockup",
       "title": "Estimated payouts",
       "unlocks-on": "Unlocks {date}"
+    },
+    "estimator": {
+      "blended-was": "blended, was {percentage}",
+      "connect-to-blend": "Connect your wallet to include your positions in the estimate",
+      "estimated-payouts-first-year": "Estimated payouts in the first year",
+      "my-positions": "My positions",
+      "new-position": "New position",
+      "per-epoch": "{symbol} per epoch · starting from epoch {epoch}",
+      "quick-amounts": "Quick amounts",
+      "scope": "Estimate scope",
+      "simple-first-year": "simple, first year",
+      "unit": "Unit",
+      "view-position": "View position",
+      "voting-power-title": "Voting power · <amount></amount> veHEMI",
+      "with-my-positions": "With my positions",
+      "yours": "Yours · {amount}"
     },
     "form": {
       "approve-and-stake": "Approve and Stake",
       "approximate": "~{percentage}",
+      "auto-relock": "Auto-relock",
+      "auto-relock-tooltip": "Your position keeps its current duration forever, as if you extended it by one epoch every epoch. Turn it off and the countdown starts again.",
       "custom": "Custom",
       "days": "{days, plural, one {{days} day} other {{days} days}}",
       "expire-date": "Expire date:",
@@ -458,6 +576,8 @@
       "title": "Stake",
       "unlocking": "Unlocking...",
       "use-or": "Use <min></min> or <max></max>",
+      "voting-power-decays": "Decays to 0 by {date}",
+      "voting-power-stays": "Stays constant while auto-relock is on",
       "years": "{years, plural, one {{years} year} other {{years} years}}"
     },
     "get-started": {
@@ -482,10 +602,6 @@
       "headline": "A whole economy.<break></break><highlight>One</highlight> key.",
       "live-on": "live 19 September",
       "subtitle": "Stake Hemi for a share of every payout and access to what launches next."
-    },
-    "launch-card": {
-      "is-live": "<name></name> is live",
-      "live-on": "Live 19 September"
     },
     "lockup-period": "Lockup period",
     "perks": {
@@ -516,23 +632,31 @@
       "your-claimable": "Available to claim",
       "your-staked": "Your stake"
     },
-    "subheading": "Lock ${symbol} from {minDays, plural, one {# day} other {# days}} to {maxYears, plural, one {# year} other {# years}}. Earn every payout in {symbol}, hemiBTC and USDC, and get a vote.",
+    "subheading": "Lock ${symbol} from {minDays, plural, one {# day} other {# days}} to {maxYears, plural, one {# year} other {# years}}. Earn every payout in {symbol} and hemiBTC, and get a vote.",
     "switch-to-start-staking": "You can switch networks to start staking your HEMI.",
     "table": {
       "action": "Action",
       "active": "Active",
       "add-liquidity-to-lockup": "Add ${symbol} to this lockup",
+      "add-time-available-on": "Available on {date}",
       "add-time-to-lockup": "Add time to this lockup",
+      "auto-relock": "Auto-relock",
+      "auto-relock-off": "Off",
+      "auto-relock-on": "On",
       "burned": "Burned",
       "claim": "Claim",
       "claim-all-rewards": "Claim all rewards",
+      "claiming": "Claiming...",
       "claiming-paused": "Rewards claiming is paused",
       "could-not-load-positions": "We couldn't load your positions",
+      "disable-auto-relock": "Disable auto-relock",
+      "enable-auto-relock": "Enable auto-relock",
       "get-started": "Get started by staking your ${symbol}",
       "get-started-burned": "Your burned positions will show up here once their lockup periods have ended.",
       "locked-amount": "Locked Amount",
       "lockup": "Lockup",
       "lockup-tooltip": "Locked for {duration}, unlocks on {date}",
+      "lockup-tooltip-auto-relock": "Auto-relock holds the lockup at {duration}. Turn it off and it unlocks on {date}.",
       "no-hemi-burned": "No burned positions yet",
       "no-hemi-staked": "No ${symbol} staked",
       "on": "On {date}",
@@ -547,6 +671,8 @@
     },
     "tabs": {
       "analytics": "Analytics",
+      "estimator": "Advanced estimator",
+      "estimator-short": "Estimator",
       "stake": "Stake"
     },
     "unlock-successful": "Unlock successful",
@@ -559,6 +685,7 @@
     "agree-to-terms-and-policy": "By using this application, you agree to the <terms>Terms of Use</terms> and <policy>Privacy Policy</policy>",
     "bitcoinkit": "Hemi Bitcoin Kit",
     "boost-staking": "Boost staking",
+    "by-vetro": "by Vetro",
     "data-attribution": "Data provided by <link>CoinMarketCap.com</link>",
     "dex": {
       "aggregators": "Aggregators",
@@ -574,90 +701,51 @@
       "language": "Language",
       "legal-and-privacy": "Legal and Privacy"
     },
+    "hemi-earn": "Hemi Earn",
     "hemi-stake": "Hemi Stake",
     "network": "Network",
     "network-status": "Network status",
-    "new": "New",
     "tunnel": "Tunnel",
     "tvl": "TVL on Hemi"
   },
   "stake-page": {
     "action": "Action",
     "asset": "Asset",
-    "change-to-mainnet": "Change to Mainnet and stake",
     "dashboard": {
       "heading": "Boost staking",
-      "manage-token": "Manage {symbol}",
       "staked": "Staked",
       "subtitle": "Monitor your boost staking positions.",
-      "title": "Dashboard",
       "total-earned-points": "Total Hemi points earned",
       "total-earned-points-description": "Season ended.",
       "total-staked-on-hemi": "Total Staked on Hemi",
       "your-stake": "Your Stake"
     },
     "drawer": {
-      "approve-and-stake": "Approve and Stake",
-      "description-manage-stake": "Top up your stake, or withdraw anytime—you're in full control!",
+      "description-manage-stake": "Withdraw your staked tokens anytime.",
       "manage-your-stake": "Manage your stake",
-      "stake-and-earn-rewards": "Stake {symbol} to boost your participation.",
-      "stake-token": "Stake {symbol}",
-      "staking": "Staking...",
-      "strategy-details": {
-        "heading": "Strategy Details",
-        "tvl": "TVL (on Hemi)",
-        "website": "Website"
-      },
       "unstake-eth-as-weth-heading": "Unstaked ETH will be received as WETH",
       "unstake-eth-as-weth-subheading": "When you stake ETH, it is automatically converted to WETH. Upon unstaking, you'll receive WETH, which you can unwrap back to ETH if desired.",
       "unstake-token": "Unstake {symbol}",
       "unstaking": "Unstaking...",
-      "unwrap": "Unwrap",
-      "you-can-unstake-anytime": "You can unstake any time."
+      "unwrap": "Unwrap"
+    },
+    "ended": {
+      "description": "No new stakes are accepted. You can withdraw your tokens anytime.",
+      "title": "Boost staking has ended"
     },
     "protocol": "Protocol",
-    "ready-to-earn": "Ready to stake? Use supported assets and start staking.",
-    "stake": {
-      "action": "Action",
-      "heading": "Stake for boost",
-      "subheading": "Stake your tokens.",
-      "title": "Stake"
-    },
-    "start-staking-earn-points": "Start staking",
     "toast": {
-      "go-boost-staking": "Go to Boost staking",
       "here-your-stake-tx": "Here’s your {type} transaction:",
-      "staking": "staking",
-      "staking-successful": "Staking successful",
       "unstaking": "unstaking",
       "unstaking-successful": "Unstaking successful"
-    },
-    "wallet-balance": "Wallet balance"
-  },
-  "token-custom-drawer": {
-    "add-contract-to-preview": "Add a contract address to preview the token...",
-    "add-this-pair": "Add this pair to Hemi's token list for everyone to tunnel",
-    "add-token": "Add token",
-    "add-token-on-chain": "Add the token contract address on the {network} network",
-    "address-does-not-match-l2": "Doesn't match the L1 pair",
-    "heading": "Tunnel an existing ERC-20 token",
-    "i-am-sure-to-tunnel": "I'm sure I want to tunnel with this token.",
-    "l1-address-not-configured": "L1 address not configured in the contract",
-    "layer-token-address": "Layer {layer} token address",
-    "make-a-request-to-add": "If you'd like to add this ERC-20 token pair to Hemi's approved tokens list, <link>make a request</link>.",
-    "see-on-explorer": "See on {explorer}",
-    "subheading": "You need to input the pair of contract addresses from both Ethereum and Hemi to tunnel with this token.",
-    "this-address-is-not-valid": "This address is not valid",
-    "this-address-is-valid": "This address is valid"
+    }
   },
   "token-selector": {
     "all-tokens": "All tokens",
-    "manually-added-tokens": "Manually added tokens",
     "no-results-for": "No results found for <search></search>",
     "search-results": "Search results",
     "search-tokens": "Search by token name or address...",
     "select-token": "Select token",
-    "validating-token-address": "Validating token address...",
     "your-tokens": "Your tokens"
   },
   "transaction-history": {
@@ -673,12 +761,15 @@
   },
   "tunnel-page": {
     "form": {
-      "balance": "Balance",
       "bitcoin-receiving-address": "Receiving Bitcoin address",
       "bitcoin-receiving-address-description": "Withdrawn {symbol} is sent to the address of your connected Bitcoin wallet, or to the custom address you enter.",
       "custom-address": "Custom address",
       "custom-address-placeholder": "Bitcoin address...",
+      "evm-custom-address-placeholder": "EVM address...",
+      "evm-receiving-address": "Receiving {network} address",
+      "evm-receiving-address-description": "Withdrawn {symbol} is sent to the address of your connected EVM wallet, or to the custom address you enter.",
       "from-network": "From Network",
+      "hemi-custom-receiving-address-description": "Deposited {symbol} is sent to the address of your connected EVM wallet, or to the custom address you enter.",
       "hemi-receiving-address": "Receiving Hemi address",
       "hemi-receiving-address-description": "Deposited {symbol} is sent to the address associated with your connected EVM wallet.",
       "hemi-tunnel": "Hemi tunnel",
@@ -733,6 +824,8 @@
       "enter-a-custom-address": "Enter a custom address",
       "initiate-withdrawal": "Initiate Withdrawal",
       "input-a-correct-custom-address": "Input a correct custom address",
+      "min-deposit-load-failed": "Failed to load minimum deposit",
+      "min-withdrawal-load-failed": "Failed to load minimum withdrawal",
       "prove-withdrawal": "Prove withdrawal",
       "proving-withdrawal": "Proving...",
       "try-again": "Try again",

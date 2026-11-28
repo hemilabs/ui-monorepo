@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import { useMemo, useState } from 'react'
 import { StakingPositionStatus } from 'types/stakingDashboard'
 import { walletIsConnected } from 'utils/wallet'
@@ -15,6 +16,7 @@ import {
 import { WalletStatsSection } from './_components/walletStatsSection'
 import { StakingDashboardProvider } from './_context/stakingDashboardContext'
 import { useStakingPositions } from './_hooks/useStakingPositions'
+import { sortPositionsByUnlock } from './_utils/sortPositionsByUnlock'
 
 export const HemiStakePage = function () {
   const { data, isLoading, isLoadingError, refetch } = useStakingPositions()
@@ -29,8 +31,11 @@ export const HemiStakePage = function () {
   const filteredData = useMemo(
     function () {
       const positions = data?.filter(position => position.status === filter)
-      return filter === StakingPositionStatus.WITHDRAWN
-        ? positions?.reverse()
+      if (filter === StakingPositionStatus.WITHDRAWN) {
+        return positions?.reverse()
+      }
+      return featureFlags.enableHemiStakeAutoRelock
+        ? positions && sortPositionsByUnlock(positions)
         : positions
     },
     [data, filter],
@@ -56,8 +61,8 @@ export const HemiStakePage = function () {
               <div className="mb-6 hidden lg:block">
                 <WalletStatsSection />
               </div>
-              <div className="mb-4 ml-1 flex flex-row items-center justify-between gap-x-2">
-                <div className="flex flex-1 md:w-fit md:flex-none">
+              <div className="mb-4 ml-1 flex flex-col items-end gap-y-2 md:flex-row md:items-center md:justify-between md:gap-x-2">
+                <div className="flex w-full flex-1 md:w-fit md:flex-none">
                   <StakeTableFilter filter={filter} onFilter={handleFilter} />
                 </div>
                 <ClaimAllRewards positions={data} />

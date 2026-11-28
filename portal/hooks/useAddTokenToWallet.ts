@@ -2,6 +2,7 @@ import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo
 import watchAsset from '@hemilabs/wallet-watch-asset'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { EvmToken } from 'types/token'
+import { getL1LogoURI } from 'utils/l1Logo'
 import { type Address } from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
 
@@ -37,7 +38,7 @@ export const useAddTokenToWallet = function (options: Options) {
           // token logos include the small Hemi logo, but wallets crop it.
           // Besides, many wallets add the chain logo anyways, so we're safe to
           // use the L1 logo version
-          logoURI: token.extensions?.l1LogoURI,
+          logoURI: getL1LogoURI(token),
           symbol: token.symbol,
         },
         localStorage,

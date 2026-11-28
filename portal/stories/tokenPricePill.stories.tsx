@@ -1,9 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { TokenPricePill } from 'components/tokenPricePill'
-import messages from 'messages/en.json'
-import { NuqsTestingAdapter } from 'nuqs/adapters/testing'
 import { tokenList } from 'tokenList'
-import { IntlProvider } from 'use-intl'
 
 const hemiTokenAddress = '0x99e3dE3817F6081B2568208337ef83295b7f591D'
 const hemiToken = tokenList.tokens.find(
@@ -27,15 +24,6 @@ const meta = {
     token: { control: false },
   },
   component: TokenPricePill,
-  decorators: [
-    Story => (
-      <IntlProvider locale="en" messages={messages}>
-        <NuqsTestingAdapter>
-          <Story />
-        </NuqsTestingAdapter>
-      </IntlProvider>
-    ),
-  ],
   parameters: {
     layout: 'centered',
   },

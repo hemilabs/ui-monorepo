@@ -17,8 +17,8 @@ export type DepositEvents = CommonEvents & {
 
 export type DepositErc20Events = DepositEvents & {
   'approve-failed': [Error]
-  'approve-transaction-succeeded': [TransactionReceipt]
   'approve-transaction-reverted': [TransactionReceipt]
+  'approve-transaction-succeeded': [TransactionReceipt]
   'pre-approve': []
   'user-signed-approve': [Hash]
   'user-signing-approve-error': [Error]
@@ -29,16 +29,16 @@ export type WithdrawEvents = CommonEvents & {
   'user-signed-withdraw': [Hash]
   'user-signing-withdraw-error': [Error]
   'withdraw-failed': [Error]
+  'withdraw-failed-validation': [string]
   'withdraw-settled': []
   'withdraw-transaction-reverted': [TransactionReceipt]
   'withdraw-transaction-succeeded': [TransactionReceipt]
-  'withdraw-failed-validation': [string]
 }
 
 export type ProveEvents = CommonEvents & {
   'pre-prove': []
-  'prove-failed-validation': [string]
   'prove-failed': [Error]
+  'prove-failed-validation': [string]
   'prove-settled': []
   'prove-transaction-reverted': [TransactionReceipt]
   'prove-transaction-succeeded': [TransactionReceipt]
@@ -47,8 +47,8 @@ export type ProveEvents = CommonEvents & {
 }
 
 export type FinalizeEvents = CommonEvents & {
-  'finalize-failed-validation': [string]
   'finalize-failed': [Error]
+  'finalize-failed-validation': [string]
   'finalize-settled': []
   'finalize-transaction-reverted': [TransactionReceipt]
   'finalize-transaction-succeeded': [TransactionReceipt]

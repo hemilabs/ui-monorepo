@@ -1,10 +1,8 @@
 allowBuilds:
-  '@sentry/cli': true # downloads the sentry-cli binary @sentry/vite-plugin uses to upload source maps
   bufferutil: false # optional native ws speedup; ws falls back to pure JS
-  core-js: false # only a sponsor-banner postinstall, no functional payload
   esbuild: true # platform binary used by vitest (via vite) for test transforms
   keccak: false # has a pure-JS fallback; the native addon is never loaded in the browser bundle
-  sharp: true # libvips bindings required by Next.js production image optimization
+  sharp: true # libvips bindings for next, an optional peer of nuqs
   unrs-resolver: true # Rust resolver required by eslint-import-resolver-typescript during lint
   utf-8-validate: false # optional native ws speedup; ws falls back to pure JS
   workerd: false # wrangler dev fetches the runtime it needs on its own; vite build never uses it
@@ -18,6 +16,8 @@ packages:
 
 blockExoticSubdeps: true
 
+lockfileIncludeTarballUrl: true
+
 minimumReleaseAge: 10080 # 7 days in minutes
 minimumReleaseAgeExclude:
   - '@hemilabs/*'
@@ -26,11 +26,14 @@ minimumReleaseAgeExclude:
   - 'umami-analytics'
 
 overrides:
+  '@walletconnect/relay-auth@1.1.0>@noble/curves': '1.8.1' # relay-auth pins 1.8.0, published without provenance
+  '@walletconnect/relay-auth@1.1.0>@noble/hashes': '1.8.0' # relay-auth pins 1.7.0, published without provenance
   brace-expansion@5: '5.0.8' # CVE-2026-13149 / CVE-2026-14257 DoS fixes
-  postcss: '8.5.14' # Needed as Next pins 8.4.31 exactly
+  postcss: '8.5.14' # next (optional peer of nuqs) pins 8.4.31 exactly
 
 patchedDependencies:
-  '@hemilabs/token-list@3.5.0': patches/@hemilabs__token-list@3.5.0.patch
+  '@graphprotocol/graph-cli@*': 'patches/@graphprotocol__graph-cli.patch'
+  '@hemilabs/token-list@4.2.0': patches/@hemilabs__token-list@4.2.0.patch
   '@hemilabs/wallet-watch-asset@1.0.2': 'patches/@hemilabs__wallet-watch-asset@1.0.2.patch'
   'coinselect@3.1.13': 'patches/coinselect@3.1.13.patch'
   'viem@*': 'patches/viem.patch'
@@ -39,3 +42,17 @@ publicHoistPattern:
   - '*eslint*'
 
 saveExact: true
+
+# Run recursive scripts without dependency ordering, so builds don't wait for
+# builds they don't need. Safe because workspaces import each other's source,
+# not build output; remove it if one starts consuming another's build.
+sort: false
+
+trustPolicy: no-downgrade
+
+trustPolicyExclude:
+  - 'chokidar@4.0.3' # graph-cli pins 4.x; 4.0.2+ lost provenance that 4.0.1 had
+  - 'eslint-config-prettier@8.10.2' # legacy release has no attestation
+  - 'eslint-import-resolver-typescript@3.10.1' # legacy release has no attestation
+  - 'semver@6.3.1' # legacy release has no attestation
+  - 'ua-parser-js@1.0.41' # react-device-detect dependency; 1.x was never attested

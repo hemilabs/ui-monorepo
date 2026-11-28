@@ -6,9 +6,9 @@ type TunnelPartners = 'jumper' | 'stargate'
 export type Extensions = {
   allowanceSlot?: number
   birthBlock?: number
-  l1LogoURI?: string
   bridgeInfo?: {
     [keyof: string]: {
+      allowanceSlot?: number
       tokenAddress?: Address
     }
   }
@@ -16,20 +16,21 @@ export type Extensions = {
     adapterAddress?: Address
     peers?: {
       [keyof: string]: {
+        allowanceSlot?: number
         tokenAddress?: Address
       }
     }
   }
-  protocol?: string
   // Use this to map which symbol should be used to map prices
   priceSymbol?: string
+  protocol?: string
   // Custom token symbol to show in the Stake
   stakeSymbol?: string
   tunnel?: boolean
+  tunnelDstAddress?: string
+  tunnelPartners?: TunnelPartners[]
   // Custom token symbol to show in the Tunnel
   tunnelSymbol?: string
-  tunnelPartners?: TunnelPartners[]
-  tunnelDstAddress?: string
 }
 
 type BaseToken = {
@@ -46,8 +47,6 @@ type BaseToken = {
 export type BtcToken = BaseToken & { chainId: BtcChain['id'] }
 // includes erc20 and native tokens for all chains
 export type EvmToken = BaseToken & { chainId: Chain['id'] }
-// superset of erc20 token with the info required from tunneling
-export type L2Token = EvmToken & { l1Token?: Address }
 
 export type Token = BtcToken | EvmToken
 

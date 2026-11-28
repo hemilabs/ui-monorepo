@@ -3,7 +3,8 @@ import { type Address, type Chain, type Client } from 'viem'
 
 import { getClassDenominatorsQueryOptions } from '../_hooks/classDenominators'
 import { getEpochStreamsQueryOptions } from '../_hooks/epochStreams'
-import { getBaseline } from '../_utils/epochBaseline'
+import { getBaselineByClass } from '../_utils/epochBaseline'
+import { type RewardClass, rewardClasses } from '../_utils/rewardClass'
 
 // Past this, roughly seven weeks, the last baseline
 // says too little about the current epoch to stand in for it.
@@ -25,46 +26,63 @@ export const fetchRewardsForecastInputs = async function (
     token: Address
   },
 ) {
-  const findFunded = async function () {
+  const findFundedByClass = async function () {
     const oldestEpoch = Math.max(
       currentEpoch - maxEpochsBack,
       firstFundableEpoch,
     )
+    const funded = new Map<RewardClass, { baseline: bigint; epoch: number }>()
 
-    for (let epoch = currentEpoch; epoch >= oldestEpoch; epoch--) {
+    for (
+      let epoch = currentEpoch;
+      epoch >= oldestEpoch && funded.size < rewardClasses.length;
+      epoch--
+    ) {
       const streams = await queryClient.fetchQuery(
         getEpochStreamsQueryOptions({ chainId, epoch, hemiClient, token }),
       )
-      const baseline = getBaseline(streams)
+      const baselines = getBaselineByClass(streams)
 
-      if (baseline > BigInt(0)) {
-        return { baseline, epoch }
-      }
+      rewardClasses
+        .filter(
+          rewardClass =>
+            !funded.has(rewardClass) && baselines[rewardClass] > BigInt(0),
+        )
+        .forEach(rewardClass =>
+          funded.set(rewardClass, { baseline: baselines[rewardClass], epoch }),
+        )
     }
 
-    return undefined
+    return funded
   }
 
-  const [{ transferable: transferableClassWeight }, funded] = await Promise.all(
-    [
-      queryClient.fetchQuery(
-        getClassDenominatorsQueryOptions({
-          chainId,
-          epoch: currentEpoch,
-          hemiClient,
-        }),
-      ),
-      findFunded(),
-    ],
-  )
+  const [denominators, funded] = await Promise.all([
+    queryClient.fetchQuery(
+      getClassDenominatorsQueryOptions({
+        chainId,
+        epoch: currentEpoch,
+        hemiClient,
+      }),
+    ),
+    findFundedByClass(),
+  ])
 
-  if (!funded) {
-    return { transferableClassWeight }
+  const toClassInputs = function (rewardClass: RewardClass) {
+    const fundedClass = funded.get(rewardClass)
+
+    return {
+      baseline: fundedClass?.baseline,
+      carriedFrom:
+        fundedClass !== undefined && fundedClass.epoch !== currentEpoch
+          ? fundedClass.epoch
+          : undefined,
+      weight: denominators[rewardClass],
+    }
   }
 
   return {
-    carriedFrom: funded.epoch === currentEpoch ? undefined : funded.epoch,
-    transferableClassBaseline: funded.baseline,
-    transferableClassWeight,
+    forfeitable: toClassInputs('forfeitable'),
+    locked: toClassInputs('locked'),
+    transferable: toClassInputs('transferable'),
   }
 }

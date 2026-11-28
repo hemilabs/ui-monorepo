@@ -115,14 +115,24 @@ describe('settleUi', function () {
       ).toBeUndefined()
     })
 
-    it('returns undefined after a reverted settlement (try-again state)', function () {
+    it('keeps the recover banner after a reverted settlement (support link)', function () {
       expect(
         pickSettleBannerKey({
           ...baseTx,
           settlement: { failed: true, kind: 'RECOVER' },
           status: 'CANCELLED',
         }),
-      ).toBeUndefined()
+      ).toBe('recover-funds')
+    })
+
+    it('keeps the claim banner after a reverted settlement', function () {
+      expect(
+        pickSettleBannerKey({
+          ...baseTx,
+          settlement: { failed: true, kind: 'CLAIM' },
+          status: 'FULFILLED',
+        }),
+      ).toBe('claim-shares')
     })
 
     it('returns "cancelled" for a user-cancelled redeem (indexed flag)', function () {

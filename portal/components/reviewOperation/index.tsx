@@ -31,9 +31,12 @@ export const ReviewOperation = ({
         {!!belowAmount && <div className="mt-2">{belowAmount}</div>}
         <div
           className="mt-4 flex flex-col gap-y-8"
-          // reserve the space up front so the gray container does not jump
-          // while the steps resolve
-          style={{ minHeight: `${144 * steps.length + 20}px` }}
+          // Reserve space for steps that grow when there is a section below them.
+          style={
+            bottomSection
+              ? { minHeight: `${144 * steps.length + 20}px` }
+              : undefined
+          }
         >
           {steps.map((stepProps, index) => (
             <Step key={index} position={index + 1} {...stepProps} />
